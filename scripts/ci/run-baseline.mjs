@@ -86,8 +86,9 @@ export async function main() {
     step('inventory-drift', ['scripts/xroga/inventory.mjs', '--check']),
     step('requirements-integrity', ['scripts/xroga/validate-requirements-ledger.mjs']),
     step('runtime-config-integrity', ['scripts/xroga/check-runtime-config.mjs']),
+    step('golden-contract-integrity', ['scripts/xroga/validate-golden-journeys.mjs']),
     step('baseline-negative-fixtures', ['--test', 'scripts/ci/baseline.test.mjs']),
-    step('inventory-and-ledger-fixtures', ['--test', 'scripts/xroga/inventory.test.mjs', 'scripts/xroga/requirements.test.mjs', 'scripts/xroga/runtime-discovery.test.mjs', 'scripts/xroga/runtime-config.test.mjs']),
+    step('inventory-and-ledger-fixtures', ['--test', 'scripts/xroga/inventory.test.mjs', 'scripts/xroga/requirements.test.mjs', 'scripts/xroga/runtime-discovery.test.mjs', 'scripts/xroga/runtime-config.test.mjs', 'scripts/xroga/golden-journeys.test.mjs']),
     step('agent-dependency-resolution', ['scripts/ci/check-agent-dependencies.mjs']),
     step('git-diff-whitespace', [], { executable: 'git', args: ['diff', '--check'] }),
   ];

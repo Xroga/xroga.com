@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "3f7413087f4428d6ed6d0fdae70d2bc5de6d59bc",
-    "sourceTimestampUtc": "2026-10-13T18:15:51+05:00",
-    "auditStartedUtc": "2026-10-13T13:19:57.229Z",
+    "sha": "c5eeeb22cedb1bbfa6542e7c892b5afebee6216d",
+    "sourceTimestampUtc": "2026-10-13T18:35:33+05:00",
+    "auditStartedUtc": "2026-10-13T13:52:34.480Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -30,6 +30,7 @@
       ".github/workflows/supabase-migrate.yml",
       ".github/workflows/unit-tests.yml",
       ".github/workflows/vercel-build-check.yml",
+      ".github/workflows/xroga-golden-journeys.yml",
       ".node-version",
       "Dockerfile.api",
       "backend/Dockerfile",
@@ -3166,6 +3167,7 @@
         "backend/src/ai/engineeringArtifact.test.ts:4",
         "backend/src/ai/pipeline.ts:5",
         "backend/src/ai/runStore.ts:10",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:13",
         "backend/src/synthesis/browserVerificationAdapter.test.ts:7"
       ],
       "reachable": true,
@@ -3184,6 +3186,7 @@
       "testCoverage": [
         "backend/src/ai/artifactDurability.test.ts",
         "backend/src/ai/engineeringArtifact.test.ts",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/synthesis/browserVerificationAdapter.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -9574,6 +9577,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:21",
         "backend/src/ai/universal/semanticRequestPlanner.ts:37",
         "backend/src/ai/universal/universalContracts.test.ts:4",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
         "backend/src/routes/phase1.ts:37",
         "backend/src/routes/phase1BusinessPreflight.ts:14",
         "backend/src/synthesis/canonicalFoundation.test.ts:4",
@@ -9599,6 +9603,7 @@
         "backend/src/ai/universal/goalContract.test.ts",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts",
         "backend/src/ai/universal/universalContracts.test.ts",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/synthesis/canonicalFoundation.test.ts",
         "backend/src/synthesis/delivery/projectDelivery.test.ts",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
@@ -9917,6 +9922,7 @@
         "backend/src/ai/providerRuntime.ts:8",
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.ts:54",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:14",
         "backend/src/routes/phase1.ts:46"
       ],
       "reachable": true,
@@ -9928,7 +9934,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/ai/universal/runtimeFailure.test.ts"
+        "backend/src/ai/universal/runtimeFailure.test.ts",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -10154,6 +10161,7 @@
         "backend/src/ai/pipeline.ts:154",
         "backend/src/ai/universal/capabilityReadiness.test.ts:5",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:4",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:12",
         "backend/src/routes/phase1.ts:31",
         "backend/src/services/integrations/businessAction.ts:23",
         "backend/src/services/integrations/businessRead.ts:19"
@@ -10177,7 +10185,8 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/universal/capabilityReadiness.test.ts",
-        "backend/src/ai/universal/semanticRequestPlanner.test.ts"
+        "backend/src/ai/universal/semanticRequestPlanner.test.ts",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -12582,6 +12591,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:15",
         "backend/src/lib/buildStreamLifecycle.test.ts:4",
         "backend/src/routes/swarm.ts:7"
       ],
@@ -12596,6 +12606,7 @@
         "backend/src/lib/buildStreamLifecycle.ts#StreamEventSource"
       ],
       "testCoverage": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/lib/buildStreamLifecycle.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -14169,6 +14180,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:16",
         "backend/src/routes/swarm.ts:5"
       ],
       "reachable": true,
@@ -14183,7 +14195,9 @@
       "evidenceBoundary": [
         "backend/src/lib/sse.ts#eventLine"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -14906,6 +14920,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:17",
         "backend/src/index.ts:7",
         "backend/src/lib/authRoundTrips.test.ts:106",
         "backend/src/middleware/phase1Auth.ts:6",
@@ -14934,6 +14949,7 @@
         "backend/src/middleware/auth.ts#verifyAccessToken"
       ],
       "testCoverage": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/lib/authRoundTrips.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -20729,6 +20745,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:9",
         "backend/src/routes/phase1.ts:63",
         "backend/src/services/integrations/businessActionConfirmations.ts:10"
       ],
@@ -20757,7 +20774,9 @@
       "evidenceBoundary": [
         "backend/src/services/integrations/businessAction.ts#verifyPlanDigest"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -21160,6 +21179,7 @@
       "callers": [
         "backend/src/capabilities/modules/businessAction.ts:6",
         "backend/src/capabilities/modules/businessRead.ts:6",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:10",
         "backend/src/routes/integrations.ts:40",
         "backend/src/routes/phase1.ts:68",
         "backend/src/services/integrations/businessAction.ts:27",
@@ -21183,6 +21203,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "frontend/src/lib/customMcp.test.ts",
         "frontend/src/lib/pluginInstalledPermissions.test.ts"
       ],
@@ -76027,6 +76048,7 @@
       ],
       "callers": [
         "frontend/src/context/TerminalChatContext.tsx:13",
+        "frontend/src/lib/goldenJourneyRendering.test.ts:4",
         "frontend/src/lib/terminal/liveActivity.test.ts:12",
         "frontend/src/lib/terminal/terminalEventModel.test.ts:4",
         "frontend/src/lib/terminal/terminalRunReducer.ts:16"
@@ -76044,6 +76066,7 @@
         "frontend/src/lib/terminal/terminalEvent.ts#TerminalEventLevel"
       ],
       "testCoverage": [
+        "frontend/src/lib/goldenJourneyRendering.test.ts",
         "frontend/src/lib/terminal/activityPresentation.test.ts",
         "frontend/src/lib/terminal/liveActivity.test.ts",
         "frontend/src/lib/terminal/terminalEventModel.test.ts"
@@ -76126,6 +76149,7 @@
       ],
       "callers": [
         "frontend/src/context/TerminalChatContext.tsx:15",
+        "frontend/src/lib/goldenJourneyRendering.test.ts:3",
         "frontend/src/lib/terminal/liveActivity.test.ts:8",
         "frontend/src/lib/terminal/softwareAgentEvents.test.ts:7",
         "frontend/src/lib/terminal/terminalEventModel.test.ts:5",
@@ -76159,6 +76183,7 @@
         "frontend/src/lib/terminal/terminalEventAdapter.ts#softwareEvidence"
       ],
       "testCoverage": [
+        "frontend/src/lib/goldenJourneyRendering.test.ts",
         "frontend/src/lib/terminal/liveActivity.test.ts",
         "frontend/src/lib/terminal/softwareAgentEvents.test.ts",
         "frontend/src/lib/terminal/terminalEventModel.test.ts",
@@ -76298,6 +76323,7 @@
       ],
       "callers": [
         "frontend/src/context/TerminalChatContext.tsx:16",
+        "frontend/src/lib/goldenJourneyRendering.test.ts:5",
         "frontend/src/lib/terminal/liveActivity.test.ts:4",
         "frontend/src/lib/terminal/terminalEventModel.test.ts:6"
       ],
@@ -76316,6 +76342,7 @@
         "frontend/src/lib/terminal/terminalRunReducer.ts#event"
       ],
       "testCoverage": [
+        "frontend/src/lib/goldenJourneyRendering.test.ts",
         "frontend/src/lib/terminal/liveActivity.test.ts",
         "frontend/src/lib/terminal/terminalEventModel.test.ts"
       ],
@@ -77910,6 +77937,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/XrogaBlockView.tsx:11",
+        "frontend/src/lib/goldenJourneyRendering.test.ts:7",
         "frontend/src/lib/xrogaA2uiAdapter.ts:1",
         "frontend/src/lib/xrogaBlocks.test.ts:6",
         "frontend/src/lib/xrogaDocumentEdits.ts:1",
@@ -77940,6 +77968,7 @@
         "frontend/src/lib/xrogaBlocks.ts#xrogaReceiptSchema"
       ],
       "testCoverage": [
+        "frontend/src/lib/goldenJourneyRendering.test.ts",
         "frontend/src/lib/xrogaBlocks.test.ts",
         "frontend/src/lib/xrogaDocumentEdits.test.ts",
         "frontend/src/lib/xrogaFileExports.test.ts",
@@ -78592,6 +78621,7 @@
       "callers": [
         "frontend/src/components/terminal/FeatureOutputView.tsx:4",
         "frontend/src/components/terminal/UniversalOutputView.tsx:4",
+        "frontend/src/lib/goldenJourneyRendering.test.ts:6",
         "frontend/src/lib/xrogaBlocks.test.ts:7",
         "frontend/src/lib/xrogaShareableOutput.ts:1"
       ],
@@ -78606,6 +78636,7 @@
         "frontend/src/lib/xrogaOutputAdapters.ts#universalEvidence"
       ],
       "testCoverage": [
+        "frontend/src/lib/goldenJourneyRendering.test.ts",
         "frontend/src/lib/xrogaBlocks.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -79902,12 +79933,14 @@
       "runtimeImports": [
         "scripts/ci/toolchain.mjs"
       ],
-      "entryPoints": [],
+      "entryPoints": [
+        "scripts/xroga/run-golden-browser.mjs"
+      ],
       "callers": [
         "scripts/ci/baseline.test.mjs:12",
         "scripts/ci/run-baseline.mjs:8"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:crypto",
@@ -79924,11 +79957,11 @@
       "testCoverage": [
         "scripts/ci/baseline.test.mjs"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -80066,7 +80099,7 @@
       "id": "surface:b52dca2df19c3c07d436",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/compare-baseline-runs.mjs",
-      "sha256": "201d29dfd52e0d4bf2637063bde9d93403dc33d212a3ede3c9431137bbf5b0e8",
+      "sha256": "d7f679fef64cfb228fe42a612798da86f965e3e22747a38235de1b32b48af9c2",
       "symbols": [
         "compareBaselineRuns",
         "directory",
@@ -80161,7 +80194,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "2250969bbba149cacf64127ef289ff577064711b2bb91a0b04c1de12af979128",
+      "sha256": "49b2b8e4973c54aebc2732d27bed6ccb3101117e2dc5011b5938bc74580fba11",
       "symbols": [
         "after",
         "append",
@@ -80215,11 +80248,14 @@
         "scripts/ci/check-installed-dependencies.mjs",
         "scripts/ci/toolchain.mjs"
       ],
-      "entryPoints": [],
-      "callers": [
-        "scripts/ci/baseline.test.mjs:11"
+      "entryPoints": [
+        "scripts/xroga/run-golden-browser.mjs"
       ],
-      "reachable": false,
+      "callers": [
+        "scripts/ci/baseline.test.mjs:11",
+        "scripts/xroga/run-golden-browser.mjs:8"
+      ],
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "declared-host:127.0.0.1",
@@ -80241,11 +80277,11 @@
       "testCoverage": [
         "scripts/ci/baseline.test.mjs"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -80279,7 +80315,9 @@
       "runtimeImports": [],
       "entryPoints": [
         "scripts/ci/check-lockfile-integrity.mjs",
-        "scripts/ci/validate-migrations.mjs"
+        "scripts/ci/validate-migrations.mjs",
+        "scripts/xroga/run-golden-browser.mjs",
+        "scripts/xroga/validate-golden-journeys.mjs"
       ],
       "callers": [
         "scripts/ci/baseline.test.mjs:7",
@@ -80292,9 +80330,12 @@
         "scripts/ci/validate-migrations.mjs:5",
         "scripts/ci/verify-toolchain.mjs:1",
         "scripts/xroga/check-runtime-config.mjs:5",
+        "scripts/xroga/golden-journeys.mjs:5",
         "scripts/xroga/inventory.mjs:8",
+        "scripts/xroga/run-golden-browser.mjs:7",
         "scripts/xroga/runtime-discovery.mjs:5",
-        "scripts/xroga/runtime-inventory.mjs:7"
+        "scripts/xroga/runtime-inventory.mjs:7",
+        "scripts/xroga/validate-golden-journeys.mjs:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81387,6 +81428,115 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:73111c9e9054b9627260",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/golden-journeys.mjs",
+      "sha256": "07e6306fa9fac60200b2e6bca346a710d3a928c700e2f4b13f4e968e5dca63df",
+      "symbols": [
+        "json",
+        "ledger",
+        "main",
+        "matrix",
+        "outputs"
+      ],
+      "imports": [
+        "../../tests/golden/fixtures/fixtures.mjs",
+        "../ci/toolchain.mjs",
+        "./golden-schema.mjs",
+        "node:child_process",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs",
+        "scripts/xroga/golden-schema.mjs",
+        "tests/golden/fixtures/fixtures.mjs"
+      ],
+      "entryPoints": [
+        "scripts/xroga/validate-golden-journeys.mjs"
+      ],
+      "callers": [
+        "scripts/xroga/validate-golden-journeys.mjs:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/xroga/golden-journeys.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:ad9b3edf0e7991197823",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/golden-schema.mjs",
+      "sha256": "af71697fe23d53e7a40fa3cb61204e7c23ff98c703a0de27f92acf109ad71d97",
+      "symbols": [
+        "fixtures",
+        "goldenJsonSchema",
+        "goldenMatrixSchema",
+        "id",
+        "ids",
+        "journey",
+        "journeyIds",
+        "matrix",
+        "node",
+        "nodes",
+        "texts",
+        "validateGoldenMatrix",
+        "visited",
+        "visiting",
+        "walk"
+      ],
+      "imports": [
+        "zod"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/xroga/validate-golden-journeys.mjs"
+      ],
+      "callers": [
+        "scripts/xroga/golden-journeys.mjs:7",
+        "scripts/xroga/golden-journeys.test.mjs:5",
+        "scripts/xroga/validate-golden-journeys.mjs:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "zod"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/xroga/golden-journeys.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:1d47c1a0b2a01e337bcf",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/inventory-schema.mjs",
@@ -81853,6 +82003,76 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:f59e1a05d8b35c15e0f0",
+      "subsystem": "browser_sandbox",
+      "sourcePath": "scripts/xroga/run-golden-browser.mjs",
+      "sha256": "ca4e59d999902ee447bdc110dc7444d4f10fd0692b8b1c4632ba98671f1f99ea",
+      "symbols": [
+        "artifacts",
+        "attempt",
+        "closed",
+        "directory",
+        "env",
+        "frontendRequire",
+        "item",
+        "name",
+        "origin",
+        "output",
+        "path",
+        "port",
+        "preload",
+        "probe",
+        "ready",
+        "relative",
+        "response",
+        "result",
+        "server",
+        "sha"
+      ],
+      "imports": [
+        "../ci/run-baseline.mjs",
+        "../ci/toolchain.mjs",
+        "node:child_process",
+        "node:fs",
+        "node:module",
+        "node:net",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/run-baseline.mjs",
+        "scripts/ci/toolchain.mjs"
+      ],
+      "entryPoints": [
+        "scripts/xroga/run-golden-browser.mjs"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:fs",
+        "node:module",
+        "node:net",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/xroga/run-golden-browser.mjs#verifyToolchain"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:cdcbb8d8aae1d7befd8d",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/runtime-discovery.mjs",
@@ -82118,6 +82338,55 @@
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:cbe3dce25f41f9a3a240",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/validate-golden-journeys.mjs",
+      "sha256": "889f8fa7ac6f6509a39c521befbcbf3aab8b90332f0d51ccf78b61c8a031a27e",
+      "symbols": [
+        "ids",
+        "main",
+        "matrix",
+        "read",
+        "result"
+      ],
+      "imports": [
+        "../ci/toolchain.mjs",
+        "./golden-journeys.mjs",
+        "./golden-schema.mjs",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs",
+        "scripts/xroga/golden-journeys.mjs",
+        "scripts/xroga/golden-schema.mjs"
+      ],
+      "entryPoints": [
+        "scripts/xroga/validate-golden-journeys.mjs"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -90223,6 +90492,17 @@
       "sha256": "8858f908b862b7fbbdb216848eb5e24c6261ea74d782b661db2a3227c615213a",
       "sourceEntrypoints": [],
       "hasSchedule": false
+    },
+    {
+      "id": "workflow:91a0343d88e6b45453b7",
+      "sourcePath": ".github/workflows/xroga-golden-journeys.yml",
+      "sha256": "9004ef4d67476a930bf7a17909423cf808a7865b89fec14d5c17cc65e3c2f0f6",
+      "sourceEntrypoints": [
+        "scripts/xroga/golden-journeys.test.mjs",
+        "scripts/xroga/run-golden-browser.mjs",
+        "scripts/xroga/validate-golden-journeys.mjs"
+      ],
+      "hasSchedule": false
     }
   ],
   "findings": [
@@ -93572,6 +93852,16 @@
       "line": 79,
       "kind": "TODO",
       "reachable": false,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:5f25602aec5139b369c4",
+      "sourcePath": "scripts/xroga/golden-journeys.mjs",
+      "line": 16,
+      "kind": "STUB",
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -97114,6 +97404,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:c9e64862eb7c7cfedf8a",
+      "sourcePath": "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+      "declaredTests": 12,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:862911cb0ebf98bd877c",
       "sourcePath": "backend/src/growth/growthEngine.test.ts",
       "declaredTests": 5,
@@ -98222,6 +98519,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:606e008b8792be49e55a",
+      "sourcePath": "frontend/src/lib/goldenJourneyRendering.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:b2edf435cce50f3d8046",
       "sourcePath": "frontend/src/lib/googleTag.test.ts",
       "declaredTests": 3,
@@ -99058,6 +99362,13 @@
       "id": "test-suite:af710f605437afee6847",
       "sourcePath": "scripts/lib/database-url.test.mjs",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:fb1fcccb441070f77622",
+      "sourcePath": "scripts/xroga/golden-journeys.test.mjs",
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -8,7 +8,7 @@ export function compareBaselineRuns(first, second) {
     assert.equal(run.result, 'PASS', 'Both baseline executions must pass');
     assert.equal(run.sourceTreeMutated, false, 'Baseline must not mutate tracked source');
     assert.ok(run.installedDependencies?.sha256, 'Actual installed dependency fingerprint is required');
-    assert.equal(run.results.length, 18, 'All mandatory baseline stages must run');
+    assert.equal(run.results.length, 19, 'All mandatory baseline stages must run');
     assert.ok(run.results.every(stage => stage.exitCode === 0), 'No mandatory stage may fail');
   }
   assert.equal(first.sourceSha, second.sourceSha, 'Clean runs must test the same SHA');
@@ -17,7 +17,7 @@ export function compareBaselineRuns(first, second) {
   assert.equal(first.installedDependencies.sha256, second.installedDependencies.sha256, 'Installed dependency graph changed');
   const suites = run => run.results.map(({ name, tests, pass, fail, skipped }) => ({ name, tests, pass, fail, skipped }));
   assert.deepEqual(suites(first), suites(second), 'Suite coverage or skip counts changed between runs');
-  return { result: 'PASS_REPEATED_CLEAN_BASELINE', sourceSha: first.sourceSha, stagesPerRun: 18,
+  return { result: 'PASS_REPEATED_CLEAN_BASELINE', sourceSha: first.sourceSha, stagesPerRun: 19,
     installedDependencySha256: first.installedDependencies.sha256, sourceTreeMutated: false };
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

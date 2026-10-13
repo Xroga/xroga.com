@@ -1,6 +1,6 @@
 # Canonical Xroga requirements ledger
 
-Application source SHA: `3f7413087f4428d6ed6d0fdae70d2bc5de6d59bc`. This is **available-source reconciliation**, not completion of the original 119-feature/72-mission source coverage. All missing inputs remain `INACCESSIBLE_PENDING_EXPORT`. Historical source assertions are preserved without treating them as current proof.
+Application source SHA: `c5eeeb22cedb1bbfa6542e7c892b5afebee6216d`. This is **available-source reconciliation**, not completion of the original 119-feature/72-mission source coverage. All missing inputs remain `INACCESSIBLE_PENDING_EXPORT`. Historical source assertions are preserved without treating them as current proof.
 
 264 requirements; 264 available source rows mapped; 43 mandatory capability families; 23 external candidates; zero newly adopted runtime dependencies.
 
@@ -10,7 +10,7 @@ Application source SHA: `3f7413087f4428d6ed6d0fdae70d2bc5de6d59bc`. This is **av
 | XB01-C002 | XROGA RESEARCH-TO-CODE REQUIREMENTS RECONCILIATION | IMPLEMENTED_BUT_UNVERIFIED | 002 | EXTEND |
 | XB01-C003 | DETERMINISTIC BUILD, TEST, MIGRATION AND CI BASELINE | IMPLEMENTED_BUT_UNVERIFIED | 003 | EXTEND |
 | XB01-C004 | DEPLOYMENT, RUNTIME AND EXTERNAL DEPENDENCY TRUTH | IMPLEMENTED_BUT_UNVERIFIED | 004 | EXTEND |
-| XB01-C005 | END-TO-END GOLDEN USER JOURNEY AND ACCEPTANCE HARNESS | PROPOSED_ONLY | 005 | NEW |
+| XB01-C005 | END-TO-END GOLDEN USER JOURNEY AND ACCEPTANCE HARNESS | IMPLEMENTED_BUT_UNVERIFIED | 005 | EXTEND |
 | XB01-C006 | XROGA ENGINEERING OPERATING CONTRACT AND DEFINITION OF DONE | PROPOSED_ONLY | 006 | NEW |
 | XB01-C007 | TENANT ISOLATION, SERVER-SIDE OWNERSHIP AND RBAC BASELINE | PROPOSED_ONLY | 007 | NEW |
 | XB01-C008 | CANONICAL OUTCOME-SCOPED AUTHORITY, APPROVAL AND PREPARED-ACTION CONTRACT | PROPOSED_ONLY | 008 | NEW |

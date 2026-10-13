@@ -1,0 +1,359 @@
+[
+  {
+    "id": "GJ-CHAT",
+    "fixtureId": "fixture-chat",
+    "goal": {
+      "version": "1.0",
+      "goal": "Explain idempotency in plain language.",
+      "desiredOutcome": "Explain idempotency in plain language.",
+      "semanticIntent": "ANSWER",
+      "constraints": [
+        "Fixture only; no external side effects"
+      ],
+      "acceptance": [
+        "Required independent evidence is present"
+      ],
+      "historyContext": [],
+      "projectContext": null,
+      "deliverables": [],
+      "requiredCapabilities": [
+        "conversation.respond"
+      ],
+      "requiredAuthorities": [],
+      "risks": [],
+      "confidence": 1,
+      "blockers": [],
+      "contextComplexity": "low"
+    }
+  },
+  {
+    "id": "GJ-WEB-RESEARCH",
+    "fixtureId": "fixture-web-research",
+    "goal": {
+      "version": "1.0",
+      "goal": "Research current accessibility guidance and cite primary sources.",
+      "desiredOutcome": "Research current accessibility guidance and cite primary sources.",
+      "semanticIntent": "INVESTIGATE",
+      "constraints": [
+        "Fixture only; no external side effects"
+      ],
+      "acceptance": [
+        "Required independent evidence is present"
+      ],
+      "historyContext": [],
+      "projectContext": null,
+      "deliverables": [],
+      "requiredCapabilities": [
+        "research.public-web",
+        "conversation.respond"
+      ],
+      "requiredAuthorities": [],
+      "risks": [],
+      "confidence": 1,
+      "blockers": [],
+      "contextComplexity": "low"
+    }
+  },
+  {
+    "id": "GJ-EXISTING-REPO-CODING",
+    "fixtureId": "fixture-existing-repo-coding",
+    "goal": {
+      "version": "1.0",
+      "goal": "Repair the authorized fixture repository and show diff and test evidence.",
+      "desiredOutcome": "Repair the authorized fixture repository and show diff and test evidence.",
+      "semanticIntent": "MODIFY",
+      "constraints": [
+        "Fixture only; no external side effects"
+      ],
+      "acceptance": [
+        "Required independent evidence is present"
+      ],
+      "historyContext": [],
+      "projectContext": null,
+      "deliverables": [],
+      "requiredCapabilities": [
+        "repository.read",
+        "software.implement",
+        "repository.write"
+      ],
+      "requiredAuthorities": [
+        "repository.write"
+      ],
+      "risks": [],
+      "confidence": 1,
+      "blockers": [],
+      "contextComplexity": "low"
+    }
+  },
+  {
+    "id": "GJ-NEW-SAAS",
+    "fixtureId": "fixture-new-saas",
+    "goal": {
+      "version": "1.0",
+      "goal": "Build a clinic appointment application with reproducible source artifacts.",
+      "desiredOutcome": "Build a clinic appointment application with reproducible source artifacts.",
+      "semanticIntent": "MODIFY",
+      "constraints": [
+        "Fixture only; no external side effects"
+      ],
+      "acceptance": [
+        "Required independent evidence is present"
+      ],
+      "historyContext": [],
+      "projectContext": null,
+      "deliverables": [],
+      "requiredCapabilities": [
+        "software.implement"
+      ],
+      "requiredAuthorities": [
+        "sandbox.execute"
+      ],
+      "risks": [],
+      "confidence": 1,
+      "blockers": [],
+      "contextComplexity": "low"
+    }
+  },
+  {
+    "id": "GJ-BUSINESS-READ",
+    "fixtureId": "fixture-business-read",
+    "goal": {
+      "version": "1.0",
+      "goal": "Read the fixture account contact list without changing it.",
+      "desiredOutcome": "Read the fixture account contact list without changing it.",
+      "semanticIntent": "INVESTIGATE",
+      "constraints": [
+        "Fixture only; no external side effects"
+      ],
+      "acceptance": [
+        "Required independent evidence is present"
+      ],
+      "historyContext": [],
+      "projectContext": null,
+      "deliverables": [],
+      "requiredCapabilities": [
+        "business.read"
+      ],
+      "requiredAuthorities": [
+        "connection.read"
+      ],
+      "risks": [],
+      "confidence": 1,
+      "blockers": [],
+      "contextComplexity": "low"
+    }
+  },
+  {
+    "id": "GJ-BUSINESS-WRITE",
+    "fixtureId": "fixture-business-write",
+    "goal": {
+      "version": "1.0",
+      "goal": "Prepare deletion of the selected fixture message and ask for confirmation.",
+      "desiredOutcome": "Prepare deletion of the selected fixture message and ask for confirmation.",
+      "semanticIntent": "EXTERNAL_ACTION",
+      "constraints": [
+        "Fixture only; no external side effects"
+      ],
+      "acceptance": [
+        "Required independent evidence is present"
+      ],
+      "historyContext": [],
+      "projectContext": null,
+      "deliverables": [],
+      "requiredCapabilities": [
+        "business.action"
+      ],
+      "requiredAuthorities": [
+        "connection.write",
+        "action.confirm"
+      ],
+      "risks": [],
+      "confidence": 1,
+      "blockers": [],
+      "contextComplexity": "low"
+    }
+  },
+  {
+    "id": "GJ-MIXED-MULTI-OUTCOME",
+    "fixtureId": "fixture-mixed-multi-outcome",
+    "goal": {
+      "version": "1.0",
+      "goal": "Research a topic, update a fixture CRM, create a document and prepare a message.",
+      "desiredOutcome": "Research a topic, update a fixture CRM, create a document and prepare a message.",
+      "semanticIntent": "MIXED",
+      "constraints": [
+        "Fixture only; no external side effects"
+      ],
+      "acceptance": [
+        "Required independent evidence is present"
+      ],
+      "historyContext": [],
+      "projectContext": null,
+      "deliverables": [],
+      "requiredCapabilities": [
+        "research.public-web",
+        "business.action",
+        "artifact.generate"
+      ],
+      "requiredAuthorities": [
+        "connection.write",
+        "action.confirm"
+      ],
+      "risks": [],
+      "confidence": 1,
+      "blockers": [],
+      "contextComplexity": "low"
+    }
+  },
+  {
+    "id": "GJ-DOCUMENTS",
+    "fixtureId": "fixture-documents",
+    "goal": {
+      "version": "1.0",
+      "goal": "Create a document, spreadsheet and slide summary with readable evidence.",
+      "desiredOutcome": "Create a document, spreadsheet and slide summary with readable evidence.",
+      "semanticIntent": "MODIFY",
+      "constraints": [
+        "Fixture only; no external side effects"
+      ],
+      "acceptance": [
+        "Required independent evidence is present"
+      ],
+      "historyContext": [],
+      "projectContext": null,
+      "deliverables": [],
+      "requiredCapabilities": [
+        "artifact.generate"
+      ],
+      "requiredAuthorities": [
+        "artifact.write"
+      ],
+      "risks": [],
+      "confidence": 1,
+      "blockers": [],
+      "contextComplexity": "low"
+    }
+  },
+  {
+    "id": "GJ-WORK-PACK",
+    "fixtureId": "fixture-work-pack",
+    "goal": {
+      "version": "1.0",
+      "goal": "Start a bounded clinic work pack with reviewed permissions.",
+      "desiredOutcome": "Start a bounded clinic work pack with reviewed permissions.",
+      "semanticIntent": "EXTERNAL_ACTION",
+      "constraints": [
+        "Fixture only; no external side effects"
+      ],
+      "acceptance": [
+        "Required independent evidence is present"
+      ],
+      "historyContext": [],
+      "projectContext": null,
+      "deliverables": [],
+      "requiredCapabilities": [
+        "work-pack.start"
+      ],
+      "requiredAuthorities": [
+        "pack.install",
+        "action.confirm"
+      ],
+      "risks": [],
+      "confidence": 1,
+      "blockers": [],
+      "contextComplexity": "low"
+    }
+  },
+  {
+    "id": "GJ-AI-EMPLOYEE",
+    "fixtureId": "fixture-ai-employee",
+    "goal": {
+      "version": "1.0",
+      "goal": "Assign a bounded recurring customer-operations goal.",
+      "desiredOutcome": "Assign a bounded recurring customer-operations goal.",
+      "semanticIntent": "EXTERNAL_ACTION",
+      "constraints": [
+        "Fixture only; no external side effects"
+      ],
+      "acceptance": [
+        "Required independent evidence is present"
+      ],
+      "historyContext": [],
+      "projectContext": null,
+      "deliverables": [],
+      "requiredCapabilities": [
+        "employee.assign"
+      ],
+      "requiredAuthorities": [
+        "employee.schedule",
+        "action.confirm"
+      ],
+      "risks": [],
+      "confidence": 1,
+      "blockers": [],
+      "contextComplexity": "low"
+    }
+  },
+  {
+    "id": "GJ-PAID-ANDROID-PUBLISH",
+    "fixtureId": "fixture-paid-android-publish",
+    "goal": {
+      "version": "1.0",
+      "goal": "In an isolated sandbox, review a quote and publish the fixture Android build.",
+      "desiredOutcome": "In an isolated sandbox, review a quote and publish the fixture Android build.",
+      "semanticIntent": "EXTERNAL_ACTION",
+      "constraints": [
+        "Fixture only; no external side effects"
+      ],
+      "acceptance": [
+        "Required independent evidence is present"
+      ],
+      "historyContext": [],
+      "projectContext": null,
+      "deliverables": [],
+      "requiredCapabilities": [
+        "software.implement",
+        "publish.android"
+      ],
+      "requiredAuthorities": [
+        "billing.verify",
+        "publish.submit",
+        "action.confirm"
+      ],
+      "risks": [],
+      "confidence": 1,
+      "blockers": [],
+      "contextComplexity": "low"
+    }
+  },
+  {
+    "id": "GJ-SEO-DRIVE",
+    "fixtureId": "fixture-seo-drive",
+    "goal": {
+      "version": "1.0",
+      "goal": "Research an SEO brief and save an authorized report artifact.",
+      "desiredOutcome": "Research an SEO brief and save an authorized report artifact.",
+      "semanticIntent": "MIXED",
+      "constraints": [
+        "Fixture only; no external side effects"
+      ],
+      "acceptance": [
+        "Required independent evidence is present"
+      ],
+      "historyContext": [],
+      "projectContext": null,
+      "deliverables": [],
+      "requiredCapabilities": [
+        "research.public-web",
+        "artifact.generate"
+      ],
+      "requiredAuthorities": [
+        "artifact.write"
+      ],
+      "risks": [],
+      "confidence": 1,
+      "blockers": [],
+      "contextComplexity": "low"
+    }
+  }
+]

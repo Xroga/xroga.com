@@ -1,0 +1,1928 @@
+{
+  "version": "1.0",
+  "sourceSha": "c5eeeb22cedb1bbfa6542e7c892b5afebee6216d",
+  "scope": "ACCEPTANCE_CONTRACTS_NOT_PRODUCT_COMPLETION",
+  "journeys": [
+    {
+      "id": "GJ-CHAT",
+      "fixtureId": "fixture-chat",
+      "userIntent": "Explain idempotency in plain language.",
+      "tenant": {
+        "ownerId": "11111111-1111-4111-8111-111111111111",
+        "outsiderId": "22222222-2222-4222-8222-222222222222",
+        "realm": "ISOLATED_FIXTURE_ONLY"
+      },
+      "requirements": [
+        "XB01-C005",
+        "XR-FAMILY-canonical-durable-execution",
+        "XR-FAMILY-activity-feeds"
+      ],
+      "prerequisiteConnections": [
+        "Approved stub/public evidence feed; no live provider credentials inherited"
+      ],
+      "capabilityClasses": [
+        "conversation.respond"
+      ],
+      "planningGraph": [
+        {
+          "id": "fixture-chat:interpret",
+          "operation": "interpret",
+          "dependencies": []
+        },
+        {
+          "id": "fixture-chat:prepare",
+          "operation": "prepare",
+          "dependencies": [
+            "fixture-chat:interpret"
+          ]
+        },
+        {
+          "id": "fixture-chat:execute",
+          "operation": "execute",
+          "dependencies": [
+            "fixture-chat:prepare"
+          ]
+        },
+        {
+          "id": "fixture-chat:verify",
+          "operation": "verify",
+          "dependencies": [
+            "fixture-chat:execute"
+          ]
+        },
+        {
+          "id": "fixture-chat:present",
+          "operation": "present",
+          "dependencies": [
+            "fixture-chat:verify"
+          ]
+        }
+      ],
+      "authorityPoints": [
+        {
+          "authority": "authenticated.read",
+          "boundary": "Server identity, owner-filtered history and bounded model budget; no write authority"
+        }
+      ],
+      "budgetRules": [
+        "Conservative estimate and bounded reservation before each chargeable operation",
+        "Idempotent settlement/release; missing durable accounting blocks paid execution",
+        "Storage quota is distinct from AI spend"
+      ],
+      "durableState": [
+        "Owner-bound goal/plan version",
+        "Append-only run events with stable sequence",
+        "Approval/evidence/artifact references persisted before verified completion"
+      ],
+      "providerSandboxBehavior": "Strict in-process HTTP stubs/loopback transport for PR tests; no real emails, charges, publication, Git writes or customer data. Provider sandbox remains an independently blocked tier.",
+      "verificationEvidence": [
+        {
+          "id": "fixture-chat:evidence",
+          "kind": "outcome-specific",
+          "requirement": "Authenticated response/event identity and restored sequence/history"
+        }
+      ],
+      "uiEventsBlocks": [
+        "Versioned canonical event adapters, not a second SSE architecture",
+        "Narrative plus appropriate evidence/artifact/approval/status XrogaBlocks"
+      ],
+      "completionSemantics": "No PASS until all required postconditions, ownership, budget and durable evidence are independently recorded. Stub success is not production completion.",
+      "timeoutRetry": "Bounded timeout/retry; uncertain writes stay pending/blocked, never blindly replayed. Refresh disconnects transport, not the durable operation.",
+      "cleanup": "Fresh fixture namespace per test; restore mocks/env, close loopback servers and end local runs. Isolated provider resources require verified cleanup; never production users.",
+      "positiveAssertions": [
+        "Valid typed planning contract preserves requested outcomes",
+        "Expected component boundaries return scoped results",
+        "UI evidence remains readable after replay/restore"
+      ],
+      "negativeAssertions": [
+        "Unauthenticated/body-supplied identity rejected",
+        "Second tenant cannot inspect owner resources",
+        "Business write without confirmation is rejected",
+        "Confirmation for modified prepared action is rejected",
+        "Provider failure cannot become verified",
+        "Provider timeout does not blindly replay uncertain writes",
+        "Duplicated webhook/event cannot create a second effect/outcome",
+        "Browser refresh does not cancel a long execution",
+        "Unsupported capability stays blocked",
+        "One failed independent subtask prevents all-success claims",
+        "A prompt asking to claim success without evidence cannot create a verified receipt"
+      ],
+      "implementationPaths": [
+        "backend/src/ai/pipeline.ts"
+      ],
+      "state": "BLOCKED_KNOWN_GAP",
+      "blockers": [
+        {
+          "requirementIds": [
+            "XR-FAMILY-canonical-durable-execution",
+            "XR-FAMILY-activity-feeds"
+          ],
+          "ownerCommands": [
+            "LATER_PENDING_HISTORICAL_EXPORT"
+          ],
+          "missingCapability": "Authenticated streamed provider reply plus isolated browser/session restoration is not verified without TEST configuration."
+        }
+      ],
+      "goal": {
+        "version": "1.0",
+        "goal": "Explain idempotency in plain language.",
+        "desiredOutcome": "Explain idempotency in plain language.",
+        "semanticIntent": "ANSWER",
+        "constraints": [
+          "Fixture only; no external side effects"
+        ],
+        "acceptance": [
+          "Required independent evidence is present"
+        ],
+        "historyContext": [],
+        "projectContext": null,
+        "deliverables": [],
+        "requiredCapabilities": [
+          "conversation.respond"
+        ],
+        "requiredAuthorities": [],
+        "risks": [],
+        "confidence": 1,
+        "blockers": [],
+        "contextComplexity": "low"
+      }
+    },
+    {
+      "id": "GJ-WEB-RESEARCH",
+      "fixtureId": "fixture-web-research",
+      "userIntent": "Research current accessibility guidance and cite primary sources.",
+      "tenant": {
+        "ownerId": "11111111-1111-4111-8111-111111111111",
+        "outsiderId": "22222222-2222-4222-8222-222222222222",
+        "realm": "ISOLATED_FIXTURE_ONLY"
+      },
+      "requirements": [
+        "XB01-C005",
+        "XR-FAMILY-web-research-citations",
+        "XR-FAMILY-provenance-evidence"
+      ],
+      "prerequisiteConnections": [
+        "Approved stub/public evidence feed; no live provider credentials inherited"
+      ],
+      "capabilityClasses": [
+        "research.public-web",
+        "conversation.respond"
+      ],
+      "planningGraph": [
+        {
+          "id": "fixture-web-research:interpret",
+          "operation": "interpret",
+          "dependencies": []
+        },
+        {
+          "id": "fixture-web-research:prepare",
+          "operation": "prepare",
+          "dependencies": [
+            "fixture-web-research:interpret"
+          ]
+        },
+        {
+          "id": "fixture-web-research:execute",
+          "operation": "execute",
+          "dependencies": [
+            "fixture-web-research:prepare"
+          ]
+        },
+        {
+          "id": "fixture-web-research:verify",
+          "operation": "verify",
+          "dependencies": [
+            "fixture-web-research:execute"
+          ]
+        },
+        {
+          "id": "fixture-web-research:present",
+          "operation": "present",
+          "dependencies": [
+            "fixture-web-research:verify"
+          ]
+        }
+      ],
+      "authorityPoints": [
+        {
+          "authority": "authenticated.read",
+          "boundary": "Server identity, owner-filtered history and bounded model budget; no write authority"
+        }
+      ],
+      "budgetRules": [
+        "Conservative estimate and bounded reservation before each chargeable operation",
+        "Idempotent settlement/release; missing durable accounting blocks paid execution",
+        "Storage quota is distinct from AI spend"
+      ],
+      "durableState": [
+        "Owner-bound goal/plan version",
+        "Append-only run events with stable sequence",
+        "Approval/evidence/artifact references persisted before verified completion"
+      ],
+      "providerSandboxBehavior": "Strict in-process HTTP stubs/loopback transport for PR tests; no real emails, charges, publication, Git writes or customer data. Provider sandbox remains an independently blocked tier.",
+      "verificationEvidence": [
+        {
+          "id": "fixture-web-research:evidence",
+          "kind": "outcome-specific",
+          "requirement": "Independent authorized postconditions and validated artifact/provider receipt; a model saying done is insufficient"
+        }
+      ],
+      "uiEventsBlocks": [
+        "Versioned canonical event adapters, not a second SSE architecture",
+        "Source/citation/evidence XrogaBlocks with timestamps"
+      ],
+      "completionSemantics": "No PASS until all required postconditions, ownership, budget and durable evidence are independently recorded. Stub success is not production completion.",
+      "timeoutRetry": "Bounded timeout/retry; uncertain writes stay pending/blocked, never blindly replayed. Refresh disconnects transport, not the durable operation.",
+      "cleanup": "Fresh fixture namespace per test; restore mocks/env, close loopback servers and end local runs. Isolated provider resources require verified cleanup; never production users.",
+      "positiveAssertions": [
+        "Valid typed planning contract preserves requested outcomes",
+        "Expected component boundaries return scoped results",
+        "UI evidence remains readable after replay/restore"
+      ],
+      "negativeAssertions": [
+        "Unauthenticated/body-supplied identity rejected",
+        "Second tenant cannot inspect owner resources",
+        "Business write without confirmation is rejected",
+        "Confirmation for modified prepared action is rejected",
+        "Provider failure cannot become verified",
+        "Provider timeout does not blindly replay uncertain writes",
+        "Duplicated webhook/event cannot create a second effect/outcome",
+        "Browser refresh does not cancel a long execution",
+        "Unsupported capability stays blocked",
+        "One failed independent subtask prevents all-success claims",
+        "A prompt asking to claim success without evidence cannot create a verified receipt"
+      ],
+      "implementationPaths": [
+        "backend/src/ai/pipeline.ts"
+      ],
+      "state": "BLOCKED_KNOWN_GAP",
+      "blockers": [
+        {
+          "requirementIds": [
+            "XR-FAMILY-web-research-citations",
+            "XR-FAMILY-provenance-evidence"
+          ],
+          "ownerCommands": [
+            "LATER_PENDING_HISTORICAL_EXPORT"
+          ],
+          "missingCapability": "Fresh source retrieval, observed timestamps and provider-backed citations require an approved sandbox feed."
+        }
+      ],
+      "goal": {
+        "version": "1.0",
+        "goal": "Research current accessibility guidance and cite primary sources.",
+        "desiredOutcome": "Research current accessibility guidance and cite primary sources.",
+        "semanticIntent": "INVESTIGATE",
+        "constraints": [
+          "Fixture only; no external side effects"
+        ],
+        "acceptance": [
+          "Required independent evidence is present"
+        ],
+        "historyContext": [],
+        "projectContext": null,
+        "deliverables": [],
+        "requiredCapabilities": [
+          "research.public-web",
+          "conversation.respond"
+        ],
+        "requiredAuthorities": [],
+        "risks": [],
+        "confidence": 1,
+        "blockers": [],
+        "contextComplexity": "low"
+      }
+    },
+    {
+      "id": "GJ-EXISTING-REPO-CODING",
+      "fixtureId": "fixture-existing-repo-coding",
+      "userIntent": "Repair the authorized fixture repository and show diff and test evidence.",
+      "tenant": {
+        "ownerId": "11111111-1111-4111-8111-111111111111",
+        "outsiderId": "22222222-2222-4222-8222-222222222222",
+        "realm": "ISOLATED_FIXTURE_ONLY"
+      },
+      "requirements": [
+        "XB01-C005",
+        "XR-FAMILY-github-coding",
+        "XR-FAMILY-sandboxes"
+      ],
+      "prerequisiteConnections": [
+        "Namespaced isolated account with explicit owner/resource scope; never a default production account"
+      ],
+      "capabilityClasses": [
+        "repository.read",
+        "software.implement",
+        "repository.write"
+      ],
+      "planningGraph": [
+        {
+          "id": "fixture-existing-repo-coding:interpret",
+          "operation": "interpret",
+          "dependencies": []
+        },
+        {
+          "id": "fixture-existing-repo-coding:prepare",
+          "operation": "prepare",
+          "dependencies": [
+            "fixture-existing-repo-coding:interpret"
+          ]
+        },
+        {
+          "id": "fixture-existing-repo-coding:authorize",
+          "operation": "authorize",
+          "dependencies": [
+            "fixture-existing-repo-coding:prepare"
+          ]
+        },
+        {
+          "id": "fixture-existing-repo-coding:execute",
+          "operation": "execute",
+          "dependencies": [
+            "fixture-existing-repo-coding:authorize"
+          ]
+        },
+        {
+          "id": "fixture-existing-repo-coding:verify",
+          "operation": "verify",
+          "dependencies": [
+            "fixture-existing-repo-coding:execute"
+          ]
+        },
+        {
+          "id": "fixture-existing-repo-coding:present",
+          "operation": "present",
+          "dependencies": [
+            "fixture-existing-repo-coding:verify"
+          ]
+        }
+      ],
+      "authorityPoints": [
+        {
+          "authority": "repository.write",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        }
+      ],
+      "budgetRules": [
+        "Conservative estimate and bounded reservation before each chargeable operation",
+        "Idempotent settlement/release; missing durable accounting blocks paid execution",
+        "Storage quota is distinct from AI spend"
+      ],
+      "durableState": [
+        "Owner-bound goal/plan version",
+        "Append-only run events with stable sequence",
+        "Approval/evidence/artifact references persisted before verified completion"
+      ],
+      "providerSandboxBehavior": "Strict in-process HTTP stubs/loopback transport for PR tests; no real emails, charges, publication, Git writes or customer data. Provider sandbox remains an independently blocked tier.",
+      "verificationEvidence": [
+        {
+          "id": "fixture-existing-repo-coding:evidence",
+          "kind": "outcome-specific",
+          "requirement": "Independent authorized postconditions and validated artifact/provider receipt; a model saying done is insufficient"
+        }
+      ],
+      "uiEventsBlocks": [
+        "Versioned canonical event adapters, not a second SSE architecture",
+        "Narrative plus appropriate evidence/artifact/approval/status XrogaBlocks"
+      ],
+      "completionSemantics": "No PASS until all required postconditions, ownership, budget and durable evidence are independently recorded. Stub success is not production completion.",
+      "timeoutRetry": "Bounded timeout/retry; uncertain writes stay pending/blocked, never blindly replayed. Refresh disconnects transport, not the durable operation.",
+      "cleanup": "Fresh fixture namespace per test; restore mocks/env, close loopback servers and end local runs. Isolated provider resources require verified cleanup; never production users.",
+      "positiveAssertions": [
+        "Valid typed planning contract preserves requested outcomes",
+        "Expected component boundaries return scoped results",
+        "UI evidence remains readable after replay/restore"
+      ],
+      "negativeAssertions": [
+        "Unauthenticated/body-supplied identity rejected",
+        "Second tenant cannot inspect owner resources",
+        "Business write without confirmation is rejected",
+        "Confirmation for modified prepared action is rejected",
+        "Provider failure cannot become verified",
+        "Provider timeout does not blindly replay uncertain writes",
+        "Duplicated webhook/event cannot create a second effect/outcome",
+        "Browser refresh does not cancel a long execution",
+        "Unsupported capability stays blocked",
+        "One failed independent subtask prevents all-success claims",
+        "A prompt asking to claim success without evidence cannot create a verified receipt"
+      ],
+      "implementationPaths": [
+        "backend/src/ai/pipeline.ts"
+      ],
+      "state": "BLOCKED_KNOWN_GAP",
+      "blockers": [
+        {
+          "requirementIds": [
+            "XR-FAMILY-github-coding",
+            "XR-FAMILY-sandboxes"
+          ],
+          "ownerCommands": [
+            "LATER_PENDING_HISTORICAL_EXPORT"
+          ],
+          "missingCapability": "Authorized repository/sandbox credentials and isolated mutation/verification fixtures are unavailable."
+        }
+      ],
+      "goal": {
+        "version": "1.0",
+        "goal": "Repair the authorized fixture repository and show diff and test evidence.",
+        "desiredOutcome": "Repair the authorized fixture repository and show diff and test evidence.",
+        "semanticIntent": "MODIFY",
+        "constraints": [
+          "Fixture only; no external side effects"
+        ],
+        "acceptance": [
+          "Required independent evidence is present"
+        ],
+        "historyContext": [],
+        "projectContext": null,
+        "deliverables": [],
+        "requiredCapabilities": [
+          "repository.read",
+          "software.implement",
+          "repository.write"
+        ],
+        "requiredAuthorities": [
+          "repository.write"
+        ],
+        "risks": [],
+        "confidence": 1,
+        "blockers": [],
+        "contextComplexity": "low"
+      }
+    },
+    {
+      "id": "GJ-NEW-SAAS",
+      "fixtureId": "fixture-new-saas",
+      "userIntent": "Build a clinic appointment application with reproducible source artifacts.",
+      "tenant": {
+        "ownerId": "11111111-1111-4111-8111-111111111111",
+        "outsiderId": "22222222-2222-4222-8222-222222222222",
+        "realm": "ISOLATED_FIXTURE_ONLY"
+      },
+      "requirements": [
+        "XB01-C005",
+        "XR-FAMILY-app-site-creation",
+        "XR-FAMILY-verification"
+      ],
+      "prerequisiteConnections": [
+        "Namespaced isolated account with explicit owner/resource scope; never a default production account"
+      ],
+      "capabilityClasses": [
+        "software.implement"
+      ],
+      "planningGraph": [
+        {
+          "id": "fixture-new-saas:interpret",
+          "operation": "interpret",
+          "dependencies": []
+        },
+        {
+          "id": "fixture-new-saas:prepare",
+          "operation": "prepare",
+          "dependencies": [
+            "fixture-new-saas:interpret"
+          ]
+        },
+        {
+          "id": "fixture-new-saas:authorize",
+          "operation": "authorize",
+          "dependencies": [
+            "fixture-new-saas:prepare"
+          ]
+        },
+        {
+          "id": "fixture-new-saas:execute",
+          "operation": "execute",
+          "dependencies": [
+            "fixture-new-saas:authorize"
+          ]
+        },
+        {
+          "id": "fixture-new-saas:verify",
+          "operation": "verify",
+          "dependencies": [
+            "fixture-new-saas:execute"
+          ]
+        },
+        {
+          "id": "fixture-new-saas:present",
+          "operation": "present",
+          "dependencies": [
+            "fixture-new-saas:verify"
+          ]
+        }
+      ],
+      "authorityPoints": [
+        {
+          "authority": "sandbox.execute",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        }
+      ],
+      "budgetRules": [
+        "Conservative estimate and bounded reservation before each chargeable operation",
+        "Idempotent settlement/release; missing durable accounting blocks paid execution",
+        "Storage quota is distinct from AI spend"
+      ],
+      "durableState": [
+        "Owner-bound goal/plan version",
+        "Append-only run events with stable sequence",
+        "Approval/evidence/artifact references persisted before verified completion"
+      ],
+      "providerSandboxBehavior": "Strict in-process HTTP stubs/loopback transport for PR tests; no real emails, charges, publication, Git writes or customer data. Provider sandbox remains an independently blocked tier.",
+      "verificationEvidence": [
+        {
+          "id": "fixture-new-saas:evidence",
+          "kind": "outcome-specific",
+          "requirement": "Independent authorized postconditions and validated artifact/provider receipt; a model saying done is insufficient"
+        }
+      ],
+      "uiEventsBlocks": [
+        "Versioned canonical event adapters, not a second SSE architecture",
+        "Narrative plus appropriate evidence/artifact/approval/status XrogaBlocks"
+      ],
+      "completionSemantics": "No PASS until all required postconditions, ownership, budget and durable evidence are independently recorded. Stub success is not production completion.",
+      "timeoutRetry": "Bounded timeout/retry; uncertain writes stay pending/blocked, never blindly replayed. Refresh disconnects transport, not the durable operation.",
+      "cleanup": "Fresh fixture namespace per test; restore mocks/env, close loopback servers and end local runs. Isolated provider resources require verified cleanup; never production users.",
+      "positiveAssertions": [
+        "Valid typed planning contract preserves requested outcomes",
+        "Expected component boundaries return scoped results",
+        "UI evidence remains readable after replay/restore"
+      ],
+      "negativeAssertions": [
+        "Unauthenticated/body-supplied identity rejected",
+        "Second tenant cannot inspect owner resources",
+        "Business write without confirmation is rejected",
+        "Confirmation for modified prepared action is rejected",
+        "Provider failure cannot become verified",
+        "Provider timeout does not blindly replay uncertain writes",
+        "Duplicated webhook/event cannot create a second effect/outcome",
+        "Browser refresh does not cancel a long execution",
+        "Unsupported capability stays blocked",
+        "One failed independent subtask prevents all-success claims",
+        "A prompt asking to claim success without evidence cannot create a verified receipt"
+      ],
+      "implementationPaths": [
+        "backend/src/ai/pipeline.ts"
+      ],
+      "state": "BLOCKED_KNOWN_GAP",
+      "blockers": [
+        {
+          "requirementIds": [
+            "XR-FAMILY-app-site-creation",
+            "XR-FAMILY-verification"
+          ],
+          "ownerCommands": [
+            "LATER_PENDING_HISTORICAL_EXPORT"
+          ],
+          "missingCapability": "A full model-to-sandbox build and reproducible artifact receipt has not been independently executed."
+        }
+      ],
+      "goal": {
+        "version": "1.0",
+        "goal": "Build a clinic appointment application with reproducible source artifacts.",
+        "desiredOutcome": "Build a clinic appointment application with reproducible source artifacts.",
+        "semanticIntent": "MODIFY",
+        "constraints": [
+          "Fixture only; no external side effects"
+        ],
+        "acceptance": [
+          "Required independent evidence is present"
+        ],
+        "historyContext": [],
+        "projectContext": null,
+        "deliverables": [],
+        "requiredCapabilities": [
+          "software.implement"
+        ],
+        "requiredAuthorities": [
+          "sandbox.execute"
+        ],
+        "risks": [],
+        "confidence": 1,
+        "blockers": [],
+        "contextComplexity": "low"
+      }
+    },
+    {
+      "id": "GJ-BUSINESS-READ",
+      "fixtureId": "fixture-business-read",
+      "userIntent": "Read the fixture account contact list without changing it.",
+      "tenant": {
+        "ownerId": "11111111-1111-4111-8111-111111111111",
+        "outsiderId": "22222222-2222-4222-8222-222222222222",
+        "realm": "ISOLATED_FIXTURE_ONLY"
+      },
+      "requirements": [
+        "XB01-C005",
+        "XR-FAMILY-composio-dynamic-tools",
+        "XR-FAMILY-tenant-isolation"
+      ],
+      "prerequisiteConnections": [
+        "Namespaced isolated account with explicit owner/resource scope; never a default production account"
+      ],
+      "capabilityClasses": [
+        "business.read"
+      ],
+      "planningGraph": [
+        {
+          "id": "fixture-business-read:interpret",
+          "operation": "interpret",
+          "dependencies": []
+        },
+        {
+          "id": "fixture-business-read:prepare",
+          "operation": "prepare",
+          "dependencies": [
+            "fixture-business-read:interpret"
+          ]
+        },
+        {
+          "id": "fixture-business-read:authorize",
+          "operation": "authorize",
+          "dependencies": [
+            "fixture-business-read:prepare"
+          ]
+        },
+        {
+          "id": "fixture-business-read:execute",
+          "operation": "execute",
+          "dependencies": [
+            "fixture-business-read:authorize"
+          ]
+        },
+        {
+          "id": "fixture-business-read:verify",
+          "operation": "verify",
+          "dependencies": [
+            "fixture-business-read:execute"
+          ]
+        },
+        {
+          "id": "fixture-business-read:present",
+          "operation": "present",
+          "dependencies": [
+            "fixture-business-read:verify"
+          ]
+        }
+      ],
+      "authorityPoints": [
+        {
+          "authority": "connection.read",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        }
+      ],
+      "budgetRules": [
+        "Conservative estimate and bounded reservation before each chargeable operation",
+        "Idempotent settlement/release; missing durable accounting blocks paid execution",
+        "Storage quota is distinct from AI spend"
+      ],
+      "durableState": [
+        "Owner-bound goal/plan version",
+        "Append-only run events with stable sequence",
+        "Approval/evidence/artifact references persisted before verified completion"
+      ],
+      "providerSandboxBehavior": "Strict in-process HTTP stubs/loopback transport for PR tests; no real emails, charges, publication, Git writes or customer data. Provider sandbox remains an independently blocked tier.",
+      "verificationEvidence": [
+        {
+          "id": "fixture-business-read:evidence",
+          "kind": "outcome-specific",
+          "requirement": "Independent authorized postconditions and validated artifact/provider receipt; a model saying done is insufficient"
+        }
+      ],
+      "uiEventsBlocks": [
+        "Versioned canonical event adapters, not a second SSE architecture",
+        "Narrative plus appropriate evidence/artifact/approval/status XrogaBlocks"
+      ],
+      "completionSemantics": "No PASS until all required postconditions, ownership, budget and durable evidence are independently recorded. Stub success is not production completion.",
+      "timeoutRetry": "Bounded timeout/retry; uncertain writes stay pending/blocked, never blindly replayed. Refresh disconnects transport, not the durable operation.",
+      "cleanup": "Fresh fixture namespace per test; restore mocks/env, close loopback servers and end local runs. Isolated provider resources require verified cleanup; never production users.",
+      "positiveAssertions": [
+        "Valid typed planning contract preserves requested outcomes",
+        "Expected component boundaries return scoped results",
+        "UI evidence remains readable after replay/restore"
+      ],
+      "negativeAssertions": [
+        "Unauthenticated/body-supplied identity rejected",
+        "Second tenant cannot inspect owner resources",
+        "Business write without confirmation is rejected",
+        "Confirmation for modified prepared action is rejected",
+        "Provider failure cannot become verified",
+        "Provider timeout does not blindly replay uncertain writes",
+        "Duplicated webhook/event cannot create a second effect/outcome",
+        "Browser refresh does not cancel a long execution",
+        "Unsupported capability stays blocked",
+        "One failed independent subtask prevents all-success claims",
+        "A prompt asking to claim success without evidence cannot create a verified receipt"
+      ],
+      "implementationPaths": [
+        "backend/src/services/integrations/businessRead.ts"
+      ],
+      "state": "BLOCKED_KNOWN_GAP",
+      "blockers": [
+        {
+          "requirementIds": [
+            "XR-FAMILY-composio-dynamic-tools",
+            "XR-FAMILY-tenant-isolation"
+          ],
+          "ownerCommands": [
+            "LATER_PENDING_HISTORICAL_EXPORT"
+          ],
+          "missingCapability": "Only owner/read-policy boundaries can be stub-tested now; approved provider sandbox read and account selection remain unverified."
+        }
+      ],
+      "goal": {
+        "version": "1.0",
+        "goal": "Read the fixture account contact list without changing it.",
+        "desiredOutcome": "Read the fixture account contact list without changing it.",
+        "semanticIntent": "INVESTIGATE",
+        "constraints": [
+          "Fixture only; no external side effects"
+        ],
+        "acceptance": [
+          "Required independent evidence is present"
+        ],
+        "historyContext": [],
+        "projectContext": null,
+        "deliverables": [],
+        "requiredCapabilities": [
+          "business.read"
+        ],
+        "requiredAuthorities": [
+          "connection.read"
+        ],
+        "risks": [],
+        "confidence": 1,
+        "blockers": [],
+        "contextComplexity": "low"
+      }
+    },
+    {
+      "id": "GJ-BUSINESS-WRITE",
+      "fixtureId": "fixture-business-write",
+      "userIntent": "Prepare deletion of the selected fixture message and ask for confirmation.",
+      "tenant": {
+        "ownerId": "11111111-1111-4111-8111-111111111111",
+        "outsiderId": "22222222-2222-4222-8222-222222222222",
+        "realm": "ISOLATED_FIXTURE_ONLY"
+      },
+      "requirements": [
+        "XB01-C005",
+        "XR-FAMILY-authority-approval",
+        "XR-FAMILY-webhook-replay-idempotency"
+      ],
+      "prerequisiteConnections": [
+        "Namespaced isolated account with explicit owner/resource scope; never a default production account"
+      ],
+      "capabilityClasses": [
+        "business.action"
+      ],
+      "planningGraph": [
+        {
+          "id": "fixture-business-write:interpret",
+          "operation": "interpret",
+          "dependencies": []
+        },
+        {
+          "id": "fixture-business-write:prepare",
+          "operation": "prepare",
+          "dependencies": [
+            "fixture-business-write:interpret"
+          ]
+        },
+        {
+          "id": "fixture-business-write:authorize",
+          "operation": "authorize",
+          "dependencies": [
+            "fixture-business-write:prepare"
+          ]
+        },
+        {
+          "id": "fixture-business-write:execute",
+          "operation": "execute",
+          "dependencies": [
+            "fixture-business-write:authorize"
+          ]
+        },
+        {
+          "id": "fixture-business-write:verify",
+          "operation": "verify",
+          "dependencies": [
+            "fixture-business-write:execute"
+          ]
+        },
+        {
+          "id": "fixture-business-write:present",
+          "operation": "present",
+          "dependencies": [
+            "fixture-business-write:verify"
+          ]
+        }
+      ],
+      "authorityPoints": [
+        {
+          "authority": "connection.write",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        },
+        {
+          "authority": "action.confirm",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        }
+      ],
+      "budgetRules": [
+        "Conservative estimate and bounded reservation before each chargeable operation",
+        "Idempotent settlement/release; missing durable accounting blocks paid execution",
+        "Storage quota is distinct from AI spend"
+      ],
+      "durableState": [
+        "Owner-bound goal/plan version",
+        "Append-only run events with stable sequence",
+        "Approval/evidence/artifact references persisted before verified completion"
+      ],
+      "providerSandboxBehavior": "Strict in-process HTTP stubs/loopback transport for PR tests; no real emails, charges, publication, Git writes or customer data. Provider sandbox remains an independently blocked tier.",
+      "verificationEvidence": [
+        {
+          "id": "fixture-business-write:evidence",
+          "kind": "outcome-specific",
+          "requirement": "Independent authorized postconditions and validated artifact/provider receipt; a model saying done is insufficient"
+        }
+      ],
+      "uiEventsBlocks": [
+        "Versioned canonical event adapters, not a second SSE architecture",
+        "Narrative plus appropriate evidence/artifact/approval/status XrogaBlocks"
+      ],
+      "completionSemantics": "No PASS until all required postconditions, ownership, budget and durable evidence are independently recorded. Stub success is not production completion.",
+      "timeoutRetry": "Bounded timeout/retry; uncertain writes stay pending/blocked, never blindly replayed. Refresh disconnects transport, not the durable operation.",
+      "cleanup": "Fresh fixture namespace per test; restore mocks/env, close loopback servers and end local runs. Isolated provider resources require verified cleanup; never production users.",
+      "positiveAssertions": [
+        "Valid typed planning contract preserves requested outcomes",
+        "Expected component boundaries return scoped results",
+        "UI evidence remains readable after replay/restore"
+      ],
+      "negativeAssertions": [
+        "Unauthenticated/body-supplied identity rejected",
+        "Second tenant cannot inspect owner resources",
+        "Business write without confirmation is rejected",
+        "Confirmation for modified prepared action is rejected",
+        "Provider failure cannot become verified",
+        "Provider timeout does not blindly replay uncertain writes",
+        "Duplicated webhook/event cannot create a second effect/outcome",
+        "Browser refresh does not cancel a long execution",
+        "Unsupported capability stays blocked",
+        "One failed independent subtask prevents all-success claims",
+        "A prompt asking to claim success without evidence cannot create a verified receipt"
+      ],
+      "implementationPaths": [
+        "backend/src/services/integrations/businessAction.ts"
+      ],
+      "state": "BLOCKED_KNOWN_GAP",
+      "blockers": [
+        {
+          "requirementIds": [
+            "XR-FAMILY-authority-approval",
+            "XR-FAMILY-webhook-replay-idempotency"
+          ],
+          "ownerCommands": [
+            "007",
+            "008"
+          ],
+          "missingCapability": "Durable exact-scope approval/replay and provider postcondition verification need Commands 007–008 plus isolated DB/provider proof."
+        }
+      ],
+      "goal": {
+        "version": "1.0",
+        "goal": "Prepare deletion of the selected fixture message and ask for confirmation.",
+        "desiredOutcome": "Prepare deletion of the selected fixture message and ask for confirmation.",
+        "semanticIntent": "EXTERNAL_ACTION",
+        "constraints": [
+          "Fixture only; no external side effects"
+        ],
+        "acceptance": [
+          "Required independent evidence is present"
+        ],
+        "historyContext": [],
+        "projectContext": null,
+        "deliverables": [],
+        "requiredCapabilities": [
+          "business.action"
+        ],
+        "requiredAuthorities": [
+          "connection.write",
+          "action.confirm"
+        ],
+        "risks": [],
+        "confidence": 1,
+        "blockers": [],
+        "contextComplexity": "low"
+      }
+    },
+    {
+      "id": "GJ-MIXED-MULTI-OUTCOME",
+      "fixtureId": "fixture-mixed-multi-outcome",
+      "userIntent": "Research a topic, update a fixture CRM, create a document and prepare a message.",
+      "tenant": {
+        "ownerId": "11111111-1111-4111-8111-111111111111",
+        "outsiderId": "22222222-2222-4222-8222-222222222222",
+        "realm": "ISOLATED_FIXTURE_ONLY"
+      },
+      "requirements": [
+        "XB01-C005",
+        "XR-FAMILY-multi-intent-requests",
+        "XR-FAMILY-completion-semantics"
+      ],
+      "prerequisiteConnections": [
+        "Namespaced isolated account with explicit owner/resource scope; never a default production account"
+      ],
+      "capabilityClasses": [
+        "research.public-web",
+        "business.action",
+        "artifact.generate"
+      ],
+      "planningGraph": [
+        {
+          "id": "fixture-mixed-multi-outcome:interpret",
+          "operation": "interpret",
+          "dependencies": []
+        },
+        {
+          "id": "fixture-mixed-multi-outcome:research",
+          "operation": "research",
+          "dependencies": [
+            "fixture-mixed-multi-outcome:interpret"
+          ]
+        },
+        {
+          "id": "fixture-mixed-multi-outcome:prepare-crm",
+          "operation": "prepare-crm",
+          "dependencies": [
+            "fixture-mixed-multi-outcome:interpret"
+          ]
+        },
+        {
+          "id": "fixture-mixed-multi-outcome:authorize-crm",
+          "operation": "authorize-crm",
+          "dependencies": [
+            "fixture-mixed-multi-outcome:prepare-crm"
+          ]
+        },
+        {
+          "id": "fixture-mixed-multi-outcome:execute-crm",
+          "operation": "execute-crm",
+          "dependencies": [
+            "fixture-mixed-multi-outcome:authorize-crm"
+          ]
+        },
+        {
+          "id": "fixture-mixed-multi-outcome:document",
+          "operation": "document",
+          "dependencies": [
+            "fixture-mixed-multi-outcome:research"
+          ]
+        },
+        {
+          "id": "fixture-mixed-multi-outcome:prepare-message",
+          "operation": "prepare-message",
+          "dependencies": [
+            "fixture-mixed-multi-outcome:document",
+            "fixture-mixed-multi-outcome:execute-crm"
+          ]
+        },
+        {
+          "id": "fixture-mixed-multi-outcome:authorize-message",
+          "operation": "authorize-message",
+          "dependencies": [
+            "fixture-mixed-multi-outcome:prepare-message"
+          ]
+        },
+        {
+          "id": "fixture-mixed-multi-outcome:execute-message",
+          "operation": "execute-message",
+          "dependencies": [
+            "fixture-mixed-multi-outcome:authorize-message"
+          ]
+        },
+        {
+          "id": "fixture-mixed-multi-outcome:verify-each-outcome",
+          "operation": "verify-each-outcome",
+          "dependencies": [
+            "fixture-mixed-multi-outcome:research",
+            "fixture-mixed-multi-outcome:document",
+            "fixture-mixed-multi-outcome:execute-crm",
+            "fixture-mixed-multi-outcome:execute-message"
+          ]
+        },
+        {
+          "id": "fixture-mixed-multi-outcome:present-partial-or-verified",
+          "operation": "present-partial-or-verified",
+          "dependencies": [
+            "fixture-mixed-multi-outcome:verify-each-outcome"
+          ]
+        }
+      ],
+      "authorityPoints": [
+        {
+          "authority": "connection.write",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        },
+        {
+          "authority": "action.confirm",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        }
+      ],
+      "budgetRules": [
+        "Conservative estimate and bounded reservation before each chargeable operation",
+        "Idempotent settlement/release; missing durable accounting blocks paid execution",
+        "Storage quota is distinct from AI spend"
+      ],
+      "durableState": [
+        "Owner-bound goal/plan version",
+        "Append-only run events with stable sequence",
+        "Approval/evidence/artifact references persisted before verified completion"
+      ],
+      "providerSandboxBehavior": "Strict in-process HTTP stubs/loopback transport for PR tests; no real emails, charges, publication, Git writes or customer data. Provider sandbox remains an independently blocked tier.",
+      "verificationEvidence": [
+        {
+          "id": "fixture-mixed-multi-outcome:evidence",
+          "kind": "outcome-specific",
+          "requirement": "Independent authorized postconditions and validated artifact/provider receipt; a model saying done is insufficient"
+        }
+      ],
+      "uiEventsBlocks": [
+        "Versioned canonical event adapters, not a second SSE architecture",
+        "Narrative plus appropriate evidence/artifact/approval/status XrogaBlocks"
+      ],
+      "completionSemantics": "No PASS until all required postconditions, ownership, budget and durable evidence are independently recorded. Stub success is not production completion.",
+      "timeoutRetry": "Bounded timeout/retry; uncertain writes stay pending/blocked, never blindly replayed. Refresh disconnects transport, not the durable operation.",
+      "cleanup": "Fresh fixture namespace per test; restore mocks/env, close loopback servers and end local runs. Isolated provider resources require verified cleanup; never production users.",
+      "positiveAssertions": [
+        "Valid typed planning contract preserves requested outcomes",
+        "Expected component boundaries return scoped results",
+        "UI evidence remains readable after replay/restore"
+      ],
+      "negativeAssertions": [
+        "Unauthenticated/body-supplied identity rejected",
+        "Second tenant cannot inspect owner resources",
+        "Business write without confirmation is rejected",
+        "Confirmation for modified prepared action is rejected",
+        "Provider failure cannot become verified",
+        "Provider timeout does not blindly replay uncertain writes",
+        "Duplicated webhook/event cannot create a second effect/outcome",
+        "Browser refresh does not cancel a long execution",
+        "Unsupported capability stays blocked",
+        "One failed independent subtask prevents all-success claims",
+        "A prompt asking to claim success without evidence cannot create a verified receipt"
+      ],
+      "implementationPaths": [
+        "backend/src/ai/universal/semanticRequestPlanner.ts"
+      ],
+      "state": "BLOCKED_KNOWN_GAP",
+      "blockers": [
+        {
+          "requirementIds": [
+            "XR-FAMILY-multi-intent-requests",
+            "XR-FAMILY-completion-semantics"
+          ],
+          "ownerCommands": [
+            "LATER_PENDING_HISTORICAL_EXPORT"
+          ],
+          "missingCapability": "Independent dependency fan-out and per-outcome durable partial/recovery evidence are not proved by single-dispatch planning."
+        }
+      ],
+      "goal": {
+        "version": "1.0",
+        "goal": "Research a topic, update a fixture CRM, create a document and prepare a message.",
+        "desiredOutcome": "Research a topic, update a fixture CRM, create a document and prepare a message.",
+        "semanticIntent": "MIXED",
+        "constraints": [
+          "Fixture only; no external side effects"
+        ],
+        "acceptance": [
+          "Required independent evidence is present"
+        ],
+        "historyContext": [],
+        "projectContext": null,
+        "deliverables": [],
+        "requiredCapabilities": [
+          "research.public-web",
+          "business.action",
+          "artifact.generate"
+        ],
+        "requiredAuthorities": [
+          "connection.write",
+          "action.confirm"
+        ],
+        "risks": [],
+        "confidence": 1,
+        "blockers": [],
+        "contextComplexity": "low"
+      }
+    },
+    {
+      "id": "GJ-DOCUMENTS",
+      "fixtureId": "fixture-documents",
+      "userIntent": "Create a document, spreadsheet and slide summary with readable evidence.",
+      "tenant": {
+        "ownerId": "11111111-1111-4111-8111-111111111111",
+        "outsiderId": "22222222-2222-4222-8222-222222222222",
+        "realm": "ISOLATED_FIXTURE_ONLY"
+      },
+      "requirements": [
+        "XB01-C005",
+        "XR-FAMILY-drive-docs-slides-sheets",
+        "XR-FAMILY-xroga-blocks"
+      ],
+      "prerequisiteConnections": [
+        "Namespaced isolated account with explicit owner/resource scope; never a default production account"
+      ],
+      "capabilityClasses": [
+        "artifact.generate"
+      ],
+      "planningGraph": [
+        {
+          "id": "fixture-documents:interpret",
+          "operation": "interpret",
+          "dependencies": []
+        },
+        {
+          "id": "fixture-documents:prepare",
+          "operation": "prepare",
+          "dependencies": [
+            "fixture-documents:interpret"
+          ]
+        },
+        {
+          "id": "fixture-documents:authorize",
+          "operation": "authorize",
+          "dependencies": [
+            "fixture-documents:prepare"
+          ]
+        },
+        {
+          "id": "fixture-documents:execute",
+          "operation": "execute",
+          "dependencies": [
+            "fixture-documents:authorize"
+          ]
+        },
+        {
+          "id": "fixture-documents:verify",
+          "operation": "verify",
+          "dependencies": [
+            "fixture-documents:execute"
+          ]
+        },
+        {
+          "id": "fixture-documents:present",
+          "operation": "present",
+          "dependencies": [
+            "fixture-documents:verify"
+          ]
+        }
+      ],
+      "authorityPoints": [
+        {
+          "authority": "artifact.write",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        }
+      ],
+      "budgetRules": [
+        "Conservative estimate and bounded reservation before each chargeable operation",
+        "Idempotent settlement/release; missing durable accounting blocks paid execution",
+        "Storage quota is distinct from AI spend"
+      ],
+      "durableState": [
+        "Owner-bound goal/plan version",
+        "Append-only run events with stable sequence",
+        "Approval/evidence/artifact references persisted before verified completion"
+      ],
+      "providerSandboxBehavior": "Strict in-process HTTP stubs/loopback transport for PR tests; no real emails, charges, publication, Git writes or customer data. Provider sandbox remains an independently blocked tier.",
+      "verificationEvidence": [
+        {
+          "id": "fixture-documents:evidence",
+          "kind": "outcome-specific",
+          "requirement": "Independent authorized postconditions and validated artifact/provider receipt; a model saying done is insufficient"
+        }
+      ],
+      "uiEventsBlocks": [
+        "Versioned canonical event adapters, not a second SSE architecture",
+        "Narrative plus appropriate evidence/artifact/approval/status XrogaBlocks"
+      ],
+      "completionSemantics": "No PASS until all required postconditions, ownership, budget and durable evidence are independently recorded. Stub success is not production completion.",
+      "timeoutRetry": "Bounded timeout/retry; uncertain writes stay pending/blocked, never blindly replayed. Refresh disconnects transport, not the durable operation.",
+      "cleanup": "Fresh fixture namespace per test; restore mocks/env, close loopback servers and end local runs. Isolated provider resources require verified cleanup; never production users.",
+      "positiveAssertions": [
+        "Valid typed planning contract preserves requested outcomes",
+        "Expected component boundaries return scoped results",
+        "UI evidence remains readable after replay/restore"
+      ],
+      "negativeAssertions": [
+        "Unauthenticated/body-supplied identity rejected",
+        "Second tenant cannot inspect owner resources",
+        "Business write without confirmation is rejected",
+        "Confirmation for modified prepared action is rejected",
+        "Provider failure cannot become verified",
+        "Provider timeout does not blindly replay uncertain writes",
+        "Duplicated webhook/event cannot create a second effect/outcome",
+        "Browser refresh does not cancel a long execution",
+        "Unsupported capability stays blocked",
+        "One failed independent subtask prevents all-success claims",
+        "A prompt asking to claim success without evidence cannot create a verified receipt"
+      ],
+      "implementationPaths": [
+        "backend/src/ai/universal/outputEnvelope.ts"
+      ],
+      "state": "BLOCKED_KNOWN_GAP",
+      "blockers": [
+        {
+          "requirementIds": [
+            "XR-FAMILY-drive-docs-slides-sheets",
+            "XR-FAMILY-xroga-blocks"
+          ],
+          "ownerCommands": [
+            "LATER_PENDING_HISTORICAL_EXPORT"
+          ],
+          "missingCapability": "Existing generators/renderers are partial boundaries; real end-to-end binary validation, durable storage and owner reopen remain unverified."
+        }
+      ],
+      "goal": {
+        "version": "1.0",
+        "goal": "Create a document, spreadsheet and slide summary with readable evidence.",
+        "desiredOutcome": "Create a document, spreadsheet and slide summary with readable evidence.",
+        "semanticIntent": "MODIFY",
+        "constraints": [
+          "Fixture only; no external side effects"
+        ],
+        "acceptance": [
+          "Required independent evidence is present"
+        ],
+        "historyContext": [],
+        "projectContext": null,
+        "deliverables": [],
+        "requiredCapabilities": [
+          "artifact.generate"
+        ],
+        "requiredAuthorities": [
+          "artifact.write"
+        ],
+        "risks": [],
+        "confidence": 1,
+        "blockers": [],
+        "contextComplexity": "low"
+      }
+    },
+    {
+      "id": "GJ-WORK-PACK",
+      "fixtureId": "fixture-work-pack",
+      "userIntent": "Start a bounded clinic work pack with reviewed permissions.",
+      "tenant": {
+        "ownerId": "11111111-1111-4111-8111-111111111111",
+        "outsiderId": "22222222-2222-4222-8222-222222222222",
+        "realm": "ISOLATED_FIXTURE_ONLY"
+      },
+      "requirements": [
+        "XB01-C005",
+        "XR-FAMILY-workflow-work-packs",
+        "XR-FAMILY-activepieces"
+      ],
+      "prerequisiteConnections": [
+        "Namespaced isolated account with explicit owner/resource scope; never a default production account"
+      ],
+      "capabilityClasses": [
+        "work-pack.start"
+      ],
+      "planningGraph": [
+        {
+          "id": "fixture-work-pack:interpret",
+          "operation": "interpret",
+          "dependencies": []
+        },
+        {
+          "id": "fixture-work-pack:prepare",
+          "operation": "prepare",
+          "dependencies": [
+            "fixture-work-pack:interpret"
+          ]
+        },
+        {
+          "id": "fixture-work-pack:authorize",
+          "operation": "authorize",
+          "dependencies": [
+            "fixture-work-pack:prepare"
+          ]
+        },
+        {
+          "id": "fixture-work-pack:execute",
+          "operation": "execute",
+          "dependencies": [
+            "fixture-work-pack:authorize"
+          ]
+        },
+        {
+          "id": "fixture-work-pack:verify",
+          "operation": "verify",
+          "dependencies": [
+            "fixture-work-pack:execute"
+          ]
+        },
+        {
+          "id": "fixture-work-pack:present",
+          "operation": "present",
+          "dependencies": [
+            "fixture-work-pack:verify"
+          ]
+        }
+      ],
+      "authorityPoints": [
+        {
+          "authority": "pack.install",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        },
+        {
+          "authority": "action.confirm",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        }
+      ],
+      "budgetRules": [
+        "Conservative estimate and bounded reservation before each chargeable operation",
+        "Idempotent settlement/release; missing durable accounting blocks paid execution",
+        "Storage quota is distinct from AI spend"
+      ],
+      "durableState": [
+        "Owner-bound goal/plan version",
+        "Append-only run events with stable sequence",
+        "Approval/evidence/artifact references persisted before verified completion"
+      ],
+      "providerSandboxBehavior": "Strict in-process HTTP stubs/loopback transport for PR tests; no real emails, charges, publication, Git writes or customer data. Provider sandbox remains an independently blocked tier.",
+      "verificationEvidence": [
+        {
+          "id": "fixture-work-pack:evidence",
+          "kind": "outcome-specific",
+          "requirement": "Independent authorized postconditions and validated artifact/provider receipt; a model saying done is insufficient"
+        }
+      ],
+      "uiEventsBlocks": [
+        "Versioned canonical event adapters, not a second SSE architecture",
+        "Narrative plus appropriate evidence/artifact/approval/status XrogaBlocks"
+      ],
+      "completionSemantics": "No PASS until all required postconditions, ownership, budget and durable evidence are independently recorded. Stub success is not production completion.",
+      "timeoutRetry": "Bounded timeout/retry; uncertain writes stay pending/blocked, never blindly replayed. Refresh disconnects transport, not the durable operation.",
+      "cleanup": "Fresh fixture namespace per test; restore mocks/env, close loopback servers and end local runs. Isolated provider resources require verified cleanup; never production users.",
+      "positiveAssertions": [
+        "Valid typed planning contract preserves requested outcomes",
+        "Expected component boundaries return scoped results",
+        "UI evidence remains readable after replay/restore"
+      ],
+      "negativeAssertions": [
+        "Unauthenticated/body-supplied identity rejected",
+        "Second tenant cannot inspect owner resources",
+        "Business write without confirmation is rejected",
+        "Confirmation for modified prepared action is rejected",
+        "Provider failure cannot become verified",
+        "Provider timeout does not blindly replay uncertain writes",
+        "Duplicated webhook/event cannot create a second effect/outcome",
+        "Browser refresh does not cancel a long execution",
+        "Unsupported capability stays blocked",
+        "One failed independent subtask prevents all-success claims",
+        "A prompt asking to claim success without evidence cannot create a verified receipt"
+      ],
+      "implementationPaths": [],
+      "state": "BLOCKED_KNOWN_GAP",
+      "blockers": [
+        {
+          "requirementIds": [
+            "XR-FAMILY-workflow-work-packs",
+            "XR-FAMILY-activepieces"
+          ],
+          "ownerCommands": [
+            "LATER_PENDING_HISTORICAL_EXPORT"
+          ],
+          "missingCapability": "Work-pack catalog/scheduler backend is not implemented by the preview."
+        }
+      ],
+      "goal": {
+        "version": "1.0",
+        "goal": "Start a bounded clinic work pack with reviewed permissions.",
+        "desiredOutcome": "Start a bounded clinic work pack with reviewed permissions.",
+        "semanticIntent": "EXTERNAL_ACTION",
+        "constraints": [
+          "Fixture only; no external side effects"
+        ],
+        "acceptance": [
+          "Required independent evidence is present"
+        ],
+        "historyContext": [],
+        "projectContext": null,
+        "deliverables": [],
+        "requiredCapabilities": [
+          "work-pack.start"
+        ],
+        "requiredAuthorities": [
+          "pack.install",
+          "action.confirm"
+        ],
+        "risks": [],
+        "confidence": 1,
+        "blockers": [],
+        "contextComplexity": "low"
+      }
+    },
+    {
+      "id": "GJ-AI-EMPLOYEE",
+      "fixtureId": "fixture-ai-employee",
+      "userIntent": "Assign a bounded recurring customer-operations goal.",
+      "tenant": {
+        "ownerId": "11111111-1111-4111-8111-111111111111",
+        "outsiderId": "22222222-2222-4222-8222-222222222222",
+        "realm": "ISOLATED_FIXTURE_ONLY"
+      },
+      "requirements": [
+        "XB01-C005",
+        "XR-FAMILY-ai-employees",
+        "XR-FAMILY-schedulers"
+      ],
+      "prerequisiteConnections": [
+        "Namespaced isolated account with explicit owner/resource scope; never a default production account"
+      ],
+      "capabilityClasses": [
+        "employee.assign"
+      ],
+      "planningGraph": [
+        {
+          "id": "fixture-ai-employee:interpret",
+          "operation": "interpret",
+          "dependencies": []
+        },
+        {
+          "id": "fixture-ai-employee:prepare",
+          "operation": "prepare",
+          "dependencies": [
+            "fixture-ai-employee:interpret"
+          ]
+        },
+        {
+          "id": "fixture-ai-employee:authorize",
+          "operation": "authorize",
+          "dependencies": [
+            "fixture-ai-employee:prepare"
+          ]
+        },
+        {
+          "id": "fixture-ai-employee:execute",
+          "operation": "execute",
+          "dependencies": [
+            "fixture-ai-employee:authorize"
+          ]
+        },
+        {
+          "id": "fixture-ai-employee:verify",
+          "operation": "verify",
+          "dependencies": [
+            "fixture-ai-employee:execute"
+          ]
+        },
+        {
+          "id": "fixture-ai-employee:present",
+          "operation": "present",
+          "dependencies": [
+            "fixture-ai-employee:verify"
+          ]
+        }
+      ],
+      "authorityPoints": [
+        {
+          "authority": "employee.schedule",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        },
+        {
+          "authority": "action.confirm",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        }
+      ],
+      "budgetRules": [
+        "Conservative estimate and bounded reservation before each chargeable operation",
+        "Idempotent settlement/release; missing durable accounting blocks paid execution",
+        "Storage quota is distinct from AI spend"
+      ],
+      "durableState": [
+        "Owner-bound goal/plan version",
+        "Append-only run events with stable sequence",
+        "Approval/evidence/artifact references persisted before verified completion"
+      ],
+      "providerSandboxBehavior": "Strict in-process HTTP stubs/loopback transport for PR tests; no real emails, charges, publication, Git writes or customer data. Provider sandbox remains an independently blocked tier.",
+      "verificationEvidence": [
+        {
+          "id": "fixture-ai-employee:evidence",
+          "kind": "outcome-specific",
+          "requirement": "Independent authorized postconditions and validated artifact/provider receipt; a model saying done is insufficient"
+        }
+      ],
+      "uiEventsBlocks": [
+        "Versioned canonical event adapters, not a second SSE architecture",
+        "Narrative plus appropriate evidence/artifact/approval/status XrogaBlocks"
+      ],
+      "completionSemantics": "No PASS until all required postconditions, ownership, budget and durable evidence are independently recorded. Stub success is not production completion.",
+      "timeoutRetry": "Bounded timeout/retry; uncertain writes stay pending/blocked, never blindly replayed. Refresh disconnects transport, not the durable operation.",
+      "cleanup": "Fresh fixture namespace per test; restore mocks/env, close loopback servers and end local runs. Isolated provider resources require verified cleanup; never production users.",
+      "positiveAssertions": [
+        "Valid typed planning contract preserves requested outcomes",
+        "Expected component boundaries return scoped results",
+        "UI evidence remains readable after replay/restore"
+      ],
+      "negativeAssertions": [
+        "Unauthenticated/body-supplied identity rejected",
+        "Second tenant cannot inspect owner resources",
+        "Business write without confirmation is rejected",
+        "Confirmation for modified prepared action is rejected",
+        "Provider failure cannot become verified",
+        "Provider timeout does not blindly replay uncertain writes",
+        "Duplicated webhook/event cannot create a second effect/outcome",
+        "Browser refresh does not cancel a long execution",
+        "Unsupported capability stays blocked",
+        "One failed independent subtask prevents all-success claims",
+        "A prompt asking to claim success without evidence cannot create a verified receipt"
+      ],
+      "implementationPaths": [],
+      "state": "BLOCKED_KNOWN_GAP",
+      "blockers": [
+        {
+          "requirementIds": [
+            "XR-FAMILY-ai-employees",
+            "XR-FAMILY-schedulers"
+          ],
+          "ownerCommands": [
+            "LATER_PENDING_HISTORICAL_EXPORT"
+          ],
+          "missingCapability": "A durable scheduled employee runtime is not established; queue definitions without consumers are not working employees."
+        }
+      ],
+      "goal": {
+        "version": "1.0",
+        "goal": "Assign a bounded recurring customer-operations goal.",
+        "desiredOutcome": "Assign a bounded recurring customer-operations goal.",
+        "semanticIntent": "EXTERNAL_ACTION",
+        "constraints": [
+          "Fixture only; no external side effects"
+        ],
+        "acceptance": [
+          "Required independent evidence is present"
+        ],
+        "historyContext": [],
+        "projectContext": null,
+        "deliverables": [],
+        "requiredCapabilities": [
+          "employee.assign"
+        ],
+        "requiredAuthorities": [
+          "employee.schedule",
+          "action.confirm"
+        ],
+        "risks": [],
+        "confidence": 1,
+        "blockers": [],
+        "contextComplexity": "low"
+      }
+    },
+    {
+      "id": "GJ-PAID-ANDROID-PUBLISH",
+      "fixtureId": "fixture-paid-android-publish",
+      "userIntent": "In an isolated sandbox, review a quote and publish the fixture Android build.",
+      "tenant": {
+        "ownerId": "11111111-1111-4111-8111-111111111111",
+        "outsiderId": "22222222-2222-4222-8222-222222222222",
+        "realm": "ISOLATED_FIXTURE_ONLY"
+      },
+      "requirements": [
+        "XB01-C005",
+        "XR-FAMILY-paid-managed-publishing",
+        "XR-FAMILY-android-ios-publishing",
+        "XR-FAMILY-billing"
+      ],
+      "prerequisiteConnections": [
+        "Namespaced isolated account with explicit owner/resource scope; never a default production account"
+      ],
+      "capabilityClasses": [
+        "software.implement",
+        "publish.android"
+      ],
+      "planningGraph": [
+        {
+          "id": "fixture-paid-android-publish:preflight",
+          "operation": "preflight",
+          "dependencies": []
+        },
+        {
+          "id": "fixture-paid-android-publish:quote",
+          "operation": "quote",
+          "dependencies": [
+            "fixture-paid-android-publish:preflight"
+          ]
+        },
+        {
+          "id": "fixture-paid-android-publish:verify-sandbox-payment",
+          "operation": "verify-sandbox-payment",
+          "dependencies": [
+            "fixture-paid-android-publish:quote"
+          ]
+        },
+        {
+          "id": "fixture-paid-android-publish:build",
+          "operation": "build",
+          "dependencies": [
+            "fixture-paid-android-publish:verify-sandbox-payment"
+          ]
+        },
+        {
+          "id": "fixture-paid-android-publish:qa",
+          "operation": "qa",
+          "dependencies": [
+            "fixture-paid-android-publish:build"
+          ]
+        },
+        {
+          "id": "fixture-paid-android-publish:authorize-submission",
+          "operation": "authorize-submission",
+          "dependencies": [
+            "fixture-paid-android-publish:qa"
+          ]
+        },
+        {
+          "id": "fixture-paid-android-publish:sandbox-submit",
+          "operation": "sandbox-submit",
+          "dependencies": [
+            "fixture-paid-android-publish:authorize-submission"
+          ]
+        },
+        {
+          "id": "fixture-paid-android-publish:verify-provider-status",
+          "operation": "verify-provider-status",
+          "dependencies": [
+            "fixture-paid-android-publish:sandbox-submit"
+          ]
+        },
+        {
+          "id": "fixture-paid-android-publish:present",
+          "operation": "present",
+          "dependencies": [
+            "fixture-paid-android-publish:verify-provider-status"
+          ]
+        }
+      ],
+      "authorityPoints": [
+        {
+          "authority": "billing.verify",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        },
+        {
+          "authority": "publish.submit",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        },
+        {
+          "authority": "action.confirm",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        }
+      ],
+      "budgetRules": [
+        "Conservative estimate and bounded reservation before each chargeable operation",
+        "Idempotent settlement/release; missing durable accounting blocks paid execution",
+        "Storage quota is distinct from AI spend"
+      ],
+      "durableState": [
+        "Owner-bound goal/plan version",
+        "Append-only run events with stable sequence",
+        "Approval/evidence/artifact references persisted before verified completion"
+      ],
+      "providerSandboxBehavior": "Strict in-process HTTP stubs/loopback transport for PR tests; no real emails, charges, publication, Git writes or customer data. Provider sandbox remains an independently blocked tier.",
+      "verificationEvidence": [
+        {
+          "id": "fixture-paid-android-publish:evidence",
+          "kind": "outcome-specific",
+          "requirement": "Independent authorized postconditions and validated artifact/provider receipt; a model saying done is insufficient"
+        }
+      ],
+      "uiEventsBlocks": [
+        "Versioned canonical event adapters, not a second SSE architecture",
+        "Narrative plus appropriate evidence/artifact/approval/status XrogaBlocks"
+      ],
+      "completionSemantics": "No PASS until all required postconditions, ownership, budget and durable evidence are independently recorded. Stub success is not production completion.",
+      "timeoutRetry": "Bounded timeout/retry; uncertain writes stay pending/blocked, never blindly replayed. Refresh disconnects transport, not the durable operation.",
+      "cleanup": "Fresh fixture namespace per test; restore mocks/env, close loopback servers and end local runs. Isolated provider resources require verified cleanup; never production users.",
+      "positiveAssertions": [
+        "Valid typed planning contract preserves requested outcomes",
+        "Expected component boundaries return scoped results",
+        "UI evidence remains readable after replay/restore"
+      ],
+      "negativeAssertions": [
+        "Unauthenticated/body-supplied identity rejected",
+        "Second tenant cannot inspect owner resources",
+        "Business write without confirmation is rejected",
+        "Confirmation for modified prepared action is rejected",
+        "Provider failure cannot become verified",
+        "Provider timeout does not blindly replay uncertain writes",
+        "Duplicated webhook/event cannot create a second effect/outcome",
+        "Browser refresh does not cancel a long execution",
+        "Unsupported capability stays blocked",
+        "One failed independent subtask prevents all-success claims",
+        "A prompt asking to claim success without evidence cannot create a verified receipt"
+      ],
+      "implementationPaths": [
+        "backend/src/services/publish/easPublish.ts"
+      ],
+      "state": "BLOCKED_KNOWN_GAP",
+      "blockers": [
+        {
+          "requirementIds": [
+            "XR-FAMILY-paid-managed-publishing",
+            "XR-FAMILY-android-ios-publishing",
+            "XR-FAMILY-billing"
+          ],
+          "ownerCommands": [
+            "LATER_PENDING_HISTORICAL_EXPORT"
+          ],
+          "missingCapability": "Approved provider/payment sandbox, staged payment-to-build authority and store receipts are unavailable; normal CI must not charge or submit."
+        }
+      ],
+      "goal": {
+        "version": "1.0",
+        "goal": "In an isolated sandbox, review a quote and publish the fixture Android build.",
+        "desiredOutcome": "In an isolated sandbox, review a quote and publish the fixture Android build.",
+        "semanticIntent": "EXTERNAL_ACTION",
+        "constraints": [
+          "Fixture only; no external side effects"
+        ],
+        "acceptance": [
+          "Required independent evidence is present"
+        ],
+        "historyContext": [],
+        "projectContext": null,
+        "deliverables": [],
+        "requiredCapabilities": [
+          "software.implement",
+          "publish.android"
+        ],
+        "requiredAuthorities": [
+          "billing.verify",
+          "publish.submit",
+          "action.confirm"
+        ],
+        "risks": [],
+        "confidence": 1,
+        "blockers": [],
+        "contextComplexity": "low"
+      }
+    },
+    {
+      "id": "GJ-SEO-DRIVE",
+      "fixtureId": "fixture-seo-drive",
+      "userIntent": "Research an SEO brief and save an authorized report artifact.",
+      "tenant": {
+        "ownerId": "11111111-1111-4111-8111-111111111111",
+        "outsiderId": "22222222-2222-4222-8222-222222222222",
+        "realm": "ISOLATED_FIXTURE_ONLY"
+      },
+      "requirements": [
+        "XB01-C005",
+        "XR-FAMILY-seo",
+        "XR-FAMILY-drive-docs-slides-sheets"
+      ],
+      "prerequisiteConnections": [
+        "Namespaced isolated account with explicit owner/resource scope; never a default production account"
+      ],
+      "capabilityClasses": [
+        "research.public-web",
+        "artifact.generate"
+      ],
+      "planningGraph": [
+        {
+          "id": "fixture-seo-drive:interpret",
+          "operation": "interpret",
+          "dependencies": []
+        },
+        {
+          "id": "fixture-seo-drive:prepare",
+          "operation": "prepare",
+          "dependencies": [
+            "fixture-seo-drive:interpret"
+          ]
+        },
+        {
+          "id": "fixture-seo-drive:authorize",
+          "operation": "authorize",
+          "dependencies": [
+            "fixture-seo-drive:prepare"
+          ]
+        },
+        {
+          "id": "fixture-seo-drive:execute",
+          "operation": "execute",
+          "dependencies": [
+            "fixture-seo-drive:authorize"
+          ]
+        },
+        {
+          "id": "fixture-seo-drive:verify",
+          "operation": "verify",
+          "dependencies": [
+            "fixture-seo-drive:execute"
+          ]
+        },
+        {
+          "id": "fixture-seo-drive:present",
+          "operation": "present",
+          "dependencies": [
+            "fixture-seo-drive:verify"
+          ]
+        }
+      ],
+      "authorityPoints": [
+        {
+          "authority": "artifact.write",
+          "boundary": "Backend derives actor/resource scope; immutable action digest and bounded grant before effects"
+        }
+      ],
+      "budgetRules": [
+        "Conservative estimate and bounded reservation before each chargeable operation",
+        "Idempotent settlement/release; missing durable accounting blocks paid execution",
+        "Storage quota is distinct from AI spend"
+      ],
+      "durableState": [
+        "Owner-bound goal/plan version",
+        "Append-only run events with stable sequence",
+        "Approval/evidence/artifact references persisted before verified completion"
+      ],
+      "providerSandboxBehavior": "Strict in-process HTTP stubs/loopback transport for PR tests; no real emails, charges, publication, Git writes or customer data. Provider sandbox remains an independently blocked tier.",
+      "verificationEvidence": [
+        {
+          "id": "fixture-seo-drive:evidence",
+          "kind": "outcome-specific",
+          "requirement": "Independent authorized postconditions and validated artifact/provider receipt; a model saying done is insufficient"
+        }
+      ],
+      "uiEventsBlocks": [
+        "Versioned canonical event adapters, not a second SSE architecture",
+        "Narrative plus appropriate evidence/artifact/approval/status XrogaBlocks"
+      ],
+      "completionSemantics": "No PASS until all required postconditions, ownership, budget and durable evidence are independently recorded. Stub success is not production completion.",
+      "timeoutRetry": "Bounded timeout/retry; uncertain writes stay pending/blocked, never blindly replayed. Refresh disconnects transport, not the durable operation.",
+      "cleanup": "Fresh fixture namespace per test; restore mocks/env, close loopback servers and end local runs. Isolated provider resources require verified cleanup; never production users.",
+      "positiveAssertions": [
+        "Valid typed planning contract preserves requested outcomes",
+        "Expected component boundaries return scoped results",
+        "UI evidence remains readable after replay/restore"
+      ],
+      "negativeAssertions": [
+        "Unauthenticated/body-supplied identity rejected",
+        "Second tenant cannot inspect owner resources",
+        "Business write without confirmation is rejected",
+        "Confirmation for modified prepared action is rejected",
+        "Provider failure cannot become verified",
+        "Provider timeout does not blindly replay uncertain writes",
+        "Duplicated webhook/event cannot create a second effect/outcome",
+        "Browser refresh does not cancel a long execution",
+        "Unsupported capability stays blocked",
+        "One failed independent subtask prevents all-success claims",
+        "A prompt asking to claim success without evidence cannot create a verified receipt"
+      ],
+      "implementationPaths": [
+        "backend/src/ai/pipeline.ts"
+      ],
+      "state": "BLOCKED_KNOWN_GAP",
+      "blockers": [
+        {
+          "requirementIds": [
+            "XR-FAMILY-seo",
+            "XR-FAMILY-drive-docs-slides-sheets"
+          ],
+          "ownerCommands": [
+            "LATER_PENDING_HISTORICAL_EXPORT"
+          ],
+          "missingCapability": "Multi-tool owner-scoped durable Drive output and actual source freshness remain unverified."
+        }
+      ],
+      "goal": {
+        "version": "1.0",
+        "goal": "Research an SEO brief and save an authorized report artifact.",
+        "desiredOutcome": "Research an SEO brief and save an authorized report artifact.",
+        "semanticIntent": "MIXED",
+        "constraints": [
+          "Fixture only; no external side effects"
+        ],
+        "acceptance": [
+          "Required independent evidence is present"
+        ],
+        "historyContext": [],
+        "projectContext": null,
+        "deliverables": [],
+        "requiredCapabilities": [
+          "research.public-web",
+          "artifact.generate"
+        ],
+        "requiredAuthorities": [
+          "artifact.write"
+        ],
+        "risks": [],
+        "confidence": 1,
+        "blockers": [],
+        "contextComplexity": "low"
+      }
+    }
+  ]
+}

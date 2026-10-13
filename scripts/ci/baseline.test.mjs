@@ -35,7 +35,7 @@ test('an installed out-of-range compiler fails; only an explicit approved packag
 test('repeatability requires passing full runs at identical SHA, locks and installed graph without mutation', () => {
   const run = { result: 'PASS', sourceTreeMutated: false, sourceSha: 'fixture-sha', toolchain: { node: '22.21.1', npm: '10.9.4' },
     installedDependencies: { sha256: 'fixture-graph' }, lockfiles: [{ path: 'fixture-lock', sha256: 'fixture-hash' }],
-    results: Array.from({ length: 18 }, (_, index) => ({ name: `fixture-stage-${index}`, exitCode: 0 })) };
+    results: Array.from({ length: 19 }, (_, index) => ({ name: `fixture-stage-${index}`, exitCode: 0 })) };
   assert.equal(compareBaselineRuns(run, structuredClone(run)).result, 'PASS_REPEATED_CLEAN_BASELINE');
   for (const patch of [{ result: 'FAIL' }, { sourceTreeMutated: true }, { sourceSha: 'different' }, { installedDependencies: { sha256: 'changed' } }, { results: [] }]) {
     assert.throws(() => compareBaselineRuns(run, { ...run, ...patch }));

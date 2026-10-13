@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3f7413087f4428d6ed6d0fdae70d2bc5de6d59bc",
+  "source_sha": "c5eeeb22cedb1bbfa6542e7c892b5afebee6216d",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -234,8 +234,10 @@
       ],
       "feature_category": "batch-command-005",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
-      "current_paths": [],
+      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_paths": [
+        "docs/xroga/evidence/command-005/manifest.json"
+      ],
       "implementation_owner_command": "005",
       "priority": "P1",
       "dependencies": [
@@ -268,7 +270,7 @@
         "Later commands can reference stable journey IDs."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [],

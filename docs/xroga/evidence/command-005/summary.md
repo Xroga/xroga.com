@@ -1,0 +1,15 @@
+# Command 005 — golden acceptance harness
+
+Status: IN PROGRESS; not a production completion claim. Base after verified Command 004: `c5eeeb22` (full SHA to be attested by test manifest).
+
+All required IDs are present: GJ-CHAT, GJ-WEB-RESEARCH, GJ-EXISTING-REPO-CODING, GJ-NEW-SAAS, GJ-BUSINESS-READ, GJ-BUSINESS-WRITE, GJ-MIXED-MULTI-OUTCOME, GJ-DOCUMENTS, GJ-WORK-PACK, GJ-AI-EMPLOYEE, GJ-PAID-ANDROID-PUBLISH, GJ-SEO-DRIVE. Matrix counts: PASS 0, FAIL 0, BLOCKED_KNOWN_GAP 12, NOT_APPLICABLE 0. Passing component tests never inflate these counts.
+
+Initial results: seven schema/coverage-policy tests, twelve backend boundary tests and four frontend rendering/replay tests pass with no skips/failures. Backend first type check found two errors in deliberately malformed fixture typing/unknown JSON; corrected without weakening assertions. Backend subsequent type check passes. Frontend compiler invocation used a nonexistent standalone path in the hoisted install; corrected hoisted-root invocation passes. Existing Playwright config compiles and lists both new guest/denial tests. Browser execution/aggregate CI verification is pending.
+
+Actual boundaries: existing GoalContract and dispatch; actual Composio adapter/session ownership and read policy; prepare relevant disconnected application; unchanged destructive-plan digest/confirmation; provider failure/timeout classifications; actual auth-denial HTTP and existing SSE serializer over loopback; real disconnect, artifact-status and safe-error helpers; canonical frontend adapters/reducer and stored block union. No second execution runtime was built.
+
+Scope limits: connected ready-action preparation with a real model, authenticated browser/SSE, fresh provider research, durable approval replay, full mixed-outcome fan-out, provider-account integration and paid Android publication are not independently proved. Work-pack/employee backend is not inferred from preview pages or queue names. Existing authenticated tests are still mandatory and BLOCKED_PENDING_TEST_CONFIGURATION. Future ownership numbers from inaccessible research are not invented.
+
+PR fixtures intercept all adapter calls, refuse unknown destinations and never forward them. Browser/server fixture runners refuse non-loopback destinations and developer env files. Fixtures are DEMO; traces contain fictional inputs only. No real email, payment, publication, Git write, R2 upload or customer record. Provider sandbox remains a separate blocked tier until approved isolated provider resources/cleanup and implementation are available. Existing production launch workflow remains read-only; it was not run for this branch.
+
+Required negative categories are declared in every contract. Executable component tests cover anonymous identity, other-tenant session, missing/changed confirmation, failure, timeout, duplicate events, refresh, unsupported capability and false success/redaction. Full durable webhook replay and mixed-task scheduling remain explicit known gaps, not simulated as passing product features. Remaining checks and exact evidence will be recorded before completion.

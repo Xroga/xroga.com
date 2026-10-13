@@ -1,0 +1,14 @@
+{
+  "command": "005",
+  "status": "IN_PROGRESS",
+  "scope": "HARNESS_IMPLEMENTATION_NOT_FUTURE_PRODUCT_COMPLETION",
+  "journeyStates": {"PASS": 0, "FAIL": 0, "BLOCKED_KNOWN_GAP": 12, "NOT_APPLICABLE": 0},
+  "initialBoundaryTests": {"backend": 12, "frontend": 4, "policy": 7, "fail": 0, "skipped": 0},
+  "browserVerified": false,
+  "ciCheck": "Xroga golden acceptance harness / deterministic-golden",
+  "ciVerified": false,
+  "actualAuthenticatedE2e": "BLOCKED_PENDING_TEST_CONFIGURATION",
+  "providerSandbox": "BLOCKED_KNOWN_GAP",
+  "productionDeployed": false,
+  "liveJourneysCertified": 0
+}
