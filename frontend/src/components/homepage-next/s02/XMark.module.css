@@ -1,0 +1,57 @@
+/* Xroga X companions: role light, halo, contact shadow and six script-driven states. */
+.mark {
+  --size: 96px;
+  --c: 120, 150, 255;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--size);
+  height: calc(var(--size) * 1.12);
+  flex: none;
+}
+.mark[data-id='engineer'] { --c: 165, 225, 235; }
+.mark[data-id='research'] { --c: 70, 130, 255; }
+.mark[data-id='acquisition'] { --c: 80, 210, 245; }
+.mark[data-id='creative'] { --c: 240, 95, 170; }
+.mark[data-id='data'] { --c: 150, 115, 255; }
+.mark[data-id='ops'] { --c: 250, 165, 70; }
+.halo { position: absolute; inset: -30%; border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--c), 0.42), rgba(var(--c), 0.1) 55%, transparent 75%); opacity: 0.55; transition: opacity 400ms, background 400ms; pointer-events: none; }
+.mark[data-focus] .halo { opacity: 0.85; }
+.body { position: relative; display: block; width: var(--size); height: var(--size); transform: rotate(var(--lean)); transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1); }
+.mark[data-float] .body { animation: float 7s ease-in-out infinite; animation-play-state: paused; }
+:global([data-running]) .mark[data-float] .body { animation-play-state: running; }
+.mark[data-id='research'] .body { animation-delay: -1.2s; }
+.mark[data-id='acquisition'] .body { animation-delay: -2.4s; }
+.mark[data-id='creative'] .body { animation-delay: -3.6s; }
+.mark[data-id='data'] .body { animation-delay: -4.8s; }
+.mark[data-id='ops'] .body { animation-delay: -6s; }
+.img { display: block; width: 100%; height: 100%; filter: drop-shadow(0 0 calc(var(--size) * 0.06) rgba(var(--c), 0.55)) drop-shadow(0 calc(var(--size) * 0.06) calc(var(--size) * 0.08) rgba(0, 0, 0, 0.6)); user-select: none; -webkit-user-drag: none; }
+/* assigned: one light runs along the crossed strokes, masked to the X itself */
+.sweep { position: absolute; inset: 0; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; overflow: hidden; opacity: 0; }
+.sweep::before { content: ''; position: absolute; top: -20%; bottom: -20%; left: -60%; width: 50%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.95), transparent); transform: skewX(-18deg); }
+.mark[data-state='assigned'] .sweep, .mark[data-state='handoff'] .sweep { opacity: 1; }
+.mark[data-state='assigned'] .sweep::before, .mark[data-state='handoff'] .sweep::before { animation: sweep 900ms cubic-bezier(0.4, 0, 0.2, 1) 120ms 1 both; }
+/* working: a quiet inner glow tied to the workspace event */
+.mark[data-state='working'] .halo { animation: work 2.4s ease-in-out infinite; animation-play-state: paused; }
+:global([data-running]) .mark[data-state='working'] .halo { animation-play-state: running; }
+/* handoff: leans toward the recipient */
+.mark[data-state='handoff'] .body { transform: rotate(var(--lean)) translateX(6%) rotate(8deg); }
+/* needs approval: halts, warm outline */
+.mark[data-state='approval'] .halo { background: radial-gradient(closest-side, rgba(255, 190, 100, 0.55), rgba(255, 170, 70, 0.12) 55%, transparent 75%); opacity: 0.9; }
+.mark[data-state='approval'] .body { animation: none; }
+.mark[data-state='approval'] .img { filter: drop-shadow(0 0 2px rgba(255, 200, 120, 0.9)) drop-shadow(0 0 calc(var(--size) * 0.08) rgba(255, 170, 70, 0.7)) drop-shadow(0 calc(var(--size) * 0.06) calc(var(--size) * 0.08) rgba(0, 0, 0, 0.6)); }
+.mark[data-state='done'] .body { animation: none; }
+.check { position: absolute; right: 2%; bottom: 10%; display: grid; place-items: center; width: calc(var(--size) * 0.3); height: calc(var(--size) * 0.3); min-width: 16px; min-height: 16px; border-radius: 50%; background: #3fbf86; color: #04130b; font-size: max(10px, calc(var(--size) * 0.16)); font-weight: 900; box-shadow: 0 0 0 2px #0b0f17; }
+.floor { position: absolute; bottom: 0; left: 20%; width: 60%; height: calc(var(--size) * 0.1); border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--c), 0.45), transparent); opacity: 0.7; }
+
+.core { position: relative; display: inline-grid; place-items: center; width: var(--size); height: var(--size); }
+.core img { position: relative; width: 100%; height: 100%; }
+.coreGlow { position: absolute; inset: -40%; border-radius: 50%; background: radial-gradient(closest-side, rgba(70, 120, 255, 0.45), rgba(120, 90, 255, 0.12) 55%, transparent 75%); }
+
+@keyframes float { 0%, 100% { transform: rotate(var(--lean)) translate3d(0, 0, 0); } 40% { transform: rotate(var(--lean)) translate3d(0, -3px, 0) rotate(-1.5deg); } 70% { transform: rotate(var(--lean)) translate3d(0, -1px, 0) rotate(1deg); } }
+@keyframes sweep { from { transform: skewX(-18deg) translateX(0); } to { transform: skewX(-18deg) translateX(420%); } }
+@keyframes work { 50% { opacity: 0.95; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mark .body, .mark .halo, .sweep::before { animation: none !important; }
+}
