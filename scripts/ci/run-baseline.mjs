@@ -9,7 +9,7 @@ import { npmCli, root, verifyToolchain } from './toolchain.mjs';
 export function safeTestEnvironment(environment = process.env) {
   const safe = {};
   for (const [key, value] of Object.entries(environment)) {
-    if (/^(?:PATH|Path|PATHEXT|SystemRoot|SYSTEMROOT|WINDIR|COMSPEC|TEMP|TMP|TMPDIR|USERPROFILE|LOCALAPPDATA|APPDATA|HOME|USER|USERNAME|LANG|LC_ALL|TZ|CI|GITHUB_ACTIONS|GITHUB_REPOSITORY|GITHUB_SHA|PLAYWRIGHT_BROWSERS_PATH)$/.test(key)) safe[key] = value;
+    if (/^(?:PATH|PATHEXT|SystemRoot|WINDIR|COMSPEC|TEMP|TMP|TMPDIR|USERPROFILE|LOCALAPPDATA|APPDATA|HOME|USER|USERNAME|LANG|LC_ALL|TZ|CI|GITHUB_ACTIONS|GITHUB_REPOSITORY|GITHUB_SHA|PLAYWRIGHT_BROWSERS_PATH)$/i.test(key)) safe[key] = value;
   }
   return { ...safe, NODE_ENV: 'test', CI: 'true', NEXT_TELEMETRY_DISABLED: '1', PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1',
     NEXT_PUBLIC_API_URL: 'http://127.0.0.1:8080', NEXT_PUBLIC_SUPABASE_URL: 'https://batch-one-test.invalid',

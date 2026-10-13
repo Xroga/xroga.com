@@ -63,6 +63,10 @@ test('production credentials and operational destinations are not inherited by b
   assert.equal(safe.CUSTOM_TOKEN, undefined);
   assert.equal(safe.NEXT_PUBLIC_API_URL, 'http://127.0.0.1:8080');
   assert.equal(safe.PLAYWRIGHT_BROWSERS_PATH, '/test-only/browser-cache');
+  const windows = safeTestEnvironment({ ComSpec: 'C:\\Windows\\System32\\cmd.exe', windir: 'C:\\Windows', SystemRoot: 'C:\\Windows', Path: 'fixture-path', SECRET_TOKEN: 'never-inherit' });
+  assert.equal(windows.ComSpec, 'C:\\Windows\\System32\\cmd.exe');
+  assert.equal(windows.windir, 'C:\\Windows');
+  assert.equal(windows.SECRET_TOKEN, undefined);
   assert.equal(publicConfigOverridden('frontend/.env.production', 'NEXT_PUBLIC_SUPABASE_URL=production\nNEXT_PUBLIC_SUPABASE_ANON_KEY=production', safe), true);
   assert.equal(publicConfigOverridden('frontend/.env.production', 'SUPABASE_SERVICE_ROLE_KEY=forbidden', safe), false);
   assert.equal(publicConfigOverridden('frontend/.env.local', 'NEXT_PUBLIC_SUPABASE_URL=production', safe), false);

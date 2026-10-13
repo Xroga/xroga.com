@@ -19,9 +19,6 @@ concurrency:
 jobs:
   unit:
     runs-on: ubuntu-latest
-    env:
-      # The local sandbox executor must use the same revision/cache as its probe.
-      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v6
@@ -31,9 +28,14 @@ jobs:
       - run: npm ci
 
       - name: Install pinned browser for existing local browser integration tests
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
         run: npx playwright install --with-deps chromium
 
       - name: Canonical build, test and security baseline
+        env:
+          # Share the cache between the probe and existing local sandbox executor.
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
         run: npm run verify:baseline
 
       - name: Preserve redacted build and test summaries
