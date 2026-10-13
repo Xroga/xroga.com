@@ -66,3 +66,4 @@ artifacts/batch-01-golden/
 .golden-browser-cache/
 supabase/.temp/
 artifacts/batch-01-local-security/
+artifacts/ci-*/
