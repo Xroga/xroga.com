@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1c911fa43d9d24dbd5327d848fccb94a43e82d69",
+  "source_sha": "9fe102e1d4768a2ae76319ac409f81cd4f9a9c81",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -898,7 +898,8 @@
         "backend/src/middleware/phase1Auth.ts",
         "backend/src/security/ownership.ts",
         "backend/src/security/tenantContext.ts",
-        "backend/src/security/tenantErrors.ts"
+        "backend/src/security/tenantErrors.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "implementation_owner_command": "007",
       "priority": "P0",
@@ -2699,6 +2700,7 @@
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/security/tenantErrors.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "frontend/src/app/(shell)/dashboard/security/page.tsx",
         "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
         "frontend/src/app/cybersecurity/page.tsx",

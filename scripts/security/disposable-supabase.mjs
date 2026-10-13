@@ -12,10 +12,26 @@ export function assertDisposableConfiguration(env) {
   return resolve(env.RUNNER_TEMP, 'xroga-disposable-supabase');
 }
 
+const privateValues = [];
+export function redactLocalLog(value, secrets = privateValues) {
+  let text = String(value ?? '');
+  for (const secret of [...secrets].filter(Boolean).sort((a,b)=>b.length-a.length)) text = text.replaceAll(secret,'[REDACTED]');
+  return text.replace(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g,'[REDACTED_JWT]')
+    .replace(/sb_(?:secret|publishable)_[A-Za-z0-9_-]+/g,'[REDACTED_API_KEY]')
+    .replace(/postgres(?:ql)?:\/\/[^\s"']+/g,'[REDACTED_DATABASE_URL]')
+    .replace(/("(?:d|password|jwt_secret|secret_key|service_role_key)"\s*:\s*")[^"]+/gi,'$1[REDACTED]');
+}
 function cli(workdir, args) {
   const result = spawnSync('npx', ['--yes','supabase@2.120.0','--workdir',workdir,...args], {encoding:'utf8',maxBuffer:32*1024*1024});
   // CLI start/status print credentials. Capture, never relay those streams to logs/artifacts.
-  if (result.status !== 0 || result.error) throw new Error(`Disposable Supabase CLI failed (${args[0]}, exit ${result.status ?? 'spawn'}); no credentials logged`);
+  if (result.status !== 0 || result.error) {
+    const output = resolve(import.meta.dirname,'../../artifacts/batch-01-local-security');
+    mkdirSync(output,{recursive:true});
+    const log = redactLocalLog(result.stderr).slice(-12000);
+    writeFileSync(join(output,'supabase-start-redacted.log'),log,{mode:0o600});
+    console.error(log);
+    throw new Error(`Disposable Supabase CLI failed (${args[0]}, exit ${result.status ?? 'spawn'}); credentials redacted`);
+  }
   return result.stdout;
 }
 
@@ -33,7 +49,8 @@ function bootstrap() {
     return `${data}.${createHmac('sha256',jwtSecret).update(data).digest('base64url')}`;
   };
   const anonKey = token('anon'), serviceKey = token('service_role');
-  for (const value of [jwtSecret,apiPublishable,apiSecret,anonKey,serviceKey,signingKey.d]) mask(value);
+  privateValues.push(jwtSecret,apiPublishable,apiSecret,anonKey,serviceKey,signingKey.d);
+  for (const value of privateValues) mask(value);
   mkdirSync(join(workdir,'supabase'),{recursive:true,mode:0o700});
   writeFileSync(join(workdir,'supabase','signing_keys.json'),JSON.stringify([signingKey]),{mode:0o600});
   writeFileSync(join(workdir,'supabase','config.toml'),`project_id = "xroga-ci-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}"
@@ -75,6 +92,7 @@ verify_enabled = true
   // The application uses the historical production migration runner's lexicographic
   // order. Its mixed legacy prefixes are NOT fed to CLI timestamp filtering, which
   // could omit 002a. The full-history verifier applies every original byte/hash.
+  appendFileSync(process.env.GITHUB_ENV,`XB01_SUPABASE_WORKDIR=${workdir}\n`);
   cli(workdir,['start']);
   const status = JSON.parse(cli(workdir,['status','--output','json']));
   const db = new URL(status.DB_URL);

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1c911fa43d9d24dbd5327d848fccb94a43e82d69",
+  "source_sha": "9fe102e1d4768a2ae76319ac409f81cd4f9a9c81",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -529,6 +529,7 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/routes/github.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/browserVerificationAdapter.ts",
@@ -543,6 +544,7 @@
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
         "CI",
+        "E2E_BACKEND_URL",
         "E2E_ISOLATED_PROJECT_REF",
         "FRONTEND_URL",
         "GITHUB_CLIENT_ID",
@@ -552,9 +554,11 @@
         "NEXT_PUBLIC_SUPABASE_URL",
         "NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF",
         "NODE_ENV",
+        "SUPABASE_ANON_KEY",
         "SUPABASE_OAUTH_CALLBACK_URL",
         "SUPABASE_OAUTH_CLIENT_ID",
         "SUPABASE_OAUTH_CLIENT_SECRET",
+        "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
         "VERCEL_CLIENT_ID",
         "VERCEL_CLIENT_SECRET",
@@ -580,6 +584,7 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/routes/github.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/browserVerificationAdapter.ts",
@@ -6764,6 +6769,7 @@
     {
       "name": "CI",
       "consuming_sources": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -7180,6 +7186,25 @@
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "E2E_BACKEND_URL",
+      "consuming_sources": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -9304,7 +9329,8 @@
     {
       "name": "SUPABASE_ANON_KEY",
       "consuming_sources": [
-        "backend/src/config/supabase.ts"
+        "backend/src/config/supabase.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -9317,7 +9343,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "supabase"
+        "supabase",
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -9533,6 +9560,7 @@
         "backend/src/lib/resolveIdentity.ts",
         "backend/src/middleware/auth.ts",
         "backend/src/routes/dashboard.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/BillingService.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
         "backend/src/synthesis/livePreview/signing.ts",
@@ -9553,6 +9581,7 @@
       ],
       "dependency_ids": [
         "supabase",
+        "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-github-com",
         "endpoint-localhost",
@@ -9571,6 +9600,7 @@
         "backend/src/lib/postgresConnect.ts",
         "backend/src/lib/resolveIdentity.ts",
         "backend/src/lib/verifyJwt.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -10163,6 +10193,7 @@
     {
       "name": "XB01_DISPOSABLE_SUPABASE",
       "consuming_sources": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -10953,7 +10984,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "540939a4563fc8f4ec12736d6803acf9847f983d809bdbaf181dd164922397da"
+      "sha256": "c4aa14d4fd6eefda10e2b842bf98d0d63dc44ddf126f5cdda97d54215d4db50e"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -12121,7 +12152,7 @@
     },
     {
       "path": "backend/src/routes/integrations.ts",
-      "sha256": "20bc4434fe9c60686548d62df7d74904e61aaa31276280899ee20e487683c666"
+      "sha256": "114021b2345dcf57c6b1a34199dd14195b92e1f6bcfb5944e184d5f4037d72f7"
     },
     {
       "path": "backend/src/routes/marketplace.ts",
@@ -12272,6 +12303,10 @@
       "sha256": "30d948b5e5418253815d7091697e5a605cdab53a63c0fe63edd06a4a7da21bb9"
     },
     {
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "sha256": "4e4ef9d0c899ce656c9a83bafc66cead8477800e6becf359c9a10a6b419d1e09"
+    },
+    {
       "path": "backend/src/services/ActionService.ts",
       "sha256": "0abc11fdd41aedd316acbc478ee50ded6a2eda1b699d246310f9407a8fe481e8"
     },
@@ -12361,7 +12396,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "a86fba3e3d79802365b7c569edcde1aa7b9352431a517ba6b0220d8a340b5c01"
+      "sha256": "eae8ef68d42d549df2580bc8d74cc3f664a424dcaac406ddcb255d0f3254af0f"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -17499,7 +17534,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/integrations.ts",
-      "line": 2048,
+      "line": 2042,
       "credentialsInUrl": false
     },
     {
@@ -17570,6 +17605,20 @@
       "protocol": "https:",
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
       "line": 99,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 11,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 11,
       "credentialsInUrl": false
     },
     {
@@ -23862,7 +23911,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 790,
+      "line": 791,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

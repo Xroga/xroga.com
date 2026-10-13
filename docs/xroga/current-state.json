@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "1c911fa43d9d24dbd5327d848fccb94a43e82d69",
-    "sourceTimestampUtc": "2026-10-13T21:01:40+05:00",
-    "auditStartedUtc": "2026-10-13T17:15:01.483Z",
+    "sha": "9fe102e1d4768a2ae76319ac409f81cd4f9a9c81",
+    "sourceTimestampUtc": "2026-10-13T22:15:29+05:00",
+    "auditStartedUtc": "2026-10-13T17:19:59.063Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -11455,7 +11455,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.ts:1",
@@ -11660,7 +11661,8 @@
         "backend/src/lib/postgresConnect.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "callers": [
         "backend/src/index.ts:45",
@@ -13450,7 +13452,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "callers": [
         "backend/src/db/ensureDashboardSchema.ts:5",
@@ -18318,7 +18321,7 @@
       "id": "surface:e651ec704dda3ac3aa42",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "sha256": "20bc4434fe9c60686548d62df7d74904e61aaa31276280899ee20e487683c666",
+      "sha256": "114021b2345dcf57c6b1a34199dd14195b92e1f6bcfb5944e184d5f4037d72f7",
       "symbols": [
         "callbackUrl",
         "catalog",
@@ -20481,11 +20484,13 @@
         "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "callers": [
         "backend/src/ai/runStore.ts:11",
-        "backend/src/security/ownedRunPersistence.test.ts:4"
+        "backend/src/security/ownedRunPersistence.test.ts:4",
+        "backend/src/security/tenantIsolation.local.integration.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -20588,13 +20593,16 @@
         "backend/src/security/tenantContext.ts",
         "backend/src/security/tenantErrors.ts"
       ],
-      "entryPoints": [],
+      "entryPoints": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
+      ],
       "callers": [
         "backend/src/security/ownership.test.ts:5",
         "backend/src/security/tenantIsolation.integration.test.ts:16",
+        "backend/src/security/tenantIsolation.local.integration.ts:7",
         "backend/src/services/storage/projectFiles.ts:5"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [
         "project_files"
       ],
@@ -20612,11 +20620,11 @@
         "backend/src/security/ownership.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -20638,7 +20646,8 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "callers": [
         "backend/src/index.ts:60",
@@ -20690,7 +20699,8 @@
         "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "callers": [
         "backend/src/ai/runStore.ts:10",
@@ -20707,6 +20717,7 @@
         "backend/src/security/serviceRoleGuard.ts:2",
         "backend/src/security/tenantContext.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:15",
+        "backend/src/security/tenantIsolation.local.integration.ts:6",
         "backend/src/services/storage/projectFiles.ts:4"
       ],
       "reachable": true,
@@ -20748,7 +20759,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "callers": [
         "backend/src/routes/swarm.ts:5",
@@ -20778,6 +20790,89 @@
         "backend/src/security/tenantContext.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts"
       ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:cbf92151ae82e4823f24",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
+      "sha256": "4e4ef9d0c899ce656c9a83bafc66cead8477800e6becf359c9a10a6b419d1e09",
+      "symbols": [
+        "admin",
+        "api",
+        "client",
+        "created",
+        "deleted",
+        "denied",
+        "email",
+        "fixture",
+        "id",
+        "index",
+        "insert",
+        "login",
+        "loser",
+        "outcomes",
+        "owner",
+        "password",
+        "path",
+        "request",
+        "response",
+        "result",
+        "row",
+        "rows",
+        "stored",
+        "text",
+        "unchanged",
+        "url",
+        "user",
+        "users",
+        "verified"
+      ],
+      "imports": [
+        "../services/integrations/userProviderKeys.js",
+        "./ownedRunPersistence.js",
+        "./ownership.js",
+        "./tenantContext.js",
+        "@supabase/supabase-js",
+        "node:assert/strict",
+        "node:crypto",
+        "node:test"
+      ],
+      "runtimeImports": [
+        "backend/src/security/ownedRunPersistence.ts",
+        "backend/src/security/ownership.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/userProviderKeys.ts"
+      ],
+      "entryPoints": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [
+        "swarm_runs",
+        "terminal_sessions"
+      ],
+      "externalProviderDependencies": [
+        "@supabase/supabase-js",
+        "declared-host:127.0.0.1",
+        "node:assert/strict",
+        "node:crypto",
+        "node:test"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/security/tenantIsolation.local.integration.ts#verified"
+      ],
+      "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -22515,7 +22610,8 @@
         "backend/src/config/supabase.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "callers": [
         "backend/src/services/integrations/githubAuth.ts:3",
@@ -22637,7 +22733,8 @@
         "backend/src/services/integrations/githubTokenStore.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "callers": [
         "backend/src/services/integrations/pluginPermissionPolicy.ts:1",
@@ -22789,13 +22886,14 @@
         "backend/src/services/integrations/oauthPkceStore.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "callers": [
         "backend/src/lib/platformReady.ts:8",
         "backend/src/routes/supabaseOAuth.ts:10",
         "backend/src/services/integrations/supabaseProvision.ts:506",
-        "backend/src/services/integrations/userProviderKeys.ts:803"
+        "backend/src/services/integrations/userProviderKeys.ts:804"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -22913,7 +23011,8 @@
         "backend/src/services/integrations/userProviderKeys.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:3765",
@@ -22926,8 +23025,8 @@
         "backend/src/routes/integrations.ts:672",
         "backend/src/routes/supabaseOAuth.ts:20",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
-        "backend/src/services/integrations/userProviderKeys.ts:866",
-        "backend/src/services/integrations/userProviderKeys.ts:875"
+        "backend/src/services/integrations/userProviderKeys.ts:867",
+        "backend/src/services/integrations/userProviderKeys.ts:876"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -22959,7 +23058,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "a86fba3e3d79802365b7c569edcde1aa7b9352431a517ba6b0220d8a340b5c01",
+      "sha256": "eae8ef68d42d549df2580bc8d74cc3f664a424dcaac406ddcb255d0f3254af0f",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -23074,7 +23173,8 @@
         "backend/src/services/integrations/supabaseProvision.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:113",
@@ -23083,6 +23183,7 @@
         "backend/src/routes/integrations.ts:638",
         "backend/src/routes/publish.ts:12",
         "backend/src/routes/supabaseOAuth.ts:26",
+        "backend/src/security/tenantIsolation.local.integration.ts:9",
         "backend/src/services/integrations/githubDeploy.ts:58",
         "backend/src/services/integrations/supabaseProvision.ts:10",
         "backend/src/services/integrations/userProviderKeys.test.ts:3",
@@ -23104,12 +23205,12 @@
       ],
       "tenantBoundary": [
         "backend/src/services/integrations/userProviderKeys.ts:415 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:461 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:468 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:483 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:566 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:585 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:608 (user_id)"
+        "backend/src/services/integrations/userProviderKeys.ts:462 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:469 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:484 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:567 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:586 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:609 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -81615,7 +81716,7 @@
       "id": "surface:6d41f9a6f61b7c1b2c87",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/disposable-supabase.mjs",
-      "sha256": "bb500d305e59f9a5489b68304fe9077be24751b9c7a016e4459427c3686a58c9",
+      "sha256": "9ee126ca10f5352051f6f78a262f54c66b9c0661eb72478724121c3593d0ff92",
       "symbols": [
         "anonKey",
         "apiPublishable",
@@ -81627,12 +81728,18 @@
         "db",
         "encode",
         "jwtSecret",
+        "log",
         "mask",
         "name",
+        "output",
+        "privateValues",
+        "redactLocalLog",
         "result",
+        "secret",
         "serviceKey",
         "signingKey",
         "status",
+        "text",
         "token",
         "value",
         "values",
@@ -85232,7 +85339,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:47ad9663b4480603c539",
+      "id": "registration:cda8adc865b6529f537c",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 734,
       "receiver": "router",
@@ -85244,9 +85351,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9afd1cfa49f1e5c378e6",
+      "id": "registration:ddda725a22cdc654a213",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 764,
+      "line": 758,
       "receiver": "router",
       "method": "post",
       "path": "/provider-keys",
@@ -85256,9 +85363,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a3ec708fef8c99e7eeb3",
+      "id": "registration:45a5d9b6a8215c836f26",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 922,
+      "line": 916,
       "receiver": "router",
       "method": "delete",
       "path": "/provider-keys/:provider",
@@ -85268,9 +85375,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:74254e5f22fbcdc5b2ea",
+      "id": "registration:2ac96a1a22c371259784",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 955,
+      "line": 949,
       "receiver": "router",
       "method": "post",
       "path": "/sync-vercel-env",
@@ -85280,9 +85387,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fafa4affac3ab88035bb",
+      "id": "registration:46bb9b7935fb5dcf1439",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1082,
+      "line": 1076,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/permission-policy",
@@ -85292,9 +85399,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:678b55cb028e36f8e9bd",
+      "id": "registration:201afc0ccc7c0c071de6",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1134,
+      "line": 1128,
       "receiver": "router",
       "method": "patch",
       "path": "/xroga-connect/permission-policy",
@@ -85304,9 +85411,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fdbcf41e98b82d91dfbb",
+      "id": "registration:5b97e56b1437add4c852",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1193,
+      "line": 1187,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/status",
@@ -85316,9 +85423,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9234f241ebcf77350a39",
+      "id": "registration:69a619fb31d88f06746a",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1211,
+      "line": 1205,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog",
@@ -85328,9 +85435,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:2ac2b0a1b7c18c989085",
+      "id": "registration:f55247ba92d7f2e3bcf2",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1317,
+      "line": 1311,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog-categories",
@@ -85340,9 +85447,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:425f2906838d96f4364b",
+      "id": "registration:136abefcf91d8488d1bd",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1336,
+      "line": 1330,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog/:toolkit/tools",
@@ -85352,9 +85459,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a16074d9d27af81adc83",
+      "id": "registration:daebe6684e0d5781b07b",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1397,
+      "line": 1391,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog/:toolkit/triggers",
@@ -85364,9 +85471,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:37baae9f2e05fd08df75",
+      "id": "registration:63a3e82186c419fb4ace",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1458,
+      "line": 1452,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog/:toolkit",
@@ -85376,9 +85483,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:018330ba4c0dcead48a5",
+      "id": "registration:1d33b9880958d5719e43",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1520,
+      "line": 1514,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/tool-details/:toolSlug",
@@ -85388,9 +85495,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:eb07c79c2d99f8f1b715",
+      "id": "registration:221ebfe50d058005d1b3",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1577,
+      "line": 1571,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/session",
@@ -85400,9 +85507,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9f30e89cc62e37ca2510",
+      "id": "registration:47ca29717b64980421ea",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1614,
+      "line": 1608,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/search",
@@ -85412,9 +85519,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:1ed936364263911244f6",
+      "id": "registration:9f27d504e8ed6dbcd924",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1700,
+      "line": 1694,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/action-search",
@@ -85424,9 +85531,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a3fedb2eceab8178b22e",
+      "id": "registration:c37fd84e531f80fc58e7",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1768,
+      "line": 1762,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/toolkits",
@@ -85436,9 +85543,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:2eb3e62bda2c3942cd16",
+      "id": "registration:890ac72f11b236a65c2e",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1833,
+      "line": 1827,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/custom-mcp",
@@ -85448,9 +85555,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:13aff96efa282ce7eb61",
+      "id": "registration:d6f706ae09dc2ab915be",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1852,
+      "line": 1846,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/custom-mcp",
@@ -85460,9 +85567,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6d3587f2289b710aa2b2",
+      "id": "registration:3165c5f9b4947f54ca7a",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1893,
+      "line": 1887,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/custom-mcp/:toolkit/sync",
@@ -85472,9 +85579,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:18ec3b29a566fa1e611d",
+      "id": "registration:270ab944165bfbe14f31",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1948,
+      "line": 1942,
       "receiver": "router",
       "method": "delete",
       "path": "/xroga-connect/custom-mcp/:toolkit",
@@ -85484,9 +85591,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:83c94ba0ccac122c157a",
+      "id": "registration:b83cad142a87de0868a2",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1995,
+      "line": 1989,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/link",
@@ -85496,9 +85603,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a3de407f9ef496637bce",
+      "id": "registration:cea82066f4832f777f26",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 2092,
+      "line": 2086,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/execute",
@@ -85508,9 +85615,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:85294e3ceb9ee788b77a",
+      "id": "registration:c8a961d06070e17c2446",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 2172,
+      "line": 2166,
       "receiver": "router",
       "method": "use",
       "path": "/live-ai",
@@ -85520,9 +85627,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:ec797ca4aa78ec76ff15",
+      "id": "registration:16890dea7994eadd6423",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 2178,
+      "line": 2172,
       "receiver": "router",
       "method": "use",
       "path": "/search",
@@ -89434,8 +89541,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:d1a4473e52139afda4bc",
-      "registrationId": "registration:47ad9663b4480603c539",
+      "id": "route:8b14878f653d230c1966",
+      "registrationId": "registration:cda8adc865b6529f537c",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 734,
       "method": "GET",
@@ -89451,10 +89558,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b20e28d2f32f80d0c321",
-      "registrationId": "registration:9afd1cfa49f1e5c378e6",
+      "id": "route:c10522e1bc87398b7930",
+      "registrationId": "registration:ddda725a22cdc654a213",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 764,
+      "line": 758,
       "method": "POST",
       "path": "/api/integrations/provider-keys",
       "mountChain": [
@@ -89468,10 +89575,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8fe43457f977e531a719",
-      "registrationId": "registration:a3ec708fef8c99e7eeb3",
+      "id": "route:d4496cc6d29c4851f6b6",
+      "registrationId": "registration:45a5d9b6a8215c836f26",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 922,
+      "line": 916,
       "method": "DELETE",
       "path": "/api/integrations/provider-keys/:provider",
       "mountChain": [
@@ -89485,10 +89592,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:90fbc1238f5926987460",
-      "registrationId": "registration:74254e5f22fbcdc5b2ea",
+      "id": "route:23480f435bef71a724f3",
+      "registrationId": "registration:2ac96a1a22c371259784",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 955,
+      "line": 949,
       "method": "POST",
       "path": "/api/integrations/sync-vercel-env",
       "mountChain": [
@@ -89502,10 +89609,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:54be06a78b22dd0829a6",
-      "registrationId": "registration:fafa4affac3ab88035bb",
+      "id": "route:bc6eedf8c41d2e8a1ff4",
+      "registrationId": "registration:46bb9b7935fb5dcf1439",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1082,
+      "line": 1076,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/permission-policy",
       "mountChain": [
@@ -89519,10 +89626,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:be118f49b18417bd12b3",
-      "registrationId": "registration:678b55cb028e36f8e9bd",
+      "id": "route:d2da37062db75450f263",
+      "registrationId": "registration:201afc0ccc7c0c071de6",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1134,
+      "line": 1128,
       "method": "PATCH",
       "path": "/api/integrations/xroga-connect/permission-policy",
       "mountChain": [
@@ -89536,10 +89643,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5863e4bb047d2911ef42",
-      "registrationId": "registration:fdbcf41e98b82d91dfbb",
+      "id": "route:853da13870dcd3e0668c",
+      "registrationId": "registration:5b97e56b1437add4c852",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1193,
+      "line": 1187,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/status",
       "mountChain": [
@@ -89553,10 +89660,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b7668782d2238c945d3a",
-      "registrationId": "registration:9234f241ebcf77350a39",
+      "id": "route:caae735bf7a918ba78c3",
+      "registrationId": "registration:69a619fb31d88f06746a",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1211,
+      "line": 1205,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog",
       "mountChain": [
@@ -89570,10 +89677,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:db5f71a0156b602d2c4a",
-      "registrationId": "registration:2ac2b0a1b7c18c989085",
+      "id": "route:364a92bacdff60166737",
+      "registrationId": "registration:f55247ba92d7f2e3bcf2",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1317,
+      "line": 1311,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog-categories",
       "mountChain": [
@@ -89587,10 +89694,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:6cca3c771441086df2fb",
-      "registrationId": "registration:425f2906838d96f4364b",
+      "id": "route:5f38d19af1382815de9d",
+      "registrationId": "registration:136abefcf91d8488d1bd",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1336,
+      "line": 1330,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog/:toolkit/tools",
       "mountChain": [
@@ -89604,10 +89711,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3bbd78614e02d9f31a52",
-      "registrationId": "registration:a16074d9d27af81adc83",
+      "id": "route:8bad2aff109e1021d54c",
+      "registrationId": "registration:daebe6684e0d5781b07b",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1397,
+      "line": 1391,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog/:toolkit/triggers",
       "mountChain": [
@@ -89621,10 +89728,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f2e9bfe73677727d2649",
-      "registrationId": "registration:37baae9f2e05fd08df75",
+      "id": "route:0ef8051dc500813a8f37",
+      "registrationId": "registration:63a3e82186c419fb4ace",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1458,
+      "line": 1452,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog/:toolkit",
       "mountChain": [
@@ -89638,10 +89745,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:20479ba7791a14a5ec9b",
-      "registrationId": "registration:018330ba4c0dcead48a5",
+      "id": "route:7128f26a92f64e33cb69",
+      "registrationId": "registration:1d33b9880958d5719e43",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1520,
+      "line": 1514,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/tool-details/:toolSlug",
       "mountChain": [
@@ -89655,10 +89762,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a58092bfca775dde8fb1",
-      "registrationId": "registration:eb07c79c2d99f8f1b715",
+      "id": "route:b8b6d5b996385ce17242",
+      "registrationId": "registration:221ebfe50d058005d1b3",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1577,
+      "line": 1571,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/session",
       "mountChain": [
@@ -89672,10 +89779,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0f1b6be769739efe3291",
-      "registrationId": "registration:9f30e89cc62e37ca2510",
+      "id": "route:998c92088da9f91a8b42",
+      "registrationId": "registration:47ca29717b64980421ea",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1614,
+      "line": 1608,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/search",
       "mountChain": [
@@ -89689,10 +89796,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:aa73fa0e5a60f7abdf69",
-      "registrationId": "registration:1ed936364263911244f6",
+      "id": "route:21b44c1bae1cc81945e1",
+      "registrationId": "registration:9f27d504e8ed6dbcd924",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1700,
+      "line": 1694,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/action-search",
       "mountChain": [
@@ -89706,10 +89813,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:884dc056b5b10bd76f79",
-      "registrationId": "registration:a3fedb2eceab8178b22e",
+      "id": "route:343aadf4de3bf4af0a7b",
+      "registrationId": "registration:c37fd84e531f80fc58e7",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1768,
+      "line": 1762,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/toolkits",
       "mountChain": [
@@ -89723,10 +89830,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:21677a309d409bf9fd5e",
-      "registrationId": "registration:2eb3e62bda2c3942cd16",
+      "id": "route:9d80845572bfd7943054",
+      "registrationId": "registration:890ac72f11b236a65c2e",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1833,
+      "line": 1827,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/custom-mcp",
       "mountChain": [
@@ -89740,10 +89847,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:407a2f4abc9cbc3aacfc",
-      "registrationId": "registration:13aff96efa282ce7eb61",
+      "id": "route:c4b803fec7cc22920ad2",
+      "registrationId": "registration:d6f706ae09dc2ab915be",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1852,
+      "line": 1846,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/custom-mcp",
       "mountChain": [
@@ -89757,10 +89864,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ee62cb56b23c4e359a16",
-      "registrationId": "registration:6d3587f2289b710aa2b2",
+      "id": "route:5e8ec2b6a54d4c9a79c2",
+      "registrationId": "registration:3165c5f9b4947f54ca7a",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1893,
+      "line": 1887,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/custom-mcp/:toolkit/sync",
       "mountChain": [
@@ -89774,10 +89881,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e757bcba6946406d49b0",
-      "registrationId": "registration:18ec3b29a566fa1e611d",
+      "id": "route:484e3b9ccaefb2c68a61",
+      "registrationId": "registration:270ab944165bfbe14f31",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1948,
+      "line": 1942,
       "method": "DELETE",
       "path": "/api/integrations/xroga-connect/custom-mcp/:toolkit",
       "mountChain": [
@@ -89791,10 +89898,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:02f9c017cd6234f79b81",
-      "registrationId": "registration:83c94ba0ccac122c157a",
+      "id": "route:97712c110bc90d3f0c30",
+      "registrationId": "registration:b83cad142a87de0868a2",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1995,
+      "line": 1989,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/link",
       "mountChain": [
@@ -89808,10 +89915,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:d8f1dde52e45de1667b8",
-      "registrationId": "registration:a3de407f9ef496637bce",
+      "id": "route:a677ecf32311d3545ff5",
+      "registrationId": "registration:cea82066f4832f777f26",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 2092,
+      "line": 2086,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/execute",
       "mountChain": [
@@ -91238,8 +91345,9 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "540939a4563fc8f4ec12736d6803acf9847f983d809bdbaf181dd164922397da",
+      "sha256": "c4aa14d4fd6eefda10e2b842bf98d0d63dc44ddf126f5cdda97d54215d4db50e",
       "sourceEntrypoints": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "scripts/security/disposable-supabase.mjs",
         "scripts/security/disposable-supabase.test.mjs",
         "scripts/security/full-supabase-history.mjs"
@@ -100499,7 +100607,7 @@
     {
       "id": "test-suite:7ad4485dc12ff4206f8f",
       "sourcePath": "scripts/security/disposable-supabase.test.mjs",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -414,7 +414,7 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('user_integrations')
-    .select('provider, metadata, updated_at')
+    .select('provider, metadata, created_at')
     .eq('user_id', userId)
     .like('provider', `${PROVIDER_PREFIX}%`);
 
@@ -422,6 +422,7 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
     provider: string;
     metadata: Record<string, unknown> | null;
     updated_at?: string | null;
+    created_at?: string | null;
   };
   let rows: KeyRow[] = (data ?? []) as KeyRow[];
   if (error) {
@@ -448,7 +449,7 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
       connected: true,
       masked: meta.masked,
       envVar: meta.env_var ?? envVarForProvider(provider),
-      connectedAt: meta.connected_at ?? row.updated_at ?? undefined,
+      connectedAt: meta.connected_at ?? row.created_at ?? row.updated_at ?? undefined,
     };
   });
 }

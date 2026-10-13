@@ -750,13 +750,7 @@ router.get(
           'aes-256-gcm',
       });
     } catch (err) {
-      res.status(500).json({
-        error:
-          (err as Error)
-            .message,
-
-        keys: [],
-      });
+      res.status(503).json({ error: 'Connected keys could not be loaded. Retry shortly.', keys: [] });
     }
   },
 );
