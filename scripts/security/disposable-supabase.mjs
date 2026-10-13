@@ -1,5 +1,5 @@
 /** CI-only real Supabase bootstrap. Never links, downloads data, or reads production env. */
-import { generateKeyPairSync, randomBytes, randomUUID, createHmac } from 'node:crypto';
+import { generateKeyPairSync, randomBytes, randomUUID, createPrivateKey, sign } from 'node:crypto';
 import { mkdirSync, writeFileSync, appendFileSync, existsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -14,6 +14,15 @@ export function assertDisposableConfiguration(env) {
 
 export function generateLocalSigningKey() {
   return {...generateKeyPairSync('ec',{namedCurve:'P-256'}).privateKey.export({format:'jwk'}),kid:randomUUID(),use:'sig',alg:'ES256',key_ops:['sign','verify']};
+}
+
+/** Match the configured JWKS: custom signing_keys_path excludes legacy HS256. */
+export function generateLocalApiToken(signingKey, role, now = Math.floor(Date.now()/1000)) {
+  if (!['anon', 'service_role'].includes(role)) throw new Error('Unsupported local API role');
+  const encode = value => Buffer.from(JSON.stringify(value)).toString('base64url');
+  const data = `${encode({alg:'ES256',typ:'JWT',kid:signingKey.kid})}.${encode({role,iss:'supabase',iat:now,exp:now+7200})}`;
+  const signature = sign('sha256', Buffer.from(data), {key:createPrivateKey({key:signingKey,format:'jwk'}),dsaEncoding:'ieee-p1363'});
+  return `${data}.${signature.toString('base64url')}`;
 }
 
 const privateValues = [];
@@ -47,12 +56,7 @@ async function bootstrap() {
   const apiPublishable = `sb_publishable_${randomBytes(24).toString('base64url')}`;
   const apiSecret = `sb_secret_${randomBytes(32).toString('base64url')}`;
   const signingKey = generateLocalSigningKey();
-  const token = role => {
-    const encode = value => Buffer.from(JSON.stringify(value)).toString('base64url');
-    const data = `${encode({alg:'HS256',typ:'JWT'})}.${encode({role,iss:'supabase',iat:Math.floor(Date.now()/1000),exp:Math.floor(Date.now()/1000)+7200})}`;
-    return `${data}.${createHmac('sha256',jwtSecret).update(data).digest('base64url')}`;
-  };
-  const anonKey = token('anon'), serviceKey = token('service_role');
+  const anonKey = generateLocalApiToken(signingKey,'anon'), serviceKey = generateLocalApiToken(signingKey,'service_role');
   privateValues.push(jwtSecret,apiPublishable,apiSecret,anonKey,serviceKey,signingKey.d);
   for (const value of privateValues) mask(value);
   mkdirSync(join(workdir,'supabase'),{recursive:true,mode:0o700});
@@ -103,13 +107,14 @@ verify_enabled = true
   if (!['localhost','127.0.0.1'].includes(db.hostname) || db.port !== '54322' || db.pathname !== '/postgres') throw new Error('CLI returned a non-disposable database');
   mask(status.DB_URL); mask(decodeURIComponent(db.password));
   if (status.API_URL !== 'http://127.0.0.1:54321') throw new Error('CLI API must be exact loopback');
-  // Use the CLI-configured opaque keys with the new local API gateway. Legacy
-  // HS256 keys are retained solely for internal compatibility, not application
-  // requests against the ES256 stack. Probe real Auth before any expensive build.
+  // Opaque gateway keys map to the ES256 API tokens above. Auth and PostgREST
+  // must both accept the same per-run signing setup before any expensive build.
   for (const [path,key] of [['settings',apiPublishable],['admin/users?page=1&per_page=1',apiSecret]]) {
     const response=await fetch(`${status.API_URL}/auth/v1/${path}`,{headers:{apikey:key,Authorization:`Bearer ${key}`}});
     if(!response.ok) throw new Error(`Disposable Auth credential admission failed (HTTP ${response.status})`);
   }
+  const rest = await fetch(`${status.API_URL}/rest/v1/`,{headers:{apikey:apiSecret}});
+  if(!rest.ok) throw new Error(`Disposable database API credential admission failed (HTTP ${rest.status})`);
   const values = {
     XB01_SUPABASE_WORKDIR:workdir, XB01_LOCAL_DATABASE_URL:status.DB_URL,
     NEXT_PUBLIC_SUPABASE_URL:status.API_URL, SUPABASE_URL:status.API_URL,

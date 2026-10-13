@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "4ce6a833a97bf49de531451415393a548dbb0dbf",
-    "sourceTimestampUtc": "2026-10-13T22:46:45+05:00",
-    "auditStartedUtc": "2026-10-13T17:48:18.071Z",
+    "sha": "1aee2bf89306b878dff8388ef25585631785eda2",
+    "sourceTimestampUtc": "2026-10-13T22:48:19+05:00",
+    "auditStartedUtc": "2026-10-13T18:03:11.359Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -82415,7 +82415,7 @@
       "id": "surface:6d41f9a6f61b7c1b2c87",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/disposable-supabase.mjs",
-      "sha256": "76c75ffcbf37b670575173d0acd09f9283794f4a3e87c895b2998caa97b86550",
+      "sha256": "4e6a7c1017d5561f5fae6925672be97f1fd5317c78faa36d0922f34f91150e75",
       "symbols": [
         "anonKey",
         "apiPublishable",
@@ -82426,6 +82426,7 @@
         "data",
         "db",
         "encode",
+        "generateLocalApiToken",
         "generateLocalSigningKey",
         "jwtSecret",
         "log",
@@ -82435,13 +82436,14 @@
         "privateValues",
         "redactLocalLog",
         "response",
+        "rest",
         "result",
         "secret",
         "serviceKey",
+        "signature",
         "signingKey",
         "status",
         "text",
-        "token",
         "value",
         "values",
         "workdir"
@@ -82459,7 +82461,7 @@
       ],
       "callers": [
         "scripts/security/collect-local-security-logs.mjs:3",
-        "scripts/security/disposable-supabase.test.mjs:3"
+        "scripts/security/disposable-supabase.test.mjs:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -101402,7 +101404,7 @@
     {
       "id": "test-suite:7ad4485dc12ff4206f8f",
       "sourcePath": "scripts/security/disposable-supabase.test.mjs",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
