@@ -1,21 +1,25 @@
 'use client';
 
 /**
- * S02: Xroga in action (V9). One compact section: an eyebrow, one headline, one line and the two-mode switch on
- * the heading row, then one physical computer. The computer's dock is the selector (four browser missions, or
- * the six AI Employees), so a choice and its result are always on screen together. A choice plays once and
- * settles on a result; nothing chains on its own, nothing scrolls the page, and the clock runs only while the
- * section is on screen (useDemoClock over script.ts).
+ * S02: Xroga in action (V10). One compact section with two different experiences behind one switch:
+ *
+ * Browser Automation: one mission executed inside an application (engine.ts + useDemoClock over script.ts).
+ * AI Employees: an ongoing team with responsibilities, a night away and results on return (workforce.ts).
+ *
+ * The two keep separate state, so switching modes never resets the other side. Each clock runs only while the
+ * section is on screen and the tab is visible; nothing scrolls the page and nothing reaches a server.
  */
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
-import { COPY, employeeOf, missionOf, modeOf, stepsOf, type Mode, type TrackId } from './script';
+import { AWAY_BEAT_MS, AWAY_BEATS, COPY, INTRO_MS, employeeOf, missionOf, stepsOf, type Mode, type TrackId } from './script';
+import { browserPhase } from './engine';
 import { useDemoClock } from './useDemoClock';
+import { initialWorkforce, workforceReducer } from './workforce';
 import s from './S02.module.css';
 
-const MODES: Mode[] = ['browser', 'employees'];
+const MODES: Mode[] = ['browser', 'workforce'];
 
 // The computer loads as its own chunk shortly before the section is reached, behind a computer-sized hold.
 const Hold = () => <div className={s.hold} aria-hidden="true" />;
@@ -26,10 +30,9 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
   const prefersReduced = useReducedMotion();
   const [reduced, setReduced] = useState(false);
   useEffect(() => setReduced(!!prefersReduced), [prefersReduced]);
-  const { state, dispatch, running } = useDemoClock(root, reduced);
-  const mode = modeOf(state.track);
-  const steps = stepsOf(state.track);
-  const last = state.step >= steps.length - 1;
+  const [mode, setMode] = useState<Mode>('browser');
+  const { state, dispatch, running, onScreen, hidden } = useDemoClock(root, reduced, mode === 'browser');
+  const [wf, wfDispatch] = useReducer(workforceReducer, undefined, initialWorkforce);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
 
   // mount the computer once the section is within about a screen and a half
@@ -42,28 +45,50 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
     return () => io.disconnect();
   }, [near]);
 
-  // the one handoff: once the Research Analyst sends its brief, it is waiting on the Growth Strategist's board
-  const [briefSent, setBriefSent] = useState(false);
+  // workforce timing: the team entrance once, then the night away beat by beat (paused offscreen or hidden)
+  const wfLive = mode === 'workforce' && onScreen && !hidden;
   useEffect(() => {
-    if (state.track === 'emp:research' && stepsOf(state.track)[state.step]?.id === 'handoff') setBriefSent(true);
-  }, [state.track, state.step]);
+    if (mode !== 'workforce' || wf.intro === 'done') return;
+    if (reduced) return wfDispatch({ type: 'intro-done' });
+    if (!wfLive) return;
+    const id = window.setTimeout(() => wfDispatch({ type: 'intro-done' }), INTRO_MS);
+    return () => window.clearTimeout(id);
+  }, [mode, wf.intro, wfLive, reduced]);
+  useEffect(() => {
+    if (wf.view === 'away' && reduced && wf.beat < AWAY_BEATS.length - 1) wfDispatch({ type: 'settle' });
+  }, [wf.view, wf.beat, reduced]);
+  useEffect(() => {
+    if (wf.view !== 'away' || !wfLive || reduced) return;
+    const gen = wf.gen;
+    const last = wf.beat >= AWAY_BEATS.length - 1;
+    const id = window.setTimeout(() => wfDispatch({ type: 'tick', gen }), last ? 1100 : AWAY_BEAT_MS);
+    return () => window.clearTimeout(id);
+  }, [wf.view, wf.beat, wf.gen, wfLive, reduced]);
 
+  const pick = (m: Mode) => setMode(m);
   const onTabKey = (ev: React.KeyboardEvent, i: number) => {
     if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(ev.key)) return;
     ev.preventDefault();
     const next = ev.key === 'Home' ? 0 : ev.key === 'End' ? MODES.length - 1 : (i + (ev.key === 'ArrowRight' ? 1 : -1) + MODES.length) % MODES.length;
-    dispatch({ type: 'mode', mode: MODES[next] });
+    pick(MODES[next]);
     tabs.current[next]?.focus({ preventScroll: true });
   };
 
-  // one short line for screen readers when a scene settles (no live narration of every step)
-  const mission = missionOf(state.track);
-  const employee = employeeOf(state.track);
-  const settledLine = mission
-    ? `${mission.label}: ${mission.outcome.title}. ${mission.outcome.gate}.`
-    : employee
-      ? `${employee.name}: ${employee.outcome.title}. ${employee.outcome.gate}.`
-      : '';
+  const steps = stepsOf(state.track);
+  const last = state.step >= steps.length - 1;
+  const mission = missionOf(state.track)!;
+  const phase = browserPhase(state, mission.outcome.state === 'approval');
+  // one short line for screen readers when something settles (no live narration of every step)
+  const live =
+    mode === 'browser'
+      ? last
+        ? `${mission.label}: ${mission.outcome.title}. ${mission.outcome.gate}.`
+        : ''
+      : wf.view === 'workspace'
+        ? `${employeeOf(wf.selected).name}: ${employeeOf(wf.selected).ret.changed.join('. ')}.`
+        : wf.view === 'away' && wf.beat === AWAY_BEATS.length - 1
+          ? 'Tuesday 18:00. Your team’s results are ready.'
+          : '';
 
   return (
     <section
@@ -74,6 +99,10 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
       data-mode={mode}
       data-track={state.track}
       data-step={steps[Math.min(state.step, steps.length - 1)].id}
+      data-phase={phase}
+      data-view={wf.view}
+      data-beat={wf.view === 'away' ? wf.beat : undefined}
+      data-employee={wf.selected}
       data-settled={(last && (state.ended || reduced)) || undefined}
       data-running={running || undefined}
       data-reduced={reduced || undefined}
@@ -86,9 +115,11 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
             <h2 id="s02-title" className={s.title}>
               {COPY.title}
             </h2>
-            <p className={s.lede}>{COPY.lede}</p>
+            <p key={mode} className={s.lede}>
+              {COPY.lede[mode]}
+            </p>
           </div>
-          <div className={s.switch} role="tablist" aria-label="Choose what to watch" data-mode={mode}>
+          <div className={s.switch} role="tablist" aria-label="Choose what to see" data-mode={mode}>
             <span className={s.thumb} aria-hidden="true" />
             {MODES.map((m, i) => (
               <button
@@ -103,7 +134,7 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
                 aria-controls="s02-stage"
                 tabIndex={mode === m ? 0 : -1}
                 className={s.tab}
-                onClick={() => dispatch({ type: 'mode', mode: m })}
+                onClick={() => pick(m)}
                 onKeyDown={(ev) => onTabKey(ev, i)}
               >
                 <span className={s.tabIcon} data-k={m} aria-hidden="true" />
@@ -116,13 +147,14 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
         <div id="s02-stage" role="tabpanel" aria-labelledby={`s02-tab-${mode}`} className={s.stage}>
           {near ? (
             <Theater
+              mode={mode}
               track={state.track}
               step={state.step}
               ended={state.ended}
               running={running}
               reduced={reduced}
-              briefSent={briefSent}
-              hold={state.stay}
+              wf={wf}
+              wfDispatch={wfDispatch}
               onPick={(t: TrackId) => dispatch({ type: 'select', track: t })}
               onReplay={() => dispatch({ type: 'replay' })}
             />
@@ -130,7 +162,7 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
             <Hold />
           )}
           <p className={s.sr} aria-live="polite">
-            {last ? settledLine : ''}
+            {live}
           </p>
         </div>
 

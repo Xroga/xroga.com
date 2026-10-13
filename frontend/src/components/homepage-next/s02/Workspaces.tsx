@@ -1,402 +1,385 @@
 'use client';
 
 /**
- * Six AI Employee workspaces, one per specialist, each built from the materials of that job: an editor and
- * terminal, a prospect board, an evidence canvas, a campaign board, a spreadsheet and an operations desk. The
- * one real handoff runs Research → Growth: the analyst's brief arrives on the strategist's board. All people,
- * companies and figures are fictional sample data.
+ * What each AI Employee's own desk looks like when you come back (V10). Six different tools with six different
+ * skeletons: a repository, a CRM pipeline, a brief and its evidence ledger, a content calendar, a data
+ * reconciliation pipeline and an operations inbox. History is shown in each tool's own idiom (commit trail, CRM
+ * activity, dated ledger, calendar, change log, triaged inbox), and the decision waiting for you sits on the
+ * object it concerns. One or two things move on arrival (a new issue lands, a brief arrives, a row gets held), so
+ * the desk reads as work that happened, not a static report.
+ *
+ * Everything is fictional sample data; decisions only mark this page's local demo state.
  */
-import type { ReactNode } from 'react';
-import type { Ctx } from './ctx';
+import type { CSSProperties, ReactNode } from 'react';
+import type { SurfaceProps } from './Workforce';
 import type { EmployeeId } from './script';
-import w from './Workspaces.module.css';
+import k from './Workspaces.module.css';
 
-export interface EmployeeApp {
-  App: (p: { ctx: Ctx; briefSent: boolean }) => ReactNode;
-  /** Window chrome flavour. */
-  chrome: 'editor' | 'board' | 'canvas' | 'sheet' | 'desk';
+/** The decision gate, on the object it concerns. A preview decision changes nothing outside this page. */
+function Gate({ e, decision, onDecide, children }: Pick<SurfaceProps, 'e' | 'decision' | 'onDecide'> & { children?: ReactNode }) {
+  const d = e.ret.decision;
+  return (
+    <div className={k.gate} data-state={decision ?? 'waiting'}>
+      <span className={k.gateQ}>
+        <i aria-hidden="true" />
+        {d.question}
+      </span>
+      {children}
+      {decision ? (
+        <span className={k.gateDone} role="status">
+          {decision === 'approved' ? 'Approved in this preview' : 'Held in this preview'} · nothing real was changed
+        </span>
+      ) : (
+        <span className={k.gateBtns}>
+          <button type="button" className={k.approve} onClick={() => onDecide('approved')}>
+            {d.approve}
+          </button>
+          <button type="button" className={k.hold} onClick={() => onDecide('held')}>
+            {d.hold}
+          </button>
+        </span>
+      )}
+    </div>
+  );
 }
 
-const on = (v: boolean) => v || undefined;
-
-/* ------------------------------------------------------------------------------------ Software Builder */
-function BuilderApp({ ctx }: { ctx: Ctx }) {
-  const open = ctx.at('open');
-  const found = ctx.at('find');
-  const edited = ctx.at('edit');
-  const running = ctx.now('test');
-  const passed = ctx.at('pass');
+/* ------------------------------------------------------------------------------- Software Builder · repo */
+function Builder(p: SurfaceProps) {
   return (
-    <div className={w.ide}>
-      <aside className={w.tree}>
-        <span className={w.treeHead}>dashboard-app</span>
-        <span>components/</span>
-        <span data-t="b.file" data-on={on(open)}>
-          session.ts
-        </span>
-        <span>projects.ts</span>
-        <span>session.test.ts</span>
-      </aside>
-      <div className={w.editor} data-open={on(open)}>
-        <div className={w.edTabs}>
-          <span data-on="">session.ts</span>
-          {edited && <span className={w.diffStat}>+6 −2</span>}
+    <div className={k.repo}>
+      <section className={k.queue} aria-label="Bug queue">
+        <span className={k.label}>Bug queue · dashboard-app</span>
+        <Issue n="#487" title="Session lost on project switch" state="fixed" note="Fixed · PR #212" />
+        <Issue n="#489" title="CSV export drops the last row" state="fixed" note="Fixed · PR #213" />
+        <Issue n="#485" title="Flaky date-picker test" state="decision" note="Needs your call" />
+        <Issue n="#491" title="Theme toggle resets on reload" state="new" note="Filed Tue 15:20 · queued Wed 07:00" />
+      </section>
+      <section className={k.pr} aria-label="Pull request 212">
+        <div className={k.prHead}>
+          <b>PR #212 · Keep session on project switch</b>
+          <small>builder/fix-487 → main · +6 −2</small>
         </div>
-        <pre className={w.code}>
-          <Line n={41}>
-            <K>export async function</K> <F>selectProject</F>(projectId: <T>string</T>) {'{'}
-          </Line>
-          <Line n={42}>
-            {'  '}
-            <K>const</K> project = <K>await</K> projects.get(projectId);
-          </Line>
-          {!edited ? (
-            <Line n={43} t="b.bug" mark={found ? 'bad' : undefined}>
-              {'  '}
-              <K>await</K> auth.signOut(); <C>{'// resets the session'}</C>
-            </Line>
-          ) : (
-            <Line n={43} mark="old">
-              {'  '}
-              <K>await</K> auth.signOut();
-            </Line>
-          )}
-          <Line n={44} t="b.edit" mark={edited ? 'new' : undefined}>
-            {'  '}
-            {ctx.at('edit') ? ctx.field('edit') : <C>{'// '}</C>}
-          </Line>
-          <Line n={45}>
-            {'  '}router.push(<S>`/p/${'{'}project.slug{'}'}`</S>);
-          </Line>
-          <Line n={46}>{'}'}</Line>
+        <pre className={k.diff}>
+          <span data-mark="old">−  await auth.signOut();</span>
+          <span data-mark="new">+  await session.switchProject(projectId);</span>
+          <span data-mark="new">+  expect(user.signedIn).toBe(true);</span>
         </pre>
-        <div className={w.term}>
-          <div className={w.termHead}>
-            <span>Terminal</span>
-            <span className={w.run} data-t="b.run" data-busy={on(running)}>
-              {running ? 'Running…' : 'Run tests'}
-            </span>
-          </div>
-          <code className={w.termBody}>
-            <span>$ npm test session</span>
-            {ctx.at('test') && <span className={w.dim}>✓ keeps the user signed in on project switch</span>}
-            <span data-t="b.result" className={w.pass} data-show={on(passed)}>
-              Tests 18 passed (18) · 1.9 s
-            </span>
-          </code>
-        </div>
-      </div>
-    </div>
-  );
-}
-const K = ({ children }: { children: ReactNode }) => <i className={w.kw}>{children}</i>;
-const F = ({ children }: { children: ReactNode }) => <i className={w.fn}>{children}</i>;
-const T = ({ children }: { children: ReactNode }) => <i className={w.ty}>{children}</i>;
-const S = ({ children }: { children: ReactNode }) => <i className={w.st}>{children}</i>;
-const C = ({ children }: { children: ReactNode }) => <i className={w.cm}>{children}</i>;
-function Line({ n, t, mark, children }: { n: number; t?: string; mark?: 'bad' | 'new' | 'old'; children: ReactNode }) {
-  return (
-    <span className={w.line} data-t={t} data-mark={mark}>
-      <b>{mark === 'new' ? '+' : mark === 'old' ? '−' : n}</b>
-      <span>{children}</span>
-    </span>
-  );
-}
-
-/* ----------------------------------------------------------------------------------- Growth Strategist */
-const PROSPECTS = [
-  { n: 'Harbor Smiles', d: '14 staff · Northside', fit: 92 },
-  { n: 'Elm Street Dental', d: '22 staff · Riverside', fit: 88 },
-  { n: 'Brightway Clinic', d: '31 staff · Old Town', fit: 81 },
-  { n: 'Pine Family Care', d: '9 staff · Eastgate', fit: 64 },
-];
-function GrowthApp({ ctx, briefSent }: { ctx: Ctx; briefSent: boolean }) {
-  const seg = ctx.at('segment');
-  const picked = ctx.at('shortlist');
-  const pitched = ctx.at('pitch');
-  const ready = ctx.at('pipeline');
-  return (
-    <div className={w.board}>
-      <div className={w.col}>
-        <span className={w.colHead}>Inputs</span>
-        <div className={w.card} data-t="g.brief" data-from={briefSent ? 'research' : undefined} data-on={on(ctx.now('brief'))}>
-          <span className={w.cardKicker}>{briefSent ? 'From Research Analyst' : 'Market brief'}</span>
-          <b>Partner-led entry</b>
-          <span className={w.cardText}>Mid-size clinics adopt fastest through referral partners.</span>
-          {briefSent && <span className={w.handoff}>Handed off</span>}
-        </div>
-        <div className={w.segment} data-t="g.segment" data-on={on(seg)}>
-          <span>Segment</span>
-          <b>Dental clinics · 10–40 staff</b>
-        </div>
-      </div>
-      <div className={w.col} data-wide="">
-        <span className={w.colHead}>Prospects {seg ? <em>· 4 match</em> : null}</span>
-        {PROSPECTS.map((p, i) => (
-          <div
-            key={p.n}
-            className={w.prospect}
-            data-t={i === 0 ? 'g.pick' : undefined}
-            data-show={on(seg)}
-            data-pick={on(picked && i < 3)}
-            data-dim={on(picked && i === 3)}
-            style={{ transitionDelay: `${i * 90}ms` }}
-          >
-            <span className={w.avatar}>{p.n[0]}</span>
-            <span>
-              <b>{p.n}</b>
-              <small>{p.d}</small>
-            </span>
-            <span className={w.fit}>{p.fit}</span>
-          </div>
-        ))}
-      </div>
-      <div className={w.col}>
-        <span className={w.colHead}>Outreach</span>
-        <div className={w.card} data-t="g.pitch" data-show={on(pitched)}>
-          <span className={w.cardKicker}>Harbor Smiles</span>
-          <span className={w.cardText}>“Your Saturday slots fill fast. A partner referral flow could fill the weekdays.”</span>
-        </div>
-        <div className={w.ready} data-t="g.ready" data-show={on(ready)}>
-          <b>3 drafts ready</b>
-          <span>Waiting for your approval</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------------------------ Research Analyst */
-const SOURCES = ['Industry report 2026', 'Clinic survey (n=212)', 'Partner pricing pages', 'Competitor filings', 'Analyst interview', 'Trade forum threads', 'Census business data'];
-const OPTIONS = [
-  { n: 'Direct sales', s: [3, 2, 2] },
-  { n: 'Partner-led', s: [4, 4, 3] },
-  { n: 'Self-serve', s: [2, 3, 4] },
-];
-function ResearchApp({ ctx }: { ctx: Ctx }) {
-  const src = ctx.at('sources');
-  const scored = ctx.at('score');
-  const risk = ctx.at('risk');
-  const rec = ctx.at('recommend');
-  const sent = ctx.at('handoff');
-  return (
-    <div className={w.canvas}>
-      <div className={w.sources} data-t="r.sources">
-        <span className={w.colHead}>Sources {src ? <em>· 7 read</em> : null}</span>
-        {SOURCES.map((s, i) => (
-          <span key={s} className={w.source} data-on={on(src)} style={{ transitionDelay: `${i * 70}ms` }}>
-            <i />
-            {s}
-          </span>
-        ))}
-      </div>
-      <div className={w.analysis}>
-        <table className={w.matrix} data-t="r.matrix" data-on={on(scored)}>
-          <thead>
-            <tr>
-              <th>Option</th>
-              <th>Reach</th>
-              <th data-t="r.risk" data-flag={on(risk)}>
-                Margin
-              </th>
-              <th>Speed</th>
-            </tr>
-          </thead>
-          <tbody>
-            {OPTIONS.map((o) => (
-              <tr key={o.n} data-best={on(rec && o.n === 'Partner-led')}>
-                <td>{o.n}</td>
-                {o.s.map((v, i) => (
-                  <td key={i}>
-                    <span className={w.dots} data-v={scored ? v : 0}>
-                      {[0, 1, 2, 3].map((d) => (
-                        <i key={d} />
-                      ))}
-                    </span>
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className={w.rec} data-t="r.rec" data-show={on(rec)}>
-          <span className={w.cardKicker}>Recommendation · medium confidence</span>
-          <b>Enter through referral partners first.</b>
-          <span className={w.cardText}>Fastest reach at acceptable cost. Margin data is thin; verify with two partners.</span>
-        </div>
-        <span className={w.send} data-t="r.send" data-sent={on(sent)}>
-          {sent ? 'Brief sent to Growth Strategist' : 'Send brief to Growth'}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/* ----------------------------------------------------------------------------------- Creative Producer */
-function CreativeApp({ ctx }: { ctx: Ctx }) {
-  const frames = ctx.at('frames');
-  const formats = ctx.at('formats');
-  const fixed = ctx.at('fix');
-  return (
-    <div className={w.studio}>
-      <div className={w.frames}>
-        <span className={w.colHead}>Storyboard</span>
-        <div className={w.frameRow}>
-          {['Problem', 'Product', 'Proof', 'Offer'].map((f, i) => (
-            <span key={f} className={w.frame} data-t={i === 1 ? 'c.frame' : undefined} data-on={on(frames)} data-n={i} style={{ transitionDelay: `${i * 90}ms` }}>
-              <i />
-              {f}
+        <div className={k.ci}>
+          {[
+            ['Lint', 'pass'],
+            ['Unit 18/18', 'pass'],
+            ['Browser check', 'pass'],
+            ['Preview deploy', 'pass'],
+          ].map(([n, s]) => (
+            <span key={n} data-s={s}>
+              {n}
             </span>
           ))}
         </div>
-      </div>
-      <div className={w.formats} data-t="c.formats" data-on={on(formats)}>
-        <span className={w.colHead}>Formats</span>
-        <div className={w.formatRow}>
-          <Art kind="wide" label="Web hero · 16:9" />
-          <Art kind="square" label="Post · 1:1" />
-          <span className={w.storyWrap} data-t="c.note">
-            <Art kind="story" label="Story · 9:16" crop={!fixed} />
+        <Gate {...p} />
+      </section>
+      <section className={k.trail} aria-label="Activity">
+        <span className={k.label}>Activity</span>
+        {[
+          ['07:00', 'Triaged 3 new issues'],
+          ['07:54', 'Reproduced #487 in a test'],
+          ['09:36', 'Opened PR #212, tests green'],
+          ['11:48', 'Paused on #485, asked you'],
+          ['15:20', 'Queued new issue #491'],
+        ].map(([t, x]) => (
+          <span key={t} className={k.commit}>
+            <i />
+            <time>Tue {t}</time>
+            {x}
           </span>
-        </div>
-      </div>
-      <span className={w.swap} data-t="c.swap" data-ok={on(fixed)}>
-        {fixed ? 'Headline re-set for story' : 'Re-set story headline'}
+        ))}
+      </section>
+    </div>
+  );
+}
+function Issue({ n, title, state, note }: { n: string; title: string; state: 'fixed' | 'decision' | 'new'; note: string }) {
+  return (
+    <div className={k.issue} data-state={state}>
+      <span className={k.issueN}>{n}</span>
+      <span>
+        <b>{title}</b>
+        <small>{note}</small>
       </span>
     </div>
   );
 }
-function Art({ kind, label, crop }: { kind: 'wide' | 'square' | 'story'; label: string; crop?: boolean }) {
+
+/* ----------------------------------------------------------------------------- Growth Strategist · CRM */
+function Growth(p: SurfaceProps) {
   return (
-    <span className={w.art} data-kind={kind}>
-      <span className={w.artFace} data-crop={on(!!crop)}>
-        <span className={w.artOrb} />
+    <div className={k.crm}>
+      <section className={k.input} data-arrived={p.handoff || undefined} aria-label="Input from Research">
+        <span className={k.doc} aria-hidden="true" />
+        <span>
+          <small>Input · from Research Analyst · Tue 06:10</small>
+          <b>Decision brief #7: partner-led entry, confidence high</b>
+        </span>
+        <em>Applied 06:20</em>
+      </section>
+      <section className={k.pipeline} aria-label="Pipeline">
+        {[
+          { h: 'Researching', n: 8, cards: [['Pine Family Care', 64], ['Northgate Ortho', 58]] },
+          { h: 'Qualified', n: 5, cards: [['Elm Street Dental', 88], ['Brightway Clinic', 81]] },
+          { h: 'Outreach drafted', n: 3, cards: [['Harbor Smiles', 92], ['Elm Street Dental', 88], ['Brightway Clinic', 81]] },
+        ].map((col) => (
+          <div key={col.h} className={k.stage}>
+            <span className={k.label}>
+              {col.h} <em>{col.n}</em>
+            </span>
+            {col.cards.map(([name, fit], i) => (
+              <span key={`${name}${i}`} className={k.deal} data-draft={col.h === 'Outreach drafted' || undefined} style={{ '--d': `${i * 120}ms` } as CSSProperties}>
+                <i>{String(name)[0]}</i>
+                <b>{name}</b>
+                <em>{fit}</em>
+              </span>
+            ))}
+          </div>
+        ))}
+      </section>
+      <section className={k.channels} aria-label="Channel performance">
+        <span className={k.label}>Channels · last 30 days</span>
+        {[
+          ['Referral partners', 38],
+          ['Search', 24],
+          ['Email', 12],
+        ].map(([c, v]) => (
+          <span key={c} className={k.bar} style={{ '--v': `${v}%` } as CSSProperties}>
+            <span>{c}</span>
+            <i />
+            <b>{v}%</b>
+          </span>
+        ))}
+        <Gate {...p}>
+          <small className={k.gateNote}>Drafts to Harbor Smiles, Elm Street Dental and Brightway Clinic</small>
+        </Gate>
+      </section>
+    </div>
+  );
+}
+
+/* --------------------------------------------------------------------- Research Analyst · brief + ledger */
+function Research(p: SurfaceProps) {
+  return (
+    <div className={k.research}>
+      <article className={k.brief} aria-label="Decision brief 7">
+        <small>Decision brief #7 · v7 · updated Tue 04:00</small>
+        <h4>Enter through referral partners first.</h4>
+        <p>
+          Mid-size clinics adopt booking software fastest when a trusted partner recommends it<sup>[2]</sup>. Partner margins
+          hold up in the new survey<sup>[5]</sup>; direct sales stay slower<sup>[3]</sup>.
+        </p>
+        <div className={k.confidence}>
+          <span>Confidence</span>
+          <span className={k.meter} data-from="2" data-to="3">
+            <i />
+            <i />
+            <i />
+          </span>
+          <b>medium → high</b>
+        </div>
+        <span className={k.cites}>
+          {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+            <i key={n} data-new={n >= 5 || undefined}>
+              [{n}]
+            </i>
+          ))}
+        </span>
+      </article>
+      <section className={k.ledger} aria-label="Evidence ledger">
+        <span className={k.label}>Evidence ledger</span>
+        {[
+          ['Tue 03:36', 'Clinic survey 2026', 'Adoption 31% → 38%', 'changed'],
+          ['Tue 03:38', 'Partner pricing pages', 'Margins steady', 'changed'],
+          ['Tue 03:40', 'Competitor filing', 'New referral program', 'new'],
+          ['Tue 06:10', 'Brief #7 → Growth Strategist', 'Handed off', 'handoff'],
+          ['Fri 02:00', 'Industry report', 'No change', 'old'],
+        ].map(([t, src, note, s]) => (
+          <span key={src} className={k.entry} data-s={s}>
+            <time>{t}</time>
+            <b>{src}</b>
+            <em>{note}</em>
+          </span>
+        ))}
+        <Gate {...p}>
+          <small className={k.gateNote}>Paywalled source found while scanning; not bought</small>
+        </Gate>
+      </section>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------- Creative Producer · content calendar */
+function Creative(p: SurfaceProps) {
+  const days: { d: string; items: { t: string; label: string; s: 'done' | 'review' | 'ready' | 'empty' }[] }[] = [
+    { d: 'Mon', items: [{ t: '10:00', label: 'Teaser · approved Fri', s: 'done' }] },
+    { d: 'Tue', items: [{ t: '—', label: 'No post', s: 'empty' }] },
+    { d: 'Wed', items: [{ t: '10:00', label: 'Post 4 · launch week', s: 'review' }] },
+    { d: 'Thu', items: [{ t: '—', label: 'No post', s: 'empty' }] },
+    { d: 'Fri', items: [{ t: '10:00', label: 'Post 5 · customer quote', s: 'ready' }] },
+  ];
+  return (
+    <div className={k.studio}>
+      <section className={k.week} aria-label="Content calendar">
+        {days.map((day) => (
+          <div key={day.d} className={k.day} data-today={day.d === 'Tue' || undefined}>
+            <span className={k.dayName}>{day.d}</span>
+            {day.items.map((it) => (
+              <span key={it.label} className={k.post} data-s={it.s}>
+                <time>{it.t}</time>
+                {it.label}
+              </span>
+            ))}
+          </div>
+        ))}
+      </section>
+      <section className={k.library} aria-label="Asset library">
+        <span className={k.label}>Asset library · Post 4 · drafted Tue 08:00–11:40</span>
+        <div className={k.assets}>
+          <Asset kind="wide" label="Web hero 16:9" />
+          <Asset kind="square" label="Square 1:1" />
+          <Asset kind="story" label="Story 9:16 · v2" note="Headline re-set (v1 cropped)" />
+        </div>
+      </section>
+      <Gate {...p} />
+    </div>
+  );
+}
+function Asset({ kind, label, note }: { kind: 'wide' | 'square' | 'story'; label: string; note?: string }) {
+  return (
+    <span className={k.asset} data-kind={kind}>
+      <span className={k.assetFace}>
+        <span className={k.assetOrb} />
         <b>Launch week</b>
+        <i className={k.newTag}>New</i>
       </span>
       <small>{label}</small>
+      {note && <small className={k.assetNote}>{note}</small>}
     </span>
   );
 }
 
-/* -------------------------------------------------------------------------------------- Data Specialist */
-const ROWS: { n: string; e: string; c: string; kind?: 'dupe' | 'email' | 'hold' | 'norm' }[] = [
-  { n: 'Maya Chen', e: 'maya@harbor.example', c: 'Northside' },
-  { n: 'Maya Chen', e: 'maya@harbor.example', c: 'northside', kind: 'dupe' },
-  { n: 'Luis Ortega', e: 'luis@@elm.example', c: 'Riverside', kind: 'email' },
-  { n: 'Priya Nair', e: 'priya@bright.example', c: 'OLD TOWN', kind: 'norm' },
-  { n: 'J. Okafor', e: '—', c: '?', kind: 'hold' },
-  { n: 'Sam Lee', e: 'sam@pine.example', c: 'Eastgate' },
-  { n: 'Sam Lee', e: 'sam@pine.example', c: 'Eastgate ', kind: 'dupe' },
-  { n: 'Test Account', e: 'test@test', c: '', kind: 'hold' },
-];
-function DataApp({ ctx }: { ctx: Ctx }) {
-  const dupes = ctx.at('dupes');
-  const invalid = ctx.at('invalid');
-  const applied = ctx.at('normalize');
-  const held = ctx.at('hold');
-  let firstDupe = true;
-  let firstHold = true;
+/* ---------------------------------------------------------------- Data Specialist · reconciliation run */
+function Data(p: SurfaceProps) {
   return (
-    <div className={w.sheet}>
-      <div className={w.sheetBar}>
-        <span className={w.fx}>fx</span>
-        <span className={w.formula}>{applied ? '=CLEAN(TRIM(PROPER(C2:C9)))' : '=C2'}</span>
-        <span className={w.applyBtn} data-t="d.apply" data-ok={on(applied)}>
-          {applied ? '5 fixes applied' : 'Apply fixes'}
-        </span>
-      </div>
-      <div className={w.grid} role="presentation">
-        <span className={w.gh} />
-        <span className={w.gh}>Name</span>
-        <span className={w.gh}>Email</span>
-        <span className={w.gh}>City</span>
-        <span className={w.gh}>Status</span>
-        {ROWS.map((r, i) => {
-          const dupeT = r.kind === 'dupe' && firstDupe ? ((firstDupe = false), 'd.dupe') : undefined;
-          const holdT = r.kind === 'hold' && firstHold ? ((firstHold = false), 'd.hold') : undefined;
-          const merged = applied && r.kind === 'dupe';
-          const state =
-            r.kind === 'dupe' && dupes ? (merged ? 'merged' : 'dupe') : r.kind === 'email' && invalid ? (applied ? 'fixed' : 'bad') : r.kind === 'norm' && applied ? 'fixed' : r.kind === 'hold' && held ? 'held' : undefined;
-          return (
-            <div key={i} className={w.row} data-state={state} data-t={dupeT ?? holdT}>
-              <span className={w.rn}>{i + 2}</span>
-              <span>{r.n}</span>
-              <span data-t={r.kind === 'email' ? 'd.email' : undefined}>{r.kind === 'email' && applied ? 'luis@elm.example' : r.e}</span>
-              <span>{r.kind === 'norm' && applied ? 'Old Town' : r.c}</span>
-              <span className={w.status}>{state === 'merged' ? 'Merged' : state === 'dupe' ? 'Duplicate' : state === 'bad' ? 'Fixable' : state === 'fixed' ? 'Fixed' : state === 'held' ? 'Held for you' : ''}</span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-/* -------------------------------------------------------------------------------- Operations Manager */
-function OpsApp({ ctx }: { ctx: Ctx }) {
-  const opened = ctx.at('open');
-  const clash = ctx.at('conflict');
-  const moved = ctx.at('reslot');
-  const crm = ctx.at('crm');
-  const draft = ctx.at('draft');
-  return (
-    <div className={w.ops}>
-      <div className={w.inbox}>
-        <span className={w.colHead}>Requests</span>
-        <div className={w.mail} data-t="o.req" data-on={on(opened)} data-new={on(!opened)}>
-          <b>Maya Chen</b>
-          <span>Can we move Thursday’s visit to the morning?</span>
-        </div>
-        <div className={w.mail}>
-          <b>Luis Ortega</b>
-          <span>Invoice received, thanks!</span>
-        </div>
-        <div className={w.mail}>
-          <b>Priya Nair</b>
-          <span>Booking for two in May</span>
-        </div>
-      </div>
-      <div className={w.cal}>
-        <span className={w.colHead}>Thursday</span>
-        {['9:00', '10:00', '11:00', '12:00'].map((h) => (
-          <span key={h} className={w.hour}>
-            {h}
+    <div className={k.data}>
+      <section className={k.sources} aria-label="Sources">
+        {[
+          ['Billing export', '2,104 rows'],
+          ['CRM contacts', '1,986 rows'],
+          ['Customer sheet', '722 rows'],
+        ].map(([n, r]) => (
+          <span key={n} className={k.source}>
+            <b>{n}</b>
+            <small>{r} · Tue 01:00</small>
           </span>
         ))}
-        <span className={w.slot} data-kind="busy" style={{ top: 58 }}>
-          Team stand-up
+        <span className={k.arrow} aria-hidden="true">
+          →
         </span>
-        <span className={w.slot} data-kind="busy" style={{ top: 120 }} data-t="o.clash" data-flag={on(clash && !moved)}>
-          Northside visit
+        <span className={k.source} data-out="">
+          <b>customers_clean.csv</b>
+          <small>4,812 checked · 37 changes</small>
         </span>
-        <span className={w.slot} data-kind="try" data-show={on(clash)} data-gone={on(moved)} style={{ top: 132 }}>
-          Maya · 10:00?
-        </span>
-        <span className={w.slot} data-kind="new" data-t="o.alt" data-show={on(moved)} style={{ top: 155 }}>
-          Maya Chen · 10:30
-        </span>
-      </div>
-      <div className={w.side}>
-        <div className={w.crm} data-t="o.crm" data-on={on(crm)}>
-          <span className={w.cardKicker}>Client record</span>
-          <b>Maya Chen · Harbor Smiles</b>
-          <span className={w.cardText}>Next visit: {crm ? <mark>Thu 10:30</mark> : 'Thu 15:00'}</span>
-        </div>
-        <div className={w.draft} data-t="o.draft" data-show={on(draft)}>
-          <span className={w.cardKicker}>Draft reply</span>
-          <span className={w.cardText}>Hi Maya, done: Thursday at 10:30. See you then.</span>
-          <span className={w.approve}>Approve &amp; send</span>
-        </div>
-      </div>
+      </section>
+      <section className={k.changes} aria-label="Change log">
+        <span className={k.label}>Change log · every change reversible</span>
+        {[
+          ['luis@@elm.example', 'luis@elm.example', 'Email fixed'],
+          ['OLD TOWN', 'Old Town', 'City normalized'],
+          ['+1 (555) 0100 ', '+1 555 0100', 'Phone formatted'],
+          ['Maya Chen ×2', 'kept both · held', 'Possible duplicate'],
+        ].map(([a, b, why]) => (
+          <span key={a} className={k.change} data-held={why === 'Possible duplicate' || undefined}>
+            <s>{a}</s>
+            <i aria-hidden="true">→</i>
+            <b>{b}</b>
+            <em>{why}</em>
+          </span>
+        ))}
+        <span className={k.more}>+ 33 more safe fixes</span>
+      </section>
+      <section className={k.held} aria-label="Held rows">
+        <span className={k.label}>Held for you · 4 rows</span>
+        {[
+          ['Maya Chen', 'Same email, two billing IDs'],
+          ['Maya Chen', 'Same email, two billing IDs'],
+          ['J. Okafor', 'No email, unclear city'],
+          ['Test Account', 'Looks like test data'],
+        ].map(([n, why], i) => (
+          <span key={i} className={k.heldRow} style={{ '--d': `${i * 140}ms` } as CSSProperties}>
+            <b>{n}</b>
+            <em>{why}</em>
+          </span>
+        ))}
+        <Gate {...p} />
+      </section>
     </div>
   );
 }
 
-export const EMPLOYEE_APPS: Record<EmployeeId, EmployeeApp> = {
-  builder: { App: BuilderApp, chrome: 'editor' },
-  growth: { App: GrowthApp, chrome: 'board' },
-  research: { App: ResearchApp, chrome: 'canvas' },
-  creative: { App: CreativeApp, chrome: 'board' },
-  data: { App: DataApp, chrome: 'sheet' },
-  ops: { App: OpsApp, chrome: 'desk' },
+/* ---------------------------------------------------------------- Operations Manager · inbox + calendar */
+function Ops(p: SurfaceProps) {
+  return (
+    <div className={k.ops}>
+      <p className={k.opsSummary}>
+        <b>3 requests triaged</b> · <b>2 replies drafted</b> · <b>1 decision needed</b> · next run Wed 09:00
+      </p>
+      <section className={k.inbox} aria-label="Inbox">
+        {[
+          { who: 'Maya Chen', ask: 'Can we move Thursday to the morning?', out: 'Held Thu 10:30 · reply drafted', s: 'drafted' },
+          { who: 'Priya Nair', ask: 'Booking for two in May', out: 'Held Fri 14:00 · reply drafted', s: 'drafted' },
+          { who: 'Luis Ortega', ask: 'Tuesday or Wednesday works?', out: 'Two dates: needs you', s: 'decision' },
+        ].map((m, i) => (
+          <span key={m.who} className={k.mail} data-s={m.s} style={{ '--d': `${i * 160}ms` } as CSSProperties}>
+            <b>{m.who}</b>
+            <span>{m.ask}</span>
+            <em>{m.out}</em>
+          </span>
+        ))}
+      </section>
+      <section className={k.cal} aria-label="Calendar">
+        <span className={k.label}>This week</span>
+        <div className={k.calGrid}>
+          {['Thu', 'Fri'].map((d) => (
+            <div key={d} className={k.calDay}>
+              <span>{d}</span>
+              <i className={k.slot} data-s="busy" style={{ top: '12%' }}>
+                Stand-up
+              </i>
+              {d === 'Thu' && (
+                <i className={k.slot} data-s="held" style={{ top: '38%' }}>
+                  Maya · 10:30 held
+                </i>
+              )}
+              {d === 'Fri' && (
+                <i className={k.slot} data-s="held" style={{ top: '64%' }}>
+                  Priya ×2 · 14:00 held
+                </i>
+              )}
+            </div>
+          ))}
+        </div>
+        <small className={k.crmNote}>CRM updated: 2 visits, 1 new contact</small>
+      </section>
+      <section className={k.draft} aria-label="Draft reply">
+        <span className={k.label}>Draft reply · in your tone</span>
+        <p>Hi Maya, done: Thursday at 10:30 is yours. See you then. — Sam</p>
+        <Gate {...p} />
+      </section>
+    </div>
+  );
+}
+
+export const EMPLOYEE_SURFACES: Record<EmployeeId, (p: SurfaceProps) => ReactNode> = {
+  builder: Builder,
+  growth: Growth,
+  research: Research,
+  creative: Creative,
+  data: Data,
+  ops: Ops,
 };

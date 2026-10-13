@@ -130,11 +130,11 @@ function AdsApp({ ctx }: { ctx: Ctx }) {
   const goal = ctx.at('goal');
   const radius = ctx.at('radius');
   const pub = ctx.at('publish');
-  const stage = ['site', 'goal', 'radius', 'headline', 'budget', 'publish'].filter((x) => ctx.at(x)).length;
+  const stage = ['site', 'goal', 'radius', 'headline', 'budget', 'checks'].filter((x) => ctx.at(x)).length;
   return (
     <div className={a.ads}>
       <nav className={a.adsRail} aria-hidden="true">
-        {['Website', 'Goal', 'Location', 'Ad', 'Budget', 'Review'].map((n, i) => (
+        {['Website', 'Goal', 'Location', 'Ad', 'Budget', 'Checks'].map((n, i) => (
           <span key={n} data-done={on(i < stage)} data-now={on(i === stage)}>
             <i>{i < stage ? '✓' : i + 1}</i>
             {n}
@@ -165,6 +165,14 @@ function AdsApp({ ctx }: { ctx: Ctx }) {
             {ctx.field('headline', <em>Write a headline</em>)}
           </span>
         </div>
+        <div className={a.field}>
+          <span>Negative keywords</span>
+          <span className={a.input} data-t="ads.negatives" data-focus={on(ctx.now('negatives'))}>
+            <span className={a.neg}>jobs</span>
+            <span className={a.neg}>DIY</span>
+            {ctx.at('negatives') && <span className={a.neg} data-new="">{ctx.field('negatives')}</span>}
+          </span>
+        </div>
         <div className={a.field} data-narrow="">
           <span>Daily budget</span>
           <span className={a.input} data-t="ads.budget" data-focus={on(ctx.now('budget'))}>
@@ -189,6 +197,13 @@ function AdsApp({ ctx }: { ctx: Ctx }) {
           <b className={a.serpTitle}>{ctx.at('headline') ? ctx.field('headline') : 'Your headline appears here'}</b>
           <span className={a.serpText}>Gentle, on-time care. Book online in two minutes.</span>
         </div>
+        <ul className={a.preflight} data-t="ads.checks">
+          {['Ad policy', 'Landing page on phones', 'Conversion tracking'].map((c, i) => (
+            <li key={c} data-ok={on(ctx.at('checks'))} style={{ transitionDelay: `${i * 120}ms` }}>
+              {c}
+            </li>
+          ))}
+        </ul>
         <span className={a.btnPay} data-t="ads.publish" data-wait={on(pub)}>
           {pub ? 'Waiting for your approval' : 'Send for approval'}
         </span>

@@ -10,8 +10,8 @@ import { stepDurations } from './script';
  * hidden step resumes with the time it had left. Every timeout carries its generation, so a timeout from an
  * earlier scene is ignored by the reducer.
  */
-export function useDemoClock(root: React.RefObject<HTMLElement | null>, reduced: boolean) {
-  const [state, dispatch] = useReducer(demoReducer, undefined, () => initialState(false));
+export function useDemoClock(root: React.RefObject<HTMLElement | null>, reduced: boolean, active: boolean) {
+  const [state, dispatch] = useReducer(demoReducer, undefined, initialState);
   const [onScreen, setOnScreen] = useState(false);
   const [hidden, setHidden] = useState(false);
   // time already spent in the current step, for resuming after a pause
@@ -31,13 +31,13 @@ export function useDemoClock(root: React.RefObject<HTMLElement | null>, reduced:
     };
   }, [root]);
 
-  // reduced motion: no clock at all; each scene or employee opens on its complete final frame, and the visitor
-  // steps through the same states with Previous and Next
+  // reduced motion: no clock at all; each mission opens on its complete final frame
   useEffect(() => {
     if (reduced) dispatch({ type: 'seek', step: stepDurations(state.track).length - 1 });
   }, [reduced, state.track]);
 
-  const running = !reduced && onScreen && !hidden && !state.paused && !state.ended;
+  // the browser clock runs only in Browser mode; switching to AI Employees holds the mission where it is
+  const running = active && !reduced && onScreen && !hidden && !state.paused && !state.ended;
 
   useEffect(() => {
     if (!running) return;
@@ -52,5 +52,5 @@ export function useDemoClock(root: React.RefObject<HTMLElement | null>, reduced:
     };
   }, [running, state]);
 
-  return { state, dispatch, running, onScreen };
+  return { state, dispatch, running, onScreen, hidden };
 }

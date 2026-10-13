@@ -169,7 +169,8 @@ export function Pins({ steps, step, scope, accent }: { steps: Step[]; step: numb
         const t = find(el, st.pin.at);
         if (!t || t.closest('[aria-hidden="true"]')) return;
         const o = offsetIn(t, el);
-        out.push({ id: st.id, x: o.x, y: o.y + o.h, w: o.w, text: st.pin.text, kind: st.pin.kind, fresh: i === step });
+        // keep the finding inside the window: a long pin near the right edge slides left, still under its element
+        out.push({ id: st.id, x: Math.max(8, Math.min(o.x, el.clientWidth - 340)), y: o.y + o.h, w: o.w, text: st.pin.text, kind: st.pin.kind, fresh: i === step });
       });
       setBoxes(out);
     };

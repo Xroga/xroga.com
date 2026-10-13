@@ -12,9 +12,6 @@
 @keyframes settle {
   from { opacity: 0; transform: perspective(1100px) rotateX(4deg) translateY(16px); }
 }
-.computer[data-mode='employees'] {
-  --dock-room: 112px;
-}
 .bezel {
   position: relative;
   padding: 11px;
@@ -130,13 +127,16 @@
   inset: -20% -10%;
   background: linear-gradient(118deg, transparent 38%, rgba(160, 200, 255, 0.07) 46%, rgba(180, 160, 255, 0.05) 52%, transparent 60%);
 }
-.computer[data-mode='employees'] .wallpaper {
+.computer[data-mode='workforce'] .wallpaper {
   background:
     radial-gradient(60% 80% at 8% 100%, color-mix(in oklab, var(--accent) 42%, transparent), transparent 62%),
     radial-gradient(60% 70% at 96% -8%, rgba(132, 86, 240, 0.32), transparent 64%),
     conic-gradient(from 210deg at 38% 60%, rgba(14, 22, 52, 0.92), rgba(7, 10, 24, 0.96) 30%, rgba(24, 16, 52, 0.9) 60%, rgba(8, 12, 30, 0.96)),
     #070a16;
   transition: background 600ms linear;
+}
+.desk[data-mode='workforce'] {
+  background: #07080d;
 }
 .scene {
   position: absolute;
@@ -163,9 +163,6 @@
     0 40px 80px -30px rgba(0, 0, 0, 0.95),
     0 12px 30px -12px rgba(0, 0, 0, 0.7);
 }
-.window[data-kind='workspace'] {
-  left: 150px;
-}
 .cam {
   position: absolute;
   inset: 0;
@@ -185,9 +182,6 @@
   box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06);
   font: 500 13px/1 var(--font-inter), system-ui, sans-serif;
   color: #c7cdd8;
-}
-.window[data-kind='workspace'] .chrome {
-  grid-template-columns: auto 1fr auto;
 }
 .lights {
   display: inline-flex;
@@ -293,26 +287,6 @@
   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
 
-/* the colleague at its computer */
-.colleague {
-  position: absolute;
-  left: 26px;
-  top: 34px;
-  width: 100px;
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  animation: colleagueIn 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes colleagueIn {
-  from { opacity: 0; transform: translate(34cqw, 4cqh) scale(1.15); }
-}
-.colleagueName {
-  font: 600 12.5px/1.25 var(--font-inter), system-ui, sans-serif;
-  color: #e6e9ef;
-  text-align: center;
-}
-
 /* ------------------------------------------------------------------------------------------- the result */
 .outcome {
   position: absolute;
@@ -340,9 +314,6 @@
   gap: 10px;
   font: 650 16px/1.2 var(--font-inter), system-ui, sans-serif;
   color: #f4f6fa;
-}
-.outcomeMark {
-  margin-bottom: -14px;
 }
 .outcome ul {
   display: grid;
@@ -405,146 +376,6 @@
 }
 .again:hover { background: rgba(255, 255, 255, 0.11); }
 .again:focus-visible { outline: 2px solid #4589ff; outline-offset: 2px; }
-
-/* ------------------------------------------------------------------------------------------- team lineup */
-.lineup {
-  position: absolute;
-  inset: 0 0 var(--dock-room) 0;
-  container-type: size;
-}
-.parent {
-  position: absolute;
-  left: calc(50% - 46px);
-  top: 4%;
-  width: 92px;
-  height: 92px;
-  opacity: 0;
-  transform: scale(0.7);
-  transition: opacity 280ms linear, transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-.parent img {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 0 30px rgba(69, 137, 255, 0.7));
-}
-.parent::after {
-  content: '';
-  position: absolute;
-  inset: -40%;
-  border-radius: 50%;
-  border: 1.5px solid rgba(150, 190, 255, 0.5);
-  opacity: 0;
-}
-.lineup[data-phase='glow'] .parent,
-.lineup[data-phase='emerge'] .parent {
-  opacity: 1;
-  transform: scale(1);
-}
-.lineup[data-phase='glow'] .parent::after {
-  animation: pulse 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes pulse {
-  0% { opacity: 0.9; transform: scale(0.5); }
-  100% { opacity: 0; transform: scale(1.3); }
-}
-/* after the six arrive, the parent orb recedes into a soft light behind the team */
-.lineup[data-phase='settle'] .parent,
-.lineup[data-phase='feature'] .parent {
-  opacity: 0.4;
-  transform: scale(0.82);
-}
-.team {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.member {
-  --xn: 0;
-  position: absolute;
-  left: calc(var(--x) - 78px);
-  top: var(--y);
-  width: 156px;
-  /* each companion rises out of the parent orb on its own short arc, 100 ms apart */
-  opacity: 0;
-  transform: translate(calc(50cqw - var(--x)), calc(6cqh - var(--y))) scale(0.35);
-  transition:
-    opacity 380ms linear calc(var(--i) * 100ms),
-    transform 640ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * 100ms);
-}
-.lineup[data-phase='emerge'] .member,
-.lineup[data-phase='settle'] .member,
-.lineup[data-phase='feature'] .member {
-  opacity: 1;
-  transform: none;
-}
-/* the featured employee glides toward its computer; the other five sink into the dock */
-.lineup[data-phase='feature'] .member:not([data-featured]) {
-  opacity: 0;
-  transform: translateY(32cqh) scale(0.4);
-  transition: opacity 420ms linear, transform 600ms cubic-bezier(0.55, 0, 0.3, 1);
-}
-.lineup[data-phase='feature'] .member[data-featured] {
-  transform-origin: 50% 0;
-  transform: translate(calc(76px - var(--x)), calc(28px - var(--y))) scale(0.86);
-  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-.lineup[data-phase='feature'] .member[data-featured] .memberName,
-.lineup[data-phase='feature'] .member[data-featured] .memberJob {
-  opacity: 0;
-}
-.memberBtn {
-  display: grid;
-  justify-items: center;
-  gap: 2px;
-  width: 100%;
-  padding: 6px 0 8px;
-  border: 0;
-  border-radius: 18px;
-  background: none;
-  cursor: pointer;
-  color: inherit;
-  transition: background 220ms linear;
-}
-.memberBtn:hover {
-  background: rgba(255, 255, 255, 0.04);
-}
-.memberBtn:hover > span:first-child {
-  transform: translateY(-6px);
-}
-.memberBtn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-.memberName {
-  margin-top: 4px;
-  font: 650 14.5px/1.2 var(--font-inter), system-ui, sans-serif;
-  color: #f1f3f7;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 300ms linear;
-}
-.memberJob {
-  font: 500 12.5px/1.3 var(--font-inter), system-ui, sans-serif;
-  color: #9aa3b3;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 300ms linear 80ms;
-}
-.lineup[data-phase='settle'] .memberName,
-.lineup[data-phase='settle'] .memberJob,
-.lineup[data-phase='feature'] .memberName,
-.lineup[data-phase='feature'] .memberJob {
-  opacity: 1;
-}
-.memberName::after {
-  content: '';
-  display: block;
-  width: 18px;
-  height: 2px;
-  margin: 5px auto 0;
-  border-radius: 2px;
-  background: var(--accent);
-}
 
 /* ------------------------------------------------------------------------------------------------- dock */
 .desk > .dock {
@@ -642,54 +473,8 @@
 .dockItem[aria-pressed='true'] .appIcon {
   box-shadow: inset 0 0 0 1.5px rgba(120, 170, 255, 0.85), 0 12px 24px -8px rgba(69, 137, 255, 0.6);
 }
-.teamIcon {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  margin-bottom: 11px;
-}
-.teamIcon img {
-  width: 42px;
-  height: 42px;
-  filter: drop-shadow(0 4px 10px rgba(69, 137, 255, 0.55));
-}
-.dockSep {
-  align-self: stretch;
-  width: 1px;
-  margin: 6px 4px 10px;
-  background: rgba(255, 255, 255, 0.12);
-}
-.dockMate {
-  position: relative;
-  display: block;
-  height: 57px;
-}
-.dockBadge {
-  position: absolute;
-  right: -2px;
-  top: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #9b7bff;
-  box-shadow: 0 0 0 2px #10131c, 0 0 10px #9b7bff;
-}
-
 /* ------------------------------------------------------------------------------------------------ narrow */
 @media (max-width: 900px) {
-  .window[data-kind='workspace'] {
-    left: 30px;
-    top: 86px;
-  }
-  .colleague {
-    left: 18px;
-    top: 6px;
-    width: auto;
-    grid-auto-flow: column;
-    align-items: center;
-    gap: 10px;
-  }
   .outcome {
     left: 18px;
     right: 18px;
@@ -709,15 +494,19 @@
     border-radius: 14px;
   }
   .menubar {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr auto;
     height: auto;
     padding: 10px 12px;
+    row-gap: 6px;
   }
-  .brand,
+  .brand {
+    display: none;
+  }
   .clock {
     display: none;
   }
   .ask {
+    grid-column: 1 / -1;
     justify-self: start;
     white-space: normal;
     font-size: 13px;
@@ -727,7 +516,7 @@
     display: inline-block;
     margin-bottom: 4px;
   }
-  /* on phones the dock becomes a swipeable row above the screen, so the choice stays in reach */
+  /* phones, Browser mode: the mission dock becomes a swipeable row above the screen */
   .desk {
     display: flex;
     flex-direction: column;
@@ -778,17 +567,11 @@
     margin: 12px 10px 10px;
     height: 470px;
   }
-  .window[data-kind='workspace'] {
-    left: auto;
-    top: auto;
-    margin-top: 6px;
+  .url {
+    display: none;
   }
-  .colleague {
-    position: relative;
-    left: auto;
-    top: auto;
-    margin: 12px 12px 0;
-    justify-content: start;
+  .chrome {
+    grid-template-columns: auto 1fr auto;
   }
   .outcome {
     position: relative;
@@ -801,82 +584,16 @@
   .outcome[data-show] {
     display: block;
   }
-  .lineup {
-    position: relative;
-    inset: auto;
-    height: auto;
-    container-type: inline-size;
-  }
-  .parent {
-    display: none;
-  }
-  .team {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 4px 6px;
-    padding: 12px 10px 16px;
-  }
-  .member {
-    position: relative;
-    left: auto;
-    top: auto;
-    width: auto;
-    opacity: 1;
-    transform: none !important;
-    transition: none;
-  }
-  .lineup[data-phase] .member:not([data-featured]) {
-    opacity: 1;
-  }
-  .memberName,
-  .memberJob {
-    opacity: 1 !important;
-  }
-  .memberName {
-    font-size: 13px;
-    white-space: normal;
-    text-align: center;
-  }
-  .memberJob {
-    display: none;
-  }
-  /* phones: smaller companions in the lineup and at the desk (zoom keeps their proportions and layout box) */
-  .memberBtn > span:first-child {
-    zoom: 0.6;
-  }
-  .colleague > span:first-child {
-    zoom: 0.55;
-  }
-  .colleague {
-    gap: 8px;
-  }
-  .url,
-  .window[data-kind='workspace'] .driver {
-    display: none;
-  }
-  .chrome {
-    grid-template-columns: auto 1fr auto;
-  }
-  .window[data-kind='workspace'] .chrome {
-    grid-template-columns: auto 1fr;
-  }
-  .title {
-    justify-self: start;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .computer,
   .scene,
-  .ask,
-  .colleague,
-  .parent::after {
+  .ask {
     animation: none !important;
   }
   .cam,
   .outcome,
-  .member,
-  .parent,
   .appIcon {
     transition: none !important;
   }

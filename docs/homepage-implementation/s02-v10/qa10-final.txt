@@ -1,0 +1,89 @@
+PASS browser: no horizontal overflow @320 []
+PASS browser: heading clear of the sticky nav @320 head 92 nav 64
+PASS workforce: no horizontal overflow @320 []
+PASS workforce: heading clear of the sticky nav @320 head 92 nav 64
+PASS no S02 errors @320 
+PASS browser: no horizontal overflow @360 []
+PASS browser: heading clear of the sticky nav @360 head 94 nav 64
+PASS workforce: no horizontal overflow @360 []
+PASS workforce: heading clear of the sticky nav @360 head 94 nav 64
+PASS no S02 errors @360 
+PASS browser: no horizontal overflow @390 []
+PASS browser: heading clear of the sticky nav @390 head 98 nav 64
+PASS workforce: no horizontal overflow @390 []
+PASS workforce: heading clear of the sticky nav @390 head 98 nav 64
+PASS no S02 errors @390 
+PASS browser: no horizontal overflow @430 []
+PASS browser: heading clear of the sticky nav @430 head 101 nav 64
+PASS workforce: no horizontal overflow @430 []
+PASS workforce: heading clear of the sticky nav @430 head 101 nav 64
+PASS no S02 errors @430 
+PASS browser: no horizontal overflow @768 []
+PASS browser: heading clear of the sticky nav @768 head 105 nav 68
+PASS workforce: no horizontal overflow @768 []
+PASS workforce: heading clear of the sticky nav @768 head 105 nav 68
+PASS no S02 errors @768 
+PASS browser: no horizontal overflow @1024 []
+PASS browser: heading clear of the sticky nav @1024 head 118 nav 72
+PASS workforce: no horizontal overflow @1024 []
+PASS workforce: heading clear of the sticky nav @1024 head 118 nav 72
+PASS no S02 errors @1024 
+PASS browser: no horizontal overflow @1280 []
+PASS browser: heading clear of the sticky nav @1280 head 120 nav 72
+PASS browser: heading + computer in one viewport @1280x800 computer bottom 794
+PASS workforce: no horizontal overflow @1280 []
+PASS workforce: heading clear of the sticky nav @1280 head 120 nav 72
+PASS workforce: heading + computer in one viewport @1280x800 computer bottom 794
+PASS no S02 errors @1280 
+PASS browser: no horizontal overflow @1440 []
+PASS browser: heading clear of the sticky nav @1440 head 124 nav 72
+PASS browser: heading + computer in one viewport @1440x900 computer bottom 885
+PASS workforce: no horizontal overflow @1440 []
+PASS workforce: heading clear of the sticky nav @1440 head 124 nav 72
+PASS workforce: heading + computer in one viewport @1440x900 computer bottom 885
+PASS no S02 errors @1440 
+PASS browser: no horizontal overflow @1920 []
+PASS browser: heading clear of the sticky nav @1920 head 131 nav 72
+PASS browser: heading + computer in one viewport @1920x1080 computer bottom 974
+PASS workforce: no horizontal overflow @1920 []
+PASS workforce: heading clear of the sticky nav @1920 head 131 nav 72
+PASS workforce: heading + computer in one viewport @1920x1080 computer bottom 974
+PASS no S02 errors @1920 
+PASS browser: first mission runs on screen {"mode":"browser","track":"browser:bug","step":"coupon","phase":"working","view":"team","emp":"ops","running":true}
+PASS browser: holds its result, no automatic switching {"mode":"browser","track":"browser:bug","step":"result","phase":"result","view":"team","emp":"ops","running":false}
+PASS browser: Replay demo appears only on the settled result 
+PASS browser: quick switching lands on the last choice {"mode":"browser","track":"browser:article","step":"open","phase":"ready","view":"team","emp":"ops","running":true}
+PASS keyboard: arrow keys switch mode and move focus 
+PASS browser clock holds while AI Employees is open radius → radius
+PASS switching back keeps the browser mission 
+PASS browser: no S02 errors 
+PASS team entrance plays on first visit 
+PASS team entrance completes in 2-3 s 1529 ms
+PASS six specialists, each a real button 
+PASS no browser pointer in AI Employees 
+PASS no mission dock in AI Employees 
+PASS Enter on a specialist opens their assignment {"mode":"workforce","track":"browser:bug","step":"loop","phase":"working","view":"assignment","emp":"ops","running":false}
+PASS assignment step 1 shows goal, trigger and deliverable 
+PASS assignment step 2 shows tools and approvals 
+PASS Preview assignment starts the night away {"mode":"workforce","track":"browser:bug","step":"loop","phase":"working","view":"away","beat":"0","emp":"ops","running":false}
+PASS the night away pauses offscreen 2 → 2
+PASS back to results after the night away {"mode":"workforce","track":"browser:bug","step":"loop","phase":"working","view":"workspace","emp":"ops","running":false}
+PASS return shows what changed, deliverables, decision and next run 
+PASS six desks with six different skeletons repo,crm,research,studio,data,ops
+PASS Growth shows the brief received from Research 
+PASS a decision is recorded locally only 
+PASS the entrance does not replay 
+PASS after the return the team shows each status 
+PASS S02 layout shift during the visit < 0.1 0.00596405058600448
+PASS workforce: no S02 errors 
+PASS mock apps and desks: no links inside 
+PASS reduced: browser shows the settled result at once, no pointer {"mode":"browser","track":"browser:bug","step":"result","phase":"result","view":"team","emp":"ops","running":false}
+PASS reduced: the team appears without the entrance 
+PASS reduced: the whole night shows at once and waits for the visitor {"mode":"workforce","track":"browser:bug","step":"result","phase":"result","view":"away","beat":"5","emp":"builder","running":false}
+PASS reduced: See what changed opens the results 
+PASS baseline: approved hero on this machine {"avgFps":2,"p95ms":517}
+PASS browser mission animating paces at least as well as the hero {"avgFps":44,"p95ms":33}
+PASS scrolling through S02 paces at least as well as the hero {"avgFps":26,"p95ms":67}
+PASS team entrance paces at least as well as the hero {"avgFps":38,"p95ms":50}
+PASS night away paces at least as well as the hero {"avgFps":40,"p95ms":33}
+{"pass":88,"fail":0}
