@@ -1,5 +1,11 @@
 # Command 002 evidence
 
+## Original-source continuation (current)
+
+At `d6b6208528c79f47b2dbfa6992233f45e488286c`, the original ZIP and all eight declared file hashes/byte counts were verified. All 119 original feature rows and 72 missions are mapped into the existing ledger, with exact mission Markdown/manifest correspondence; 445 requirements / 527 mappings. All original CSV states remain UNVERIFIED/NOT_RUN; original owner/mission/acceptance/evidence columns are empty. Derived assignments are assessor annotations, not implementation proof. Original 01–10 missions alias stricter Batch One specifications; 11–72 remain future scope. No runtime dependency adopted from the 56 research catalog entries. Private originals stay outside Git.
+
+`node --test scripts/xroga/requirements.test.mjs scripts/xroga/private-research.test.mjs`: 12 PASS, zero fail/skip. Deterministic ledger/schema/hash validators PASS. Complete original transcript semantic review and 243 earlier family/history alias reviews remain pending; historical shared chat page remains inaccessible. Original row reconciliation is no longer blocked by missing files, but the original unmodified specification is not claimed fully complete. The following sections preserve the earlier available-source checkpoint.
+
 Assessment: **PASS_AVAILABLE_SOURCE_GATE_WITH_DEFERRED_HISTORICAL_COVERAGE**, under the user's explicit amendment. The original unmodified Command 002 is not fully reconciled: the original 119 feature rows and 72 mission definitions were not supplied or read.
 
 Source application/inventory snapshot: `a06f8cb9a2b167f41fcb4dfe5ea53582f5734097`. Command 001 implementation commit is recorded in the tracker. No runtime/provider/schema/production behavior changes occur in Command 002.

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3c421c2e4adf2aae58fce2aaa15fa1ec4187cb91",
+  "source_sha": "d6b6208528c79f47b2dbfa6992233f45e488286c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -10984,7 +10984,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "70472c2a19fbcd336969dd39e2d47a8e56d1f393d8d43a96939951eea587bfcd"
+      "sha256": "0384a97562d3a758551c2d150dd37775fb92c78d0789c78da0279dcd780fa6ea"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -13924,15 +13924,15 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s02/Theater.tsx",
-      "sha256": "f74ea9182868e67b2cff980a5e748ff44f0162e39f2a6f113bfa1fbeaddeabd3"
+      "sha256": "43089fb13d3413b05a019cc3a4731b9886aeb0cbb25f69f8d971aa4d5bb8e93b"
     },
     {
-      "path": "frontend/src/components/homepage-next/s02/Workforce.tsx",
+      "path": "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx",
       "sha256": "8365a29f97a7a5d264fe0dfb9840b7ad04813684c0b1b90317dabd4de82938f2"
     },
     {
       "path": "frontend/src/components/homepage-next/s02/Workspaces.tsx",
-      "sha256": "5a7a29d21499a6af2d2e952ecaf4657cd873402337d5be7dfc247b6f4d1eebb1"
+      "sha256": "b0998d51ae7de4cbfdba3afa82e06354f9ba47cc2486e113ad7f37716444983d"
     },
     {
       "path": "frontend/src/components/homepage-next/s02/ctx.tsx",

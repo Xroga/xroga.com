@@ -27,6 +27,9 @@ jobs:
       # not couple branch validation to the configuration of an older release.
       FRONTEND_URL: http://127.0.0.1:3000
       NODE_ENV: test
+      XROGA_RELEASE_SHA: ${{ github.sha }}
+      EXPECTED_RELEASE_SHA: ${{ github.sha }}
+      EXPECTED_WEB_RELEASE_SHA: ${{ github.sha }}
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
@@ -117,7 +120,8 @@ jobs:
         # Independent evidence still runs after a browser assertion fails, but
         # never against an app that failed readiness; failures remain fatal.
         if: ${{ !cancelled() && steps.start-application.outcome == 'success' }}
-        run: node --import tsx --test backend/src/security/tenantIsolation.local.integration.ts
+        working-directory: backend
+        run: node --import tsx --test src/security/tenantIsolation.local.integration.ts
       - name: Collect bounded redacted local application logs
         if: always()
         run: node scripts/security/collect-local-security-logs.mjs

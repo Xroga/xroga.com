@@ -26,8 +26,8 @@ test('current public S00 homepage, themes and reduced-motion accessibility are c
   // accessibility instead.
 
   // Main intentionally removed the public header theme control. Exercise the
-  // real guest workspace selector, then prove each choice persists on the home
-  // page; do not resurrect retired UI or replace interaction with store mutation.
+  // real guest workspace selector and its persistence. Public marketing pages
+  // deliberately force MARKETING_THEME=black without changing user preferences.
   await expect(page.getByRole('button', { name: 'Change website theme' })).toHaveCount(0);
   for (const theme of ['Beige', 'White', 'Gray', 'Black']) {
     await page.goto('/workspace');
@@ -35,8 +35,12 @@ test('current public S00 homepage, themes and reduced-motion accessibility are c
     await page.getByRole('menuitemradio', { name: new RegExp(`^${theme}`) }).click();
     await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
     await page.goto('/');
+    await expect(page.locator('body')).toHaveClass(/theme-black/);
+    await page.goto('/workspace');
     await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
   }
+
+  await page.goto('/');
 
   // The public homepage now renders S00Hero rather than the retired
   // HomepageCompanionStage. Assert actual public interactions without restoring

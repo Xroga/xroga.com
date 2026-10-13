@@ -80,8 +80,8 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(async () => {
-  if (ownerId) await admin.auth.admin.deleteUser(ownerId);
-  if (outsiderId) await admin.auth.admin.deleteUser(outsiderId);
+  if (ownerId) expect((await admin.auth.admin.deleteUser(ownerId)).error).toBeNull();
+  if (outsiderId) expect((await admin.auth.admin.deleteUser(outsiderId)).error).toBeNull();
 });
 
 test('real Supabase login persists, Operations works, cross-tenant access is denied, and logout clears the session', async ({ page }) => {

@@ -11,7 +11,7 @@
  * Everything is fictional sample data; decisions only mark this page's local demo state.
  */
 import type { CSSProperties, ReactNode } from 'react';
-import type { SurfaceProps } from './Workforce';
+import type { SurfaceProps } from './WorkforceSurface';
 import type { EmployeeId } from './script';
 import k from './Workspaces.module.css';
 

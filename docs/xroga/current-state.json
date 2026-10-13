@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "3c421c2e4adf2aae58fce2aaa15fa1ec4187cb91",
-    "sourceTimestampUtc": "2026-10-13T23:03:27+05:00",
-    "auditStartedUtc": "2026-10-13T18:15:02.558Z",
+    "sha": "d6b6208528c79f47b2dbfa6992233f45e488286c",
+    "sourceTimestampUtc": "2026-10-13T23:15:20+05:00",
+    "auditStartedUtc": "2026-10-13T18:24:50.016Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -44663,7 +44663,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/Workforce.tsx:15"
+        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -44829,7 +44829,7 @@
       "id": "surface:c99f71f1a449010d1d98",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/Theater.tsx",
-      "sha256": "f74ea9182868e67b2cff980a5e748ff44f0162e39f2a6f113bfa1fbeaddeabd3",
+      "sha256": "43089fb13d3413b05a019cc3a4731b9886aeb0cbb25f69f8d971aa4d5bb8e93b",
       "symbols": [
         "BrowserScene",
         "Dock",
@@ -44848,7 +44848,7 @@
       "imports": [
         "./Missions",
         "./Theater.module.css",
-        "./Workforce",
+        "./WorkforceSurface",
         "./ctx",
         "./inert",
         "./motion",
@@ -44859,7 +44859,7 @@
       "runtimeImports": [
         "frontend/src/components/homepage-next/s02/Missions.tsx",
         "frontend/src/components/homepage-next/s02/Theater.module.css",
-        "frontend/src/components/homepage-next/s02/Workforce.tsx",
+        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx",
         "frontend/src/components/homepage-next/s02/ctx.tsx",
         "frontend/src/components/homepage-next/s02/inert.ts",
         "frontend/src/components/homepage-next/s02/motion.tsx",
@@ -44890,9 +44890,9 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
-      "id": "surface:a52619c562c6c06a62dd",
+      "id": "surface:3141491f6b15bca270c9",
       "subsystem": "frontend",
-      "sourcePath": "frontend/src/components/homepage-next/s02/Workforce.tsx",
+      "sourcePath": "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx",
       "sha256": "8365a29f97a7a5d264fe0dfb9840b7ad04813684c0b1b90317dabd4de82938f2",
       "symbols": [
         "AssignmentSheet",
@@ -44971,7 +44971,7 @@
       "id": "surface:111b0452e418dff5c8f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/Workspaces.tsx",
-      "sha256": "5a7a29d21499a6af2d2e952ecaf4657cd873402337d5be7dfc247b6f4d1eebb1",
+      "sha256": "b0998d51ae7de4cbfdba3afa82e06354f9ba47cc2486e113ad7f37716444983d",
       "symbols": [
         "Asset",
         "Builder",
@@ -44987,7 +44987,7 @@
         "days"
       ],
       "imports": [
-        "./Workforce",
+        "./WorkforceSurface",
         "./Workspaces.module.css",
         "./script",
         "react"
@@ -44999,7 +44999,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/Workforce.tsx:16"
+        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -45257,7 +45257,7 @@
       "callers": [
         "frontend/src/components/homepage-next/s02/S02Work.tsx:16",
         "frontend/src/components/homepage-next/s02/Theater.tsx:17",
-        "frontend/src/components/homepage-next/s02/Workforce.tsx:17",
+        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:17",
         "frontend/src/components/homepage-next/s02/engine.ts:6",
         "frontend/src/components/homepage-next/s02/s02.test.ts:5",
         "frontend/src/components/homepage-next/s02/useDemoClock.ts:5",
@@ -45369,7 +45369,7 @@
       ],
       "callers": [
         "frontend/src/components/homepage-next/s02/S02Work.tsx:19",
-        "frontend/src/components/homepage-next/s02/Workforce.tsx:18",
+        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:18",
         "frontend/src/components/homepage-next/s02/s02.test.ts:6"
       ],
       "reachable": true,
@@ -92143,9 +92143,8 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "70472c2a19fbcd336969dd39e2d47a8e56d1f393d8d43a96939951eea587bfcd",
+      "sha256": "0384a97562d3a758551c2d150dd37775fb92c78d0789c78da0279dcd780fa6ea",
       "sourceEntrypoints": [
-        "backend/src/security/tenantIsolation.local.integration.ts",
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
         "scripts/security/disposable-supabase.test.mjs",
@@ -93420,8 +93419,8 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:3bf7523263e3fa26981c",
-      "sourcePath": "frontend/src/components/homepage-next/s02/Workforce.tsx",
+      "id": "finding:3fcc6c3990827d45e81b",
+      "sourcePath": "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx",
       "line": 37,
       "kind": "SIMULATED",
       "reachable": true,
@@ -93430,8 +93429,8 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0042552ae0a4dd48ba8c",
-      "sourcePath": "frontend/src/components/homepage-next/s02/Workforce.tsx",
+      "id": "finding:c35c67a2a2cbcd1ab4e8",
+      "sourcePath": "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx",
       "line": 220,
       "kind": "SIMULATION",
       "reachable": true,
@@ -95889,56 +95888,56 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:9f2d6e199a3335d8cbf8",
+      "id": "frontend-call:552a3383ab10c0a2fa57",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 97,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:edac02b3f981b29e6926",
+      "id": "frontend-call:8628111198d1874699b7",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 100,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ce23649908f1d86e5fd5",
+      "id": "frontend-call:d23e98b3d0e0643125de",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 791,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:73ce139f2c328e55cc86",
+      "id": "frontend-call:805b01ccc3ca9dd1ee6e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 792,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7994869964a148798979",
+      "id": "frontend-call:7c1106711266c8021c13",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 794,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7730770f6925a6fe39bf",
+      "id": "frontend-call:e11edfe9673eb14dee4b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 795,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ff424a5165321e93a9b1",
+      "id": "frontend-call:3a3b8a7c4f750b76fe1e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 802,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a65e6c158a8b9a1fe24d",
+      "id": "frontend-call:a7375a0c3a7cbd4e45ba",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 816,
       "callee": "fetch",

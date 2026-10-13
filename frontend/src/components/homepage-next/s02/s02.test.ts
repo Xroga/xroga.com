@@ -7,7 +7,7 @@ import { initialWorkforce, workforceReducer, type WfAction, type WfState } from 
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const MISSION_SRC = read('./Missions.tsx');
-const WORKFORCE_SRC = read('./Workforce.tsx');
+const WORKFORCE_SRC = read('./WorkforceSurface.tsx');
 const DESK_SRC = read('./Workspaces.tsx');
 const THEATER = read('./Theater.tsx');
 const COMPANION = read('./Companion.tsx');
