@@ -9,13 +9,37 @@
   "rlsEnabledTables": 118,
   "semanticCallerReviewComplete": false,
   "orphanRemediationCount": null,
-  "localBackendTests": {"newTenantTests":19,"existingRunAndTerminalTests":10,"pass":29,"fail":0,"skipped":0},
-  "localFrontendTests": {"newRealmTests":3,"existingConfigTests":2,"pass":5,"fail":0,"skipped":0},
-  "scannerTests": {"pass":2,"fail":0,"skipped":0},
-  "typechecks": {"backend":"PASS","frontendNonIncremental":"PASS"},
-  "disposablePolicyDatabase": "PASS_CI_MINIMAL_TARGET_SCHEMA_ONLY_AT_e0186bd7",
-  "disposablePolicyCi": "https://github.com/Xroga/xroga.com/actions/runs/38421959197",
-  "disposablePolicyAssertions": {"tests":5,"pass":5,"fail":0,"skipped":0},
+  "localBackendTests": {
+    "newTenantTests": 19,
+    "existingRunAndTerminalTests": 10,
+    "pass": 29,
+    "fail": 0,
+    "skipped": 0
+  },
+  "localFrontendTests": {
+    "newRealmTests": 3,
+    "existingConfigTests": 2,
+    "pass": 5,
+    "fail": 0,
+    "skipped": 0
+  },
+  "scannerTests": {
+    "pass": 2,
+    "fail": 0,
+    "skipped": 0
+  },
+  "typechecks": {
+    "backend": "PASS",
+    "frontendNonIncremental": "PASS"
+  },
+  "disposablePolicyDatabase": "PASS_CI_MINIMAL_TARGET_SCHEMA_ONLY_AT_1cef0ff7",
+  "disposablePolicyCi": "https://github.com/Xroga/xroga.com/actions/runs/38423642993",
+  "disposablePolicyAssertions": {
+    "tests": 5,
+    "pass": 5,
+    "fail": 0,
+    "skipped": 0
+  },
   "firstAggregateCi": "https://github.com/Xroga/xroga.com/actions/runs/38421958805",
   "firstAggregateResult": "FAIL_FRONTEND_PARAMETER_TYPING_AFTER_2745_BACKEND_PASS",
   "fullFreshUpgradeSupabase": "BLOCKED_PENDING_ISOLATED_ENVIRONMENT",
@@ -24,5 +48,40 @@
   "productionDeployed": false,
   "productionMigrationApplied": false,
   "newRuntimePackages": 0,
-  "acceptanceResult": "INCOMPLETE_NOT_PASS"
+  "acceptanceResult": "INCOMPLETE_NOT_PASS",
+  "codeSha": "1cef0ff71dee2d5aa446826a247c4ef4d4dffa27",
+  "testedMergeSha": "a586aa91b5b73951aa04aa4260e8edc7e08074bb",
+  "aggregateCi": "https://github.com/Xroga/xroga.com/actions/runs/38423643123",
+  "aggregateResult": "PASS_COMPONENT_REGRESSION_NOT_FULL_TENANT_ACCEPTANCE",
+  "repeatedRuns": 2,
+  "perRun": {
+    "stages": 21,
+    "backendTests": 2749,
+    "frontendTests": 994,
+    "baselineGuards": 13,
+    "combinedFixtures": 54,
+    "fail": 0,
+    "skipped": 0,
+    "trackedMutation": false
+  },
+  "browserCi": "https://github.com/Xroga/xroga.com/actions/runs/38423642971",
+  "browserResult": "PASS_THREE_GUEST_FIXTURE_TESTS_NOT_AUTHENTICATED_E2E",
+  "privilegedFactorySites": 159,
+  "persistenceCandidates": 668,
+  "ownerPredicateCandidates": 157,
+  "unresolvedSemanticReviewCandidates": 668,
+  "automaticallyCertifiedScopedCallers": 0,
+  "registeredNarrowGlobalExceptions": 1,
+  "accessMatrixFile": "docs/xroga/security/tenant-model.md",
+  "accessMatrixFileSha256": "444a3f7f4736b6bb0e331e31f804a0d639b7c5fe058bbc9306c2c8954284aa31",
+  "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
+  "tenantBoundaryCiTests": {
+    "tests": 20,
+    "pass": 20,
+    "fail": 0,
+    "skipped": 0
+  },
+  "fullAcceptance": "INCOMPLETE_NOT_PASS",
+  "authenticatedBrowserCi": "https://github.com/Xroga/xroga.com/actions/runs/38423643160",
+  "hashEncoding": "SHA256_UTF8_LF_CANONICAL"
 }
