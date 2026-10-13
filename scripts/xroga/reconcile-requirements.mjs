@@ -202,6 +202,7 @@ export function buildRequirements() {
       record.rationale+='; original missions 01–10 are explicit semantic aliases of the stricter Batch One specifications; neither source overrides unpassed gates';
     } else {
       record=base(missionId(mission.number),mission.title,mission.implementation,'Original planned outcome; independently implement and verify in the later mission, not Batch One',refs,mission.phase,[],`MISSION-${String(mission.number).padStart(3,'0')}`,[mission.acceptance]);
+      record.current_state='UNKNOWN_BLOCKED';record.disposition='EXTEND';
       record.dependencies=[missionId(mission.number-1)];record.source_reported_states=['REQUIREMENT_NOT_IMPLEMENTATION'];record.unresolved_questions=['Later-mission implementation is outside Batch One; current functional evidence must be established separately'];
       requirements.push(record);
     }
@@ -213,6 +214,7 @@ export function buildRequirements() {
       'Original requested capability; research is not proof of execution',[{source_id:featureSource,locator:`CSV data row ${feature.row}; ${feature.group}`}],feature.group,[],`MISSION-${String(feature.assessor_primary_mission).padStart(3,'0')}`,
       [`Independently verify ${feature.feature} with real evidence and applicable negative cases`,`Meet mapped mission acceptance: ${original.missions[feature.assessor_primary_mission-1].acceptance}`]);
     record.dependencies=[missionId(feature.assessor_primary_mission)];record.source_reported_states=[feature.observed_state,feature.test_result];record.confidence='LOW';
+    record.current_state='UNKNOWN_BLOCKED';record.disposition='EXTEND';
     record.rationale='Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.';
     record.unresolved_questions=['Original CSV contains no acceptance test/evidence/owner; proposed acceptance and owner are assessor annotations. No current functionality inferred.'];
     requirements.push(record);source_mappings.push({source_id:featureSource,source_row_id:`FEATURE-${String(feature.row).padStart(3,'0')}`,requirement_id:record.requirement_id});

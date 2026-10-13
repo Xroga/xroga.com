@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "16abb16ff3f4136c9f715c7bb37b0f858275c999",
+  "source_sha": "934cb850fb30d16937491776ac518e24b056943d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -568,6 +568,7 @@
         "VERCEL_OAUTH_CLIENT_SECRET",
         "VERCEL_OAUTH_SCOPES",
         "XB01_DISPOSABLE_SUPABASE",
+        "XB01_LOCAL_DATABASE_URL",
         "XROGA_ISOLATED_AUTH_BUILD",
         "XROGA_SANDBOX_BROWSER_IMAGE"
       ],
@@ -10211,6 +10212,25 @@
       ]
     },
     {
+      "name": "XB01_LOCAL_DATABASE_URL",
+      "consuming_sources": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-127-0-0-1"
+      ]
+    },
+    {
       "name": "XROGA_ALLOWED_MODELS",
       "consuming_sources": [
         "backend/src/ai/routerConfig.ts"
@@ -11316,7 +11336,7 @@
     },
     {
       "path": "backend/src/ai/providerHealthStore.ts",
-      "sha256": "ce7d894787603c1645da6ff6415badd9061f01bd85b49233dda1d8eb13329729"
+      "sha256": "ec92f541a194e0c3c03ef5c12d9afc6e6052aadc7ca9d5e2b6ebf27d6c260b0d"
     },
     {
       "path": "backend/src/ai/providerPolicy.ts",
@@ -11360,7 +11380,7 @@
     },
     {
       "path": "backend/src/ai/runReconciler.ts",
-      "sha256": "91705914cfb71b4653d478ff0c4a47b3748e5615ec317692cceca987a4d56fd5"
+      "sha256": "cfb0a5c3f8e3dff46ede12147dfd3155bb1d052ca829a4ed07a0e5db63b3ecb4"
     },
     {
       "path": "backend/src/ai/runStore.ts",
@@ -11996,7 +12016,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
+      "sha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
     },
     {
       "path": "backend/src/operations/permissions.ts",
@@ -12164,7 +12184,7 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sha256": "9262b42a79d31698ea44fbeeb65b272079a1df1542209fa643c73cf2a41d72d2"
+      "sha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0"
     },
     {
       "path": "backend/src/routes/notifications.ts",
@@ -12292,7 +12312,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "3decc6b2f938d80f9a612b4e2c45605f871a4160609e680b4332bfce15ab15ee"
+      "sha256": "ade895e09606260ae006573135cf992465bb10f1d10d912473207fe6d3dc9da6"
     },
     {
       "path": "backend/src/security/tenantContext.ts",
@@ -12304,7 +12324,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "c79ddd3f0a0529364131bd306cf45468ffadbc4be93ec5db24fd2b9bb3c88c96"
+      "sha256": "2fbbb00e6a92795c570230abcc095f21aac054e8da3191fb66a0a5753111577f"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12452,7 +12472,7 @@
     },
     {
       "path": "backend/src/services/responseCache.ts",
-      "sha256": "dd440ab1e2a78f7e92bd2a28e3384563dfbcf145962e72b7e4ff9c19b04ab3a1"
+      "sha256": "b333804ab4e08635a8ecc1183a4774b9d01e96fe4946cee30cac40c9c1bacdca"
     },
     {
       "path": "backend/src/services/scaffolds/chromeExtensionScaffold.ts",
@@ -17663,14 +17683,14 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 11,
+      "line": 14,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 11,
+      "line": 14,
       "credentialsInUrl": false
     },
     {

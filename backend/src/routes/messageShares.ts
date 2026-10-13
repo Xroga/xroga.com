@@ -1,7 +1,8 @@
 import { randomBytes } from 'node:crypto';
 import { Router } from 'express';
 import { z } from 'zod';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { getTenantSupabaseAdmin, getGlobalSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import { requireTenantContext } from '../security/tenantContext.js';
 import { ensureMessageSharesSchema } from '../db/ensureMessageSharesSchema.js';
 import { authMiddleware, verifyAccessToken, type AuthRequest } from '../middleware/auth.js';
 import { cleanSharedText } from '../lib/messageShareText.js';
@@ -66,7 +67,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res) => {
   await ensureMessageSharesSchema().catch(() => false);
   const token = randomBytes(24).toString('base64url');
   try {
-    const { data, error } = await getSupabaseAdmin()
+    const { data, error } = await getTenantSupabaseAdmin(requireTenantContext(req.tenantContext))
       .from('message_shares')
       .insert({
         token,
@@ -81,7 +82,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res) => {
     if (error) throw error;
     res.status(201).json({ share: toShare(data as ShareRow) });
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    res.status(503).json({ error: 'The share could not be saved. Retry shortly.' });
   }
 });
 
@@ -94,7 +95,7 @@ router.get('/:token', async (req: AuthRequest, res) => {
     return;
   }
   try {
-    const { data, error } = await getSupabaseAdmin()
+    const { data, error } = await getGlobalSupabaseAdmin('message_share_resolution')
       .from('message_shares')
       .select('token, owner_id, visibility, scope, prompt, response, created_at')
       .eq('token', parsedToken.data)
@@ -128,11 +129,11 @@ router.get('/:token', async (req: AuthRequest, res) => {
     const share = toShare(row);
     res.setHeader(
       'Cache-Control',
-      share.visibility === 'public' ? 'public, max-age=60' : 'private, no-store',
+      'private, no-store',
     );
     res.json({ share });
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    res.status(503).json({ error: 'The share is temporarily unavailable. Retry shortly.' });
   }
 });
 
@@ -143,7 +144,7 @@ router.delete('/:token', authMiddleware, async (req: AuthRequest, res) => {
     return;
   }
   try {
-    const { data, error } = await getSupabaseAdmin()
+    const { data, error } = await getTenantSupabaseAdmin(requireTenantContext(req.tenantContext))
       .from('message_shares')
       .update({ revoked_at: new Date().toISOString() })
       .eq('token', parsedToken.data)
@@ -158,7 +159,7 @@ router.delete('/:token', authMiddleware, async (req: AuthRequest, res) => {
     }
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    res.status(503).json({ error: 'The share could not be closed. Retry shortly.' });
   }
 });
 

@@ -2,6 +2,17 @@
 
 Starting verified policy SHA: 224fb2b38c92e6351429a2c073a95bd265d1378e; evidence checkpoint 3f06da0b. No hosting, billing or production database change. Source report is Command 007 in research/inputs/batch-one-report.txt.
 
+Latest isolated proof: CI 38448018758, `934cb850`, three real browser tests and eleven real tenant tests PASS, plus full 68-file fresh/upgrade migrations and both builds. This supersedes earlier environment-blocked notes, not the full semantic/staging acceptance gate. Subsequent changes require rerun.
+
+## Additional semantic boundaries under verification
+
+- Operations memberships are server-only; actor cannot INSERT a membership through the browser. Access now requires the membership's persisted owner to match the actual project owner; portfolio validates that relation and bounds child queries to authorized owners. Corrupt/misbound service rows do not confer permission. Revocation rereads server state; valid delegated viewer access remains supported.
+- Five explicitly named global exceptions: fixed readiness probe; startup stale-run maintenance with minimum five-minute grace; shutdown for supplied active IDs AND a required persisted worker lease ID; server-only platform model circuit aggregates with fixed columns; owner-opt-in public shares or independently verified private owner access. The exception registry is not a general query proxy and is not client-selectable. All other unreviewed global callers remain unresolved.
+- Active sharing schema comes from the existing full runtime bootstrap, not invented test tables. Private/public revocation is uncached. Create/delete use issued context; private reads still require independently verified identity. Unknown or unavailable requests return safe text, never database messages.
+- The response-cache service has no current production callers. Its old unscoped signatures now fail closed, with future use requiring an issued tenant context and a tenant-prefixed SHA256 key. Historical global cache entries are not reused or deleted. Case-sensitive prompts and valid expiry are preserved; no dormant table is granted new production permissions or activated as a product.
+- Missing Operations rows use the same denied status as foreign resources, without querying an undefined owner. Other nullable action-helper semantics still require review in the authority command.
+- React review of the Windows-only filename/import repair confirms literal static imports, unchanged component content/hooks/JSX and no added runtime package or React-19-only API. Existing homepage design and theme policy remain unchanged.
+
 ## Identity and permissions actually present
 
 Backend authMiddleware and optionalAuthMiddleware resolve signed project tokens through existing resolveIdentity. phase1Auth delegates to the same boundary. New immutable TenantContext carries server-verified user ID, personal tenant ID, verification provenance and a server-generated correlation ID. It contains no credential, client-supplied role or claimed workspace permission. Deserialized body/header objects cannot be used as the issued request context. A context factory is INTERNAL server code, not an authorization endpoint: passing an arbitrary user ID to it is not sufficient proof of ownership. Background use must originate from a verified persisted owner; request guards must not manufacture it from input.

@@ -1,16 +1,19 @@
 import crypto from 'crypto';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
 
 const TTL_MS = 60 * 60 * 1000; // 1 hour
 
-function hashPrompt(prompt: string): string {
-  return crypto.createHash('sha256').update(prompt.trim().toLowerCase()).digest('hex');
+export function tenantResponseCacheKey(prompt: string, context: TenantContext): string {
+  const scope = requireTenantContext(context);
+  return crypto.createHash('sha256').update(`xroga:tenant-response:v1\0${scope.userId}\0${prompt.trim()}`).digest('hex');
 }
 
-export async function getCachedResponse(prompt: string): Promise<string | null> {
+export async function getCachedResponse(prompt: string, context?: TenantContext): Promise<string | null> {
   try {
-    const supabase = getSupabaseAdmin();
-    const key = hashPrompt(prompt);
+    const scope = requireTenantContext(context);
+    const supabase = getTenantSupabaseAdmin(scope);
+    const key = tenantResponseCacheKey(prompt, scope);
     const { data } = await supabase
       .from('response_cache')
       .select('response_text, ttl_expires_at')
@@ -18,7 +21,8 @@ export async function getCachedResponse(prompt: string): Promise<string | null> 
       .maybeSingle();
 
     if (!data) return null;
-    if (new Date(data.ttl_expires_at) < new Date()) return null;
+    const expiry=Date.parse(data.ttl_expires_at);
+    if (!Number.isFinite(expiry) || expiry <= Date.now()) return null;
     return data.response_text;
   } catch {
     return null;
@@ -28,11 +32,13 @@ export async function getCachedResponse(prompt: string): Promise<string | null> 
 export async function setCachedResponse(
   prompt: string,
   responseText: string,
-  featureCategory?: string
+  featureCategory?: string,
+  context?: TenantContext,
 ): Promise<void> {
   try {
-    const supabase = getSupabaseAdmin();
-    const key = hashPrompt(prompt);
+    const scope = requireTenantContext(context);
+    const supabase = getTenantSupabaseAdmin(scope);
+    const key = tenantResponseCacheKey(prompt, scope);
     const expires = new Date(Date.now() + TTL_MS).toISOString();
     await supabase.from('response_cache').upsert({
       cache_key: key,
@@ -40,7 +46,7 @@ export async function setCachedResponse(
       response_text: responseText,
       feature_category: featureCategory ?? null,
       ttl_expires_at: expires,
-    });
+    }, {onConflict:'cache_key'});
   } catch {
     /* non-fatal */
   }

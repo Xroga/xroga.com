@@ -7,6 +7,9 @@ import { createTenantContext, type TenantContext } from './tenantContext.js';
 import { requireOwnedResource, requireOwnedFile } from './ownership.js';
 import { persistOwnedRun, persistOwnedRuntimeSession } from './ownedRunPersistence.js';
 import { listUserProviderKeys } from '../services/integrations/userProviderKeys.js';
+import { reconcileOrphanedRuns,failInFlightRuns } from '../ai/runReconciler.js';
+import { getCachedResponse,setCachedResponse } from '../services/responseCache.js';
+import pg from 'pg';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -93,6 +96,10 @@ test('provider metadata uses real schema and owner filters without returning enc
 });
 test('actual member identity cannot fetch privileged operational endpoints',async()=>{
   for(const path of ['/api/admin/errors','/metrics']) assert.equal((await request(path,users[0].token)).status,403);
+  const absent=await request(`/api/operations/products/${randomUUID()}`,users[0].token);
+  const foreign=await request(`/api/operations/products/${users[1].project}`,users[0].token);
+  assert.equal(absent.status,403);assert.equal(foreign.status,403);
+  const safe=await absent.json() as {error:string;code:string};assert.equal(safe.code,'forbidden');assert.equal(safe.error,'Operation is not permitted');
 });
 test('real profile column grants reject self-promotion and auth metadata cannot supply admin authority',async()=>{
   const owner=users[0];
@@ -137,4 +144,83 @@ test('portfolio does not disclose a misbound foreign resource while keeping legi
       const text=await response.text();assert.ok(text.includes('OWN_RESOURCE_EVIDENCE_CANARY'));assert.ok(!text.includes('FOREIGN_RESOURCE'));
     }
   } finally {assert.equal((await admin.from('operations_resources').delete().in('id',[legitimate,foreign])).error,null);}
+});
+
+test('registered stale-run maintenance preserves fresh and terminal runs across tenants',async()=>{
+  const [owner,other]=users,old=new Date(Date.now()-20*60000).toISOString();
+  const stale=await insert('swarm_runs',{user_id:owner.id,prompt:'Stale fixture',status:'running',worker_id:'fixture-old-worker',heartbeat_at:old,created_at:old});
+  const fresh=await insert('swarm_runs',{user_id:other.id,prompt:'Fresh fixture',status:'running',worker_id:'fixture-live-worker',heartbeat_at:new Date().toISOString(),created_at:old});
+  const terminal=await insert('swarm_runs',{user_id:other.id,prompt:'Terminal fixture',status:'complete',heartbeat_at:old,created_at:old});
+  assert.equal(await reconcileOrphanedRuns({graceMs:0}),1);
+  const result=await admin.from('swarm_runs').select('id,user_id,status').in('id',[stale,fresh,terminal]);assert.equal(result.error,null);
+  assert.equal(result.data?.find(row=>row.id===stale)?.status,'error');
+  assert.equal(result.data?.find(row=>row.id===fresh)?.status,'running');
+  assert.equal(result.data?.find(row=>row.id===terminal)?.status,'complete');
+  assert.equal(result.data?.find(row=>row.id===fresh)?.user_id,other.id);
+});
+
+test('registered shutdown cannot alter an active ID owned by a different worker lease',async()=>{
+  const [owner,other]=users,worker=randomUUID();
+  const own=await insert('swarm_runs',{user_id:owner.id,prompt:'Shutdown fixture',status:'running',worker_id:worker,heartbeat_at:new Date().toISOString()});
+  const foreign=await insert('swarm_runs',{user_id:other.id,prompt:'Foreign worker fixture',status:'running',worker_id:randomUUID(),heartbeat_at:new Date().toISOString()});
+  await assert.rejects(failInFlightRuns([foreign],'deploy_interrupted'),/Worker lease identity required/);
+  assert.equal(await failInFlightRuns([own,foreign],'deploy_interrupted',{workerId:worker}),1);
+  const rows=await admin.from('swarm_runs').select('id,user_id,status').in('id',[own,foreign]);assert.equal(rows.error,null);
+  assert.equal(rows.data?.find(row=>row.id===own)?.status,'error');assert.equal(rows.data?.find(row=>row.id===foreign)?.status,'running');assert.equal(rows.data?.find(row=>row.id===foreign)?.user_id,other.id);
+});
+
+test('private share token cannot grant another tenant access or revocation authority',async()=>{
+  const [owner,other]=users;
+  const created=await request('/api/message-shares',owner.token,'POST',{visibility:'private',scope:'response',response:'PRIVATE_SHARE_CANARY',owner_id:other.id});assert.equal(created.status,201);
+  const body=await created.json() as {share:{token:string}};
+  const stored=await admin.from('message_shares').select('owner_id').eq('token',body.share.token).single();assert.equal(stored.error,null);assert.equal(stored.data?.owner_id,owner.id);
+  for(const token of [undefined,other.token]) {
+    const denied=await request(`/api/message-shares/${body.share.token}`,token);assert.equal(denied.status,403);assert.ok(!(await denied.text()).includes('PRIVATE_SHARE_CANARY'));
+  }
+  const allowed=await request(`/api/message-shares/${body.share.token}`,owner.token);assert.equal(allowed.status,200);assert.ok((await allowed.text()).includes('PRIVATE_SHARE_CANARY'));
+  assert.equal((await request(`/api/message-shares/${body.share.token}`,other.token,'DELETE')).status,404);
+  assert.equal((await request(`/api/message-shares/${body.share.token}`,owner.token,'DELETE')).status,200);
+  assert.equal((await request(`/api/message-shares/${body.share.token}`,owner.token)).status,404);
+});
+
+test('owner opt-in public share is readable without auth but revocation is immediate and uncached',async()=>{
+  const owner=users[0];
+  const created=await request('/api/message-shares',owner.token,'POST',{visibility:'public',scope:'response',response:'PUBLIC_FIXTURE_ONLY'});assert.equal(created.status,201);
+  const body=await created.json() as {share:{token:string}};
+  const read=await request(`/api/message-shares/${body.share.token}`);assert.equal(read.status,200);assert.equal(read.headers.get('cache-control'),'private, no-store');assert.ok((await read.text()).includes('PUBLIC_FIXTURE_ONLY'));
+  assert.equal((await request(`/api/message-shares/${body.share.token}`,owner.token,'DELETE')).status,200);
+  assert.equal((await request(`/api/message-shares/${body.share.token}`)).status,404);
+});
+
+test('identical prompts cannot retrieve another tenant response through the privileged cache',async()=>{
+  const [owner,other]=users,prompt=`Same fixture prompt ${randomUUID()}`;
+  await setCachedResponse(prompt,'OWNER_CACHE_CANARY','fixture',owner.context);
+  assert.equal(await getCachedResponse(prompt,owner.context),'OWNER_CACHE_CANARY');
+  assert.equal(await getCachedResponse(prompt,other.context),null);
+  assert.equal(await getCachedResponse(prompt),null);
+  await setCachedResponse(prompt,'OTHER_CACHE_CANARY','fixture',other.context);
+  assert.equal(await getCachedResponse(prompt,owner.context),'OWNER_CACHE_CANARY');
+  assert.equal(await getCachedResponse(prompt,other.context),'OTHER_CACHE_CANARY');
+});
+
+test('real catalog and RPC denial prevent browser roles mutating own or foreign billing authority',async()=>{
+  const database=new URL(process.env.XB01_LOCAL_DATABASE_URL!);
+  assert.ok(['localhost','127.0.0.1'].includes(database.hostname));assert.equal(database.port,'54322');assert.equal(database.pathname,'/postgres');
+  const db=new pg.Client({connectionString:database.href,ssl:false});await db.connect();
+  try {
+    const routines=[['ensure_xroga_free_cycle','public.ensure_xroga_free_cycle(uuid)',{}],['set_xroga_usage_pacing','public.set_xroga_usage_pacing(uuid,text,boolean)',{p_pacing:'full_access',p_confirm_full_access:true}],['set_user_ai_plan_budget','public.set_user_ai_plan_budget(uuid,text,numeric)',{p_plan_tier:'spark',p_plan_budget_usd:1000}]] as const;
+    const before=await admin.from('user_token_usage').select('*').in('user_id',users.map(user=>user.id)).order('user_id');assert.equal(before.error,null);
+    for(const [name,signature,args] of routines) {
+      const privilege=await db.query("select to_regprocedure($1)::text as routine,has_function_privilege('authenticated',$1,'EXECUTE') as member_execute,has_function_privilege('anon',$1,'EXECUTE') as anon_execute",[signature]);
+      assert.ok(privilege.rows[0].routine,'Missing real routine is not permission-denial proof');assert.equal(privilege.rows[0].member_execute,false);assert.equal(privilege.rows[0].anon_execute,false);
+      for(const bearer of [undefined,users[0].token]) {
+        const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{...(bearer?{global:{headers:{Authorization:`Bearer ${bearer}`}}}:{}),auth:{persistSession:false,autoRefreshToken:false}});
+        for(const target of users) {
+          const denied=await client.rpc(name,{...args,p_user_id:target.id});
+          assert.ok(denied.error && ['42501','PGRST202'].includes(denied.error.code),'Privileged billing RPC must deny (catalog separately proves presence and no execute grant)');
+        }
+      }
+    }
+    const after=await admin.from('user_token_usage').select('*').in('user_id',users.map(user=>user.id)).order('user_id');assert.equal(after.error,null);assert.deepEqual(after.data,before.data);
+  } finally {await db.end();}
 });

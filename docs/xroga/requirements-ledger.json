@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "16abb16ff3f4136c9f715c7bb37b0f858275c999",
+  "source_sha": "934cb850fb30d16937491776ac518e24b056943d",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -13247,7 +13247,7 @@
       ],
       "feature_category": "P01",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-011",
       "priority": "P1",
@@ -13272,7 +13272,7 @@
         "Unauthorized requests denied, audit entries created without leaking secrets, customer can revoke sessions/connections."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13299,7 +13299,7 @@
       ],
       "feature_category": "P02",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-012",
       "priority": "P1",
@@ -13324,7 +13324,7 @@
         "Upload/download exact bytes after service restart; simulated R2 failure returns real error; cross-tenant access denied."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13351,7 +13351,7 @@
       ],
       "feature_category": "P02",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-013",
       "priority": "P1",
@@ -13376,7 +13376,7 @@
         "Quota concurrency, stale reservation, tenant deletion and restore drills validated with synthetic objects."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13403,7 +13403,7 @@
       ],
       "feature_category": "P02",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-014",
       "priority": "P1",
@@ -13428,7 +13428,7 @@
         "Task survives API restart; each dispatched job maps to one authoritative run ID, worker leases and bounded retries."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13455,7 +13455,7 @@
       ],
       "feature_category": "P02",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-015",
       "priority": "P1",
@@ -13480,7 +13480,7 @@
         "Single synthetic run is traceable without secret leakage; API/job/UI have health and alert thresholds."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13507,7 +13507,7 @@
       ],
       "feature_category": "P02",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-016",
       "priority": "P1",
@@ -13532,7 +13532,7 @@
         "Rollback drill and restore simulation documented and checked; no production mutation without explicit approval."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13559,7 +13559,7 @@
       ],
       "feature_category": "P03",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-017",
       "priority": "P1",
@@ -13584,7 +13584,7 @@
         "Serialization/migration tests; hidden changes to locked permissions or cost rejected."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13611,7 +13611,7 @@
       ],
       "feature_category": "P03",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-018",
       "priority": "P1",
@@ -13636,7 +13636,7 @@
         "Kill worker mid-run; resume from checkpoint; no duplicate email/CRM/deploy writes."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13663,7 +13663,7 @@
       ],
       "feature_category": "P03",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-019",
       "priority": "P1",
@@ -13688,7 +13688,7 @@
         "Parallel independent reads execute concurrently; conflicting writes serialize; per-tenant concurrency and rate limits pass."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13715,7 +13715,7 @@
       ],
       "feature_category": "P03",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-020",
       "priority": "P1",
@@ -13740,7 +13740,7 @@
         "False-success fixtures fail; receipts and limitations render through existing Xroga Blocks; partial status accurate."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13767,7 +13767,7 @@
       ],
       "feature_category": "P03",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-021",
       "priority": "P1",
@@ -13792,7 +13792,7 @@
         "Failure injection tests: retry-unsafe actions never duplicated; recovery reason traceable."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13819,7 +13819,7 @@
       ],
       "feature_category": "P04",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-022",
       "priority": "P1",
@@ -13844,7 +13844,7 @@
         "Intent suite covers 100+ positive/negative examples, including same-conversation shifts and ambiguous app requests; no false side effects."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13871,7 +13871,7 @@
       ],
       "feature_category": "P04",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-023",
       "priority": "P1",
@@ -13896,7 +13896,7 @@
         "Multi-app plus code prompt produces correct graph; every user-requested outcome accounted for; no invented extras."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13923,7 +13923,7 @@
       ],
       "feature_category": "P04",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-024",
       "priority": "P1",
@@ -13948,7 +13948,7 @@
         "Email explanation triggers no Gmail login; calendar retrieval selects only authorized calendar; unsupported tool reported honestly."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -13975,7 +13975,7 @@
       ],
       "feature_category": "P04",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-025",
       "priority": "P1",
@@ -14000,7 +14000,7 @@
         "Existing-repo task receives relevant files and tests; update remains within approved architecture; no private-memory leakage."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14027,7 +14027,7 @@
       ],
       "feature_category": "P04",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-026",
       "priority": "P1",
@@ -14052,7 +14052,7 @@
         "Offline provider fixtures plus live authorized probes; model unavailable falls back safely; no invented DeepSeek/GLM/Kimi costs."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14079,7 +14079,7 @@
       ],
       "feature_category": "P05",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-027",
       "priority": "P1",
@@ -14104,7 +14104,7 @@
         "Account mapping prevents wrong Gmail/CRM destination; schemas versioned; read/write fixtures + safe live staging actions pass."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14131,7 +14131,7 @@
       ],
       "feature_category": "P05",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-028",
       "priority": "P1",
@@ -14156,7 +14156,7 @@
         "Calendar/create, CRM/update, Gmail/send staged tests verify actual state; duplicate webhook/retry only one external action."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14183,7 +14183,7 @@
       ],
       "feature_category": "P05",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-029",
       "priority": "P1",
@@ -14208,7 +14208,7 @@
         "Calendar → research → CRM → report golden journey passes with duplicates/ambiguous contact names."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14235,7 +14235,7 @@
       ],
       "feature_category": "P05",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-030",
       "priority": "P1",
@@ -14260,7 +14260,7 @@
         "Informational prompts never show connection bar; missing CRM pauses CRM only while research proceeds."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14287,7 +14287,7 @@
       ],
       "feature_category": "P05",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-031",
       "priority": "P1",
@@ -14312,7 +14312,7 @@
         "Certified test API may execute read and approved write; malformed OpenAPI/unsafe URL rejected."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14339,7 +14339,7 @@
       ],
       "feature_category": "P06",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-032",
       "priority": "P1",
@@ -14364,7 +14364,7 @@
         "One deterministic coding task works through existing Cline path and adapter; parity and rollback tests."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14391,7 +14391,7 @@
       ],
       "feature_category": "P06",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-033",
       "priority": "P1",
@@ -14416,7 +14416,7 @@
         "Five representative tasks match acceptance; cost/latency/quality recorded."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14443,7 +14443,7 @@
       ],
       "feature_category": "P06",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-034",
       "priority": "P1",
@@ -14468,7 +14468,7 @@
         "Multi-language query/cross-file fix uses correct symbols; improved context/token measurement."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14495,7 +14495,7 @@
       ],
       "feature_category": "P06",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-035",
       "priority": "P1",
@@ -14520,7 +14520,7 @@
         "Import one MIT starter, test build/license, parameterize safely, reject vulnerable/incompatible sample."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14547,7 +14547,7 @@
       ],
       "feature_category": "P06",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-036",
       "priority": "P1",
@@ -14572,7 +14572,7 @@
         "Playwright performs create/read/update/delete protected records with two roles; tests pass across user refresh and sandbox restart."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14599,7 +14599,7 @@
       ],
       "feature_category": "P06",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-037",
       "priority": "P1",
@@ -14624,7 +14624,7 @@
         "Golden bug-fix task and Undo restore branch to intended state, preserve concurrent unrelated changes, reconcile deployment status."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14651,7 +14651,7 @@
       ],
       "feature_category": "P07",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-038",
       "priority": "P1",
@@ -14676,7 +14676,7 @@
         "Authorized form workflow works; injection, unexpected redirects and unauthorized sites blocked."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14703,7 +14703,7 @@
       ],
       "feature_category": "P07",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-039",
       "priority": "P1",
@@ -14728,7 +14728,7 @@
         "3 concurrent employees isolated; no profile/session leakage or overlapping same-record mutation."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14755,7 +14755,7 @@
       ],
       "feature_category": "P07",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-040",
       "priority": "P1",
@@ -14780,7 +14780,7 @@
         "Frontend displays genuine worker steps; pause/takeover/resume works with protected identity; disconnect recovery."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14807,7 +14807,7 @@
       ],
       "feature_category": "P07",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-041",
       "priority": "P1",
@@ -14832,7 +14832,7 @@
         "A few OS task fixtures in sandbox pass; default disabled until permission and reliability thresholds measured."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14859,7 +14859,7 @@
       ],
       "feature_category": "P08",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-042",
       "priority": "P1",
@@ -14884,7 +14884,7 @@
         "API creates/reads/versions workflows; simulation nonmutating; invalid graph rejected."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14911,7 +14911,7 @@
       ],
       "feature_category": "P08",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-043",
       "priority": "P1",
@@ -14936,7 +14936,7 @@
         "One-time/daily/event tasks fire once despite duplicate events and restart; observed vs scheduled timestamps stored."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -14963,7 +14963,7 @@
       ],
       "feature_category": "P08",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-044",
       "priority": "P1",
@@ -14988,7 +14988,7 @@
         "Concurrent employees execute different roles, consume only active resources, cannot exceed scope; tenant tests."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15015,7 +15015,7 @@
       ],
       "feature_category": "P08",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-045",
       "priority": "P1",
@@ -15040,7 +15040,7 @@
         "Lead Research, SEO Audit, Website Guardian, QA certified packs run with real data; no unjustified connection prompts."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15067,7 +15067,7 @@
       ],
       "feature_category": "P08",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-046",
       "priority": "P1",
@@ -15092,7 +15092,7 @@
         "Playwright E2E install/activate/pause/schedule/monitor workflow; accessible mobile view."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15119,7 +15119,7 @@
       ],
       "feature_category": "P08",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-047",
       "priority": "P1",
@@ -15144,7 +15144,7 @@
         "Upgrade without permission broadening; cancel stops future jobs; audit log and pack validation preserved."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15171,7 +15171,7 @@
       ],
       "feature_category": "P09",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-048",
       "priority": "P1",
@@ -15196,7 +15196,7 @@
         "Full-browser upload-refresh-download hash equality; authorized delete and cross-tenant protection."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15223,7 +15223,7 @@
       ],
       "feature_category": "P09",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-049",
       "priority": "P1",
@@ -15248,7 +15248,7 @@
         "No model-invented values in scanned invoice; source-backed contract extraction and garbled scan warning."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15275,7 +15275,7 @@
       ],
       "feature_category": "P09",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-050",
       "priority": "P1",
@@ -15300,7 +15300,7 @@
         "1000-row synthetic workbook totals/formulas correct; exported XLSX opens and cross-check passes."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15327,7 +15327,7 @@
       ],
       "feature_category": "P09",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-051",
       "priority": "P1",
@@ -15352,7 +15352,7 @@
         "Multi-page report, editable presentation and PDF generated, rendered, reopened and verified."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15379,7 +15379,7 @@
       ],
       "feature_category": "P09",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-052",
       "priority": "P1",
@@ -15404,7 +15404,7 @@
         "Image/voice fixtures pass, disabled video honestly blocked; avoid silent no-op buttons and copyrighted asset leakage."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15431,7 +15431,7 @@
       ],
       "feature_category": "P10",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-053",
       "priority": "P1",
@@ -15456,7 +15456,7 @@
         "Induced stalled network and reconnect show honest state, no duplicated tools/cards, first real event visible promptly."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15483,7 +15483,7 @@
       ],
       "feature_category": "P10",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-054",
       "priority": "P1",
@@ -15508,7 +15508,7 @@
         "Price/booking status never invented; expired offers update; mobile responsive, keyboard + screen reader usable."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15535,7 +15535,7 @@
       ],
       "feature_category": "P10",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-055",
       "priority": "P1",
@@ -15560,7 +15560,7 @@
         "Critical screens pass desktop/mobile/keyboard, reduced motion, loading/error/empty states; no regression."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15587,7 +15587,7 @@
       ],
       "feature_category": "P10",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-056",
       "priority": "P1",
@@ -15612,7 +15612,7 @@
         "One prompt with 4 outcomes shows each real run, inline approval, artifacts and finish receipts; simple question shows no app widgets."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15639,7 +15639,7 @@
       ],
       "feature_category": "P11",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-057",
       "priority": "P1",
@@ -15664,7 +15664,7 @@
         "Web-only project never claimed native iOS; missing credentials listed precisely; target selection retained."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15691,7 +15691,7 @@
       ],
       "feature_category": "P11",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-058",
       "priority": "P1",
@@ -15716,7 +15716,7 @@
         "Verified staging website URL and Chrome status sample; failed deploy not live; no force push."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15743,7 +15743,7 @@
       ],
       "feature_category": "P11",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-059",
       "priority": "P1",
@@ -15768,7 +15768,7 @@
         "Verified AAB, emulator/device QA, internal track receipt and safe replay; Apple review not labeled live until confirmed."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15795,7 +15795,7 @@
       ],
       "feature_category": "P11",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-060",
       "priority": "P1",
@@ -15820,7 +15820,7 @@
         "Signed installer/extension build fixture, backend release IDs, correct target status and rollback."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15847,7 +15847,7 @@
       ],
       "feature_category": "P12",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-061",
       "priority": "P1",
@@ -15872,7 +15872,7 @@
         "Real staging probes and failure injection update provider receipts; no fake green status."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15899,7 +15899,7 @@
       ],
       "feature_category": "P12",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-062",
       "priority": "P1",
@@ -15924,7 +15924,7 @@
         "Simulated outage alert correlates real failing endpoint; rollback works safely under approval."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -15951,7 +15951,7 @@
       ],
       "feature_category": "P12",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-063",
       "priority": "P1",
@@ -15976,7 +15976,7 @@
         "Public site audit, real GSC permission handling, verified fix and report; GSC not required for basic public audit."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -16003,7 +16003,7 @@
       ],
       "feature_category": "P12",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-064",
       "priority": "P1",
@@ -16028,7 +16028,7 @@
         "Campaign dry run + safe sandbox send, unsubscribe/suppression and provider reconciliation pass."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -16055,7 +16055,7 @@
       ],
       "feature_category": "P13",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-065",
       "priority": "P1",
@@ -16080,7 +16080,7 @@
         "Concurrent task cannot overspend budget; UI aligns provider invoices/reconciliation and projected caps; no unverified pricing constants."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -16107,7 +16107,7 @@
       ],
       "feature_category": "P13",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-066",
       "priority": "P1",
@@ -16132,7 +16132,7 @@
         "Duplicate payment webhook charges one release; payment unverified cannot start work; canceled/refunded order handled."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -16159,7 +16159,7 @@
       ],
       "feature_category": "P13",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-067",
       "priority": "P1",
@@ -16184,7 +16184,7 @@
         "New user reaches one genuine successful task without tech setup; alerts not spammy; exports and support intake work."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -16211,7 +16211,7 @@
       ],
       "feature_category": "P14",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-068",
       "priority": "P1",
@@ -16236,7 +16236,7 @@
         "Run produces machine-readable success/cost/latency data; zero claims of benchmark wins without measurements."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -16263,7 +16263,7 @@
       ],
       "feature_category": "P14",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-069",
       "priority": "P1",
@@ -16288,7 +16288,7 @@
         "Repeated report/export task deterministically reuses certified procedure; changed provider schema invalidates safely."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -16315,7 +16315,7 @@
       ],
       "feature_category": "P14",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-070",
       "priority": "P1",
@@ -16340,7 +16340,7 @@
         "Founder-only ACL tested; report cites observed sources; promotion creates proposal/PR not auto deployment."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -16367,7 +16367,7 @@
       ],
       "feature_category": "P15",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-071",
       "priority": "P1",
@@ -16392,7 +16392,7 @@
         "All required journeys have signed evidence; failures remain open issues with owners; no cosmetic Done labels."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -16419,7 +16419,7 @@
       ],
       "feature_category": "P15",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-072",
       "priority": "P1",
@@ -16444,7 +16444,7 @@
         "Post-deploy smoke tests and monitored canary receipts; documents enable another developer to resume without conversational history."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [
@@ -16467,7 +16467,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-056",
       "priority": "P1",
@@ -16493,7 +16493,7 @@
         "Meet mapped mission acceptance: One prompt with 4 outcomes shows each real run, inline approval, artifacts and finish receipts; simple question shows no app widgets."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -16517,7 +16517,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-025",
       "priority": "P1",
@@ -16543,7 +16543,7 @@
         "Meet mapped mission acceptance: Existing-repo task receives relevant files and tests; update remains within approved architecture; no private-memory leakage."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -16567,7 +16567,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-025",
       "priority": "P1",
@@ -16593,7 +16593,7 @@
         "Meet mapped mission acceptance: Existing-repo task receives relevant files and tests; update remains within approved architecture; no private-memory leakage."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -16617,7 +16617,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-025",
       "priority": "P1",
@@ -16643,7 +16643,7 @@
         "Meet mapped mission acceptance: Existing-repo task receives relevant files and tests; update remains within approved architecture; no private-memory leakage."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -16667,7 +16667,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-022",
       "priority": "P1",
@@ -16693,7 +16693,7 @@
         "Meet mapped mission acceptance: Intent suite covers 100+ positive/negative examples, including same-conversation shifts and ambiguous app requests; no false side effects."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -16717,7 +16717,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-023",
       "priority": "P1",
@@ -16743,7 +16743,7 @@
         "Meet mapped mission acceptance: Multi-app plus code prompt produces correct graph; every user-requested outcome accounted for; no invented extras."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -16767,7 +16767,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-017",
       "priority": "P1",
@@ -16793,7 +16793,7 @@
         "Meet mapped mission acceptance: Serialization/migration tests; hidden changes to locked permissions or cost rejected."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -16817,7 +16817,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-026",
       "priority": "P1",
@@ -16843,7 +16843,7 @@
         "Meet mapped mission acceptance: Offline provider fixtures plus live authorized probes; model unavailable falls back safely; no invented DeepSeek/GLM/Kimi costs."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -16867,7 +16867,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-024",
       "priority": "P1",
@@ -16893,7 +16893,7 @@
         "Meet mapped mission acceptance: Email explanation triggers no Gmail login; calendar retrieval selects only authorized calendar; unsupported tool reported honestly."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -16917,7 +16917,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-020",
       "priority": "P1",
@@ -16943,7 +16943,7 @@
         "Meet mapped mission acceptance: False-success fixtures fail; receipts and limitations render through existing Xroga Blocks; partial status accurate."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -16967,7 +16967,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-069",
       "priority": "P1",
@@ -16993,7 +16993,7 @@
         "Meet mapped mission acceptance: Repeated report/export task deterministically reuses certified procedure; changed provider schema invalidates safely."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17017,7 +17017,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-025",
       "priority": "P1",
@@ -17043,7 +17043,7 @@
         "Meet mapped mission acceptance: Existing-repo task receives relevant files and tests; update remains within approved architecture; no private-memory leakage."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17067,7 +17067,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-049",
       "priority": "P1",
@@ -17093,7 +17093,7 @@
         "Meet mapped mission acceptance: No model-invented values in scanned invoice; source-backed contract extraction and garbled scan warning."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17117,7 +17117,7 @@
       ],
       "feature_category": "Xroga AI Core",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-070",
       "priority": "P1",
@@ -17143,7 +17143,7 @@
         "Meet mapped mission acceptance: Founder-only ACL tested; report cites observed sources; promotion creates proposal/PR not auto deployment."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17167,7 +17167,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-036",
       "priority": "P1",
@@ -17193,7 +17193,7 @@
         "Meet mapped mission acceptance: Playwright performs create/read/update/delete protected records with two roles; tests pass across user refresh and sandbox restart."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17217,7 +17217,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-037",
       "priority": "P1",
@@ -17243,7 +17243,7 @@
         "Meet mapped mission acceptance: Golden bug-fix task and Undo restore branch to intended state, preserve concurrent unrelated changes, reconcile deployment status."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17267,7 +17267,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-032",
       "priority": "P1",
@@ -17293,7 +17293,7 @@
         "Meet mapped mission acceptance: One deterministic coding task works through existing Cline path and adapter; parity and rollback tests."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17317,7 +17317,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-033",
       "priority": "P1",
@@ -17343,7 +17343,7 @@
         "Meet mapped mission acceptance: Five representative tasks match acceptance; cost/latency/quality recorded."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17367,7 +17367,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-032",
       "priority": "P1",
@@ -17393,7 +17393,7 @@
         "Meet mapped mission acceptance: One deterministic coding task works through existing Cline path and adapter; parity and rollback tests."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17417,7 +17417,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-034",
       "priority": "P1",
@@ -17443,7 +17443,7 @@
         "Meet mapped mission acceptance: Multi-language query/cross-file fix uses correct symbols; improved context/token measurement."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17467,7 +17467,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-010",
       "priority": "P1",
@@ -17493,7 +17493,7 @@
         "Meet mapped mission acceptance: Simulated exfiltration attempt, poisoned tool description and cross-account data flow are blocked with auditable reason."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17517,7 +17517,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-035",
       "priority": "P1",
@@ -17543,7 +17543,7 @@
         "Meet mapped mission acceptance: Import one MIT starter, test build/license, parameterize safely, reject vulnerable/incompatible sample."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17567,7 +17567,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-035",
       "priority": "P1",
@@ -17593,7 +17593,7 @@
         "Meet mapped mission acceptance: Import one MIT starter, test build/license, parameterize safely, reject vulnerable/incompatible sample."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17617,7 +17617,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-055",
       "priority": "P1",
@@ -17643,7 +17643,7 @@
         "Meet mapped mission acceptance: Critical screens pass desktop/mobile/keyboard, reduced motion, loading/error/empty states; no regression."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17667,7 +17667,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-037",
       "priority": "P1",
@@ -17693,7 +17693,7 @@
         "Meet mapped mission acceptance: Golden bug-fix task and Undo restore branch to intended state, preserve concurrent unrelated changes, reconcile deployment status."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17717,7 +17717,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-036",
       "priority": "P1",
@@ -17743,7 +17743,7 @@
         "Meet mapped mission acceptance: Playwright performs create/read/update/delete protected records with two roles; tests pass across user refresh and sandbox restart."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17767,7 +17767,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-037",
       "priority": "P1",
@@ -17793,7 +17793,7 @@
         "Meet mapped mission acceptance: Golden bug-fix task and Undo restore branch to intended state, preserve concurrent unrelated changes, reconcile deployment status."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17817,7 +17817,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-059",
       "priority": "P1",
@@ -17843,7 +17843,7 @@
         "Meet mapped mission acceptance: Verified AAB, emulator/device QA, internal track receipt and safe replay; Apple review not labeled live until confirmed."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17867,7 +17867,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-058",
       "priority": "P1",
@@ -17893,7 +17893,7 @@
         "Meet mapped mission acceptance: Verified staging website URL and Chrome status sample; failed deploy not live; no force push."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17917,7 +17917,7 @@
       ],
       "feature_category": "Engineering & Building",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-060",
       "priority": "P1",
@@ -17943,7 +17943,7 @@
         "Meet mapped mission acceptance: Signed installer/extension build fixture, backend release IDs, correct target status and rollback."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -17967,7 +17967,7 @@
       ],
       "feature_category": "Browser & Computer",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-038",
       "priority": "P1",
@@ -17993,7 +17993,7 @@
         "Meet mapped mission acceptance: Authorized form workflow works; injection, unexpected redirects and unauthorized sites blocked."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18017,7 +18017,7 @@
       ],
       "feature_category": "Browser & Computer",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-038",
       "priority": "P1",
@@ -18043,7 +18043,7 @@
         "Meet mapped mission acceptance: Authorized form workflow works; injection, unexpected redirects and unauthorized sites blocked."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18067,7 +18067,7 @@
       ],
       "feature_category": "Browser & Computer",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-039",
       "priority": "P1",
@@ -18093,7 +18093,7 @@
         "Meet mapped mission acceptance: 3 concurrent employees isolated; no profile/session leakage or overlapping same-record mutation."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18117,7 +18117,7 @@
       ],
       "feature_category": "Browser & Computer",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-040",
       "priority": "P1",
@@ -18143,7 +18143,7 @@
         "Meet mapped mission acceptance: Frontend displays genuine worker steps; pause/takeover/resume works with protected identity; disconnect recovery."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18167,7 +18167,7 @@
       ],
       "feature_category": "Browser & Computer",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-039",
       "priority": "P1",
@@ -18193,7 +18193,7 @@
         "Meet mapped mission acceptance: 3 concurrent employees isolated; no profile/session leakage or overlapping same-record mutation."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18217,7 +18217,7 @@
       ],
       "feature_category": "Browser & Computer",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-038",
       "priority": "P1",
@@ -18243,7 +18243,7 @@
         "Meet mapped mission acceptance: Authorized form workflow works; injection, unexpected redirects and unauthorized sites blocked."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18267,7 +18267,7 @@
       ],
       "feature_category": "Browser & Computer",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-020",
       "priority": "P1",
@@ -18293,7 +18293,7 @@
         "Meet mapped mission acceptance: False-success fixtures fail; receipts and limitations render through existing Xroga Blocks; partial status accurate."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18317,7 +18317,7 @@
       ],
       "feature_category": "Browser & Computer",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-041",
       "priority": "P1",
@@ -18343,7 +18343,7 @@
         "Meet mapped mission acceptance: A few OS task fixtures in sandbox pass; default disabled until permission and reliability thresholds measured."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18367,7 +18367,7 @@
       ],
       "feature_category": "Browser & Computer",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-040",
       "priority": "P1",
@@ -18393,7 +18393,7 @@
         "Meet mapped mission acceptance: Frontend displays genuine worker steps; pause/takeover/resume works with protected identity; disconnect recovery."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18417,7 +18417,7 @@
       ],
       "feature_category": "Business Apps & Connected Services",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-027",
       "priority": "P1",
@@ -18443,7 +18443,7 @@
         "Meet mapped mission acceptance: Account mapping prevents wrong Gmail/CRM destination; schemas versioned; read/write fixtures + safe live staging actions pass."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18467,7 +18467,7 @@
       ],
       "feature_category": "Business Apps & Connected Services",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-024",
       "priority": "P1",
@@ -18493,7 +18493,7 @@
         "Meet mapped mission acceptance: Email explanation triggers no Gmail login; calendar retrieval selects only authorized calendar; unsupported tool reported honestly."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18517,7 +18517,7 @@
       ],
       "feature_category": "Business Apps & Connected Services",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-028",
       "priority": "P1",
@@ -18543,7 +18543,7 @@
         "Meet mapped mission acceptance: Calendar/create, CRM/update, Gmail/send staged tests verify actual state; duplicate webhook/retry only one external action."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18567,7 +18567,7 @@
       ],
       "feature_category": "Business Apps & Connected Services",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-028",
       "priority": "P1",
@@ -18593,7 +18593,7 @@
         "Meet mapped mission acceptance: Calendar/create, CRM/update, Gmail/send staged tests verify actual state; duplicate webhook/retry only one external action."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18617,7 +18617,7 @@
       ],
       "feature_category": "Business Apps & Connected Services",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-028",
       "priority": "P1",
@@ -18643,7 +18643,7 @@
         "Meet mapped mission acceptance: Calendar/create, CRM/update, Gmail/send staged tests verify actual state; duplicate webhook/retry only one external action."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18667,7 +18667,7 @@
       ],
       "feature_category": "Business Apps & Connected Services",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-028",
       "priority": "P1",
@@ -18693,7 +18693,7 @@
         "Meet mapped mission acceptance: Calendar/create, CRM/update, Gmail/send staged tests verify actual state; duplicate webhook/retry only one external action."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18717,7 +18717,7 @@
       ],
       "feature_category": "Business Apps & Connected Services",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-029",
       "priority": "P1",
@@ -18743,7 +18743,7 @@
         "Meet mapped mission acceptance: Calendar → research → CRM → report golden journey passes with duplicates/ambiguous contact names."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18767,7 +18767,7 @@
       ],
       "feature_category": "Business Apps & Connected Services",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-008",
       "priority": "P1",
@@ -18793,7 +18793,7 @@
         "Meet mapped mission acceptance: Sensitive send/delete/publish/spend require correct approval; stale/replayed digest and broadened permissions rejected."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18817,7 +18817,7 @@
       ],
       "feature_category": "Business Apps & Connected Services",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-031",
       "priority": "P1",
@@ -18843,7 +18843,7 @@
         "Meet mapped mission acceptance: Certified test API may execute read and approved write; malformed OpenAPI/unsafe URL rejected."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18867,7 +18867,7 @@
       ],
       "feature_category": "Business Apps & Connected Services",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-007",
       "priority": "P1",
@@ -18893,7 +18893,7 @@
         "Meet mapped mission acceptance: Cross-tenant read/write negative tests cover every high-value resource; avoid direct service-role data exposure."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18917,7 +18917,7 @@
       ],
       "feature_category": "Business Apps & Connected Services",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-030",
       "priority": "P1",
@@ -18943,7 +18943,7 @@
         "Meet mapped mission acceptance: Informational prompts never show connection bar; missing CRM pauses CRM only while research proceeds."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -18967,7 +18967,7 @@
       ],
       "feature_category": "Business Apps & Connected Services",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-028",
       "priority": "P1",
@@ -18993,7 +18993,7 @@
         "Meet mapped mission acceptance: Calendar/create, CRM/update, Gmail/send staged tests verify actual state; duplicate webhook/retry only one external action."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19017,7 +19017,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-042",
       "priority": "P1",
@@ -19043,7 +19043,7 @@
         "Meet mapped mission acceptance: API creates/reads/versions workflows; simulation nonmutating; invalid graph rejected."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19067,7 +19067,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-043",
       "priority": "P1",
@@ -19093,7 +19093,7 @@
         "Meet mapped mission acceptance: One-time/daily/event tasks fire once despite duplicate events and restart; observed vs scheduled timestamps stored."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19117,7 +19117,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-043",
       "priority": "P1",
@@ -19143,7 +19143,7 @@
         "Meet mapped mission acceptance: One-time/daily/event tasks fire once despite duplicate events and restart; observed vs scheduled timestamps stored."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19167,7 +19167,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-044",
       "priority": "P1",
@@ -19193,7 +19193,7 @@
         "Meet mapped mission acceptance: Concurrent employees execute different roles, consume only active resources, cannot exceed scope; tenant tests."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19217,7 +19217,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-045",
       "priority": "P1",
@@ -19243,7 +19243,7 @@
         "Meet mapped mission acceptance: Lead Research, SEO Audit, Website Guardian, QA certified packs run with real data; no unjustified connection prompts."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19267,7 +19267,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-045",
       "priority": "P1",
@@ -19293,7 +19293,7 @@
         "Meet mapped mission acceptance: Lead Research, SEO Audit, Website Guardian, QA certified packs run with real data; no unjustified connection prompts."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19317,7 +19317,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-063",
       "priority": "P1",
@@ -19343,7 +19343,7 @@
         "Meet mapped mission acceptance: Public site audit, real GSC permission handling, verified fix and report; GSC not required for basic public audit."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19367,7 +19367,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-062",
       "priority": "P1",
@@ -19393,7 +19393,7 @@
         "Meet mapped mission acceptance: Simulated outage alert correlates real failing endpoint; rollback works safely under approval."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19417,7 +19417,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-044",
       "priority": "P1",
@@ -19443,7 +19443,7 @@
         "Meet mapped mission acceptance: Concurrent employees execute different roles, consume only active resources, cannot exceed scope; tenant tests."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19467,7 +19467,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-044",
       "priority": "P1",
@@ -19493,7 +19493,7 @@
         "Meet mapped mission acceptance: Concurrent employees execute different roles, consume only active resources, cannot exceed scope; tenant tests."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19517,7 +19517,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-018",
       "priority": "P1",
@@ -19543,7 +19543,7 @@
         "Meet mapped mission acceptance: Kill worker mid-run; resume from checkpoint; no duplicate email/CRM/deploy writes."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19567,7 +19567,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-047",
       "priority": "P1",
@@ -19593,7 +19593,7 @@
         "Meet mapped mission acceptance: Upgrade without permission broadening; cancel stops future jobs; audit log and pack validation preserved."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19617,7 +19617,7 @@
       ],
       "feature_category": "Automations & Employees",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-047",
       "priority": "P1",
@@ -19643,7 +19643,7 @@
         "Meet mapped mission acceptance: Upgrade without permission broadening; cancel stops future jobs; audit log and pack validation preserved."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19667,7 +19667,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-048",
       "priority": "P1",
@@ -19693,7 +19693,7 @@
         "Meet mapped mission acceptance: Full-browser upload-refresh-download hash equality; authorized delete and cross-tenant protection."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19717,7 +19717,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-048",
       "priority": "P1",
@@ -19743,7 +19743,7 @@
         "Meet mapped mission acceptance: Full-browser upload-refresh-download hash equality; authorized delete and cross-tenant protection."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19767,7 +19767,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-051",
       "priority": "P1",
@@ -19793,7 +19793,7 @@
         "Meet mapped mission acceptance: Multi-page report, editable presentation and PDF generated, rendered, reopened and verified."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19817,7 +19817,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-035",
       "priority": "P1",
@@ -19843,7 +19843,7 @@
         "Meet mapped mission acceptance: Import one MIT starter, test build/license, parameterize safely, reject vulnerable/incompatible sample."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19867,7 +19867,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-013",
       "priority": "P1",
@@ -19893,7 +19893,7 @@
         "Meet mapped mission acceptance: Quota concurrency, stale reservation, tenant deletion and restore drills validated with synthetic objects."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19917,7 +19917,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-049",
       "priority": "P1",
@@ -19943,7 +19943,7 @@
         "Meet mapped mission acceptance: No model-invented values in scanned invoice; source-backed contract extraction and garbled scan warning."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -19967,7 +19967,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-051",
       "priority": "P1",
@@ -19993,7 +19993,7 @@
         "Meet mapped mission acceptance: Multi-page report, editable presentation and PDF generated, rendered, reopened and verified."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20017,7 +20017,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-050",
       "priority": "P1",
@@ -20043,7 +20043,7 @@
         "Meet mapped mission acceptance: 1000-row synthetic workbook totals/formulas correct; exported XLSX opens and cross-check passes."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20067,7 +20067,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-050",
       "priority": "P1",
@@ -20093,7 +20093,7 @@
         "Meet mapped mission acceptance: 1000-row synthetic workbook totals/formulas correct; exported XLSX opens and cross-check passes."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20117,7 +20117,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-052",
       "priority": "P1",
@@ -20143,7 +20143,7 @@
         "Meet mapped mission acceptance: Image/voice fixtures pass, disabled video honestly blocked; avoid silent no-op buttons and copyrighted asset leakage."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20167,7 +20167,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-052",
       "priority": "P1",
@@ -20193,7 +20193,7 @@
         "Meet mapped mission acceptance: Image/voice fixtures pass, disabled video honestly blocked; avoid silent no-op buttons and copyrighted asset leakage."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20217,7 +20217,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-052",
       "priority": "P1",
@@ -20243,7 +20243,7 @@
         "Meet mapped mission acceptance: Image/voice fixtures pass, disabled video honestly blocked; avoid silent no-op buttons and copyrighted asset leakage."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20267,7 +20267,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-051",
       "priority": "P1",
@@ -20293,7 +20293,7 @@
         "Meet mapped mission acceptance: Multi-page report, editable presentation and PDF generated, rendered, reopened and verified."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20317,7 +20317,7 @@
       ],
       "feature_category": "Library & Artifacts",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-048",
       "priority": "P1",
@@ -20343,7 +20343,7 @@
         "Meet mapped mission acceptance: Full-browser upload-refresh-download hash equality; authorized delete and cross-tenant protection."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20367,7 +20367,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-053",
       "priority": "P1",
@@ -20393,7 +20393,7 @@
         "Meet mapped mission acceptance: Induced stalled network and reconnect show honest state, no duplicated tools/cards, first real event visible promptly."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20417,7 +20417,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-053",
       "priority": "P1",
@@ -20443,7 +20443,7 @@
         "Meet mapped mission acceptance: Induced stalled network and reconnect show honest state, no duplicated tools/cards, first real event visible promptly."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20467,7 +20467,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-054",
       "priority": "P1",
@@ -20493,7 +20493,7 @@
         "Meet mapped mission acceptance: Price/booking status never invented; expired offers update; mobile responsive, keyboard + screen reader usable."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20517,7 +20517,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-054",
       "priority": "P1",
@@ -20543,7 +20543,7 @@
         "Meet mapped mission acceptance: Price/booking status never invented; expired offers update; mobile responsive, keyboard + screen reader usable."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20567,7 +20567,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-054",
       "priority": "P1",
@@ -20593,7 +20593,7 @@
         "Meet mapped mission acceptance: Price/booking status never invented; expired offers update; mobile responsive, keyboard + screen reader usable."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20617,7 +20617,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-054",
       "priority": "P1",
@@ -20643,7 +20643,7 @@
         "Meet mapped mission acceptance: Price/booking status never invented; expired offers update; mobile responsive, keyboard + screen reader usable."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20667,7 +20667,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-049",
       "priority": "P1",
@@ -20693,7 +20693,7 @@
         "Meet mapped mission acceptance: No model-invented values in scanned invoice; source-backed contract extraction and garbled scan warning."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20717,7 +20717,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-050",
       "priority": "P1",
@@ -20743,7 +20743,7 @@
         "Meet mapped mission acceptance: 1000-row synthetic workbook totals/formulas correct; exported XLSX opens and cross-check passes."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20767,7 +20767,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-037",
       "priority": "P1",
@@ -20793,7 +20793,7 @@
         "Meet mapped mission acceptance: Golden bug-fix task and Undo restore branch to intended state, preserve concurrent unrelated changes, reconcile deployment status."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20817,7 +20817,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-030",
       "priority": "P1",
@@ -20843,7 +20843,7 @@
         "Meet mapped mission acceptance: Informational prompts never show connection bar; missing CRM pauses CRM only while research proceeds."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20867,7 +20867,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-067",
       "priority": "P1",
@@ -20893,7 +20893,7 @@
         "Meet mapped mission acceptance: New user reaches one genuine successful task without tech setup; alerts not spammy; exports and support intake work."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20917,7 +20917,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-055",
       "priority": "P1",
@@ -20943,7 +20943,7 @@
         "Meet mapped mission acceptance: Critical screens pass desktop/mobile/keyboard, reduced motion, loading/error/empty states; no regression."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -20967,7 +20967,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-054",
       "priority": "P1",
@@ -20993,7 +20993,7 @@
         "Meet mapped mission acceptance: Price/booking status never invented; expired offers update; mobile responsive, keyboard + screen reader usable."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21017,7 +21017,7 @@
       ],
       "feature_category": "Rich Response & UX",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-055",
       "priority": "P1",
@@ -21043,7 +21043,7 @@
         "Meet mapped mission acceptance: Critical screens pass desktop/mobile/keyboard, reduced motion, loading/error/empty states; no regression."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21067,7 +21067,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-058",
       "priority": "P1",
@@ -21093,7 +21093,7 @@
         "Meet mapped mission acceptance: Verified staging website URL and Chrome status sample; failed deploy not live; no force push."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21117,7 +21117,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-057",
       "priority": "P1",
@@ -21143,7 +21143,7 @@
         "Meet mapped mission acceptance: Web-only project never claimed native iOS; missing credentials listed precisely; target selection retained."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21167,7 +21167,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-058",
       "priority": "P1",
@@ -21193,7 +21193,7 @@
         "Meet mapped mission acceptance: Verified staging website URL and Chrome status sample; failed deploy not live; no force push."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21217,7 +21217,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-060",
       "priority": "P1",
@@ -21243,7 +21243,7 @@
         "Meet mapped mission acceptance: Signed installer/extension build fixture, backend release IDs, correct target status and rollback."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21267,7 +21267,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-060",
       "priority": "P1",
@@ -21293,7 +21293,7 @@
         "Meet mapped mission acceptance: Signed installer/extension build fixture, backend release IDs, correct target status and rollback."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21317,7 +21317,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-059",
       "priority": "P1",
@@ -21343,7 +21343,7 @@
         "Meet mapped mission acceptance: Verified AAB, emulator/device QA, internal track receipt and safe replay; Apple review not labeled live until confirmed."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21367,7 +21367,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-059",
       "priority": "P1",
@@ -21393,7 +21393,7 @@
         "Meet mapped mission acceptance: Verified AAB, emulator/device QA, internal track receipt and safe replay; Apple review not labeled live until confirmed."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21417,7 +21417,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-066",
       "priority": "P1",
@@ -21443,7 +21443,7 @@
         "Meet mapped mission acceptance: Duplicate payment webhook charges one release; payment unverified cannot start work; canceled/refunded order handled."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21467,7 +21467,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-009",
       "priority": "P1",
@@ -21493,7 +21493,7 @@
         "Meet mapped mission acceptance: Unit and integration tests for expired, swapped, revoked credentials and callback tampering; telemetry redacted."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21517,7 +21517,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-057",
       "priority": "P1",
@@ -21543,7 +21543,7 @@
         "Meet mapped mission acceptance: Web-only project never claimed native iOS; missing credentials listed precisely; target selection retained."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21567,7 +21567,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-061",
       "priority": "P1",
@@ -21593,7 +21593,7 @@
         "Meet mapped mission acceptance: Real staging probes and failure injection update provider receipts; no fake green status."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21617,7 +21617,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-062",
       "priority": "P1",
@@ -21643,7 +21643,7 @@
         "Meet mapped mission acceptance: Simulated outage alert correlates real failing endpoint; rollback works safely under approval."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21667,7 +21667,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-063",
       "priority": "P1",
@@ -21693,7 +21693,7 @@
         "Meet mapped mission acceptance: Public site audit, real GSC permission handling, verified fix and report; GSC not required for basic public audit."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21717,7 +21717,7 @@
       ],
       "feature_category": "Publish & Operations",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-062",
       "priority": "P1",
@@ -21743,7 +21743,7 @@
         "Meet mapped mission acceptance: Simulated outage alert correlates real failing endpoint; rollback works safely under approval."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21767,7 +21767,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-007",
       "priority": "P1",
@@ -21793,7 +21793,7 @@
         "Meet mapped mission acceptance: Cross-tenant read/write negative tests cover every high-value resource; avoid direct service-role data exposure."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21817,7 +21817,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-065",
       "priority": "P1",
@@ -21843,7 +21843,7 @@
         "Meet mapped mission acceptance: Concurrent task cannot overspend budget; UI aligns provider invoices/reconciliation and projected caps; no unverified pricing constants."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21867,7 +21867,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-065",
       "priority": "P1",
@@ -21893,7 +21893,7 @@
         "Meet mapped mission acceptance: Concurrent task cannot overspend budget; UI aligns provider invoices/reconciliation and projected caps; no unverified pricing constants."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21917,7 +21917,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-065",
       "priority": "P1",
@@ -21943,7 +21943,7 @@
         "Meet mapped mission acceptance: Concurrent task cannot overspend budget; UI aligns provider invoices/reconciliation and projected caps; no unverified pricing constants."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -21967,7 +21967,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-015",
       "priority": "P1",
@@ -21993,7 +21993,7 @@
         "Meet mapped mission acceptance: Single synthetic run is traceable without secret leakage; API/job/UI have health and alert thresholds."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -22017,7 +22017,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-010",
       "priority": "P1",
@@ -22043,7 +22043,7 @@
         "Meet mapped mission acceptance: Simulated exfiltration attempt, poisoned tool description and cross-account data flow are blocked with auditable reason."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -22067,7 +22067,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-016",
       "priority": "P1",
@@ -22093,7 +22093,7 @@
         "Meet mapped mission acceptance: Rollback drill and restore simulation documented and checked; no production mutation without explicit approval."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -22117,7 +22117,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-072",
       "priority": "P1",
@@ -22143,7 +22143,7 @@
         "Meet mapped mission acceptance: Post-deploy smoke tests and monitored canary receipts; documents enable another developer to resume without conversational history."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -22167,7 +22167,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-007",
       "priority": "P1",
@@ -22193,7 +22193,7 @@
         "Meet mapped mission acceptance: Cross-tenant read/write negative tests cover every high-value resource; avoid direct service-role data exposure."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -22217,7 +22217,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-011",
       "priority": "P1",
@@ -22243,7 +22243,7 @@
         "Meet mapped mission acceptance: Unauthorized requests denied, audit entries created without leaking secrets, customer can revoke sessions/connections."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -22267,7 +22267,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-067",
       "priority": "P1",
@@ -22293,7 +22293,7 @@
         "Meet mapped mission acceptance: New user reaches one genuine successful task without tech setup; alerts not spammy; exports and support intake work."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -22317,7 +22317,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-064",
       "priority": "P1",
@@ -22343,7 +22343,7 @@
         "Meet mapped mission acceptance: Campaign dry run + safe sandbox send, unsubscribe/suppression and provider reconciliation pass."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [
@@ -22367,7 +22367,7 @@
       ],
       "feature_category": "Business Platform",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [],
       "implementation_owner_command": "MISSION-070",
       "priority": "P1",
@@ -22393,7 +22393,7 @@
         "Meet mapped mission acceptance: Founder-only ACL tested; report cites observed sources; promotion creates proposal/PR not auto deployment."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.",
       "confidence": "LOW",
       "unresolved_questions": [

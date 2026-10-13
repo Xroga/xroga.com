@@ -54,10 +54,10 @@ function mapResource(row: DbRow): OperationalResource {
   };
 }
 
-async function queryOrThrow<T = DbRow[]>(promise: PromiseLike<{ data: T | null; error: any }>, message: string): Promise<T> {
+async function queryOrThrow<T = DbRow[]>(promise: PromiseLike<{ data: T | null; error: any }>, message: string, missing: T = [] as T): Promise<T> {
   const { data, error } = await promise;
   if (error) throw new OperationsServiceError('unknown', message, 503);
-  return (data ?? []) as T;
+  return data ?? missing;
 }
 
 export class OperationsService {
@@ -73,13 +73,13 @@ export class OperationsService {
 
   private async access(userId: string, projectId: string, permission: OperationsPermission): Promise<{ role: OperationsRole; ownerId: string }> {
     const [project, profile] = await Promise.all([
-      queryOrThrow<DbRow | null>(this.db.from('projects').select('id,user_id').eq('id', projectId).maybeSingle(), 'Project lookup failed'),
-      queryOrThrow<DbRow | null>(this.db.from('profiles').select('role').eq('id', userId).maybeSingle(), 'Profile lookup failed'),
+      queryOrThrow<DbRow | null>(this.db.from('projects').select('id,user_id').eq('id', projectId).maybeSingle(), 'Project lookup failed', null),
+      queryOrThrow<DbRow | null>(this.db.from('profiles').select('role').eq('id', userId).maybeSingle(), 'Profile lookup failed', null),
     ]);
-    if (!project) throw new OperationsServiceError('not_found', 'Product not found', 404);
+    if (!project) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
     let role = roleForProjectAccess({ isAdmin: profile?.role === 'admin', isOwner: project.user_id === userId });
     if (!role) {
-      const membership = await queryOrThrow<DbRow | null>(this.db.from('operations_memberships').select('role').eq('project_id', projectId).eq('user_id', project.user_id).eq('member_user_id', userId).maybeSingle(), 'Membership lookup failed');
+      const membership = await queryOrThrow<DbRow | null>(this.db.from('operations_memberships').select('role').eq('project_id', projectId).eq('user_id', project.user_id).eq('member_user_id', userId).maybeSingle(), 'Membership lookup failed', null);
       role = membership?.role as OperationsRole | null;
     }
     if (!role || !hasOperationsPermission(role, permission)) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
@@ -149,7 +149,7 @@ export class OperationsService {
   async product(userId: string, projectId: string): Promise<Record<string, unknown>> {
     const access = await this.access(userId, projectId, 'view_product_operations');
     const [project, environments, resources, releases, deployments, incidents, alerts, actions, approvals, jobs, webhooks, maintenance] = await Promise.all([
-      queryOrThrow<DbRow | null>(this.db.from('projects').select('id,name,type,status,github_repo_url,github_repo_name,created_at,updated_at').eq('id', projectId).maybeSingle(), 'Product unavailable'),
+      queryOrThrow<DbRow | null>(this.db.from('projects').select('id,name,type,status,github_repo_url,github_repo_name,created_at,updated_at').eq('id', projectId).maybeSingle(), 'Product unavailable', null),
       queryOrThrow(this.db.from('operations_environments').select('*').eq('project_id', projectId).eq('user_id', access.ownerId).order('updated_at', { ascending: false }), 'Environments unavailable'),
       queryOrThrow(this.db.from('operations_resources').select('*').eq('project_id', projectId).eq('user_id', access.ownerId).order('updated_at', { ascending: false }), 'Resources unavailable'),
       queryOrThrow(this.db.from('production_releases').select('id,commit_sha,artifact_digest,environment,state,branch,build_id,verified_at,stale_after,created_at').eq('project_id', projectId).eq('user_id', access.ownerId).order('created_at', { ascending: false }).limit(50), 'Releases unavailable'),

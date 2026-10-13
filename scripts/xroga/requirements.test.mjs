@@ -24,7 +24,7 @@ test('full ten-command specifications retain exact acceptance criteria and manda
   assert.equal(ledger.coverage.historical_feature_rows_mapped,119);
   assert.equal(ledger.coverage.historical_missions_mapped,72);
   assert.equal(ledger.requirements.filter(item=>item.requirement_id.startsWith('XR-ORIGINAL-')).length,119);
-  assert.ok(ledger.requirements.filter(item=>item.requirement_id.startsWith('XR-ORIGINAL-')).every(item=>item.current_state==='PROPOSED_ONLY'));
+  assert.ok(ledger.requirements.filter(item=>item.requirement_id.startsWith('XR-ORIGINAL-')).every(item=>item.current_state==='UNKNOWN_BLOCKED'));
   validateRepositoryLedger(ledger, sources, repositories);
 });
 test('multiple source references and explicit aliases survive validation', () => {

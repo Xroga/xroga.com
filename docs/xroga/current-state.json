@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "16abb16ff3f4136c9f715c7bb37b0f858275c999",
-    "sourceTimestampUtc": "2026-10-13T23:25:03+05:00",
-    "auditStartedUtc": "2026-10-13T18:35:12.119Z",
+    "sha": "934cb850fb30d16937491776ac518e24b056943d",
+    "sourceTimestampUtc": "2026-10-13T23:35:35+05:00",
+    "auditStartedUtc": "2026-10-13T19:09:22.122Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -5907,7 +5907,7 @@
       "id": "surface:1d4e81e3fde724694528",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerHealthStore.ts",
-      "sha256": "ce7d894787603c1645da6ff6415badd9061f01bd85b49233dda1d8eb13329729",
+      "sha256": "ec92f541a194e0c3c03ef5c12d9afc6e6052aadc7ca9d5e2b6ebf27d6c260b0d",
       "symbols": [
         "InMemoryProviderHealthStore",
         "PersistedProviderHealth",
@@ -5918,12 +5918,12 @@
         "worthPersisting"
       ],
       "imports": [
-        "../config/supabase.js",
+        "../security/serviceRoleGuard.js",
         "./models.js",
         "./providerRuntime.js"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts"
+        "backend/src/security/serviceRoleGuard.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -6784,7 +6784,7 @@
       "id": "surface:5e71e44624d4cceea003",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/runReconciler.ts",
-      "sha256": "91705914cfb71b4653d478ff0c4a47b3748e5615ec317692cceca987a4d56fd5",
+      "sha256": "cfb0a5c3f8e3dff46ede12147dfd3155bb1d052ca829a4ed07a0e5db63b3ecb4",
       "symbols": [
         "ACTIVE_RUN_STATUSES",
         "ORPHAN_GRACE_MS",
@@ -6805,17 +6805,18 @@
         "update"
       ],
       "imports": [
-        "../config/supabase.js"
+        "../security/serviceRoleGuard.js"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts"
+        "backend/src/security/serviceRoleGuard.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/runReconciler.test.ts:3",
-        "backend/src/index.ts:53"
+        "backend/src/index.ts:53",
+        "backend/src/security/tenantIsolation.local.integration.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -6832,7 +6833,8 @@
         "backend/src/ai/runReconciler.ts#reconcileOutput"
       ],
       "testCoverage": [
-        "backend/src/ai/runReconciler.test.ts"
+        "backend/src/ai/runReconciler.test.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -11466,10 +11468,8 @@
         "backend/src/ai/measuredEvidence.ts:33",
         "backend/src/ai/projectMemory.ts:6",
         "backend/src/ai/providerBudget.ts:2",
-        "backend/src/ai/providerHealthStore.ts:29",
         "backend/src/ai/quota.ts:1",
         "backend/src/ai/routingOutcomes.ts:1",
-        "backend/src/ai/runReconciler.ts:1",
         "backend/src/ai/runStore.ts:9",
         "backend/src/ai/runTrace.ts:5",
         "backend/src/ai/sessionMemory.ts:6",
@@ -11484,7 +11484,6 @@
         "backend/src/routes/billingWebhook.ts:4",
         "backend/src/routes/dashboard.ts:3",
         "backend/src/routes/github.ts:3",
-        "backend/src/routes/messageShares.ts:4",
         "backend/src/routes/notifications.ts:2",
         "backend/src/routes/operations.ts:4",
         "backend/src/routes/phase1BusinessPreflight.ts:18",
@@ -11505,7 +11504,6 @@
         "backend/src/services/memory/buildProjectStore.ts:3",
         "backend/src/services/notificationService.ts:1",
         "backend/src/services/referralService.ts:2",
-        "backend/src/services/responseCache.ts:2",
         "backend/src/services/storage/projectFiles.ts:1",
         "backend/src/services/systemErrorLog.ts:1",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:1",
@@ -11711,7 +11709,7 @@
       ],
       "callers": [
         "backend/src/index.ts:47",
-        "backend/src/routes/messageShares.ts:5"
+        "backend/src/routes/messageShares.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -13185,7 +13183,7 @@
       ],
       "callers": [
         "backend/src/lib/messageShareText.test.ts:3",
-        "backend/src/routes/messageShares.ts:7"
+        "backend/src/routes/messageShares.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -14937,7 +14935,7 @@
         "backend/src/middleware/phase1Auth.ts:6",
         "backend/src/routes/community.ts:4",
         "backend/src/routes/guestChat.ts:17",
-        "backend/src/routes/messageShares.ts:6",
+        "backend/src/routes/messageShares.ts:7",
         "backend/src/security/tenantIsolation.integration.test.ts:9"
       ],
       "reachable": true,
@@ -15395,7 +15393,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba",
+      "sha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -18484,7 +18482,7 @@
       "id": "surface:689012372a18e20a2b6f",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "sha256": "9262b42a79d31698ea44fbeeb65b272079a1df1542209fa643c73cf2a41d72d2",
+      "sha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0",
       "symbols": [
         "ShareRow",
         "authorization",
@@ -18504,19 +18502,21 @@
         "viewerId"
       ],
       "imports": [
-        "../config/supabase.js",
         "../db/ensureMessageSharesSchema.js",
         "../lib/messageShareText.js",
         "../middleware/auth.js",
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
         "express",
         "node:crypto",
         "zod"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts",
         "backend/src/db/ensureMessageSharesSchema.ts",
         "backend/src/lib/messageShareText.ts",
-        "backend/src/middleware/auth.ts"
+        "backend/src/middleware/auth.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -18540,7 +18540,7 @@
         "backend/src/routes/messageShares.ts#verifyAccessToken"
       ],
       "tenantBoundary": [
-        "backend/src/routes/messageShares.ts:146 (owner_id)"
+        "backend/src/routes/messageShares.ts:147 (owner_id)"
       ],
       "approvalBoundary": [
         "backend/src/routes/messageShares.ts#authorization"
@@ -20639,8 +20639,9 @@
       "id": "surface:e31c62507c56bf4fa325",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "3decc6b2f938d80f9a612b4e2c45605f871a4160609e680b4332bfce15ab15ee",
+      "sha256": "ade895e09606260ae006573135cf992465bb10f1d10d912473207fe6d3dc9da6",
       "symbols": [
+        "getGlobalSupabaseAdmin",
         "getTenantSupabaseAdmin",
         "globalServiceExceptions",
         "probeDatabaseReadiness"
@@ -20657,10 +20658,15 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/providerHealthStore.ts:29",
+        "backend/src/ai/runReconciler.ts:1",
         "backend/src/index.ts:60",
+        "backend/src/routes/messageShares.ts:4",
         "backend/src/routes/projects.ts:3",
         "backend/src/security/ownership.ts:2",
-        "backend/src/security/tenantContext.test.ts:4"
+        "backend/src/security/serviceRoleGuard.test.ts:3",
+        "backend/src/security/tenantContext.test.ts:4",
+        "backend/src/services/responseCache.ts:2"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -20673,6 +20679,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/serviceRoleGuard.test.ts",
         "backend/src/security/tenantContext.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -20711,6 +20718,7 @@
       "callers": [
         "backend/src/ai/runStore.ts:10",
         "backend/src/middleware/auth.ts:4",
+        "backend/src/routes/messageShares.ts:5",
         "backend/src/routes/projectRuntime.ts:8",
         "backend/src/routes/projects.ts:4",
         "backend/src/routes/swarm.ts:4",
@@ -20725,6 +20733,8 @@
         "backend/src/security/tenantContext.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:15",
         "backend/src/security/tenantIsolation.local.integration.ts:6",
+        "backend/src/services/responseCache.test.ts:3",
+        "backend/src/services/responseCache.ts:3",
         "backend/src/services/storage/projectFiles.ts:4",
         "backend/src/synthesis/projectRuntime/store.ts:9"
       ],
@@ -20747,7 +20757,8 @@
         "backend/src/security/ownership.test.ts",
         "backend/src/security/tenantContext.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/responseCache.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -24253,25 +24264,32 @@
       "id": "surface:1a5c57a53070bd189630",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/responseCache.ts",
-      "sha256": "dd440ab1e2a78f7e92bd2a28e3384563dfbcf145962e72b7e4ff9c19b04ab3a1",
+      "sha256": "b333804ab4e08635a8ecc1183a4774b9d01e96fe4946cee30cac40c9c1bacdca",
       "symbols": [
         "TTL_MS",
         "expires",
+        "expiry",
         "getCachedResponse",
-        "hashPrompt",
         "key",
+        "scope",
         "setCachedResponse",
-        "supabase"
+        "supabase",
+        "tenantResponseCacheKey"
       ],
       "imports": [
-        "../config/supabase.js",
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
         "crypto"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts"
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [],
-      "callers": [],
+      "callers": [
+        "backend/src/security/tenantIsolation.local.integration.ts:11",
+        "backend/src/services/responseCache.test.ts:4"
+      ],
       "reachable": false,
       "persistenceDependencies": [
         "response_cache"
@@ -24284,7 +24302,10 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/responseCache.test.ts"
+      ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
@@ -82309,7 +82330,7 @@
       "id": "surface:df5a69bd66236469cf20",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/audit-tenant-policies.mjs",
-      "sha256": "0c4f15def7a558e4f9ba5dd156424698da75ce19154b7d2dbfb7a83a67ab998f",
+      "sha256": "6883886725ab3deee19c2e69749e0045aca2e8f4f4c96b76ef89f5d99a361878",
       "symbols": [
         "adminNames",
         "binding",
@@ -82321,8 +82342,10 @@
         "discoverPersistenceCalls",
         "enclosing",
         "escape",
+        "exceptions",
         "factory",
         "foreign",
+        "guard",
         "hash",
         "inspect",
         "json",
@@ -82342,6 +82365,7 @@
         "property",
         "read",
         "report",
+        "reviewedMarkdown",
         "source",
         "statement",
         "tableNames",
@@ -82515,12 +82539,13 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "1c9c28d70fac4234c35e43afa5d04e41d2997b6470f749bfb8eb1e9f592a7b5e",
+      "sha256": "c7a6090449de643d077b02e2e2ac24ec8174ea3d34bb2256dec51f10fbe282fb",
       "symbols": [
         "actual",
         "afterPolicies",
         "apply",
         "before",
+        "bootstrapSource",
         "connect",
         "db",
         "error",
@@ -82540,6 +82565,9 @@
         "reset",
         "root",
         "save",
+        "shareBefore",
+        "shareSql",
+        "shareToken",
         "target",
         "url"
       ],
@@ -83482,7 +83510,7 @@
       "id": "surface:877bc278c500a2b4cc54",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/reconcile-requirements.mjs",
-      "sha256": "d747dc4fce701e661ee5c57f1a0aa1bc8c40b3e174828faf93b0e28ab88f520a",
+      "sha256": "230470d3ce1c008a533db2de85f95a2952f97824d0539a804b8ad838458eaca0",
       "symbols": [
         "acceptance",
         "archive",
@@ -86456,9 +86484,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:20394954e112921251ad",
+      "id": "registration:e0e648f4c4a5050bae68",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 48,
+      "line": 49,
       "receiver": "router",
       "method": "post",
       "path": "/",
@@ -86470,9 +86498,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:03018245572c35c3fd67",
+      "id": "registration:33c38f75f9b38d85a2ca",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 90,
+      "line": 91,
       "receiver": "router",
       "method": "get",
       "path": "/:token",
@@ -86482,9 +86510,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:97f9a0cde06e379fbccd",
+      "id": "registration:d00eca0fbb10eaab2db0",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 139,
+      "line": 140,
       "receiver": "router",
       "method": "delete",
       "path": "/:token",
@@ -88680,10 +88708,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:6c92b7f502c66538fe50",
-      "registrationId": "registration:20394954e112921251ad",
+      "id": "route:85091cc0968608a58120",
+      "registrationId": "registration:e0e648f4c4a5050bae68",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 48,
+      "line": 49,
       "method": "POST",
       "path": "/api/message-shares",
       "mountChain": [
@@ -88697,10 +88725,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:71af12a030775acd1751",
-      "registrationId": "registration:03018245572c35c3fd67",
+      "id": "route:46af98f9f833090bd7ea",
+      "registrationId": "registration:33c38f75f9b38d85a2ca",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 90,
+      "line": 91,
       "method": "GET",
       "path": "/api/message-shares/:token",
       "mountChain": [
@@ -88712,10 +88740,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e8e99370f9198237698a",
-      "registrationId": "registration:97f9a0cde06e379fbccd",
+      "id": "route:490af0fa50d4246b624a",
+      "registrationId": "registration:d00eca0fbb10eaab2db0",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 139,
+      "line": 140,
       "method": "DELETE",
       "path": "/api/message-shares/:token",
       "mountChain": [
@@ -92132,7 +92160,7 @@
       "sourcePath": "supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql",
       "version": "20261013150357",
       "order": 68,
-      "sha256": "035535945ef49fdac3d52692383998cb03cfc6e4d102949ea55007dc4a9aeede"
+      "sha256": "b4bf153b6aa4d7b7d3cb1322a1806706d92d09a0a4f71cfefb803e7998235fb6"
     }
   ],
   "workflows": [
@@ -99649,6 +99677,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:ac541d563efcbc546c08",
+      "sourcePath": "backend/src/security/serviceRoleGuard.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:ec8a4fcda50fd116d656",
       "sourcePath": "backend/src/security/tenantContext.test.ts",
       "declaredTests": 3,
@@ -99672,7 +99707,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 11,
+      "declaredTests": 17,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -99840,6 +99875,13 @@
     {
       "id": "test-suite:41ddc986a2f406003ec0",
       "sourcePath": "backend/src/services/publish/userOwnedPublish.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a6d4a3e13a86c4935c93",
+      "sourcePath": "backend/src/services/responseCache.test.ts",
       "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []

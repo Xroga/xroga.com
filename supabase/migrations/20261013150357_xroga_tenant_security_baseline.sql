@@ -47,6 +47,31 @@ BEGIN
   END IF;
 END $legacy_schema$;
 
+-- Canonical active share schema previously existed only in runtime bootstrap.
+-- Exact existing definition: backend/src/db/ensureMessageSharesSchema.ts and
+-- inspected deployed columns/constraints/policy. No production rows/grants changed.
+DO $share_schema$
+BEGIN
+  IF to_regclass('public.message_shares') IS NULL THEN
+    CREATE TABLE public.message_shares (
+      token text PRIMARY KEY,
+      owner_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+      visibility text NOT NULL CHECK (visibility IN ('private','public')),
+      scope text NOT NULL CHECK (scope IN ('response','exchange')),
+      prompt text NOT NULL DEFAULT '',
+      response text NOT NULL,
+      created_at timestamptz NOT NULL DEFAULT now(),
+      revoked_at timestamptz,
+      CONSTRAINT message_shares_response_present CHECK (char_length(response)>0)
+    );
+    CREATE INDEX idx_message_shares_owner_created ON public.message_shares(owner_id,created_at DESC);
+    ALTER TABLE public.message_shares ENABLE ROW LEVEL SECURITY;
+    REVOKE ALL ON public.message_shares FROM anon;
+    CREATE POLICY "Owners manage message shares" ON public.message_shares FOR ALL USING(auth.uid()=owner_id) WITH CHECK(auth.uid()=owner_id);
+    GRANT SELECT,INSERT,UPDATE,DELETE ON public.message_shares TO authenticated,service_role;
+  END IF;
+END $share_schema$;
+
 DO $baseline$
 DECLARE target text;
 BEGIN

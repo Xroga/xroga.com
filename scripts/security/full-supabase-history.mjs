@@ -28,14 +28,24 @@ let db = await connect();
 try {
   // No production dump/projection: recreate the actual pre-upgrade repository schema.
   await apply(db,files.slice(0,-1),'pre-upgrade');
+  const bootstrapSource=readFileSync(join(root,'backend/src/db/ensureMessageSharesSchema.ts'),'utf8');
+  const shareSql=bootstrapSource.match(/const ENSURE_MESSAGE_SHARES_SQL = `([\s\S]*?)`;/)?.[1];
+  assert.ok(shareSql && !shareSql.includes('${'),'Complete canonical share bootstrap SQL required, not a projected table');
+  await db.query(shareSql);
+  evidence.upgradeShareBootstrap={source:'backend/src/db/ensureMessageSharesSchema.ts',sha256:createHash('sha256').update(shareSql).digest('hex'),sourceClass:'EXISTING_FULL_RUNTIME_SCHEMA'};
   const owner=randomUUID(),other=randomUUID(),project=randomUUID(),foreign=randomUUID();
   await db.query("insert into auth.users(id,email,raw_user_meta_data) values($1,$2,'{}'),($3,$4,'{}')",[owner,'upgrade-owner@example.invalid',other,'upgrade-other@example.invalid']);
   await db.query("insert into public.projects(id,user_id,name,type) values($1,$2,'Sanitized fixture','app'),($3,$4,'Foreign fixture','app')",[project,owner,foreign,other]);
   await db.query("insert into public.project_files(project_id,file_name,content) values($1,'fixture.txt','non-customer example')",[project]);
+  const shareToken=randomUUID();
+  await db.query("insert into public.message_shares(token,owner_id,visibility,scope,response) values($1,$2,'private','response','Sanitized pre-upgrade fixture')",[shareToken,owner]);
+  const shareBefore=(await db.query('select token,owner_id,visibility,response from public.message_shares')).rows;
   const before = await db.query("select id,user_id,name from public.projects order by id");
   const policies = await db.query("select schemaname,tablename,policyname from pg_policies where schemaname='public' order by tablename,policyname");
   await apply(db,[target],'upgrade');
   assert.deepEqual((await db.query("select id,user_id,name from public.projects order by id")).rows,before.rows);
+  assert.deepEqual((await db.query('select token,owner_id,visibility,response from public.message_shares')).rows,shareBefore);
+  evidence.preUpgradeShareRowsPreserved=true;
   const afterPolicies=(await db.query("select schemaname,tablename,policyname from pg_policies where schemaname='public'")).rows;
   for(const policy of policies.rows) assert.ok(afterPolicies.some(p=>p.tablename===policy.tablename&&p.policyname===policy.policyname));
   await db.query('begin');

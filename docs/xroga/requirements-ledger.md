@@ -1,6 +1,6 @@
 # Canonical Xroga requirements ledger
 
-Application source SHA: `16abb16ff3f4136c9f715c7bb37b0f858275c999`. Original row coverage is **119/119 features and 72/72 missions**; this is requirements mapping, NOT implemented-product or fully verified Batch One status. All original features remain UNVERIFIED/NOT_RUN. Full original-transcript semantic review remains pending. Private originals are not committed; pinned hashes and derived planning records are retained.
+Application source SHA: `934cb850fb30d16937491776ac518e24b056943d`. Original row coverage is **119/119 features and 72/72 missions**; this is requirements mapping, NOT implemented-product or fully verified Batch One status. All original features remain UNVERIFIED/NOT_RUN. Full original-transcript semantic review remains pending. Private originals are not committed; pinned hashes and derived planning records are retained.
 
 445 requirements; 527 source rows mapped; 43 mandatory capability families; 23 independently registered external candidates; zero newly adopted runtime dependencies. Original research lists additional candidates without granting adoption rights.
 
@@ -270,187 +270,187 @@ Application source SHA: `16abb16ff3f4136c9f715c7bb37b0f858275c999`. Original row
 | XR-HIST-de01fa93ac79aabe | Historical requirement C3C-18 | PROPOSED_ONLY | LATER_SOURCE_MAPPING_REVIEW | NEW |
 | XR-HIST-5e02fd52ef7b330c | Historical requirement C3C-19 | PROPOSED_ONLY | LATER_SOURCE_MAPPING_REVIEW | NEW |
 | XR-HIST-e16fdcdbe00f7154 | Historical requirement C3C-20 | PROPOSED_ONLY | LATER_SOURCE_MAPPING_REVIEW | NEW |
-| XR-MISSION-011 | Account protection and audit logs | PROPOSED_ONLY | MISSION-011 | NEW |
-| XR-MISSION-012 | Private R2/Xroga Drive correctness | PROPOSED_ONLY | MISSION-012 | NEW |
-| XR-MISSION-013 | Storage ledger, lifecycle and recovery | PROPOSED_ONLY | MISSION-013 | NEW |
-| XR-MISSION-014 | Production async runtime topology | PROPOSED_ONLY | MISSION-014 | NEW |
-| XR-MISSION-015 | Observability and SLO instrumentation | PROPOSED_ONLY | MISSION-015 | NEW |
-| XR-MISSION-016 | Release-safe infrastructure operations | PROPOSED_ONLY | MISSION-016 | NEW |
-| XR-MISSION-017 | Outcome Contract v2 | PROPOSED_ONLY | MISSION-017 | NEW |
-| XR-MISSION-018 | Task states and checkpoint resumption | PROPOSED_ONLY | MISSION-018 | NEW |
-| XR-MISSION-019 | Dependency and resource concurrency | PROPOSED_ONLY | MISSION-019 | NEW |
-| XR-MISSION-020 | Verification, receipts and status honesty | PROPOSED_ONLY | MISSION-020 | NEW |
-| XR-MISSION-021 | Error taxonomy and deterministic recovery | PROPOSED_ONLY | MISSION-021 | NEW |
-| XR-MISSION-022 | User-intent relevance gate | PROPOSED_ONLY | MISSION-022 | NEW |
-| XR-MISSION-023 | Multi-outcome goal decomposition | PROPOSED_ONLY | MISSION-023 | NEW |
-| XR-MISSION-024 | Capability binding and tool relevance | PROPOSED_ONLY | MISSION-024 | NEW |
-| XR-MISSION-025 | Task Context Planner and project passport | PROPOSED_ONLY | MISSION-025 | NEW |
-| XR-MISSION-026 | Model/provider routing and cost escalation | PROPOSED_ONLY | MISSION-026 | NEW |
-| XR-MISSION-027 | Composio account and tool certification | PROPOSED_ONLY | MISSION-027 | NEW |
-| XR-MISSION-028 | Transactional business action execution | PROPOSED_ONLY | MISSION-028 | NEW |
-| XR-MISSION-029 | Cross-app output typing and mapping | PROPOSED_ONLY | MISSION-029 | NEW |
-| XR-MISSION-030 | Native-first action and contextual connection UI | PROPOSED_ONLY | MISSION-030 | NEW |
-| XR-MISSION-031 | Custom API and connector admission | PROPOSED_ONLY | MISSION-031 | NEW |
-| XR-MISSION-032 | Engineering worker registry | PROPOSED_ONLY | MISSION-032 | NEW |
-| XR-MISSION-033 | Mini Worker for bounded edits | PROPOSED_ONLY | MISSION-033 | NEW |
-| XR-MISSION-034 | Repository intelligence | PROPOSED_ONLY | MISSION-034 | NEW |
-| XR-MISSION-035 | Genome admission and build composition | PROPOSED_ONLY | MISSION-035 | NEW |
-| XR-MISSION-036 | Full-stack application golden slice | PROPOSED_ONLY | MISSION-036 | NEW |
-| XR-MISSION-037 | Existing-repository fix, Undo and delivery | PROPOSED_ONLY | MISSION-037 | NEW |
-| XR-MISSION-038 | Browser worker contracts and action safety | PROPOSED_ONLY | MISSION-038 | NEW |
-| XR-MISSION-039 | Separate employee browser sessions | PROPOSED_ONLY | MISSION-039 | NEW |
-| XR-MISSION-040 | Browser viewer and human takeover | PROPOSED_ONLY | MISSION-040 | NEW |
-| XR-MISSION-041 | Desktop/computer-use evaluation gate | PROPOSED_ONLY | MISSION-041 | NEW |
-| XR-MISSION-042 | Workflow definitions and typed compiler | PROPOSED_ONLY | MISSION-042 | NEW |
-| XR-MISSION-043 | Schedule and event triggers | PROPOSED_ONLY | MISSION-043 | NEW |
-| XR-MISSION-044 | AI Employee manifests and assignments | PROPOSED_ONLY | MISSION-044 | NEW |
-| XR-MISSION-045 | Certified Work Pack engine | PROPOSED_ONLY | MISSION-045 | NEW |
-| XR-MISSION-046 | Automations dashboard complete | PROPOSED_ONLY | MISSION-046 | NEW |
-| XR-MISSION-047 | Workflow lifecycle, marketplace governance | PROPOSED_ONLY | MISSION-047 | NEW |
-| XR-MISSION-048 | Library dashboard and file ingestion | PROPOSED_ONLY | MISSION-048 | NEW |
-| XR-MISSION-049 | Document extraction and citation pipeline | PROPOSED_ONLY | MISSION-049 | NEW |
-| XR-MISSION-050 | Spreadsheet/data intelligence worker | PROPOSED_ONLY | MISSION-050 | NEW |
-| XR-MISSION-051 | Document, slides and artifact Studio | PROPOSED_ONLY | MISSION-051 | NEW |
-| XR-MISSION-052 | Images, voice, video and media truth | PROPOSED_ONLY | MISSION-052 | NEW |
-| XR-MISSION-053 | Canonical live work and stream replay | PROPOSED_ONLY | MISSION-053 | NEW |
-| XR-MISSION-054 | Rich results cards with verified data | PROPOSED_ONLY | MISSION-054 | NEW |
-| XR-MISSION-055 | Experience Genome design and accessibility | PROPOSED_ONLY | MISSION-055 | NEW |
-| XR-MISSION-056 | Unified workspace and progressive disclosure | PROPOSED_ONLY | MISSION-056 | NEW |
-| XR-MISSION-057 | Publish readiness and release manifest | PROPOSED_ONLY | MISSION-057 | NEW |
-| XR-MISSION-058 | Web and Chrome publish correctness | PROPOSED_ONLY | MISSION-058 | NEW |
-| XR-MISSION-059 | Android/iOS EAS release workflows | PROPOSED_ONLY | MISSION-059 | NEW |
-| XR-MISSION-060 | Desktop and broader marketplace adapters | PROPOSED_ONLY | MISSION-060 | NEW |
-| XR-MISSION-061 | Operations production health | PROPOSED_ONLY | MISSION-061 | NEW |
-| XR-MISSION-062 | Incident and Release Guardian | PROPOSED_ONLY | MISSION-062 | NEW |
-| XR-MISSION-063 | SEO technical worker and measurement | PROPOSED_ONLY | MISSION-063 | NEW |
-| XR-MISSION-064 | Business growth and communications | PROPOSED_ONLY | MISSION-064 | NEW |
-| XR-MISSION-065 | Budgets, quota and unit economics | PROPOSED_ONLY | MISSION-065 | NEW |
-| XR-MISSION-066 | Paid one-time publishing orders | PROPOSED_ONLY | MISSION-066 | NEW |
-| XR-MISSION-067 | Onboarding, notifications, support and controls | PROPOSED_ONLY | MISSION-067 | NEW |
-| XR-MISSION-068 | XrogaBench full evaluation program | PROPOSED_ONLY | MISSION-068 | NEW |
-| XR-MISSION-069 | Experience Engine procedures and safe learning | PROPOSED_ONLY | MISSION-069 | NEW |
-| XR-MISSION-070 | Founder-only Frontier research loop | PROPOSED_ONLY | MISSION-070 | NEW |
-| XR-MISSION-071 | Cross-feature golden journeys | PROPOSED_ONLY | MISSION-071 | NEW |
-| XR-MISSION-072 | Staged rollout, operator runbooks and handoff | PROPOSED_ONLY | MISSION-072 | NEW |
-| XR-ORIGINAL-F001 | chat and natural answers | PROPOSED_ONLY | MISSION-056 | NEW |
-| XR-ORIGINAL-F002 | source-backed web research | PROPOSED_ONLY | MISSION-025 | NEW |
-| XR-ORIGINAL-F003 | X/Twitter research via authorized tools | PROPOSED_ONLY | MISSION-025 | NEW |
-| XR-ORIGINAL-F004 | deep research | PROPOSED_ONLY | MISSION-025 | NEW |
-| XR-ORIGINAL-F005 | native-first relevance and app suggestions | PROPOSED_ONLY | MISSION-022 | NEW |
-| XR-ORIGINAL-F006 | multi-outcome compiler | PROPOSED_ONLY | MISSION-023 | NEW |
-| XR-ORIGINAL-F007 | goal/outcome contracts | PROPOSED_ONLY | MISSION-017 | NEW |
-| XR-ORIGINAL-F008 | cost-aware model/provider router | PROPOSED_ONLY | MISSION-026 | NEW |
-| XR-ORIGINAL-F009 | typed tool search | PROPOSED_ONLY | MISSION-024 | NEW |
-| XR-ORIGINAL-F010 | verification and receipts | PROPOSED_ONLY | MISSION-020 | NEW |
-| XR-ORIGINAL-F011 | recovery and experience engine | PROPOSED_ONLY | MISSION-069 | NEW |
-| XR-ORIGINAL-F012 | memory and project passports | PROPOSED_ONLY | MISSION-025 | NEW |
-| XR-ORIGINAL-F013 | source provenance | PROPOSED_ONLY | MISSION-049 | NEW |
-| XR-ORIGINAL-F014 | shadow evals and Frontier | PROPOSED_ONLY | MISSION-070 | NEW |
-| XR-ORIGINAL-F015 | new web SaaS | PROPOSED_ONLY | MISSION-036 | NEW |
-| XR-ORIGINAL-F016 | existing repository bugfix | PROPOSED_ONLY | MISSION-037 | NEW |
-| XR-ORIGINAL-F017 | Cline worker | PROPOSED_ONLY | MISSION-032 | NEW |
-| XR-ORIGINAL-F018 | native mini worker | PROPOSED_ONLY | MISSION-033 | NEW |
-| XR-ORIGINAL-F019 | ACP worker adapter | PROPOSED_ONLY | MISSION-032 | NEW |
-| XR-ORIGINAL-F020 | ast-grep/repo maps | PROPOSED_ONLY | MISSION-034 | NEW |
-| XR-ORIGINAL-F021 | security and dependency checks | PROPOSED_ONLY | MISSION-010 | NEW |
-| XR-ORIGINAL-F022 | certified starter/template Genome | PROPOSED_ONLY | MISSION-035 | NEW |
-| XR-ORIGINAL-F023 | App Genome discover/reuse/adapt/compose | PROPOSED_ONLY | MISSION-035 | NEW |
-| XR-ORIGINAL-F024 | frontend design/UX genome | PROPOSED_ONLY | MISSION-055 | NEW |
-| XR-ORIGINAL-F025 | GitHub branch/PR/diff | PROPOSED_ONLY | MISSION-037 | NEW |
-| XR-ORIGINAL-F026 | preview and tests | PROPOSED_ONLY | MISSION-036 | NEW |
-| XR-ORIGINAL-F027 | protected undo rollback | PROPOSED_ONLY | MISSION-037 | NEW |
-| XR-ORIGINAL-F028 | mobile/Expo scaffolds | PROPOSED_ONLY | MISSION-059 | NEW |
-| XR-ORIGINAL-F029 | browser extension scaffolds | PROPOSED_ONLY | MISSION-058 | NEW |
-| XR-ORIGINAL-F030 | Electron desktop | PROPOSED_ONLY | MISSION-060 | NEW |
-| XR-ORIGINAL-F031 | backend Playwright | PROPOSED_ONLY | MISSION-038 | NEW |
-| XR-ORIGINAL-F032 | Stagehand fallback | PROPOSED_ONLY | MISSION-038 | NEW |
-| XR-ORIGINAL-F033 | multiple isolated employee sessions | PROPOSED_ONLY | MISSION-039 | NEW |
-| XR-ORIGINAL-F034 | browser viewer and human takeover | PROPOSED_ONLY | MISSION-040 | NEW |
-| XR-ORIGINAL-F035 | authenticated app context | PROPOSED_ONLY | MISSION-039 | NEW |
-| XR-ORIGINAL-F036 | form filling and browser tests | PROPOSED_ONLY | MISSION-038 | NEW |
-| XR-ORIGINAL-F037 | postcondition verification | PROPOSED_ONLY | MISSION-020 | NEW |
-| XR-ORIGINAL-F038 | desktop automation research | PROPOSED_ONLY | MISSION-041 | NEW |
-| XR-ORIGINAL-F039 | MFA/CAPTCHA handoff | PROPOSED_ONLY | MISSION-040 | NEW |
-| XR-ORIGINAL-F040 | Composio managed OAuth | PROPOSED_ONLY | MISSION-027 | NEW |
-| XR-ORIGINAL-F041 | dynamic app/tool discovery | PROPOSED_ONLY | MISSION-024 | NEW |
-| XR-ORIGINAL-F042 | calendar read/write | PROPOSED_ONLY | MISSION-028 | NEW |
-| XR-ORIGINAL-F043 | Gmail/Outlook read/send with consent | PROPOSED_ONLY | MISSION-028 | NEW |
-| XR-ORIGINAL-F044 | Slack/Teams | PROPOSED_ONLY | MISSION-028 | NEW |
-| XR-ORIGINAL-F045 | CRM lead research/update | PROPOSED_ONLY | MISSION-028 | NEW |
-| XR-ORIGINAL-F046 | Notion/Docs/Sheets | PROPOSED_ONLY | MISSION-029 | NEW |
-| XR-ORIGINAL-F047 | financial/payments high risk | PROPOSED_ONLY | MISSION-008 | NEW |
-| XR-ORIGINAL-F048 | custom OpenAPI adapter | PROPOSED_ONLY | MISSION-031 | NEW |
-| XR-ORIGINAL-F049 | per-user data isolation | PROPOSED_ONLY | MISSION-007 | NEW |
-| XR-ORIGINAL-F050 | contextual connect cards | PROPOSED_ONLY | MISSION-030 | NEW |
-| XR-ORIGINAL-F051 | provider action receipts and saga recovery | PROPOSED_ONLY | MISSION-028 | NEW |
-| XR-ORIGINAL-F052 | Workflows visual + natural builder | PROPOSED_ONLY | MISSION-042 | NEW |
-| XR-ORIGINAL-F053 | Scheduled Tasks | PROPOSED_ONLY | MISSION-043 | NEW |
-| XR-ORIGINAL-F054 | external event triggers | PROPOSED_ONLY | MISSION-043 | NEW |
-| XR-ORIGINAL-F055 | AI Employee manifests | PROPOSED_ONLY | MISSION-044 | NEW |
-| XR-ORIGINAL-F056 | Work Packs install/activate | PROPOSED_ONLY | MISSION-045 | NEW |
-| XR-ORIGINAL-F057 | native Lead Research Work Pack | PROPOSED_ONLY | MISSION-045 | NEW |
-| XR-ORIGINAL-F058 | SEO Auditor | PROPOSED_ONLY | MISSION-063 | NEW |
-| XR-ORIGINAL-F059 | Website Guardian | PROPOSED_ONLY | MISSION-062 | NEW |
-| XR-ORIGINAL-F060 | CRM and meeting assistant | PROPOSED_ONLY | MISSION-044 | NEW |
-| XR-ORIGINAL-F061 | QA Engineer | PROPOSED_ONLY | MISSION-044 | NEW |
-| XR-ORIGINAL-F062 | Run History | PROPOSED_ONLY | MISSION-018 | NEW |
-| XR-ORIGINAL-F063 | pause/resume/upgrade | PROPOSED_ONLY | MISSION-047 | NEW |
-| XR-ORIGINAL-F064 | pack marketplace later | PROPOSED_ONLY | MISSION-047 | NEW |
-| XR-ORIGINAL-F065 | private Xroga Drive | PROPOSED_ONLY | MISSION-048 | NEW |
-| XR-ORIGINAL-F066 | My Files | PROPOSED_ONLY | MISSION-048 | NEW |
-| XR-ORIGINAL-F067 | Artifacts | PROPOSED_ONLY | MISSION-051 | NEW |
-| XR-ORIGINAL-F068 | Skills | PROPOSED_ONLY | MISSION-035 | NEW |
-| XR-ORIGINAL-F069 | storage quotas and ledger | PROPOSED_ONLY | MISSION-013 | NEW |
-| XR-ORIGINAL-F070 | Docling parsing | PROPOSED_ONLY | MISSION-049 | NEW |
-| XR-ORIGINAL-F071 | PDF/DOCX/PPTX/XLSX | PROPOSED_ONLY | MISSION-051 | NEW |
-| XR-ORIGINAL-F072 | CSV/SQL analysis | PROPOSED_ONLY | MISSION-050 | NEW |
-| XR-ORIGINAL-F073 | graphs/charts/calculations | PROPOSED_ONLY | MISSION-050 | NEW |
-| XR-ORIGINAL-F074 | image generation/edit | PROPOSED_ONLY | MISSION-052 | NEW |
-| XR-ORIGINAL-F075 | video workflows when supported | PROPOSED_ONLY | MISSION-052 | NEW |
-| XR-ORIGINAL-F076 | voice and speech | PROPOSED_ONLY | MISSION-052 | NEW |
-| XR-ORIGINAL-F077 | editable documents | PROPOSED_ONLY | MISSION-051 | NEW |
-| XR-ORIGINAL-F078 | templates and file previews | PROPOSED_ONLY | MISSION-048 | NEW |
-| XR-ORIGINAL-F079 | live server events SSE | PROPOSED_ONLY | MISSION-053 | NEW |
-| XR-ORIGINAL-F080 | progressive text and upserted blocks | PROPOSED_ONLY | MISSION-053 | NEW |
-| XR-ORIGINAL-F081 | travels flights and hotels | PROPOSED_ONLY | MISSION-054 | NEW |
-| XR-ORIGINAL-F082 | products/shopping | PROPOSED_ONLY | MISSION-054 | NEW |
-| XR-ORIGINAL-F083 | restaurants and reservations | PROPOSED_ONLY | MISSION-054 | NEW |
-| XR-ORIGINAL-F084 | maps | PROPOSED_ONLY | MISSION-054 | NEW |
-| XR-ORIGINAL-F085 | sources/citations | PROPOSED_ONLY | MISSION-049 | NEW |
-| XR-ORIGINAL-F086 | graphs/tables | PROPOSED_ONLY | MISSION-050 | NEW |
-| XR-ORIGINAL-F087 | code diffs/terminal | PROPOSED_ONLY | MISSION-037 | NEW |
-| XR-ORIGINAL-F088 | approval/connection cards | PROPOSED_ONLY | MISSION-030 | NEW |
-| XR-ORIGINAL-F089 | notifications | PROPOSED_ONLY | MISSION-067 | NEW |
-| XR-ORIGINAL-F090 | responsive/accessibility | PROPOSED_ONLY | MISSION-055 | NEW |
-| XR-ORIGINAL-F091 | intelligent component selection | PROPOSED_ONLY | MISSION-054 | NEW |
-| XR-ORIGINAL-F092 | design tokens/icons/motion | PROPOSED_ONLY | MISSION-055 | NEW |
-| XR-ORIGINAL-F093 | Web Vercel/Cloudflare publishing | PROPOSED_ONLY | MISSION-058 | NEW |
-| XR-ORIGINAL-F094 | domain management Godaddy/Spaceship when authorized | PROPOSED_ONLY | MISSION-057 | NEW |
-| XR-ORIGINAL-F095 | Chrome Web Store v2 | PROPOSED_ONLY | MISSION-058 | NEW |
-| XR-ORIGINAL-F096 | Firefox/Edge extension submission | PROPOSED_ONLY | MISSION-060 | NEW |
-| XR-ORIGINAL-F097 | Windows/macOS/Linux installers | PROPOSED_ONLY | MISSION-060 | NEW |
-| XR-ORIGINAL-F098 | Apple iOS App Store | PROPOSED_ONLY | MISSION-059 | NEW |
-| XR-ORIGINAL-F099 | Google Play Android | PROPOSED_ONLY | MISSION-059 | NEW |
-| XR-ORIGINAL-F100 | Whop one-time release orders | PROPOSED_ONLY | MISSION-066 | NEW |
-| XR-ORIGINAL-F101 | customer-owned publisher accounts | PROPOSED_ONLY | MISSION-009 | NEW |
-| XR-ORIGINAL-F102 | actual submitted/review/live receipts | PROPOSED_ONLY | MISSION-057 | NEW |
-| XR-ORIGINAL-F103 | Operations health and incidents | PROPOSED_ONLY | MISSION-061 | NEW |
-| XR-ORIGINAL-F104 | release rollback | PROPOSED_ONLY | MISSION-062 | NEW |
-| XR-ORIGINAL-F105 | SEO/GSC and campaigns | PROPOSED_ONLY | MISSION-063 | NEW |
-| XR-ORIGINAL-F106 | product maintenance guardian | PROPOSED_ONLY | MISSION-062 | NEW |
-| XR-ORIGINAL-F107 | Supabase Auth/RLS | PROPOSED_ONLY | MISSION-007 | NEW |
-| XR-ORIGINAL-F108 | billing Whop | PROPOSED_ONLY | MISSION-065 | NEW |
-| XR-ORIGINAL-F109 | Free/Pro entitlements | PROPOSED_ONLY | MISSION-065 | NEW |
-| XR-ORIGINAL-F110 | AI budget and persistent quotas | PROPOSED_ONLY | MISSION-065 | NEW |
-| XR-ORIGINAL-F111 | monitoring and telemetry | PROPOSED_ONLY | MISSION-015 | NEW |
-| XR-ORIGINAL-F112 | security abuse controls | PROPOSED_ONLY | MISSION-010 | NEW |
-| XR-ORIGINAL-F113 | backup/restore | PROPOSED_ONLY | MISSION-016 | NEW |
-| XR-ORIGINAL-F114 | CI/CD staging production | PROPOSED_ONLY | MISSION-072 | NEW |
-| XR-ORIGINAL-F115 | multi-user collaboration | PROPOSED_ONLY | MISSION-007 | NEW |
-| XR-ORIGINAL-F116 | data export/erasure | PROPOSED_ONLY | MISSION-011 | NEW |
-| XR-ORIGINAL-F117 | support/onboarding | PROPOSED_ONLY | MISSION-067 | NEW |
-| XR-ORIGINAL-F118 | analytics and conversion | PROPOSED_ONLY | MISSION-064 | NEW |
-| XR-ORIGINAL-F119 | private Frontier two reports monthly | PROPOSED_ONLY | MISSION-070 | NEW |
+| XR-MISSION-011 | Account protection and audit logs | UNKNOWN_BLOCKED | MISSION-011 | EXTEND |
+| XR-MISSION-012 | Private R2/Xroga Drive correctness | UNKNOWN_BLOCKED | MISSION-012 | EXTEND |
+| XR-MISSION-013 | Storage ledger, lifecycle and recovery | UNKNOWN_BLOCKED | MISSION-013 | EXTEND |
+| XR-MISSION-014 | Production async runtime topology | UNKNOWN_BLOCKED | MISSION-014 | EXTEND |
+| XR-MISSION-015 | Observability and SLO instrumentation | UNKNOWN_BLOCKED | MISSION-015 | EXTEND |
+| XR-MISSION-016 | Release-safe infrastructure operations | UNKNOWN_BLOCKED | MISSION-016 | EXTEND |
+| XR-MISSION-017 | Outcome Contract v2 | UNKNOWN_BLOCKED | MISSION-017 | EXTEND |
+| XR-MISSION-018 | Task states and checkpoint resumption | UNKNOWN_BLOCKED | MISSION-018 | EXTEND |
+| XR-MISSION-019 | Dependency and resource concurrency | UNKNOWN_BLOCKED | MISSION-019 | EXTEND |
+| XR-MISSION-020 | Verification, receipts and status honesty | UNKNOWN_BLOCKED | MISSION-020 | EXTEND |
+| XR-MISSION-021 | Error taxonomy and deterministic recovery | UNKNOWN_BLOCKED | MISSION-021 | EXTEND |
+| XR-MISSION-022 | User-intent relevance gate | UNKNOWN_BLOCKED | MISSION-022 | EXTEND |
+| XR-MISSION-023 | Multi-outcome goal decomposition | UNKNOWN_BLOCKED | MISSION-023 | EXTEND |
+| XR-MISSION-024 | Capability binding and tool relevance | UNKNOWN_BLOCKED | MISSION-024 | EXTEND |
+| XR-MISSION-025 | Task Context Planner and project passport | UNKNOWN_BLOCKED | MISSION-025 | EXTEND |
+| XR-MISSION-026 | Model/provider routing and cost escalation | UNKNOWN_BLOCKED | MISSION-026 | EXTEND |
+| XR-MISSION-027 | Composio account and tool certification | UNKNOWN_BLOCKED | MISSION-027 | EXTEND |
+| XR-MISSION-028 | Transactional business action execution | UNKNOWN_BLOCKED | MISSION-028 | EXTEND |
+| XR-MISSION-029 | Cross-app output typing and mapping | UNKNOWN_BLOCKED | MISSION-029 | EXTEND |
+| XR-MISSION-030 | Native-first action and contextual connection UI | UNKNOWN_BLOCKED | MISSION-030 | EXTEND |
+| XR-MISSION-031 | Custom API and connector admission | UNKNOWN_BLOCKED | MISSION-031 | EXTEND |
+| XR-MISSION-032 | Engineering worker registry | UNKNOWN_BLOCKED | MISSION-032 | EXTEND |
+| XR-MISSION-033 | Mini Worker for bounded edits | UNKNOWN_BLOCKED | MISSION-033 | EXTEND |
+| XR-MISSION-034 | Repository intelligence | UNKNOWN_BLOCKED | MISSION-034 | EXTEND |
+| XR-MISSION-035 | Genome admission and build composition | UNKNOWN_BLOCKED | MISSION-035 | EXTEND |
+| XR-MISSION-036 | Full-stack application golden slice | UNKNOWN_BLOCKED | MISSION-036 | EXTEND |
+| XR-MISSION-037 | Existing-repository fix, Undo and delivery | UNKNOWN_BLOCKED | MISSION-037 | EXTEND |
+| XR-MISSION-038 | Browser worker contracts and action safety | UNKNOWN_BLOCKED | MISSION-038 | EXTEND |
+| XR-MISSION-039 | Separate employee browser sessions | UNKNOWN_BLOCKED | MISSION-039 | EXTEND |
+| XR-MISSION-040 | Browser viewer and human takeover | UNKNOWN_BLOCKED | MISSION-040 | EXTEND |
+| XR-MISSION-041 | Desktop/computer-use evaluation gate | UNKNOWN_BLOCKED | MISSION-041 | EXTEND |
+| XR-MISSION-042 | Workflow definitions and typed compiler | UNKNOWN_BLOCKED | MISSION-042 | EXTEND |
+| XR-MISSION-043 | Schedule and event triggers | UNKNOWN_BLOCKED | MISSION-043 | EXTEND |
+| XR-MISSION-044 | AI Employee manifests and assignments | UNKNOWN_BLOCKED | MISSION-044 | EXTEND |
+| XR-MISSION-045 | Certified Work Pack engine | UNKNOWN_BLOCKED | MISSION-045 | EXTEND |
+| XR-MISSION-046 | Automations dashboard complete | UNKNOWN_BLOCKED | MISSION-046 | EXTEND |
+| XR-MISSION-047 | Workflow lifecycle, marketplace governance | UNKNOWN_BLOCKED | MISSION-047 | EXTEND |
+| XR-MISSION-048 | Library dashboard and file ingestion | UNKNOWN_BLOCKED | MISSION-048 | EXTEND |
+| XR-MISSION-049 | Document extraction and citation pipeline | UNKNOWN_BLOCKED | MISSION-049 | EXTEND |
+| XR-MISSION-050 | Spreadsheet/data intelligence worker | UNKNOWN_BLOCKED | MISSION-050 | EXTEND |
+| XR-MISSION-051 | Document, slides and artifact Studio | UNKNOWN_BLOCKED | MISSION-051 | EXTEND |
+| XR-MISSION-052 | Images, voice, video and media truth | UNKNOWN_BLOCKED | MISSION-052 | EXTEND |
+| XR-MISSION-053 | Canonical live work and stream replay | UNKNOWN_BLOCKED | MISSION-053 | EXTEND |
+| XR-MISSION-054 | Rich results cards with verified data | UNKNOWN_BLOCKED | MISSION-054 | EXTEND |
+| XR-MISSION-055 | Experience Genome design and accessibility | UNKNOWN_BLOCKED | MISSION-055 | EXTEND |
+| XR-MISSION-056 | Unified workspace and progressive disclosure | UNKNOWN_BLOCKED | MISSION-056 | EXTEND |
+| XR-MISSION-057 | Publish readiness and release manifest | UNKNOWN_BLOCKED | MISSION-057 | EXTEND |
+| XR-MISSION-058 | Web and Chrome publish correctness | UNKNOWN_BLOCKED | MISSION-058 | EXTEND |
+| XR-MISSION-059 | Android/iOS EAS release workflows | UNKNOWN_BLOCKED | MISSION-059 | EXTEND |
+| XR-MISSION-060 | Desktop and broader marketplace adapters | UNKNOWN_BLOCKED | MISSION-060 | EXTEND |
+| XR-MISSION-061 | Operations production health | UNKNOWN_BLOCKED | MISSION-061 | EXTEND |
+| XR-MISSION-062 | Incident and Release Guardian | UNKNOWN_BLOCKED | MISSION-062 | EXTEND |
+| XR-MISSION-063 | SEO technical worker and measurement | UNKNOWN_BLOCKED | MISSION-063 | EXTEND |
+| XR-MISSION-064 | Business growth and communications | UNKNOWN_BLOCKED | MISSION-064 | EXTEND |
+| XR-MISSION-065 | Budgets, quota and unit economics | UNKNOWN_BLOCKED | MISSION-065 | EXTEND |
+| XR-MISSION-066 | Paid one-time publishing orders | UNKNOWN_BLOCKED | MISSION-066 | EXTEND |
+| XR-MISSION-067 | Onboarding, notifications, support and controls | UNKNOWN_BLOCKED | MISSION-067 | EXTEND |
+| XR-MISSION-068 | XrogaBench full evaluation program | UNKNOWN_BLOCKED | MISSION-068 | EXTEND |
+| XR-MISSION-069 | Experience Engine procedures and safe learning | UNKNOWN_BLOCKED | MISSION-069 | EXTEND |
+| XR-MISSION-070 | Founder-only Frontier research loop | UNKNOWN_BLOCKED | MISSION-070 | EXTEND |
+| XR-MISSION-071 | Cross-feature golden journeys | UNKNOWN_BLOCKED | MISSION-071 | EXTEND |
+| XR-MISSION-072 | Staged rollout, operator runbooks and handoff | UNKNOWN_BLOCKED | MISSION-072 | EXTEND |
+| XR-ORIGINAL-F001 | chat and natural answers | UNKNOWN_BLOCKED | MISSION-056 | EXTEND |
+| XR-ORIGINAL-F002 | source-backed web research | UNKNOWN_BLOCKED | MISSION-025 | EXTEND |
+| XR-ORIGINAL-F003 | X/Twitter research via authorized tools | UNKNOWN_BLOCKED | MISSION-025 | EXTEND |
+| XR-ORIGINAL-F004 | deep research | UNKNOWN_BLOCKED | MISSION-025 | EXTEND |
+| XR-ORIGINAL-F005 | native-first relevance and app suggestions | UNKNOWN_BLOCKED | MISSION-022 | EXTEND |
+| XR-ORIGINAL-F006 | multi-outcome compiler | UNKNOWN_BLOCKED | MISSION-023 | EXTEND |
+| XR-ORIGINAL-F007 | goal/outcome contracts | UNKNOWN_BLOCKED | MISSION-017 | EXTEND |
+| XR-ORIGINAL-F008 | cost-aware model/provider router | UNKNOWN_BLOCKED | MISSION-026 | EXTEND |
+| XR-ORIGINAL-F009 | typed tool search | UNKNOWN_BLOCKED | MISSION-024 | EXTEND |
+| XR-ORIGINAL-F010 | verification and receipts | UNKNOWN_BLOCKED | MISSION-020 | EXTEND |
+| XR-ORIGINAL-F011 | recovery and experience engine | UNKNOWN_BLOCKED | MISSION-069 | EXTEND |
+| XR-ORIGINAL-F012 | memory and project passports | UNKNOWN_BLOCKED | MISSION-025 | EXTEND |
+| XR-ORIGINAL-F013 | source provenance | UNKNOWN_BLOCKED | MISSION-049 | EXTEND |
+| XR-ORIGINAL-F014 | shadow evals and Frontier | UNKNOWN_BLOCKED | MISSION-070 | EXTEND |
+| XR-ORIGINAL-F015 | new web SaaS | UNKNOWN_BLOCKED | MISSION-036 | EXTEND |
+| XR-ORIGINAL-F016 | existing repository bugfix | UNKNOWN_BLOCKED | MISSION-037 | EXTEND |
+| XR-ORIGINAL-F017 | Cline worker | UNKNOWN_BLOCKED | MISSION-032 | EXTEND |
+| XR-ORIGINAL-F018 | native mini worker | UNKNOWN_BLOCKED | MISSION-033 | EXTEND |
+| XR-ORIGINAL-F019 | ACP worker adapter | UNKNOWN_BLOCKED | MISSION-032 | EXTEND |
+| XR-ORIGINAL-F020 | ast-grep/repo maps | UNKNOWN_BLOCKED | MISSION-034 | EXTEND |
+| XR-ORIGINAL-F021 | security and dependency checks | UNKNOWN_BLOCKED | MISSION-010 | EXTEND |
+| XR-ORIGINAL-F022 | certified starter/template Genome | UNKNOWN_BLOCKED | MISSION-035 | EXTEND |
+| XR-ORIGINAL-F023 | App Genome discover/reuse/adapt/compose | UNKNOWN_BLOCKED | MISSION-035 | EXTEND |
+| XR-ORIGINAL-F024 | frontend design/UX genome | UNKNOWN_BLOCKED | MISSION-055 | EXTEND |
+| XR-ORIGINAL-F025 | GitHub branch/PR/diff | UNKNOWN_BLOCKED | MISSION-037 | EXTEND |
+| XR-ORIGINAL-F026 | preview and tests | UNKNOWN_BLOCKED | MISSION-036 | EXTEND |
+| XR-ORIGINAL-F027 | protected undo rollback | UNKNOWN_BLOCKED | MISSION-037 | EXTEND |
+| XR-ORIGINAL-F028 | mobile/Expo scaffolds | UNKNOWN_BLOCKED | MISSION-059 | EXTEND |
+| XR-ORIGINAL-F029 | browser extension scaffolds | UNKNOWN_BLOCKED | MISSION-058 | EXTEND |
+| XR-ORIGINAL-F030 | Electron desktop | UNKNOWN_BLOCKED | MISSION-060 | EXTEND |
+| XR-ORIGINAL-F031 | backend Playwright | UNKNOWN_BLOCKED | MISSION-038 | EXTEND |
+| XR-ORIGINAL-F032 | Stagehand fallback | UNKNOWN_BLOCKED | MISSION-038 | EXTEND |
+| XR-ORIGINAL-F033 | multiple isolated employee sessions | UNKNOWN_BLOCKED | MISSION-039 | EXTEND |
+| XR-ORIGINAL-F034 | browser viewer and human takeover | UNKNOWN_BLOCKED | MISSION-040 | EXTEND |
+| XR-ORIGINAL-F035 | authenticated app context | UNKNOWN_BLOCKED | MISSION-039 | EXTEND |
+| XR-ORIGINAL-F036 | form filling and browser tests | UNKNOWN_BLOCKED | MISSION-038 | EXTEND |
+| XR-ORIGINAL-F037 | postcondition verification | UNKNOWN_BLOCKED | MISSION-020 | EXTEND |
+| XR-ORIGINAL-F038 | desktop automation research | UNKNOWN_BLOCKED | MISSION-041 | EXTEND |
+| XR-ORIGINAL-F039 | MFA/CAPTCHA handoff | UNKNOWN_BLOCKED | MISSION-040 | EXTEND |
+| XR-ORIGINAL-F040 | Composio managed OAuth | UNKNOWN_BLOCKED | MISSION-027 | EXTEND |
+| XR-ORIGINAL-F041 | dynamic app/tool discovery | UNKNOWN_BLOCKED | MISSION-024 | EXTEND |
+| XR-ORIGINAL-F042 | calendar read/write | UNKNOWN_BLOCKED | MISSION-028 | EXTEND |
+| XR-ORIGINAL-F043 | Gmail/Outlook read/send with consent | UNKNOWN_BLOCKED | MISSION-028 | EXTEND |
+| XR-ORIGINAL-F044 | Slack/Teams | UNKNOWN_BLOCKED | MISSION-028 | EXTEND |
+| XR-ORIGINAL-F045 | CRM lead research/update | UNKNOWN_BLOCKED | MISSION-028 | EXTEND |
+| XR-ORIGINAL-F046 | Notion/Docs/Sheets | UNKNOWN_BLOCKED | MISSION-029 | EXTEND |
+| XR-ORIGINAL-F047 | financial/payments high risk | UNKNOWN_BLOCKED | MISSION-008 | EXTEND |
+| XR-ORIGINAL-F048 | custom OpenAPI adapter | UNKNOWN_BLOCKED | MISSION-031 | EXTEND |
+| XR-ORIGINAL-F049 | per-user data isolation | UNKNOWN_BLOCKED | MISSION-007 | EXTEND |
+| XR-ORIGINAL-F050 | contextual connect cards | UNKNOWN_BLOCKED | MISSION-030 | EXTEND |
+| XR-ORIGINAL-F051 | provider action receipts and saga recovery | UNKNOWN_BLOCKED | MISSION-028 | EXTEND |
+| XR-ORIGINAL-F052 | Workflows visual + natural builder | UNKNOWN_BLOCKED | MISSION-042 | EXTEND |
+| XR-ORIGINAL-F053 | Scheduled Tasks | UNKNOWN_BLOCKED | MISSION-043 | EXTEND |
+| XR-ORIGINAL-F054 | external event triggers | UNKNOWN_BLOCKED | MISSION-043 | EXTEND |
+| XR-ORIGINAL-F055 | AI Employee manifests | UNKNOWN_BLOCKED | MISSION-044 | EXTEND |
+| XR-ORIGINAL-F056 | Work Packs install/activate | UNKNOWN_BLOCKED | MISSION-045 | EXTEND |
+| XR-ORIGINAL-F057 | native Lead Research Work Pack | UNKNOWN_BLOCKED | MISSION-045 | EXTEND |
+| XR-ORIGINAL-F058 | SEO Auditor | UNKNOWN_BLOCKED | MISSION-063 | EXTEND |
+| XR-ORIGINAL-F059 | Website Guardian | UNKNOWN_BLOCKED | MISSION-062 | EXTEND |
+| XR-ORIGINAL-F060 | CRM and meeting assistant | UNKNOWN_BLOCKED | MISSION-044 | EXTEND |
+| XR-ORIGINAL-F061 | QA Engineer | UNKNOWN_BLOCKED | MISSION-044 | EXTEND |
+| XR-ORIGINAL-F062 | Run History | UNKNOWN_BLOCKED | MISSION-018 | EXTEND |
+| XR-ORIGINAL-F063 | pause/resume/upgrade | UNKNOWN_BLOCKED | MISSION-047 | EXTEND |
+| XR-ORIGINAL-F064 | pack marketplace later | UNKNOWN_BLOCKED | MISSION-047 | EXTEND |
+| XR-ORIGINAL-F065 | private Xroga Drive | UNKNOWN_BLOCKED | MISSION-048 | EXTEND |
+| XR-ORIGINAL-F066 | My Files | UNKNOWN_BLOCKED | MISSION-048 | EXTEND |
+| XR-ORIGINAL-F067 | Artifacts | UNKNOWN_BLOCKED | MISSION-051 | EXTEND |
+| XR-ORIGINAL-F068 | Skills | UNKNOWN_BLOCKED | MISSION-035 | EXTEND |
+| XR-ORIGINAL-F069 | storage quotas and ledger | UNKNOWN_BLOCKED | MISSION-013 | EXTEND |
+| XR-ORIGINAL-F070 | Docling parsing | UNKNOWN_BLOCKED | MISSION-049 | EXTEND |
+| XR-ORIGINAL-F071 | PDF/DOCX/PPTX/XLSX | UNKNOWN_BLOCKED | MISSION-051 | EXTEND |
+| XR-ORIGINAL-F072 | CSV/SQL analysis | UNKNOWN_BLOCKED | MISSION-050 | EXTEND |
+| XR-ORIGINAL-F073 | graphs/charts/calculations | UNKNOWN_BLOCKED | MISSION-050 | EXTEND |
+| XR-ORIGINAL-F074 | image generation/edit | UNKNOWN_BLOCKED | MISSION-052 | EXTEND |
+| XR-ORIGINAL-F075 | video workflows when supported | UNKNOWN_BLOCKED | MISSION-052 | EXTEND |
+| XR-ORIGINAL-F076 | voice and speech | UNKNOWN_BLOCKED | MISSION-052 | EXTEND |
+| XR-ORIGINAL-F077 | editable documents | UNKNOWN_BLOCKED | MISSION-051 | EXTEND |
+| XR-ORIGINAL-F078 | templates and file previews | UNKNOWN_BLOCKED | MISSION-048 | EXTEND |
+| XR-ORIGINAL-F079 | live server events SSE | UNKNOWN_BLOCKED | MISSION-053 | EXTEND |
+| XR-ORIGINAL-F080 | progressive text and upserted blocks | UNKNOWN_BLOCKED | MISSION-053 | EXTEND |
+| XR-ORIGINAL-F081 | travels flights and hotels | UNKNOWN_BLOCKED | MISSION-054 | EXTEND |
+| XR-ORIGINAL-F082 | products/shopping | UNKNOWN_BLOCKED | MISSION-054 | EXTEND |
+| XR-ORIGINAL-F083 | restaurants and reservations | UNKNOWN_BLOCKED | MISSION-054 | EXTEND |
+| XR-ORIGINAL-F084 | maps | UNKNOWN_BLOCKED | MISSION-054 | EXTEND |
+| XR-ORIGINAL-F085 | sources/citations | UNKNOWN_BLOCKED | MISSION-049 | EXTEND |
+| XR-ORIGINAL-F086 | graphs/tables | UNKNOWN_BLOCKED | MISSION-050 | EXTEND |
+| XR-ORIGINAL-F087 | code diffs/terminal | UNKNOWN_BLOCKED | MISSION-037 | EXTEND |
+| XR-ORIGINAL-F088 | approval/connection cards | UNKNOWN_BLOCKED | MISSION-030 | EXTEND |
+| XR-ORIGINAL-F089 | notifications | UNKNOWN_BLOCKED | MISSION-067 | EXTEND |
+| XR-ORIGINAL-F090 | responsive/accessibility | UNKNOWN_BLOCKED | MISSION-055 | EXTEND |
+| XR-ORIGINAL-F091 | intelligent component selection | UNKNOWN_BLOCKED | MISSION-054 | EXTEND |
+| XR-ORIGINAL-F092 | design tokens/icons/motion | UNKNOWN_BLOCKED | MISSION-055 | EXTEND |
+| XR-ORIGINAL-F093 | Web Vercel/Cloudflare publishing | UNKNOWN_BLOCKED | MISSION-058 | EXTEND |
+| XR-ORIGINAL-F094 | domain management Godaddy/Spaceship when authorized | UNKNOWN_BLOCKED | MISSION-057 | EXTEND |
+| XR-ORIGINAL-F095 | Chrome Web Store v2 | UNKNOWN_BLOCKED | MISSION-058 | EXTEND |
+| XR-ORIGINAL-F096 | Firefox/Edge extension submission | UNKNOWN_BLOCKED | MISSION-060 | EXTEND |
+| XR-ORIGINAL-F097 | Windows/macOS/Linux installers | UNKNOWN_BLOCKED | MISSION-060 | EXTEND |
+| XR-ORIGINAL-F098 | Apple iOS App Store | UNKNOWN_BLOCKED | MISSION-059 | EXTEND |
+| XR-ORIGINAL-F099 | Google Play Android | UNKNOWN_BLOCKED | MISSION-059 | EXTEND |
+| XR-ORIGINAL-F100 | Whop one-time release orders | UNKNOWN_BLOCKED | MISSION-066 | EXTEND |
+| XR-ORIGINAL-F101 | customer-owned publisher accounts | UNKNOWN_BLOCKED | MISSION-009 | EXTEND |
+| XR-ORIGINAL-F102 | actual submitted/review/live receipts | UNKNOWN_BLOCKED | MISSION-057 | EXTEND |
+| XR-ORIGINAL-F103 | Operations health and incidents | UNKNOWN_BLOCKED | MISSION-061 | EXTEND |
+| XR-ORIGINAL-F104 | release rollback | UNKNOWN_BLOCKED | MISSION-062 | EXTEND |
+| XR-ORIGINAL-F105 | SEO/GSC and campaigns | UNKNOWN_BLOCKED | MISSION-063 | EXTEND |
+| XR-ORIGINAL-F106 | product maintenance guardian | UNKNOWN_BLOCKED | MISSION-062 | EXTEND |
+| XR-ORIGINAL-F107 | Supabase Auth/RLS | UNKNOWN_BLOCKED | MISSION-007 | EXTEND |
+| XR-ORIGINAL-F108 | billing Whop | UNKNOWN_BLOCKED | MISSION-065 | EXTEND |
+| XR-ORIGINAL-F109 | Free/Pro entitlements | UNKNOWN_BLOCKED | MISSION-065 | EXTEND |
+| XR-ORIGINAL-F110 | AI budget and persistent quotas | UNKNOWN_BLOCKED | MISSION-065 | EXTEND |
+| XR-ORIGINAL-F111 | monitoring and telemetry | UNKNOWN_BLOCKED | MISSION-015 | EXTEND |
+| XR-ORIGINAL-F112 | security abuse controls | UNKNOWN_BLOCKED | MISSION-010 | EXTEND |
+| XR-ORIGINAL-F113 | backup/restore | UNKNOWN_BLOCKED | MISSION-016 | EXTEND |
+| XR-ORIGINAL-F114 | CI/CD staging production | UNKNOWN_BLOCKED | MISSION-072 | EXTEND |
+| XR-ORIGINAL-F115 | multi-user collaboration | UNKNOWN_BLOCKED | MISSION-007 | EXTEND |
+| XR-ORIGINAL-F116 | data export/erasure | UNKNOWN_BLOCKED | MISSION-011 | EXTEND |
+| XR-ORIGINAL-F117 | support/onboarding | UNKNOWN_BLOCKED | MISSION-067 | EXTEND |
+| XR-ORIGINAL-F118 | analytics and conversion | UNKNOWN_BLOCKED | MISSION-064 | EXTEND |
+| XR-ORIGINAL-F119 | private Frontier two reports monthly | UNKNOWN_BLOCKED | MISSION-070 | EXTEND |
 
 ## Ownership and contradictions
 

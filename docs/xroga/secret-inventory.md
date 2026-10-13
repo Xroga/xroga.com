@@ -1,6 +1,6 @@
 # Environment/secret NAME inventory
 
-Source SHA: `16abb16ff3f4136c9f715c7bb37b0f858275c999`. Values are prohibited, including public credential values. 206 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
+Source SHA: `934cb850fb30d16937491776ac518e24b056943d`. Values are prohibited, including public credential values. 207 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
 
 | Name | Class | Requiredness | Consuming source | Validation status |
 | --- | --- | --- | --- | --- |
@@ -178,6 +178,7 @@ Source SHA: `16abb16ff3f4136c9f715c7bb37b0f858275c999`. Values are prohibited, i
 | WHOP_WEBHOOK_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/config/envSecrets.ts, backend/src/lib/platformReady.ts, backend/src/routes/billingWebhook.ts, backend/src/services/BillingService.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/ai/black-hole/webIntelligence.ts, backend/src/ai/openaiCompat.ts, backend/src/ai/research.ts, backend/src/ai/universal/semanticRequestPlanner.ts, backend/src/capabilities/modules/xResearch.ts, backend/src/config/envSecrets.ts, backend/src/lib/capabilityRegistry.ts, backend/src/lib/platformReady.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XB01_DISPOSABLE_SUPABASE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/security/tenantIsolation.local.integration.ts, frontend/src/lib/supabase/authBuildRealm.mjs | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XB01_LOCAL_DATABASE_URL | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/security/tenantIsolation.local.integration.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_ALLOWED_MODELS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/routerConfig.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_CIRCUIT_FAILURE_THRESHOLD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/providerRuntime.ts, backend/src/ai/routerConfig.ts, backend/src/lib/resilience/circuitBreaker.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_DISABLED_PROVIDERS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/routerConfig.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
