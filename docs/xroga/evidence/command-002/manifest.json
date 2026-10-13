@@ -1,5 +1,20 @@
 {
   "command": "002",
+  "originalArchiveContinuation": {
+    "codeSha": "d6b6208528c79f47b2dbfa6992233f45e488286c",
+    "archiveSha256": "1fd3bda7d1bce2697be94a7539b8c30d04a788fdb9b5ba9042ce161cc06913bf",
+    "actualFilesHashVerified":8,
+    "originalFeatureRowsMapped":119,
+    "originalMissionsMapped":72,
+    "markdownManifestAgreement":"PASS",
+    "sourceCoverageIsImplementationProof":false,
+    "originalFeaturesStatus":"UNVERIFIED_NOT_RUN",
+    "privateOriginalsCommitted":false,
+    "remainingReconciliation":"Full private historical transcript semantics and 243 earlier aliases; not inaccessible ZIP",
+    "legacyFieldsBelow":"Original available-source checkpoint, superseded only for export accessibility/count mapping",
+    "sourceRegister":"docs/xroga/research/source-manifest.json",
+    "coverage":"docs/xroga/research/source-reconciliation.md"
+  },
   "title": "Research-to-Code Requirements Reconciliation",
   "source_sha": "a06f8cb9a2b167f41fcb4dfe5ea53582f5734097",
   "assessment": "PASS_AVAILABLE_SOURCE_GATE_WITH_DEFERRED_HISTORICAL_COVERAGE",

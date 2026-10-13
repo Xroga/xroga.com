@@ -27,6 +27,8 @@ Reuse current accounts and release providers; no DNS changes. Provision only wit
 
 The app has existing hard-coded external destinations and startup reconciliation/schema ensures. Missing provider keys and the proposed `services: disabled` declaration alone are NOT a complete egress guarantee. Require staging network controls plus caller review before starting the app. Never supply billing, email, deployment, GitHub-write, Composio or provider tokens merely to silence readiness warnings. Boot/health is not integration success.
 
+Concrete self-hosted staging compatibility blocker: `frontend/src/lib/supabase/authBuildRealm.mjs` and `config.ts` intentionally pin production Auth, permitting only guarded CI loopback or approved CI hosted project references. They do NOT currently admit `https://xroga-supabase-staging.fly.dev`. Merely setting staging URLs will not create a valid staging frontend. A bounded extension of that same canonical build/server admission, with independently verified staging identity and rejection tests, is required before deploying the proposal. No client toggle or global production-pin relaxation was implemented. The backend issuer follows its server-configured Supabase URL; both halves must be verified together. Preflight manifest admission only checks the proposed resource declaration, not actual app Auth compatibility.
+
 ## Credential-free implementation delivered
 
 - `staging-preflight.mjs`: validates exact SHA, separate origins/resource names, owner-reviewed production bucket inventory/isolation evidence, synthetic-only policy and inactive external services. Rejects inherited general-purpose production-capable env variables. Prints a plan only; cannot provision, deploy, migrate or fetch env secrets. Declarations are operator inputs, not independent platform attestation or authorization.
@@ -42,7 +44,7 @@ Official API contract references used for the prepared R2 inspector: [managed do
 
 | Gate | Status / exact prerequisite |
 | --- | --- |
-| Real staged app/Auth/database rollout and compatibility | BLOCKED: separately approved/provisioned resources, restricted network and synthetic dataset; full history and reviewed expand/migrate/contract rollout, actual revision and auth/role/tenant assertions. Isolated fresh/representative upgrade proof is not complete production-schema parity. |
+| Real staged app/Auth/database rollout and compatibility | BLOCKED: approved/provisioned resources, canonical self-hosted staging auth-realm admission, restricted network and synthetic dataset; full history and reviewed expand/migrate/contract rollout, actual revision and auth/role/tenant assertions. Isolated fresh/representative upgrade proof is not complete production-schema parity. |
 | Actual R2 bucket privacy/durability | BLOCKED: reviewed private test bucket and metadata/S3 scopes, explicit approval for synthetic canary PUT/DELETE. Prepared inspector has not contacted Cloudflare. |
 | Application-private file delivery | BLOCKED: existing R2 publicUrl/data-URL/local fallback cannot certify private downloads. Need canonical owner-authorized private download/signed-link adapter and actual A/B denial, revocation/expiry, range and restart tests. Bucket-only canary explicitly reports these as blocked. |
 | All privileged caller semantics | IN PROGRESS: budgets/callbacks/webhooks/provisioning/memory/community/delivery remaining; 662 conservative candidates are not automatically certified. |

@@ -22,6 +22,8 @@ The committed example must exit nonzero. A valid operator manifest prints PLAN_O
 
 Staging app configuration uses normal existing backend/Next variable names *inside the isolated app only*. Operator tools deliberately refuse those generic variables in their own environment to prevent accidentally using a copied production shell. Set staging FRONTEND_URL, API_PUBLIC_URL, SUPABASE_URL and Next public API/Auth URLs consistently. No default xroga.com/xroga-api endpoints or production public R2 URLs are acceptable. Backend startup schema ensures/reconciliation must be reviewed against the staging DB, not treated as read-only operations.
 
+STOP before deploying a self-hosted staging frontend: the current canonical `authBuildRealm.mjs`/`config.ts` does not admit the proposed Fly Auth origin. A reviewed, exact staging-only build/server admission extension and real rejection/positive tests are still required. Do not use the disposable-local CI flag on a hosted deployment, edit browser storage, set VERCEL_ENV to pretend it is CI, remove production pinning or treat this plan as proof of compatibility. No new public auth override was added.
+
 ## Prepared private R2 check
 
 After resource identity/privacy and token-scope review, set only the dedicated test tool variables through protected secret handling:
@@ -31,6 +33,8 @@ After resource identity/privacy and token-scope review, set only the dedicated t
 - `XB01_STAGING_TEST_APPROVAL_SHA`: exact owner-approved source SHA (an explicit execution acknowledgement, not an authentication system).
 
 Do not print/paste values or pass credentials as command-line arguments.
+
+The CLI additionally requires the manifest's source SHA to match the actual clean checkout, so another version or uncommitted source cannot inherit a passing/approved test receipt. This still does not make the acknowledgement environment variable an identity or authorization system.
 
 ```text
 node scripts/security/r2-private-check.mjs <reviewed-manifest.json> inspect

@@ -1,6 +1,6 @@
 # Command 007 — semantic review checkpoint, not completed acceptance
 
-These are code-path observations, not automatic certification from `.eq` or RLS being enabled. The conservative scanner still retains every unresolved candidate. In particular, `Buffer.from` and frontend user-client queries occur among its 669 candidates; their presence is not evidence of a service-role vulnerability. No candidate is silently removed or granted an exception by this document.
+These are code-path observations, not automatic certification from `.eq` or RLS being enabled. The conservative scanner still retains every unresolved candidate. In particular, `Buffer.from` and frontend user-client queries occur among its 662 candidates; their presence is not evidence of a service-role vulnerability. No candidate is silently removed or granted an exception by this document.
 
 ## Reviewed boundaries and concrete changes
 
@@ -24,7 +24,7 @@ These are code-path observations, not automatic certification from `.eq` or RLS 
 
 ## Still unresolved
 
-Budget review: canonical durable reserve/settle/release RPCs check service_role, scope reservations to user_id and use row locks; the actual server caller selecting that user still matters. The process-local fallback omitted `row.userId === input.userId` on settlement and release, allowing a foreign reservation ID to modify status/accounting against another cycle. Added both owner checks, scoped idempotency and negative/legitimate-settlement assertions; nine credential-free budget tests pass. A real full-Supabase concurrency/foreign-settlement test is added, pending its exact-source CI. No paid-cycle activation, pricing, production payment, schema or provider transaction changed. Memory accounting remains non-durable and is not certified as production budget authority.
+Budget review: canonical durable reserve/settle/release RPCs check service_role, scope reservations to user_id and use row locks; the actual server caller selecting that user still matters. The process-local fallback omitted `row.userId === input.userId` on settlement and release, allowing a foreign reservation ID to modify status/accounting against another cycle. Added both owner checks, scoped idempotency and negative/legitimate-settlement assertions; nine credential-free budget tests pass. The real full-Supabase concurrency/foreign-settlement test passes at exact source `9fbd9895` in CI38471854808 (32 actual tenant cases). No paid-cycle activation, pricing, production payment, schema or provider transaction changed. Memory accounting remains non-durable and is not certified as production budget authority.
 
 Software checkpoint observation: existing Supabase primary key is `(run_id,user_id)` and both load filters and upsert conflict bind user. `checkpointMatchesExecution` independently compares run/project/repository/base fingerprint before applying restored delta. No broader verification of every caller or corrupt JSON state is inferred from these predicates. This store is not the globally keyed collision pattern fixed in execution/runtime/trace persistence.
 

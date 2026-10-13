@@ -170,11 +170,12 @@
   "rollout": "PR/draft only; explicit release block. Migration remains unapplied in production",
   "rollback": "Revert scoped entry-point/code edits; approved isolated/staged SQL drops only new guards; preserve all user data and existing RLS",
   "knownGaps": [
-    "Authenticated browser BLOCKED_PENDING_TEST_CONFIGURATION",
-    "Full isolated historical fresh/upgrade DB and staged security",
+    "Final-source authenticated and full fresh/representative-upgrade tests must stay green; actual disposable Supabase replaces hosted configuration",
+    "Real staged security remains blocked: no verified isolated staging resources/private R2 bucket and no creation/deployment approval",
     "All privileged caller/exception semantics and distributed owner persistence/races/membership revocation",
+    "Canonical private application download/durability, staged catalog drift and orphan compatibility",
     "Production KMS and later authority/egress integration",
-    "Historical 119/72 source coverage inaccessible/deferred"
+    "Original 119/72 rows are hash-verified and mapped as unverified requirements; full transcript and earlier-alias semantic reconciliation still pending"
   ],
   "placeholderClaimsRemaining": [
     "Complete Command 007 security acceptance is not met; no all-resource or full migration certification"
