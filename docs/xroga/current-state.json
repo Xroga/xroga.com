@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "b71423db38467d65211c3773f812ab15703c4db9",
-    "sourceTimestampUtc": "2026-10-13T15:56:56+05:00",
-    "auditStartedUtc": "2026-10-13T10:59:30.735Z",
+    "sha": "e9d6ba183ea56cbeb24ea9dae2fc1c872a4f05a0",
+    "sourceTimestampUtc": "2026-10-13T15:59:41+05:00",
+    "auditStartedUtc": "2026-10-13T11:23:19.316Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -79869,6 +79869,69 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:ae8f150bdd9cb00df2c9",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/ci/check-installed-dependencies.mjs",
+      "sha256": "be4010aa6f9f2650327fc1bdfbaffa51ae7353f89965665506af99ca9d12b2bc",
+      "symbols": [
+        "approvedOverride",
+        "direct",
+        "expected",
+        "installed",
+        "installedDependencyState",
+        "lock",
+        "manifest",
+        "owner",
+        "packagePath",
+        "packages",
+        "path",
+        "read",
+        "require",
+        "semver",
+        "validateInstalledVersion",
+        "workspace"
+      ],
+      "imports": [
+        "./toolchain.mjs",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "scripts/ci/baseline.test.mjs:12",
+        "scripts/ci/run-baseline.mjs:8"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/ci/baseline.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:4c164d227a417b9bc539",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/check-lockfile-integrity.mjs",
@@ -80050,7 +80113,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "1194d4f28c00f7b526f00da19738cc5f7b2158d0df7a22b2e6a4ce188c3c2528",
+      "sha256": "82e194d7f5e1a11c79e586d823890ee7aae0a6dc4ad4d7e89e8f86a4ff9737ee",
       "symbols": [
         "after",
         "append",
@@ -80064,6 +80127,7 @@
         "field",
         "filename",
         "frontendRequire",
+        "installedDependencies",
         "keys",
         "main",
         "manifest",
@@ -80090,6 +80154,7 @@
         "tsc"
       ],
       "imports": [
+        "./check-installed-dependencies.mjs",
         "./toolchain.mjs",
         "node:child_process",
         "node:crypto",
@@ -80099,6 +80164,7 @@
         "node:url"
       ],
       "runtimeImports": [
+        "scripts/ci/check-installed-dependencies.mjs",
         "scripts/ci/toolchain.mjs"
       ],
       "entryPoints": [],
@@ -80170,6 +80236,7 @@
       "callers": [
         "scripts/ci/baseline.test.mjs:7",
         "scripts/ci/check-agent-dependencies.mjs:5",
+        "scripts/ci/check-installed-dependencies.mjs:6",
         "scripts/ci/check-lockfile-integrity.mjs:5",
         "scripts/ci/check-test-skips.mjs:7",
         "scripts/ci/register-existing-skips.mjs:5",
@@ -98576,7 +98643,7 @@
     {
       "id": "test-suite:5a20cade29e90a03909b",
       "sourcePath": "scripts/ci/baseline.test.mjs",
-      "declaredTests": 10,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },

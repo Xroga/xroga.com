@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b71423db38467d65211c3773f812ab15703c4db9",
+  "source_sha": "e9d6ba183ea56cbeb24ea9dae2fc1c872a4f05a0",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -665,6 +665,7 @@
       "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
       "current_paths": [
         "scripts/ci/check-agent-dependencies.mjs",
+        "scripts/ci/check-installed-dependencies.mjs",
         "scripts/ci/check-lockfile-integrity.mjs",
         "scripts/ci/check-test-skips.mjs",
         "scripts/ci/register-existing-skips.mjs",

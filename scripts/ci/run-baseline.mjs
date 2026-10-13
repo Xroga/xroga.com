@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { npmCli, root, verifyToolchain } from './toolchain.mjs';
+import { installedDependencyState } from './check-installed-dependencies.mjs';
 
 export function safeTestEnvironment(environment = process.env) {
   const safe = {};
@@ -66,6 +67,7 @@ export async function main() {
     }
   }
   const before = sourceState();
+  const installedDependencies = installedDependencyState();
   const npm = npmCli(), frontendRequire = createRequire(join(root, 'frontend/package.json')), backendRequire = createRequire(join(root, 'backend/package.json'));
   const tsc = workspace => (workspace === 'backend' ? backendRequire : frontendRequire).resolve('typescript/bin/tsc');
   const step = (name, args, extra = {}) => ({ name, args, ...extra });
@@ -96,7 +98,7 @@ export async function main() {
   const after = sourceState();
   if (before !== after) { result.exitCode = 1; result.results.push({ name: 'tracked-source-mutation', exitCode: 1, output: 'Tracked source changed during baseline', durationMs: 0 }); }
   const manifest = { sourceSha: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
-    toolchain, result: result.exitCode === 0 ? 'PASS' : 'FAIL', exitCode: result.exitCode,
+    toolchain, installedDependencies, result: result.exitCode === 0 ? 'PASS' : 'FAIL', exitCode: result.exitCode,
     lockfiles: ['package-lock.json', 'backend/package-lock.json', 'frontend/package-lock.json'].map(path => ({ path, sha256: createHash('sha256').update(readFileSync(join(root, path), 'utf8').replace(/\r\n/g, '\n')).digest('hex') })),
     results: result.results.map(({ output, ...item }) => item), sourceTreeMutated: before !== after,
     migrationEvidence: 'Parser/identifier gate only; fresh/upgrade DB and staging checks remain mandatory before security rollout' };

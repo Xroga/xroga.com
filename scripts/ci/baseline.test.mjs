@@ -9,6 +9,7 @@ import { validateManifestLock } from './check-lockfile-integrity.mjs';
 import { analyzeTestSkips, validateSkips } from './check-test-skips.mjs';
 import { validateMigrations } from './validate-migrations.mjs';
 import { publicConfigOverridden, redactLog, runSteps, safeTestEnvironment } from './run-baseline.mjs';
+import { validateInstalledVersion } from './check-installed-dependencies.mjs';
 
 const fixture = () => mkdtempSync(join(tmpdir(), 'xroga-ci-fixture-'));
 function cleanup(path) {
@@ -22,6 +23,13 @@ test('manifest/lock agreement passes and an unrecorded dependency change fails',
   assert.equal(validateManifestLock(manifest, lock), true);
   manifest.dependencies.x = '2.0.0';
   assert.throws(() => validateManifestLock(manifest, lock), /Manifest\/lock mismatch/);
+});
+test('an installed out-of-range compiler fails; only an explicit approved package override is accepted', () => {
+  assert.throws(() => validateInstalledVersion('typescript', '6.0.3', '^5.8.2'), /violates declared range/);
+  assert.throws(() => validateInstalledVersion('dotenv', '17.4.2', '^16.4.7'), /violates declared range/);
+  validateInstalledVersion('typescript', '5.9.3', '^5.8.2');
+  validateInstalledVersion('postcss', '8.5.24', '8.4.31', { postcss: '8.5.24' });
+  assert.throws(() => validateInstalledVersion('postcss', '8.6.0', '8.4.31', { postcss: '8.5.24' }), /violates declared range/);
 });
 test('focused tests fail even when someone attempts to register them; unexplained skips also fail', () => {
   const focused = analyzeTestSkips('fixture.test.ts', "test.only('forced', () => {});");

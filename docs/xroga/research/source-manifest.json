@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b71423db38467d65211c3773f812ab15703c4db9",
+  "source_sha": "e9d6ba183ea56cbeb24ea9dae2fc1c872a4f05a0",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -2763,9 +2763,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "f1a608e431c6b4e7024b24f1df9d7a76a49dafdcde46f045c9741b911b6a76dc",
-      "byte_size": 3603933,
-      "modified_timestamp": "2026-10-13T10:59:31.920Z",
+      "sha256": "d897485afccd77841a42c02a4daa3bbca0b00736a0cc7f12b92f0247dc3ab2d6",
+      "byte_size": 3606098,
+      "modified_timestamp": "2026-10-13T11:23:19.629Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -19608,6 +19608,19 @@
       "notes": "Git-canonical LF source bytes and AST/import metadata, not manual behavioral verification"
     },
     {
+      "source_id": "SRC-ae8f150bdd9cb00d",
+      "filename": "check-installed-dependencies.mjs",
+      "path_or_url": "scripts/ci/check-installed-dependencies.mjs",
+      "sha256": "be4010aa6f9f2650327fc1bdfbaffa51ae7353f89965665506af99ca9d12b2bc",
+      "byte_size": 3204,
+      "modified_timestamp": "2026-10-13T11:12:48.811Z",
+      "parse_status": "AST_METADATA",
+      "category": "SOURCE_CODE",
+      "authority": "CURRENT_CODE",
+      "analyzed": true,
+      "notes": "Git-canonical LF source bytes and AST/import metadata, not manual behavioral verification"
+    },
+    {
       "source_id": "SRC-4c164d227a417b9b",
       "filename": "check-lockfile-integrity.mjs",
       "path_or_url": "scripts/ci/check-lockfile-integrity.mjs",
@@ -19650,9 +19663,9 @@
       "source_id": "SRC-c4f135aa7dcb9cdc",
       "filename": "run-baseline.mjs",
       "path_or_url": "scripts/ci/run-baseline.mjs",
-      "sha256": "1194d4f28c00f7b526f00da19738cc5f7b2158d0df7a22b2e6a4ce188c3c2528",
-      "byte_size": 8478,
-      "modified_timestamp": "2026-10-13T10:58:02.365Z",
+      "sha256": "82e194d7f5e1a11c79e586d823890ee7aae0a6dc4ad4d7e89e8f86a4ff9737ee",
+      "byte_size": 8640,
+      "modified_timestamp": "2026-10-13T11:12:48.819Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
