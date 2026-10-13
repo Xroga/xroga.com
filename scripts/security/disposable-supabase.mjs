@@ -39,7 +39,7 @@ function cli(workdir, args) {
   return result.stdout;
 }
 
-function bootstrap() {
+async function bootstrap() {
   const workdir = assertDisposableConfiguration(process.env);
   if (existsSync(workdir)) throw new Error('Refusing to reuse a previous test stack');
   const mask = value => console.log(`::add-mask::${value}`);
@@ -103,11 +103,18 @@ verify_enabled = true
   if (!['localhost','127.0.0.1'].includes(db.hostname) || db.port !== '54322' || db.pathname !== '/postgres') throw new Error('CLI returned a non-disposable database');
   mask(status.DB_URL); mask(decodeURIComponent(db.password));
   if (status.API_URL !== 'http://127.0.0.1:54321') throw new Error('CLI API must be exact loopback');
+  // Use the CLI-configured opaque keys with the new local API gateway. Legacy
+  // HS256 keys are retained solely for internal compatibility, not application
+  // requests against the ES256 stack. Probe real Auth before any expensive build.
+  for (const [path,key] of [['settings',apiPublishable],['admin/users?page=1&per_page=1',apiSecret]]) {
+    const response=await fetch(`${status.API_URL}/auth/v1/${path}`,{headers:{apikey:key,Authorization:`Bearer ${key}`}});
+    if(!response.ok) throw new Error(`Disposable Auth credential admission failed (HTTP ${response.status})`);
+  }
   const values = {
     XB01_SUPABASE_WORKDIR:workdir, XB01_LOCAL_DATABASE_URL:status.DB_URL,
     NEXT_PUBLIC_SUPABASE_URL:status.API_URL, SUPABASE_URL:status.API_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY:anonKey, SUPABASE_ANON_KEY:anonKey,
-    SUPABASE_SERVICE_ROLE_KEY:serviceKey,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY:apiPublishable, SUPABASE_ANON_KEY:apiPublishable,
+    SUPABASE_SERVICE_ROLE_KEY:apiSecret,
     // Real user tokens are ES256 and verified using this stack's real JWKS.
     E2E_ISOLATED_PROJECT_REF:'local-disposable', XROGA_ISOLATED_AUTH_BUILD:'1',
   };
@@ -117,4 +124,4 @@ verify_enabled = true
   }
   console.log('disposable_supabase_started=true; ephemeral_signing_and_api_keys=true; production_credentials=false');
 }
-if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) bootstrap();
+if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) await bootstrap();

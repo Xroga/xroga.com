@@ -1,6 +1,6 @@
 # Canonical Xroga requirements ledger
 
-Application source SHA: `1a8a695bd3bd24db20b9e032580b0b25df8a3712`. This is **available-source reconciliation**, not completion of the original 119-feature/72-mission source coverage. All missing inputs remain `INACCESSIBLE_PENDING_EXPORT`. Historical source assertions are preserved without treating them as current proof.
+Application source SHA: `4ce6a833a97bf49de531451415393a548dbb0dbf`. This is **available-source reconciliation**, not completion of the original 119-feature/72-mission source coverage. All missing inputs remain `INACCESSIBLE_PENDING_EXPORT`. Historical source assertions are preserved without treating them as current proof.
 
 264 requirements; 264 available source rows mapped; 43 mandatory capability families; 23 external candidates; zero newly adopted runtime dependencies.
 
