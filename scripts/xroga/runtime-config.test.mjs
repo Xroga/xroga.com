@@ -36,6 +36,8 @@ test('active service needs actual evidence and every service must expose readine
 test('production ephemeral fallback remains high risk and unknown dynamic bindings cannot be marked reconciled', () => {
   const value = fixture(); value.risks = value.risks.filter(row => row.id !== 'EPHEMERAL_ARTIFACT_FALLBACK');
   assert.throws(() => validateRuntimeInventory(value), /not reported as high risk/);
+  const memory = fixture(); memory.risks.find(row => row.id === 'EPHEMERAL_BUDGET_FALLBACK').severity = 'P2';
+  assert.throws(() => validateRuntimeInventory(memory), /production memory fallback is not reported as high risk/);
   const dynamic = fixture(); dynamic.dynamic_bindings[0].status = 'REQUIRES_BINDING_REVIEW';
   assert.throws(() => validateRuntimeInventory(dynamic), /Unresolved dynamic/);
 });

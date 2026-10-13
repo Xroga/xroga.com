@@ -35,6 +35,15 @@ export function validateRuntimeInventory(value, expectedNames = []) {
   const frontend = inventory.dependencies.find(row => row.dependency_id === 'frontend'), api = inventory.dependencies.find(row => row.dependency_id === 'api');
   if (frontend.hostnames[0] !== 'xroga.com' || api.hostnames[0] !== 'xroga-api.fly.dev') throw new Error('Conflicting canonical public hostname definition');
   if (inventory.dependencies.some(row => /local.*(?:fallback|storage)|filesystem/i.test(row.provider + row.purpose)) && !inventory.risks.some(row => row.id === 'EPHEMERAL_ARTIFACT_FALLBACK' && ['P0', 'P1'].includes(row.severity))) throw new Error('Production ephemeral fallback is not reported as high risk');
+  const consequentialFallbacks = [
+    ['backend/src/ai/providerBudget.ts', 'EPHEMERAL_BUDGET_FALLBACK'],
+    ['backend/src/ai/quota.ts', 'EPHEMERAL_BUDGET_FALLBACK'],
+    ['backend/src/ai/runStore.ts', 'RUN_PERSISTENCE_GAP'],
+    ['backend/src/synthesis/universalPersistence.ts', 'UNIVERSAL_MEMORY_ADMISSION'],
+  ];
+  for (const [path, riskId] of consequentialFallbacks) {
+    if (inventory.fallback_candidates.some(row => row.path === path) && !inventory.risks.some(row => row.id === riskId && ['P0', 'P1'].includes(row.severity))) throw new Error('Reviewed production memory fallback is not reported as high risk');
+  }
   return { result: 'PASS_CONFIG_INVENTORY_WITH_RECORDED_RISKS', dependencies: ids.size, environmentNames: names.size,
     dynamicBindings: inventory.dynamic_bindings.length, highRisks: inventory.risks.filter(row => ['P0', 'P1'].includes(row.severity)).length,
     secretValuesRead: false, productionDeployed: false };

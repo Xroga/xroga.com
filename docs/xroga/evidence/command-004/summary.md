@@ -4,6 +4,8 @@ Status: IMPLEMENTED; focused verification passed; aggregate CI verification pend
 
 Starting audited source SHA: `f9d8f0aad68ee6acb37566c6ae5d428f7f7e43da`. Generated inventory records this identity plus exact LF-normalized source/config/tooling hashes for the reviewed overlay. Eventual tested commit/CI SHA must be recorded separately; this starting SHA does not imply that new tooling already existed in that commit.
 
+Re-audited overlay base SHA: `3f7413087f4428d6ed6d0fdae70d2bc5de6d59bc`, now recorded in the generated inventory. Additional reviewed existing paths: Guest Redis rate/token/concurrency/claim fallback, BillingService fulfilled-payment memory deduplication, and BYOK platform-auth-key derivation/development fallback. These are risks, not new implementations or disclosed key values. Seven post-review runtime tests pass, including denial of downgrading known production memory fallback risk.
+
 ## Findings
 
 Twelve core definitions plus source-host/reference candidates are inventoried. Public asset/reference/optional endpoint records are NOT active service counts. Vercel frontend, Fly API and canonical Supabase have scoped dated evidence. Redis/BullMQ, R2, local-media, Fly sandbox, OAuth/BYOK storage and Browserbase remain configured but independently unverified. Older inactive Supabase LOGIN is legacy, not an isolated test project. Cloud Run/Jobs and Cloudflare Workers hosting are proposed only; existing R2 is distinct from Workers.

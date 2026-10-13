@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f9d8f0aad68ee6acb37566c6ae5d428f7f7e43da",
+  "source_sha": "3f7413087f4428d6ed6d0fdae70d2bc5de6d59bc",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16002,7 +16002,7 @@
     },
     {
       "path": "scripts/xroga/check-runtime-config.mjs",
-      "sha256": "8d28cf4e7506f48f49c52d89808730f1ca3f073ad1e58bc8fc5bdfaee6bbf7e1"
+      "sha256": "ee60133a227f6230fbfff8d773ff5b3c38063fc3938c25295b58481c7ba57e00"
     },
     {
       "path": "scripts/xroga/runtime-discovery.mjs",
@@ -16014,7 +16014,7 @@
     },
     {
       "path": "scripts/xroga/runtime-inventory.mjs",
-      "sha256": "67bf9e44d0d7a93b5d718a297eacff9f95bdd5dad4aec582767662c34fca6383"
+      "sha256": "0f7d3f3599142267d49a493b9bef4b7e6b462c895283d553c4a9972749393e8b"
     },
     {
       "path": "scripts/xroga/runtime-schema.mjs",
@@ -25890,9 +25890,11 @@
       "source_paths": [
         "backend/src/ai/providerBudget.ts",
         "backend/src/ai/quota.ts",
-        "backend/src/ai/universal/costLedger.ts"
+        "backend/src/ai/universal/costLedger.ts",
+        "backend/src/routes/guestChat.ts",
+        "backend/src/services/BillingService.ts"
       ],
-      "summary": "Absent durable billing credentials activates process-only cycles/reservations; quota also falls back after DB/RPC errors. UniversalCostLedger is explicitly in-process. Restart/cross-process accounting cannot rely on these maps",
+      "summary": "Absent durable billing credentials activates process-only cycles/reservations; quota also falls back after DB/RPC errors. Guest rate/token/concurrency/claim limits fall back from Redis to maps. UniversalCostLedger is explicitly in-process; BillingService also defines process-only fulfilled-payment deduplication. Restart/cross-process accounting cannot rely on these stores",
       "disposition": "RECORDED_PRE_EXISTING_RISK_NOT_WAIVED",
       "owner_command": "008"
     },
@@ -25945,7 +25947,7 @@
       "source_paths": [
         "backend/src/services/integrations/userProviderKeys.ts"
       ],
-      "summary": "BYOK crypto exists but actual managed production key authority is not established",
+      "summary": "BYOK AES-GCM exists; encryptionKey can derive from platform service-role/JWT credentials and has a fixed development fallback guarded only by NODE_ENV. Actual managed production key authority/AAD/rotation is not established; no key values were read",
       "disposition": "RECORDED_PRE_EXISTING_RISK_NOT_WAIVED",
       "owner_command": "009"
     },

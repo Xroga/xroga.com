@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `f9d8f0aad68ee6acb37566c6ae5d428f7f7e43da`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `3f7413087f4428d6ed6d0fdae70d2bc5de6d59bc`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -188,12 +188,12 @@ Frontend release 3b2bad and API release 41665b legitimately differ: the initial 
 
 - P1 TEST_REALM_PIN: Production URL is hardcoded; configured isolated test URL alone cannot supply correct frontend test isolation. Owner command: 007; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 EPHEMERAL_ARTIFACT_FALLBACK: R2 failures can fall back to local files or data URLs; durable-storage claims/quota/ownership need proof. Owner command: 007–010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
-- P1 EPHEMERAL_BUDGET_FALLBACK: Absent durable billing credentials activates process-only cycles/reservations; quota also falls back after DB/RPC errors. UniversalCostLedger is explicitly in-process. Restart/cross-process accounting cannot rely on these maps. Owner command: 008; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
+- P1 EPHEMERAL_BUDGET_FALLBACK: Absent durable billing credentials activates process-only cycles/reservations; quota also falls back after DB/RPC errors. Guest rate/token/concurrency/claim limits fall back from Redis to maps. UniversalCostLedger is explicitly in-process; BillingService also defines process-only fulfilled-payment deduplication. Restart/cross-process accounting cannot rely on these stores. Owner command: 008; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 RUN_PERSISTENCE_GAP: Run persistence returns without service-role configuration and scheduled writes swallow failures; hot run maps are not durable evidence of saved history. Owner command: 007–008; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 UNIVERSAL_MEMORY_ADMISSION: universalStore defaults to owner-keyed memory without a client; runtime-store and operational evidence/idempotency map implementations also exist. Durable production admission/caller reachability must be proved, not inferred from class names. Owner command: 007–008; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 OAUTH_PLAINTEXT_MIRROR: OAuth/PKCE plaintext DB/private JSON mirror; encryption, expiry, one-use and KMS cutover need verified migration. Owner command: 009; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 QUEUE_CONSUMERS_ABSENT: Four queue definitions, no discovered Worker consumers; client construction is not queue readiness. Owner command: LATER; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
-- P1 KMS_UNPROVEN: BYOK crypto exists but actual managed production key authority is not established. Owner command: 009; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
+- P1 KMS_UNPROVEN: BYOK AES-GCM exists; encryptionKey can derive from platform service-role/JWT credentials and has a fixed development fallback guarded only by NODE_ENV. Actual managed production key authority/AAD/rotation is not established; no key values were read. Owner command: 009; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
