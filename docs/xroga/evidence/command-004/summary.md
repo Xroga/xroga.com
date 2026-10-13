@@ -1,6 +1,6 @@
 # Command 004 — runtime/dependency truth
 
-Status: IMPLEMENTED; focused verification passed; aggregate CI verification pending. No deployment performed.
+Status: VERIFIED read-only inventory and runtime gates, with recorded risks; no production security/durability certification or deployment.
 
 Starting audited source SHA: `f9d8f0aad68ee6acb37566c6ae5d428f7f7e43da`. Generated inventory records this identity plus exact LF-normalized source/config/tooling hashes for the reviewed overlay. Eventual tested commit/CI SHA must be recorded separately; this starting SHA does not imply that new tooling already existed in that commit.
 
@@ -31,3 +31,7 @@ Every core service/host candidate has readiness strategy or explicit gap. Health
 Schema, env coverage, host conflicts/unsafe defaults, duplicate IDs, credential-like canaries, build outputs, high-risk fallback recording, generated Mermaid/docs and exact drift have mechanical gates. ACTIVE requires successful dated evidence. Optional provider probes/semantic durability certification remain independently unverified, not healthy by implication.
 
 Rollback: revert audit/tooling and generated inventories. No user/database/provider data changed. Production remains gated on mandatory security/migration/authenticated-browser proof.
+
+## Final passing gate
+
+CI https://github.com/Xroga/xroga.com/actions/runs/38404145138 passes two complete 18-stage runs at merge SHA `add9ee8937a4996712b24062e4a73fcd7bbbbf0b`, branch code `38b426d28b14082868362d46cb3d261610baa74e`. Per run: backend 2,717/2,717, frontend 987/987, baseline guards 12/12, combined inventory/ledger/runtime fixtures 34/34, all zero failures/skips. Both builds/type checks, frontend lint, 67 SQL parses, runtime/source/ledger integrity and actual dependency resolution pass. Repeatability passes with unchanged source/locks/installed graph. Raw manifests are retained here. Supplemental clean Windows integrity plus 46 focused tests also passes. Existing authenticated-browser job separately fails missing isolated configuration and remains BLOCKED_PENDING_TEST_CONFIGURATION; it was not bypassed. Proceed to Command 005 under the user's safe-work amendment.
