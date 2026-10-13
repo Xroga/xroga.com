@@ -98,6 +98,7 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ms-playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - name: Start isolated application
+        id: start-application
         shell: bash
         run: |
           PORT=4000 node backend/dist/index.js > backend.log 2>&1 & echo $! > backend.pid
@@ -113,6 +114,9 @@ jobs:
         # cannot select the transitive playwright binary from another copy.
         run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/companion-public.spec.ts e2e/batch01-founder-local.spec.ts
       - name: Real tenant authorization and concurrency integration
+        # Independent evidence still runs after a browser assertion fails, but
+        # never against an app that failed readiness; failures remain fatal.
+        if: ${{ !cancelled() && steps.start-application.outcome == 'success' }}
         run: node --import tsx --test backend/src/security/tenantIsolation.local.integration.ts
       - name: Collect bounded redacted local application logs
         if: always()

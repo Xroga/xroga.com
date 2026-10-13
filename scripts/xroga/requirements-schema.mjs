@@ -4,7 +4,7 @@ import { states } from './inventory-schema.mjs';
 const strings = z.array(z.string());
 export const sourceSchema = z.object({ source_id: z.string(), filename: z.string(), path_or_url: z.string(),
   sha256: z.string().regex(/^[a-f0-9]{64}$/).nullable(), byte_size: z.number().int().nonnegative(), modified_timestamp: z.string().nullable(),
-  parse_status: z.enum(['PARSED_JSON', 'TEXT_READ', 'AST_METADATA', 'INACCESSIBLE_PENDING_EXPORT', 'PARSE_FAILED']),
+  parse_status: z.enum(['PARSED_JSON', 'TEXT_READ', 'AST_METADATA', 'PINNED_SOURCE_METADATA', 'INACCESSIBLE_PENDING_EXPORT', 'PARSE_FAILED']),
   category: z.string(), authority: z.enum(['AUTHORITATIVE', 'ADVISORY', 'HISTORICAL', 'CURRENT_CODE']),
   analyzed: z.boolean(), notes: z.string() }).strict();
 const requirementSchema = z.object({ requirement_id: z.string(), title: z.string(), description: z.string(), user_need: z.string(),
@@ -58,6 +58,11 @@ export function validateLedger(ledger, sources, candidates, pathExists = () => t
   }
   if (parsed.coverage.imported_available_rows !== parsed.source_mappings.length || parsed.coverage.mapped_available_rows !== parsed.source_mappings.length) throw new Error('Imported row coverage gap');
   if (parsed.coverage.historical_coverage_complete && (parsed.coverage.historical_feature_rows_mapped !== 119 || parsed.coverage.historical_missions_mapped !== 72)) throw new Error('False historical coverage completion');
+  if(parsed.coverage.historical_coverage_complete) {
+    const featureRows=parsed.source_mappings.filter(item=>item.source_row_id.startsWith('FEATURE-'));
+    const missionRows=parsed.source_mappings.filter(item=>item.source_row_id.startsWith('MISSION-'));
+    if(featureRows.length!==119 || new Set(missionRows.map(item=>item.source_row_id)).size!==72 || parsed.coverage.historical_feature_rows_supplied!==119 || parsed.coverage.historical_missions_supplied!==72) throw new Error('False historical coverage: original source mappings missing');
+  }
   if (parsed.assessment === 'FULL_HISTORICAL_COVERAGE' && !parsed.coverage.historical_coverage_complete) throw new Error('Full coverage falsely claimed');
   return parsed;
 }

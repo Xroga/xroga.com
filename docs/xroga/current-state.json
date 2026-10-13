@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "1aee2bf89306b878dff8388ef25585631785eda2",
-    "sourceTimestampUtc": "2026-10-13T22:48:19+05:00",
-    "auditStartedUtc": "2026-10-13T18:03:11.359Z",
+    "sha": "3c421c2e4adf2aae58fce2aaa15fa1ec4187cb91",
+    "sourceTimestampUtc": "2026-10-13T23:03:27+05:00",
+    "auditStartedUtc": "2026-10-13T18:15:02.558Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -72466,11 +72466,13 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/os-preview/founder/page.tsx",
-        "frontend/src/app/os-preview/layout.tsx"
+        "frontend/src/app/os-preview/layout.tsx",
+        "frontend/src/middleware.ts"
       ],
       "callers": [
         "frontend/src/lib/osFounderAccess.test.ts:3",
-        "frontend/src/lib/osFounderSession.ts:3"
+        "frontend/src/lib/osFounderSession.ts:3",
+        "frontend/src/lib/supabase/middleware.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -76557,10 +76559,11 @@
       "id": "surface:3429bc7b9d142e3943e4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabase/middleware.ts",
-      "sha256": "fa6bb82303ba6478e7bcaecc48acf64c46f70ed7b026f582f02630edfafac6a7",
+      "sha256": "6b64d6ec040671598d9247f891d6e130baa2f73bee712141ce36db4db14d67c8",
       "symbols": [
         "authUnavailableResponse",
         "config",
+        "decision",
         "isAuthPage",
         "isPublicPage",
         "pathname",
@@ -76572,12 +76575,14 @@
         "user"
       ],
       "imports": [
+        "../osFounderAccess",
         "./config",
         "./routeAccess",
         "@supabase/ssr",
         "next/server"
       ],
       "runtimeImports": [
+        "frontend/src/lib/osFounderAccess.ts",
         "frontend/src/lib/supabase/config.ts",
         "frontend/src/lib/supabase/routeAccess.ts"
       ],
@@ -76595,10 +76600,13 @@
       ],
       "authBoundary": [
         "frontend/src/lib/supabase/middleware.ts#authUnavailableResponse",
+        "frontend/src/lib/supabase/middleware.ts#authorizeFounderRequest",
         "frontend/src/lib/supabase/middleware.ts#isAuthPage"
       ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/lib/supabase/middleware.ts#authorizeFounderRequest"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
@@ -81378,7 +81386,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "a0648c5060f12c5664da339ee67d0a6fc40691068af4c88174f64cf6bd351dd3",
+      "sha256": "a45bc6bd4203e2ecaa5347a7a202173c7386c7a038d13a59dbc31f3b5a22ca54",
       "symbols": [
         "after",
         "append",
@@ -83001,6 +83009,75 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:6768e7d7f26fa8d5e132",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/import-private-research.mjs",
+      "sha256": "971f797a3476cdbe98720e09bb58a16339ed3cacc589b120a7f3cbebf396be6c",
+      "symbols": [
+        "archiveHash",
+        "bytes",
+        "candidates",
+        "catalog",
+        "columns",
+        "deriveResearch",
+        "derivedHash",
+        "digest",
+        "featureOwners",
+        "lines",
+        "manifest",
+        "markdown",
+        "missions",
+        "number",
+        "padded",
+        "parseCoverage",
+        "pins",
+        "row",
+        "rows",
+        "validateDerivedResearch",
+        "value",
+        "values",
+        "verified"
+      ],
+      "imports": [
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "scripts/xroga/private-research.test.mjs:4",
+        "scripts/xroga/reconcile-requirements.mjs:8"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "scripts/xroga/import-private-research.mjs#digest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/xroga/import-private-research.mjs#verified"
+      ],
+      "testCoverage": [
+        "scripts/xroga/private-research.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:1d47c1a0b2a01e337bcf",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/inventory-schema.mjs",
@@ -83386,9 +83463,10 @@
       "id": "surface:877bc278c500a2b4cc54",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/reconcile-requirements.mjs",
-      "sha256": "2fc775af8f70886774b9d726db136cd69ea72a43e81c9fbff7a6fc8df2ac9767",
+      "sha256": "d747dc4fce701e661ee5c57f1a0aa1bc8c40b3e174828faf93b0e28ab88f520a",
       "symbols": [
         "acceptance",
+        "archive",
         "base",
         "body",
         "buildRequirements",
@@ -83408,17 +83486,26 @@
         "familyOwners",
         "familyPaths",
         "familySection",
+        "feature",
+        "featureSource",
         "hash",
         "id",
         "index",
         "inventory",
         "inventoryId",
+        "item",
         "json",
         "ledger",
         "lines",
         "main",
+        "manifestSource",
+        "markdownSource",
         "missingSources",
+        "mission",
+        "missionId",
         "number",
+        "original",
+        "originalPath",
         "out",
         "outputs",
         "owner",
@@ -83432,6 +83519,7 @@
         "read",
         "record",
         "records",
+        "refs",
         "renderOutputs",
         "report",
         "reportArg",
@@ -83449,6 +83537,7 @@
         "sourceId",
         "sourceManifestPath",
         "sourcePaths",
+        "source_id",
         "source_mappings",
         "sources",
         "surface",
@@ -83456,6 +83545,7 @@
         "value"
       ],
       "imports": [
+        "./import-private-research.mjs",
         "./requirements-schema.mjs",
         "./research-candidates.mjs",
         "node:child_process",
@@ -83465,6 +83555,7 @@
         "node:url"
       ],
       "runtimeImports": [
+        "scripts/xroga/import-private-research.mjs",
         "scripts/xroga/requirements-schema.mjs",
         "scripts/xroga/research-candidates.mjs"
       ],
@@ -83506,15 +83597,17 @@
       "id": "surface:7ca097ead6f3f5853b27",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/requirements-schema.mjs",
-      "sha256": "2697cae36647c8057cd92878c7857002be44bba20931ae41ce9cfa78254f89d3",
+      "sha256": "98f18d82282e4e37cee10504fa0f0cbab8e02b5494de69753b766cc8d478ee1e",
       "symbols": [
         "candidate",
         "candidateNames",
         "dependency",
+        "featureRows",
         "key",
         "ledgerJsonSchema",
         "ledgerSchema",
         "mapping",
+        "missionRows",
         "name",
         "parsed",
         "path",
@@ -84005,7 +84098,7 @@
       "id": "surface:82e40683bea60ec09a19",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/validate-requirements-ledger.mjs",
-      "sha256": "c142c3f63802598fdae15acc7b8065d5449b80c2b8cefc3ff80bcfb4b89ab604",
+      "sha256": "66ae78510a20f985082094f265ac22c520967d5c764ccba94c094640f09c46e8",
       "symbols": [
         "actual",
         "actualHashes",
@@ -92050,7 +92143,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "303258c96da5838c0d5015aad02b9653202872c2f31344fbe4099aba45fb07fd",
+      "sha256": "70472c2a19fbcd336969dd39e2d47a8e56d1f393d8d43a96939951eea587bfcd",
       "sourceEntrypoints": [
         "backend/src/security/tenantIsolation.local.integration.ts",
         "scripts/security/collect-local-security-logs.mjs",
@@ -95777,9 +95870,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:8685769e56deaf928e2e",
+      "id": "finding:c1527a4650a1840d1788",
       "sourcePath": "scripts/xroga/reconcile-requirements.mjs",
-      "line": 169,
+      "line": 171,
       "kind": "PLACEHOLDER",
       "reachable": false,
       "state": "PARTIAL",
@@ -101040,7 +101133,7 @@
     {
       "id": "test-suite:8c2692899d02a0e38ba8",
       "sourcePath": "frontend/src/lib/supabase/authLookupCost.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101426,6 +101519,13 @@
       "id": "test-suite:0eb74e3e3cb581708af4",
       "sourcePath": "scripts/xroga/inventory.test.mjs",
       "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:bcb0aa7527425a8235e8",
+      "sourcePath": "scripts/xroga/private-research.test.mjs",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -4,7 +4,7 @@ Observed schema only, 2026-10-13, canonical project nzenxdfumxrnsmybazmo; no cus
 
 ## Caller review
 
-159 explicit privileged factory call sites; 667 conservative table/storage/RPC/factory candidates; 157 contain a direct owner-filter candidate. None is automatically certified from syntax. Every candidate is recorded in privileged-callers.json with source hash, location and review-required state. Parent checks, injected clients, dynamic RPC/table targets, global/admin/background and frontend user-client calls need semantic review. Zero certified scope count means incomplete review, not that every existing query is vulnerable. One new narrow readiness exception exists in serviceRoleGuard.ts; other legacy administrative/bootstrap/webhook operations are NOT silently exempted. Production release remains BLOCKED.
+159 explicit privileged factory call sites; 668 conservative table/storage/RPC/factory candidates; 157 contain a direct owner-filter candidate. None is automatically certified from syntax. Every candidate is recorded in privileged-callers.json with source hash, location and review-required state. Parent checks, injected clients, dynamic RPC/table targets, global/admin/background and frontend user-client calls need semantic review. Zero certified scope count means incomplete review, not that every existing query is vulnerable. One new narrow readiness exception exists in serviceRoleGuard.ts; other legacy administrative/bootstrap/webhook operations are NOT silently exempted. Production release remains BLOCKED.
 
 ## Every observed table
 

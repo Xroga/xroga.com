@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getSupabasePublicConfig } from './config';
 import { isPublicPath, requiresUserLookup } from './routeAccess';
+import { authorizeFounderRequest } from '../osFounderAccess';
 
 function authUnavailableResponse(request: NextRequest, isPublicPage: boolean) {
   if (isPublicPage) return NextResponse.next({ request });
@@ -76,6 +77,28 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = '/auth/login';
     return NextResponse.redirect(url);
+  }
+
+  // Deny before Next begins streaming HTML/RSC. A layout notFound() alone can
+  // otherwise produce an HTTP 200 stream even though its children are withheld.
+  // The server layout independently rechecks this same policy; navigation is not
+  // authority and this never broadens the existing admin policy.
+  if (pathname === '/os-preview' || pathname.startsWith('/os-preview/')) {
+    const decision = await authorizeFounderRequest({
+      getUser: async () => user,
+      getRole: async () => {
+        const { data, error } = await supabase.rpc('current_community_role');
+        return error ? null : data;
+      },
+      getAal: async () => {
+        const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+        return error ? null : data.currentLevel;
+      },
+    });
+    if (!decision.allowed) return new NextResponse('Access denied.', {
+      status: 403,
+      headers: { 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex, nofollow, noarchive' },
+    });
   }
 
   if (user && isAuthPage) {

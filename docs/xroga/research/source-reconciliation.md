@@ -1,21 +1,17 @@
 # Source reconciliation
 
-1581 local sources ingested and hashed; 7 unavailable/unparsed sources. Code ingestion means AST/source metadata, not a claim of manual functional review of every module.
+1589 ingested/derived sources; 1 inaccessible source; two hash-verified private transcripts still need complete semantic review. Code ingestion is AST metadata, not behavioral verification of every module.
 
-Original feature coverage: **0/119 supplied and 0/119 mapped**. Original missions: **0/72 supplied and 0/72 mapped**. They remain deferred under the user's amendment. The generated feature CSV contains available canonical requirements; it is not the missing 119-item input.
+Original feature coverage: **119/119 supplied and mapped**. Original missions: **72/72 supplied and mapped** from BOTH the Markdown and manifest, checked for exact title/prompt correspondence during private import. All 119 original rows are UNVERIFIED/NOT_RUN with empty evidence/owner/mission/acceptance columns. Derived owners are explicitly assessor-selected planning annotations. Missions 01–10 alias the existing Batch One specifications; 11–72 are not executed in Batch One. Row reconciliation never proves implementation.
 
-## Unavailable sources
+## Deferred review
 
-- Xroga_OS_Complete_Codex_Source_Bundle_2026-10-13.zip: INACCESSIBLE_PENDING_EXPORT
-- Xroga_OS_72_Codex_Missions_Full_Implementation_2026-10-13.md: INACCESSIBLE_PENDING_EXPORT
-- Xroga_OS_Feature_Coverage_119_Items_2026-10-13.csv: INACCESSIBLE_PENDING_EXPORT
-- Xroga_OS_Codex_72_Command_Manifest_2026-10-13.json: INACCESSIBLE_PENDING_EXPORT
-- Xroga_OS_Final_Engineering_Research_2026-10-12.md: INACCESSIBLE_PENDING_EXPORT
-- Xroga_GitHub_Research_Catalog_2026-10-12.json: INACCESSIBLE_PENDING_EXPORT
-- https://chatgpt.com/share/6acd319b-8244-83ec-ae3f-dfe13f414569: INACCESSIBLE_PENDING_EXPORT
+- https://chatgpt.com/share/6acd319b-8244-83ec-ae3f-dfe13f414569
+- Original transcript semantic reconciliation (two hash-verified private files)
+- Earlier family/history semantic alias review (not missing exports)
 
-The shared ChatGPT URL was attempted directly and could not be retrieved. No share contents were analyzed or invented. Every available historical repository ledger row is mapped exactly once; historical completion labels remain separate from current verification.
+The shared ChatGPT page remains inaccessible. No omitted contents invented. Original research repository proposals are RESEARCH_ONLY_NOT_ADOPTED; their license/commit claims require independent current review before use.
 
-## Source integrity
+## Source integrity and confidentiality
 
-`source-manifest.json` records stable source ID, filename, SHA-256, byte count, actual modified timestamp, parse status, category, authority and ingestion limits. Repeated reconciliation preserves timestamp metadata for identical bytes. The complete attached Batch One report is retained byte-for-byte under `inputs/batch-one-report.txt`.
+Archive SHA256: `1fd3bda7d1bce2697be94a7539b8c30d04a788fdb9b5ba9042ce161cc06913bf`. All eight declared original file hashes and byte counts match. Originals remain outside Git. `derived-original-requirements.json` holds only normalized planning/provenance records, not transcripts, credentials or original prompts. CI verifies that pinned derivative and every row mapping; it does not pretend to reread private originals. Reimport with `node scripts/xroga/import-private-research.mjs <private-extracted-dir> <original-zip>`. Full source hashes/byte counts are in `source-manifest.json`; original-source timestamp is null rather than invented.

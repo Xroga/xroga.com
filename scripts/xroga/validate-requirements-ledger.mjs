@@ -26,8 +26,8 @@ export function main() {
   }
   console.log(JSON.stringify({ result: 'PASS_AVAILABLE_SOURCE_GATE', requirements: ledger.requirements.length,
     mappedAvailableRows: ledger.source_mappings.length, registeredCandidates: candidates.length, emptyOwnerFields: 0,
-    deferredOwnerAssignments: ledger.requirements.filter(item => item.implementation_owner_command === 'LATER_PENDING_HISTORICAL_EXPORT').length,
-    historicalFeatureCoverage: 'DEFERRED: 0/119 supplied', historicalMissionCoverage: 'DEFERRED: 0/72 supplied',
+    deferredOwnerAssignments: ledger.requirements.filter(item => item.implementation_owner_command === 'LATER_SOURCE_MAPPING_REVIEW').length,
+    historicalFeatureCoverage: `${ledger.coverage.historical_feature_rows_mapped}/119 mapped (not implementation)`, historicalMissionCoverage: `${ledger.coverage.historical_missions_mapped}/72 mapped (not implementation)`,
     originalUnmodifiedSpecificationComplete: false }));
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

@@ -7,9 +7,9 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 159,
-    "persistenceCandidates": 667,
+    "persistenceCandidates": 668,
     "ownerPredicateCandidates": 157,
-    "reviewRequired": 667,
+    "reviewRequired": 668,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 1
   },
@@ -7328,6 +7328,17 @@
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
       "sourceSha256": "e753abbfe0795b9e2362d5ac28e1d3974500091b4515e2f42cee80e5d22f951a"
+    },
+    {
+      "id": "eaeece344026385a744d",
+      "path": "frontend/src/lib/supabase/middleware.ts",
+      "line": 90,
+      "enclosing": "updateSession",
+      "kind": "RPC_CANDIDATE",
+      "target": "current_community_role",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "6b64d6ec040671598d9247f891d6e130baa2f73bee712141ce36db4db14d67c8"
     },
     {
       "id": "535d0b09865d0b876600",

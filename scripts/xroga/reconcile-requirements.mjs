@@ -5,6 +5,7 @@ import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { candidates as expectedCandidates } from './research-candidates.mjs';
 import { ledgerJsonSchema, validateLedger } from './requirements-schema.mjs';
+import { validateDerivedResearch } from './import-private-research.mjs';
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -19,12 +20,6 @@ const json = value => `${JSON.stringify(value, null, 2)}\n`;
 const reportPath = 'docs/xroga/research/inputs/batch-one-report.txt';
 const sourceManifestPath = 'docs/xroga/research/source-manifest.json';
 export const missingSources = [
-  'Xroga_OS_Complete_Codex_Source_Bundle_2026-10-13.zip',
-  'Xroga_OS_72_Codex_Missions_Full_Implementation_2026-10-13.md',
-  'Xroga_OS_Feature_Coverage_119_Items_2026-10-13.csv',
-  'Xroga_OS_Codex_72_Command_Manifest_2026-10-13.json',
-  'Xroga_OS_Final_Engineering_Research_2026-10-12.md',
-  'Xroga_GitHub_Research_Catalog_2026-10-12.json',
   'https://chatgpt.com/share/6acd319b-8244-83ec-ae3f-dfe13f414569',
 ];
 const reportSourceHash = 'a0926f4e47149450c3f9fc33c59782eac31d19be57789f11950b20b03c01b499';
@@ -93,13 +88,14 @@ export function parseCommandRequirements(report) {
 }
 
 export function buildRequirements() {
+  const original=validateDerivedResearch(JSON.parse(read('docs/xroga/research/derived-original-requirements.json')));
   const report = read(reportPath);
   if (hash(report) !== reportSourceHash) throw new Error('Authoritative report integrity mismatch');
   const inventory = JSON.parse(read('docs/xroga/current-state.json'));
   const paths = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' }).trim().split(/\r?\n/).sort();
   const previous = existsSync(resolve(root, sourceManifestPath)) ? JSON.parse(read(sourceManifestPath)) : null;
   const previousById = new Map((previous?.sources ?? []).map(item => [item.source_id, item]));
-  const sourcePaths = sorted([reportPath, 'docs/xroga/current-state.json', 'docs/xroga/research/repository-candidates.json',
+  const sourcePaths = sorted([reportPath, 'docs/xroga/current-state.json', 'docs/xroga/research/repository-candidates.json', 'docs/xroga/research/derived-original-requirements.json',
     ...paths.filter(path => /^docs\//.test(path) && !path.startsWith('docs/xroga/') && !path.startsWith('docs/implementation/batch-01/') && /\.(?:md|json|csv)$/.test(path)),
     ...['AGENTS.md', 'README.md', 'CONTRIBUTING.md', 'DEPLOY.md', 'ROUTING.md', 'SECURITY.md', 'SHIP_COMPLETENESS.md', 'OWNER_SETUP.md'].filter(path => paths.includes(path))]);
   const sources = [], parsedDocuments = new Map();
@@ -126,6 +122,12 @@ export function buildRequirements() {
     sha256: null, byte_size: 0, modified_timestamp: null, parse_status: 'INACCESSIBLE_PENDING_EXPORT', category: 'HISTORICAL_RESEARCH',
     authority: 'HISTORICAL', analyzed: false, notes: path.startsWith('https:') ? 'Direct retrieval attempted; shared page unavailable. No contents claimed read.' : 'Not supplied/found; user explicitly authorized deferred reconciliation.' });
   const reportId = sourceId(reportPath), inventoryId = sourceId('docs/xroga/current-state.json');
+  const archive='Xroga_OS_Complete_Codex_Source_Bundle_2026-10-13.zip';
+  const originalPath=path=>`${archive}#${path}`;
+  for(const item of original.sources) sources.push({source_id:sourceId(originalPath(item.path)),filename:basename(item.path),path_or_url:originalPath(item.path),sha256:item.sha256,byte_size:item.byte_size,modified_timestamp:null,
+    parse_status:item.ingestion==='HASH_VERIFIED_SEMANTIC_REVIEW_PENDING'?'PINNED_SOURCE_METADATA':item.path.endsWith('.json')?'PARSED_JSON':'TEXT_READ',
+    category:'ORIGINAL_RESEARCH_REQUIREMENTS',authority:'HISTORICAL',analyzed:item.ingestion!=='HASH_VERIFIED_SEMANTIC_REVIEW_PENDING',
+    notes:`Exact original bytes verified outside Git; ${item.ingestion}. CI verifies derived snapshot/provenance, not access to private originals. Never implementation or license-admission evidence.`});
   const requirements = [], source_mappings = [];
   const base = (id, title, description, userNeed, refs, category, paths, owner, criteria) => ({
     requirement_id: id, title, description, user_need: userNeed, source_refs: refs, feature_category: category,
@@ -138,7 +140,7 @@ export function buildRequirements() {
     verification_method: 'Execute the requirement acceptance criteria against current source; source filenames and historical status labels alone do not prove completion',
     acceptance_criteria: criteria, external_repo_candidates: [], disposition: paths.length ? 'EXTEND' : 'NEW',
     rationale: 'Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted',
-    confidence: 'MEDIUM', unresolved_questions: owner === 'LATER_PENDING_HISTORICAL_EXPORT' ? ['Original 72-command ownership cannot be reconciled until its export is supplied'] : [], source_reported_states: [] });
+    confidence: 'MEDIUM', unresolved_questions: owner === 'LATER_PENDING_HISTORICAL_EXPORT' ? ['Original sources are now supplied; precise mapping of this earlier record still requires semantic review, not a guessed mission assignment'] : [], source_reported_states: [] });
   const commands = parseCommandRequirements(report);
   for (const command of commands) {
     const evidence = `docs/xroga/evidence/command-${command.number}/manifest.json`;
@@ -189,20 +191,47 @@ export function buildRequirements() {
       source_mappings.push({ source_id: sourceId(path), source_row_id: rowId, requirement_id: id });
     }
   }
+  const missionId=number=>number<=10?`XB01-C${String(number).padStart(3,'0')}`:`XR-MISSION-${String(number).padStart(3,'0')}`;
+  const manifestSource=sourceId(originalPath('codex/Xroga_OS_Codex_72_Command_Manifest_2026-10-13.json'));
+  const markdownSource=sourceId(originalPath('codex/Xroga_OS_72_Codex_Missions_Full_Implementation_2026-10-13.md'));
+  for(const mission of original.missions) {
+    const refs=[{source_id:manifestSource,locator:`commands[number=${mission.number}]`},{source_id:markdownSource,locator:`Command ${String(mission.number).padStart(2,'0')}`}];
+    let record=requirements.find(item=>item.requirement_id===missionId(mission.number));
+    if(record) {
+      record.source_refs.push(...refs);record.acceptance_criteria.push(`Original mission acceptance (not current proof): ${mission.acceptance}`);
+      record.rationale+='; original missions 01–10 are explicit semantic aliases of the stricter Batch One specifications; neither source overrides unpassed gates';
+    } else {
+      record=base(missionId(mission.number),mission.title,mission.implementation,'Original planned outcome; independently implement and verify in the later mission, not Batch One',refs,mission.phase,[],`MISSION-${String(mission.number).padStart(3,'0')}`,[mission.acceptance]);
+      record.dependencies=[missionId(mission.number-1)];record.source_reported_states=['REQUIREMENT_NOT_IMPLEMENTATION'];record.unresolved_questions=['Later-mission implementation is outside Batch One; current functional evidence must be established separately'];
+      requirements.push(record);
+    }
+    for(const source_id of [manifestSource,markdownSource]) source_mappings.push({source_id,source_row_id:`MISSION-${String(mission.number).padStart(3,'0')}`,requirement_id:record.requirement_id});
+  }
+  const featureSource=sourceId(originalPath('codex/Xroga_OS_Feature_Coverage_119_Items_2026-10-13.csv'));
+  for(const feature of original.features) {
+    const record=base(`XR-ORIGINAL-F${String(feature.row).padStart(3,'0')}`,feature.feature,`Original ${feature.group} requirement. Source observed_state=${feature.observed_state}, test_result=${feature.test_result}; original owner, mission and evidence columns are empty.`,
+      'Original requested capability; research is not proof of execution',[{source_id:featureSource,locator:`CSV data row ${feature.row}; ${feature.group}`}],feature.group,[],`MISSION-${String(feature.assessor_primary_mission).padStart(3,'0')}`,
+      [`Independently verify ${feature.feature} with real evidence and applicable negative cases`,`Meet mapped mission acceptance: ${original.missions[feature.assessor_primary_mission-1].acceptance}`]);
+    record.dependencies=[missionId(feature.assessor_primary_mission)];record.source_reported_states=[feature.observed_state,feature.test_result];record.confidence='LOW';
+    record.rationale='Explicit assessor-selected primary mission, not an original CSV assignment or keyword-based runtime certification. Related family/history records remain separate until acceptance equivalence is reviewed.';
+    record.unresolved_questions=['Original CSV contains no acceptance test/evidence/owner; proposed acceptance and owner are assessor annotations. No current functionality inferred.'];
+    requirements.push(record);source_mappings.push({source_id:featureSource,source_row_id:`FEATURE-${String(feature.row).padStart(3,'0')}`,requirement_id:record.requirement_id});
+  }
+  for(const record of requirements) if(record.implementation_owner_command==='LATER_PENDING_HISTORICAL_EXPORT') record.implementation_owner_command='LATER_SOURCE_MAPPING_REVIEW';
   const ledger = { version: '1.0', source_sha: inventory.identity.sha, assessment: 'AVAILABLE_SOURCE_RECONCILIATION', requirements,
     source_mappings, coverage: { imported_available_rows: source_mappings.length, mapped_available_rows: source_mappings.length,
-      historical_feature_rows_expected: 119, historical_feature_rows_supplied: 0, historical_feature_rows_mapped: 0,
-      historical_missions_expected: 72, historical_missions_supplied: 0, historical_missions_mapped: 0, historical_coverage_complete: false,
-      deferred: missingSources },
+      historical_feature_rows_expected: 119, historical_feature_rows_supplied: original.features.length, historical_feature_rows_mapped: original.features.length,
+      historical_missions_expected: 72, historical_missions_supplied: original.missions.length, historical_missions_mapped: original.missions.length, historical_coverage_complete: true,
+      deferred: [...missingSources,'Original transcript semantic reconciliation (two hash-verified private files)','Earlier family/history semantic alias review (not missing exports)'] },
     contradictions: [
       { id: 'CONTRADICTION-TOOLCHAIN-DOCS', sources: ['AGENTS.md', 'frontend/package.json'], issue: 'AGENTS says Next.js 14; current manifest declares 15.5.21', resolution: 'Actual manifests/lockfiles govern; correct engineering documentation in Command 006' },
       { id: 'CONTRADICTION-HISTORICAL-COMPLETION', sources: ['SHIP_COMPLETENESS.md', 'docs/command-1/requirements-ledger.json', 'docs/xroga/current-state.json'], issue: 'Historical complete/live labels and old task-graph claims are not current acceptance evidence', resolution: 'Preserve historical labels as source_reported_states; current runtime requirements remain unverified until tested' },
-      { id: 'CONTRADICTION-MISSING-SOURCE-COVERAGE', sources: ['Batch One report', 'user amendment'], issue: 'Original 119-row/72-mission acceptance needs unavailable files', resolution: 'Record deferred historical coverage, validate all available source rows, proceed under explicit user amendment; never report original full coverage' },
+      { id: 'CONTRADICTION-SOURCE-VS-IMPLEMENTATION', sources: ['Original source bundle', 'current repository evidence'], issue: '119 original rows say UNVERIFIED/NOT_RUN; owner and acceptance columns are empty', resolution: 'Map every row and mission while preserving unverified source states. Assessor mappings are planning annotations. Transcript semantic review and earlier alias review remain pending.' },
     ] };
   const repositories = JSON.parse(read('docs/xroga/research/repository-candidates.json'));
   for (const [name] of expectedCandidates) if (!repositories.some(item => item.name === name)) throw new Error(`Missing mandatory repository candidate: ${name}`);
   validateLedger(ledger, sources, repositories, path => existsSync(resolve(root, path)));
-  return { ledger, sources, repositories, families };
+  return { ledger, sources, repositories, families, original };
 }
 
 export function renderOutputs({ ledger, sources, repositories, families }) {
@@ -211,10 +240,10 @@ export function renderOutputs({ ledger, sources, repositories, families }) {
   out.set('docs/xroga/requirements-ledger.schema.json', json(ledgerJsonSchema));
   out.set(sourceManifestPath, json({ version: '1.0', source_sha: ledger.source_sha, hash_policy: 'Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts', sources }));
   const lines = ledger.requirements.map(item => `| ${item.requirement_id} | ${item.title.replace(/\|/g, '/')} | ${item.current_state} | ${item.implementation_owner_command} | ${item.disposition} |`);
-  out.set('docs/xroga/requirements-ledger.md', `# Canonical Xroga requirements ledger\n\nApplication source SHA: \`${ledger.source_sha}\`. This is **available-source reconciliation**, not completion of the original 119-feature/72-mission source coverage. All missing inputs remain \`INACCESSIBLE_PENDING_EXPORT\`. Historical source assertions are preserved without treating them as current proof.\n\n${ledger.requirements.length} requirements; ${ledger.source_mappings.length} available source rows mapped; ${families.length} mandatory capability families; ${repositories.length} external candidates; zero newly adopted runtime dependencies.\n\n| Requirement | Title | Current state | Owner command | Disposition |\n| --- | --- | --- | --- | --- |\n${lines.join('\n')}\n\n## Deferred ownership and contradictions\n\n\`LATER_PENDING_HISTORICAL_EXPORT\` is an explicit deferred ownership decision; it is not an invented mission number. Related capabilities and historical records remain separate when independent acceptance is not proven identical. A later export can merge semantic aliases while retaining stable source row mappings.\n\n${ledger.contradictions.map(item => `- ${item.id}: ${item.issue}. ${item.resolution}.`).join('\n')}\n\nReproduce with \`node scripts/xroga/reconcile-requirements.mjs\`; validate with \`node scripts/xroga/validate-requirements-ledger.mjs\`.\n`);
+  out.set('docs/xroga/requirements-ledger.md', `# Canonical Xroga requirements ledger\n\nApplication source SHA: \`${ledger.source_sha}\`. Original row coverage is **119/119 features and 72/72 missions**; this is requirements mapping, NOT implemented-product or fully verified Batch One status. All original features remain UNVERIFIED/NOT_RUN. Full original-transcript semantic review remains pending. Private originals are not committed; pinned hashes and derived planning records are retained.\n\n${ledger.requirements.length} requirements; ${ledger.source_mappings.length} source rows mapped; ${families.length} mandatory capability families; ${repositories.length} independently registered external candidates; zero newly adopted runtime dependencies. Original research lists additional candidates without granting adoption rights.\n\n| Requirement | Title | Current state | Owner command | Disposition |\n| --- | --- | --- | --- | --- |\n${lines.join('\n')}\n\n## Ownership and contradictions\n\nOriginal feature-to-mission assignments are explicit assessor annotations: the input CSV has empty owner/mission columns. Missions 01–10 alias the stricter Batch One records; later missions remain proposed and outside Batch One. \`LATER_SOURCE_MAPPING_REVIEW\` records earlier family/history aliases requiring semantic review, no longer missing exports. Preserve independent acceptance instead of guessing duplicate equivalence.\n\n${ledger.contradictions.map(item => `- ${item.id}: ${item.issue}. ${item.resolution}.`).join('\n')}\n\nReproduce with \`node scripts/xroga/reconcile-requirements.mjs\`; validate with \`node scripts/xroga/validate-requirements-ledger.mjs\`.\n`);
   const csv = value => `"${String(value).replace(/"/g, '""')}"`;
   out.set('docs/xroga/feature-coverage.csv', `requirement_id,title,current_state,owner_command,source_refs\n${ledger.requirements.map(item => [item.requirement_id, item.title, item.current_state, item.implementation_owner_command, item.source_refs.map(ref => `${ref.source_id}#${ref.locator}`).join(';')].map(csv).join(',')).join('\n')}\n`);
-  out.set('docs/xroga/research/source-reconciliation.md', `# Source reconciliation\n\n${sources.filter(item => item.analyzed).length} local sources ingested and hashed; ${sources.filter(item => !item.analyzed).length} unavailable/unparsed sources. Code ingestion means AST/source metadata, not a claim of manual functional review of every module.\n\nOriginal feature coverage: **0/119 supplied and 0/119 mapped**. Original missions: **0/72 supplied and 0/72 mapped**. They remain deferred under the user's amendment. The generated feature CSV contains available canonical requirements; it is not the missing 119-item input.\n\n## Unavailable sources\n\n${missingSources.map(path => `- ${path}: INACCESSIBLE_PENDING_EXPORT`).join('\n')}\n\nThe shared ChatGPT URL was attempted directly and could not be retrieved. No share contents were analyzed or invented. Every available historical repository ledger row is mapped exactly once; historical completion labels remain separate from current verification.\n\n## Source integrity\n\n\`source-manifest.json\` records stable source ID, filename, SHA-256, byte count, actual modified timestamp, parse status, category, authority and ingestion limits. Repeated reconciliation preserves timestamp metadata for identical bytes. The complete attached Batch One report is retained byte-for-byte under \`inputs/batch-one-report.txt\`.\n`);
+  out.set('docs/xroga/research/source-reconciliation.md', `# Source reconciliation\n\n${sources.filter(item => item.analyzed).length} ingested/derived sources; ${sources.filter(item => item.parse_status==='INACCESSIBLE_PENDING_EXPORT').length} inaccessible source; two hash-verified private transcripts still need complete semantic review. Code ingestion is AST metadata, not behavioral verification of every module.\n\nOriginal feature coverage: **119/119 supplied and mapped**. Original missions: **72/72 supplied and mapped** from BOTH the Markdown and manifest, checked for exact title/prompt correspondence during private import. All 119 original rows are UNVERIFIED/NOT_RUN with empty evidence/owner/mission/acceptance columns. Derived owners are explicitly assessor-selected planning annotations. Missions 01–10 alias the existing Batch One specifications; 11–72 are not executed in Batch One. Row reconciliation never proves implementation.\n\n## Deferred review\n\n${ledger.coverage.deferred.map(path => `- ${path}`).join('\n')}\n\nThe shared ChatGPT page remains inaccessible. No omitted contents invented. Original research repository proposals are RESEARCH_ONLY_NOT_ADOPTED; their license/commit claims require independent current review before use.\n\n## Source integrity and confidentiality\n\nArchive SHA256: \`1fd3bda7d1bce2697be94a7539b8c30d04a788fdb9b5ba9042ce161cc06913bf\`. All eight declared original file hashes and byte counts match. Originals remain outside Git. \`derived-original-requirements.json\` holds only normalized planning/provenance records, not transcripts, credentials or original prompts. CI verifies that pinned derivative and every row mapping; it does not pretend to reread private originals. Reimport with \`node scripts/xroga/import-private-research.mjs <private-extracted-dir> <original-zip>\`. Full source hashes/byte counts are in \`source-manifest.json\`; original-source timestamp is null rather than invented.\n`);
   out.set('docs/xroga/repository-candidate-register.md', `# External repository candidate register\n\nThese are references/candidates, not installed systems. Primary GitHub metadata is frozen in \`research/repository-candidates.json\`, including inspected commit, license path/blob and archival state. Mixed licenses, individual assets, transitive dependencies and actual integration require separate review before adoption.\n\n| Candidate | License metadata | Maintenance | Decision | Purpose |\n| --- | --- | --- | --- | --- |\n${repositories.map(item => `| [${item.name}](${item.url}) | ${item.licenseUrl ? `[${item.license}](${item.licenseUrl})` : item.license} | ${item.maintenanceStatus} | ${item.decision} | ${item.purpose} |`).join('\n')}\n\nNo candidate changes Xroga's current task graph, auth, billing, transport, renderer or deployment. Existing Playwright/Motion dependencies remain governed by their current manifests/lockfiles, not the reference repository's latest commit. \`assistant-ui/tool-ui\` archival/maintenance state comes from the frozen inspected metadata rather than assuming the report's claim is current.\n`);
   return out;
 }
@@ -234,6 +263,6 @@ export function main(args = process.argv.slice(2)) {
   }
   console.log(JSON.stringify({ result: args.includes('--check') ? 'PASS_AVAILABLE_SOURCES' : 'GENERATED', requirements: result.ledger.requirements.length,
     sources: result.sources.length, availableRows: result.ledger.source_mappings.length, families: result.families.length,
-    candidates: result.repositories.length, historicalFeatureRows: '0/119', historicalMissions: '0/72', historicalCoverageComplete: false }));
+    candidates: result.repositories.length, historicalFeatureRows: `${result.ledger.coverage.historical_feature_rows_mapped}/119`, historicalMissions: `${result.ledger.coverage.historical_missions_mapped}/72`, historicalCoverageComplete: result.ledger.coverage.historical_coverage_complete, implementationComplete:false }));
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

@@ -25,9 +25,16 @@ test('current public S00 homepage, themes and reduced-motion accessibility are c
   // inside the homepage FAQ accordion; this spec covers the companion, themes, and
   // accessibility instead.
 
+  // Main intentionally removed the public header theme control. Exercise the
+  // real guest workspace selector, then prove each choice persists on the home
+  // page; do not resurrect retired UI or replace interaction with store mutation.
+  await expect(page.getByRole('button', { name: 'Change website theme' })).toHaveCount(0);
   for (const theme of ['Beige', 'White', 'Gray', 'Black']) {
-    await page.getByRole('button', { name: 'Change website theme' }).click();
-    await page.getByRole('radio', { name: new RegExp(`^${theme}`) }).click();
+    await page.goto('/workspace');
+    await page.getByRole('button', { name: 'Change theme', exact: true }).first().click();
+    await page.getByRole('menuitemradio', { name: new RegExp(`^${theme}`) }).click();
+    await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
+    await page.goto('/');
     await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
   }
 

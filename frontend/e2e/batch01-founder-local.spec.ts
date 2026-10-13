@@ -36,7 +36,7 @@ async function denied(context:BrowserContext,label:string) {
   for(const path of ['/os-preview','/os-preview/founder']) {
     for(const headers of [{},{RSC:'1','Next-Router-Prefetch':'1'}]) {
       const response=await context.request.get(path,{headers,maxRedirects:0});
-      expect([302,303,307,308,404],`${label} ${path}`).toContain(response.status());
+      expect([302,303,307,308,403,404],`${label} ${path}`).toContain(response.status());
       const body=await response.text();expect(body).not.toContain('SIMULATED SCENARIO');expect(body).not.toContain('Private interactive example');expect(body).not.toContain('fixture_timeout');
     }
   }

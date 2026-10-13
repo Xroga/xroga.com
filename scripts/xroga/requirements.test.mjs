@@ -19,8 +19,12 @@ test('full ten-command specifications retain exact acceptance criteria and manda
   assert.equal(ledger.source_mappings.length, ledger.coverage.imported_available_rows);
   assert.equal(repositories.length, 23);
   assert.ok(repositories.some(item => item.name === 'assistant-ui/tool-ui' && item.archived === true));
-  assert.equal(sources.filter(item => item.parse_status === 'INACCESSIBLE_PENDING_EXPORT').length, 7);
-  assert.equal(ledger.coverage.historical_coverage_complete, false);
+  assert.equal(sources.filter(item => item.parse_status === 'INACCESSIBLE_PENDING_EXPORT').length, 1);
+  assert.equal(ledger.coverage.historical_coverage_complete, true);
+  assert.equal(ledger.coverage.historical_feature_rows_mapped,119);
+  assert.equal(ledger.coverage.historical_missions_mapped,72);
+  assert.equal(ledger.requirements.filter(item=>item.requirement_id.startsWith('XR-ORIGINAL-')).length,119);
+  assert.ok(ledger.requirements.filter(item=>item.requirement_id.startsWith('XR-ORIGINAL-')).every(item=>item.current_state==='PROPOSED_ONLY'));
   validateRepositoryLedger(ledger, sources, repositories);
 });
 test('multiple source references and explicit aliases survive validation', () => {
@@ -30,7 +34,7 @@ test('multiple source references and explicit aliases survive validation', () =>
   const alias = structuredClone(ledger.source_mappings[0]); alias.source_row_id = 'EXPLICIT-TEST-ALIAS';
   ledger.source_mappings.push(alias); ledger.coverage.imported_available_rows++; ledger.coverage.mapped_available_rows++;
   assert.ok(validateLedger(ledger, sources, repositories));
-  assert.throws(() => validateRepositoryLedger(ledger, sources, repositories), /source row/);
+  assert.throws(() => validateRepositoryLedger(ledger, sources, repositories), /source row|original source mappings/);
 });
 test('duplicate requirement IDs, missing source hashes and unknown sources fail', () => {
   const { ledger, sources, repositories } = fixture();
@@ -51,13 +55,13 @@ test('implemented-without-evidence and missing ownership fail', () => {
 test('unmapped imported row fails even if someone edits the declared coverage counts', () => {
   const { ledger, sources, repositories } = fixture();
   ledger.source_mappings.pop(); ledger.coverage.imported_available_rows--; ledger.coverage.mapped_available_rows--;
-  assert.throws(() => validateRepositoryLedger(ledger, sources, repositories), /source row/);
+  assert.throws(() => validateRepositoryLedger(ledger, sources, repositories), /source row|original source mappings/);
 });
-test('inaccessible sources and absent 119/72 input cannot be represented as analyzed or full coverage', () => {
+test('inaccessible sources or incomplete original row mappings cannot claim analyzed or full coverage', () => {
   const { ledger, sources, repositories } = fixture();
   const dishonest = structuredClone(sources); dishonest.find(item => item.parse_status === 'INACCESSIBLE_PENDING_EXPORT').analyzed = true;
   assert.throws(() => validateLedger(ledger, dishonest, repositories), /falsely analyzed/);
-  const full = structuredClone(ledger); full.coverage.historical_coverage_complete = true;
+  const full = structuredClone(ledger); full.coverage.historical_feature_rows_mapped = 118;
   assert.throws(() => validateLedger(full, sources, repositories), /False historical coverage/);
 });
 test('candidate adoption without a decision or proven license fails', () => {

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1aee2bf89306b878dff8388ef25585631785eda2",
+  "source_sha": "3c421c2e4adf2aae58fce2aaa15fa1ec4187cb91",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -10984,7 +10984,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "303258c96da5838c0d5015aad02b9653202872c2f31344fbe4099aba45fb07fd"
+      "sha256": "70472c2a19fbcd336969dd39e2d47a8e56d1f393d8d43a96939951eea587bfcd"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -16020,7 +16020,7 @@
     },
     {
       "path": "frontend/src/lib/supabase/middleware.ts",
-      "sha256": "fa6bb82303ba6478e7bcaecc48acf64c46f70ed7b026f582f02630edfafac6a7"
+      "sha256": "6b64d6ec040671598d9247f891d6e130baa2f73bee712141ce36db4db14d67c8"
     },
     {
       "path": "frontend/src/lib/supabase/routeAccess.ts",
