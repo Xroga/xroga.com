@@ -57,6 +57,12 @@ try {
   assert.equal((await db.query("select to_regclass('public.projects') as table_name")).rows[0].table_name,null);
   await apply(db,files,'fresh');
   assert.equal((await db.query("select count(*)::int as n from pg_policies where schemaname='public' and policyname like 'xroga_%' and permissive='RESTRICTIVE'")).rows[0].n,11);
+  // Complete file replay is not automatically complete deployed-schema parity.
+  // Report catalog drift without copying production rows or declaring it waived.
+  const observed=JSON.parse(readFileSync(join(root,'docs/xroga/security/schema-observation.json'),'utf8'));
+  const actual=(await db.query("select n.nspname as schema,c.relname as table_name from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname in ('public','storage') and c.relkind in ('r','p') order by n.nspname,c.relname")).rows;
+  const names=new Set(actual.map(row=>`${row.schema}.${row.table_name}`));
+  evidence.schemaParity={status:'NOT_PRODUCTION_DRIFT_CERTIFIED',observedReferenceTables:observed.tables.length,disposableTables:actual.length,missingObservedTables:observed.tables.filter(row=>!names.has(`${row.schema}.${row.table_name}`)).map(row=>`${row.schema}.${row.table_name}`)};
   evidence.fresh='PASS'; evidence.status='PASS'; save();
   await db.query("notify pgrst, 'reload schema'");
 } finally {await db.end();}

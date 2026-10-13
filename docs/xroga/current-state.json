@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "d6b6208528c79f47b2dbfa6992233f45e488286c",
-    "sourceTimestampUtc": "2026-10-13T23:15:20+05:00",
-    "auditStartedUtc": "2026-10-13T18:24:50.016Z",
+    "sha": "16abb16ff3f4136c9f715c7bb37b0f858275c999",
+    "sourceTimestampUtc": "2026-10-13T23:25:03+05:00",
+    "auditStartedUtc": "2026-10-13T18:35:12.119Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -15395,7 +15395,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703",
+      "sha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -15437,6 +15437,7 @@
         "memberships",
         "nextActionStatus",
         "now",
+        "ownerIds",
         "products",
         "projectId",
         "projectResources",
@@ -15533,9 +15534,8 @@
         "backend/src/operations/operationsService.ts#permissionsForRole"
       ],
       "tenantBoundary": [
+        "backend/src/operations/operationsService.ts:82 (user_id)",
         "backend/src/operations/operationsService.ts:100 (user_id)",
-        "backend/src/operations/operationsService.ts:151 (user_id)",
-        "backend/src/operations/operationsService.ts:152 (user_id)",
         "backend/src/operations/operationsService.ts:153 (user_id)",
         "backend/src/operations/operationsService.ts:154 (user_id)",
         "backend/src/operations/operationsService.ts:155 (user_id)",
@@ -15545,28 +15545,30 @@
         "backend/src/operations/operationsService.ts:159 (user_id)",
         "backend/src/operations/operationsService.ts:160 (user_id)",
         "backend/src/operations/operationsService.ts:161 (user_id)",
-        "backend/src/operations/operationsService.ts:169 (user_id)",
-        "backend/src/operations/operationsService.ts:178 (user_id)",
-        "backend/src/operations/operationsService.ts:185 (user_id)",
-        "backend/src/operations/operationsService.ts:192 (user_id)",
-        "backend/src/operations/operationsService.ts:209 (user_id)",
-        "backend/src/operations/operationsService.ts:275 (user_id)",
-        "backend/src/operations/operationsService.ts:316 (user_id)",
-        "backend/src/operations/operationsService.ts:340 (user_id)",
-        "backend/src/operations/operationsService.ts:346 (user_id)",
-        "backend/src/operations/operationsService.ts:350 (user_id)",
-        "backend/src/operations/operationsService.ts:354 (user_id)",
-        "backend/src/operations/operationsService.ts:359 (user_id)",
-        "backend/src/operations/operationsService.ts:366 (user_id)",
-        "backend/src/operations/operationsService.ts:380 (user_id)",
-        "backend/src/operations/operationsService.ts:384 (tenant_id)",
-        "backend/src/operations/operationsService.ts:393 (user_id)",
-        "backend/src/operations/operationsService.ts:398 (user_id)",
-        "backend/src/operations/operationsService.ts:403 (user_id)",
-        "backend/src/operations/operationsService.ts:409 (user_id)",
-        "backend/src/operations/operationsService.ts:410 (user_id)",
-        "backend/src/operations/operationsService.ts:433 (user_id)",
-        "backend/src/operations/operationsService.ts:434 (user_id)"
+        "backend/src/operations/operationsService.ts:162 (user_id)",
+        "backend/src/operations/operationsService.ts:163 (user_id)",
+        "backend/src/operations/operationsService.ts:171 (user_id)",
+        "backend/src/operations/operationsService.ts:180 (user_id)",
+        "backend/src/operations/operationsService.ts:187 (user_id)",
+        "backend/src/operations/operationsService.ts:194 (user_id)",
+        "backend/src/operations/operationsService.ts:211 (user_id)",
+        "backend/src/operations/operationsService.ts:277 (user_id)",
+        "backend/src/operations/operationsService.ts:318 (user_id)",
+        "backend/src/operations/operationsService.ts:342 (user_id)",
+        "backend/src/operations/operationsService.ts:348 (user_id)",
+        "backend/src/operations/operationsService.ts:352 (user_id)",
+        "backend/src/operations/operationsService.ts:356 (user_id)",
+        "backend/src/operations/operationsService.ts:361 (user_id)",
+        "backend/src/operations/operationsService.ts:368 (user_id)",
+        "backend/src/operations/operationsService.ts:382 (user_id)",
+        "backend/src/operations/operationsService.ts:386 (tenant_id)",
+        "backend/src/operations/operationsService.ts:395 (user_id)",
+        "backend/src/operations/operationsService.ts:400 (user_id)",
+        "backend/src/operations/operationsService.ts:405 (user_id)",
+        "backend/src/operations/operationsService.ts:411 (user_id)",
+        "backend/src/operations/operationsService.ts:412 (user_id)",
+        "backend/src/operations/operationsService.ts:435 (user_id)",
+        "backend/src/operations/operationsService.ts:436 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/operations/operationsService.ts#OperationsPermission",
@@ -15595,7 +15597,7 @@
       "id": "surface:ad9175fbbb64c5373b32",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/permissions.ts",
-      "sha256": "8976a492977f9936f564226d1c4cac940394926418b71d0fdb04bbae3751e781",
+      "sha256": "557be34bb470f8a019c779de41fd5c9b7b331ee9e8f43eeede52822892ae737b",
       "symbols": [
         "OPERATOR_PERMISSIONS",
         "READ_PERMISSIONS",
@@ -15603,6 +15605,8 @@
         "RELEASE_PERMISSIONS",
         "ROLE_PERMISSIONS",
         "hasOperationsPermission",
+        "ownerBoundMembershipProjectIds",
+        "parent",
         "permissionsForRole",
         "roleForProjectAccess"
       ],
@@ -15616,7 +15620,8 @@
       "callers": [
         "backend/src/operations/benchmarkAdapter.test.ts:10",
         "backend/src/operations/operationsEngine.test.ts:8",
-        "backend/src/operations/operationsService.ts:8"
+        "backend/src/operations/operationsService.ts:8",
+        "backend/src/operations/permissions.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -15646,7 +15651,8 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/operations/benchmarkAdapter.test.ts",
-        "backend/src/operations/operationsEngine.test.ts"
+        "backend/src/operations/operationsEngine.test.ts",
+        "backend/src/operations/permissions.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -18969,10 +18975,11 @@
       "id": "surface:3d74dc318d6d51f5d44e",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "sha256": "7e523220faf539fd8eb754f8f686c6ec3e81421961b9797b48ec6d78ea095fd4",
+      "sha256": "2e31e864b645265a6e416d1fc18b3876baa90be23b40cdadd12905a1a48992b6",
       "symbols": [
         "binding",
         "error",
+        "failure",
         "grant",
         "logs",
         "plan",
@@ -18996,6 +19003,8 @@
       ],
       "imports": [
         "../middleware/auth.js",
+        "../security/tenantContext.js",
+        "../security/tenantErrors.js",
         "../synthesis/livePreview/coordinator.js",
         "../synthesis/livePreview/plan.js",
         "../synthesis/livePreview/signing.js",
@@ -19006,6 +19015,8 @@
         "express"
       ],
       "runtimeImports": [
+        "backend/src/security/tenantContext.ts",
+        "backend/src/security/tenantErrors.ts",
         "backend/src/synthesis/livePreview/coordinator.ts",
         "backend/src/synthesis/livePreview/plan.ts",
         "backend/src/synthesis/livePreview/signing.ts",
@@ -20700,6 +20711,7 @@
       "callers": [
         "backend/src/ai/runStore.ts:10",
         "backend/src/middleware/auth.ts:4",
+        "backend/src/routes/projectRuntime.ts:8",
         "backend/src/routes/projects.ts:4",
         "backend/src/routes/swarm.ts:4",
         "backend/src/routes/terminalSessions.ts:17",
@@ -20748,10 +20760,11 @@
       "id": "surface:9f0d297de842e4defff2",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/tenantErrors.ts",
-      "sha256": "30d948b5e5418253815d7091697e5a605cdab53a63c0fe63edd06a4a7da21bb9",
+      "sha256": "b14fbbeb994ff03dd2a1d7489db1ab0eb5660eb37a1c13fcfd4abda23b1facab",
       "symbols": [
         "TenantAccessError",
-        "resourceNotFound"
+        "resourceNotFound",
+        "runtimeAccessFailure"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -20759,6 +20772,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/routes/projectRuntime.ts:9",
         "backend/src/routes/swarm.ts:5",
         "backend/src/routes/terminalSessions.ts:19",
         "backend/src/security/ownedRunPersistence.test.ts:6",
@@ -20769,6 +20783,7 @@
         "backend/src/security/ownership.ts:4",
         "backend/src/security/tenantContext.test.ts:5",
         "backend/src/security/tenantContext.ts:3",
+        "backend/src/security/tenantErrors.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:17"
       ],
       "reachable": true,
@@ -20784,6 +20799,7 @@
         "backend/src/security/ownedTerminalPersistence.test.ts",
         "backend/src/security/ownership.test.ts",
         "backend/src/security/tenantContext.test.ts",
+        "backend/src/security/tenantErrors.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -27476,7 +27492,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:145",
-        "backend/src/routes/projectRuntime.ts:14",
+        "backend/src/routes/projectRuntime.ts:16",
         "backend/src/synthesis/livePreview/agentBridge.ts:39",
         "backend/src/synthesis/livePreview/index.ts:9"
       ],
@@ -27594,7 +27610,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/projectRuntime.ts:27",
+        "backend/src/routes/projectRuntime.ts:29",
         "backend/src/synthesis/livePreview/coordinator.ts:37",
         "backend/src/synthesis/livePreview/index.ts:7",
         "backend/src/synthesis/livePreview/livePreview.test.ts:16"
@@ -27653,7 +27669,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:30",
-        "backend/src/routes/projectRuntime.ts:23",
+        "backend/src/routes/projectRuntime.ts:25",
         "backend/src/synthesis/livePreview/coordinator.ts:33",
         "backend/src/synthesis/livePreview/index.ts:5",
         "backend/src/synthesis/livePreview/livePreview.test.ts:20"
@@ -27697,7 +27713,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/projectRuntime.ts:36",
+        "backend/src/routes/projectRuntime.ts:38",
         "backend/src/synthesis/livePreview/status.test.ts:8"
       ],
       "reachable": true,
@@ -27745,7 +27761,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:26",
-        "backend/src/routes/projectRuntime.ts:18",
+        "backend/src/routes/projectRuntime.ts:20",
         "backend/src/synthesis/livePreview/coordinator.ts:27",
         "backend/src/synthesis/livePreview/index.ts:3"
       ],
@@ -27793,7 +27809,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/projectRuntime.ts:31",
+        "backend/src/routes/projectRuntime.ts:33",
         "backend/src/synthesis/livePreview/coordinator.ts:41",
         "backend/src/synthesis/livePreview/index.ts:1"
       ],
@@ -28716,7 +28732,7 @@
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:22",
         "backend/src/routes/delivery.ts:13",
-        "backend/src/routes/projectRuntime.ts:9",
+        "backend/src/routes/projectRuntime.ts:11",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:15",
         "backend/src/synthesis/livePreview/agentBridge.ts:27",
         "backend/src/synthesis/livePreview/coordinator.ts:16"
@@ -82499,8 +82515,9 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "e51b232045d1fbc5a8bf7ab3434874d76a496e741e4cbce96ac742d72f529f04",
+      "sha256": "1c9c28d70fac4234c35e43afa5d04e41d2997b6470f749bfb8eb1e9f592a7b5e",
       "symbols": [
+        "actual",
         "afterPolicies",
         "apply",
         "before",
@@ -82512,6 +82529,8 @@
         "files",
         "foreign",
         "inventory",
+        "names",
+        "observed",
         "other",
         "out",
         "owner",
@@ -86935,9 +86954,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:79c8579757691be78d9c",
+      "id": "registration:c6730f64190caf2c1d79",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 58,
+      "line": 52,
       "receiver": "router",
       "method": "get",
       "path": "/:projectId/logs",
@@ -86947,9 +86966,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e3f28d9357dbe12d67fe",
+      "id": "registration:f519083fd584b05eecc3",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 187,
+      "line": 170,
       "receiver": "router",
       "method": "post",
       "path": "/:projectId/restart",
@@ -86959,9 +86978,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e0c6aa9e31fd72c607e2",
+      "id": "registration:fcd86e53c62eabd3a771",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 275,
+      "line": 247,
       "receiver": "router",
       "method": "post",
       "path": "/:projectId/stop",
@@ -86971,9 +86990,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f5631df623c3a05aaa5c",
+      "id": "registration:f366a31f9b508370ba6f",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 384,
+      "line": 345,
       "receiver": "router",
       "method": "get",
       "path": "/:projectId",
@@ -87741,10 +87760,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c6b47ff02b88bebf3a4b",
-      "registrationId": "registration:79c8579757691be78d9c",
+      "id": "route:cd57669118d07b206d3a",
+      "registrationId": "registration:c6730f64190caf2c1d79",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 58,
+      "line": 52,
       "method": "GET",
       "path": "/api/project-runtime/:projectId/logs",
       "mountChain": [
@@ -87758,10 +87777,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8200a165fe276782d63a",
-      "registrationId": "registration:e3f28d9357dbe12d67fe",
+      "id": "route:1214ef6628172d16feeb",
+      "registrationId": "registration:f519083fd584b05eecc3",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 187,
+      "line": 170,
       "method": "POST",
       "path": "/api/project-runtime/:projectId/restart",
       "mountChain": [
@@ -87775,10 +87794,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:20ad21b7408e3838935f",
-      "registrationId": "registration:e0c6aa9e31fd72c607e2",
+      "id": "route:845623ef7322207f2e09",
+      "registrationId": "registration:fcd86e53c62eabd3a771",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 275,
+      "line": 247,
       "method": "POST",
       "path": "/api/project-runtime/:projectId/stop",
       "mountChain": [
@@ -87792,10 +87811,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:72dd13256a6579775c3d",
-      "registrationId": "registration:f5631df623c3a05aaa5c",
+      "id": "route:83cc9f6d696ef958a22a",
+      "registrationId": "registration:f366a31f9b508370ba6f",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 384,
+      "line": 345,
       "method": "GET",
       "path": "/api/project-runtime/:projectId",
       "mountChain": [
@@ -99474,6 +99493,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:ad44ba93192488946192",
+      "sourcePath": "backend/src/operations/permissions.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:1562476765a600eb578b",
       "sourcePath": "backend/src/operations/productionOperations.test.ts",
       "declaredTests": 14,
@@ -99630,6 +99656,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:df04edf2abe0a74876a8",
+      "sourcePath": "backend/src/security/tenantErrors.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:5202c26b2019c416efe8",
       "sourcePath": "backend/src/security/tenantIsolation.integration.test.ts",
       "declaredTests": 11,
@@ -99639,7 +99672,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 9,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },

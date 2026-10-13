@@ -5,7 +5,7 @@ import {
   ACTION_DEFINITIONS, actionPlanDigest, aggregatePortfolioProduct, approvalIsValid, automationDecision,
   initialActionStatus, maintenanceBlocksAction, providerResultToStatus, redactOperationsValue,
 } from './operationsEngine.js';
-import { hasOperationsPermission, permissionsForRole, roleForProjectAccess } from './permissions.js';
+import { hasOperationsPermission, permissionsForRole, roleForProjectAccess, ownerBoundMembershipProjectIds } from './permissions.js';
 import { createInternalAdapter, httpVerificationAdapter, ProviderAdapterRegistry } from './providerAdapters.js';
 import { benchmarkStore, createBenchmarkAdapter } from './benchmarkAdapter.js';
 import type {
@@ -79,7 +79,7 @@ export class OperationsService {
     if (!project) throw new OperationsServiceError('not_found', 'Product not found', 404);
     let role = roleForProjectAccess({ isAdmin: profile?.role === 'admin', isOwner: project.user_id === userId });
     if (!role) {
-      const membership = await queryOrThrow<DbRow | null>(this.db.from('operations_memberships').select('role').eq('project_id', projectId).eq('member_user_id', userId).maybeSingle(), 'Membership lookup failed');
+      const membership = await queryOrThrow<DbRow | null>(this.db.from('operations_memberships').select('role').eq('project_id', projectId).eq('user_id', project.user_id).eq('member_user_id', userId).maybeSingle(), 'Membership lookup failed');
       role = membership?.role as OperationsRole | null;
     }
     if (!role || !hasOperationsPermission(role, permission)) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
@@ -93,10 +93,10 @@ export class OperationsService {
 
   async portfolio(userId: string, options: { search?: string; status?: string; type?: string; limit: number; offset: number }): Promise<{ products: PortfolioProduct[]; total: number; nextOffset: number | null }> {
     const { data: profile } = await this.db.from('profiles').select('role').eq('id', userId).maybeSingle();
-    const memberships = profile?.role === 'admin' ? [] : await queryOrThrow<DbRow[]>(this.db.from('operations_memberships').select('project_id').eq('member_user_id', userId), 'Membership lookup failed');
+    const memberships = profile?.role === 'admin' ? [] : await queryOrThrow<Array<{project_id: unknown; user_id: unknown; projects: unknown}>>(this.db.from('operations_memberships').select('project_id,user_id,projects!inner(user_id)').eq('member_user_id', userId), 'Membership lookup failed');
     let projectsQuery = this.db.from('projects').select('id,name,type,github_repo_name,user_id', { count: 'exact' }).order('updated_at', { ascending: false });
     if (profile?.role !== 'admin') {
-      const memberProjectIds = memberships.map((item) => item.project_id);
+      const memberProjectIds = ownerBoundMembershipProjectIds(memberships);
       projectsQuery = memberProjectIds.length ? projectsQuery.or(`user_id.eq.${userId},id.in.(${memberProjectIds.join(',')})`) : projectsQuery.eq('user_id', userId);
     }
     if (options.search) projectsQuery = projectsQuery.ilike('name', `%${options.search.replace(/[%_]/g, '')}%`);
@@ -106,21 +106,23 @@ export class OperationsService {
     const projectRows = projects ?? [];
     const ids = projectRows.map((project) => project.id);
     if (!ids.length) return { products: [], total: count ?? 0, nextOffset: null };
+    const ownerIds = [...new Set(projectRows.map(project => project.user_id))];
 
     const [environments, resources, incidents, alerts, approvals, deployments] = await Promise.all([
-      queryOrThrow(this.db.from('operations_environments').select('*').in('project_id', ids).order('updated_at', { ascending: false }), 'Environment state unavailable'),
-      queryOrThrow(this.db.from('operations_resources').select('*').in('project_id', ids), 'Operational resources unavailable'),
-      queryOrThrow(this.db.from('production_incidents').select('id,project_id,status').in('project_id', ids).not('status', 'in', '(resolved,closed,cancelled)'), 'Incident state unavailable'),
-      queryOrThrow(this.db.from('operations_alerts').select('id,project_id,status').in('project_id', ids).in('status', ['active','acknowledged']), 'Alert state unavailable'),
+      queryOrThrow(this.db.from('operations_environments').select('*').in('project_id', ids).in('user_id', ownerIds).order('updated_at', { ascending: false }), 'Environment state unavailable'),
+      queryOrThrow(this.db.from('operations_resources').select('*').in('project_id', ids).in('user_id', ownerIds), 'Operational resources unavailable'),
+      queryOrThrow(this.db.from('production_incidents').select('id,project_id,status').in('project_id', ids).in('user_id', ownerIds).not('status', 'in', '(resolved,closed,cancelled)'), 'Incident state unavailable'),
+      queryOrThrow(this.db.from('operations_alerts').select('id,project_id,status').in('project_id', ids).in('user_id', ownerIds).in('status', ['active','acknowledged']), 'Alert state unavailable'),
       queryOrThrow(
         this.db
           .from('operations_action_approvals')
           .select('id,action_id,decision,operations_actions!inner(project_id)')
           .eq('decision', 'pending')
+          .in('user_id', ownerIds)
           .in('operations_actions.project_id', ids),
         'Approval state unavailable',
       ),
-      queryOrThrow(this.db.from('deployment_status').select('id,project_id,verification_state,status,created_at').in('project_id', ids).order('created_at', { ascending: false }), 'Deployment state unavailable'),
+      queryOrThrow(this.db.from('deployment_status').select('id,project_id,verification_state,status,created_at').in('project_id', ids).in('user_id', ownerIds).order('created_at', { ascending: false }), 'Deployment state unavailable'),
     ]);
 
     const products = projectRows.map((project) => {

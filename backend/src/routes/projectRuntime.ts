@@ -5,6 +5,8 @@ import {
 import type {
   AuthRequest,
 } from '../middleware/auth.js';
+import { requireTenantContext } from '../security/tenantContext.js';
+import { runtimeAccessFailure } from '../security/tenantErrors.js';
 
 import {
   createProjectRuntimeManager,
@@ -44,15 +46,7 @@ function requireUser(
   req:
     AuthRequest,
 ): string {
-  if (
-    !req.userId
-  ) {
-    throw new Error(
-      'Sign in required.',
-    );
-  }
-
-  return req.userId;
+  return requireTenantContext(req.tenantContext).userId;
 }
 
 router.get(
@@ -167,19 +161,8 @@ const process =
     } catch (
       error
     ) {
-      return res
-        .status(
-          500,
-        )
-        .json({
-          error:
-            error instanceof
-              Error
-              ? error.message
-              : String(
-                  error,
-                ),
-        });
+      const failure = runtimeAccessFailure(error);
+      return res.status(failure.status).json({ error: failure.error, code: failure.code });
     }
   },
 );
@@ -255,19 +238,8 @@ router.post(
     } catch (
       error
     ) {
-      return res
-        .status(
-          500,
-        )
-        .json({
-          error:
-            error instanceof
-              Error
-              ? error.message
-              : String(
-                  error,
-                ),
-        });
+      const failure = runtimeAccessFailure(error);
+      return res.status(failure.status).json({ error: failure.error, code: failure.code });
     }
   },
 );
@@ -364,19 +336,8 @@ router.post(
     } catch (
       error
     ) {
-      return res
-        .status(
-          500,
-        )
-        .json({
-          error:
-            error instanceof
-              Error
-              ? error.message
-              : String(
-                  error,
-                ),
-        });
+      const failure = runtimeAccessFailure(error);
+      return res.status(failure.status).json({ error: failure.error, code: failure.code });
     }
   },
 );
@@ -672,19 +633,8 @@ router.get(
     } catch (
       error
     ) {
-      return res
-        .status(
-          500,
-        )
-        .json({
-          error:
-            error instanceof
-              Error
-              ? error.message
-              : String(
-                  error,
-                ),
-        });
+      const failure = runtimeAccessFailure(error);
+      return res.status(failure.status).json({ error: failure.error, code: failure.code });
     }
   },
 );

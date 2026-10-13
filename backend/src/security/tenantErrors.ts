@@ -7,3 +7,9 @@ export class TenantAccessError extends Error {
 }
 
 export function resourceNotFound(): never { throw new TenantAccessError(404, 'RESOURCE_NOT_FOUND'); }
+
+/** Fixed public runtime failure surface; never stringify provider/database errors. */
+export function runtimeAccessFailure(error: unknown): {status: number; error: string; code: string} {
+  if (error instanceof TenantAccessError) return {status:error.status,error:error.message,code:error.code};
+  return {status:503,error:'Project runtime is temporarily unavailable. Retry shortly.',code:'PROJECT_RUNTIME_UNAVAILABLE'};
+}

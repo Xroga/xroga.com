@@ -2160,7 +2160,7 @@
       "sourceSha256": "d97a998832330a493d6f20b8aa449831bbd63407ade94d359ad908a13d63914d"
     },
     {
-      "id": "e967e899ccdbdbfb5c00",
+      "id": "71216b847f15b4b98eb8",
       "path": "backend/src/operations/operationsService.ts",
       "line": 65,
       "enclosing": "<module>",
@@ -2168,10 +2168,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "6e63fbb8f04a48475b51",
+      "id": "4f23b3603559537a8268",
       "path": "backend/src/operations/operationsService.ts",
       "line": 76,
       "enclosing": "access",
@@ -2179,10 +2179,10 @@
       "target": "projects",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "3e434843421c04db6ee7",
+      "id": "a53131a90040ab5604bb",
       "path": "backend/src/operations/operationsService.ts",
       "line": 77,
       "enclosing": "access",
@@ -2190,10 +2190,10 @@
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "9d98ad384857334281f7",
+      "id": "95f07eb4b33f4afcf33f",
       "path": "backend/src/operations/operationsService.ts",
       "line": 82,
       "enclosing": "access",
@@ -2201,10 +2201,10 @@
       "target": "operations_memberships",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "aa6d46808325df5f16e9",
+      "id": "a5bf0a3cb0fb6cd4477c",
       "path": "backend/src/operations/operationsService.ts",
       "line": 95,
       "enclosing": "portfolio",
@@ -2212,10 +2212,10 @@
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "6715ec492e4466b46dbf",
+      "id": "2218b454d17065f04dcf",
       "path": "backend/src/operations/operationsService.ts",
       "line": 96,
       "enclosing": "portfolio",
@@ -2223,10 +2223,10 @@
       "target": "operations_memberships",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "b609d4aaf9893885d953",
+      "id": "50ed4506bec927681895",
       "path": "backend/src/operations/operationsService.ts",
       "line": 97,
       "enclosing": "portfolio",
@@ -2234,95 +2234,73 @@
       "target": "projects",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "7b212287c81be9eea20b",
+      "id": "76f2c79514b3f24b222b",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 111,
+      "line": 112,
       "enclosing": "portfolio",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_environments",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "bfe65a7540eb3d2877a5",
+      "id": "0175826a81b86b8f52e8",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 112,
+      "line": 113,
       "enclosing": "portfolio",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_resources",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "5e641f8ac1c4edbe0119",
+      "id": "f55f3cb71d5cb532263d",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 113,
+      "line": 114,
       "enclosing": "portfolio",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_incidents",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "24d727655dfcf39fa676",
+      "id": "b35e6994124728774506",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 114,
+      "line": 115,
       "enclosing": "portfolio",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_alerts",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "120acd456c179751d766",
+      "id": "e32b7dbd02bb0ba587bb",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 116,
+      "line": 117,
       "enclosing": "portfolio",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "1611c7053b5da87b76f6",
+      "id": "45483b1979f8191a69ad",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 123,
+      "line": 125,
       "enclosing": "portfolio",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "deployment_status",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
-    },
-    {
-      "id": "e79f96d6f0e21bf5f128",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 150,
-      "enclosing": "product",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "projects",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
-    },
-    {
-      "id": "8f06115fbca5d16288ac",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 151,
-      "enclosing": "product",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_environments",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
       "id": "569b5a8ae6b19ce32b71",
@@ -2330,607 +2308,618 @@
       "line": 152,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
+    },
+    {
+      "id": "94c23b592953fe665e68",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 153,
+      "enclosing": "product",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_environments",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
+    },
+    {
+      "id": "06280029a2329f351811",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 154,
+      "enclosing": "product",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_resources",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "096710d893c6feca6fe7",
+      "id": "80fa89e50b8450490985",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 153,
+      "line": 155,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_releases",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "5c5876b682736dd700d0",
+      "id": "49b3a9b6352be64456a4",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 154,
+      "line": 156,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "deployment_status",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "1577458d2b9c8bb47cc1",
+      "id": "d0b329c37b207e9b30a6",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 155,
+      "line": 157,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_incidents",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "af169b89bb22d7c8c0e0",
+      "id": "ebdf5157c19009285455",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 156,
+      "line": 158,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_alerts",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "33166e6afbe4eec65d2a",
+      "id": "2903d93c4331dfc3b810",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 157,
+      "line": 159,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "2740816ea42811d7d62a",
+      "id": "4d45124b889dcdc74c88",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 158,
+      "line": 160,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "3efa3a095c27c75aadee",
+      "id": "51c35065a82460a4869e",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 159,
+      "line": 161,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_job_queue",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "0fa0b2df6b8e6204df2e",
+      "id": "e2ded272791bad208c78",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 160,
+      "line": 162,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "823853b133b06596f14f",
+      "id": "a00f6760c92b3df6d5e2",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 161,
+      "line": 163,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "68d9d5a459320ec3f057",
+      "id": "5a00435db4af5522a144",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 169,
+      "line": 171,
       "enclosing": "resources",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_resources",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "a9a86cae322fd191cd1e",
+      "id": "0ccaabeddb11a14f96bf",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 178,
+      "line": 180,
       "enclosing": "configuration",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_config_checks",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "b7b31cde1593138f49e3",
+      "id": "04efdebfa641bef8c186",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 185,
+      "line": 187,
       "enclosing": "slo",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_slo_snapshots",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "6b54124ffbf42ae1e0f4",
+      "id": "c00758baa37ef32a3de8",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 192,
+      "line": 194,
       "enclosing": "createAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "1d0ac34f18ee5fadf69b",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 207,
-      "enclosing": "createAction",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_actions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
-    },
-    {
-      "id": "b4048d4b60ff83e247d5",
+      "id": "11cda7b00aa5a39c0848",
       "path": "backend/src/operations/operationsService.ts",
       "line": 209,
       "enclosing": "createAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
+    },
+    {
+      "id": "11a244bb47965fc1b492",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 211,
+      "enclosing": "createAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_actions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "b11d6625c82a028c959d",
+      "id": "69f62d99af452bc52859",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 216,
+      "line": 218,
       "enclosing": "createAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "a705570ab888ef47a8ba",
+      "id": "a00156d0ece3a7c7d056",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 220,
+      "line": 222,
       "enclosing": "createAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "e078f84d7c3195e3705b",
+      "id": "72214e4cdceccb2b9fce",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 228,
+      "line": 230,
       "enclosing": "approveAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "5e6877f425b7bab6f570",
+      "id": "ce96e16dfbadcfa2424a",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 232,
+      "line": 234,
       "enclosing": "approveAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "e73ea6947532235c8703",
+      "id": "282d867040fa8d2ca8c5",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 236,
+      "line": 238,
       "enclosing": "approveAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "66059cbfee9d35a2d076",
+      "id": "7035bb033bf4c4bae218",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 240,
+      "line": 242,
       "enclosing": "approveAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "d18048a0db1d7e67a06c",
+      "id": "5fa74c7dd718e33b371a",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 241,
+      "line": 243,
       "enclosing": "approveAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "1fd99d8ee9c0e973d9d2",
+      "id": "4167e3402edaaff045a2",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 247,
+      "line": 249,
       "enclosing": "confirmAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "9eff33023ff3815e648b",
+      "id": "e2937a89cc9aa71cb9bb",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 254,
+      "line": 256,
       "enclosing": "confirmAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "d6b0e049ec7f78df94a2",
+      "id": "29a62e10f8e183d43e3a",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 257,
+      "line": 259,
       "enclosing": "confirmAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "44b20041f17a7d04c975",
+      "id": "bb4f7feac9c1ad7eae33",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 275,
+      "line": 277,
       "enclosing": "currentTargetVersion",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "03e5d7ffed06170c15a9",
+      "id": "4703024663f578d5698b",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 280,
+      "line": 282,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "5266485580e3458aa91b",
+      "id": "716dd2aa4f7b695dbc13",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 287,
+      "line": 289,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "e4fd8e72a271940a6ad1",
+      "id": "c32a2af7360b965f3df4",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 288,
+      "line": 290,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "06f0abdba61b54568ad8",
+      "id": "770a7683b268b9e07f32",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 293,
+      "line": 295,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "46bd6b77764f86839dac",
+      "id": "ab15c90dd5f4b5d21975",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 298,
+      "line": 300,
       "enclosing": "executeAction",
       "kind": "RPC_CANDIDATE",
       "target": "operations_claim_action",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "54adbc60e6cfc07088ef",
+      "id": "4b851d3e2e76b0111c38",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 300,
+      "line": 302,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "8db1c97c7b5e1e5ee4da",
+      "id": "2c2b0dfca073ea5d62ec",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 316,
+      "line": 318,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_resources",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "0fce0ce7441e454ec889",
+      "id": "43b4e576b27599c98738",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 328,
+      "line": 330,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_evidence",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "77b7ffdb402a6317c53e",
+      "id": "b67850553a1c19f08ad1",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 330,
+      "line": 332,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "e582d0621a5da8b82eab",
+      "id": "4210b6e5f8790be496eb",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 331,
+      "line": 333,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "8f6f71f8033cab3b7ddb",
+      "id": "a3265d8dc5c996543deb",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 340,
+      "line": 342,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_incidents",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "5bda30be8b3008256f12",
+      "id": "615432f8140145a0d826",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 346,
+      "line": 348,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_incidents",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "4065919053511d5dbaed",
+      "id": "b6171c199c41d25a9225",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 350,
+      "line": 352,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_job_queue",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "63f01fb44231c2ce6111",
+      "id": "c233dd9c7cec46293271",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 354,
+      "line": 356,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "f225849b1f1b3bf78826",
+      "id": "a8259eaf665f93928317",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 359,
+      "line": 361,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "5ad2fb97f7746bf3eb10",
+      "id": "0e91c13fb9dea512dc0e",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 366,
+      "line": 368,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "d4ba34d0cda7d55a5f33",
+      "id": "d67609dba7bc0ce638d0",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 376,
+      "line": 378,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "2e1bc3f89092f0636134",
+      "id": "623dbb29c52698ffbb05",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 380,
+      "line": 382,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "bffef8ec5b08cc7b7b09",
+      "id": "006646741d4c8f3bb566",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 384,
+      "line": 386,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "f225f864105c0296dbb0",
+      "id": "cd9b08fdcbd933fadd87",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 393,
+      "line": 395,
       "enclosing": "listActions",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "6c0a836e8d7a948ab462",
+      "id": "6787fde37ae6990fcac7",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 398,
+      "line": 400,
       "enclosing": "listAudit",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_audit_log",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "bc37619ce891624d70d0",
+      "id": "a4f7e01e51b576e3d801",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 403,
+      "line": 405,
       "enclosing": "listEvidence",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_evidence",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "e4697397e849861021a5",
+      "id": "fe42c2088106390ca97f",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 409,
+      "line": 411,
       "enclosing": "automation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "f6b6e1fc40999e84ddd4",
+      "id": "8070570d2c6d002011cb",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 410,
+      "line": 412,
       "enclosing": "automation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "f2f16f8eea4dc3f74bfa",
+      "id": "acbe57dd26f7d46fd30c",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 423,
+      "line": 425,
       "enclosing": "createAutomationRule",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "88ce3191bd01d5c81887",
+      "id": "4f41e0adb04b602e5c23",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 433,
+      "line": 435,
       "enclosing": "evaluateAutomationSignal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "de6b2cfd9e80482b770c",
+      "id": "ff38ae52999c549a0cde",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 434,
+      "line": 436,
       "enclosing": "evaluateAutomationSignal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "6827ea86476526847122",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 438,
-      "enclosing": "evaluateAutomationSignal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_automation_runs",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
-    },
-    {
-      "id": "9b41e4c02573bc31de6e",
+      "id": "379d947fcea0ce567ce6",
       "path": "backend/src/operations/operationsService.ts",
       "line": 440,
       "enclosing": "evaluateAutomationSignal",
@@ -2938,51 +2927,62 @@
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "5ec25a57b67e8c351ebb",
+      "id": "d2f5094621d8275fa69b",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 448,
+      "line": 442,
       "enclosing": "evaluateAutomationSignal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "e716294d7d2b58ccd476",
+      "id": "73d30e3912054a7cf65c",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 454,
+      "line": 450,
       "enclosing": "evaluateAutomationSignal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "c5f9bdda0eae21f17b55",
+      "id": "2bd32a95398808e4e9cc",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 458,
+      "line": 456,
       "enclosing": "evaluateAutomationSignal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
-      "id": "52b561daf1b57cb28e89",
+      "id": "32010af0d6e64a992629",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 471,
+      "line": 460,
+      "enclosing": "evaluateAutomationSignal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_automation_runs",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
+    },
+    {
+      "id": "0af31d8225da63e6c1fa",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 473,
       "enclosing": "audit",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_audit_log",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "968a8d34c83efb29269ca793529f8c3f84f7bdde45551237f529363ec716d703"
+      "sourceSha256": "6c61d66571c5f0cc836f7272622902bed703026963ad19f87ca22fc6660d17ba"
     },
     {
       "id": "5cd18776b49fa748916c",

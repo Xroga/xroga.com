@@ -112,3 +112,29 @@ test('real operations membership allows its reviewed relation then denies immedi
     assert.equal((await request(`/api/operations/products/${owner.project}`,member.token)).status,403);
   } finally {assert.equal((await admin.from('operations_memberships').delete().eq('id',id)).error,null);}
 });
+
+test('browser cannot mint operations membership, and even a misbound service row cannot grant foreign access',async()=>{
+  const [owner,other]=users;
+  const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${other.token}`}},auth:{persistSession:false,autoRefreshToken:false}});
+  const forged={user_id:other.id,project_id:owner.project,member_user_id:other.id,role:'admin',created_by:other.id};
+  assert.equal((await client.from('operations_memberships').insert(forged)).error?.code,'42501');
+  // Simulate corrupt server-owned relation, not an actual browser privilege grant.
+  const id=await insert('operations_memberships',forged);
+  try {
+    assert.equal((await request(`/api/operations/products/${owner.project}`,other.token)).status,403);
+    const portfolio=await request('/api/operations/portfolio',other.token);assert.equal(portfolio.status,200);
+    assert.ok(!(await portfolio.text()).includes(owner.project));
+  } finally {assert.equal((await admin.from('operations_memberships').delete().eq('id',id)).error,null);}
+});
+
+test('portfolio does not disclose a misbound foreign resource while keeping legitimate owner evidence',async()=>{
+  const [owner,other]=users;
+  const legitimate=await insert('operations_resources',{user_id:owner.id,project_id:owner.project,kind:'service',name:'Owner fixture',source:'fixture',evidence_reference:'OWN_RESOURCE_EVIDENCE_CANARY'});
+  const foreign=await insert('operations_resources',{user_id:other.id,project_id:owner.project,kind:'service',name:'FOREIGN_RESOURCE_CANARY',source:'fixture',status:'failed',evidence_reference:'FOREIGN_RESOURCE_EVIDENCE_CANARY'});
+  try {
+    for(const path of ['/api/operations/portfolio',`/api/operations/products/${owner.project}`]) {
+      const response=await request(path,owner.token);assert.equal(response.status,200);
+      const text=await response.text();assert.ok(text.includes('OWN_RESOURCE_EVIDENCE_CANARY'));assert.ok(!text.includes('FOREIGN_RESOURCE'));
+    }
+  } finally {assert.equal((await admin.from('operations_resources').delete().in('id',[legitimate,foreign])).error,null);}
+});
