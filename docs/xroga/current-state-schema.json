@@ -1,0 +1,777 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "sha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "sourceTimestampUtc": {
+          "type": "string"
+        },
+        "auditStartedUtc": {
+          "type": "string"
+        },
+        "initialWorkingTreeState": {
+          "type": "string"
+        },
+        "sourceTreeState": {
+          "type": "string"
+        },
+        "node": {
+          "type": "string"
+        },
+        "npm": {
+          "type": "string"
+        },
+        "lockfiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtimeDeclarations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "repository",
+        "branch",
+        "sha",
+        "sourceTimestampUtc",
+        "auditStartedUtc",
+        "initialWorkingTreeState",
+        "sourceTreeState",
+        "node",
+        "npm",
+        "lockfiles",
+        "runtimeDeclarations"
+      ],
+      "additionalProperties": false
+    },
+    "requiredPaths": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sourcePath": {
+            "type": "string"
+          },
+          "presence": {
+            "type": "string",
+            "enum": [
+              "PRESENT",
+              "ABSENT"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourcePath",
+          "presence",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "surfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "subsystem": {
+            "type": "string"
+          },
+          "sourcePath": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          },
+          "symbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "imports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "runtimeImports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "entryPoints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "callers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reachable": {
+            "type": "boolean"
+          },
+          "persistenceDependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "externalProviderDependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authBoundary": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tenantBoundary": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "approvalBoundary": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "costBoundary": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidenceBoundary": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "testCoverage": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "IMPLEMENTED_AND_REACHABLE",
+              "IMPLEMENTED_BUT_UNVERIFIED",
+              "PARTIAL",
+              "PLACEHOLDER",
+              "DEAD_OR_UNREACHABLE",
+              "PROPOSED_ONLY",
+              "UNKNOWN_BLOCKED"
+            ]
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "HIGH",
+              "MEDIUM",
+              "LOW"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "knownRisk": {
+            "type": "string"
+          },
+          "recommendedDisposition": {
+            "type": "string"
+          },
+          "nextEvidenceNeeded": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "subsystem",
+          "sourcePath",
+          "sha256",
+          "symbols",
+          "imports",
+          "runtimeImports",
+          "entryPoints",
+          "callers",
+          "reachable",
+          "persistenceDependencies",
+          "externalProviderDependencies",
+          "authBoundary",
+          "tenantBoundary",
+          "approvalBoundary",
+          "costBoundary",
+          "evidenceBoundary",
+          "testCoverage",
+          "state",
+          "confidence",
+          "reason",
+          "knownRisk",
+          "recommendedDisposition",
+          "nextEvidenceNeeded"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "routeRegistrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sourcePath": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "receiver": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "handlers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "module",
+              "conditional",
+              "function"
+            ]
+          },
+          "functionName": {
+            "type": "string"
+          },
+          "inlineResponse": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "sourcePath",
+          "line",
+          "receiver",
+          "method",
+          "path",
+          "handlers",
+          "scope",
+          "functionName",
+          "inlineResponse"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "registrationId": {
+            "type": "string"
+          },
+          "sourcePath": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "method": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "mountChain": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authBoundary": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reachable": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "IMPLEMENTED_AND_REACHABLE",
+              "IMPLEMENTED_BUT_UNVERIFIED",
+              "PARTIAL",
+              "PLACEHOLDER",
+              "DEAD_OR_UNREACHABLE",
+              "PROPOSED_ONLY",
+              "UNKNOWN_BLOCKED"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "registrationId",
+          "sourcePath",
+          "line",
+          "method",
+          "path",
+          "mountChain",
+          "authBoundary",
+          "reachable",
+          "state",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "queues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "definitions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "factorySymbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "producers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "consumers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "callers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "producerStatus": {
+            "type": "string"
+          },
+          "consumerStatus": {
+            "type": "string"
+          },
+          "reachable": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "IMPLEMENTED_AND_REACHABLE",
+              "IMPLEMENTED_BUT_UNVERIFIED",
+              "PARTIAL",
+              "PLACEHOLDER",
+              "DEAD_OR_UNREACHABLE",
+              "PROPOSED_ONLY",
+              "UNKNOWN_BLOCKED"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "definitions",
+          "factorySymbols",
+          "producers",
+          "consumers",
+          "callers",
+          "producerStatus",
+          "consumerStatus",
+          "reachable",
+          "state",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "scheduledJobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sourcePath": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "kind": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "reachable": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "IMPLEMENTED_AND_REACHABLE",
+              "IMPLEMENTED_BUT_UNVERIFIED",
+              "PARTIAL",
+              "PLACEHOLDER",
+              "DEAD_OR_UNREACHABLE",
+              "PROPOSED_ONLY",
+              "UNKNOWN_BLOCKED"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "sourcePath",
+          "line",
+          "kind",
+          "symbol",
+          "reachable",
+          "state"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "migrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sourcePath": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "sha256": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "sourcePath",
+          "version",
+          "order",
+          "sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "workflows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sourcePath": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          },
+          "sourceEntrypoints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hasSchedule": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "sourcePath",
+          "sha256",
+          "sourceEntrypoints",
+          "hasSchedule"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sourcePath": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "kind": {
+            "type": "string"
+          },
+          "reachable": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "IMPLEMENTED_AND_REACHABLE",
+              "IMPLEMENTED_BUT_UNVERIFIED",
+              "PARTIAL",
+              "PLACEHOLDER",
+              "DEAD_OR_UNREACHABLE",
+              "PROPOSED_ONLY",
+              "UNKNOWN_BLOCKED"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "nextEvidenceNeeded": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "sourcePath",
+          "line",
+          "kind",
+          "reachable",
+          "state",
+          "reason",
+          "nextEvidenceNeeded"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "frontendCallers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sourcePath": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "callee": {
+            "type": "string"
+          },
+          "reachable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "sourcePath",
+          "line",
+          "callee",
+          "reachable"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "testSuites": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sourcePath": {
+            "type": "string"
+          },
+          "declaredTests": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "skipLocations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "focusLocations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "sourcePath",
+          "declaredTests",
+          "skipLocations",
+          "focusLocations"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "duplicateCandidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "sourcePaths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reason": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string",
+            "const": "CANDIDATE_FOR_REVIEW"
+          }
+        },
+        "required": [
+          "id",
+          "family",
+          "sourcePaths",
+          "reason",
+          "disposition"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "unresolved": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "version",
+    "identity",
+    "requiredPaths",
+    "surfaces",
+    "routeRegistrations",
+    "routes",
+    "queues",
+    "scheduledJobs",
+    "migrations",
+    "workflows",
+    "findings",
+    "frontendCallers",
+    "testSuites",
+    "duplicateCandidates",
+    "unresolved"
+  ],
+  "additionalProperties": false
+}

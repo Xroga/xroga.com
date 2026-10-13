@@ -23,6 +23,11 @@ jobs:
           cache: npm
       - run: npm ci
 
+      - name: Repository truth inventory and adversarial fixtures
+        run: |
+          node scripts/xroga/inventory.mjs --check
+          node --test scripts/xroga/inventory.test.mjs
+
       - name: Backend and frontend unit tests
         run: npm test
 
