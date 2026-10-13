@@ -179,8 +179,10 @@
       ],
       "feature_category": "batch-command-004",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
-      "current_paths": [],
+      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_paths": [
+        "docs/xroga/evidence/command-004/manifest.json"
+      ],
       "implementation_owner_command": "004",
       "priority": "P1",
       "dependencies": [
@@ -213,7 +215,7 @@
         "Documentation names the source SHA."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [],

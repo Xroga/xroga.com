@@ -87,6 +87,8 @@ Command 004 runtime outputs/validator are implemented: 12 core definitions plus 
 
 ## External/deferred prerequisites
 
+Command 004 first aggregate CI (`88c8e702`, run 38402382559) fails at requirements integrity, after 2,717 backend/987 frontend tests and both builds/type/lint pass. Its manifest was created after ledger generation, leaving a stale evidence path; regenerate with all evidence files present and verify the exact outputs. This is a real caught integrity failure, not an authenticated-test prerequisite, and must be fixed before marking 004 verified.
+
 The source ZIP, 119-item CSV, 72-mission Markdown/manifest, final research Markdown, and GitHub catalog were not found in the supplied attachment, Downloads, or Codex folders. Only an older frontend Command 3 document matched the filename search. User explicitly authorized deferred historical reconciliation.
 
 Isolated/staging database availability, production KMS, and production migration/release approvals have not yet been verified. They must be inspected before the affected safety gates; no credentials or production secret values belong in this tracker.
