@@ -1,7 +1,11 @@
-const APPROVED_PROJECT_REF = process.env.NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF || 'nzenxdfumxrnsmybazmo';
+const PRODUCTION_PROJECT_REF='nzenxdfumxrnsmybazmo';
+const APPROVED_PROJECT_REF = process.env.NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF || PRODUCTION_PROJECT_REF;
 const LOCAL_BUILD = APPROVED_PROJECT_REF === 'local-disposable';
 const STAGING_BUILD = APPROVED_PROJECT_REF === 'self-hosted-staging';
 const APPROVED_PUBLIC_URL = LOCAL_BUILD ? 'http://127.0.0.1:54321' : STAGING_BUILD ? process.env.NEXT_PUBLIC_XROGA_AUTH_BASE_URL??'' : `https://${APPROVED_PROJECT_REF}.supabase.co`;
+
+/** Telemetry selection only, NEVER an authentication/role grant. Build realm is canonical. */
+export function isProductionAuthBuild(projectRef=APPROVED_PROJECT_REF):boolean {return projectRef===PRODUCTION_PROJECT_REF;}
 
 function legacyRole(key: string): string | null {
   if (!key.includes('.')) return null;

@@ -133,6 +133,7 @@ jobs:
           path: |
             frontend/test-results/command3-auth-evidence.json
             frontend/test-results/batch01-founder-evidence.json
+            frontend/test-results/batch01-private-delivery-evidence.json
             frontend/test-results/**/test-failed-*.png
             artifacts/batch-01-local-security/migration-history.json
             artifacts/batch-01-local-security/supabase-start-redacted.log

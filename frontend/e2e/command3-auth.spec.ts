@@ -93,13 +93,16 @@ test.afterAll(async () => {
 
 test('real Supabase login persists, Operations works, cross-tenant access is denied, and logout clears the session', async ({ page }) => {
   let browserBearer = '';
+  let productionTelemetryRequests=0;
   page.on('request', (request) => {
     if (request.url().includes('/api/operations/') && request.headers().authorization?.startsWith('Bearer ')) browserBearer = request.headers().authorization;
+    if(/(?:clarity\.ms|google-analytics\.com|googletagmanager\.com|analytics\.google\.com|analytics\.ahrefs\.com)/.test(new URL(request.url()).hostname))productionTelemetryRequests++;
   });
   // The sign-in shell is interactive at DOMContentLoaded. Do not let a slow third-party
   // font request consume the entire authenticated-flow budget while waiting for `load`;
   // the locators and API assertions below still prove the rendered app is usable.
   await page.goto('/auth/login', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('script#xroga-microsoft-clarity,script#xroga-google-tag,script[src*="analytics.ahrefs.com"],script[src*="googletagmanager.com"]')).toHaveCount(0);
   const webRelease = await page.evaluate(async () => {
     const response = await fetch('/api/release', { cache: 'no-store' });
     return { status: response.status, body: await response.json() as { release?: string; environment?: string } };
@@ -923,5 +926,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
+  expect(productionTelemetryRequests).toBe(0);
+  await writeFile('test-results/batch01-private-delivery-evidence.json',JSON.stringify({expectedRelease,privateCookieDelivery:privateDelivery.own,crossTenantDenial:privateDelivery.foreign,signedOwnerAccess:200,anonymousSignedAccess:401,revokedLinkAccess:404,renderedCopyAndRevoke:'PASS',productionTelemetryRequests,realR2:'NOT_EXECUTED',observedAt:new Date().toISOString()},null,2));
   await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, persistentWorkspaceShell: 'verified', workspaceMetrics, hardRefreshDraftRestore: 'verified', offlineShellContinuity: 'verified', userCacheIsolation: 'verified', prepaintTheme: 'verified', companionComposer: 'verified', canonicalComposerProductChips: 'removed', canonicalComposerVoice: 'wake_word_icon_verified', companionProfilePersistence, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction: 'not_submitted', initialRealCharge: 0, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, billing cycles, and companion preferences cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });

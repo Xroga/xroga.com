@@ -29,6 +29,8 @@ Rollback plan: keep PR unmerged until gates pass. If later approved rollout fail
 
 ## Evidence and unresolved limits
 
+Correction verified at `9c3f52fa`: isolated CI38481986195 PASS (3 browser/35 actual tenant cases, zero fail/skip, all 69 fresh/upgrade files and both exact-revision builds); aggregate CI38481990186 PASS twice all 21 stages (2779 backend, 1014 frontend, 15 guards, 71 combined fixtures per run). Exact safe manifests retained in Command 007 evidence. Subsequent test/staging telemetry suppression requires its own rerun; real R2 and approved staged rollout remain blocked. This proves scoped private database/file/link behavior, not every privileged caller or full production privacy/security acceptance.
+
 First real run `38480773161` at `abbe1ec6` failed honestly (69-file fresh/upgrade + both builds PASS; browser 2 PASS/1 FAIL; tenant 34 PASS/1 FAIL, zero skipped). It exposed a real UI API-prefix error and an incorrect fixture assumption about browser UPDATE: repository policies only permit file SELECT/INSERT. The correction preserves those permissions, proves permitted owner read/insert, denies client updates/metadata forgery with unchanged stored rows, and checks authorized server edits and epoch rollback denial. No permissive policy added and no security assertion removed. The next source requires its own complete passing run.
 
 Bounded R2 request deadlines and pre-fetch configuration validation are prepared, not live storage proof. Signed-link input is masked; public failure copy does not claim absence of partial storage when cleanup may remain outstanding. In-flight response/SDK deadline behavior and interrupted-upload orphan reconciliation still require actual staged/R2 evidence; no object or production credential was changed.

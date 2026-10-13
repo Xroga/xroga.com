@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "abbe1ec66beaa25bd1a038b21c3511ad5ebca017",
-    "sourceTimestampUtc": "2026-10-14T03:53:30+05:00",
-    "auditStartedUtc": "2026-10-13T23:04:42.044Z",
+    "sha": "9c3f52fa26371c818d5e31d6979d4f0883c8694b",
+    "sourceTimestampUtc": "2026-10-14T04:04:43+05:00",
+    "auditStartedUtc": "2026-10-13T23:18:56.013Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -36610,10 +36610,11 @@
       "id": "surface:f3bfc5eb8ab49540cf25",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/layout.tsx",
-      "sha256": "ceb6ea83088944959db18b1f4b8041171568460279648acbbe595c4a11cccbcf",
+      "sha256": "3dcb944de7d48407286ffd845cf4aeb0fac007a11b69f56731ae14e61240a4d6",
       "symbols": [
         "RootLayout",
         "metadata",
+        "productionTelemetry",
         "viewport"
       ],
       "imports": [
@@ -36625,6 +36626,7 @@
         "@/components/seo/SiteJsonLd",
         "@/lib/fonts",
         "@/lib/seo",
+        "@/lib/supabase/config",
         "@/styles/companion.css",
         "@/styles/public-marketing.css",
         "@/styles/uiverse.css",
@@ -36640,6 +36642,7 @@
         "frontend/src/components/seo/SiteJsonLd.tsx",
         "frontend/src/lib/fonts.ts",
         "frontend/src/lib/seo.ts",
+        "frontend/src/lib/supabase/config.ts",
         "frontend/src/styles/companion.css",
         "frontend/src/styles/public-marketing.css",
         "frontend/src/styles/uiverse.css",
@@ -36657,7 +36660,9 @@
         "declared-host:xroga.com",
         "next"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "frontend/src/app/layout.tsx#isProductionAuthBuild"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -76901,13 +76906,15 @@
       "id": "surface:f2d5ae8b59647e15a070",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabase/config.ts",
-      "sha256": "0dab1dd29661bfa9b6015dc83576975872dcd31b77e5b7ec079edb5f65982460",
+      "sha256": "073d70a7f30c1383943e1f4585e8651abf2f9bdd33c96622d244fe5c54b35598",
       "symbols": [
         "APPROVED_PROJECT_REF",
         "APPROVED_PUBLIC_URL",
         "LOCAL_BUILD",
+        "PRODUCTION_PROJECT_REF",
         "STAGING_BUILD",
         "getSupabasePublicConfig",
+        "isProductionAuthBuild",
         "json",
         "legacyRole",
         "parsed",
@@ -76983,24 +76990,29 @@
         "frontend/src/middleware.ts"
       ],
       "callers": [
+        "frontend/src/app/layout.tsx:14",
         "frontend/src/lib/supabase/authProviders.ts:1",
         "frontend/src/lib/supabase/client.ts:3",
         "frontend/src/lib/supabase/config.test.ts:3",
         "frontend/src/lib/supabase/middleware.ts:3",
-        "frontend/src/lib/supabase/server.ts:3"
+        "frontend/src/lib/supabase/server.ts:3",
+        "frontend/src/lib/supabase/telemetryRealm.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "declared-host:127.0.0.1"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "frontend/src/lib/supabase/config.ts#isProductionAuthBuild"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "frontend/src/lib/supabase/config.test.ts"
+        "frontend/src/lib/supabase/config.test.ts",
+        "frontend/src/lib/supabase/telemetryRealm.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -92908,7 +92920,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "0384a97562d3a758551c2d150dd37775fb92c78d0789c78da0279dcd780fa6ea",
+      "sha256": "a59dc4599b2d4fd38f49b028ac1a42225ac83bf965b9248dd930bc4ad6e44497",
       "sourceEntrypoints": [
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
@@ -96653,86 +96665,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:5fdc7ea1f681712e405e",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 104,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:cd38c485491601857da4",
+      "id": "frontend-call:da34402f43c7850aa253",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 107,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:0a7a0fa13fb5e6418a49",
+      "id": "frontend-call:8514603d63d24c7c5dd4",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 798,
+      "line": 110,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:15c0bf37345d7b6e485c",
+      "id": "frontend-call:64015e82025b945185f7",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 799,
+      "line": 801,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:49e8d38a9c5b2cb28181",
+      "id": "frontend-call:ab0f12a47630480a9098",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 804,
+      "line": 802,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d6590883fe6c3387b7ec",
+      "id": "frontend-call:6d3496bd1d7187c6ca61",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 805,
+      "line": 807,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b9c1f14cad83be94af6c",
+      "id": "frontend-call:01269447b3cc99934668",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 811,
+      "line": 808,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:3b155e955ddd631193e8",
+      "id": "frontend-call:886bbc3ad02189be4781",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 816,
+      "line": 814,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a26e977c1735dc52a960",
+      "id": "frontend-call:e313f920853d3faf43c4",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 829,
+      "line": 819,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:161a3f1428042d701a56",
+      "id": "frontend-call:b73b094a262079addb3e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 830,
+      "line": 832,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:2f8ca91742311ea83725",
+      "id": "frontend-call:0d46d35715cd10c39a79",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 837,
+      "line": 833,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a97350f8d9320786b919",
+      "id": "frontend-call:67981ca4926899dc6fc0",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 851,
+      "line": 840,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:7eb96e8d9ed6a1a257f8",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 854,
       "callee": "fetch",
       "reachable": false
     },
@@ -102024,6 +102036,13 @@
       "id": "test-suite:a216cb39c9c4401ce621",
       "sourcePath": "frontend/src/lib/supabase/stagingAuthBuild.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:35d1381840b58c5d6fda",
+      "sourcePath": "frontend/src/lib/supabase/telemetryRealm.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

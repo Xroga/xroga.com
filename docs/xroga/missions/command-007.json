@@ -10,6 +10,8 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "frontend/src/app/layout.tsx",
+    "frontend/src/lib/supabase/telemetryRealm.test.ts",
     "backend/src/services/storage/fileDeliveryPolicy.ts",
     "backend/src/services/storage/privateFileDelivery.ts",
     "backend/src/services/storage/fileDeliveryPolicy.test.ts",

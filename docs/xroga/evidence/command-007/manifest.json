@@ -27,18 +27,18 @@
     "noMergeDeploymentProvisioningOrCloudCanary":true
   },
   "latestRetainedScopedProof": {
-    "codeSha": "9fbd989548df908242a42e8c8726284fa4565c2c",
-    "isolatedCi": "https://github.com/Xroga/xroga.com/actions/runs/38471854808",
-    "aggregateCi": "https://github.com/Xroga/xroga.com/actions/runs/38471860039",
+    "codeSha": "9c3f52fa26371c818d5e31d6979d4f0883c8694b",
+    "isolatedCi": "https://github.com/Xroga/xroga.com/actions/runs/38481986195",
+    "aggregateCi": "https://github.com/Xroga/xroga.com/actions/runs/38481990186",
     "result": "PASS_SCOPED_REGRESSION_NOT_FULL_COMMAND007_ACCEPTANCE",
     "realBrowserTests": 3,
-    "realTenantTests": 32,
-    "fullFreshAndRepresentativeUpgradeFiles": 68,
+    "realTenantTests": 35,
+    "fullFreshAndRepresentativeUpgradeFiles": 69,
     "bothBuildsAndExactApiWebRevision": "PASS",
     "aggregateRepeats": 2,
     "aggregateStages": 21,
-    "perRun": {"backend":2769,"frontend":1010,"guards":13,"combinedFixtures":70,"fail":0,"skipped":0},
-    "evidenceFiles": ["docs/xroga/evidence/command-007/local-supabase-38471854808-migrations.json","docs/xroga/evidence/command-007/local-supabase-38471854808-browser-journey.json","docs/xroga/evidence/command-007/local-supabase-38471854808-founder.json","docs/xroga/evidence/command-007/aggregate-38471860039-run-a.json","docs/xroga/evidence/command-007/aggregate-38471860039-run-b.json"],
+    "perRun": {"backend":2779,"frontend":1014,"guards":15,"combinedFixtures":71,"fail":0,"skipped":0},
+    "evidenceFiles": ["docs/xroga/evidence/command-007/local-supabase-38481986195-migrations.json","docs/xroga/evidence/command-007/local-supabase-38481986195-browser-journey.json","docs/xroga/evidence/command-007/local-supabase-38481986195-founder.json","docs/xroga/evidence/command-007/aggregate-38481990186-run-a.json","docs/xroga/evidence/command-007/aggregate-38481990186-run-b.json"],
     "laterSourceRequiresRerun": true
   },
   "stagingResourceInspection": {
