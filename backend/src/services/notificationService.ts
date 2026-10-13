@@ -21,6 +21,13 @@ export interface BuildCompleteNotificationParams {
   assistantMessageId?: string;
 }
 
+/** Failure details belong in protected diagnostics, never a user notification. */
+export function failureNotificationMessage(kind: 'build' | 'video'): string {
+  return kind === 'build'
+    ? 'Xroga could not finish this build. Open Workspace to review available progress and retry.'
+    : 'Xroga could not finish this video. Open Workspace to review its status and retry.';
+}
+
 export function buildCompletionNotification(params: BuildCompleteNotificationParams): {
   title: string;
   message: string;
@@ -105,7 +112,7 @@ export async function notifyVideoFailed(
 ): Promise<void> {
   await pushNotification(userId, {
     title: 'Video generation failed',
-    message: params.error.slice(0, 200) || 'Something went wrong. Try again with a shorter clip.',
+    message: failureNotificationMessage('video'),
     type: 'error',
     link: '/dashboard',
     metadata: {
@@ -152,7 +159,7 @@ export async function notifyBuildFailed(
 ): Promise<void> {
   await pushNotification(userId, {
     title: 'XROGA build needs attention',
-    message: params.error.slice(0, 200) || 'Build could not finish. Open the dashboard to retry.',
+    message: failureNotificationMessage('build'),
     type: 'error',
     link: '/dashboard',
     metadata: {

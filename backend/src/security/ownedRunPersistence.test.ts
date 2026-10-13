@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createClient } from '@supabase/supabase-js';
-import { persistOwnedRun, persistOwnedRuntimeSession } from './ownedRunPersistence.js';
+import { persistOwnedRun, persistOwnedRuntimeSession, persistOwnedRunTrace } from './ownedRunPersistence.js';
 import { createTenantContext } from './tenantContext.js';
 import { TenantAccessError } from './tenantErrors.js';
 const owner='11111111-1111-4111-8111-111111111111';
@@ -34,4 +34,16 @@ test('existing runtime-session writer uses the same collision-safe owner boundar
   assert.equal(requests[1].pathname,'/rest/v1/project_runtime_sessions');
   assert.equal(requests[1].searchParams.get('session_id'),'eq.foreign-session');
   assert.equal(requests[1].searchParams.get('user_id'),`eq.${owner}`);
+});
+
+test('trace collision cannot merge another owner and rejects a forged write owner before persistence',async()=>{
+  const requests:{url:URL;method:string;headers:Headers}[]=[];
+  const db=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(input,init)=>{
+    requests.push({url:new URL(String(input)),method:init?.method??'GET',headers:new Headers(init?.headers)});
+    return new Response('[]',{headers:{'Content-Type':'application/json'}});
+  }}});
+  await assert.rejects(persistOwnedRunTrace(db,context,{run_id:'foreign-trace',user_id:owner,stages:[],meta:{}}),{status:404});
+  assert.match(requests[0].headers.get('Prefer')??'',/ignore-duplicates/);assert.equal(requests[1].url.searchParams.get('run_id'),'eq.foreign-trace');assert.equal(requests[1].url.searchParams.get('user_id'),`eq.${owner}`);
+  const count=requests.length;
+  await assert.rejects(persistOwnedRunTrace(db,context,{run_id:'foreign-trace',user_id:'22222222-2222-4222-8222-222222222222'}),TenantAccessError);assert.equal(requests.length,count);
 });

@@ -5,11 +5,13 @@ import { randomUUID } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { createTenantContext, type TenantContext } from './tenantContext.js';
 import { requireOwnedResource, requireOwnedFile } from './ownership.js';
-import { persistOwnedRun, persistOwnedRuntimeSession } from './ownedRunPersistence.js';
+import { persistOwnedRun, persistOwnedRuntimeSession, persistOwnedRunTrace } from './ownedRunPersistence.js';
 import { listUserProviderKeys } from '../services/integrations/userProviderKeys.js';
 import { reconcileOrphanedRuns,failInFlightRuns } from '../ai/runReconciler.js';
 import { getCachedResponse,setCachedResponse } from '../services/responseCache.js';
+import { notifyBuildFailed } from '../services/notificationService.js';
 import pg from 'pg';
+import { SupabaseProjectRuntimeStore } from '../synthesis/projectRuntime/store.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -82,11 +84,37 @@ test('real terminal autosave collision denies foreign id and preserves transcrip
   assert.equal((await request(`/api/terminal-sessions/${id}`,other.token)).status,404);
   const stored=await admin.from('terminal_sessions').select('user_id,title,messages').eq('id',id).single();assert.equal(stored.error,null);assert.equal(stored.data?.user_id,owner.id);assert.equal(stored.data?.title,'Owner fixture');
 });
+
+test('real run trace collision and concurrent creation preserve trace ownership and private evidence',async()=>{
+  const [owner,other]=users;
+  await persistOwnedRunTrace(admin,other.context,{run_id:other.run,user_id:other.id,stages:[{message:'FOREIGN_TRACE_CANARY'}],meta:{fixture:true}});
+  await assert.rejects(persistOwnedRunTrace(admin,owner.context,{run_id:other.run,user_id:owner.id,stages:[{message:'Forbidden overwrite'}],meta:{}}),{status:404});
+  const unchanged=await admin.from('swarm_run_traces').select('user_id,stages').eq('run_id',other.run).single();assert.equal(unchanged.error,null);assert.equal(unchanged.data?.user_id,other.id);assert.ok(JSON.stringify(unchanged.data?.stages).includes('FOREIGN_TRACE_CANARY'));
+  const run_id=randomUUID();
+  const outcomes=await Promise.allSettled(users.map(user=>persistOwnedRunTrace(admin,user.context,{run_id,user_id:user.id,stages:[],meta:{}})));
+  assert.equal(outcomes.filter(result=>result.status==='fulfilled').length,1);
+  const persisted=await admin.from('swarm_run_traces').select('user_id').eq('run_id',run_id).single();assert.equal(persisted.error,null);assert.ok(users.some(user=>user.id===persisted.data?.user_id));
+});
 test('existing runtime session persistence cannot take over a foreign durable session',async()=>{
   const [owner,other]=users;
   await assert.rejects(persistOwnedRuntimeSession(admin,owner.context,{session_id:other.session,user_id:owner.id,project_id:owner.project,provider_id:'fixture-no-execution',runtime_class:'interactive',status:'failed',state:{}}),{status:404});
   const row=await admin.from('project_runtime_sessions').select('user_id,status').eq('session_id',other.session).single();
   assert.equal(row.error,null);assert.equal(row.data?.user_id,other.id);assert.equal(row.data?.status,'stopped');
+});
+
+test('real runtime restore rejects owner session and project mismatches in persisted JSON',async()=>{
+  const owner=users[0],store=new SupabaseProjectRuntimeStore();
+  // Binding fixture only: never passed to a provider or executed as a runtime.
+  const state={userId:owner.id,sessionId:owner.session,projectId:owner.project,providerState:{fixture:'no execution'}};
+  try {
+    assert.equal((await admin.from('project_runtime_sessions').update({state}).eq('session_id',owner.session)).error,null);
+    assert.equal((await store.loadSession(owner.id,owner.session))?.userId,owner.id);
+    for(const mutation of [{userId:users[1].id},{sessionId:users[1].session},{projectId:users[1].project}]) {
+      assert.equal((await admin.from('project_runtime_sessions').update({state:{...state,...mutation}}).eq('session_id',owner.session)).error,null);
+      assert.equal(await store.loadSession(owner.id,owner.session),null);
+    }
+    assert.equal(await store.loadSession(users[1].id,owner.session),null);
+  } finally {assert.equal((await admin.from('project_runtime_sessions').update({state:{}}).eq('session_id',owner.session)).error,null);}
 });
 test('provider metadata uses real schema and owner filters without returning encrypted/raw credentials',async()=>{
   const owner=users[0];
@@ -129,6 +157,15 @@ test('profile activity keeps own and project-less entries but redacts a corrupt 
   const promotion=await request('/api/profile',owner.token,'PATCH',{role:'owner',user_id:other.id});assert.equal(promotion.status,400);
   const profile=await request('/api/profile',owner.token);assert.equal(profile.status,200);
   const row=await profile.json() as {id:string;role:string};assert.equal(row.id,owner.id);assert.equal(row.role,'member');
+});
+
+test('real failed-build notification cannot disclose raw backend diagnostic text',async()=>{
+  const owner=users[0];
+  await notifyBuildFailed(owner.id,{projectName:'Isolated failure fixture',prompt:'Synthetic request only',error:'RAW_DIAGNOSTIC_PRIVATE_CANARY password=synthetic-not-a-secret SQL internal exception'});
+  const stored=await admin.from('notifications').select('message,metadata').eq('user_id',owner.id).eq('title','XROGA build needs attention');assert.equal(stored.error,null);assert.ok(stored.data?.length);
+  assert.ok(!JSON.stringify(stored.data).includes('RAW_DIAGNOSTIC_PRIVATE_CANARY'));
+  assert.ok(stored.data?.some(row=>row.message.includes('could not finish')&&row.message.includes('retry')));
+  const publicList=await request('/api/notifications',owner.token);assert.equal(publicList.status,200);assert.ok(!(await publicList.text()).includes('RAW_DIAGNOSTIC_PRIVATE_CANARY'));
 });
 test('actual member identity cannot fetch privileged operational endpoints',async()=>{
   for(const path of ['/api/admin/errors','/metrics']) assert.equal((await request(path,users[0].token)).status,403);

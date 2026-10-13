@@ -12,7 +12,12 @@ export async function persistOwnedRuntimeSession(client: SupabaseClient, context
   return persistOwnerBoundRecord(client,context,'project_runtime_sessions','session_id',row);
 }
 
-async function persistOwnerBoundRecord(client: SupabaseClient, context: TenantContext, table:'swarm_runs'|'project_runtime_sessions', key:'id'|'session_id', row:{user_id:string;[column:string]:unknown}): Promise<void> {
+/** Existing best-effort trace store shares the same global-ID collision boundary. */
+export async function persistOwnedRunTrace(client: SupabaseClient, context: TenantContext, row: {run_id:string;user_id:string;[column:string]:unknown}): Promise<void> {
+  return persistOwnerBoundRecord(client,context,'swarm_run_traces','run_id',row);
+}
+
+async function persistOwnerBoundRecord(client: SupabaseClient, context: TenantContext, table:'swarm_runs'|'project_runtime_sessions'|'swarm_run_traces', key:'id'|'session_id'|'run_id', row:{user_id:string;[column:string]:unknown}): Promise<void> {
   const scope = requireTenantContext(context);
   if (row.user_id !== scope.userId) throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
   const inserted = await client.from(table).upsert(row,{onConflict:key,ignoreDuplicates:true});

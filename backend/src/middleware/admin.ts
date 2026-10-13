@@ -1,6 +1,6 @@
 import type { Response, NextFunction } from 'express';
 import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
-import { requireTenantContext } from '../security/tenantContext.js';
+import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
 import type { AuthRequest } from './auth.js';
 
 export function canReadAdminOperations(role: unknown): boolean {
@@ -12,7 +12,7 @@ export async function adminMiddleware(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  let scope;
+  let scope: TenantContext;
   try { scope = requireTenantContext(req.tenantContext); }
   catch {
     res.status(401).json({ error: 'Unauthorized' });

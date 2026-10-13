@@ -834,7 +834,7 @@ export class SupabaseProjectRuntimeStore
           'project_runtime_sessions',
         )
         .select(
-          'state',
+          'state,user_id,session_id,project_id',
         )
         .eq(
           'user_id',
@@ -852,12 +852,7 @@ export class SupabaseProjectRuntimeStore
       throw error;
     }
 
-    return data?.state
-      ? clone(
-          data.state as
-            ProjectRuntimeSession,
-        )
-      : null;
+    return restoreOwnerBoundRuntimeSession(data,userId,sessionId);
   }
 
   async appendEvent(
@@ -1128,6 +1123,17 @@ export class SupabaseProjectRuntimeStore
       throw error;
     }
   }
+}
+
+/** Ownership columns, not embedded restored JSON, are the durable authority. */
+export function restoreOwnerBoundRuntimeSession(row: unknown, userId: string, sessionId: string): ProjectRuntimeSession | null {
+  if (!row || typeof row !== 'object' || Array.isArray(row)) return null;
+  const record = row as Record<string,unknown>;
+  const state = record.state;
+  if (!state || typeof state !== 'object' || Array.isArray(state)) return null;
+  const snapshot = state as Record<string,unknown>;
+  if (record.user_id !== userId || record.session_id !== sessionId || typeof record.project_id !== 'string' || !record.project_id || snapshot.userId !== userId || snapshot.sessionId !== sessionId || snapshot.projectId !== record.project_id) return null;
+  return clone(state as ProjectRuntimeSession);
 }
 
 export interface ProjectRevisionPersistenceResult {

@@ -1,6 +1,6 @@
 # Canonical Xroga requirements ledger
 
-Application source SHA: `66db8a4c536f156c1c266e25ff229ba8161b442b`. Original row coverage is **119/119 features and 72/72 missions**; this is requirements mapping, NOT implemented-product or fully verified Batch One status. All original features remain UNVERIFIED/NOT_RUN. Full original-transcript semantic review remains pending. Private originals are not committed; pinned hashes and derived planning records are retained.
+Application source SHA: `f350f08a35f7792c4e6820b6a8001762b217c158`. Original row coverage is **119/119 features and 72/72 missions**; this is requirements mapping, NOT implemented-product or fully verified Batch One status. All original features remain UNVERIFIED/NOT_RUN. Full original-transcript semantic review remains pending. Private originals are not committed; pinned hashes and derived planning records are retained.
 
 445 requirements; 527 source rows mapped; 43 mandatory capability families; 23 independently registered external candidates; zero newly adopted runtime dependencies. Original research lists additional candidates without granting adoption rights.
 

@@ -4,6 +4,8 @@
 
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
+import { createTenantContext } from '../security/tenantContext.js';
+import { persistOwnedRunTrace } from '../security/ownedRunPersistence.js';
 
 export interface TraceStage {
   agent: string;
@@ -53,7 +55,9 @@ export class RunTrace {
     try {
       await ensureShipLoopSchema();
       const supabase = getSupabaseAdmin();
-      await supabase.from('swarm_run_traces').upsert(
+      await persistOwnedRunTrace(
+        supabase,
+        createTenantContext({userId:this.userId,via:'persisted_owner'}),
         {
           run_id: this.runId,
           user_id: this.userId,
@@ -61,7 +65,6 @@ export class RunTrace {
           meta: { ...this.meta, durationMs: Date.now() - this.startedAt },
           updated_at: new Date().toISOString(),
         },
-        { onConflict: 'run_id' },
       );
     } catch (err) {
       console.warn('[runTrace] persist failed:', (err as Error).message);

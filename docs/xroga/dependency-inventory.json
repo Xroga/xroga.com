@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "66db8a4c536f156c1c266e25ff229ba8161b442b",
+  "source_sha": "f350f08a35f7792c4e6820b6a8001762b217c158",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11388,7 +11388,7 @@
     },
     {
       "path": "backend/src/ai/runTrace.ts",
-      "sha256": "88430734856b55dcbe00f22f35d92c246a4323866c4d7dbefc2739a0c8b3a69d"
+      "sha256": "b61429b7f71e724d142672dfbbc8264cfef8c58d0b7ba07e62bfefa239d79780"
     },
     {
       "path": "backend/src/ai/securityScan.ts",
@@ -11980,7 +11980,7 @@
     },
     {
       "path": "backend/src/middleware/admin.ts",
-      "sha256": "7faa10cbb6526f5eb0dc15a31be13bc6b51a7da53b3564ef9661924f88aff3df"
+      "sha256": "ead49170241f447e25c5a38334e35791dc6d435d487a275d7032f19921112b00"
     },
     {
       "path": "backend/src/middleware/auth.ts",
@@ -12300,7 +12300,7 @@
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "sha256": "a0f1de05f2abdb63417a1201460b356921d8e0954f00c0de2db30b9d7935ab04"
+      "sha256": "2d526a7f3df9fcabd4c325fd141ae61d54935b45d1c1752558ec18744d1a0afd"
     },
     {
       "path": "backend/src/security/ownedTerminalPersistence.ts",
@@ -12324,7 +12324,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "7d4e392820d12620a8a33a7c46461e8bef67ef34f6e0be4546c60e823c7bd32d"
+      "sha256": "02d84f321c6f2e0de91f88615d2d8c1176dcfdab278977fb14bf6e819dd99b03"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12436,7 +12436,7 @@
     },
     {
       "path": "backend/src/services/notificationService.ts",
-      "sha256": "fa8f9a84bcda4af04aae2ef0d357e5728c76de20e621fb979e1953aafdc56a6a"
+      "sha256": "082f6cba830061d4a8979d013b8409377ae64f6a610553e5866e0cbea09443f9"
     },
     {
       "path": "backend/src/services/projectScaffold.ts",
@@ -12736,7 +12736,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "sha256": "23c606d56054938079c58f6f19d057091674c7484532ff03d9a840c44f0b575a"
+      "sha256": "250cce1b540a3d9b7f4bac9b4d6b1d8d8b3dcdafd9167cc98c078436d2f90a2d"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/processManager.ts",
@@ -12752,7 +12752,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "1a12e1838a2bcc1b750fd72f7ed13352646513a4c85ebf75dcb5b3c6671fce87"
+      "sha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/types.ts",
@@ -17683,14 +17683,14 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 14,
+      "line": 16,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 14,
+      "line": 16,
       "credentialsInUrl": false
     },
     {

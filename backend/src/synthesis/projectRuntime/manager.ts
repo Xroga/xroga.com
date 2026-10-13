@@ -177,7 +177,7 @@ export class ProjectRuntimeManager {
         );
 
     if (
-      !session
+      !session || session.userId !== this.userId || session.sessionId !== sessionId
     ) {
       throw new Error(
         'Project runtime session does not exist.',

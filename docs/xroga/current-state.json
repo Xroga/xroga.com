@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "66db8a4c536f156c1c266e25ff229ba8161b442b",
-    "sourceTimestampUtc": "2026-10-14T00:09:55+05:00",
-    "auditStartedUtc": "2026-10-13T19:35:10.311Z",
+    "sha": "f350f08a35f7792c4e6820b6a8001762b217c158",
+    "sourceTimestampUtc": "2026-10-14T00:36:04+05:00",
+    "auditStartedUtc": "2026-10-13T19:47:21.335Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -7000,7 +7000,7 @@
       "id": "surface:90e871448fca3c7213cc",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/runTrace.ts",
-      "sha256": "88430734856b55dcbe00f22f35d92c246a4323866c4d7dbefc2739a0c8b3a69d",
+      "sha256": "b61429b7f71e724d142672dfbbc8264cfef8c58d0b7ba07e62bfefa239d79780",
       "symbols": [
         "RunTrace",
         "TraceStage",
@@ -7009,11 +7009,15 @@
       ],
       "imports": [
         "../config/supabase.js",
-        "../db/ensureShipLoopSchema.js"
+        "../db/ensureShipLoopSchema.js",
+        "../security/ownedRunPersistence.js",
+        "../security/tenantContext.js"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
-        "backend/src/db/ensureShipLoopSchema.ts"
+        "backend/src/db/ensureShipLoopSchema.ts",
+        "backend/src/security/ownedRunPersistence.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -7022,9 +7026,7 @@
         "backend/src/ai/pipeline.ts:210"
       ],
       "reachable": true,
-      "persistenceDependencies": [
-        "swarm_run_traces"
-      ],
+      "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -14844,7 +14846,7 @@
       "id": "surface:a6a2af1b7585a21ced99",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/middleware/admin.ts",
-      "sha256": "7faa10cbb6526f5eb0dc15a31be13bc6b51a7da53b3564ef9661924f88aff3df",
+      "sha256": "ead49170241f447e25c5a38334e35791dc6d435d487a275d7032f19921112b00",
       "symbols": [
         "adminMiddleware",
         "canReadAdminOperations",
@@ -20485,10 +20487,11 @@
       "id": "surface:9f90d9fb1a702b164831",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/ownedRunPersistence.ts",
-      "sha256": "a0f1de05f2abdb63417a1201460b356921d8e0954f00c0de2db30b9d7935ab04",
+      "sha256": "2d526a7f3df9fcabd4c325fd141ae61d54935b45d1c1752558ec18744d1a0afd",
       "symbols": [
         "inserted",
         "persistOwnedRun",
+        "persistOwnedRunTrace",
         "persistOwnedRuntimeSession",
         "persistOwnerBoundRecord",
         "scope"
@@ -20507,6 +20510,7 @@
       ],
       "callers": [
         "backend/src/ai/runStore.ts:11",
+        "backend/src/ai/runTrace.ts:8",
         "backend/src/security/ownedRunPersistence.test.ts:4",
         "backend/src/security/tenantIsolation.local.integration.ts:8",
         "backend/src/synthesis/projectRuntime/store.ts:10"
@@ -20518,7 +20522,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/security/ownedRunPersistence.ts:20 (user_id)"
+        "backend/src/security/ownedRunPersistence.ts:25 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -20731,6 +20735,7 @@
       ],
       "callers": [
         "backend/src/ai/runStore.ts:10",
+        "backend/src/ai/runTrace.ts:7",
         "backend/src/middleware/admin.ts:3",
         "backend/src/middleware/auth.ts:4",
         "backend/src/routes/messageShares.ts:5",
@@ -23550,12 +23555,13 @@
       "id": "surface:98ae0b31c2f7847037ba",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/notificationService.ts",
-      "sha256": "fa8f9a84bcda4af04aae2ef0d357e5728c76de20e621fb979e1953aafdc56a6a",
+      "sha256": "082f6cba830061d4a8979d013b8409377ae64f6a610553e5866e0cbea09443f9",
       "symbols": [
         "BuildCompleteNotificationParams",
         "PushNotificationInput",
         "buildCompletionNotification",
         "copy",
+        "failureNotificationMessage",
         "notifyBuildComplete",
         "notifyBuildFailed",
         "notifyVideoFailed",
@@ -23576,6 +23582,7 @@
       ],
       "callers": [
         "backend/src/routes/swarm.ts:11",
+        "backend/src/security/tenantIsolation.local.integration.ts:12",
         "backend/src/services/notificationService.test.ts:3"
       ],
       "reachable": true,
@@ -23592,6 +23599,7 @@
         "backend/src/services/notificationService.ts#verifiedLive"
       ],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/notificationService.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -28795,7 +28803,7 @@
       "id": "surface:ca5b423e9d8cf5e5167b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/manager.ts",
-      "sha256": "23c606d56054938079c58f6f19d057091674c7484532ff03d9a840c44f0b575a",
+      "sha256": "250cce1b540a3d9b7f4bac9b4d6b1d8d8b3dcdafd9167cc98c078436d2f90a2d",
       "symbols": [
         "ProjectRuntimeManager",
         "ProjectRuntimeUnavailableError",
@@ -29044,7 +29052,7 @@
       "id": "surface:52eacb67555cd24b2de9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "1a12e1838a2bcc1b750fd72f7ed13352646513a4c85ebf75dcb5b3c6671fce87",
+      "sha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7",
       "symbols": [
         "EncryptedProjectSecretRecord",
         "InMemoryProjectRuntimeStore",
@@ -29065,8 +29073,11 @@
         "persistSoftwareProjectRevision",
         "projectWorkspaceFingerprint",
         "record",
+        "restoreOwnerBoundRuntimeSession",
         "revision",
         "session",
+        "snapshot",
+        "state",
         "store",
         "values"
       ],
@@ -29088,10 +29099,12 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:138",
+        "backend/src/security/tenantIsolation.local.integration.ts:14",
         "backend/src/synthesis/projectRuntime/index.ts:3",
         "backend/src/synthesis/projectRuntime/manager.ts:22",
         "backend/src/synthesis/projectRuntime/projectHistory.ts:9",
-        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:48"
+        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:48",
+        "backend/src/synthesis/projectRuntime/store.owner.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -29107,8 +29120,8 @@
       "tenantBoundary": [
         "backend/src/synthesis/projectRuntime/store.ts:706 (user_id)",
         "backend/src/synthesis/projectRuntime/store.ts:832 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1020 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1103 (user_id)"
+        "backend/src/synthesis/projectRuntime/store.ts:1015 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:1098 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -29117,7 +29130,9 @@
         "backend/src/synthesis/projectRuntime/store.ts#event"
       ],
       "testCoverage": [
-        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts"
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+        "backend/src/synthesis/projectRuntime/store.owner.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -99706,7 +99721,7 @@
     {
       "id": "test-suite:9e4fbec6266f2a8ae08d",
       "sourcePath": "backend/src/security/ownedRunPersistence.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -99755,7 +99770,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 20,
+      "declaredTests": 23,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -99909,7 +99924,7 @@
     {
       "id": "test-suite:7b08ebbf93d127ef0eb2",
       "sourcePath": "backend/src/services/notificationService.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -100176,6 +100191,13 @@
       "id": "test-suite:b6dd6164f56ecf050765",
       "sourcePath": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
       "declaredTests": 13,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:06ea418cf83423dcff7b",
+      "sourcePath": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
