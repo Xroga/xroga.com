@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `e9543986c10331ef2795920ebf60d3494ee7f1aa`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `3f06da0b269bb06f7fe1d3b62593bdfe0c9874b0`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -186,7 +186,7 @@ Frontend release 3b2bad and API release 41665b legitimately differ: the initial 
 
 ## Risks and incomplete evidence
 
-- P1 TEST_REALM_PIN: Production URL is hardcoded; configured isolated test URL alone cannot supply correct frontend test isolation. Owner command: 007; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
+- P1 TEST_REALM_PIN: Production realm stays pinned; an explicit isolated CI build is now admitted, but real authenticated E2E configuration and verification remain blocked. Owner command: 007; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 EPHEMERAL_ARTIFACT_FALLBACK: R2 failures can fall back to local files or data URLs; durable-storage claims/quota/ownership need proof. Owner command: 007–010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 EPHEMERAL_BUDGET_FALLBACK: Absent durable billing credentials activates process-only cycles/reservations; quota also falls back after DB/RPC errors. Guest rate/token/concurrency/claim limits fall back from Redis to maps. UniversalCostLedger is explicitly in-process; BillingService also defines process-only fulfilled-payment deduplication. Restart/cross-process accounting cannot rely on these stores. Owner command: 008; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 RUN_PERSISTENCE_GAP: Run persistence returns without service-role configuration and scheduled writes swallow failures; hot run maps are not durable evidence of saved history. Owner command: 007–008; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.

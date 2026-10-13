@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { randomUUID } from 'node:crypto';
 import type { AuthRequest } from '../middleware/auth.js';
+import { requireTenantContext, requireResourceOwner } from '../security/tenantContext.js';
+import { TenantAccessError } from '../security/tenantErrors.js';
 import { runBuildPipeline } from '../ai/pipeline.js';
 import { initSSE, sendSSE, endSSE } from '../lib/sse.js';
 import { slimOutputForSse } from '../lib/slimOutputForSse.js';
@@ -331,8 +333,9 @@ router.get('/history', async (req: AuthRequest, res) => {
 });
 
 router.get('/runs/:runId', async (req: AuthRequest, res) => {
+  if (!req.userId) return res.status(401).json({ error: 'Sign in again and retry.' });
   const runId = String(req.params.runId || '');
-  const run = await getRunAsync(runId);
+  const run = await getRunAsync(runId, req.userId);
   if (!run) {
     return res.json({
       id: runId,
@@ -367,8 +370,9 @@ router.get('/runs/:runId', async (req: AuthRequest, res) => {
 });
 
 router.post('/runs/:runId/cancel', async (req: AuthRequest, res) => {
+  if (!req.userId) return res.status(401).json({ error: 'Sign in again and retry.' });
   const runId = String(req.params.runId || '');
-  const run = await getRunAsync(runId);
+  const run = await getRunAsync(runId, req.userId);
   if (!run) return res.status(404).json({ error: 'Run not found' });
   if (!req.userId || run.userId !== req.userId) {
     return res.status(403).json({ error: 'Forbidden' });
@@ -391,8 +395,18 @@ async function saveConversationHandler(req: AuthRequest, res: import('express').
   const messages = Array.isArray(req.body?.messages) ? req.body.messages : [];
   if (!runId) return res.status(400).json({ error: 'runId required' });
 
-  // In memory: the normal path, on the machine that owns the run.
-  if (getRun(runId)) {
+  let context;
+  try { context = requireTenantContext(req.tenantContext); }
+  catch { return res.status(401).json({ error: 'Sign in again and retry.' }); }
+
+  // A cache hit is not permission to mutate another owner's run.
+  const cached = getRun(runId);
+  if (cached) {
+    try { requireResourceOwner(context, cached.userId); }
+    catch (error) {
+      if (error instanceof TenantAccessError) return res.status(error.status).json({ error: error.message, code: error.code });
+      throw error;
+    }
     const saved = saveConversation(runId, messages);
     return res.json({ saved: true, persisted: saved });
   }

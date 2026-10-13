@@ -1,12 +1,18 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import { requireTenantContext } from '../security/tenantContext.js';
 import type { AuthRequest } from '../middleware/auth.js';
 
 const router = Router();
 
+router.use((req: AuthRequest, res, next) => {
+  try { req.userId = requireTenantContext(req.tenantContext).userId; next(); }
+  catch { res.status(401).json({ error: 'Sign in again and retry.' }); }
+});
+
 router.get('/', async (req: AuthRequest, res) => {
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
   const githubOnly = req.query.github === '1' || req.query.github === 'true';
 
   let query = supabase
@@ -22,7 +28,7 @@ router.get('/', async (req: AuthRequest, res) => {
   const { data, error } = await query;
 
   if (error) {
-    res.status(500).json({ error: error.message });
+    res.status(503).json({ error: 'Projects could not be loaded. Retry shortly.' });
     return;
   }
   res.json(data);
@@ -45,7 +51,7 @@ router.post('/', async (req: AuthRequest, res) => {
     return;
   }
 
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
 
   if (parsed.data.github_repo_name) {
     const { data: existing } = await supabase
@@ -67,10 +73,11 @@ router.post('/', async (req: AuthRequest, res) => {
           updated_at: new Date().toISOString(),
         })
         .eq('id', existing.id)
+        .eq('user_id', req.userId!)
         .select()
         .single();
       if (error) {
-        res.status(500).json({ error: error.message });
+        res.status(503).json({ error: 'Project could not be saved. Retry shortly.' });
         return;
       }
       if (parsed.data.user_prompt?.trim()) {
@@ -105,7 +112,7 @@ router.post('/', async (req: AuthRequest, res) => {
     .single();
 
   if (error) {
-    res.status(500).json({ error: error.message });
+    res.status(503).json({ error: 'Project could not be saved. Retry shortly.' });
     return;
   }
 
@@ -134,7 +141,7 @@ router.post('/', async (req: AuthRequest, res) => {
 });
 
 router.delete('/:id', async (req: AuthRequest, res) => {
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
   const projectId = String(req.params.id);
 
   const { data: project } = await supabase
@@ -152,7 +159,7 @@ router.delete('/:id', async (req: AuthRequest, res) => {
   const { error } = await supabase.from('projects').delete().eq('id', projectId).eq('user_id', req.userId!);
 
   if (error) {
-    res.status(500).json({ error: error.message });
+    res.status(503).json({ error: 'Project could not be removed. Retry shortly.' });
     return;
   }
 
@@ -167,7 +174,7 @@ router.delete('/:id', async (req: AuthRequest, res) => {
 });
 
 router.get('/:id/files', async (req: AuthRequest, res) => {
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
   const projectId = String(req.params.id);
 
   const { data: project } = await supabase
@@ -189,7 +196,7 @@ router.get('/:id/files', async (req: AuthRequest, res) => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    res.status(500).json({ error: error.message });
+    res.status(503).json({ error: 'Files could not be loaded. Retry shortly.' });
     return;
   }
   res.json(data);
@@ -197,7 +204,7 @@ router.get('/:id/files', async (req: AuthRequest, res) => {
 
 /** Fetch stored code files for a project (AI + user restore). */
 router.get('/:id/code', async (req: AuthRequest, res) => {
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
   const projectId = String(req.params.id);
 
   const { data: project } = await supabase
@@ -220,7 +227,7 @@ router.get('/:id/code', async (req: AuthRequest, res) => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    res.status(500).json({ error: error.message });
+    res.status(503).json({ error: 'Files could not be loaded. Retry shortly.' });
     return;
   }
 
@@ -228,7 +235,7 @@ router.get('/:id/code', async (req: AuthRequest, res) => {
 });
 
 router.get('/:id', async (req: AuthRequest, res) => {
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
   const { data, error } = await supabase
     .from('projects')
     .select('*, project_files(*), project_messages(*)')

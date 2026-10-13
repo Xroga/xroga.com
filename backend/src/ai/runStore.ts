@@ -7,6 +7,8 @@ import {
 } from 'node:crypto';
 
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { createTenantContext } from '../security/tenantContext.js';
+import { persistOwnedRun } from '../security/ownedRunPersistence.js';
 import { isEngineeringArtifact } from './engineeringArtifact.js';
 import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
 import { redactOperationsValue } from '../operations/operationsEngine.js';
@@ -275,6 +277,10 @@ function createRunHot(
   prompt: string,
   runId: string,
 ): SwarmRunRecord {
+  const existing = runs.get(runId);
+  if (existing && existing.userId !== userId) {
+    throw Object.assign(new Error('Run not found.'), { code: 'RUN_NOT_FOUND' });
+  }
   const rec: SwarmRunRecord = {
     id: runId,
     userId,
@@ -319,6 +325,9 @@ export async function createRunDurable(
   prompt: string,
   runId: string,
 ): Promise<SwarmRunRecord> {
+  if (await getRunAsync(runId)) {
+    throw Object.assign(new Error('This run cannot be created again. Reconnect or use its recovery action.'), { code: 'RUN_ALREADY_EXISTS' });
+  }
   const rec = createRunHot(
     userId,
     prompt,
@@ -350,7 +359,7 @@ export async function resumeRunDurable(
     return error;
   };
 
-  const existing = await getRunAsync(runId);
+  const existing = await getRunAsync(runId, userId);
 
   if (!existing || existing.userId !== userId) {
     throw codedError(
@@ -807,12 +816,13 @@ export function getRun(
 /** Hot cache first; fall back to Supabase for cold starts / other instances. */
 export async function getRunAsync(
   runId: string,
+  ownerId?: string,
 ): Promise<SwarmRunRecord | null> {
   const hot =
     runs.get(runId);
 
   if (hot) {
-    return hot;
+    return ownerId === undefined || hot.userId === ownerId ? hot : null;
   }
 
   if (
@@ -825,18 +835,13 @@ export async function getRunAsync(
     const supabase =
       getSupabaseAdmin();
 
+    let query = supabase.from('swarm_runs').select('*').eq('id', runId);
+    if (ownerId !== undefined) query = query.eq('user_id', ownerId);
     const {
       data,
       error,
     } =
-      await supabase
-        .from('swarm_runs')
-        .select('*')
-        .eq(
-          'id',
-          runId,
-        )
-        .maybeSingle();
+      await query.maybeSingle();
 
     if (
       error ||
@@ -1454,13 +1459,8 @@ async function persistToSupabase(
   const supabase =
     getSupabaseAdmin();
 
-  const {
-    error,
-  } =
-    await supabase
-      .from('swarm_runs')
-      .upsert(
-        {
+  const context = createTenantContext({ userId: rec.userId, via: 'persisted_owner' });
+  const row = {
           id:
             rec.id,
 
@@ -1527,17 +1527,6 @@ async function persistToSupabase(
                   }
                 : {}
           ),
-        },
-
-        {
-          onConflict:
-            'id',
-        },
-      );
-
-  if (error) {
-    throw new Error(
-      `Platform swarm-run write failed: ${error.message}`,
-    );
-  }
+        };
+  await persistOwnedRun(supabase, context, row);
 }

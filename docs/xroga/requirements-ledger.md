@@ -1,6 +1,6 @@
 # Canonical Xroga requirements ledger
 
-Application source SHA: `e9543986c10331ef2795920ebf60d3494ee7f1aa`. This is **available-source reconciliation**, not completion of the original 119-feature/72-mission source coverage. All missing inputs remain `INACCESSIBLE_PENDING_EXPORT`. Historical source assertions are preserved without treating them as current proof.
+Application source SHA: `3f06da0b269bb06f7fe1d3b62593bdfe0c9874b0`. This is **available-source reconciliation**, not completion of the original 119-feature/72-mission source coverage. All missing inputs remain `INACCESSIBLE_PENDING_EXPORT`. Historical source assertions are preserved without treating them as current proof.
 
 264 requirements; 264 available source rows mapped; 43 mandatory capability families; 23 external candidates; zero newly adopted runtime dependencies.
 
@@ -12,7 +12,7 @@ Application source SHA: `e9543986c10331ef2795920ebf60d3494ee7f1aa`. This is **av
 | XB01-C004 | DEPLOYMENT, RUNTIME AND EXTERNAL DEPENDENCY TRUTH | IMPLEMENTED_BUT_UNVERIFIED | 004 | EXTEND |
 | XB01-C005 | END-TO-END GOLDEN USER JOURNEY AND ACCEPTANCE HARNESS | IMPLEMENTED_BUT_UNVERIFIED | 005 | EXTEND |
 | XB01-C006 | XROGA ENGINEERING OPERATING CONTRACT AND DEFINITION OF DONE | IMPLEMENTED_BUT_UNVERIFIED | 006 | EXTEND |
-| XB01-C007 | TENANT ISOLATION, SERVER-SIDE OWNERSHIP AND RBAC BASELINE | PROPOSED_ONLY | 007 | NEW |
+| XB01-C007 | TENANT ISOLATION, SERVER-SIDE OWNERSHIP AND RBAC BASELINE | IMPLEMENTED_BUT_UNVERIFIED | 007 | EXTEND |
 | XB01-C008 | CANONICAL OUTCOME-SCOPED AUTHORITY, APPROVAL AND PREPARED-ACTION CONTRACT | PROPOSED_ONLY | 008 | NEW |
 | XB01-C009 | CREDENTIAL VAULT, ENVELOPE ENCRYPTION, ROTATION AND CONNECTED-ACCOUNT IDENTITY | PROPOSED_ONLY | 009 | NEW |
 | XB01-C010 | TOOL TRUST, DATA EGRESS, SSRF AND UNTRUSTED-INPUT SECURITY GATEWAY | PROPOSED_ONLY | 010 | NEW |

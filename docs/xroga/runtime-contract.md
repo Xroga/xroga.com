@@ -1,6 +1,6 @@
 # Runtime/dependency contract
 
-Source SHA: `e9543986c10331ef2795920ebf60d3494ee7f1aa`. Existing runtime semantics are preserved; this audit does not create another provider router, scheduler, vault or backend.
+Source SHA: `3f06da0b269bb06f7fe1d3b62593bdfe0c9874b0`. Existing runtime semantics are preserved; this audit does not create another provider router, scheduler, vault or backend.
 
 ## Runtime classes
 
@@ -16,7 +16,7 @@ Canonical engineering runtime: Node 22.21.1/npm 10.9.4/TypeScript 5.9.3. Current
 
 The existing source helpers remain canonical. Supabase server service-role access bypasses RLS and needs independent owner/tenant checks (Command 007). OAuth/PKCE/private storage and existing BYOK encryption need verified KMS and migration (009). Existing action authority/digest/approval/budget boundaries must be unified (008) before consequential calls. API/worker/tool egress and untrusted input need central guard coverage (010).
 
-Frontend public Supabase config currently hardcodes production and ignores the test URL setting. An approved isolated-build realm is required before real authenticated E2E can pass; never use production users or create a client-side founder bypass. Missing isolated GitHub secrets/variable remain BLOCKED_PENDING_TEST_CONFIGURATION. Stage security/migration proof and KMS are release gates, not optional metadata.
+Frontend production Supabase remains pinned. Command 007 admits an explicit, validated non-production CI build realm; this does not grant roles or bypass founder/MFA authorization. Real authenticated E2E proof is still blocked pending the dedicated test configuration; never use production users. Missing isolated GitHub secrets/variable remain BLOCKED_PENDING_TEST_CONFIGURATION. Stage security/migration proof and KMS are release gates, not optional metadata.
 
 ## Mechanical check
 

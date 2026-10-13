@@ -57,7 +57,7 @@ import { modelKeyStatus, modelTransportStatus } from './ai/openaiCompat.js';
 import { publicHealthPayload } from './lib/safeHealth.js';
 import operationsRouter from './routes/operations.js';
 import growthRouter from './routes/growth.js';
-import { getSupabaseAdmin } from './config/supabase.js';
+import { probeDatabaseReadiness } from './security/serviceRoleGuard.js';
 import {
   configureRemoteSandboxProvider,
   configureFlyMachineSandboxProvider,
@@ -171,8 +171,7 @@ app.get('/ready', async (_req, res) => {
     return;
   }
   try {
-    const { error } = await getSupabaseAdmin().from('profiles').select('id').limit(1);
-    if (error) throw error;
+    await probeDatabaseReadiness();
     const health = publicHealthPayload();
     res.json({ status: 'ready', service: 'xroga-api', release: health.release, timestamp: new Date().toISOString() });
   } catch {

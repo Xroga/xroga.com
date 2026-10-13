@@ -64,3 +64,4 @@ artifacts/batch-01-baseline/
 artifacts/command-003-ci-*/
 artifacts/batch-01-golden/
 .golden-browser-cache/
+supabase/.temp/

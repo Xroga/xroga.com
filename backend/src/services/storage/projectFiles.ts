@@ -1,6 +1,8 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { uploadToR2, buildR2Key, buildPlaybackUrl, downloadFromR2, type R2UploadResult } from '../../lib/r2.js';
 import { saveLocalMedia, readLocalMedia } from './localMediaCache.js';
+import { createTenantContext } from '../../security/tenantContext.js';
+import { requireOwnedProject } from '../../security/ownership.js';
 
 export interface StoredFile {
   id: string;
@@ -18,6 +20,9 @@ export async function storeProjectFile(
   contentType: string,
   fileType: StoredFile['fileType']
 ): Promise<StoredFile> {
+  // Existing server build caller carries the owner. Recheck the project before any upload/write.
+  const context = createTenantContext({ userId, via: 'persisted_owner' });
+  await requireOwnedProject(context, projectId);
   const key = buildR2Key(userId, filename);
   let r2Result: R2UploadResult;
 

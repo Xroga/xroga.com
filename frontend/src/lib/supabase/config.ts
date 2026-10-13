@@ -1,4 +1,4 @@
-const APPROVED_PROJECT_REF = 'nzenxdfumxrnsmybazmo';
+const APPROVED_PROJECT_REF = process.env.NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF || 'nzenxdfumxrnsmybazmo';
 const APPROVED_PUBLIC_URL = `https://${APPROVED_PROJECT_REF}.supabase.co`;
 
 function legacyRole(key: string): string | null {
@@ -11,11 +11,13 @@ function legacyRole(key: string): string | null {
 }
 
 export function getSupabasePublicConfig(): { url: string; publishableKey: string; projectRef: string } {
-  // Xroga has one approved production auth project. Keep its public endpoint
+  // next.config validates a build-only isolated CI realm; production remains pinned.
+  // Keep the selected build's public endpoint
   // canonical so a stale hosting variable cannot redirect browser credentials
   // to a different Supabase project. The publishable key remains configurable
   // for rotation and is validated below.
   const url = APPROVED_PUBLIC_URL;
+  if (!/^[a-z]{20}$/.test(APPROVED_PROJECT_REF)) throw new Error('Supabase public URL does not match the approved project');
   const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() ?? '';
   if (!publishableKey) throw new Error('Supabase public configuration is missing');
   let parsed: URL;

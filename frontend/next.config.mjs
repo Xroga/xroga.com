@@ -1,4 +1,5 @@
 import { nextRedirects } from './redirects.mjs';
+import { resolveAuthBuildRealm } from './src/lib/supabase/authBuildRealm.mjs';
 
 const configuredApiOrigin = (() => {
   try {
@@ -87,6 +88,9 @@ const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|showcase/[^/]+/preview$|showcase/bl
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Next inlines this validated public issuer in both server and browser builds.
+  // Runtime hosting URLs/body/query parameters cannot redirect credentials.
+  env: { NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF: resolveAuthBuildRealm(process.env) },
   webpack(config, { isServer, webpack }) {
     if (!isServer) {
       // PptxGenJS guards these Node-only imports at runtime, but webpack still

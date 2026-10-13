@@ -24,6 +24,7 @@ jobs:
       SUPABASE_URL: ${{ secrets.E2E_SUPABASE_URL }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.E2E_SUPABASE_SERVICE_ROLE_KEY }}
       E2E_ISOLATED_PROJECT_REF: ${{ vars.E2E_ISOLATED_PROJECT_REF }}
+      XROGA_ISOLATED_AUTH_BUILD: '1'
       NEXT_PUBLIC_API_URL: http://127.0.0.1:4000
       E2E_BACKEND_URL: http://127.0.0.1:4000
       # Production billing is verified by launch-production-verification.yml

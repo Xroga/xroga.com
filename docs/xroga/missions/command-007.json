@@ -1,0 +1,169 @@
+{
+  "version": "1.0",
+  "missionId": "XB01-C007",
+  "baseSha": "3f06da0b269bb06f7fe1d3b62593bdfe0c9874b0",
+  "requirementIds": [
+    "XB01-C007",
+    "XR-FAMILY-tenant-isolation"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
+  "changedFiles": [
+    ".github/workflows/command3-auth-browser.yml",
+    ".github/workflows/xroga-tenant-security.yml",
+    ".gitignore",
+    "backend/src/ai/runStore.ts",
+    "backend/src/index.ts",
+    "backend/src/lib/verifyJwt.ts",
+    "backend/src/middleware/auth.ts",
+    "backend/src/routes/projects.ts",
+    "backend/src/routes/swarm.ts",
+    "backend/src/security/ownership.test.ts",
+    "backend/src/security/ownership.ts",
+    "backend/src/security/serviceRoleGuard.ts",
+    "backend/src/security/tenantContext.test.ts",
+    "backend/src/security/tenantContext.ts",
+    "backend/src/security/tenantErrors.ts",
+    "backend/src/security/tenantIsolation.integration.test.ts",
+    "backend/src/services/storage/projectFiles.ts",
+    "docs/xroga/security/schema-observation.json",
+    "frontend/next.config.mjs",
+    "frontend/src/lib/supabase/authBuildRealm.test.ts",
+    "frontend/src/lib/supabase/config.ts",
+    "scripts/ci/baseline.test.mjs",
+    "scripts/ci/compare-baseline-runs.mjs",
+    "scripts/ci/run-baseline.mjs",
+    "scripts/security/audit-tenant-policies.mjs",
+    "scripts/security/audit-tenant-policies.test.mjs",
+    "scripts/security/tenant-rls.database.test.mjs",
+    "scripts/xroga/runtime-inventory.mjs",
+    "supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql",
+    "docs/xroga/missions/command-007.json",
+    "docs/xroga/security/tenant-model.md",
+    "docs/xroga/security/rls-audit.md",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/profile-column-grants.json",
+    "docs/xroga/evidence/command-007/summary.md",
+    "docs/xroga/evidence/command-007/manifest.json",
+    "frontend/src/lib/supabase/authBuildRealm.mjs",
+    "backend/src/security/ownedRunPersistence.ts",
+    "backend/src/security/ownedRunPersistence.test.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing Supabase/auth/roles, Swarm run store, correct ownership and deliberate public community/shares",
+      "Existing founder server identity/owner/MFA boundary and operations memberships"
+    ],
+    "extend": [
+      "Server-issued typed context, owner-bound query/persistence and schema/caller inventory",
+      "Isolated CI test realm, restrictive private-table policies and negative tests"
+    ],
+    "replace": [
+      "Foreign cached-run mutation and merge-upsert ownership hazard",
+      "Raw auth/project DB error responses and signature-only audience fallback"
+    ],
+    "deprecate": [
+      "ID possession as resource authority",
+      "Unexplained service-role/global bypasses"
+    ]
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql"
+    ],
+    "rollout": "Expand-only staged restrictive policies; do not apply production until full isolated history/upgrade/E2E/staging gates pass",
+    "rollback": "Drop exact eleven new guards on their ten named tables; retain all existing RLS/policies, no data deletion"
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Preserve signed Supabase resolver, require audience, attach issued context, admit isolated BUILD test issuer without role/MFA grant"
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Owner-bound cached conversation/run reads/cancellation/persistence/project/file access; broader caller review incomplete"
+    },
+    "approval": {
+      "changed": false,
+      "description": "No new approval grant or authority engine"
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No production keys read/rotated/cut over; existing vault deferred to 009"
+    },
+    "egress": {
+      "changed": false,
+      "description": "No new provider transport, upload only after parent-owner check; broader central guard deferred to 010"
+    },
+    "cost": {
+      "changed": false,
+      "description": "No pricing/accounting/budget engine change"
+    },
+    "billing": {
+      "changed": false,
+      "description": "No live payment or charges changed"
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/security/*.test.ts",
+      "scope": "Issued context, direct and inherited owner predicates, real loopback route denial, cached/durable run ownership",
+      "negative": true,
+      "reference": "backend/src/security/tenantIsolation.integration.test.ts"
+    },
+    {
+      "command": "node --test scripts/security/tenant-rls.database.test.mjs",
+      "scope": "Guarded disposable PostgreSQL actual restrictive migration against minimal target-schema projection, not full Supabase history",
+      "negative": true,
+      "reference": "scripts/security/tenant-rls.database.test.mjs"
+    },
+    {
+      "command": "npm run test:frontend",
+      "scope": "Production pin and explicit isolated issuer validation plus unchanged frontend regressions",
+      "negative": true,
+      "reference": "frontend/src/lib/supabase/authBuildRealm.test.ts"
+    },
+    {
+      "command": "npm run verify:baseline",
+      "scope": "Clean repeated actual regression/build/type/lint/SQL/source integrity, not production security certification",
+      "negative": true,
+      "reference": "scripts/ci/run-baseline.mjs"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Same auth clients/resolver, project and run stores. No new IdP/RBAC engine, database or orchestrator",
+    "rfc": null
+  },
+  "rollout": "PR/draft only; explicit release block. Migration remains unapplied in production",
+  "rollback": "Revert scoped entry-point/code edits; approved isolated/staged SQL drops only new guards; preserve all user data and existing RLS",
+  "knownGaps": [
+    "Authenticated browser BLOCKED_PENDING_TEST_CONFIGURATION",
+    "Full isolated historical fresh/upgrade DB and staged security",
+    "All privileged caller/exception semantics and distributed owner persistence/races/membership revocation",
+    "Production KMS and later authority/egress integration",
+    "Historical 119/72 source coverage inaccessible/deferred"
+  ],
+  "placeholderClaimsRemaining": [
+    "Complete Command 007 security acceptance is not met; no all-resource or full migration certification"
+  ],
+  "evidenceRefs": [
+    "docs/xroga/evidence/command-007/summary.md",
+    "docs/xroga/evidence/command-007/manifest.json",
+    "docs/xroga/security/tenant-model.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Command 007 incomplete caller review and required full isolated/authenticated/staging security gates"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

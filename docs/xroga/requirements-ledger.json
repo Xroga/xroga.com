@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e9543986c10331ef2795920ebf60d3494ee7f1aa",
+  "source_sha": "3f06da0b269bb06f7fe1d3b62593bdfe0c9874b0",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -344,8 +344,10 @@
       ],
       "feature_category": "batch-command-007",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
-      "current_paths": [],
+      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_paths": [
+        "docs/xroga/evidence/command-007/manifest.json"
+      ],
       "implementation_owner_command": "007",
       "priority": "P1",
       "dependencies": [
@@ -378,7 +380,7 @@
         "Security review contains zero unexplained service-role bypasses."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [],
@@ -893,7 +895,10 @@
       "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
       "current_paths": [
         "backend/src/middleware/auth.ts",
-        "backend/src/middleware/phase1Auth.ts"
+        "backend/src/middleware/phase1Auth.ts",
+        "backend/src/security/ownership.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/security/tenantErrors.ts"
       ],
       "implementation_owner_command": "007",
       "priority": "P0",
@@ -2688,10 +2693,16 @@
       "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
       "current_paths": [
         "backend/src/middleware/auth.ts",
+        "backend/src/security/ownedRunPersistence.ts",
+        "backend/src/security/ownership.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/security/tenantErrors.ts",
         "frontend/src/app/(shell)/dashboard/security/page.tsx",
         "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
         "frontend/src/app/cybersecurity/page.tsx",
-        "frontend/src/app/security/page.tsx"
+        "frontend/src/app/security/page.tsx",
+        "scripts/security/audit-tenant-policies.mjs"
       ],
       "implementation_owner_command": "010",
       "priority": "P0",
