@@ -26,6 +26,9 @@ test('manifest/lock agreement passes and an unrecorded dependency change fails',
 test('focused tests fail even when someone attempts to register them; unexplained skips also fail', () => {
   const focused = analyzeTestSkips('fixture.test.ts', "test.only('forced', () => {});");
   assert.throws(() => validateSkips(focused, { entries: [] }), /Focused test/);
+  for (const source of ["test('focused', {only: true}, () => {});", "it('focused', {'only': selected}, () => {});", "test('focused', {only}, () => {});"]) {
+    assert.throws(() => validateSkips(analyzeTestSkips('fixture.test.ts', source), { entries: [] }), /Focused test/);
+  }
   const skipped = analyzeTestSkips('fixture.test.ts', "test('masked', {skip: true}, () => {});");
   assert.throws(() => validateSkips(skipped, { entries: [] }), /Unregistered skipped/);
   assert.deepEqual(analyzeTestSkips('fixture.test.ts', "test('normal',{skip:false},()=>{}); const example = \"test.only('not executed')\";"), []);
@@ -36,6 +39,7 @@ test('known pre-existing platform skips need an owner, reason and future review 
   assert.deepEqual(validateSkips(skips, { entries: [entry] }, '2026-10-13'), { registeredSkips: 1, focusedTests: 0 });
   assert.throws(() => validateSkips(skips, { entries: [{ ...entry, reason: '' }] }, '2026-10-13'), /lacks owner/);
   assert.throws(() => validateSkips(skips, { entries: [{ ...entry, review_date: '2026-10-12' }] }, '2026-10-13'), /expired/);
+  assert.throws(() => validateSkips(skips, { entries: [{ ...entry, review_date: 'never' }] }, '2026-10-13'), /invalid review date/);
 });
 test('migration SQL and installer ordering pass; duplicate IDs, invalid names and broken SQL fail', async () => {
   const entries = [{ name: '002_second.sql', sql: 'select 2;' }, { name: '001_first.sql', sql: 'select 1;' }];
@@ -52,12 +56,13 @@ test('missing runtime declaration or a different actual toolchain fails', () => 
   assert.deepEqual(verifyToolchain({ nodeVersion: '22.21.1', npmVersion: '10.9.4' }), { node: '22.21.1', npm: '10.9.4' });
 });
 test('production credentials and operational destinations are not inherited by baseline subprocesses', () => {
-  const safe = safeTestEnvironment({ PATH: process.env.PATH, SUPABASE_SERVICE_ROLE_KEY: 'secret-canary', OPENAI_API_KEY: 'secret-canary', DATABASE_URL: 'production-canary', NEXT_PUBLIC_API_URL: 'https://production.example', CUSTOM_TOKEN: 'secret-canary' });
+  const safe = safeTestEnvironment({ PATH: process.env.PATH, PLAYWRIGHT_BROWSERS_PATH: '/test-only/browser-cache', SUPABASE_SERVICE_ROLE_KEY: 'secret-canary', OPENAI_API_KEY: 'secret-canary', DATABASE_URL: 'production-canary', NEXT_PUBLIC_API_URL: 'https://production.example', CUSTOM_TOKEN: 'secret-canary' });
   assert.equal(safe.SUPABASE_SERVICE_ROLE_KEY, undefined);
   assert.equal(safe.OPENAI_API_KEY, undefined);
   assert.equal(safe.DATABASE_URL, undefined);
   assert.equal(safe.CUSTOM_TOKEN, undefined);
   assert.equal(safe.NEXT_PUBLIC_API_URL, 'http://127.0.0.1:8080');
+  assert.equal(safe.PLAYWRIGHT_BROWSERS_PATH, '/test-only/browser-cache');
   assert.equal(publicConfigOverridden('frontend/.env.production', 'NEXT_PUBLIC_SUPABASE_URL=production\nNEXT_PUBLIC_SUPABASE_ANON_KEY=production', safe), true);
   assert.equal(publicConfigOverridden('frontend/.env.production', 'SUPABASE_SERVICE_ROLE_KEY=forbidden', safe), false);
   assert.equal(publicConfigOverridden('frontend/.env.local', 'NEXT_PUBLIC_SUPABASE_URL=production', safe), false);

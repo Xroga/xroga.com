@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "c7230c815870ad3942f5f74ddf70c9ddff2ec988",
-    "sourceTimestampUtc": "2026-10-13T14:56:13+05:00",
-    "auditStartedUtc": "2026-10-13T10:48:55.622Z",
+    "sha": "eb71f668e3c20c06fae6048c74f349cc7148c2ea",
+    "sourceTimestampUtc": "2026-10-13T15:49:30+05:00",
+    "auditStartedUtc": "2026-10-13T10:56:46.686Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -79927,7 +79927,7 @@
       "id": "surface:31efa78657642cb55b6d",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/check-test-skips.mjs",
-      "sha256": "83a31e22c085265deae6078367233007d50065078ba6239c96fb456615c605a1",
+      "sha256": "9dd4c4aa7eb0215ca5cfaae62c08feea878830be32c4608eb3b07883bf8a7996",
       "symbols": [
         "analyzeTestSkips",
         "callee",
@@ -79941,18 +79941,20 @@
         "first",
         "id",
         "ids",
+        "key",
         "kind",
         "main",
         "options",
+        "property",
         "record",
         "registryPath",
         "result",
-        "skip",
         "source",
         "title",
         "titleFor",
         "ts",
         "validateSkips",
+        "value",
         "visit"
       ],
       "imports": [
@@ -80001,7 +80003,7 @@
       "id": "surface:27c317c410ffae0628eb",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/register-existing-skips.mjs",
-      "sha256": "e42086a9714bc8b15ab52a367d0658e1f0fe16084ed7f16bf28437d2c0f2c66c",
+      "sha256": "256dbdf6f31bef9fe8f5292e14f5be29f57b12eb21a9deb279b8539410ab870e",
       "symbols": [
         "current",
         "finding",
@@ -80048,7 +80050,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "e9048ff23e89b16219074424a51a1c52a1634581385659ff5d3cee2ee10ad474",
+      "sha256": "83f61ae95a105359ae781e1263aca9513fc8be16bcfa2229c4a6086651349eaa",
       "symbols": [
         "after",
         "append",
@@ -89744,7 +89746,7 @@
     {
       "id": "workflow:cd0effce06f425599e96",
       "sourcePath": ".github/workflows/unit-tests.yml",
-      "sha256": "4f4206e4a5b8849f51637a5541161c4fd2441b5c8ad94d9b8b588ea834c5d2d4",
+      "sha256": "211fa2d4272fe61bb37ff91093485da50b7c1e5a7cd73f90d7dbd7a9d1163817",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },

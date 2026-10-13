@@ -26,8 +26,15 @@ export function analyzeTestSkips(path, content) {
       let condition = kind ? (node.arguments[0]?.getText(source).slice(0, 240) ?? '') : '';
       if (/^(?:test|it|describe)$/.test(callee)) {
         const options = node.arguments[1];
-        const skip = options && ts.isObjectLiteralExpression(options) ? options.properties.find(property => ts.isPropertyAssignment(property) && property.name.getText(source) === 'skip') : null;
-        if (skip && skip.initializer.getText(source) !== 'false') { kind = 'SKIPPED'; condition = skip.initializer.getText(source); }
+        if (options && ts.isObjectLiteralExpression(options)) {
+          for (const property of options.properties) {
+            if (!ts.isPropertyAssignment(property) && !ts.isShorthandPropertyAssignment(property)) continue;
+            const key = ts.isStringLiteral(property.name) ? property.name.text : property.name.getText(source);
+            const value = ts.isPropertyAssignment(property) ? property.initializer.getText(source) : property.name.getText(source);
+            if (key === 'only' && value !== 'false') { kind = 'FOCUSED'; condition = value; break; }
+            if (key === 'skip' && value !== 'false') { kind = 'SKIPPED'; condition = value; }
+          }
+        }
       }
       if (kind) {
         const title = titleFor(node);
@@ -46,6 +53,7 @@ export function validateSkips(findings, registry, today = new Date().toISOString
     if (ids.has(record.id)) throw new Error('Duplicate known-skip entry');
     ids.add(record.id);
     if (!record.owner || !record.reason || !record.issue_or_command || !record.review_date) throw new Error('Known skip lacks owner/reason/issue/review date');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(record.review_date) || !Number.isFinite(Date.parse(record.review_date))) throw new Error('Known skip has an invalid review date');
     if (record.review_date < today) throw new Error(`Known skip review expired: ${record.path}`);
   }
   for (const finding of findings) {

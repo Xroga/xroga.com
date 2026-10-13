@@ -19,6 +19,9 @@ concurrency:
 jobs:
   unit:
     runs-on: ubuntu-latest
+    env:
+      # The local sandbox executor must use the same revision/cache as its probe.
+      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v6

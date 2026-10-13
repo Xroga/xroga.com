@@ -83,6 +83,56 @@
       "review_date": "2026-11-13"
     },
     {
+      "id": "e9e06469adb18471e5a2547532e950775432ad28806aca0cc2dbf679868194f1",
+      "path": "backend/src/synthesis/inSandboxBrowser.integration.test.ts",
+      "title": "real in-sandbox run: a working application passes on collected evidence",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Existing local sandbox/browser integration requires Linux /bin/sh and installed Chromium. CI must execute it using one matching browser cache; Windows cannot exercise this boundary.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "5ba163e2e30074348f9ac78a61e283d808d66fddcc0cedd6f72999f86e3adbfb",
+      "path": "backend/src/synthesis/inSandboxBrowser.integration.test.ts",
+      "title": "real in-sandbox run: a page that throws fails with the exact error",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Existing local sandbox/browser integration requires Linux /bin/sh and installed Chromium. CI must execute it using one matching browser cache; Windows cannot exercise this boundary.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "5f89099c19ab090ca0d7b1601febb2b739c8909811c400006236063e88744086",
+      "path": "backend/src/synthesis/inSandboxBrowser.integration.test.ts",
+      "title": "real in-sandbox run: an unmet acceptance criterion fails on what the DOM actually held",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Existing local sandbox/browser integration requires Linux /bin/sh and installed Chromium. CI must execute it using one matching browser cache; Windows cannot exercise this boundary.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "b2f2331da0b7f612cd37555be05330d5a794db159e9314ab1e5e5ea6fdd31c84",
+      "path": "backend/src/synthesis/inSandboxBrowser.integration.test.ts",
+      "title": "real in-sandbox run: the application does not outlive a passing command",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Existing local sandbox/browser integration requires Linux /bin/sh and installed Chromium. CI must execute it using one matching browser cache; Windows cannot exercise this boundary.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "5ed7c8cdca585dbc07c4937fb4ee7b5a0fa09f2dba165456f5554f69a5b29b1a",
+      "path": "backend/src/synthesis/inSandboxBrowser.integration.test.ts",
+      "title": "cleanup also happens when verification fails",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Existing local sandbox/browser integration requires Linux /bin/sh and installed Chromium. CI must execute it using one matching browser cache; Windows cannot exercise this boundary.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
       "id": "093897ab042b8b0922223e7be0f6094d3ad0a8b8181c7859d9353ecf6ecce20e",
       "path": "backend/src/synthesis/inSandboxBrowser.test.ts",
       "title": "the generated shell command is syntactically valid shell",
