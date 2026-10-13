@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "7ce07a3d22eaaef5242b786089c2d3bd59e293d5",
-    "sourceTimestampUtc": "2026-10-13T16:23:23+05:00",
-    "auditStartedUtc": "2026-10-13T11:23:54.675Z",
+    "sha": "f9d8f0aad68ee6acb37566c6ae5d428f7f7e43da",
+    "sourceTimestampUtc": "2026-10-13T16:39:09+05:00",
+    "auditStartedUtc": "2026-10-13T13:04:33.019Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -80066,7 +80066,7 @@
       "id": "surface:b52dca2df19c3c07d436",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/compare-baseline-runs.mjs",
-      "sha256": "e38f207723a2107830b4ac146bbcf709b64877aa9411ccd48384ba7ba75c1514",
+      "sha256": "201d29dfd52e0d4bf2637063bde9d93403dc33d212a3ede3c9431137bbf5b0e8",
       "symbols": [
         "compareBaselineRuns",
         "directory",
@@ -80161,7 +80161,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "82e194d7f5e1a11c79e586d823890ee7aae0a6dc4ad4d7e89e8f86a4ff9737ee",
+      "sha256": "2250969bbba149cacf64127ef289ff577064711b2bb91a0b04c1de12af979128",
       "symbols": [
         "after",
         "append",
@@ -80291,7 +80291,10 @@
         "scripts/ci/run-baseline.mjs:7",
         "scripts/ci/validate-migrations.mjs:5",
         "scripts/ci/verify-toolchain.mjs:1",
-        "scripts/xroga/inventory.mjs:8"
+        "scripts/xroga/check-runtime-config.mjs:5",
+        "scripts/xroga/inventory.mjs:8",
+        "scripts/xroga/runtime-discovery.mjs:5",
+        "scripts/xroga/runtime-inventory.mjs:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81305,6 +81308,84 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:40d79d4afb30fa60cebe",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/check-runtime-config.mjs",
+      "sha256": "8d28cf4e7506f48f49c52d89808730f1ca3f073ad1e58bc8fc5bdfaee6bbf7e1",
+      "symbols": [
+        "actualManifests",
+        "api",
+        "backend",
+        "bindings",
+        "discovery",
+        "docker",
+        "entry",
+        "evidenceIds",
+        "expectedNames",
+        "fly",
+        "frontend",
+        "hostname",
+        "id",
+        "ids",
+        "inventory",
+        "main",
+        "name",
+        "names",
+        "path",
+        "read",
+        "result",
+        "serialized",
+        "service",
+        "source",
+        "validateRuntimeInventory",
+        "vercel"
+      ],
+      "imports": [
+        "../ci/toolchain.mjs",
+        "./runtime-discovery.mjs",
+        "./runtime-inventory.mjs",
+        "./runtime-schema.mjs",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs",
+        "scripts/xroga/runtime-discovery.mjs",
+        "scripts/xroga/runtime-inventory.mjs",
+        "scripts/xroga/runtime-schema.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "scripts/xroga/runtime-config.test.mjs:4"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/xroga/check-runtime-config.mjs#evidenceIds"
+      ],
+      "testCoverage": [
+        "scripts/xroga/runtime-config.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:1d47c1a0b2a01e337bcf",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/inventory-schema.mjs",
@@ -81756,6 +81837,274 @@
         "node:fs",
         "node:path",
         "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:cdcbb8d8aae1d7befd8d",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/runtime-discovery.mjs",
+      "sha256": "9d8154ae21a854797c3b0db8af1f88e4b4bdede2423100b96ebc8c1af3f3eac9",
+      "symbols": [
+        "alias",
+        "aliases",
+        "binding",
+        "bindings",
+        "constants",
+        "declarations",
+        "discoverRuntime",
+        "discoverRuntimeSource",
+        "discovery",
+        "dynamic",
+        "element",
+        "envName",
+        "environmentObject",
+        "fallbackCandidates",
+        "findings",
+        "hosts",
+        "line",
+        "literal",
+        "name",
+        "outerAliases",
+        "outerConstants",
+        "parameter",
+        "parent",
+        "paths",
+        "property",
+        "readers",
+        "scope",
+        "scoped",
+        "secretHelpers",
+        "sorted",
+        "source",
+        "statement",
+        "ts",
+        "url",
+        "value",
+        "visit"
+      ],
+      "imports": [
+        "../ci/toolchain.mjs",
+        "node:child_process",
+        "node:fs",
+        "node:module",
+        "node:path"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "scripts/xroga/check-runtime-config.mjs:7",
+        "scripts/xroga/runtime-discovery.test.mjs:3",
+        "scripts/xroga/runtime-inventory.mjs:8"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:fs",
+        "node:module",
+        "node:path"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/xroga/runtime-discovery.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:feab506b94437f0d2609",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/runtime-facts.mjs",
+      "sha256": "7b091ca23780b11c22464ac4559715f808de29885b0d2dc97d2ad182d496f2be",
+      "symbols": [
+        "coreServices",
+        "evidence"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "scripts/xroga/runtime-inventory.mjs:9"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:github.com",
+        "declared-host:xroga-api.fly.dev",
+        "declared-host:xroga.com"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/xroga/runtime-facts.mjs#evidence"
+      ],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:0508a95649266c86d55d",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/runtime-inventory.mjs",
+      "sha256": "67bf9e44d0d7a93b5d718a297eacff9f95bdd5dad4aec582767662c34fca6383",
+      "symbols": [
+        "aliasKeys",
+        "bindings",
+        "buildRuntimeInventory",
+        "capabilityKeys",
+        "consumers",
+        "contract",
+        "credential",
+        "declaredKeys",
+        "dependencies",
+        "discovery",
+        "endpoint",
+        "endpointGroups",
+        "endpointService",
+        "envRows",
+        "environment_names",
+        "escape",
+        "graph",
+        "group",
+        "hash",
+        "identifiers",
+        "inventory",
+        "isPublic",
+        "json",
+        "keys",
+        "main",
+        "manifestPaths",
+        "matchingNames",
+        "md",
+        "modelKeys",
+        "modelSource",
+        "names",
+        "node",
+        "policy",
+        "read",
+        "renderRuntimeOutputs",
+        "resolveDynamicBindings",
+        "reviewedExpressions",
+        "riskRows",
+        "risks",
+        "rows",
+        "sandboxKeys",
+        "secrets",
+        "service",
+        "sorted",
+        "source",
+        "sourcePaths",
+        "sources",
+        "status",
+        "take",
+        "ts",
+        "unassignedNames",
+        "value",
+        "visit"
+      ],
+      "imports": [
+        "../ci/toolchain.mjs",
+        "./runtime-discovery.mjs",
+        "./runtime-facts.mjs",
+        "./runtime-schema.mjs",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs",
+        "scripts/xroga/runtime-discovery.mjs",
+        "scripts/xroga/runtime-facts.mjs",
+        "scripts/xroga/runtime-schema.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "scripts/xroga/check-runtime-config.mjs:8",
+        "scripts/xroga/runtime-config.test.mjs:3"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/xroga/runtime-inventory.mjs#evidence"
+      ],
+      "testCoverage": [
+        "scripts/xroga/runtime-config.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:c7da8142a968ab2b4452",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/runtime-schema.mjs",
+      "sha256": "9c4dfc31cbb68a0c01b6a08d3c3489d1dedf92af6c810c37fbceee08e9d45721",
+      "symbols": [
+        "dependencySchema",
+        "environmentSchema",
+        "runtimeInventorySchema",
+        "runtimeJsonSchema",
+        "strings"
+      ],
+      "imports": [
+        "zod"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "scripts/xroga/check-runtime-config.mjs:6",
+        "scripts/xroga/runtime-inventory.mjs:10"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "zod"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -98722,6 +99071,20 @@
       "id": "test-suite:35a410f3349e4aa6b7c1",
       "sourcePath": "scripts/xroga/requirements.test.mjs",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e4abbb3327d5dd30e800",
+      "sourcePath": "scripts/xroga/runtime-config.test.mjs",
+      "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:767b35eed78a059d98d2",
+      "sourcePath": "scripts/xroga/runtime-discovery.test.mjs",
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
