@@ -1,6 +1,6 @@
 # Reproducible engineering baseline
 
-Command 003 is **in verification**, not verified or released. The canonical command is `npm run verify:baseline` from a clean repository root after `npm ci`.
+Command 003's credential-free baseline is **verified in CI**, not released. The canonical command is `npm run verify:baseline` from a clean repository root after `npm ci`.
 
 ## Toolchain and installation
 
@@ -29,6 +29,6 @@ The SQL gate preserves existing lexical installer order, rejects duplicate ident
 
 ## Verification and rollback
 
-Eleven baseline guard tests currently pass, including real failing unit/type-check subprocesses and rejection of out-of-range installed versions. Migration parsing passes for all 67 migrations. Linux backend tests pass 2,717/2,717 with zero skips. Full clean baseline runs remain pending after frontend fixture/type repairs; see Command 003 evidence and the tracker. Installation advisories remain unresolved pending runtime/security classification; no force audit fix was used.
+Two complete 17-stage clean CI runs pass at the same SHA: backend 2,717, frontend 987, guards 12 and inventory/ledger 18 tests per run, all passing with zero skips; both builds/type checks, lint and 67 SQL parses pass. Installed versions, locks, counts and unchanged tracked source match. See Command 003 manifests. Authenticated E2E remains blocked on test configuration; advisories remain unresolved pending security review. No force audit fix was used.
 
 No production deployment or database migration occurs in Command 003. Revert its commits to restore workflow/tooling changes; no user data or product schemas require rollback.
