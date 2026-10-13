@@ -18,7 +18,8 @@ before(async()=>{
   await client.connect();
   const {rows}=await client.query('select current_database() as name');assert.equal(rows[0].name,'xb01_tenant_test');
   await client.query(`CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN; CREATE ROLE service_role NOLOGIN BYPASSRLS;
-    CREATE SCHEMA auth; CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
+    CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY);
+    CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
     GRANT USAGE ON SCHEMA public,auth TO anon,authenticated,service_role; GRANT EXECUTE ON FUNCTION auth.uid() TO anon,authenticated,service_role;`);
   for(const table of direct)await client.query(`CREATE TABLE public.${table}(id uuid PRIMARY KEY,user_id uuid NOT NULL);`);
   await client.query(`CREATE TABLE public.chats(id uuid PRIMARY KEY,user_id uuid NOT NULL,chat_id uuid REFERENCES public.chat_metadata(id));

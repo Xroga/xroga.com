@@ -94,12 +94,60 @@ test('provider metadata uses real schema and owner filters without returning enc
   const response=await request('/api/integrations/provider-keys',owner.token);assert.equal(response.status,200);
   const text=await response.text();assert.ok(!text.includes('SYNTHETIC_PRIVATE_CANARY'));assert.ok(!text.includes('access_token'));
 });
+
+test('notification list and mutations cannot read or alter another owner notification',async()=>{
+  const [owner,other]=users;
+  const own=await insert('notifications',{user_id:owner.id,title:'OWN_NOTIFICATION_CANARY',message:'Fixture only',read:false});
+  const foreign=await insert('notifications',{user_id:other.id,title:'FOREIGN_NOTIFICATION_CANARY',message:'Fixture only',read:false});
+  const listed=await request('/api/notifications',owner.token);assert.equal(listed.status,200);
+  const text=await listed.text();assert.ok(text.includes('OWN_NOTIFICATION_CANARY'));assert.ok(!text.includes('FOREIGN_NOTIFICATION_CANARY'));
+  // Existing idempotent mutation contract stays 200, but no foreign row changes.
+  assert.equal((await request(`/api/notifications/${foreign}/read`,owner.token,'PATCH',{user_id:other.id})).status,200);
+  assert.equal((await request(`/api/notifications/${foreign}`,owner.token,'DELETE')).status,200);
+  const unchanged=await admin.from('notifications').select('user_id,read').eq('id',foreign).single();assert.equal(unchanged.error,null);assert.equal(unchanged.data?.read,false);assert.equal(unchanged.data?.user_id,other.id);
+  assert.equal((await request(`/api/notifications/${own}/read`,owner.token,'PATCH',{})).status,200);
+  const updated=await admin.from('notifications').select('read').eq('id',own).single();assert.equal(updated.data?.read,true);
+  const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${owner.token}`}},auth:{persistSession:false,autoRefreshToken:false}});
+  const hidden=await client.from('notifications').select('id').eq('id',foreign);assert.equal(hidden.error,null);assert.deepEqual(hidden.data,[]);
+  assert.equal((await request('/api/notifications')).status,401);
+});
+
+test('profile activity keeps own and project-less entries but redacts a corrupt foreign project join',async()=>{
+  const [owner,other]=users;
+  assert.equal((await admin.from('projects').update({name:'FOREIGN_PROJECT_NAME_CANARY'}).eq('id',other.project)).error,null);
+  const own=await insert('activity_logs',{user_id:owner.id,project_id:owner.project,action:'OWN_ACTIVITY_CANARY'});
+  const noProject=await insert('activity_logs',{user_id:owner.id,action:'PROJECTLESS_ACTIVITY_CANARY'});
+  const corrupt=await insert('activity_logs',{user_id:owner.id,project_id:other.project,action:'CORRUPT_JOIN_CANARY'});
+  await insert('activity_logs',{user_id:other.id,project_id:other.project,action:'FOREIGN_ACTIVITY_CANARY'});
+  const response=await request('/api/profile/activity',owner.token);assert.equal(response.status,200);
+  const entries=await response.json() as Array<{id:string;action:string;projects:{name:string}|null}>;
+  assert.ok(entries.some(row=>row.id===own&&row.projects?.name));
+  assert.ok(entries.some(row=>row.id===noProject&&row.projects===null));
+  assert.ok(entries.some(row=>row.id===corrupt&&row.projects===null));
+  assert.ok(!JSON.stringify(entries).includes('FOREIGN_PROJECT_NAME_CANARY'));assert.ok(!entries.some(row=>row.action==='FOREIGN_ACTIVITY_CANARY'));
+  assert.equal((await request('/api/profile')).status,401);
+  const promotion=await request('/api/profile',owner.token,'PATCH',{role:'owner',user_id:other.id});assert.equal(promotion.status,400);
+  const profile=await request('/api/profile',owner.token);assert.equal(profile.status,200);
+  const row=await profile.json() as {id:string;role:string};assert.equal(row.id,owner.id);assert.equal(row.role,'member');
+});
 test('actual member identity cannot fetch privileged operational endpoints',async()=>{
   for(const path of ['/api/admin/errors','/metrics']) assert.equal((await request(path,users[0].token)).status,403);
   const absent=await request(`/api/operations/products/${randomUUID()}`,users[0].token);
   const foreign=await request(`/api/operations/products/${users[1].project}`,users[0].token);
   assert.equal(absent.status,403);assert.equal(foreign.status,403);
   const safe=await absent.json() as {error:string;code:string};assert.equal(safe.code,'forbidden');assert.equal(safe.error,'Operation is not permitted');
+});
+
+test('foreign durable business confirmations cannot be read approved or cancelled by changing IDs',async()=>{
+  const [owner,other]=users;
+  const id=await insert('business_action_confirmations',{user_id:other.id,status:'pending',plan:{fixture:'no executable action'},plan_digest:'a'.repeat(64),summary:'FOREIGN_ACTION_CANARY',toolkit:'fixture',risk:'write',expires_at:new Date(Date.now()+600000).toISOString()});
+  for(const [suffix,method] of [['','GET'],['/confirm','POST'],['/cancel','POST']]) {
+    const response=await request(`/api/phase1/business-actions/confirmations/${id}${suffix}`,owner.token,method,method==='GET'?undefined:{userId:other.id,tenantId:other.id});
+    assert.equal(response.status,404);assert.ok(!(await response.text()).includes('FOREIGN_ACTION_CANARY'));
+  }
+  const unchanged=await admin.from('business_action_confirmations').select('user_id,status,claimed_at').eq('id',id).single();assert.equal(unchanged.error,null);assert.equal(unchanged.data?.user_id,other.id);assert.equal(unchanged.data?.status,'pending');assert.equal(unchanged.data?.claimed_at,null);
+  const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${owner.token}`}},auth:{persistSession:false,autoRefreshToken:false}});
+  assert.equal((await client.from('business_action_confirmations').select('*').eq('id',id)).error?.code,'42501');
 });
 test('real profile column grants reject self-promotion and auth metadata cannot supply admin authority',async()=>{
   const owner=users[0];
@@ -171,13 +219,15 @@ test('registered shutdown cannot alter an active ID owned by a different worker 
 
 test('private share token cannot grant another tenant access or revocation authority',async()=>{
   const [owner,other]=users;
-  const created=await request('/api/message-shares',owner.token,'POST',{visibility:'private',scope:'response',response:'PRIVATE_SHARE_CANARY',owner_id:other.id});assert.equal(created.status,201);
+  // Literal words survive the established Markdown-cleaning share contract.
+  // Underscore canaries would be altered, weakening the negative leak assertion.
+  const created=await request('/api/message-shares',owner.token,'POST',{visibility:'private',scope:'response',response:'Private share privacy canary',owner_id:other.id});assert.equal(created.status,201);
   const body=await created.json() as {share:{token:string}};
   const stored=await admin.from('message_shares').select('owner_id').eq('token',body.share.token).single();assert.equal(stored.error,null);assert.equal(stored.data?.owner_id,owner.id);
   for(const token of [undefined,other.token]) {
-    const denied=await request(`/api/message-shares/${body.share.token}`,token);assert.equal(denied.status,403);assert.ok(!(await denied.text()).includes('PRIVATE_SHARE_CANARY'));
+    const denied=await request(`/api/message-shares/${body.share.token}`,token);assert.equal(denied.status,403);assert.ok(!(await denied.text()).includes('Private share privacy canary'));
   }
-  const allowed=await request(`/api/message-shares/${body.share.token}`,owner.token);assert.equal(allowed.status,200);assert.ok((await allowed.text()).includes('PRIVATE_SHARE_CANARY'));
+  const allowed=await request(`/api/message-shares/${body.share.token}`,owner.token);assert.equal(allowed.status,200);assert.ok((await allowed.text()).includes('Private share privacy canary'));
   assert.equal((await request(`/api/message-shares/${body.share.token}`,other.token,'DELETE')).status,404);
   assert.equal((await request(`/api/message-shares/${body.share.token}`,owner.token,'DELETE')).status,200);
   assert.equal((await request(`/api/message-shares/${body.share.token}`,owner.token)).status,404);
@@ -185,9 +235,9 @@ test('private share token cannot grant another tenant access or revocation autho
 
 test('owner opt-in public share is readable without auth but revocation is immediate and uncached',async()=>{
   const owner=users[0];
-  const created=await request('/api/message-shares',owner.token,'POST',{visibility:'public',scope:'response',response:'PUBLIC_FIXTURE_ONLY'});assert.equal(created.status,201);
+  const created=await request('/api/message-shares',owner.token,'POST',{visibility:'public',scope:'response',response:'Public fixture only'});assert.equal(created.status,201);
   const body=await created.json() as {share:{token:string}};
-  const read=await request(`/api/message-shares/${body.share.token}`);assert.equal(read.status,200);assert.equal(read.headers.get('cache-control'),'private, no-store');assert.ok((await read.text()).includes('PUBLIC_FIXTURE_ONLY'));
+  const read=await request(`/api/message-shares/${body.share.token}`);assert.equal(read.status,200);assert.equal(read.headers.get('cache-control'),'private, no-store');assert.ok((await read.text()).includes('Public fixture only'));
   assert.equal((await request(`/api/message-shares/${body.share.token}`,owner.token,'DELETE')).status,200);
   assert.equal((await request(`/api/message-shares/${body.share.token}`)).status,404);
 });

@@ -11,7 +11,7 @@
     "ownerPredicateCandidates": 157,
     "reviewRequired": 669,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 5
+    "registeredNarrowGlobalExceptions": 8
   },
   "callers": [
     {
@@ -2127,26 +2127,26 @@
       "sourceSha256": "d842ab8f2a9b3dcbe91bf8f6860ba7088d10d9069aca982471bf6efe39e5d724"
     },
     {
-      "id": "03e2c4cb67b678829a7a",
+      "id": "878af20cebe04a8b2f9f",
       "path": "backend/src/middleware/admin.ts",
-      "line": 20,
+      "line": 23,
       "enclosing": "adminMiddleware",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3b0394aadb6b60bb4be4f200c00c2000ee640a92e6a032383326df78d63ceae3"
+      "sourceSha256": "7faa10cbb6526f5eb0dc15a31be13bc6b51a7da53b3564ef9661924f88aff3df"
     },
     {
-      "id": "320ad4fcdab3cf690f0c",
+      "id": "fdb3116b41da04191c05",
       "path": "backend/src/middleware/admin.ts",
-      "line": 21,
+      "line": 24,
       "enclosing": "adminMiddleware",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3b0394aadb6b60bb4be4f200c00c2000ee640a92e6a032383326df78d63ceae3"
+      "sourceSha256": "7faa10cbb6526f5eb0dc15a31be13bc6b51a7da53b3564ef9661924f88aff3df"
     },
     {
       "id": "ef40ee4a87c8a7c007a9",
@@ -2985,18 +2985,18 @@
       "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
     },
     {
-      "id": "5cd18776b49fa748916c",
+      "id": "2b8467a8a83dd3c64e81",
       "path": "backend/src/routes/admin.ts",
       "line": 18,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "74db41a7109fe42cff5c536a08638c9d22b9c14b1384b7870b9fa1fe0b3389cf"
+      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba"
     },
     {
-      "id": "e0030ee1b53718c2bcdd",
+      "id": "f8562aec2157a6292f53",
       "path": "backend/src/routes/admin.ts",
       "line": 19,
       "enclosing": "<module>",
@@ -3004,21 +3004,21 @@
       "target": "system_errors",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "74db41a7109fe42cff5c536a08638c9d22b9c14b1384b7870b9fa1fe0b3389cf"
+      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba"
     },
     {
-      "id": "9cbeebfbab8d39b45f11",
+      "id": "99ca9fc02915d914648a",
       "path": "backend/src/routes/admin.ts",
       "line": 39,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "74db41a7109fe42cff5c536a08638c9d22b9c14b1384b7870b9fa1fe0b3389cf"
+      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba"
     },
     {
-      "id": "1d5f18ed2431648d8d87",
+      "id": "3e1bebc42ac74d873a41",
       "path": "backend/src/routes/admin.ts",
       "line": 40,
       "enclosing": "<module>",
@@ -3026,7 +3026,7 @@
       "target": "deployment_status",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "74db41a7109fe42cff5c536a08638c9d22b9c14b1384b7870b9fa1fe0b3389cf"
+      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba"
     },
     {
       "id": "6c4f35b1e3d1acdd6b24",
@@ -3238,117 +3238,117 @@
       "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0"
     },
     {
-      "id": "d493b72a646f9e6b89b4",
+      "id": "126691b1d6a4669f5367",
       "path": "backend/src/routes/notifications.ts",
-      "line": 8,
+      "line": 13,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "629dc4c07e949d1fb18cf0fa3ba229ebc1a8f1465f14594f8757d8c132e6af93"
+      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
     },
     {
-      "id": "5e7404c9c13795defd52",
+      "id": "c60f076ef96edd310542",
       "path": "backend/src/routes/notifications.ts",
-      "line": 9,
+      "line": 14,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "629dc4c07e949d1fb18cf0fa3ba229ebc1a8f1465f14594f8757d8c132e6af93"
+      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
     },
     {
-      "id": "1ae2dee26b4fdf6321a4",
+      "id": "81a9c34cf83c0cf6f86b",
       "path": "backend/src/routes/notifications.ts",
-      "line": 24,
+      "line": 29,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "629dc4c07e949d1fb18cf0fa3ba229ebc1a8f1465f14594f8757d8c132e6af93"
+      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
     },
     {
-      "id": "5d14fd8caadc1ed718d2",
+      "id": "0160015d57b6b985851c",
       "path": "backend/src/routes/notifications.ts",
-      "line": 25,
+      "line": 30,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "629dc4c07e949d1fb18cf0fa3ba229ebc1a8f1465f14594f8757d8c132e6af93"
+      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
     },
     {
-      "id": "54fc80b17fcab7e40b27",
+      "id": "9b250981c178f982cbc1",
       "path": "backend/src/routes/notifications.ts",
-      "line": 39,
+      "line": 44,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "629dc4c07e949d1fb18cf0fa3ba229ebc1a8f1465f14594f8757d8c132e6af93"
+      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
     },
     {
-      "id": "4ff57a30864126eec21c",
+      "id": "2daf5703d3c47f957da6",
       "path": "backend/src/routes/notifications.ts",
-      "line": 40,
+      "line": 45,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "629dc4c07e949d1fb18cf0fa3ba229ebc1a8f1465f14594f8757d8c132e6af93"
+      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
     },
     {
-      "id": "d0d158974163fc826da4",
+      "id": "93e9c8489e22d73215db",
       "path": "backend/src/routes/notifications.ts",
-      "line": 54,
+      "line": 59,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "629dc4c07e949d1fb18cf0fa3ba229ebc1a8f1465f14594f8757d8c132e6af93"
+      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
     },
     {
-      "id": "175e9bef7d1b4a566cfc",
+      "id": "f321ba6f7ca17fd521fd",
       "path": "backend/src/routes/notifications.ts",
-      "line": 55,
+      "line": 60,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "629dc4c07e949d1fb18cf0fa3ba229ebc1a8f1465f14594f8757d8c132e6af93"
+      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
     },
     {
-      "id": "84ff702e7df485285cca",
+      "id": "d117d5e147f52bb2b476",
       "path": "backend/src/routes/notifications.ts",
-      "line": 69,
+      "line": 74,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "629dc4c07e949d1fb18cf0fa3ba229ebc1a8f1465f14594f8757d8c132e6af93"
+      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
     },
     {
-      "id": "3177fb468adea8a1a50e",
+      "id": "3c6e7676cbb73e9a6f83",
       "path": "backend/src/routes/notifications.ts",
-      "line": 70,
+      "line": 75,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "629dc4c07e949d1fb18cf0fa3ba229ebc1a8f1465f14594f8757d8c132e6af93"
+      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
     },
     {
-      "id": "a478783c2edeaf57f2a5",
+      "id": "74399012ac412499168f",
       "path": "backend/src/routes/operations.ts",
       "line": 65,
       "enclosing": "<module>",
@@ -3356,18 +3356,18 @@
       "target": "production_evidence",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "cdd225907e1f3f494a6ec35127455c042cb011c9412c1ad5b42b81ce2d5e1ec6"
+      "sourceSha256": "46ef11fb24c684b47c8a4fca31993b0d8c2f97891ecc76db9d40c5ea5db6ea5e"
     },
     {
-      "id": "a478783c2edeaf57f2a5",
+      "id": "74399012ac412499168f",
       "path": "backend/src/routes/operations.ts",
       "line": 65,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "cdd225907e1f3f494a6ec35127455c042cb011c9412c1ad5b42b81ce2d5e1ec6"
+      "sourceSha256": "46ef11fb24c684b47c8a4fca31993b0d8c2f97891ecc76db9d40c5ea5db6ea5e"
     },
     {
       "id": "225e20a2bc94b2b0df89",
@@ -3403,81 +3403,81 @@
       "sourceSha256": "1c7b647b97510721b182a2bf054052ae25ffb2d9c8223ac778788bd1dbd4153b"
     },
     {
-      "id": "b370fa6da1503a5d7412",
+      "id": "55d7740f7e36d277f2c9",
       "path": "backend/src/routes/profile.ts",
-      "line": 78,
+      "line": 83,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f2b110940cd9c5da0df2fe3b8a0749f94bd44eaa2ff375267ac41afe12440b2d"
+      "sourceSha256": "fee53587ad176cd91f70a3645a28171117400d0e12e48474b5d345296cf060f8"
     },
     {
-      "id": "9a58be0c0939ebf6bf21",
+      "id": "afb04564f0a5f857d00f",
       "path": "backend/src/routes/profile.ts",
-      "line": 79,
+      "line": 84,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f2b110940cd9c5da0df2fe3b8a0749f94bd44eaa2ff375267ac41afe12440b2d"
+      "sourceSha256": "fee53587ad176cd91f70a3645a28171117400d0e12e48474b5d345296cf060f8"
     },
     {
-      "id": "ee269b7a6742a8f143c3",
+      "id": "b2e2f77f749ba570a97e",
       "path": "backend/src/routes/profile.ts",
-      "line": 133,
+      "line": 138,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f2b110940cd9c5da0df2fe3b8a0749f94bd44eaa2ff375267ac41afe12440b2d"
+      "sourceSha256": "fee53587ad176cd91f70a3645a28171117400d0e12e48474b5d345296cf060f8"
     },
     {
-      "id": "180f5e4f5572c865142b",
+      "id": "d0a126959618e95ef1e9",
       "path": "backend/src/routes/profile.ts",
-      "line": 134,
+      "line": 139,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f2b110940cd9c5da0df2fe3b8a0749f94bd44eaa2ff375267ac41afe12440b2d"
+      "sourceSha256": "fee53587ad176cd91f70a3645a28171117400d0e12e48474b5d345296cf060f8"
     },
     {
-      "id": "8e5c66250db54eaca5d4",
+      "id": "5b6b15f3cbb23eeab29b",
       "path": "backend/src/routes/profile.ts",
-      "line": 157,
+      "line": 162,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f2b110940cd9c5da0df2fe3b8a0749f94bd44eaa2ff375267ac41afe12440b2d"
+      "sourceSha256": "fee53587ad176cd91f70a3645a28171117400d0e12e48474b5d345296cf060f8"
     },
     {
-      "id": "41f9774c6edb35b4a3e9",
+      "id": "6195cb737c21cc9a71d7",
       "path": "backend/src/routes/profile.ts",
-      "line": 172,
+      "line": 177,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f2b110940cd9c5da0df2fe3b8a0749f94bd44eaa2ff375267ac41afe12440b2d"
+      "sourceSha256": "fee53587ad176cd91f70a3645a28171117400d0e12e48474b5d345296cf060f8"
     },
     {
-      "id": "57a0e39fe5941c9ab445",
+      "id": "52f3f598e0da46d0a4a9",
       "path": "backend/src/routes/profile.ts",
-      "line": 173,
+      "line": 178,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "activity_logs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f2b110940cd9c5da0df2fe3b8a0749f94bd44eaa2ff375267ac41afe12440b2d"
+      "sourceSha256": "fee53587ad176cd91f70a3645a28171117400d0e12e48474b5d345296cf060f8"
     },
     {
       "id": "621b3147c69910093fde",
@@ -3939,40 +3939,40 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ade895e09606260ae006573135cf992465bb10f1d10d912473207fe6d3dc9da6"
+      "sourceSha256": "dfcca66fbd583c2bd874d1d151efd4759b4175aeaae29f397bc59586734c9b13"
     },
     {
-      "id": "c2afcf153c19ea26e00e",
+      "id": "d9915437959d05159865",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 22,
+      "line": 25,
       "enclosing": "getGlobalSupabaseAdmin",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ade895e09606260ae006573135cf992465bb10f1d10d912473207fe6d3dc9da6"
+      "sourceSha256": "dfcca66fbd583c2bd874d1d151efd4759b4175aeaae29f397bc59586734c9b13"
     },
     {
-      "id": "7c63c842faf847a37d7f",
+      "id": "05298abfe6c9c1db497b",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 26,
+      "line": 29,
       "enclosing": "probeDatabaseReadiness",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ade895e09606260ae006573135cf992465bb10f1d10d912473207fe6d3dc9da6"
+      "sourceSha256": "dfcca66fbd583c2bd874d1d151efd4759b4175aeaae29f397bc59586734c9b13"
     },
     {
-      "id": "7c63c842faf847a37d7f",
+      "id": "05298abfe6c9c1db497b",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 26,
+      "line": 29,
       "enclosing": "probeDatabaseReadiness",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ade895e09606260ae006573135cf992465bb10f1d10d912473207fe6d3dc9da6"
+      "sourceSha256": "dfcca66fbd583c2bd874d1d151efd4759b4175aeaae29f397bc59586734c9b13"
     },
     {
       "id": "a2b7e564b0e180499973",

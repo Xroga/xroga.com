@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { getGlobalSupabaseAdmin } from '../security/serviceRoleGuard.js';
 import type { AuthRequest } from '../middleware/auth.js';
 import { computePlatformReady } from '../lib/platformReady.js';
 
@@ -15,7 +15,7 @@ router.get('/errors', async (req: AuthRequest, res) => {
   const severity = req.query.severity ? String(req.query.severity) : undefined;
 
   try {
-    const supabase = getSupabaseAdmin();
+    const supabase = getGlobalSupabaseAdmin('authorized_platform_errors');
     let query = supabase
       .from('system_errors')
       .select('id, timestamp, api, error_message, fallback_used, severity, user_id, run_id, metadata')
@@ -36,7 +36,7 @@ router.get('/errors', async (req: AuthRequest, res) => {
 router.get('/deployments', async (req: AuthRequest, res) => {
   const limit = Math.min(Number(req.query.limit) || 50, 100);
   try {
-    const supabase = getSupabaseAdmin();
+    const supabase = getGlobalSupabaseAdmin('authorized_deployment_history');
     const { data } = await supabase
       .from('deployment_status')
       .select('*')

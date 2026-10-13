@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "934cb850fb30d16937491776ac518e24b056943d",
+  "source_sha": "66db8a4c536f156c1c266e25ff229ba8161b442b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11980,7 +11980,7 @@
     },
     {
       "path": "backend/src/middleware/admin.ts",
-      "sha256": "3b0394aadb6b60bb4be4f200c00c2000ee640a92e6a032383326df78d63ceae3"
+      "sha256": "7faa10cbb6526f5eb0dc15a31be13bc6b51a7da53b3564ef9661924f88aff3df"
     },
     {
       "path": "backend/src/middleware/auth.ts",
@@ -12116,7 +12116,7 @@
     },
     {
       "path": "backend/src/routes/admin.ts",
-      "sha256": "74db41a7109fe42cff5c536a08638c9d22b9c14b1384b7870b9fa1fe0b3389cf"
+      "sha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba"
     },
     {
       "path": "backend/src/routes/analytics.ts",
@@ -12188,11 +12188,11 @@
     },
     {
       "path": "backend/src/routes/notifications.ts",
-      "sha256": "629dc4c07e949d1fb18cf0fa3ba229ebc1a8f1465f14594f8757d8c132e6af93"
+      "sha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a"
     },
     {
       "path": "backend/src/routes/operations.ts",
-      "sha256": "cdd225907e1f3f494a6ec35127455c042cb011c9412c1ad5b42b81ce2d5e1ec6"
+      "sha256": "46ef11fb24c684b47c8a4fca31993b0d8c2f97891ecc76db9d40c5ea5db6ea5e"
     },
     {
       "path": "backend/src/routes/phase1.ts",
@@ -12204,7 +12204,7 @@
     },
     {
       "path": "backend/src/routes/profile.ts",
-      "sha256": "f2b110940cd9c5da0df2fe3b8a0749f94bd44eaa2ff375267ac41afe12440b2d"
+      "sha256": "fee53587ad176cd91f70a3645a28171117400d0e12e48474b5d345296cf060f8"
     },
     {
       "path": "backend/src/routes/projectRuntime.ts",
@@ -12312,7 +12312,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "ade895e09606260ae006573135cf992465bb10f1d10d912473207fe6d3dc9da6"
+      "sha256": "dfcca66fbd583c2bd874d1d151efd4759b4175aeaae29f397bc59586734c9b13"
     },
     {
       "path": "backend/src/security/tenantContext.ts",
@@ -12324,7 +12324,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "2fbbb00e6a92795c570230abcc095f21aac054e8da3191fb66a0a5753111577f"
+      "sha256": "7d4e392820d12620a8a33a7c46461e8bef67ef34f6e0be4546c60e823c7bd32d"
     },
     {
       "path": "backend/src/services/ActionService.ts",

@@ -23,6 +23,10 @@ The existing JWT verifier retried without audience enforcement after failure. Th
 
 ## Access matrix and discovery scope
 
+Current continuation (2026-10-14): profile/notification route operations derive their user ID from the issued context; service client use and queries remain owner-scoped. Activity's optional project join checks the parent owner before returning a name. Admin role lookup also requires issued context, using current database role, not token/user metadata. The registry now includes the three established platform error, deployment-history and release-readiness reads alongside the five maintenance/public-resolution exceptions. Their existing admin/owner authorization is broader than founder exclusivity, and payload redaction requires independent review. This registry is internal documentation/admission, not a magic RLS proxy or blanket caller certification.
+
+Real disposable run 38454542421 at `66db8a4c` passed full fresh/upgrade history including active share bootstrap preservation, all three real browser tests, and 15/17 actual tenant cases. Overall FAIL: two share test expectations did not account for the existing Markdown cleaner. Literal-word privacy canaries fix the tests without relaxing leak/owner/revocation assertions. Twenty real integration cases are defined for the next run, including notification mutations, corrupt activity joins and denied foreign business confirmation actions. This does not implement Command 008 or authorize external action execution.
+
 | Resource | Actual owner/relation | User actions / server boundary | Remaining acceptance |
 | --- | --- | --- | --- |
 | Profiles/users | profiles.id / auth.users | Existing safe community profile read; column grants deny public role/customer fields; own safe update | Actual isolated auth deletion/revocation, provisioning/admin audit |

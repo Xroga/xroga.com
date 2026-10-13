@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "934cb850fb30d16937491776ac518e24b056943d",
-    "sourceTimestampUtc": "2026-10-13T23:35:35+05:00",
-    "auditStartedUtc": "2026-10-13T19:09:22.122Z",
+    "sha": "66db8a4c536f156c1c266e25ff229ba8161b442b",
+    "sourceTimestampUtc": "2026-10-14T00:09:55+05:00",
+    "auditStartedUtc": "2026-10-13T19:35:10.311Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -11478,16 +11478,11 @@
         "backend/src/community/service.ts:1",
         "backend/src/growth/growthService.ts:3",
         "backend/src/lib/resolveIdentity.ts:39",
-        "backend/src/middleware/admin.ts:2",
         "backend/src/operations/operationsService.ts:3",
-        "backend/src/routes/admin.ts:2",
         "backend/src/routes/billingWebhook.ts:4",
         "backend/src/routes/dashboard.ts:3",
         "backend/src/routes/github.ts:3",
-        "backend/src/routes/notifications.ts:2",
-        "backend/src/routes/operations.ts:4",
         "backend/src/routes/phase1BusinessPreflight.ts:18",
-        "backend/src/routes/profile.ts:3",
         "backend/src/routes/terminalSessions.ts:13",
         "backend/src/security/serviceRoleGuard.ts:1",
         "backend/src/services/BillingService.ts:5",
@@ -14849,19 +14844,22 @@
       "id": "surface:a6a2af1b7585a21ced99",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/middleware/admin.ts",
-      "sha256": "3b0394aadb6b60bb4be4f200c00c2000ee640a92e6a032383326df78d63ceae3",
+      "sha256": "7faa10cbb6526f5eb0dc15a31be13bc6b51a7da53b3564ef9661924f88aff3df",
       "symbols": [
         "adminMiddleware",
         "canReadAdminOperations",
+        "scope",
         "supabase"
       ],
       "imports": [
-        "../config/supabase.js",
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
         "./auth.js",
         "express"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts"
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -14961,6 +14959,8 @@
       "testCoverage": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/lib/authRoundTrips.test.ts",
+        "backend/src/middleware/admin.test.ts",
+        "backend/src/security/accountRoutes.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -17436,7 +17436,7 @@
       "id": "surface:9cf56c86a002c17e3dd5",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/admin.ts",
-      "sha256": "74db41a7109fe42cff5c536a08638c9d22b9c14b1384b7870b9fa1fe0b3389cf",
+      "sha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba",
       "symbols": [
         "api",
         "limit",
@@ -17446,14 +17446,14 @@
         "supabase"
       ],
       "imports": [
-        "../config/supabase.js",
         "../lib/platformReady.js",
         "../middleware/auth.js",
+        "../security/serviceRoleGuard.js",
         "express"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts",
-        "backend/src/lib/platformReady.ts"
+        "backend/src/lib/platformReady.ts",
+        "backend/src/security/serviceRoleGuard.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -18563,24 +18563,27 @@
       "id": "surface:4edcaf26389e9c51de18",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "sha256": "629dc4c07e949d1fb18cf0fa3ba229ebc1a8f1465f14594f8757d8c132e6af93",
+      "sha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
       "symbols": [
         "router",
         "supabase"
       ],
       "imports": [
-        "../config/supabase.js",
         "../middleware/auth.js",
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
         "express"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts"
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:22"
+        "backend/src/index.ts:22",
+        "backend/src/security/accountRoutes.test.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -18593,16 +18596,18 @@
         "backend/src/routes/notifications.ts#AuthRequest"
       ],
       "tenantBoundary": [
-        "backend/src/routes/notifications.ts:9 (user_id)",
-        "backend/src/routes/notifications.ts:25 (user_id)",
-        "backend/src/routes/notifications.ts:40 (user_id)",
-        "backend/src/routes/notifications.ts:55 (user_id)",
-        "backend/src/routes/notifications.ts:70 (user_id)"
+        "backend/src/routes/notifications.ts:14 (user_id)",
+        "backend/src/routes/notifications.ts:30 (user_id)",
+        "backend/src/routes/notifications.ts:45 (user_id)",
+        "backend/src/routes/notifications.ts:60 (user_id)",
+        "backend/src/routes/notifications.ts:75 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/security/accountRoutes.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -18614,7 +18619,7 @@
       "id": "surface:dc65d1b143ecefc64bf7",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/operations.ts",
-      "sha256": "cdd225907e1f3f494a6ec35127455c042cb011c9412c1ad5b42b81ce2d5e1ec6",
+      "sha256": "46ef11fb24c684b47c8a4fca31993b0d8c2f97891ecc76db9d40c5ea5db6ea5e",
       "symbols": [
         "actionSchema",
         "body",
@@ -18641,23 +18646,23 @@
       ],
       "imports": [
         "../config/jobQueues.js",
-        "../config/supabase.js",
         "../lib/platformReady.js",
         "../middleware/admin.js",
         "../middleware/auth.js",
         "../operations/operationsService.js",
         "../operations/productionOperations.js",
+        "../security/serviceRoleGuard.js",
         "express",
         "node:crypto",
         "zod"
       ],
       "runtimeImports": [
         "backend/src/config/jobQueues.ts",
-        "backend/src/config/supabase.ts",
         "backend/src/lib/platformReady.ts",
         "backend/src/middleware/admin.ts",
         "backend/src/operations/operationsService.ts",
-        "backend/src/operations/productionOperations.ts"
+        "backend/src/operations/productionOperations.ts",
+        "backend/src/security/serviceRoleGuard.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -18912,7 +18917,7 @@
       "id": "surface:4681d564b0f04020f4a8",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/profile.ts",
-      "sha256": "f2b110940cd9c5da0df2fe3b8a0749f94bd44eaa2ff375267ac41afe12440b2d",
+      "sha256": "fee53587ad176cd91f70a3645a28171117400d0e12e48474b5d345296cf060f8",
       "symbols": [
         "companionPreferencesSchema",
         "deleteAccountSchema",
@@ -18924,14 +18929,16 @@
         "supabase"
       ],
       "imports": [
-        "../config/supabase.js",
         "../middleware/auth.js",
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
         "../services/userProvisioningCache.js",
         "express",
         "zod"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/services/userProvisioningCache.ts"
       ],
       "entryPoints": [
@@ -18940,7 +18947,8 @@
       "callers": [
         "backend/src/index.ts:13",
         "backend/src/routes/profile.companion.test.ts:3",
-        "backend/src/routes/profile.deleteAccount.test.ts:3"
+        "backend/src/routes/profile.deleteAccount.test.ts:3",
+        "backend/src/security/accountRoutes.test.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -18955,14 +18963,15 @@
         "backend/src/routes/profile.ts#AuthRequest"
       ],
       "tenantBoundary": [
-        "backend/src/routes/profile.ts:173 (user_id)"
+        "backend/src/routes/profile.ts:178 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/routes/profile.companion.test.ts",
-        "backend/src/routes/profile.deleteAccount.test.ts"
+        "backend/src/routes/profile.deleteAccount.test.ts",
+        "backend/src/security/accountRoutes.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -20639,7 +20648,7 @@
       "id": "surface:e31c62507c56bf4fa325",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "ade895e09606260ae006573135cf992465bb10f1d10d912473207fe6d3dc9da6",
+      "sha256": "dfcca66fbd583c2bd874d1d151efd4759b4175aeaae29f397bc59586734c9b13",
       "symbols": [
         "getGlobalSupabaseAdmin",
         "getTenantSupabaseAdmin",
@@ -20661,7 +20670,12 @@
         "backend/src/ai/providerHealthStore.ts:29",
         "backend/src/ai/runReconciler.ts:1",
         "backend/src/index.ts:60",
+        "backend/src/middleware/admin.ts:2",
+        "backend/src/routes/admin.ts:2",
         "backend/src/routes/messageShares.ts:4",
+        "backend/src/routes/notifications.ts:2",
+        "backend/src/routes/operations.ts:4",
+        "backend/src/routes/profile.ts:3",
         "backend/src/routes/projects.ts:3",
         "backend/src/security/ownership.ts:2",
         "backend/src/security/serviceRoleGuard.test.ts:3",
@@ -20717,8 +20731,11 @@
       ],
       "callers": [
         "backend/src/ai/runStore.ts:10",
+        "backend/src/middleware/admin.ts:3",
         "backend/src/middleware/auth.ts:4",
         "backend/src/routes/messageShares.ts:5",
+        "backend/src/routes/notifications.ts:3",
+        "backend/src/routes/profile.ts:4",
         "backend/src/routes/projectRuntime.ts:8",
         "backend/src/routes/projects.ts:4",
         "backend/src/routes/swarm.ts:4",
@@ -25131,7 +25148,7 @@
         "backend/src/ai/p0Regressions.test.ts:62",
         "backend/src/lib/authRoundTrips.test.ts:131",
         "backend/src/lib/authRoundTrips.test.ts:257",
-        "backend/src/routes/profile.ts:5",
+        "backend/src/routes/profile.ts:6",
         "backend/src/services/ensureUserRecords.ts:13"
       ],
       "reachable": true,
@@ -82330,7 +82347,7 @@
       "id": "surface:df5a69bd66236469cf20",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/audit-tenant-policies.mjs",
-      "sha256": "6883886725ab3deee19c2e69749e0045aca2e8f4f4c96b76ef89f5d99a361878",
+      "sha256": "28955480966813e2ec3d0c1c0ec0e1af2cc90f18c1737f90fde0b72994c103c6",
       "symbols": [
         "adminNames",
         "binding",
@@ -85130,7 +85147,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0fbc24249a4d7cd390d5",
+      "id": "registration:b10971f6e421c8731c7d",
       "sourcePath": "backend/src/routes/admin.ts",
       "line": 8,
       "receiver": "router",
@@ -85142,7 +85159,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:ca17e59f97fca2161532",
+      "id": "registration:c766e6f7ed0fd170e085",
       "sourcePath": "backend/src/routes/admin.ts",
       "line": 12,
       "receiver": "router",
@@ -85154,7 +85171,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:648a09d6a75844c7cc6e",
+      "id": "registration:bf580d2617ed8e48a5f7",
       "sourcePath": "backend/src/routes/admin.ts",
       "line": 36,
       "receiver": "router",
@@ -86524,9 +86541,21 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a1a95c2e961a2144c942",
+      "id": "registration:fa08d4fe05af64046b18",
       "sourcePath": "backend/src/routes/notifications.ts",
       "line": 7,
+      "receiver": "router",
+      "method": "use",
+      "path": null,
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:d4bc00e304a0c23a4914",
+      "sourcePath": "backend/src/routes/notifications.ts",
+      "line": 12,
       "receiver": "router",
       "method": "get",
       "path": "/",
@@ -86536,9 +86565,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9a730bb2495ae26c3a8f",
+      "id": "registration:faf44843f9635af6db85",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 23,
+      "line": 28,
       "receiver": "router",
       "method": "get",
       "path": "/unread-count",
@@ -86548,9 +86577,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3f20f755bd10c4d13b30",
+      "id": "registration:02175b4885cbb4b818e4",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 38,
+      "line": 43,
       "receiver": "router",
       "method": "patch",
       "path": "/:id/read",
@@ -86560,9 +86589,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5a94943de445aba20032",
+      "id": "registration:bffbc69c1588348608cc",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 53,
+      "line": 58,
       "receiver": "router",
       "method": "patch",
       "path": "/read-all",
@@ -86572,9 +86601,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c7f5c3123bbd9e841cfc",
+      "id": "registration:faf7e0a90c548d15a6ef",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 68,
+      "line": 73,
       "receiver": "router",
       "method": "delete",
       "path": "/:id",
@@ -86584,7 +86613,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:201b8c56b9552fecdf08",
+      "id": "registration:b932def42cba5e16898f",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 62,
       "receiver": "router",
@@ -86598,7 +86627,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b85e8c26d03a57695605",
+      "id": "registration:76b03f0a73313e835ba7",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 78,
       "receiver": "router",
@@ -86610,7 +86639,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c45273bba3ab8628cb1f",
+      "id": "registration:50b1abd9440d7d0028ff",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 84,
       "receiver": "router",
@@ -86622,7 +86651,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f896b2e90ae8882c0975",
+      "id": "registration:7abaf242fc205adb415b",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 89,
       "receiver": "router",
@@ -86634,7 +86663,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fc5df4f1908384bdb8ff",
+      "id": "registration:1545f5f20acd66b475ef",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 94,
       "receiver": "router",
@@ -86646,7 +86675,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c50f77c6f163abcdf2a4",
+      "id": "registration:cd75bdedebf9951e3d58",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 99,
       "receiver": "router",
@@ -86658,7 +86687,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4902070c798a663e5117",
+      "id": "registration:866184854461486dfe7a",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 104,
       "receiver": "router",
@@ -86670,7 +86699,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c1353e3c6f6a8bb4a5bb",
+      "id": "registration:fb0a192bfc77781f0362",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 106,
       "receiver": "router",
@@ -86682,7 +86711,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:74645e46f3311e91bf68",
+      "id": "registration:041155b74eb87d13e990",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 111,
       "receiver": "router",
@@ -86694,7 +86723,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:24bca666913322e7b94c",
+      "id": "registration:493bc573fad9e34c718a",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 116,
       "receiver": "router",
@@ -86706,7 +86735,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c858aa80467d96e39f5d",
+      "id": "registration:931ed52733f7ccf55495",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 123,
       "receiver": "router",
@@ -86718,7 +86747,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:42bc8cf3d53c49defa74",
+      "id": "registration:186b26c85e6dc047ec67",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 128,
       "receiver": "router",
@@ -86730,7 +86759,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a6d8c257fde99ca809c6",
+      "id": "registration:8645d7e373b761d6b9cf",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 133,
       "receiver": "router",
@@ -86742,7 +86771,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b2fbba998abcc2adeb64",
+      "id": "registration:cc6f229ad1bf9391d691",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 138,
       "receiver": "router",
@@ -86754,7 +86783,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7d17633c341d48a6c79a",
+      "id": "registration:b527223c2ee869c896f8",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 143,
       "receiver": "router",
@@ -86766,7 +86795,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5a868788982b3ed0198d",
+      "id": "registration:4def0d529ff09e8ec583",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 148,
       "receiver": "router",
@@ -86778,7 +86807,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:17fecd7b11201d2b5aa4",
+      "id": "registration:fed97b3d4d7f8a919ab4",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 153,
       "receiver": "router",
@@ -86934,9 +86963,21 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4a39ed3c2303fab218e8",
+      "id": "registration:153d87437bfc6991b4b2",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 77,
+      "line": 9,
+      "receiver": "router",
+      "method": "use",
+      "path": null,
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:5e8ba56ea0d99a7b6b31",
+      "sourcePath": "backend/src/routes/profile.ts",
+      "line": 82,
       "receiver": "router",
       "method": "get",
       "path": "/",
@@ -86946,9 +86987,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f28ef17430a92b653e01",
+      "id": "registration:8298405180807955989f",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 92,
+      "line": 97,
       "receiver": "router",
       "method": "patch",
       "path": "/",
@@ -86958,9 +86999,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e57a8b60667cf6cda509",
+      "id": "registration:fcd6de1607973dae3db6",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 150,
+      "line": 155,
       "receiver": "router",
       "method": "delete",
       "path": "/",
@@ -86970,9 +87011,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:525bdd24564e079539c4",
+      "id": "registration:9fc7843e1173f7da46d6",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 171,
+      "line": 176,
       "receiver": "router",
       "method": "get",
       "path": "/activity",
@@ -88829,8 +88870,8 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:665048bd290cc8c6c256",
-      "registrationId": "registration:0fbc24249a4d7cd390d5",
+      "id": "route:013e464269f0d39b9191",
+      "registrationId": "registration:b10971f6e421c8731c7d",
       "sourcePath": "backend/src/routes/admin.ts",
       "line": 8,
       "method": "GET",
@@ -88848,8 +88889,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:76ffe8efc581263f9ee8",
-      "registrationId": "registration:ca17e59f97fca2161532",
+      "id": "route:5e25b8f09931d528cf21",
+      "registrationId": "registration:c766e6f7ed0fd170e085",
       "sourcePath": "backend/src/routes/admin.ts",
       "line": 12,
       "method": "GET",
@@ -88867,8 +88908,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9e8dc1891631ae051cde",
-      "registrationId": "registration:648a09d6a75844c7cc6e",
+      "id": "route:0f0d84dfcddc9901a2aa",
+      "registrationId": "registration:bf580d2617ed8e48a5f7",
       "sourcePath": "backend/src/routes/admin.ts",
       "line": 36,
       "method": "GET",
@@ -88886,8 +88927,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:d84623abf49456a017e5",
-      "registrationId": "registration:201b8c56b9552fecdf08",
+      "id": "route:3aba71eb7c22fc7f3c70",
+      "registrationId": "registration:b932def42cba5e16898f",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 62,
       "method": "GET",
@@ -88904,8 +88945,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0a0284c5a74cbf501fbc",
-      "registrationId": "registration:b85e8c26d03a57695605",
+      "id": "route:e78a2daecc8187496f0e",
+      "registrationId": "registration:76b03f0a73313e835ba7",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 78,
       "method": "GET",
@@ -88921,8 +88962,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:bba2aca96ec2ca70fed6",
-      "registrationId": "registration:c45273bba3ab8628cb1f",
+      "id": "route:2016ceeff0cc2e94d77b",
+      "registrationId": "registration:50b1abd9440d7d0028ff",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 84,
       "method": "GET",
@@ -88938,8 +88979,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0b785076702e742cbc73",
-      "registrationId": "registration:f896b2e90ae8882c0975",
+      "id": "route:74dd8739eab9b883a7cf",
+      "registrationId": "registration:7abaf242fc205adb415b",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 89,
       "method": "GET",
@@ -88955,8 +88996,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:72ef085570ba5de5e24a",
-      "registrationId": "registration:fc5df4f1908384bdb8ff",
+      "id": "route:fb6b7446cfd4539b5ab0",
+      "registrationId": "registration:1545f5f20acd66b475ef",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 94,
       "method": "GET",
@@ -88972,8 +89013,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3daa0fad37346c987f6a",
-      "registrationId": "registration:c50f77c6f163abcdf2a4",
+      "id": "route:a468ea8a6ec65f22c055",
+      "registrationId": "registration:cd75bdedebf9951e3d58",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 99,
       "method": "GET",
@@ -88989,8 +89030,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:214953ad2f1e9522328e",
-      "registrationId": "registration:4902070c798a663e5117",
+      "id": "route:ae40621627894d36e4c1",
+      "registrationId": "registration:866184854461486dfe7a",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 104,
       "method": "GET",
@@ -89006,8 +89047,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:14666c6eb41f67efe14c",
-      "registrationId": "registration:c1353e3c6f6a8bb4a5bb",
+      "id": "route:84c3bc82108826d08767",
+      "registrationId": "registration:fb0a192bfc77781f0362",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 106,
       "method": "GET",
@@ -89023,8 +89064,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b12ae87ec46e77275926",
-      "registrationId": "registration:74645e46f3311e91bf68",
+      "id": "route:c60238ed04ca9e43779e",
+      "registrationId": "registration:041155b74eb87d13e990",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 111,
       "method": "POST",
@@ -89040,8 +89081,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b5d47ee2aa0f34c25232",
-      "registrationId": "registration:24bca666913322e7b94c",
+      "id": "route:d4fcdab851efe53c8971",
+      "registrationId": "registration:493bc573fad9e34c718a",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 116,
       "method": "POST",
@@ -89057,8 +89098,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:27798bed098536d45c27",
-      "registrationId": "registration:c858aa80467d96e39f5d",
+      "id": "route:915c0fcf16684a7e7f5b",
+      "registrationId": "registration:931ed52733f7ccf55495",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 123,
       "method": "POST",
@@ -89074,8 +89115,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:742ebcda5a75b524a0c8",
-      "registrationId": "registration:42bc8cf3d53c49defa74",
+      "id": "route:7e5b4a3dfdb76b83286e",
+      "registrationId": "registration:186b26c85e6dc047ec67",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 128,
       "method": "POST",
@@ -89091,8 +89132,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:eead26a5e896f06a813b",
-      "registrationId": "registration:a6d8c257fde99ca809c6",
+      "id": "route:ce1e0330c55c8b1282aa",
+      "registrationId": "registration:8645d7e373b761d6b9cf",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 133,
       "method": "GET",
@@ -89108,8 +89149,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:28e54a3d12ffe8340315",
-      "registrationId": "registration:b2fbba998abcc2adeb64",
+      "id": "route:caa603c8575d147131b5",
+      "registrationId": "registration:cc6f229ad1bf9391d691",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 138,
       "method": "POST",
@@ -89125,8 +89166,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:dd97468eafe86d3bcaab",
-      "registrationId": "registration:7d17633c341d48a6c79a",
+      "id": "route:6300fc379cfdd85d7c5f",
+      "registrationId": "registration:b527223c2ee869c896f8",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 143,
       "method": "POST",
@@ -89142,8 +89183,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1b9efd3d76764455700b",
-      "registrationId": "registration:5a868788982b3ed0198d",
+      "id": "route:ca7bf94a0069a6317da4",
+      "registrationId": "registration:4def0d529ff09e8ec583",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 148,
       "method": "GET",
@@ -89159,8 +89200,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:2a3598035c732124fd3a",
-      "registrationId": "registration:17fecd7b11201d2b5aa4",
+      "id": "route:4a0b75bb57d669188e80",
+      "registrationId": "registration:fed97b3d4d7f8a919ab4",
       "sourcePath": "backend/src/routes/operations.ts",
       "line": 153,
       "method": "GET",
@@ -89686,10 +89727,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4bc0e23e104630ed4e5c",
-      "registrationId": "registration:4a39ed3c2303fab218e8",
+      "id": "route:5e735e53bfad9083c133",
+      "registrationId": "registration:5e8ba56ea0d99a7b6b31",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 77,
+      "line": 82,
       "method": "GET",
       "path": "/api/profile",
       "mountChain": [
@@ -89703,10 +89744,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ba7b80f484fc1017d478",
-      "registrationId": "registration:f28ef17430a92b653e01",
+      "id": "route:12ac382561eb945d9f64",
+      "registrationId": "registration:8298405180807955989f",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 92,
+      "line": 97,
       "method": "PATCH",
       "path": "/api/profile",
       "mountChain": [
@@ -89720,10 +89761,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b7eac9f5218793a2dfeb",
-      "registrationId": "registration:e57a8b60667cf6cda509",
+      "id": "route:e5bc02a80b71b28ccca9",
+      "registrationId": "registration:fcd6de1607973dae3db6",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 150,
+      "line": 155,
       "method": "DELETE",
       "path": "/api/profile",
       "mountChain": [
@@ -89737,10 +89778,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b677f84027e9452bd2f1",
-      "registrationId": "registration:525bdd24564e079539c4",
+      "id": "route:9d925dad1625cc1c04c7",
+      "registrationId": "registration:9fc7843e1173f7da46d6",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 171,
+      "line": 176,
       "method": "GET",
       "path": "/api/profile/activity",
       "mountChain": [
@@ -91174,10 +91215,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b00fdef94de38271649c",
-      "registrationId": "registration:a1a95c2e961a2144c942",
+      "id": "route:356b676eec0b4b85c046",
+      "registrationId": "registration:d4bc00e304a0c23a4914",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 7,
+      "line": 12,
       "method": "GET",
       "path": "/api/notifications",
       "mountChain": [
@@ -91191,10 +91232,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8cbcefc8c0dda41b5ef9",
-      "registrationId": "registration:9a730bb2495ae26c3a8f",
+      "id": "route:10e52d628a98840ae672",
+      "registrationId": "registration:faf44843f9635af6db85",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 23,
+      "line": 28,
       "method": "GET",
       "path": "/api/notifications/unread-count",
       "mountChain": [
@@ -91208,10 +91249,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a7de3af0c2d5c7afe232",
-      "registrationId": "registration:3f20f755bd10c4d13b30",
+      "id": "route:33ee44b4416d97d6ad36",
+      "registrationId": "registration:02175b4885cbb4b818e4",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 38,
+      "line": 43,
       "method": "PATCH",
       "path": "/api/notifications/:id/read",
       "mountChain": [
@@ -91225,10 +91266,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:69935704261729cb954f",
-      "registrationId": "registration:5a94943de445aba20032",
+      "id": "route:ec3c59b5e825a8e9e540",
+      "registrationId": "registration:bffbc69c1588348608cc",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 53,
+      "line": 58,
       "method": "PATCH",
       "path": "/api/notifications/read-all",
       "mountChain": [
@@ -91242,10 +91283,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b74ae85c0f7dee43b8f1",
-      "registrationId": "registration:c7f5c3123bbd9e841cfc",
+      "id": "route:b0055f923810c886eaad",
+      "registrationId": "registration:faf7e0a90c548d15a6ef",
       "sourcePath": "backend/src/routes/notifications.ts",
-      "line": 68,
+      "line": 73,
       "method": "DELETE",
       "path": "/api/notifications/:id",
       "mountChain": [
@@ -99481,7 +99522,7 @@
     {
       "id": "test-suite:c947ec396bf7a93fba06",
       "sourcePath": "backend/src/middleware/admin.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -99656,6 +99697,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:7f7bfe6ac08b7ec8686c",
+      "sourcePath": "backend/src/security/accountRoutes.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9e4fbec6266f2a8ae08d",
       "sourcePath": "backend/src/security/ownedRunPersistence.test.ts",
       "declaredTests": 2,
@@ -99707,7 +99755,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 17,
+      "declaredTests": 20,
       "skipLocations": [],
       "focusLocations": []
     },
