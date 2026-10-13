@@ -647,8 +647,10 @@ describe(
 
         assert.match(
           memory,
-          /\.delete\s*\(\s*\)[\s\S]*\.eq\s*\(\s*['"]user_id['"]\s*,\s*outcome\.userId\s*,?\s*\)[\s\S]*\.lt\s*\(\s*['"]updated_at['"]\s*,\s*cutoff\s*,?\s*\)/s,
+          /\.delete\s*\(\s*\)[\s\S]*\.eq\s*\(\s*['"]user_id['"]\s*,\s*context\.userId\s*,?\s*\)[\s\S]*\.lt\s*\(\s*['"]updated_at['"]\s*,\s*cutoff\s*,?\s*\)/s,
+          'Retention must use the captured server owner context and finite cutoff',
         );
+        assert.match(memory,/createTenantContext\(\{userId:outcome\.userId,via:'persisted_owner'\}\)/,'Owner is captured before asynchronous persistence');
       },
     );
 

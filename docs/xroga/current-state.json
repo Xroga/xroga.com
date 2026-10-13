@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "1a8a5b2c43c8f058b4b8461273e0400c969b89f4",
-    "sourceTimestampUtc": "2026-10-14T00:48:16+05:00",
-    "auditStartedUtc": "2026-10-13T20:15:06.282Z",
+    "sha": "a59583adc645c284096db002d1fca5e0ee735a38",
+    "sourceTimestampUtc": "2026-10-14T01:15:38+05:00",
+    "auditStartedUtc": "2026-10-13T21:04:46.051Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -3906,6 +3906,7 @@
         "backend/src/ai/buildOutcomeMemory.ts:10",
         "backend/src/ai/buildOutcomeRoutingMemory.ts:9",
         "backend/src/ai/buildStrategyMemory.ts:5",
+        "backend/src/security/tenantIsolation.local.integration.ts:22",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:24"
       ],
       "reachable": true,
@@ -3917,6 +3918,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/reliability/step7cReliability.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -20503,7 +20505,7 @@
       "id": "surface:9f90d9fb1a702b164831",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/ownedRunPersistence.ts",
-      "sha256": "db5ba61f08ac0859a9b2f60d3ce5f4d23f044be3d0fbdad409885cf2e528973f",
+      "sha256": "afee97a186c1c4b90314d1530dfa6d30c77b28eefa315463e9fdfb6f8cb3adce",
       "symbols": [
         "OwnedUniversalRecordKind",
         "inserted",
@@ -99840,7 +99842,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 29,
+      "declaredTests": 30,
       "skipLocations": [],
       "focusLocations": []
     },

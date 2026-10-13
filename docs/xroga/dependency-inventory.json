@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1a8a5b2c43c8f058b4b8461273e0400c969b89f4",
+  "source_sha": "a59583adc645c284096db002d1fca5e0ee735a38",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12349,7 +12349,7 @@
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "sha256": "db5ba61f08ac0859a9b2f60d3ce5f4d23f044be3d0fbdad409885cf2e528973f"
+      "sha256": "afee97a186c1c4b90314d1530dfa6d30c77b28eefa315463e9fdfb6f8cb3adce"
     },
     {
       "path": "backend/src/security/ownedTerminalPersistence.ts",
@@ -12373,7 +12373,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "cab98666e533d7b80259253529c2c75f9800b084da65068c422da2c6f443e5e4"
+      "sha256": "72e7999e1912a641b88f891cf2d3f2542b229f1a4775a2886870d7e9afac463a"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -17732,21 +17732,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 23,
+      "line": 24,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 23,
+      "line": 24,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 148,
+      "line": 149,
       "credentialsInUrl": false
     },
     {

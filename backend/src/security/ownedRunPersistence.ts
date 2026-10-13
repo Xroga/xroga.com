@@ -46,8 +46,10 @@ async function persistOwnerBoundRecord(client: SupabaseClient, context: TenantCo
   if(typeof row[key]!=='string'||!row[key]||String(row[key]).length>2000)throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
   const inserted = await client.from(table).upsert(row,{onConflict:key,ignoreDuplicates:true});
   if (inserted.error) throw new TenantAccessError(503,'RESOURCE_ACCESS_UNAVAILABLE');
-  const query=appendOnly?client.from(table).select(key):client.from(table).update(row).select(key);
-  const {data,error} = await query.eq(key,row[key]).eq('user_id',scope.userId);
+  let query=appendOnly?client.from(table).select(key):client.from(table).update(row).select(key);
+  query=query.eq(key,row[key]).eq('user_id',scope.userId);
+  if(appendOnly)query=query.eq('run_id',row.run_id).eq('project_id',row.project_id);
+  const {data,error} = await query;
   if (error) throw new TenantAccessError(503,'RESOURCE_ACCESS_UNAVAILABLE');
   if (data?.length !== 1) throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
 }

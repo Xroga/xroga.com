@@ -19,6 +19,7 @@ import { planArchitecture } from '../synthesis/architecturePlan.js';
 import { buildOutcomeFromTerminalRun,SupabaseBuildOutcomeStore } from '../ai/buildOutcomeMemory.js';
 import { createEvidence } from '../synthesis/researchEvidence.js';
 import type { PlanMutation } from '../synthesis/dynamicPlanning.js';
+import { BUILD_OUTCOME_RETENTION_MS } from '../ai/learningPolicy.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -164,8 +165,20 @@ test('real planning mutation replay is append-only and a foreign collision is no
   assert.equal((await a.saveMutations(actor,runId,[{...mutation,reason:'Forbidden replay change'}])).saved,true);
   assert.equal((await b.saveMutations(attacker,runId,[mutation])).saved,false);
   assert.equal((await a.saveMutations(actor,randomUUID(),[mutation])).saved,false);
+  assert.equal((await a.saveMutations({...actor,projectId:randomUUID()},runId,[mutation])).saved,false);
   assert.deepEqual(await b.loadMutations(attacker,runId),[]);
   const stored=await admin.from('plan_mutations').select('user_id,reason').eq('mutation_key',mutation.mutationKey).single();assert.equal(stored.error,null);assert.equal(stored.data?.user_id,owner.id);assert.equal(stored.data?.reason,'OWNER_MUTATION_CANARY');
+});
+
+test('real outcome retention deletes only expired records owned by its captured actor',async()=>{
+  const [owner,other]=users,store=new SupabaseBuildOutcomeStore(),ids=[randomUUID(),randomUUID()];
+  const old=new Date(Date.now()-BUILD_OUTCOME_RETENTION_MS-86400000).toISOString();
+  for(let index=0;index<users.length;index++)await store.upsert(buildOutcomeFromTerminalRun({runId:ids[index],userId:users[index].id,terminalStatus:'error',iterationCount:0,output:null,routingOutcomes:[]}));
+  assert.equal((await admin.from('build_outcomes').update({updated_at:old}).in('run_id',ids)).error,null);
+  const expired=await admin.from('build_outcomes').select('run_id,updated_at').in('run_id',ids);assert.equal(expired.error,null);assert.equal(expired.data?.length,2);assert.ok(expired.data?.every(row=>Date.parse(row.updated_at)<Date.now()-BUILD_OUTCOME_RETENTION_MS));
+  await store.upsert(buildOutcomeFromTerminalRun({runId:randomUUID(),userId:owner.id,terminalStatus:'error',iterationCount:0,output:null,routingOutcomes:[]}));
+  const own=await admin.from('build_outcomes').select('run_id').eq('run_id',ids[0]).maybeSingle();assert.equal(own.error,null);assert.equal(own.data,null);
+  const foreign=await admin.from('build_outcomes').select('run_id,user_id').eq('run_id',ids[1]).single();assert.equal(foreign.error,null);assert.equal(foreign.data?.user_id,other.id);
 });
 test('real terminal autosave collision denies foreign id and preserves transcript',async()=>{
   const [owner,other]=users,id=`fixture-${randomUUID()}`;
