@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a1d4c7f96fda4fee75eef1b563e7477fe1e69c61",
+  "source_sha": "131ac75600d28f3c90f1c573344a75f76cab9be0",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12782,7 +12782,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/access.ts",
-      "sha256": "d3a61e4a1e342dfd1d118c5a862ea6fe4ea86dd8a32ddbf5ab309c7a24a2c846"
+      "sha256": "c01a9bdbac40ebe84699b83bcb815b27a41d1644322ff36396a29074ba23b74f"
     },
     {
       "path": "backend/src/synthesis/livePreview/agentBridge.ts",

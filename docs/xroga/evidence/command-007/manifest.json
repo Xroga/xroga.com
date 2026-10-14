@@ -1,6 +1,19 @@
 {
   "command": "007",
   "status": "IN_PROGRESS_RELEASE_BLOCKED",
+  "integratedFirstRun": {
+    "sha":"131ac75600d28f3c90f1c573344a75f76cab9be0",
+    "aggregateCi":"https://github.com/Xroga/xroga.com/actions/runs/38577911283",
+    "result":"FAIL_RUNTIME_INVENTORY_DRIFT_NOT_WAIVED",
+    "backendTests":2807,
+    "frontendTests":1035,
+    "bothBuildsTypesAndLint":"PASS",
+    "cause":"Runtime inventory not regenerated after final access-source correction",
+    "goldenCi":"https://github.com/Xroga/xroga.com/actions/runs/38577920268",
+    "goldenAttempt1":"FAIL_EXISTING_GOOGLE_FONT_LOADER_BOUNDED_RETRY_PENDING",
+    "vercel":"CANCELED_BY_IGNORED_BUILD_STEP",
+    "pr":"DRAFT_MERGEABLE_NO_RELEASE_AUTHORIZATION"
+  },
   "continuation20261014": {
     "localMainIntegration": "a1d4c7f96fda4fee75eef1b563e7477fe1e69c61",
     "mainIntegrated": "6aa3963b972fbb22f45398d0e9b7cf17c74bef1e",
