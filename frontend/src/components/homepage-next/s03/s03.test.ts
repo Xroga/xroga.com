@@ -3,7 +3,10 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
 import {
   AD_GROUPS,
+  AI_COPY,
   AI_QUESTIONS,
+  BRIEF,
+  PRODUCT_FACTS,
   AUDIENCES,
   BRAND,
   CHANNELS,
@@ -110,7 +113,7 @@ test('no generic slogans, no repeated "sample data", no promises of rankings or 
     assert.doesNotMatch(ALL, banned, `found ${banned}`);
   }
   // an explicit statement that nothing is guaranteed is allowed; a promise is not
-  assert.match(ALL, /nothing here is a guarantee/);
+  assert.match(ALL, /nothing guarantees a mention or a citation/);
 });
 
 test('both businesses are fictional, said once, and every domain is reserved (.example)', () => {
@@ -118,7 +121,7 @@ test('both businesses are fictional, said once, and every domain is reserved (.e
     if (!/^(simple-icons|integrations-catalog)/.test(d)) assert.match(d, /\.example$/, d);
   assert.match(COPY.about, /fictional/);
   assert.match(COPY.about, /nothing is published, sent or spent/);
-  assert.equal(SITE.domain, 'northlane.example');
+  assert.equal(SITE.domain, 'peakform.example');
   assert.equal(BRAND.domain, 'emberroasters.example');
 });
 
@@ -128,7 +131,7 @@ test('five search lenses cover technical, content, AI answers, links and local',
     LENSES.map((l) => l.id),
     ['health', 'content', 'ai', 'links', 'local'],
   );
-  for (const l of LENSES) assert.ok(words(l.status) <= 3, l.status);
+  for (const l of LENSES) assert.ok(l.expert.length > 0 && words(l.label) <= 4, l.label);
 });
 
 test('site health: every issue sits on a real internal link between real pages', () => {
@@ -143,19 +146,46 @@ test('site health: every issue sits on a real internal link between real pages',
   }
 });
 
-test('content: gaps are queries Northlane has no page for; intents are all represented', () => {
-  for (const q of QUERIES) assert.equal(q.gap, q.you === 'No page', q.id);
-  assert.deepEqual([...new Set(QUERIES.map((q) => q.intent))].sort(), ['buying', 'comparing', 'learning']);
+test('keywords: gaps are buyer searches PeakForm has no page for; compare, buy, local and learn are all represented', () => {
+  for (const q of QUERIES) assert.equal(q.gap, q.you === 'No page answers this', q.id);
+  assert.deepEqual([...new Set(QUERIES.map((q) => q.intent))].sort(), ['buy', 'compare', 'learn', 'local']);
+  // every gap has a page brief: heading, what it covers, a FAQ, internal links and product facts
+  for (const q of QUERIES.filter((x) => x.gap)) {
+    const b = BRIEF[q.id];
+    assert.ok(b && b.covers.length === 3 && b.faq && b.link && b.facts, q.id);
+  }
+  // the opening keyword is the same buyer question the AI lens asks
+  assert.ok(AI_QUESTIONS[0].q.toLowerCase().startsWith(QUERIES[0].q.toLowerCase()));
 });
 
-test('AI answers: explicit cited / not cited / not tested / conflicting states, no guaranteed citation', () => {
+test('AI answers: cited, mentioned-only, not cited and not checked are distinct; nothing is promised', () => {
   const states = new Set(AI_QUESTIONS.flatMap((q) => [...q.sources.map((x) => x.state), q.you]));
-  for (const s of ['cited', 'absent', 'untested', 'conflicting']) assert.ok(states.has(s as never), s);
+  for (const s of ['cited', 'mentioned', 'absent', 'untested']) assert.ok(states.has(s as never), s);
+  for (const q of AI_QUESTIONS) for (const a of q.answer) if (a.cite) assert.equal(q.sources[a.cite - 1].state, 'cited', `${q.id}: ${a.text}`);
+  assert.match(AI_COPY.recheck, /no new result is shown/);
+  assert.doesNotMatch(ALL, /now recommended|recommends you|AI recommends|rank(?:ed)? #?1|top of ChatGPT|guaranteed (?:citation|mention|ranking)/i);
+});
+
+test('V11: the AI lens leads with a protein buyer, and the boiler-repair scene is gone everywhere in S03', () => {
+  assert.equal(AI_QUESTIONS[0].q, 'Which whey protein should I buy for the gym?');
+  assert.equal(initialState().sample, AI_QUESTIONS[0].id);
+  assert.doesNotMatch(ALL, /boiler|Northlane|heating engineer|Headingley/i);
+  assert.equal(SITE.name, 'PeakForm Nutrition');
+  // one coherent example: every search lens names the same business, and its product page carries the facts answers cite
+  assert.equal(PRODUCT_FACTS.length, 3);
+  assert.ok(BEATS.some((b) => b.caption === 'Checking how AI answers find product information.'));
+  assert.ok(BEATS.some((b) => b.steps.some((st) => st.actions.some((a) => a.type === 'set' && (a.patch as Partial<State>).aiCheck === true))));
+});
+
+test('site health tells broken, slow, hidden by mistake and hidden on purpose apart', () => {
+  assert.deepEqual([...new Set(PAGES.map((p) => p.state))].sort(), ['blocked', 'broken', 'excluded', 'ok', 'slow']);
+  for (const i of ISSUES) assert.match(i.finding, /\.$/);
+  assert.equal(ISSUES.find((i) => i.id === 'broken')!.finding, 'This product page returns 404.');
 });
 
 test('links: typed relationships with honest semantics', () => {
   const by = (c: string) => SOURCES.filter((s) => s.cls === c);
-  assert.ok(by('verified').length >= 2 && by('rival').length >= 2 && by('mention').length >= 1 && by('prospect').length >= 1 && by('discarded').length >= 1);
+  assert.ok(by('verified').length === 1 && by('rival').length >= 2 && by('mention').length >= 1 && by('prospect').length >= 1 && by('discarded').length >= 1);
   // only verified relationships have a date observed; prospects and competitor-only sources do not link to the site
   for (const s of SOURCES) assert.equal(s.seen !== '—', s.cls === 'verified' || s.cls === 'mention', s.id);
   // edges: verified and competitor-only carry arrows; mentions stop short; prospects and excluded draw no line
@@ -163,6 +193,9 @@ test('links: typed relationships with honest semantics', () => {
   assert.match(LINKS_SRC, /x\.cls === 'mention' \? 0\.72 : 1/);
   assert.match(LINKS_SRC, /toRival \? RIVAL_AT : SITE_AT/);
   assert.match(LINKS_SRC, /Draft · awaiting your review/);
+  // the competitor gap shows PeakForm's missing link as an open line that never arrives, never as a completed edge
+  assert.match(LINKS_SRC, /data-cls="gap" markerEnd="url\(#s03-open\)"/);
+  assert.match(LINKS_SRC, /No link from \{sel\.domain\} yet/);
   assert.match(LINKS_SRC, /A draft is not a link/);
   assert.match(by('discarded')[0].action, /breaks search policies/);
 });
@@ -234,7 +267,7 @@ test('exactly one route into the product, plus the integrations directory', () =
 test('lenses and missions keep every selection; switching never replays', () => {
   const s = run(
     initialState(),
-    { type: 'set', patch: { issue: 'noindex', query: 'combi', sample: 'cost' } },
+    { type: 'set', patch: { issue: 'blocked', query: 'beginners', sample: 'trust' } },
     { type: 'mode', mode: 'mentions' },
     { type: 'lens', lens: 'health' },
     { type: 'mission', mission: 'social' },
@@ -242,8 +275,8 @@ test('lenses and missions keep every selection; switching never replays', () => 
     { type: 'lens', lens: 'links' },
     { type: 'mission', mission: 'search' },
   );
-  assert.equal(s.issue, 'noindex');
-  assert.equal(s.query, 'combi');
+  assert.equal(s.issue, 'blocked');
+  assert.equal(s.query, 'beginners');
   assert.equal(s.mode, 'mentions');
   assert.equal(s.source, 'forum');
   assert.equal(s.audience, 'office');
@@ -319,6 +352,9 @@ test('the tour hands over on any input, pauses offscreen and hidden, and never r
   assert.match(SHELL, /min-width: 701px/);
   assert.match(TOUR, /Skip/);
   assert.match(TOUR, /Replay/);
+  // BUG-07: a paused beat resumes where it stopped; steps already shown are not replayed
+  assert.match(TOUR, /if \(from === 0 \|\| step\.at > from\)/);
+  assert.match(TOUR, /BEATS\[i\]\.dur - from/);
 });
 
 test('no stray timers, reduced motion respected, header-aware', () => {
@@ -329,6 +365,46 @@ test('no stray timers, reduced motion respected, header-aware', () => {
   assert.match(CSS, /\.section\[data-under\] \.shield/);
   assert.doesNotMatch(SHELL + TOUR, /addEventListener\('wheel'|scrollIntoView\(|scrollTo\(/);
   assert.match(CSS, /@keyframes sceneIn \{\s*from \{\s*opacity: 0\.5;/);
+});
+
+/* ------------------------------------------------------------------------------- V11 regressions (bugs) */
+const HOMEPAGE_CSS = read('../../../styles/homepage-coding.css');
+const hoverRules = (css: string) => [...css.matchAll(/([^{}]*:hover[^{}]*)\{([^{}]*)\}/g)].map((m) => ({ sel: m[1].trim(), body: m[2] }));
+
+test('BUG-01: the homepage button lift never reaches S03 (it replaced S03 transforms and made controls vibrate)', () => {
+  const lift = hoverRules(HOMEPAGE_CSS).filter((r) => /translateY\(-2px\)/.test(r.body) && /:where\(button/.test(r.sel));
+  assert.ok(lift.length >= 1);
+  for (const r of lift) assert.match(r.sel, /:where\(:not\(#s03 \*\)\)/, r.sel);
+  assert.match(HOMEPAGE_CSS, /:where\(button,\.xv-hc-btn-primary,\.xv-hc-btn-ghost\):where\(:not\(#s03 \*\)\):not\(:disabled\):active/);
+});
+
+test('BUG-02: no S03 hover state moves or resizes what is under the pointer', () => {
+  for (const r of hoverRules(CSS))
+    assert.doesNotMatch(r.body, /transform|translate|scale|rotate|width|height|padding|margin|top:|left:|font-size|max-height/, `${r.sel} {${r.body}}`);
+  // graph node labels keep their line reserved; hover only changes opacity and colour
+  assert.match(CSS, /\.src small \{[^}]*height: 14px;[^}]*opacity: 0;/);
+});
+
+test('BUG-03: nothing in S03 tracks the pointer; citation lines are measured on layout changes only', () => {
+  assert.doesNotMatch(ALL, /onPointerMove|onMouseMove|pointermove|mousemove|onMouseEnter|onPointerEnter/);
+  const AI_SRC = read('./search/Ai.tsx');
+  assert.match(AI_SRC, /new ResizeObserver\(measure\)/);
+  assert.match(AI_SRC, /ro\.disconnect\(\)/);
+});
+
+test('BUG-04/05: on phones the evidence button sits under the stage, and the card behind never shows its words', () => {
+  assert.ok(SEARCH.indexOf('className={s.evidenceBtn}') > SEARCH.indexOf('className={s.scene}'));
+  assert.match(SEARCH, /<\/div>\s*<\/div>\s*\{\/\* phones: the evidence opens as a sheet/);
+  assert.doesNotMatch(CSS, /:is\([^)]*\.evidenceBtn[^)]*\) \{\s*position: absolute/);
+  assert.match(
+    CSS,
+    /\.feed\[data-pos='back'\] :is\(\.feedTop, \.feedCopy\),\s*\.story\[data-pos='back'\] :is\(\.storyBar, \.storyLine, \.storyCta\) \{\s*visibility: hidden;/,
+  );
+});
+
+test('BUG-06: animated figures and citation threads fade in place instead of sliding over neighbouring text', () => {
+  assert.match(CSS, /\.gate b \{[^}]*animation: textIn/);
+  for (const sel of ['answerCard', 'source', 'product', 'flow']) assert.doesNotMatch(CSS.split(`.${sel} {`)[1].split('}')[0], /popIn|draftIn|srcIn/, sel);
 });
 
 test('controls carry roles and names', () => {

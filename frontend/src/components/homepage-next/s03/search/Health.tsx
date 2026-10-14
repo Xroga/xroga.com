@@ -1,22 +1,22 @@
 'use client';
 
 /**
- * Site health: a small crawlable site. "Inspect crawl" sends a tracer once along the internal links; it stops where a
- * link is broken. Each issue sits on the exact link it affects. "Preview repair" draws the proposed change as a dashed
- * proposal; nothing is applied, and the verification step says what would have to pass.
+ * Fix my website: a small crawlable store. "Inspect crawl" sends a tracer once along the internal links; it stops at the
+ * broken one. Four page states are told apart by shape and words, not colour alone: can't be opened (404), opens slowly,
+ * hidden by mistake, and hidden on purpose (not an issue). The inspector answers three questions in order: what was
+ * checked, what is wrong, and what Xroga would prepare. A repair is drawn as a dashed proposal; nothing is applied.
  */
 import type { Dispatch } from 'react';
-import { ISSUES, LINKS, PAGES, issueOf } from '../data';
+import { CRAWL, ISSUES, LINKS, PAGES, PAGE_STATE, issueOf } from '../data';
 import { rovingKeys } from '../keys';
 import type { Action, State } from '../state';
 import s from '../S03.module.css';
 
 const at = (id: string) => PAGES.find((p) => p.id === id)!;
-const FIXED = { x: 74, y: 29 };
 const edge = (a: string, b: string) => path(at(a), at(b));
 const path = (p: { x: number; y: number }, q: { x: number; y: number }) => {
-  const x1 = p.x + 6;
-  const x2 = q.x - 6;
+  const x1 = p.x + 5;
+  const x2 = q.x - 5;
   return `M${x1} ${p.y} C${(x1 + x2) / 2} ${p.y} ${(x1 + x2) / 2} ${q.y} ${x2} ${q.y}`;
 };
 
@@ -31,13 +31,17 @@ export function HealthStage({ st, dispatch }: { st: State; dispatch: Dispatch<Ac
           </svg>
           {st.crawl ? 'Crawl again' : 'Inspect crawl'}
         </button>
-        <span className={s.barNote}>7 pages · 7 internal links</span>
+        <span className={s.barNote}>
+          {CRAWL.pages} pages · {CRAWL.links} internal links
+        </span>
       </div>
       <div className={s.plot}>
         <svg className={s.graph} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
           {LINKS.map(([a, b]) => {
             const issue = ISSUES.find((i) => i.from === a && i.to === b);
-            return <path key={`${a}-${b}`} d={edge(a, b)} className={s.crawlEdge} data-issue={issue?.id} data-on={issue?.id === sel.id || undefined} />;
+            return (
+              <path key={`${a}-${b}`} d={edge(a, b)} className={s.crawlEdge} data-to={at(b).state} data-on={(issue && issue.id === sel.id) || undefined} />
+            );
           })}
           {/* the tracer: one pass per run, stopping at the broken link */}
           {st.crawl > 0 &&
@@ -46,41 +50,36 @@ export function HealthStage({ st, dispatch }: { st: State; dispatch: Dispatch<Ac
                 key={`t-${st.crawl}-${a}-${b}`}
                 d={edge(a, b)}
                 className={s.tracer}
-                data-stop={ISSUES.find((x) => x.from === a && x.to === b)?.id === 'broken' || undefined}
-                style={{ animationDelay: `${(at(a).id === 'home' ? 0 : 1) * 380 + i * 60}ms` }}
+                data-stop={at(b).state === 'broken' || undefined}
+                style={{ animationDelay: `${(a === 'home' ? 0 : 1) * 380 + i * 50}ms` }}
               />
             ))}
-          {st.repair && sel.id === 'broken' && <path d={path(at('services'), FIXED)} className={s.proposal} />}
+          {st.repair && sel.id === 'broken' && <path d={edge('protein', 'whey')} className={s.proposal} />}
         </svg>
 
         {PAGES.map((p) => {
           const issue = ISSUES.find((i) => i.to === p.id);
+          const flag = p.state !== 'ok' ? PAGE_STATE[p.state] : null;
           return (
             <span
               key={p.id}
               className={s.page}
               data-home={p.id === 'home' || undefined}
-              data-issue={issue?.id}
-              data-on={issue?.id === sel.id || undefined}
+              data-state={p.state}
+              data-on={(issue && issue.id === sel.id) || undefined}
               style={{ left: `${p.x}%`, top: `${p.y}%` }}
               aria-hidden="true"
             >
               <i />
               <code>{p.path}</code>
-              {issue && <em>{issue.id === 'broken' ? '404' : issue.id === 'noindex' ? 'noindex' : 'no schema'}</em>}
+              {flag && <em>{flag.tag}</em>}
+              {st.repair && issue?.id === 'broken' && sel.id === 'broken' && <em data-proposed="">→ /protein/whey-isolate-1kg · proposed</em>}
             </span>
           );
         })}
-        {st.repair && sel.id === 'broken' && (
-          <span className={s.page} data-proposed="" style={{ left: `${FIXED.x}%`, top: `${FIXED.y}%` }} aria-hidden="true">
-            <i />
-            <code>/services/boiler-repairs</code>
-            <em>200 · proposed</em>
-          </span>
-        )}
       </div>
 
-      <div className={s.issueRow} role="radiogroup" aria-label="Issues" onKeyDown={rovingKeys}>
+      <div className={s.issueRow} role="radiogroup" aria-label="Issues found" onKeyDown={rovingKeys}>
         {ISSUES.map((i) => (
           <button
             key={i.id}
@@ -105,11 +104,24 @@ export function HealthInspector({ st, dispatch }: { st: State; dispatch: Dispatc
   const i = issueOf(st.issue);
   return (
     <>
-      <span className={s.insKicker} data-tone="warn">
-        {i.label}
-      </span>
-      <code className={s.insCode}>{i.status}</code>
-      <b className={s.insTitle}>{i.consequence}</b>
+      <ol className={s.steps}>
+        <li>
+          <small>Checked</small>
+          <span>
+            {CRAWL.pages} pages: {CRAWL.checks.toLowerCase()}
+          </span>
+        </li>
+        <li data-tone="warn">
+          <small>Found</small>
+          <b>{i.finding}</b>
+          <code className={s.insCode}>{i.status}</code>
+          <span>{i.consequence}</span>
+        </li>
+        <li>
+          <small>Xroga prepares</small>
+          <span>{i.repair}</span>
+        </li>
+      </ol>
       <button type="button" className={s.actBtn} aria-pressed={st.repair} onClick={() => dispatch({ type: 'set', patch: { repair: !st.repair } })}>
         {st.repair ? 'Hide the repair' : 'Preview repair'}
       </button>
@@ -119,7 +131,7 @@ export function HealthInspector({ st, dispatch }: { st: State; dispatch: Dispatc
           {i.repair}
           <span className={s.verify}>
             <i aria-hidden="true" />
-            Verify after approval: {i.verify}
+            Then retest: {i.verify}
           </span>
         </span>
       )}

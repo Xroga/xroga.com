@@ -27,8 +27,10 @@ export interface State {
   repair: boolean; // proposed repair preview shown (never applied)
   query: string;
   brief: boolean;
-  sample: string;
-  aiFix: boolean;
+  sample: string; // the AI-answer question
+  aiFix: boolean; // product-facts draft shown (never published)
+  aiCheck: boolean; // recheck planned (no result is invented)
+  aiPick: number | 'product' | null; // a source (1-based) or the product card, highlighted on request
   mode: LinkMode;
   source: string;
   outreach: boolean; // outreach draft open (a draft, never a link)
@@ -45,7 +47,7 @@ export interface State {
   channel: string;
   // shared
   tool: { chapter: Chapter; id: ToolId } | null;
-  detail: 'evidence' | 'method' | 'review' | null; // one on-demand detail at a time
+  detail: 'evidence' | 'method' | 'review' | 'surfaces' | null; // one on-demand detail at a time
   sheet: Chapter | null; // phone evidence sheet
   about: boolean;
 }
@@ -66,12 +68,14 @@ const searchDefaults = () => ({
   issue: 'broken' as IssueId,
   crawl: 0,
   repair: false,
-  query: QUERIES[1].id,
+  query: QUERIES[0].id,
   brief: false,
-  sample: 'today',
+  sample: 'buy',
   aiFix: false,
+  aiCheck: false,
+  aiPick: null as State['aiPick'],
   mode: 'gap' as LinkMode,
-  source: 'guide',
+  source: 'liftmag',
   outreach: false,
   localFix: false,
 });

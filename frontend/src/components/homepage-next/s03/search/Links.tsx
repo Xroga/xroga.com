@@ -1,13 +1,14 @@
 'use client';
 
 /**
- * Authority & links: Northlane's site on the left, outside sources on an arc to the right. Shape, line pattern and the
- * legend say what each relationship is: a verified link (solid, pointing at the site), an unlinked mention (an open line
- * that stops short), a link that goes only to a competitor (dashed, to the competitor), a prospect (no line) and an
- * excluded source. Outreach produces a draft; it never draws a link that does not exist.
+ * Earn authority: PeakForm's site on the left, outside sources on an arc to the right. Shape, line pattern and words say
+ * what each relationship is: a verified link (solid, pointing at the site), an unlinked mention (an open line that stops
+ * short), a link that goes only to a competitor (dashed, to the competitor), an opportunity to contact (no line) and an
+ * unsuitable source. In the competitor gap, the chosen publisher shows the missing link to PeakForm as an open, dotted
+ * line that never arrives. Outreach produces a draft; it never draws a link that does not exist.
  */
 import type { Dispatch } from 'react';
-import { CLASS_LABEL, LINK_MODES, RIVAL, SITE, SOURCES, sourceOf, type LinkClass } from '../data';
+import { CLASS_LABEL, LEGEND, LINK_MODES, RIVAL, SITE, SOURCES, sourceOf } from '../data';
 import { rovingKeys } from '../keys';
 import type { Action, State } from '../state';
 import { Seg } from '../ui';
@@ -30,7 +31,7 @@ export function LinksStage({ st, dispatch }: { st: State; dispatch: Dispatch<Act
   const visible = SOURCES.filter((x) => shown.includes(x.cls));
   const rival = st.mode === 'gap' || st.mode === 'outreach';
   return (
-    <div className={s.links} data-mode={st.mode}>
+    <div className={s.links} data-mode={st.mode} data-draft={(st.outreach && !!sel.angle) || undefined}>
       <div className={s.stageBar}>
         <Seg
           label="Link view"
@@ -67,8 +68,8 @@ export function LinksStage({ st, dispatch }: { st: State; dispatch: Dispatch<Act
               />
             );
           })}
-          {st.outreach && sel.cls !== 'verified' && sel.cls !== 'discarded' && (
-            <path key={`draft-${sel.id}`} d={curve(sel.x, sel.y, 46, 80)} className={s.edge} data-cls="draft" />
+          {st.mode === 'gap' && sel.cls === 'rival' && (
+            <path key={`gap-${sel.id}`} d={curve(sel.x, sel.y, SITE_AT.x + 7, SITE_AT.y, 0.62)} className={s.edge} data-cls="gap" markerEnd="url(#s03-open)" />
           )}
         </svg>
 
@@ -76,6 +77,11 @@ export function LinksStage({ st, dispatch }: { st: State; dispatch: Dispatch<Act
           <b>{SITE.domain}</b>
           <small>Your site</small>
         </span>
+        {st.mode === 'gap' && sel.cls === 'rival' && (
+          <span key={`tag-${sel.id}`} className={s.gapTag} style={{ left: `${SITE_AT.x}%`, top: `${SITE_AT.y + 15}%` }}>
+            No link from {sel.domain} yet
+          </span>
+        )}
         {rival && (
           <span className={s.rivalNode} style={{ left: `${RIVAL_AT.x}%`, top: `${RIVAL_AT.y}%` }} aria-hidden="true">
             <b>{RIVAL.domain}</b>
@@ -107,21 +113,19 @@ export function LinksStage({ st, dispatch }: { st: State; dispatch: Dispatch<Act
         </div>
       </div>
 
-      {st.outreach && sel.cls !== 'verified' && sel.cls !== 'discarded' && (
+      {st.outreach && sel.angle && (
         <div key={sel.id} className={s.draft} role="note">
           <span className={s.draftState}>Draft · awaiting your review</span>
           <b>To the editor of {sel.domain}</b>
-          <span>
-            Your {sel.topic.toLowerCase()} page lists heating engineers in Leeds. Our boiler-pressure guide answers the question your readers ask most…
-          </span>
+          <span>{sel.angle}</span>
         </div>
       )}
 
       <div className={s.legend} aria-hidden="true">
-        {(['verified', 'mention', 'rival', 'prospect'] as LinkClass[]).map((c) => (
-          <span key={c} data-cls={c}>
+        {LEGEND.map((l) => (
+          <span key={l.cls} data-cls={l.cls}>
             <i />
-            {CLASS_LABEL[c].split(' · ')[0]}
+            {l.label}
           </span>
         ))}
       </div>
@@ -167,7 +171,7 @@ export function LinksInspector({ st, dispatch }: { st: State; dispatch: Dispatch
           {st.outreach ? 'Close the draft' : 'Prepare outreach'}
         </button>
       )}
-      <span className={s.insNote}>A draft is not a link. Only a re-check of the live page marks a link as verified.</span>
+      <span className={s.insNote}>A draft is not a link. Nothing is sent, and only a re-check of the live page marks a link as verified.</span>
     </>
   );
 }

@@ -1,9 +1,9 @@
 'use client';
 
 /**
- * Local presence: a service area around Northlane, nearby businesses for one local search, and the listing details
- * that decide whether Northlane shows up. Missing details are marked; "Prepare listing update" drafts the change for
- * approval. Nothing is posted to a listing, and no reviews or ratings are invented.
+ * Show up locally: PeakForm's Leeds shop on a map for one local search, nearby shops, and the listing details that decide
+ * how it shows up. One detail is missing (Saturday hours); "Prepare listing correction" drafts it from the store page for
+ * approval. This is a map listing, not an AI-answer citation. Nothing is posted, and no rating or rank is invented.
  */
 import type { Dispatch } from 'react';
 import { LOCAL } from '../data';
@@ -39,18 +39,22 @@ export function LocalStage({ st }: { st: State }) {
       </div>
       <div className={s.listing}>
         <span className={s.listHead}>
-          <b>Northlane Heating</b>
-          <small>Heating engineer · Leeds</small>
+          <b>{LOCAL.store}</b>
+          <small>{LOCAL.category}</small>
         </span>
         <ul>
           {LOCAL.fields.map((f) => (
             <li key={f.id} data-ok={f.ok || undefined} data-fixed={(!f.ok && st.localFix) || undefined}>
               <i />
-              {f.label}
+              <span>
+                {f.label}
+                <small>{f.ok ? f.value : st.localFix ? `${f.value} · drafted` : 'Not set'}</small>
+              </span>
               <em>{f.ok ? 'Complete' : st.localFix ? 'Drafted' : 'Missing'}</em>
             </li>
           ))}
         </ul>
+        <small className={s.listNote}>Map listing · not an AI-answer citation</small>
       </div>
     </div>
   );
@@ -60,13 +64,19 @@ export function LocalInspector({ st, dispatch }: { st: State; dispatch: Dispatch
   return (
     <>
       <span className={s.insKicker} data-tone="local">
-        2 details missing
+        1 detail missing
       </span>
-      <b className={s.insTitle}>Opening hours and service areas are blank, so map results can skip you.</b>
+      <b className={s.insTitle}>Saturday hours are missing, so weekend shoppers can’t tell if the shop is open.</b>
+      <span className={s.insNext}>
+        <small>Proposed correction</small>
+        {LOCAL.fix}
+      </span>
       <button type="button" className={s.actBtn} aria-pressed={st.localFix} onClick={() => dispatch({ type: 'set', patch: { localFix: !st.localFix } })}>
-        {st.localFix ? 'Discard the draft' : 'Prepare listing update'}
+        {st.localFix ? 'Discard the draft' : 'Prepare listing correction'}
       </button>
-      {st.localFix && <span className={s.insNote}>Draft only. Listing changes need your sign-in and approval.</span>}
+      <span className={s.insNote}>
+        {st.localFix ? 'Draft only. ' : ''}Business Profile isn’t in Xroga’s directory yet, so a listing change needs your own sign-in and approval.
+      </span>
     </>
   );
 }

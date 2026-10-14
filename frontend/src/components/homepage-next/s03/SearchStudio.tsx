@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * S03.A — Search & Authority Studio. A specialist's workbench in three columns: what to look at (lenses), the work itself
+ * S03 · Search & Visibility (PeakForm Nutrition). A specialist's workbench in three columns: what to look at (lenses), the work itself
  * (one stage that recomposes per lens), and the evidence with one next action (inspector). Providers appear under the
  * stage only for the lens they serve. On phones the inspector is a bottom sheet opened from the stage.
  */
@@ -74,23 +74,24 @@ export function SearchStudio({ st, dispatch }: { st: State; dispatch: Dispatch<A
               {st.lens === 'links' && <LinksStage st={st} dispatch={dispatch} />}
               {st.lens === 'local' && <LocalStage st={st} />}
             </div>
-            <button
-              ref={opener}
-              type="button"
-              className={s.evidenceBtn}
-              aria-expanded={open}
-              aria-controls="s03-search-inspector"
-              onClick={() => dispatch({ type: 'set', patch: { sheet: open ? null : 'search' } })}
-            >
-              View evidence
-            </button>
           </div>
+          {/* phones: the evidence opens as a sheet; the button sits under the stage so it never covers the work */}
+          <button
+            ref={opener}
+            type="button"
+            className={s.evidenceBtn}
+            aria-expanded={open}
+            aria-controls="s03-search-inspector"
+            onClick={() => dispatch({ type: 'set', patch: { sheet: open ? null : 'search' } })}
+          >
+            View evidence
+          </button>
           <div className={s.tools} aria-label={`Tools for ${lens.label}`}>
             <span className={s.toolsLabel}>{lens.discipline}</span>
             {lens.tools.length ? (
               lens.tools.map((id) => <ToolChip key={id} id={id} role={ROLE[st.lens]?.[id] ?? ''} chapter="search" st={st} dispatch={dispatch} />)
             ) : (
-              <NoTool>No AI-answer data provider is in Xroga’s directory yet; these answers were sampled by hand.</NoTool>
+              <NoTool>No AI-answer data provider is in Xroga’s directory yet, so these answers are illustrative.</NoTool>
             )}
           </div>
         </div>

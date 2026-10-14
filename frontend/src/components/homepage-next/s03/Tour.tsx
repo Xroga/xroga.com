@@ -4,7 +4,8 @@
  * The guided demonstration engine and its slim control bar. The tour plays once per visit when the stage is at least
  * half visible (never under reduced motion, never automatically on phones), drives the real components through BEATS,
  * and hands over the moment the visitor does anything: a click, a tap or a key anywhere in S03 stops it for good.
- * It pauses while the page is hidden or the stage is out of view and resumes from the start of the same beat.
+ * It pauses while the page is hidden or the stage is out of view and resumes where it stopped: steps already shown are
+ * not replayed, so nothing restarts or flickers when the stage comes back.
  */
 import { useCallback, useEffect, useRef, useState, type Dispatch, type RefObject } from 'react';
 import { BEATS } from './tourBeats';
@@ -17,9 +18,9 @@ export function useTour(root: RefObject<HTMLElement | null>, stage: RefObject<HT
   const [status, setStatus] = useState<TourStatus>('idle');
   const [beat, setBeat] = useState(0);
   const [played, setPlayed] = useState(false);
-  const [run, setRun] = useState(0); // bumps on every (re)start of a beat, so progress restarts with it
+  const [run, setRun] = useState(0); // bumps when a beat starts from its beginning, so progress restarts with it
   const timers = useRef<number[]>([]);
-  const live = useRef({ status: 'idle' as TourStatus, beat: 0, visible: false });
+  const live = useRef({ status: 'idle' as TourStatus, beat: 0, visible: false, started: 0, elapsed: 0 });
 
   const clear = () => {
     timers.current.forEach((t) => window.clearTimeout(t));
@@ -33,17 +34,25 @@ export function useTour(root: RefObject<HTMLElement | null>, stage: RefObject<HT
   };
 
   const playBeat = useCallback(
-    (i: number) => {
+    (i: number, from = 0) => {
       clear();
       if (i >= BEATS.length) return setLive('done', BEATS.length - 1);
       setLive('playing', i);
-      if (i === 0) setPlayed(true);
-      setRun((r) => r + 1);
-      for (const step of BEATS[i].steps) timers.current.push(window.setTimeout(() => step.actions.forEach(dispatch), step.at));
-      timers.current.push(window.setTimeout(() => playBeat(i + 1), BEATS[i].dur));
+      if (i === 0 && from === 0) setPlayed(true);
+      if (from === 0) setRun((r) => r + 1);
+      live.current.started = performance.now() - from;
+      for (const step of BEATS[i].steps)
+        if (from === 0 || step.at > from) timers.current.push(window.setTimeout(() => step.actions.forEach(dispatch), step.at - from));
+      timers.current.push(window.setTimeout(() => playBeat(i + 1), BEATS[i].dur - from));
     },
     [dispatch],
   );
+  const pause = useCallback(() => {
+    live.current.elapsed = Math.min(performance.now() - live.current.started, BEATS[live.current.beat].dur - 1);
+    clear();
+    setLive('paused');
+  }, []);
+  const resume = useCallback(() => playBeat(live.current.beat, live.current.elapsed), [playBeat]);
 
   const start = useCallback(() => playBeat(0), [playBeat]);
   const stop = useCallback((why: 'done' | 'interrupted') => {
@@ -63,29 +72,24 @@ export function useTour(root: RefObject<HTMLElement | null>, stage: RefObject<HT
         live.current.visible = e.intersectionRatio >= 0.5;
         const st = live.current.status;
         if (live.current.visible && st === 'idle' && autoplay) playBeat(0);
-        else if (live.current.visible && st === 'paused') playBeat(live.current.beat);
-        else if (e.intersectionRatio < 0.2 && st === 'playing') {
-          clear();
-          setLive('paused');
-        }
+        else if (live.current.visible && st === 'paused') resume();
+        else if (e.intersectionRatio < 0.2 && st === 'playing') pause();
       },
       { threshold: [0, 0.2, 0.5] },
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [stage, autoplay, playBeat]);
+  }, [stage, autoplay, playBeat, pause, resume]);
 
   // a hidden page never advances the tour
   useEffect(() => {
     const onVis = () => {
-      if (document.hidden && live.current.status === 'playing') {
-        clear();
-        setLive('paused');
-      } else if (!document.hidden && live.current.status === 'paused' && live.current.visible) playBeat(live.current.beat);
+      if (document.hidden && live.current.status === 'playing') pause();
+      else if (!document.hidden && live.current.status === 'paused' && live.current.visible) resume();
     };
     document.addEventListener('visibilitychange', onVis);
     return () => document.removeEventListener('visibilitychange', onVis);
-  }, [playBeat]);
+  }, [pause, resume]);
 
   // any visitor input inside S03 (other than the tour's own controls) makes manual state authoritative
   useEffect(() => {
