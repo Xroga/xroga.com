@@ -1,5 +1,13 @@
 # Command 007 acceptance checkpoint — not verified
 
+## Superseding current candidate
+
+`46bf5e5f` real isolated38614645431, golden38614645450, frontend38614645527 and Docker38614645498 PASS. Aggregate38614645707 FAIL at inventory-drift after both builds/type/lint and backend2807/frontend1041 PASS. This is retained; regenerated source and new font-loading assertion must pass complete repeated aggregate/golden and real isolated CI before any new scoped proof is recorded. No prior SHA certifies these later changes.
+
+Manual semantic register: 51 reviewed of669 candidates (11 scoped helper boundaries,2 readiness exception sites,7 buffer/non-persistence,31 reviewed gaps),618 unreviewed/649 unresolved. Nested factory/query IDs no longer collide; records pin source hashes and evidence markers. Changed resource helpers reject inherited resource names and malformed file IDs before injected clients are used. Both existing OAuth/GitHub storage writers now require shared private bucket admission and recheck create/duplicate postcondition. New actual disposable Storage public-bucket refusal case brings defined real tenant tests to37; execution pending. No live bucket/KMS/cloud mutation.
+
+Git4.0.2 facade attempt failed actual receiver resolution/import; withdrawn without publishing a broken graph or weakening tests. Existing SDK and parser-only mitigation retained. Package critical1 and reachable/unreviewed highs remain release blockers. Full criteria1–6/9 remain partial,2/10 FAIL;7/8 have scoped real isolated proof but do not replace staging. 008–010 remain NOT STARTED; NO-GO. Missing semantic source reconciliation remains explicit.
+
 ## Final scoped CI result
 
 Exact runtime231dee9d101315d331991f6a5d0f9c0652930dd6: aggregate38578929563 PASS twice all21 stages, backend2807/frontend1035/guards17/combined71,zero fail/skip; real Supabase38578936924 PASS browser3/tenant36/full69 fresh+representative upgrade/exact web+API; golden38578940415 PASS on independently equal-tree synthetic merge2ece1204. Seven safe manifests retained. Criteria7/8 pass in isolated scope; criterion9 has integrated regression proof, not every real provider journey. Criteria2/10 and other full coverage remain unresolved. PR aggregate38578940266 still FAILED from intermittent existing Google-font loading despite other frontend builds passing; it is an OPEN reliability/release blocker, not waived. The older pending/17-case candidate notes below record the progression, not current passing counts. No staging/R2/KMS/production verification or release performed.

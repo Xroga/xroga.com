@@ -16,16 +16,17 @@ export type OwnedResourceKind = keyof typeof resources;
 
 export async function requireOwnedResource(context: TenantContext, kind: OwnedResourceKind, id: string, client?: SupabaseClient): Promise<void> {
   const scope = requireTenantContext(context);
+  if (!Object.hasOwn(resources, kind) || typeof id !== 'string' || !id.trim() || id.length > 200) resourceNotFound();
   const policy = resources[kind];
-  if (!policy || typeof id !== 'string' || !id.trim() || id.length > 200) resourceNotFound();
   const { data, error } = await (client ?? getTenantSupabaseAdmin(scope)).from(policy.table).select(policy.key).eq(policy.key, id).eq('user_id', scope.userId).maybeSingle();
   if (error) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
   if (!data) resourceNotFound();
 }
 
 export async function requireOwnedFile(context: TenantContext, fileId: string, client?: SupabaseClient): Promise<void> {
-  const scope = requireTenantContext(context), db = client ?? getTenantSupabaseAdmin(scope);
-  if (!fileId.trim() || fileId.length > 200) resourceNotFound();
+  const scope = requireTenantContext(context);
+  if (typeof fileId !== 'string' || !fileId.trim() || fileId.length > 200) resourceNotFound();
+  const db = client ?? getTenantSupabaseAdmin(scope);
   // PostgREST inner join applies both predicates in one request; don't fetch the foreign file first.
   const { data, error } = await db.from('project_files').select('id, projects!inner(user_id)').eq('id', fileId).eq('projects.user_id', scope.userId).maybeSingle();
   if (error) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');

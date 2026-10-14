@@ -10,6 +10,13 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/services/integrations/credentialStorageBucket.ts",
+    "backend/src/services/integrations/githubTokenStore.ts",
+    "backend/src/services/integrations/oauthPkceStore.ts",
+    "backend/src/services/integrations/oauthPkceStore.test.ts",
+    "scripts/security/caller-reviews.mjs",
+    "docs/xroga/security/caller-reviews.json",
+    "frontend/e2e/xroga-golden/public-fixtures.spec.ts",
     "frontend/src/app/crypto/fonts.ts",
     "frontend/src/app/crypto/page.tsx",
     "frontend/src/lib/localFontBuild.test.ts",

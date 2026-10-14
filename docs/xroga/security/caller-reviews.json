@@ -1,0 +1,111 @@
+{
+  "version": "1.0",
+  "reviews": [
+    {
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "sourceSha256": "a76327fe8aa60335ae03512413de7a5dfa921c01df24d7d538c9c040fefab94e",
+      "callIds": ["c2c53ad00a2bf16323ab","c6ebceaa755ce9241fa9","2e75e200c72f254980c6","d85e6b6345b22ef727df","63d4e8eaf75cec58374e","2f8fe9eb8ec536c6fe4f","7f7791ff48a1bd811756","c3076cc8c8662245bed9","7bfc78c279a5e8ca3411","ef1ad2d1b3b69f9f5c41","adba7e1b629b7e17d6d7","08634e84eb5e85ac5bb1","920d688d339a2a5d8af0","da757aa701f0dc326566","fdcc3e194068a98955a8","671c232d98ba0bbe146e","9c318fe6e0e34a043b7d","5c1bbd460f235c1db06c","edcdccfabd6aa744e666","c8b8c3f4fb260546ee86","67efb8385a7ca3cb0245"],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
+      "reason": "Actor provenance at every consuming caller remains to be completed. DB queries constrain user/provider and storage paths include user, but that syntax does not prove all internal callers. Bucket privacy admission is now shared and fail-closed; PKCE fallback mirrors are still not an atomic one-use/expiry authority and removal ignores DB failure. Plaintext credential mirrors and lifecycle races remain Command 009 obligations, not a reason to label access or credential cutover verified here.",
+      "evidence": [
+        {"path":"backend/src/routes/supabaseOAuth.ts","marker":"stateInfo.userId !== req.userId"},
+        {"path":"backend/src/index.ts","marker":"authMiddleware, supabaseOAuthRouter"},
+        {"path":"backend/src/services/integrations/oauthPkceStore.ts","marker":"if (stored?.verifier && stored.state === expectedState)"}
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubTokenStore.ts",
+      "sourceSha256": "6d23e63e5e822ea5916a3d666ad137709074db0677030d2ac55e7fca012051d4",
+      "callIds": ["3606e6e2a2c84f5d37fd","8ea0355a7a40e6d35fef","0be2ba1bb19f870be5da","9bc84e071bdd13202ce7","3a61483e374e23853351","0a25a411c643e94deeef","8c3e0638491358836bac"],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
+      "reason": "Full provenance of all publishing/execution/helper callers remains unverified; a path derived from a user argument is not an authorization context. Deletion ignores errors, legacy token JSON is plaintext and read helpers do not prove revocation freshness. Real Storage browser denials and the new public-bucket refusal are separate evidence, not completed credential lifecycle or production migration acceptance.",
+      "evidence": [{"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real credential writer refuses a public bucket"}]
+    },
+    {
+      "path": "backend/src/services/integrations/credentialStorageBucket.ts",
+      "sourceSha256": "b8c4cc2611ccb136bc8347ffc5fe76047415c74dc2c928574741ef61e5444d1f",
+      "callIds": ["36f74cf393d92fc17a74"],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Internal fixed-bucket configuration admission, no supplied tenant/table/object path. Reads catalogue and, only when absent, retains the existing server bootstrap of a private 16KiB bucket. It never changes an existing public or unknown-policy bucket.",
+      "reason": "Privacy is independently rechecked after create or duplicate, and catalogue failure denies upload. This is not an identity issuer or new CredentialVault. Complete upstream caller review and staged storage compatibility remain outstanding; do not infer authorization of every token caller from this configuration guard.",
+      "evidence": [
+        {"path":"backend/src/services/integrations/oauthPkceStore.test.ts","marker":"unavailable bucket catalogue fails closed"},
+        {"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real credential writer refuses a public bucket"}
+      ]
+    },
+    {
+      "path": "backend/src/security/ownership.ts",
+      "sourceSha256": "8b240ab552b5d1134b69bad79c31827d4a3854a623b7d045adbb0f45e556dc11",
+      "callIds": ["7f2999f4b2c508de0829", "48e8f6b398fe79bc2846", "64d3d6a6fc218ad1ee7b", "14b268dddb5863f18706"],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Both helpers require an issued immutable TenantContext before either the internal or injected database client can be used. Unknown/prototype resource names and malformed IDs are rejected before query construction.",
+      "reason": "Fixed resource mapping excludes caller-selected SQL tables and columns; direct resources use actor plus resource predicates. Files join their current project owner in the same request, and missing/foreign records receive the same 404. This certifies this helper boundary, not every caller issuing persisted_owner contexts or future client injection.",
+      "evidence": [
+        {"path":"backend/src/security/ownership.test.ts","marker":"injected clients cannot turn invalid resource kinds"},
+        {"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real owner helpers deny every foreign high-risk resource"}
+      ]
+    },
+    {
+      "path": "backend/src/security/ownedRunPersistence.ts",
+      "sourceSha256": "afee97a186c1c4b90314d1530dfa6d30c77b28eefa315463e9fdfb6f8cb3adce",
+      "callIds": ["e96cbab02a43d476a1b1", "20965f3eb585be67730c", "f8dec8dfc0826b0b8622"],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
+      "reason": "Insert-ignore prevents transferring a globally keyed row; subsequent update or append-only verification constrains both key and actor and requires exactly one row. Mutation verification also binds run/project. Parent authority and provenance at wrapper callers remain separate review obligations, not inferred from these helper predicates.",
+      "evidence": [
+        {"path":"backend/src/security/ownedRunPersistence.test.ts","marker":"trace collision cannot merge another owner"},
+        {"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real run persistence concurrent collision never transfers"}
+      ]
+    },
+    {
+      "path": "backend/src/security/serviceRoleGuard.ts",
+      "sourceSha256": "4987c92eba0570950dac65354c9f5edd4d7152c2ad86ad591bd4680450cb6a65",
+      "callIds": ["d84df34ff692e4fb31c1", "f3727b33de49fb153851"],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
+      "reason": "These are admission helpers, not automatic RLS or constrained query proxies. The full control flow of every recipient must be reviewed. Registry names cannot certify their callers, raw diagnostic redaction, account authority or arbitrary subsequent queries. Keep unresolved rather than pretending this shared factory completes tenant isolation.",
+      "evidence": [{"path":"backend/src/security/serviceRoleGuard.test.ts","marker":"unregistered or prototype-derived global operations fail"}]
+    },
+    {
+      "path": "backend/src/security/serviceRoleGuard.ts",
+      "sourceSha256": "4987c92eba0570950dac65354c9f5edd4d7152c2ad86ad591bd4680450cb6a65",
+      "callIds": ["a8c91d71cbf6c1a589ee", "6f8fdf0096f2bc603545"],
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
+      "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
+      "evidence": [{"path":"backend/src/security/serviceRoleGuard.ts","marker":".from('profiles').select('id').limit(1)"}]
+    },
+    {
+      "path": "backend/src/services/scaffolds/packageBuildZip.ts",
+      "sourceSha256": "4c4a769325e95ed267aa2a168aed276f74523c871b53d77b126892ef5c041540",
+      "callIds": ["09fd7c8816ae6e3ba4dd", "725f0bbd4bca836886b1", "c88c08dabe08da091f52", "436acca3c84063f543c1", "bd9067bb3ee07df8b4de"],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "These five candidates are the built-in Buffer.from calls in an in-memory ZIP serializer. Full module imports are only node:zlib plus a type-only ProjectFile declaration; no database, Storage, network or privileged SDK is present.",
+      "reason": "False positives are classified explicitly rather than removed by owner-filter syntax. This proves only absence of persistence at these calls. Archive path/size admission and downstream artifact delivery are independent unresolved security concerns, not certified safe by this disposition.",
+      "evidence": [{"path":"backend/src/services/scaffolds/packageBuildZip.ts","marker":"return Buffer.concat([...localParts, centralDir, end]);"}]
+    },
+    {
+      "path": "backend/src/services/storage/privateFileDelivery.ts",
+      "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399",
+      "callIds": ["1592c394d8f566b6b5c6", "1dc21b8de955c5a67410", "a3fd57e400ae93dcf1bc", "c0d01dcfb09596ce1894"],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Issued context and validated project/file UUIDs precede owner-joined retrieval. Returned payload is independently Zod validated and matched against actor/project/file even when an injected SDK is used. Revocation uses the server actor, not a request owner.",
+      "reason": "Link verification and file read restore current owner before object access; metadata owner/key, bytes and digest are verified without fetching legacy public/data URLs. Revocation's owner-parent predicate is atomic in its existing RPC. Real R2 privacy, key management, staging compatibility and upstream writer identity remain blocked separately.",
+      "evidence": [
+        {"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real durable database file delivery is owner-only"},
+        {"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real RLS and metadata trigger deny client delivery forgery"}
+      ]
+    },
+    {
+      "path": "backend/src/services/storage/privateFileDelivery.ts",
+      "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399",
+      "callIds": ["fb08a2d7689ff8e64794", "0052e85ad523398c7685"],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Both expressions use the built-in Buffer.from to encode already owner-checked database content; neither invokes the database SDK or an external object store.",
+      "reason": "This classification is limited to two buffer conversions, not the surrounding storage lifecycle. The actual privileged reads and revocation RPC in this module have separate semantic dispositions, and the external private R2 acceptance gate remains pending.",
+      "evidence": [{"path":"backend/src/services/storage/privateFileDelivery.ts","marker":"buffer=Buffer.from(row.content)"}]
+    }
+  ]
+}

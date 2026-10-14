@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e6ae62b2b3ff806cfcdd7bd84b509ec7a86ce10b",
+  "source_sha": "46bf5e5f566c36b60dba672724a086e4ff68f2e6",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -2795,6 +2795,7 @@
         "frontend/src/app/cybersecurity/page.tsx",
         "frontend/src/app/security/page.tsx",
         "scripts/security/audit-tenant-policies.mjs",
+        "scripts/security/caller-reviews.mjs",
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/dependency-advisories.mjs",
         "scripts/security/disposable-supabase.mjs",

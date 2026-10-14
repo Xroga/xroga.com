@@ -66,8 +66,8 @@ for (const key of ['VISUAL', 'visual', 'Visual']) {
 
 for (const config of ['trailer.audit.cmd=untrusted-command', 'trailer.audit.command=untrusted-command', 'include.path=/untrusted/config']) {
   test(`Git rejects executable configuration before spawning: ${config.split('=')[0]}`, async () => {
-    // The compatible v3 class keeps Error.name='Error'; check the real exported
-    // plugin class and exact unsafe-control reason, not a v4 naming assumption.
-    await assert.rejects(simpleGit({ config: [config] }).raw(['status', '--porcelain']), (error: Error) => error instanceof GitPluginError && /is not permitted without enabling allowUnsafe/.test(error.message));
+    // A guard regression must fail without accidentally attempting network/Git
+    // actions: Node as the binary cannot perform a Git action if spawn occurs.
+    await assert.rejects(simpleGit({ binary: 'node', config: [config] }).raw(['status', '--porcelain']), (error: Error) => error instanceof GitPluginError && /is not permitted without enabling allowUnsafe/.test(error.message));
   });
 }

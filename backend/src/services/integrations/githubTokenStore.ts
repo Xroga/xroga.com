@@ -1,5 +1,6 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import type { GitHubRepoStrategy } from './githubAuth.js';
+import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 
 const BUCKET = 'xroga-github-tokens';
 
@@ -26,32 +27,12 @@ function isBucketMissingError(message: string): boolean {
   return /bucket not found|not found|does not exist/i.test(message);
 }
 
-async function ensurePrivateBucket(): Promise<boolean> {
-  const supabase = getSupabaseAdmin();
-
-  const { data: buckets, error: listErr } = await supabase.storage.listBuckets();
-  if (!listErr && buckets?.some((b) => b.id === BUCKET || b.name === BUCKET)) {
-    return true;
-  }
-
-  const { error: createErr } = await supabase.storage.createBucket(BUCKET, {
-    public: false,
-    fileSizeLimit: 8192,
-  });
-
-  if (!createErr) return true;
-  if (/already exists|duplicate/i.test(createErr.message)) return true;
-
-  console.warn('[githubTokenStore] createBucket:', createErr.message);
-  return false;
-}
-
 export async function saveGitHubTokenToStorage(
   userId: string,
   data: StoredGitHubAuth
 ): Promise<boolean> {
   try {
-    const ready = await ensurePrivateBucket();
+    const ready = await ensurePrivateOAuthBucket();
     if (!ready) {
       console.warn('[githubTokenStore] bucket not available');
       return false;
@@ -65,7 +46,7 @@ export async function saveGitHubTokenToStorage(
     });
 
     if (error && isBucketMissingError(error.message)) {
-      await ensurePrivateBucket();
+      if (!(await ensurePrivateOAuthBucket())) return false;
       ({ error } = await supabase.storage.from(BUCKET).upload(storagePath(userId), body, {
         upsert: true,
         contentType: 'application/json',

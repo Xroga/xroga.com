@@ -3,13 +3,13 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "e6ae62b2b3ff806cfcdd7bd84b509ec7a86ce10b",
-    "sourceTimestampUtc": "2026-10-14T19:31:44+05:00",
-    "auditStartedUtc": "2026-10-14T18:22:33.060Z",
+    "sha": "46bf5e5f566c36b60dba672724a086e4ff68f2e6",
+    "sourceTimestampUtc": "2026-10-14T23:22:35+05:00",
+    "auditStartedUtc": "2026-10-14T18:58:18.501Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
-    "npm": "11.16.0",
+    "npm": "10.9.4",
     "lockfiles": [
       "backend/package-lock.json",
       "frontend/package-lock.json",
@@ -5791,7 +5791,7 @@
         "backend/src/routes/billing.ts:5",
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:27",
-        "backend/src/security/tenantIsolation.local.integration.ts:24",
+        "backend/src/security/tenantIsolation.local.integration.ts:25",
         "backend/src/services/BillingService.ts:18",
         "backend/src/services/integrations/businessAction.ts:11",
         "backend/src/services/integrations/businessRead.ts:7"
@@ -11510,6 +11510,7 @@
         "backend/src/services/BillingService.ts:5",
         "backend/src/services/ensureUserRecords.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.ts:1",
+        "backend/src/services/integrations/credentialStorageBucket.ts:2",
         "backend/src/services/integrations/githubAuth.ts:1",
         "backend/src/services/integrations/githubDeploy.ts:1",
         "backend/src/services/integrations/githubTokenStore.ts:1",
@@ -20653,7 +20654,7 @@
       "id": "surface:4928f851a2c75540edf8",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/ownership.ts",
-      "sha256": "9b188e67fd41fb04985c374ae116139f06c321224dc00b91b69a907264ab3a36",
+      "sha256": "8b240ab552b5d1134b69bad79c31827d4a3854a623b7d045adbb0f45e556dc11",
       "symbols": [
         "OwnedResourceKind",
         "db",
@@ -21711,6 +21712,55 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:8554dadffc6cd0a3fbde",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/credentialStorageBucket.ts",
+      "sha256": "b8c4cc2611ccb136bc8347ffc5fe76047415c74dc2c928574741ef61e5444d1f",
+      "symbols": [
+        "BUCKET",
+        "ensurePrivateOAuthBucket",
+        "existing"
+      ],
+      "imports": [
+        "../../config/supabase.js",
+        "@supabase/supabase-js"
+      ],
+      "runtimeImports": [
+        "backend/src/config/supabase.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/security/tenantIsolation.local.integration.ts:24",
+        "backend/src/services/integrations/githubTokenStore.ts:3",
+        "backend/src/services/integrations/oauthPkceStore.test.ts:4",
+        "backend/src/services/integrations/oauthPkceStore.ts:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@supabase/supabase-js"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/credentialStorageBucket.ts#ensurePrivateOAuthBucket"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/integrations/oauthPkceStore.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:29892ce182cf6cd487bd",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubAtomicTransport.ts",
@@ -22624,13 +22674,12 @@
       "id": "surface:f780b953b9a0b38aa89b",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubTokenStore.ts",
-      "sha256": "02552dd085133205d8de442f72ac5f2ac60281ab97385fe139ab05b61857e845",
+      "sha256": "6d23e63e5e822ea5916a3d666ad137709074db0677030d2ac55e7fca012051d4",
       "symbols": [
         "BUCKET",
         "StoredGitHubAuth",
         "body",
         "deleteGitHubTokenFromStorage",
-        "ensurePrivateBucket",
         "err",
         "getGitHubTokenFromStorage",
         "isBucketMissingError",
@@ -22644,10 +22693,12 @@
       ],
       "imports": [
         "../../config/supabase.js",
+        "./credentialStorageBucket.js",
         "./githubAuth.js"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts"
+        "backend/src/config/supabase.ts",
+        "backend/src/services/integrations/credentialStorageBucket.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -22663,7 +22714,8 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [
-        "backend/src/services/integrations/githubTokenStore.ts#StoredGitHubAuth"
+        "backend/src/services/integrations/githubTokenStore.ts#StoredGitHubAuth",
+        "backend/src/services/integrations/githubTokenStore.ts#ensurePrivateOAuthBucket"
       ],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -22738,7 +22790,7 @@
       "id": "surface:949ba325e98bab6b63c3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "06263ac5bcb5ceb6febea9ecb5f75ecbfb9d26182f74a0e7b34ad06a438627c0",
+      "sha256": "a76327fe8aa60335ae03512413de7a5dfa921c01df24d7d538c9c040fefab94e",
       "symbols": [
         "BUCKET",
         "PkceSession",
@@ -22747,7 +22799,6 @@
         "clearPkceSession",
         "clearProviderToken",
         "downloadJson",
-        "ensurePrivateBucket",
         "err",
         "isBucketMissingError",
         "loadPkceSession",
@@ -22767,11 +22818,13 @@
       "imports": [
         "../../config/supabase.js",
         "../../db/ensureGithubSchema.js",
+        "./credentialStorageBucket.js",
         "./githubTokenStore.js"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
         "backend/src/db/ensureGithubSchema.ts",
+        "backend/src/services/integrations/credentialStorageBucket.ts",
         "backend/src/services/integrations/githubTokenStore.ts"
       ],
       "entryPoints": [
@@ -22788,12 +22841,14 @@
         "user_integrations"
       ],
       "externalProviderDependencies": [],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/services/integrations/oauthPkceStore.ts#ensurePrivateOAuthBucket"
+      ],
       "tenantBoundary": [
-        "backend/src/services/integrations/oauthPkceStore.ts:162 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:201 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:269 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:302 (user_id)"
+        "backend/src/services/integrations/oauthPkceStore.ts:147 (user_id)",
+        "backend/src/services/integrations/oauthPkceStore.ts:186 (user_id)",
+        "backend/src/services/integrations/oauthPkceStore.ts:254 (user_id)",
+        "backend/src/services/integrations/oauthPkceStore.ts:287 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -25116,7 +25171,7 @@
       "callers": [
         "backend/src/lib/r2.ts:3",
         "backend/src/routes/projects.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:27",
+        "backend/src/security/tenantIsolation.local.integration.ts:28",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.ts:6",
         "backend/src/services/storage/projectFiles.ts:6"
@@ -25228,7 +25283,7 @@
       ],
       "callers": [
         "backend/src/routes/projects.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:26",
+        "backend/src/security/tenantIsolation.local.integration.ts:27",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5"
       ],
       "reachable": true,
@@ -25295,7 +25350,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/security/tenantIsolation.integration.test.ts:14",
-        "backend/src/security/tenantIsolation.local.integration.ts:25",
+        "backend/src/security/tenantIsolation.local.integration.ts:26",
         "backend/src/services/memory/buildProjectStore.ts:8",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7"
       ],
@@ -27603,7 +27658,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:29",
-        "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/security/tenantIsolation.local.integration.ts:29",
         "backend/src/synthesis/livePreview/access.test.ts:5",
         "backend/src/synthesis/livePreview/store.ts:9"
       ],
@@ -28107,7 +28162,7 @@
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:26",
         "backend/src/routes/projectRuntime.ts:20",
-        "backend/src/security/tenantIsolation.local.integration.ts:31",
+        "backend/src/security/tenantIsolation.local.integration.ts:32",
         "backend/src/synthesis/livePreview/coordinator.ts:27",
         "backend/src/synthesis/livePreview/index.ts:3"
       ],
@@ -83719,13 +83774,14 @@
       "id": "surface:df5a69bd66236469cf20",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/audit-tenant-policies.mjs",
-      "sha256": "28955480966813e2ec3d0c1c0ec0e1af2cc90f18c1737f90fde0b72994c103c6",
+      "sha256": "6ba81ce965a35555acfa220978e544e27e42efb08cc71382133ab7d3b73ca18d",
       "symbols": [
         "adminNames",
         "binding",
         "buildTenantAudit",
         "callers",
         "calls",
+        "candidates",
         "chain",
         "counts",
         "discoverPersistenceCalls",
@@ -83733,11 +83789,13 @@
         "escape",
         "exceptions",
         "factory",
+        "finalMarkdown",
         "foreign",
         "guard",
         "hash",
         "inspect",
         "json",
+        "kind",
         "line",
         "literal",
         "main",
@@ -83745,6 +83803,7 @@
         "metadataPath",
         "normalized",
         "observation",
+        "outcomes",
         "outputs",
         "ownerPredicate",
         "owners",
@@ -83753,6 +83812,8 @@
         "policy",
         "property",
         "read",
+        "registry",
+        "registryPath",
         "report",
         "reviewedMarkdown",
         "source",
@@ -83764,6 +83825,7 @@
       ],
       "imports": [
         "../ci/toolchain.mjs",
+        "./caller-reviews.mjs",
         "node:child_process",
         "node:crypto",
         "node:fs",
@@ -83772,7 +83834,8 @@
         "node:url"
       ],
       "runtimeImports": [
-        "scripts/ci/toolchain.mjs"
+        "scripts/ci/toolchain.mjs",
+        "scripts/security/caller-reviews.mjs"
       ],
       "entryPoints": [
         "scripts/security/audit-tenant-policies.mjs"
@@ -83790,6 +83853,50 @@
         "node:path",
         "node:url"
       ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/security/audit-tenant-policies.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:48d5db220184df85a8de",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/caller-reviews.mjs",
+      "sha256": "5e3d8715ae4fef0b60755ad08576d3fc8a8c5b0a87679ab29bb791be895d4736",
+      "symbols": [
+        "applyCallerReviews",
+        "byId",
+        "candidate",
+        "dispositions",
+        "id",
+        "proof",
+        "record",
+        "reviews",
+        "source",
+        "validPath"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/security/audit-tenant-policies.mjs"
+      ],
+      "callers": [
+        "scripts/security/audit-tenant-policies.mjs:8",
+        "scripts/security/audit-tenant-policies.test.mjs:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -101429,7 +101536,7 @@
     {
       "id": "test-suite:202b022e2f1c32eef410",
       "sourcePath": "backend/src/security/ownership.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101464,7 +101571,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 36,
+      "declaredTests": 37,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101555,7 +101662,7 @@
     {
       "id": "test-suite:4e143d1613918feb9727",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102264,7 +102371,7 @@
     {
       "id": "test-suite:3b1b0f6843b9d9bfab10",
       "sourcePath": "frontend/e2e/xroga-golden/public-fixtures.spec.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -103398,7 +103505,7 @@
     {
       "id": "test-suite:391d343edda2653fa467",
       "sourcePath": "scripts/security/audit-tenant-policies.test.mjs",
-      "declaredTests": 2,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

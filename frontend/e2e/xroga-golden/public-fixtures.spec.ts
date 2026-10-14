@@ -49,3 +49,36 @@ test('GJ narrow guest UI shows a truthful actionable failure rather than Coming 
   await expect(page.getByText('Guest chat is temporarily unavailable. Please try again shortly.',{exact:true}).first()).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(391);
 });
+
+test('production crypto typography loads real local normal and italic faces without a font service',async({page,baseURL})=>{
+  const fonts:{url:string;status:number}[]=[];
+  page.on('response',response=>{
+    if(response.request().resourceType()==='font')fonts.push({url:response.url(),status:response.status()});
+  });
+  const response=await page.goto('/crypto',{waitUntil:'domcontentloaded'});
+  expect(response?.status()).toBe(200);
+  await expect(page.locator('main[data-crypto-page]')).toBeVisible();
+  const faces=await page.locator('main[data-crypto-page]').evaluate(async element=>{
+    const css=getComputedStyle(element);
+    const ui=css.getPropertyValue('--font-manrope').trim().split(',')[0];
+    const editorial=css.getPropertyValue('--font-editorial').trim().split(',')[0];
+    if(!ui||!editorial)throw new Error('Actual typography variables unavailable');
+    const result=[];
+    for(const [family,style] of [[ui,'normal'],[editorial,'normal'],[editorial,'italic']]){
+      const loaded=await document.fonts.load(`${style} 500 24px ${family}`,'Xroga');
+      result.push({family,style,count:loaded.length,loaded:loaded.every(face=>face.status==='loaded'&&face.style===style)});
+    }
+    return result;
+  });
+  expect(faces).toHaveLength(3);
+  for(const face of faces){expect(face.count).toBeGreaterThan(0);expect(face.loaded).toBe(true);}
+  expect(new Set(faces.map(face=>face.family)).size).toBe(2);
+  expect(fonts.length).toBeGreaterThanOrEqual(3);
+  for(const font of fonts){
+    expect(new URL(font.url).origin).toBe(new URL(baseURL!).origin);
+    expect(new URL(font.url).pathname).toMatch(/^\/_next\/static\/media\/.+\.woff2$/);
+    expect(font.status).toBe(200);
+  }
+  await page.setViewportSize({width:390,height:844});
+  await expect(page.locator('main[data-crypto-page]')).toBeVisible();
+});

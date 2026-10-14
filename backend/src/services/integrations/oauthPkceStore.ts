@@ -6,6 +6,7 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
 import { isMissingTableError } from './githubTokenStore.js';
+import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 
 const BUCKET = 'xroga-github-tokens';
 
@@ -35,25 +36,9 @@ function isBucketMissingError(message: string): boolean {
   return /bucket not found|not found|does not exist/i.test(message);
 }
 
-async function ensurePrivateBucket(): Promise<boolean> {
-  const supabase = getSupabaseAdmin();
-  const { data: buckets, error: listErr } = await supabase.storage.listBuckets();
-  if (!listErr && buckets?.some((b) => b.id === BUCKET || b.name === BUCKET)) {
-    return true;
-  }
-  const { error: createErr } = await supabase.storage.createBucket(BUCKET, {
-    public: false,
-    fileSizeLimit: 16384,
-  });
-  if (!createErr) return true;
-  if (/already exists|duplicate/i.test(createErr.message)) return true;
-  console.warn('[oauthPkceStore] createBucket:', createErr.message);
-  return false;
-}
-
 async function uploadJson(path: string, data: unknown): Promise<boolean> {
   try {
-    if (!(await ensurePrivateBucket())) return false;
+    if (!(await ensurePrivateOAuthBucket())) return false;
     const supabase = getSupabaseAdmin();
     const body = JSON.stringify(data);
     let { error } = await supabase.storage.from(BUCKET).upload(path, body, {
@@ -61,7 +46,7 @@ async function uploadJson(path: string, data: unknown): Promise<boolean> {
       contentType: 'application/json',
     });
     if (error && isBucketMissingError(error.message)) {
-      await ensurePrivateBucket();
+      if (!(await ensurePrivateOAuthBucket())) return false;
       ({ error } = await supabase.storage.from(BUCKET).upload(path, body, {
         upsert: true,
         contentType: 'application/json',

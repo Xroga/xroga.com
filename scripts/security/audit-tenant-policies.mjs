@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { root } from '../ci/toolchain.mjs';
+import { applyCallerReviews } from './caller-reviews.mjs';
 const ts = createRequire(import.meta.url)('typescript');
 const hash = value => createHash('sha256').update(value).digest('hex');
 const normalized = value => value.replace(/\r\n/g,'\n');
@@ -33,7 +34,8 @@ export function discoverPersistenceCalls(path,content) {
         let enclosing='<module>';
         for(let parent=node.parent;parent;parent=parent.parent) {if(ts.isFunctionDeclaration(parent)||ts.isMethodDeclaration(parent)){enclosing=parent.name?.getText(source)??'<anonymous>';break;}}
         const line=source.getLineAndCharacterOfPosition(node.getStart(source)).line+1;
-        calls.push({id:hash(`${path}:${line}:${node.pos}`).slice(0,20),path,line,enclosing,kind:factory?'PRIVILEGED_FACTORY':property==='rpc'?'RPC_CANDIDATE':'TABLE_OR_BUCKET_CANDIDATE',target:factory?node.expression.getText(source):literal(node.arguments[0])??'<dynamic>',ownerPredicateCandidate:ownerPredicate,review:'REVIEW_REQUIRED',sourceSha256:hash(normalized(content))});
+        const kind=factory?'PRIVILEGED_FACTORY':property==='rpc'?'RPC_CANDIDATE':'TABLE_OR_BUCKET_CANDIDATE';
+        calls.push({id:hash(`${path}:${node.getStart(source)}:${node.end}:${kind}`).slice(0,20),path,line,enclosing,kind,target:factory?node.expression.getText(source):literal(node.arguments[0])??'<dynamic>',ownerPredicateCandidate:ownerPredicate,review:'REVIEW_REQUIRED',sourceSha256:hash(normalized(content))});
       }
     }
     ts.forEachChild(node,visit);
@@ -44,15 +46,19 @@ export function buildTenantAudit() {
   const observation=JSON.parse(read(metadataPath));
   if(observation.scope!=='READ_ONLY_SCHEMA_METADATA_NO_CUSTOMER_ROWS'||observation.securityCertification!=='NOT_CERTIFIED'||!observation.tables.length)throw new Error('Unapproved schema observation');
   const paths=execFileSync('git',['ls-files'],{cwd:root,encoding:'utf8'}).trim().split(/\r?\n/).filter(path=>/^(?:backend|frontend)\/src\/.*\.[jt]sx?$/.test(path)&&!/(?:\.test\.|\.spec\.|\.local\.integration\.|\/e2e\/|\/tests?\/)/.test(path));
-  const callers=paths.flatMap(path=>discoverPersistenceCalls(path,read(path)));
+  const candidates=paths.flatMap(path=>discoverPersistenceCalls(path,read(path)));
+  const registryPath='docs/xroga/security/caller-reviews.json';
+  const registry=JSON.parse(read(registryPath));
+  const callers=applyCallerReviews(candidates,registry,path=>existsSync(join(root,path))?read(path):null);
   const tableNames=new Set(observation.tables.map(row=>`${row.schema}.${row.table_name}`));
   if(tableNames.size!==observation.tables.length)throw new Error('Duplicate schema table');
   const guard=ts.createSourceFile('serviceRoleGuard.ts',read('backend/src/security/serviceRoleGuard.ts'),ts.ScriptTarget.Latest,true);
   let exceptions=0;
   const inspect=node=>{if(ts.isVariableDeclaration(node)&&node.name.getText(guard)==='globalServiceExceptions'&&ts.isCallExpression(node.initializer)&&ts.isObjectLiteralExpression(node.initializer.arguments[0])) exceptions=node.initializer.arguments[0].properties.length;ts.forEachChild(node,inspect);};inspect(guard);
   if(!exceptions) throw new Error('Missing explicit global service exception registry');
-  const counts={observedTables:tableNames.size,rlsEnabled:observation.tables.filter(row=>row.rls_enabled).length,privilegedFactorySites:callers.filter(row=>row.kind==='PRIVILEGED_FACTORY').length,persistenceCandidates:callers.length,ownerPredicateCandidates:callers.filter(row=>row.ownerPredicateCandidate).length,reviewRequired:callers.length,certifiedScopedPrivilegedCallers:0,registeredNarrowGlobalExceptions:exceptions};
-  const report={version:'1.0',schemaObservationSha256:hash(read(metadataPath)),scope:'STATIC_CANDIDATES_NOT_SECURITY_CERTIFICATION',releaseGate:'BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF',counts,callers};
+  const outcomes=Object.fromEntries(['REVIEW_REQUIRED','SCOPED_BOUNDARY','NARROW_EXCEPTION','NOT_PERSISTENCE','REVIEWED_GAP'].map(value=>[value,callers.filter(row=>row.review===value).length]));
+  const counts={observedTables:tableNames.size,rlsEnabled:observation.tables.filter(row=>row.rls_enabled).length,privilegedFactorySites:callers.filter(row=>row.kind==='PRIVILEGED_FACTORY').length,persistenceCandidates:callers.length,ownerPredicateCandidates:callers.filter(row=>row.ownerPredicateCandidate).length,reviewRequired:outcomes.REVIEW_REQUIRED,reviewedCandidates:callers.length-outcomes.REVIEW_REQUIRED,unresolvedSafetyCandidates:outcomes.REVIEW_REQUIRED+outcomes.REVIEWED_GAP,certifiedScopedPrivilegedCallers:0,registeredNarrowGlobalExceptions:exceptions};
+  const report={version:'1.1',schemaObservationSha256:hash(read(metadataPath)),reviewRegistrySha256:hash(read(registryPath)),scope:'STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION',releaseGate:'BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF',counts,outcomes,callers};
   const escape=value=>String(value??'none').replaceAll('|','/').replaceAll('\n',' ');
   const tableRows=observation.tables.map(row=>{
     const owners=row.columns.filter(column=>['user_id','tenant_id','owner_id','author_id','member_user_id'].includes(column.name)||(row.table_name==='profiles'&&column.name==='id'));
@@ -62,7 +68,8 @@ export function buildTenantAudit() {
   });
   const markdown=`# Tenant/RLS audit — incomplete security acceptance\n\nObserved schema only, ${observation.observedAt}, canonical project ${observation.projectRef}; no customer rows read, no DDL run. ${counts.observedTables}/${counts.rlsEnabled} tables have RLS enabled. Enabled is NOT proven isolation. JSON contains complete observed columns, nullable flags, FKs, policy USING/WITH CHECK and grants. Ownership classification below is a candidate, not an invented workspace model. Profiles have safe community public access and restricted column grants; do not remove it.\n\n## Caller review\n\n${counts.privilegedFactorySites} explicit privileged factory call sites; ${counts.persistenceCandidates} conservative table/storage/RPC/factory candidates; ${counts.ownerPredicateCandidates} contain a direct owner-filter candidate. None is automatically certified from syntax. Every candidate is recorded in privileged-callers.json with source hash, location and review-required state. Parent checks, injected clients, dynamic RPC/table targets, global/admin/background and frontend user-client calls need semantic review. Zero certified scope count means incomplete review, not that every existing query is vulnerable. One new narrow readiness exception exists in serviceRoleGuard.ts; other legacy administrative/bootstrap/webhook operations are NOT silently exempted. Production release remains BLOCKED.\n\n## Every observed table\n\nFor ALL rows: service-role/BYPASSRLS behavior is outside these user policies; require explicit server ownership or a registered reviewed narrow exception. Nullable owner/inherited-owner rows require isolated orphan/remediation audit; count UNKNOWN, never delete unknown rows. Tables with no policies may be intentionally server-only; do not create generic permissive policies to make them readable.\n\n| Table | Ownership keys / nullable risks | Foreign keys | RLS | SELECT | INSERT | UPDATE | DELETE |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n${tableRows.join('\n')}\n\n## Rollout status\n\nMigration 20261013150357 adds only restrictive owner/container guards to ten inspected private tables, preserving existing operation grants/policies. It has NOT been applied to production. No NOT NULL/FK tightening/backfill or orphan deletion. Fresh complete migration history, upgrade fixtures, dedicated authenticated Supabase E2E and staged security checks remain mandatory. Loopback transport fixtures are not PostgreSQL/RLS proof. See tenant-model.md and Command 007 evidence.\n`;
   const reviewedMarkdown=markdown.replace('One new narrow readiness exception exists in serviceRoleGuard.ts; other legacy administrative/bootstrap/webhook operations are NOT silently exempted.',`${counts.registeredNarrowGlobalExceptions} explicitly named exceptions exist in serviceRoleGuard.ts: readiness, stale-run maintenance, leased-worker shutdown, platform model-health aggregates, opt-in/owner-verified share resolution and the three existing database-admin/owner-only platform diagnostic/readiness reads. The latter preserve broader admin authorization, NOT founder exclusivity. Names are not blanket certification or a constrained query proxy. Other legacy bootstrap/webhook operations and full payload redaction remain unresolved.`);
-  return new Map([['docs/xroga/security/privileged-callers.json',json(report)],['docs/xroga/security/rls-audit.md',reviewedMarkdown]]);
+  const finalMarkdown=reviewedMarkdown.replace('Every candidate is recorded in privileged-callers.json with source hash, location and review-required state.',`Every candidate is recorded with a unique source-bound identity. ${counts.reviewedCandidates} have manual dispositions, ${counts.reviewRequired} await review and ${counts.unresolvedSafetyCandidates} remain unresolved including reviewed gaps. Categories: ${Object.entries(outcomes).map(([name,count])=>`${name}=${count}`).join(', ')}. Stale, duplicate, unknown or unsupported manual reviews fail the integrity check; evidence paths/markers must resolve. A scoped helper disposition is not proof of every upstream actor or overall acceptance.`);
+  return new Map([['docs/xroga/security/privileged-callers.json',json(report)],['docs/xroga/security/rls-audit.md',finalMarkdown]]);
 }
 
 export function main(args=process.argv.slice(2)) {
@@ -72,7 +79,9 @@ export function main(args=process.argv.slice(2)) {
     else if(!existsSync(join(root,path))||read(path)!==content)throw new Error(`Tenant audit drift: ${path}`);
   }
   const report=JSON.parse(outputs.get('docs/xroga/security/privileged-callers.json'));
-  if(args.includes('--require-complete')&&report.counts.reviewRequired>0)throw new Error('Tenant security acceptance BLOCKED: unresolved caller review and integration gates');
+  // Finishing a manual candidate register cannot satisfy separate staging,
+  // orphan, end-to-end and full original acceptance criteria.
+  if(args.includes('--require-complete')&&(report.counts.unresolvedSafetyCandidates>0||report.releaseGate!=='PASS'))throw new Error('Tenant security acceptance BLOCKED: unresolved caller review and integration gates');
   console.log(JSON.stringify({result:'PASS_AUDIT_INTEGRITY_NOT_TENANT_SECURITY_ACCEPTANCE',counts:report.counts,releaseGate:report.releaseGate}));
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))main();

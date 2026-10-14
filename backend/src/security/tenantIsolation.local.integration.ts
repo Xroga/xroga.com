@@ -21,6 +21,7 @@ import { createEvidence } from '../synthesis/researchEvidence.js';
 import type { PlanMutation } from '../synthesis/dynamicPlanning.js';
 import { BUILD_OUTCOME_RETENTION_MS } from '../ai/learningPolicy.js';
 import { saveGitHubTokenToStorage,getGitHubTokenFromStorage } from '../services/integrations/githubTokenStore.js';
+import { ensurePrivateOAuthBucket } from '../services/integrations/credentialStorageBucket.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
 import { storeProjectFile } from '../services/storage/projectFiles.js';
 import { ownedFile } from '../services/storage/privateFileDelivery.js';
@@ -358,6 +359,23 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
     const publicRead=await fetch(`${url}/storage/v1/object/public/${bucket}/${path}`,{headers:{apikey:process.env.SUPABASE_ANON_KEY!}});assert.equal(publicRead.ok,false);assert.ok(!(await publicRead.text()).includes(canary));
     const status=await request('/api/github/status',other.token);assert.equal(status.status,200);assert.equal((await status.json() as {connected:boolean}).connected,false);
   } finally {const removed=await admin.storage.from(bucket).remove([path]);assert.equal(removed.error,null,'temporary private object cleanup failed');}
+});
+
+test('real credential writer refuses a public bucket without uploading or silently repairing it',async()=>{
+  // Module-level admission requires the disposable CLI loopback deployment.
+  // This bucket and every row/object are synthetic; never run on hosted storage.
+  const bucket='xroga-github-tokens',owner=users[0],path=`${owner.id}/github.json`;
+  const initial=await admin.storage.getBucket(bucket);assert.equal(initial.error,null);assert.equal(initial.data?.public,false);
+  try {
+    const changed=await admin.storage.updateBucket(bucket,{public:true});assert.equal(changed.error,null);
+    assert.equal(await ensurePrivateOAuthBucket(admin),false);
+    assert.equal(await saveGitHubTokenToStorage(owner.id,{access_token:'SYNTHETIC_REFUSED_WRITE_NOT_A_CREDENTIAL',username:'fixture',provider_user_id:'fixture',repo_strategy:'auto',default_repo:null,updated_at:new Date().toISOString()}),false);
+    const absent=await admin.storage.from(bucket).download(path);assert.ok(absent.error);assert.equal(absent.data,null);
+    const afterAttempt=await admin.storage.getBucket(bucket);assert.equal(afterAttempt.data?.public,true,'writer must not silently mutate existing bucket policy');
+  } finally {
+    const restored=await admin.storage.updateBucket(bucket,{public:false});assert.equal(restored.error,null,'disposable bucket privacy cleanup failed');
+    const verified=await admin.storage.getBucket(bucket);assert.equal(verified.data?.public,false);
+  }
 });
 
 test('notification list and mutations cannot read or alter another owner notification',async()=>{

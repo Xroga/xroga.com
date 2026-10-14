@@ -33,3 +33,19 @@ test('foreign/missing row is 404; database failures are safe 503; malformed IDs 
   await assert.rejects(requireOwnedResource({...context}, 'project', 'own', client), TenantAccessError);
   assert.equal(requests, before);
 });
+
+test('injected clients cannot turn invalid resource kinds or malformed file IDs into a query', async () => {
+  let requests = 0;
+  const client = createClient('http://127.0.0.1:1', 'fixture-only', {
+    auth: {persistSession:false,autoRefreshToken:false},
+    global: {fetch:async () => { requests++; throw new Error('Must not be reached'); }},
+  });
+  for (const kind of ['__proto__', 'constructor', 'toString', 'unapproved_table']) {
+    await assert.rejects(requireOwnedResource(context, kind as OwnedResourceKind, 'valid-id', client), {status:404});
+  }
+  for (const id of [null, undefined, 17, {}, '', ' ', 'x'.repeat(201)]) {
+    await assert.rejects(requireOwnedFile(context, id as string, client), {status:404});
+  }
+  await assert.rejects(requireOwnedFile({...context}, 'valid-id', client), {status:401});
+  assert.equal(requests, 0);
+});

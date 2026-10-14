@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e6ae62b2b3ff806cfcdd7bd84b509ec7a86ce10b",
+  "source_sha": "46bf5e5f566c36b60dba672724a086e4ff68f2e6",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12434,7 +12434,7 @@
     },
     {
       "path": "backend/src/security/ownership.ts",
-      "sha256": "9b188e67fd41fb04985c374ae116139f06c321224dc00b91b69a907264ab3a36"
+      "sha256": "8b240ab552b5d1134b69bad79c31827d4a3854a623b7d045adbb0f45e556dc11"
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
@@ -12450,7 +12450,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "7985ab98fcda189ec35e258287a13e605c4936efc9c668d60eed4031b87876e1"
+      "sha256": "f8809d592afed2745301eb07f93cce32dc85eea0fa90505df8cb468a4a757a5f"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12479,6 +12479,10 @@
     {
       "path": "backend/src/services/integrations/composioClient.ts",
       "sha256": "d242e3b59c7e0c96ab639b6c93836631ce1ca4302ed190ebc74d4a9d4029efff"
+    },
+    {
+      "path": "backend/src/services/integrations/credentialStorageBucket.ts",
+      "sha256": "b8c4cc2611ccb136bc8347ffc5fe76047415c74dc2c928574741ef61e5444d1f"
     },
     {
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
@@ -12518,7 +12522,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "sha256": "02552dd085133205d8de442f72ac5f2ac60281ab97385fe139ab05b61857e845"
+      "sha256": "6d23e63e5e822ea5916a3d666ad137709074db0677030d2ac55e7fca012051d4"
     },
     {
       "path": "backend/src/services/integrations/githubTreeSnapshot.ts",
@@ -12526,7 +12530,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "06263ac5bcb5ceb6febea9ecb5f75ecbfb9d26182f74a0e7b34ad06a438627c0"
+      "sha256": "a76327fe8aa60335ae03512413de7a5dfa921c01df24d7d538c9c040fefab94e"
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
@@ -17889,35 +17893,35 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 33,
+      "line": 34,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 33,
+      "line": 34,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 133,
+      "line": 134,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 183,
+      "line": 184,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 264,
+      "line": 265,
       "credentialsInUrl": false
     },
     {
@@ -24007,7 +24011,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 535,
+      "line": 553,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
