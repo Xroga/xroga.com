@@ -1,24 +1,57 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { AI_SAMPLES, AUDIENCES, BRAND, CHANNELS, COMPETITORS, COPY, OUTCOMES, QUERIES, SOURCES, TOOLS, shares, totalFunnel } from './data';
+import {
+  ANNOUNCE,
+  APPROVALS,
+  ASSETS,
+  AUDIENCES,
+  CHANNELS,
+  COPY,
+  FIELD,
+  LISTING,
+  OPPORTUNITIES,
+  PERSPECTIVES,
+  PRODUCT,
+  RESULTS,
+  SOURCES,
+  STACK_GROUPS,
+  TOOLS,
+  pct,
+  totals,
+} from './data';
 import { hasMark } from './marks';
 import { initialState, isDefault, reducer, type Action, type State } from './state';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const SHELL = read('./S03Growth.tsx');
-const DISCOVER = read('./Discover.tsx');
+const ARTIFACT = read('./Artifact.tsx');
+const LAUNCH = read('./Launch.tsx');
+const DISCOVERY = read('./Discovery.tsx');
 const CAMPAIGNS = read('./Campaigns.tsx');
-const OUTCOMES_SRC = read('./Outcomes.tsx');
+const RESULTS_SRC = read('./Results.tsx');
 const STACK = read('./Stack.tsx');
-const TERRAIN = read('./Terrain.tsx');
-const TRACE = read('./Trace.tsx');
-const ART = read('./Art.tsx');
 const CSS = read('./S03.module.css');
 const PAGE = read('../../homepage/HomepageClient.tsx');
 const CATALOG = read('../../../lib/integrations-catalog.ts');
-const UI = SHELL + DISCOVER + CAMPAIGNS + OUTCOMES_SRC + STACK + TERRAIN;
-const ALL_COPY = JSON.stringify({ BRAND, COMPETITORS, QUERIES, AUDIENCES, CHANNELS, SOURCES, OUTCOMES, TOOLS, COPY }) + UI;
+const UI = SHELL + ARTIFACT + LAUNCH + DISCOVERY + CAMPAIGNS + RESULTS_SRC + STACK;
+const DATA = JSON.stringify({
+  PRODUCT,
+  PERSPECTIVES,
+  ASSETS,
+  ANNOUNCE,
+  LISTING,
+  OPPORTUNITIES,
+  FIELD,
+  AUDIENCES,
+  CHANNELS,
+  APPROVALS,
+  SOURCES,
+  RESULTS,
+  TOOLS,
+  COPY,
+});
+const ALL_COPY = DATA + UI;
 const words = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
 const run = (s: State, ...as: Action[]) => as.reduce(reducer, s);
 
@@ -31,108 +64,129 @@ test('S03 sits directly after S02 and before the existing power stories, which s
 });
 
 /* --------------------------------------------------------------------------------------------------- copy */
-test('a short editorial header: one headline, one supporting sentence', () => {
-  assert.equal(COPY.title, 'Your next customer is already searching.');
-  assert.ok(words(COPY.title) >= 6 && words(COPY.title) <= 9);
-  assert.ok(words(COPY.lede) >= 12 && words(COPY.lede) <= 20, `lede is ${words(COPY.lede)} words`);
-  assert.equal(COPY.disclosure, 'Illustrative example · sample data');
+test('a short editorial header: one headline, one 15–25 word sentence, one specific action', () => {
+  assert.equal(COPY.title, 'A finished product isn’t a finished business.');
+  assert.ok(words(COPY.lede) >= 15 && words(COPY.lede) <= 25, `lede is ${words(COPY.lede)} words`);
+  assert.equal(COPY.cta, 'Open the growth workspace');
+  assert.equal(COPY.preview, 'Interactive preview');
 });
 
-test('every resting insight is a 4–10 word headline, and labels stay short', () => {
-  for (const q of QUERIES) {
-    assert.ok(words(q.headline) >= 4 && words(q.headline) <= 10, `${q.id}: ${q.headline}`);
-    assert.ok(words(q.status) <= 4, q.status);
-    for (const r of q.results) assert.ok(words(r.note) <= 6, r.note);
+test('four journey steps, each with one short headline and one short line', () => {
+  assert.deepEqual(
+    PERSPECTIVES.map((p) => p.label),
+    ['Launch', 'Discovery', 'Campaigns', 'Results'],
+  );
+  for (const p of PERSPECTIVES) {
+    assert.ok(words(p.title) <= 7, p.title);
+    assert.ok(words(p.line) <= 12, p.line);
   }
-  for (const t of TOOLS) {
-    assert.ok(words(t.role) <= 4, t.role);
-    assert.ok(t.could.length >= 2 && t.could.length <= 3, t.id);
-  }
-  for (const w of Object.values(COPY.worlds)) assert.ok(words(w) <= 2, w);
 });
 
-test('S03 does not reuse S02 language, objects or banned slogans', () => {
+test('the resting first view stays light on words', () => {
+  const launch = PERSPECTIVES[0];
+  const visible = [
+    COPY.eyebrow,
+    COPY.title,
+    COPY.lede,
+    COPY.cta,
+    ...PERSPECTIVES.map((p) => p.label),
+    launch.title,
+    launch.line,
+    COPY.preview,
+    ...ASSETS.map((a) => a.label),
+  ];
+  assert.ok(words(visible.join(' ')) <= 75, `${words(visible.join(' '))} words`);
+  for (const o of OPPORTUNITIES) assert.ok(words(o.move) <= 7 && words(o.status) <= 3, o.id);
+  for (const s of SOURCES) assert.ok(words(s.note) <= 10, s.id);
+  for (const a of AUDIENCES) assert.ok(words(a.headline) <= 7, a.id);
+});
+
+test('no generic slogans, no S02 language, no "sample data"', () => {
   for (const banned of [
+    /sample data/i,
+    /Start in Xroga/i,
+    /Start with Xroga/i,
+    /Launch is only the beginning/i,
+    /already searching/i,
+    /Unlock/i,
+    /Supercharge/i,
+    /Transform your/i,
+    /Grow 10x/i,
+    /Know what works/i,
+    /See what works/i,
+    /Reach more people/i,
+    /Know where the market looks/i,
+    /Turn attention into demand/i,
     /AI Employee/i,
     /\bmission/i,
-    /\bbrowser\b/i,
-    /Get found/i,
-    /Reach people/i,
-    /Know what works/i,
-    /Unlock 10x/i,
-    /AI does everything/i,
-    /dental/i,
-    /timeline/i,
+    /approved in preview/i,
   ]) {
     assert.doesNotMatch(ALL_COPY, banned, `found ${banned}`);
   }
 });
 
-test('the sample business is fictional and every domain is reserved (.example)', () => {
-  assert.equal(BRAND.name, 'Morrow Supply');
-  for (const d of [BRAND.domain, ...Object.values(COMPETITORS).map((c) => c.domain)]) assert.match(d, /\.example$/);
+test('the business is fictional, said once, and every domain is reserved (.example)', () => {
+  assert.equal(PRODUCT.name, 'Aurel');
+  assert.match(PRODUCT.domain, /\.example$/);
+  for (const o of OPPORTUNITIES) for (const d of o.leader.match(/[\w-]+\.\w+/g) ?? []) assert.match(d, /\.example$/, d);
+  assert.match(COPY.about, /fictional/);
+  assert.match(COPY.about, /nothing is published, sent or spent/);
   assert.doesNotMatch(ALL_COPY, /https?:\/\/(?!localhost)/);
 });
 
 /* -------------------------------------------------------------------------------------------------- data */
-test('four search opportunities with consistent sample numbers', () => {
-  assert.equal(QUERIES.length, 4);
-  assert.equal(new Set(QUERIES.map((q) => q.id)).size, 4);
-  for (const q of QUERIES) {
-    assert.ok(q.volume > 0 && q.difficulty >= 0 && q.difficulty <= 100, q.id);
-    assert.ok(q.x > 0 && q.x < 1 && q.ridge >= 0 && q.ridge <= 4, q.id);
-    assert.ok(q.gsc.clicks <= q.gsc.impressions, q.id);
-    assert.ok(COMPETITORS[q.rival], `${q.id} rival`);
-    for (const c of q.ai.cited) assert.ok(c === 'you' || COMPETITORS[c], `${q.id} cites ${c}`);
-    // your page is either in the top three or shown separately, never both
-    const inTop = q.results.some((r) => r.by === 'you');
-    assert.ok(inTop !== Boolean(q.you), q.id);
-    assert.equal(inTop, q.yours <= 3, `${q.id} rank vs. results`);
-    // the AI mention count shown in the comparison matches the cited list
-    const named = q.ai.cited.includes('you') ? q.compare.find((c) => c.label === 'AI mentions')!.you : '0 of 4';
-    assert.match(named, new RegExp(`of ${AI_SAMPLES}$`));
-    if (!q.ai.cited.includes('you')) assert.equal(named, `0 of ${AI_SAMPLES}`);
+test('opportunities: unique, inside the field, and presence agrees with the status', () => {
+  assert.equal(new Set(OPPORTUNITIES.map((o) => o.id)).size, OPPORTUNITIES.length);
+  for (const o of [...OPPORTUNITIES, ...FIELD]) assert.ok(o.x >= 0 && o.x <= 100 && o.y >= 0 && o.y <= 100);
+  for (const o of OPPORTUNITIES) {
+    assert.ok(o.demand >= 1 && o.demand <= 4, o.id);
+    if (o.presence === 'visible') assert.equal(o.leader, PRODUCT.domain, o.id);
+    else assert.notEqual(o.leader, PRODUCT.domain, o.id);
   }
+  assert.ok(OPPORTUNITIES.some((o) => o.kind === 'AI answer' && o.presence === 'missing'));
 });
 
-test('every audience grows from a real search and every channel has a cap and a provider', () => {
-  for (const a of AUDIENCES)
-    assert.ok(
-      QUERIES.some((q) => q.id === a.from),
-      a.id,
-    );
-  for (const c of CHANNELS) {
-    assert.match(c.cap, /cap|opted in/);
+test('every audience changes the artwork, not only the words; every channel has a provider', () => {
+  assert.equal(new Set(AUDIENCES.map((a) => a.art)).size, AUDIENCES.length);
+  assert.equal(new Set(AUDIENCES.map((a) => a.offer)).size, AUDIENCES.length);
+  for (const c of CHANNELS)
     assert.ok(
       TOOLS.some((t) => t.id === c.provider),
       c.id,
     );
-  }
 });
 
-test('every funnel narrows, totals add up and shares sum to one', () => {
-  for (const s of SOURCES) for (let i = 1; i < 4; i++) assert.ok(s.funnel[i] < s.funnel[i - 1], `${s.id} stage ${i}`);
-  const t = totalFunnel();
+test('every path narrows, totals add up, and the chosen figures agree with the insight', () => {
+  for (const s of SOURCES) for (let i = 1; i < 3; i++) assert.ok(s.flow[i] < s.flow[i - 1], `${s.id} stage ${i}`);
   assert.deepEqual(
-    t,
-    [0, 1, 2, 3].map((i) => SOURCES.reduce((n, s) => n + s.funnel[i], 0)),
+    totals(),
+    [0, 1, 2].map((i) => SOURCES.reduce((n, s) => n + s.flow[i], 0)),
   );
-  const sum = SOURCES.map(shares).reduce((a, x) => ({ v: a.v + x.visitors, p: a.p + x.purchases }), { v: 0, p: 0 });
-  assert.ok(Math.abs(sum.v - 1) < 1e-9 && Math.abs(sum.p - 1) < 1e-9);
-  assert.match(OUTCOMES.forecast, /forecast, not a result/);
-  assert.match(OUTCOMES.method, /Sample data/);
+  // the bottleneck really is the weakest trial-to-active source
+  const worst = [...SOURCES].sort((a, b) => a.flow[2] / a.flow[1] - b.flow[2] / b.flow[1])[0];
+  assert.equal(worst.id, 'paid');
+  assert.equal(pct(66, 120), '55%');
+  assert.equal(new Set(SOURCES.map((s) => s.mark)).size, SOURCES.length, 'sources never rely on colour alone');
+  assert.match(RESULTS.method, /Illustrative/);
 });
 
 /* ------------------------------------------------------------------------------------- capability truth */
-test('tools: the required providers, none shown as connected, catalog names match the real directory', () => {
+test('services: grouped by job, none shown as connected, catalog names match the real directory', () => {
   const names = TOOLS.map((t) => t.name);
-  for (const n of ['Ahrefs', 'Semrush', 'Google Search Console', 'Google Analytics', 'Google Ads', 'Meta Ads', 'HubSpot']) assert.ok(names.includes(n), n);
-  for (const t of TOOLS) if (t.catalog) assert.ok(CATALOG.includes(`"name": "${t.catalog}"`), `${t.catalog} is in integrations-catalog.ts`);
-  // honest phrasing ("not connected", "once connected", "connected by you") is fine; a status claim is not
-  assert.doesNotMatch(ALL_COPY, /(?<!Nothing )\b(?:is|are|now|already)\s+connected\b|>\s*Connected\s*</i);
-  assert.doesNotMatch(ALL_COPY.replace(/Not connected · connection required/g, ''), /\bConnected\b/);
+  for (const n of ['Ahrefs', 'Semrush', 'Search Console', 'Google Analytics', 'Google Ads', 'Meta Ads', 'HubSpot']) assert.ok(names.includes(n), n);
+  for (const t of TOOLS) {
+    assert.ok(
+      STACK_GROUPS.some((g) => g.step === t.step),
+      `${t.id} belongs to a group`,
+    );
+    if (t.catalog) assert.ok(CATALOG.includes(`"name": "${t.catalog}"`), `${t.catalog} is in integrations-catalog.ts`);
+  }
+  assert.equal(TOOLS.find((t) => t.id === 'gsc')!.catalog, null);
+  assert.equal(TOOLS.find((t) => t.id === 'gtm')!.catalog, null);
+  assert.doesNotMatch(ALL_COPY, /(?<!no accounts )\b(?:is|are|now|already)\s+connected\b|>\s*Connected\s*</i);
   assert.match(STACK, /href="\/integrations"/);
-  assert.match(STACK, /Not connected · connection required/);
+  assert.match(STACK, /connection required/);
+  assert.match(STACK, /Integration not confirmed/);
 });
 
 test('every logo is an official mark or the plain name — none are invented', () => {
@@ -142,75 +196,82 @@ test('every logo is an official mark or the plain name — none are invented', (
 
 test('campaigns never imply anything was published, sent or spent', () => {
   assert.match(CAMPAIGNS, /\$0 spent/);
-  assert.match(CAMPAIGNS, /Nothing was published, sent or spent/);
-  assert.match(CAMPAIGNS, /Local preview · not published/);
-  assert.doesNotMatch(ART, /href=|<image/);
+  assert.match(CAMPAIGNS, /Nothing is published, sent or spent from this page/);
+  assert.match(CAMPAIGNS, /Approval step preview/);
+  assert.match(CAMPAIGNS, /Ready for review/);
+  assert.doesNotMatch(ARTIFACT, /href=|<image|<img/);
 });
 
-test('no brand mark is drawn inside the data', () => {
-  assert.doesNotMatch(TRACE + TERRAIN + DISCOVER + OUTCOMES_SRC, /xroga-orb|<Image|<img/);
+test('exactly one real route out of the section, plus the integrations directory', () => {
+  assert.equal((SHELL.match(/<Link /g) ?? []).length, 1);
+  assert.match(SHELL, /loggedIn \? '\/workspace' : '\/auth\/signup'/);
+  assert.equal((STACK.match(/<Link /g) ?? []).length, 1);
+  for (const src of [LAUNCH, DISCOVERY, CAMPAIGNS, RESULTS_SRC]) assert.doesNotMatch(src, /href=/);
 });
 
 /* ------------------------------------------------------------------------------------------------ reducer */
-test('worlds keep selections and switching never replays', () => {
+test('steps keep selections and switching never replays', () => {
   const s = run(
     initialState(),
-    { type: 'query', id: 'personal' },
-    { type: 'world', world: 'campaigns' },
-    { type: 'audience', id: 'gift' },
-    { type: 'world', world: 'outcomes' },
-    { type: 'source', id: 'email' },
-    { type: 'world', world: 'discover' },
+    { type: 'asset', id: 'announce' },
+    { type: 'p', p: 'discovery' },
+    { type: 'opp', id: 'howto' },
+    { type: 'p', p: 'campaigns' },
+    { type: 'audience', id: 'study' },
+    { type: 'channel', id: 'email' },
+    { type: 'p', p: 'results' },
+    { type: 'source', id: 'paid' },
+    { type: 'p', p: 'launch' },
   );
-  assert.equal(s.query, 'personal');
-  assert.equal(s.audience, 'gift');
-  assert.equal(s.source, 'email');
+  assert.equal(s.asset, 'announce');
+  assert.equal(s.opp, 'howto');
+  assert.equal(s.audience, 'study');
+  assert.equal(s.channel, 'email');
+  assert.equal(s.source, 'paid');
 });
 
-test('explore cycles through every search and wraps around', () => {
-  let s = run(initialState(), { type: 'world', world: 'outcomes' });
-  const seen: string[] = [];
-  for (let i = 0; i < QUERIES.length; i++) seen.push((s = reducer(s, { type: 'next-query' })).query);
-  assert.equal(s.world, 'discover');
-  assert.deepEqual(new Set(seen).size, QUERIES.length);
-  assert.equal(seen[QUERIES.length - 1], QUERIES[0].id);
-});
-
-test('approval is a reversible preview', () => {
-  const s = run(initialState(), { type: 'approve' });
-  assert.equal(s.approved, true);
+test('the review step is a reversible preview', () => {
+  const s = run(initialState(), { type: 'ready' });
+  assert.equal(s.ready, true);
   assert.equal(isDefault(s), false);
-  assert.equal(reducer(s, { type: 'approve' }).approved, false);
+  assert.equal(reducer(s, { type: 'ready' }).ready, false);
 });
 
-test('layers open on request; escape closes the innermost first; reset returns to the start', () => {
-  const busy = run(initialState(), { type: 'query', id: 'tips' }, { type: 'layer', layer: 'evidence' }, { type: 'tool', id: 'ga' });
+test('details open on request; escape closes the innermost first; reset returns to the start', () => {
+  const busy = run(initialState(), { type: 'p', p: 'discovery' }, { type: 'detail', detail: 'evidence' }, { type: 'tool', id: 'ga' });
   let s = reducer(busy, { type: 'escape' });
-  assert.equal(s.layer, null);
+  assert.equal(s.detail, null);
   assert.equal(s.tool, 'ga');
   s = reducer(s, { type: 'escape' });
   assert.equal(s.tool, null);
-  assert.equal(reducer(run(initialState(), { type: 'layer', layer: 'evidence' }), { type: 'world', world: 'outcomes' }).layer, null);
+  assert.equal(reducer(run(initialState(), { type: 'detail', detail: 'evidence' }), { type: 'p', p: 'results' }).detail, null);
+  assert.equal(reducer(run(initialState(), { type: 'detail', detail: 'about' }), { type: 'p', p: 'results' }).detail, 'about');
   assert.deepEqual(reducer(busy, { type: 'reset' }), initialState());
   assert.equal(isDefault(initialState()), true);
 });
 
 /* ----------------------------------------------------------------------------------------- motion & a11y */
 test('one entrance, no autoplay timers, reduced motion respected, header-aware', () => {
-  for (const src of [SHELL, DISCOVER, CAMPAIGNS, OUTCOMES_SRC, STACK, TERRAIN, TRACE]) assert.doesNotMatch(src, /setInterval|setTimeout|autoPlay|loop=/);
+  for (const src of [SHELL, LAUNCH, DISCOVERY, CAMPAIGNS, RESULTS_SRC, STACK, ARTIFACT]) assert.doesNotMatch(src, /setInterval|setTimeout|autoPlay|loop=/);
   assert.match(SHELL, /useReducedMotion/);
   assert.match(SHELL, /IntersectionObserver/);
+  assert.match(SHELL, /pointerType !== 'mouse'/);
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]*animation: none !important/);
-  assert.match(CSS, /scroll-margin-top/);
+  assert.match(CSS, /\.section\[data-under\] \.shield/);
   assert.doesNotMatch(SHELL, /addEventListener\('wheel'|scrollIntoView\(/);
+  // scene changes never start from an empty stage
+  assert.match(CSS, /@keyframes sceneIn \{\s*from \{\s*opacity: 0\.6;/);
 });
 
 test('controls carry roles and names', () => {
   assert.match(SHELL, /role="tablist"/);
-  assert.match(TERRAIN, /role="radiogroup"/);
+  assert.match(SHELL, /role="tab"/);
+  assert.match(LAUNCH, /role="radiogroup" aria-label="Launch kit"/);
+  assert.match(DISCOVERY, /role="radiogroup" aria-label="Search opportunities"/);
   assert.match(CAMPAIGNS, /role="radiogroup" aria-label="Audience"/);
-  assert.match(OUTCOMES_SRC, /role="radiogroup" aria-label="Source"/);
-  assert.match(CAMPAIGNS, /aria-pressed=\{st\.approved\}/);
+  assert.match(CAMPAIGNS, /role="radiogroup" aria-label="Channel"/);
+  assert.match(RESULTS_SRC, /role="radiogroup" aria-label="Source"/);
+  assert.match(CAMPAIGNS, /aria-pressed=\{st\.ready\}/);
   assert.match(STACK, /aria-expanded/);
-  assert.match(TRACE, /aria-hidden="true"/);
+  assert.match(ARTIFACT, /aria-hidden="true"/);
 });
