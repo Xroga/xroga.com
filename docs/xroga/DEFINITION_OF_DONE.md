@@ -4,7 +4,7 @@ Code-complete means scoped files exist and can be reviewed. Verified-scope means
 
 Every mission must declare requirements, actual base SHA, changed files, KEEP/EXTEND/REPLACE/DEPRECATE, schema/security/approval/credentials/egress/cost/billing impacts, tests/negative tests, scope limits, rollout, rollback and evidence. Missing mandatory evidence is BLOCKED, not a TODO hidden behind DONE.
 
-Golden fixture/component PASS is not provider-backed journey PASS. Command 005 deliberately has twelve BLOCKED_KNOWN_GAP full journeys; this can coexist with a verified acceptance-harness implementation. Original historical 119/72 reconciliation remains INACCESSIBLE_PENDING_EXPORT, not reviewed.
+Golden fixture/component PASS is not provider-backed journey PASS. Command 005 deliberately has twelve BLOCKED_KNOWN_GAP full journeys; this can coexist with a verified acceptance-harness implementation. The original archive is now hash-verified and its 119 feature rows/72 missions mapped as UNVERIFIED/NOT_RUN requirements. Full private-transcript and 243 earlier-alias semantic reconciliation remains incomplete, not inaccessible and not proof of implementation.
 
 Security-sensitive release requires isolated authenticated E2E, fresh/upgrade DB and staging security proof, role/tenant/authority/privacy tests, verified production key management before vault activation, dependency review and final ten-command GO/NO-GO. Missing test configuration cannot be replaced by production users or stubs counted as passing. Platform branch/environment protections may be absent; user-mandated gates still apply.
 

@@ -222,9 +222,9 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Command 007 incomplete caller review and required full isolated/authenticated/staging security gates"
+      "Command 007 incomplete caller review, remaining critical/high advisories, intermittent font-build CI failure and actual staged security gates"
     ],
-    "authenticatedE2e": "BLOCKED",
+    "authenticatedE2e": "PASS",
     "stagedSecurity": "BLOCKED",
     "liveUrl": null,
     "deployedSha": null

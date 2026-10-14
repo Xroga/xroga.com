@@ -58,6 +58,27 @@
     "noMergeDeploymentProvisioningOrCloudCanary":true
   },
   "latestRetainedScopedProof": {
+    "codeSha":"231dee9d101315d331991f6a5d0f9c0652930dd6",
+    "isolatedCi":"https://github.com/Xroga/xroga.com/actions/runs/38578936924",
+    "aggregateCi":"https://github.com/Xroga/xroga.com/actions/runs/38578929563",
+    "goldenCi":"https://github.com/Xroga/xroga.com/actions/runs/38578940415",
+    "result":"PASS_SCOPED_REGRESSION_NOT_FULL_COMMAND007_ACCEPTANCE",
+    "realBrowserTests":3,
+    "realTenantTests":36,
+    "fullFreshAndRepresentativeUpgradeFiles":69,
+    "bothBuildsAndExactApiWebRevision":"PASS",
+    "aggregateRepeats":2,
+    "aggregateStages":21,
+    "perRun":{"backend":2807,"frontend":1035,"guards":17,"combinedFixtures":71,"fail":0,"skipped":0},
+    "productionTelemetryRequests":0,
+    "privateDelivery":{"cookieOwner":200,"foreign":404,"signedOwner":200,"anonymous":401,"revoked":404,"controls":"PASS","realR2":"NOT_EXECUTED"},
+    "goldenMergeRefSha":"2ece1204dcf6d8a6629737df406d14924bd4dddf",
+    "goldenAndFeatureTree":"07d01c577145bda60d0abcaeca7ce06ab8d755d5",
+    "evidenceFiles":["docs/xroga/evidence/command-007/local-supabase-38578936924-migrations.json","docs/xroga/evidence/command-007/local-supabase-38578936924-browser-journey.json","docs/xroga/evidence/command-007/local-supabase-38578936924-founder.json","docs/xroga/evidence/command-007/local-supabase-38578936924-private-delivery.json","docs/xroga/evidence/command-007/aggregate-38578929563-run-a.json","docs/xroga/evidence/command-007/aggregate-38578929563-run-b.json","docs/xroga/evidence/command-007/golden-38578940415-browser.json"],
+    "otherPrCiFailure":{"ci":"https://github.com/Xroga/xroga.com/actions/runs/38578940266","cause":"Existing intermittent Google font loader on crypto route","state":"OPEN_NOT_WAIVED"},
+    "laterSourceRequiresRerun":true
+  },
+  "previousRetainedScopedProof": {
     "codeSha": "a8d9972b5671e4339230cfdfffbe11bafedd231b",
     "isolatedCi": "https://github.com/Xroga/xroga.com/actions/runs/38483498798",
     "aggregateCi": "https://github.com/Xroga/xroga.com/actions/runs/38483505494",

@@ -1,5 +1,9 @@
 # Command 007 acceptance checkpoint — not verified
 
+## Final scoped CI result
+
+Exact runtime231dee9d101315d331991f6a5d0f9c0652930dd6: aggregate38578929563 PASS twice all21 stages, backend2807/frontend1035/guards17/combined71,zero fail/skip; real Supabase38578936924 PASS browser3/tenant36/full69 fresh+representative upgrade/exact web+API; golden38578940415 PASS on independently equal-tree synthetic merge2ece1204. Seven safe manifests retained. Criteria7/8 pass in isolated scope; criterion9 has integrated regression proof, not every real provider journey. Criteria2/10 and other full coverage remain unresolved. PR aggregate38578940266 still FAILED from intermittent existing Google-font loading despite other frontend builds passing; it is an OPEN reliability/release blocker, not waived. The older pending/17-case candidate notes below record the progression, not current passing counts. No staging/R2/KMS/production verification or release performed.
+
 ## Latest dependency decision (supersedes the initial candidate below)
 
 Final local rerun: all eight Cline/Git tests PASS, zero failure/skip; all 20 preview access tests PASS (including malformed persisted state); backend typecheck and manifest/lock checks PASS. Two advisory-inventory fixtures PASS. These are scoped local results, not complete Command 007 or integrated CI acceptance.
