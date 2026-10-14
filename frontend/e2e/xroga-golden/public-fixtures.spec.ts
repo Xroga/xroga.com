@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { resolve } from 'node:path';
 
 // Actual guest UI with intercepted fixture transport. Not authenticated-chat/provider proof.
 test.beforeEach(async ({page,baseURL})=>{
@@ -88,7 +89,9 @@ test('production crypto typography loads real local normal and italic faces with
     expect(font.status).toBe(200);
   }
   const received=await Promise.all(payloads);
-  const register=JSON.parse(readFileSync(new URL('../../../docs/xroga/security/CRYPTO_FONT_REGISTER.json',import.meta.url),'utf8')) as {fonts:{sha256:string}[]};
+  // Playwright compiles this existing suite as CommonJS. Resolve from the
+  // spec directory, not the invocation cwd (root and frontend both occur in CI).
+  const register=JSON.parse(readFileSync(resolve(__dirname,'../../../docs/xroga/security/CRYPTO_FONT_REGISTER.json'),'utf8')) as {fonts:{sha256:string}[]};
   for(const font of register.fonts)expect(received).toContain(font.sha256);
   await page.setViewportSize({width:390,height:844});
   await expect(page.locator('main[data-crypto-page]')).toBeVisible();
