@@ -1,4 +1,14 @@
-# PR 803 conflict inspection — plan only
+# PR 803 conflict inspection and local resolution
+
+## 2026-10-14 authorized local integration
+
+User authorized narrow LOCAL conflict resolution, not production merge/deploy. Clean starting feature SHA `f92c722be7ed86b3d7aa05346502f40c6e4e6e02`; fetched main `6aa3963b972fbb22f45398d0e9b7cf17c74bef1e`. Main now also includes S03 work; preserve it rather than assuming the older S02-only comparison remains current.
+
+Local merge `a1d4c7f96fda4fee75eef1b563e7477fe1e69c61` preserves both histories. Three conflicts: S01 composition assertion, Theater imports, Workspaces imports. Main's V12 Workforce edits automatically followed the prior feature filename rename into `WorkforceSurface.tsx`; Theater retains that explicit case-safe path plus main's updated script types. Workspaces retains main's Companion/team/Thread inputs, not obsolete V10 SurfaceProps. S01 keeps the actual S02 composition-order assertion. One pre-existing incoming blank EOF in Glyphs was removed to satisfy whitespace checking. No redesign or removed assertion.
+
+All 67 S01/S02/S03 tests pass locally, zero failures/skips. Complete regression on the final integrated source is still required; older CI is not integrated-tree evidence. Remote PR conflict status remains conflicting until a normal feature-branch push and GitHub recomputation. Main was not changed; no force-push, PR merge, production deployment or provisioning. PR remains draft/NO-GO.
+
+## Earlier read-only comparison (historical)
 
 2026-10-14 read-only comparison: branch `codex/xroga-batch-01`, existing implementation/evidence HEAD `5b6bf95a033cd3dbe4fa54432e1c427d87719186`; fetched main `a0394c3d679a8a4a646171ff9f9a3382a398cc8e` (S02 V12). `git merge-tree --write-tree --name-only --no-messages HEAD origin/main` reports conflicts in exactly:
 

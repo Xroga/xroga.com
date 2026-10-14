@@ -2,9 +2,11 @@ import {
   randomUUID,
 } from 'node:crypto';
 
-import {
-  getSupabaseAdmin,
-} from '../../config/supabase.js';
+import { getTenantSupabaseAdmin, getGlobalSupabaseAdmin } from '../../security/serviceRoleGuard.js';
+import { createTenantContext } from '../../security/tenantContext.js';
+import { TenantAccessError } from '../../security/tenantErrors.js';
+import { SupabaseProjectRuntimeStore } from '../projectRuntime/store.js';
+import { authorizedPreviewTarget } from './access.js';
 
 import type {
   LivePreviewGrant,
@@ -109,12 +111,19 @@ export async function createLivePreviewGrant(
 ): Promise<LivePreviewGrant> {
   const previewId =
     randomUUID();
+  // Internal coordinator supplies the server owner; never create a capability
+  // from an unchecked request/model owner or unrelated runtime session.
+  const context = createTenantContext({ userId: input.userId, via: 'persisted_owner' });
+  const now = new Date().toISOString();
+  const candidate: LivePreviewGrant = { ...input, previewId, createdAt: now, revokedAt: null };
+  const session = await new SupabaseProjectRuntimeStore().loadSession(context.userId, input.sessionId);
+  if (!authorizedPreviewTarget(candidate, session)) throw new TenantAccessError(404, 'RESOURCE_NOT_FOUND');
 
   const {
     data,
     error,
   } =
-    await getSupabaseAdmin()
+    await getTenantSupabaseAdmin(context)
       .from(
         'project_preview_grants',
       )
@@ -173,11 +182,12 @@ export async function getLivePreviewGrant(
   previewId:
     string,
 ): Promise<LivePreviewGrant | null> {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(previewId)) return null;
   const {
     data,
     error,
   } =
-    await getSupabaseAdmin()
+    await getGlobalSupabaseAdmin('signed_runtime_preview_resolution')
       .from(
         'project_preview_grants',
       )
@@ -218,8 +228,9 @@ export async function getLatestLivePreviewGrant(
       string | null;
   },
 ): Promise<LivePreviewGrant | null> {
+  const context = createTenantContext({ userId: input.userId, via: 'persisted_owner' });
   let query =
-    getSupabaseAdmin()
+    getTenantSupabaseAdmin(context)
       .from(
         'project_preview_grants',
       )
@@ -299,8 +310,9 @@ export async function revokeLivePreviewGrants(
       string | null;
   },
 ): Promise<void> {
+  const context = createTenantContext({ userId: input.userId, via: 'persisted_owner' });
   let query =
-    getSupabaseAdmin()
+    getTenantSupabaseAdmin(context)
       .from(
         'project_preview_grants',
       )

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a8d9972b5671e4339230cfdfffbe11bafedd231b",
+  "source_sha": "a1d4c7f96fda4fee75eef1b563e7477fe1e69c61",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -2796,6 +2796,7 @@
         "frontend/src/app/security/page.tsx",
         "scripts/security/audit-tenant-policies.mjs",
         "scripts/security/collect-local-security-logs.mjs",
+        "scripts/security/dependency-advisories.mjs",
         "scripts/security/disposable-supabase.mjs",
         "scripts/security/full-supabase-history.mjs",
         "scripts/security/r2-private-check.mjs",

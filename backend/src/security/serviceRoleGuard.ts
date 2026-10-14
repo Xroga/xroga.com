@@ -9,6 +9,7 @@ export function getTenantSupabaseAdmin(context: TenantContext) {
 
 /** Narrow registered global operation, not an unbounded administrative client grant. */
 export const globalServiceExceptions = Object.freeze({
+  signed_runtime_preview_resolution: Object.freeze({ source: 'backend/src/synthesis/livePreview/store.ts', table: 'project_preview_grants', action: 'select', reason: 'Internal exact UUID capability lookup only. No returned grant payload is sent to the visitor; gateway independently verifies signature, revocation, finite expiry, owner/project/session binding and declared port before resolving its private machine. Not a private-file share or client-selectable admin grant.' }),
   readiness_profile_probe: Object.freeze({ source: 'backend/src/index.ts', table: 'profiles', action: 'select', columns: 'id', limit: 1, reason: 'Infrastructure readiness; only error presence is returned, never rows or identities.' }),
   stale_run_reconcile: Object.freeze({ source: 'backend/src/ai/runReconciler.ts', table: 'swarm_runs', action: 'update', reason: 'Internal startup only; running rows with stale heartbeat/legacy creation, minimum five-minute grace. No provider replay or external effect.' }),
   leased_worker_shutdown: Object.freeze({ source: 'backend/src/ai/runReconciler.ts', table: 'swarm_runs', action: 'update', reason: 'Internal shutdown only; explicit local active IDs AND persisted worker lease identity AND running status. No general user API.' }),

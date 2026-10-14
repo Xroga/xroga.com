@@ -25,6 +25,10 @@ import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget
 import { storeProjectFile } from '../services/storage/projectFiles.js';
 import { ownedFile } from '../services/storage/privateFileDelivery.js';
 import { signFileLink } from '../services/storage/fileDeliveryPolicy.js';
+import { authorizedPreviewTarget } from '../synthesis/livePreview/access.js';
+import type { LivePreviewGrant } from '../synthesis/livePreview/types.js';
+import type { ProjectRuntimeSession } from '../synthesis/projectRuntime/types.js';
+import { createLivePreviewGrant, getLivePreviewGrant, revokeLivePreviewGrants } from '../synthesis/livePreview/store.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -67,6 +71,40 @@ test('real owner helpers deny every foreign high-risk resource without enumerati
   }
   await requireOwnedFile(owner.context,owner.file,admin);
   await assert.rejects(requireOwnedFile(owner.context,other.file,admin),{status:404});
+});
+
+test('real durable preview session cannot resolve a misbound owner/project or stale capability', async () => {
+  const [owner, other] = users;
+  const now = Date.now(), sessionId = randomUUID();
+  const store = new SupabaseProjectRuntimeStore();
+  const session: ProjectRuntimeSession = {
+    schemaVersion: '1.0.0', sessionId, userId: owner.id, projectId: owner.project,
+    providerId: 'fixture-no-execution', runtimeClass: 'interactive', status: 'running', image: null,
+    workspaceRevision: 1, knownFiles: [], processes: [],
+    ports: [{ port: 3000, protocol: 'http', processId: 'fixture', status: 'declared' }],
+    providerState: { machineId: 'abc123', app: 'xroga-synthetic-runtime' },
+    createdAt: new Date(now).toISOString(), updatedAt: new Date(now).toISOString(), expiresAt: new Date(now + 120_000).toISOString(),
+  };
+  await store.saveSession(session);
+  const restored = await store.loadSession(owner.id, sessionId);
+  assert.ok(restored);
+  assert.equal(await store.loadSession(other.id, sessionId), null);
+  const grant: LivePreviewGrant = { previewId: randomUUID(), userId: owner.id, projectId: owner.project, sessionId, runId: 'fixture-run', kind: 'browser', port: 3000, expiresAt: new Date(now + 60_000).toISOString(), revokedAt: null, createdAt: new Date(now).toISOString() };
+  assert.ok(authorizedPreviewTarget(grant, restored, now));
+  assert.equal(authorizedPreviewTarget({ ...grant, userId: other.id }, restored, now), null);
+  assert.equal(authorizedPreviewTarget({ ...grant, projectId: other.project }, restored, now), null);
+  assert.equal(authorizedPreviewTarget({ ...grant, port: 4000 }, restored, now), null);
+  assert.equal(authorizedPreviewTarget({ ...grant, revokedAt: new Date(now).toISOString() }, restored, now), null);
+  assert.equal(authorizedPreviewTarget(grant, restored, now + 120_001), null);
+  const input = { userId: owner.id, projectId: owner.project, sessionId, runId: 'fixture-run', kind: 'browser' as const, port: 3000, expiresAt: grant.expiresAt };
+  await assert.rejects(createLivePreviewGrant({ ...input, userId: other.id }), { status: 404 });
+  await assert.rejects(createLivePreviewGrant({ ...input, projectId: other.project }), { status: 404 });
+  const saved = await createLivePreviewGrant(input);
+  assert.ok(await getLivePreviewGrant(saved.previewId));
+  await revokeLivePreviewGrants({ userId: other.id, projectId: owner.project, sessionId });
+  assert.equal((await getLivePreviewGrant(saved.previewId))?.revokedAt, null);
+  await revokeLivePreviewGrants({ userId: owner.id, projectId: owner.project, sessionId });
+  assert.ok((await getLivePreviewGrant(saved.previewId))?.revokedAt);
 });
 test('actual API ignores client owner and rejects foreign project/file access and unsigned requests',async()=>{
   const [owner,other]=users;

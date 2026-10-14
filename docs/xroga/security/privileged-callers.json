@@ -7,11 +7,11 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
-    "persistenceCandidates": 669,
+    "persistenceCandidates": 670,
     "ownerPredicateCandidates": 163,
-    "reviewRequired": 669,
+    "reviewRequired": 670,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 8
+    "registeredNarrowGlobalExceptions": 9
   },
   "callers": [
     {
@@ -2116,15 +2116,15 @@
       "sourceSha256": "ead49170241f447e25c5a38334e35791dc6d435d487a275d7032f19921112b00"
     },
     {
-      "id": "ef40ee4a87c8a7c007a9",
+      "id": "d74081dc750fd815380f",
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "line": 618,
+      "line": 588,
       "enclosing": "attachRuntimePreviewWebSocketGateway",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d97a998832330a493d6f20b8aa449831bbd63407ade94d359ad908a13d63914d"
+      "sourceSha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383"
     },
     {
       "id": "b4f1f9fc3e57652d4c13",
@@ -3917,40 +3917,40 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "dfcca66fbd583c2bd874d1d151efd4759b4175aeaae29f397bc59586734c9b13"
+      "sourceSha256": "4987c92eba0570950dac65354c9f5edd4d7152c2ad86ad591bd4680450cb6a65"
     },
     {
-      "id": "d9915437959d05159865",
+      "id": "82385a0717590eceef14",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 25,
+      "line": 26,
       "enclosing": "getGlobalSupabaseAdmin",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "dfcca66fbd583c2bd874d1d151efd4759b4175aeaae29f397bc59586734c9b13"
+      "sourceSha256": "4987c92eba0570950dac65354c9f5edd4d7152c2ad86ad591bd4680450cb6a65"
     },
     {
-      "id": "05298abfe6c9c1db497b",
+      "id": "13905bf23cf00d6685f9",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 29,
+      "line": 30,
       "enclosing": "probeDatabaseReadiness",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "dfcca66fbd583c2bd874d1d151efd4759b4175aeaae29f397bc59586734c9b13"
+      "sourceSha256": "4987c92eba0570950dac65354c9f5edd4d7152c2ad86ad591bd4680450cb6a65"
     },
     {
-      "id": "05298abfe6c9c1db497b",
+      "id": "13905bf23cf00d6685f9",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 29,
+      "line": 30,
       "enclosing": "probeDatabaseReadiness",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "dfcca66fbd583c2bd874d1d151efd4759b4175aeaae29f397bc59586734c9b13"
+      "sourceSha256": "4987c92eba0570950dac65354c9f5edd4d7152c2ad86ad591bd4680450cb6a65"
     },
     {
       "id": "a2b7e564b0e180499973",
@@ -6120,92 +6120,92 @@
       "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999"
     },
     {
-      "id": "ab55eac6a2ab61fa2815",
+      "id": "18ec94fee6d460cd45fa",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 117,
+      "line": 126,
       "enclosing": "createLivePreviewGrant",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1668aa45a31d43631ff7ed4ef402a7ada2de4fdc449473d57017e29e78a8abb8"
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
     },
     {
-      "id": "ab55eac6a2ab61fa2815",
+      "id": "18ec94fee6d460cd45fa",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 117,
+      "line": 126,
       "enclosing": "createLivePreviewGrant",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1668aa45a31d43631ff7ed4ef402a7ada2de4fdc449473d57017e29e78a8abb8"
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
     },
     {
-      "id": "658ccc0104139050d65f",
+      "id": "a1d2a115983b65de6b92",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 180,
+      "line": 190,
       "enclosing": "getLivePreviewGrant",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1668aa45a31d43631ff7ed4ef402a7ada2de4fdc449473d57017e29e78a8abb8"
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
     },
     {
-      "id": "658ccc0104139050d65f",
+      "id": "a1d2a115983b65de6b92",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 180,
+      "line": 190,
       "enclosing": "getLivePreviewGrant",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1668aa45a31d43631ff7ed4ef402a7ada2de4fdc449473d57017e29e78a8abb8"
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
     },
     {
-      "id": "a6cebfe306b229878b3b",
+      "id": "0df0c5288e54e148303f",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 222,
+      "line": 233,
       "enclosing": "getLatestLivePreviewGrant",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1668aa45a31d43631ff7ed4ef402a7ada2de4fdc449473d57017e29e78a8abb8"
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
     },
     {
-      "id": "a6cebfe306b229878b3b",
+      "id": "0df0c5288e54e148303f",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 222,
+      "line": 233,
       "enclosing": "getLatestLivePreviewGrant",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1668aa45a31d43631ff7ed4ef402a7ada2de4fdc449473d57017e29e78a8abb8"
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
     },
     {
-      "id": "36fa52d266d50b1a7922",
+      "id": "5874e5664d10d0943e00",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 303,
+      "line": 315,
       "enclosing": "revokeLivePreviewGrants",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1668aa45a31d43631ff7ed4ef402a7ada2de4fdc449473d57017e29e78a8abb8"
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
     },
     {
-      "id": "36fa52d266d50b1a7922",
+      "id": "5874e5664d10d0943e00",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 303,
+      "line": 315,
       "enclosing": "revokeLivePreviewGrants",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1668aa45a31d43631ff7ed4ef402a7ada2de4fdc449473d57017e29e78a8abb8"
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
     },
     {
       "id": "6ec0dffc2b2b08262e45",
@@ -6866,6 +6866,17 @@
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
       "sourceSha256": "9bf59a1d622fa603b77fd53aff0042f872ee347aa223d1623f105653dff2684f"
+    },
+    {
+      "id": "a9a7ce7fe78fc66ee5f9",
+      "path": "frontend/src/components/homepage-next/s02/Missions.tsx",
+      "line": 719,
+      "enclosing": "OutSite",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "9bb270d8d5b7689493700bfebf5027318e8e710e5b6f124fad23417c3294c1b6"
     },
     {
       "id": "7e334ae8cea29a7df264",

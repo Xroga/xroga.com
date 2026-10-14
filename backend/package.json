@@ -33,6 +33,9 @@
     "xroga": "file:..",
     "zod": "3.25.76"
   },
+  "overrides": {
+    "@simple-git/argv-parser": "2.0.1"
+  },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",

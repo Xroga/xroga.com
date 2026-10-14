@@ -1,5 +1,17 @@
 # Credential-free advisory checkpoint — release remains blocked
 
+## Latest continuation: actual Cline boundary and rejected incompatible fix
+
+Current exact graphs and every high/critical finding are retained in `dependency-advisories.json`: workspace aggregate 52 (critical1/high30), frontend standalone18 (critical0/high13), backend standalone40 (critical1/high21). All three audit commands return exit1; no exclusions or false passing audit. Paths/versions, advisory URLs, propagated package effects and suggested fixes are recorded, not just totals. Some suggested fixes are incompatible majors/downgrades and are not automatically applied.
+
+Runtime path: `backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts` uses the existing `@cline/sdk@0.0.82` Agent. Core 0.0.82 resolves Git3.36.0, originally parser1.1.1. Published core0.0.93 still pins Git3.36.0. Inspecting all shipped core JavaScript entrypoints found Git imports in index/hub/daemon; the inspected workspace metadata functions call checkIsRepo/getRemotes/revparse/branch, not untrusted inline config or editor mutation. This bounds that inspected path, not every model/tool/environment pathway or arbitrary subprocess execution.
+
+Candidate Git4.0.1/parser2.0.1 cleared critical audit entries but the REAL unchanged SDK import FAILED because v4 removes the default export. Candidate rejected, not shipped or hidden by tests. Keep Git3.36.0; the narrow parser2.0.1 MIT override passes eight actual dependency-resolution, SDK metadata and unsafe-editor/trailer/include denials. Initially three tests expected a v4 Error.name; corrected to assert the actual exported v3 GitPluginError and rejection reason, without weakening the unsafe-action checks. Backend typecheck and all manifest/lock checks pass after the single frozen install.
+
+[GHSA-v5rq-49vh-5v5c](https://github.com/advisories/GHSA-v5rq-49vh-5v5c) parser critical is patched. [GHSA-x6jw-m9v5-85vh](https://github.com/advisories/GHSA-x6jw-m9v5-85vh) Git critical remains reported against installed3.36.0; actual delegated trailer guard is mitigated but the advisory is NOT waived or relabeled fully resolved. Upstream-compatible patched Git/Cline combination or separately reviewed backport remains necessary for full remediation. No forked chat/execution runtime or installed-package tampering. Full integrated regression and isolated CI still required.
+
+Other high groups: Cline LLM → SAP AI/cloud SDK → node-forge/jks-js; Cline MCP SDK; undici/busboy; frontend export → pptxgenjs/image-size; Tailwind/ESLint/nodemon → chokidar/braces/micromatch/fast-glob; brace-expansion/js-yaml/source-map-js/nanoid. Their exact paths and primary advisories are in the JSON. No claim that all are runtime-exploitable or dev-only; remaining semantic exposure/remediation review is internal work, not an owner-credential request.
+
 Actual `npm audit --json --prefix <scope> --workspaces=false` registry checks, no `audit fix --force`, no major framework migration. Initial scope counts: root-only 2 critical; frontend 21 (1 low, 4 moderate, 15 high, 1 critical); backend 44 (5 low, 15 moderate, 21 high, 3 critical). These are vulnerability/package counts, not distinct CVEs or proof of exploitation; root-only excludes workspace advisories and must not be summed with aggregate workspace results.
 
 ## Compatible changes prepared and locked

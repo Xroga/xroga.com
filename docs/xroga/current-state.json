@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "a8d9972b5671e4339230cfdfffbe11bafedd231b",
-    "sourceTimestampUtc": "2026-10-14T04:18:57+05:00",
-    "auditStartedUtc": "2026-10-13T23:33:33.785Z",
+    "sha": "a1d4c7f96fda4fee75eef1b563e7477fe1e69c61",
+    "sourceTimestampUtc": "2026-10-14T18:45:33+05:00",
+    "auditStartedUtc": "2026-10-14T14:06:44.206Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -11524,7 +11524,6 @@
         "backend/src/services/storage/projectFiles.ts:2",
         "backend/src/services/systemErrorLog.ts:1",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:1",
-        "backend/src/synthesis/livePreview/store.ts:5",
         "backend/src/synthesis/projectRuntime/projectHistory.ts:1",
         "backend/src/synthesis/projectRuntime/store.ts:6",
         "backend/src/synthesis/universalEntrypoint.ts:52"
@@ -15155,18 +15154,16 @@
       "id": "surface:bd41a7e2f60985200cff",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sha256": "d97a998832330a493d6f20b8aa449831bbd63407ade94d359ad908a13d63914d",
+      "sha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383",
       "symbols": [
         "HOP_BY_HOP",
         "PreviewTarget",
-        "app",
         "attachRuntimePreviewWebSocketGateway",
         "buffer",
         "closeBoth",
         "grant",
         "headers",
         "hostname",
-        "machineId",
         "message",
         "parsed",
         "pending",
@@ -15185,6 +15182,7 @@
         "upstreamHeaders"
       ],
       "imports": [
+        "../synthesis/livePreview/access.js",
         "../synthesis/livePreview/signing.js",
         "../synthesis/livePreview/store.js",
         "../synthesis/projectRuntime/index.js",
@@ -15194,6 +15192,7 @@
         "ws"
       ],
       "runtimeImports": [
+        "backend/src/synthesis/livePreview/access.ts",
         "backend/src/synthesis/livePreview/signing.ts",
         "backend/src/synthesis/livePreview/store.ts",
         "backend/src/synthesis/projectRuntime/index.ts"
@@ -15212,9 +15211,13 @@
         "node:stream",
         "ws"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/middleware/runtimePreviewGateway.ts#authorizedPreviewTarget"
+      ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/middleware/runtimePreviewGateway.ts#authorizedPreviewTarget"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [
         "backend/src/middleware/runtimePreviewGateway.ts#verifyLivePreviewSignature"
@@ -20709,7 +20712,7 @@
       "id": "surface:e31c62507c56bf4fa325",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "dfcca66fbd583c2bd874d1d151efd4759b4175aeaae29f397bc59586734c9b13",
+      "sha256": "4987c92eba0570950dac65354c9f5edd4d7152c2ad86ad591bd4680450cb6a65",
       "symbols": [
         "getGlobalSupabaseAdmin",
         "getTenantSupabaseAdmin",
@@ -20744,7 +20747,8 @@
         "backend/src/security/serviceRoleGuard.test.ts:3",
         "backend/src/security/tenantContext.test.ts:4",
         "backend/src/services/responseCache.ts:2",
-        "backend/src/services/storage/privateFileDelivery.ts:3"
+        "backend/src/services/storage/privateFileDelivery.ts:3",
+        "backend/src/synthesis/livePreview/store.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -20824,6 +20828,7 @@
         "backend/src/services/storage/fileDeliveryPolicy.ts:5",
         "backend/src/services/storage/privateFileDelivery.ts:4",
         "backend/src/services/storage/projectFiles.ts:4",
+        "backend/src/synthesis/livePreview/store.ts:6",
         "backend/src/synthesis/projectRuntime/store.ts:9",
         "backend/src/synthesis/universalEntrypoint.ts:55",
         "backend/src/synthesis/universalPersistence.owner.test.ts:7",
@@ -20889,7 +20894,8 @@
         "backend/src/security/tenantContext.test.ts:5",
         "backend/src/security/tenantContext.ts:3",
         "backend/src/security/tenantErrors.test.ts:3",
-        "backend/src/security/tenantIsolation.integration.test.ts:17"
+        "backend/src/security/tenantIsolation.integration.test.ts:17",
+        "backend/src/synthesis/livePreview/store.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -27579,6 +27585,52 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:f3fdc77942588fe53f5f",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/synthesis/livePreview/access.ts",
+      "sha256": "d3a61e4a1e342dfd1d118c5a862ea6fe4ea86dd8a32ddbf5ab309c7a24a2c846",
+      "symbols": [
+        "authorizedPreviewTarget",
+        "expiry"
+      ],
+      "imports": [
+        "../projectRuntime/types.js",
+        "./types.js"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/middleware/runtimePreviewGateway.ts:29",
+        "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/synthesis/livePreview/access.test.ts:5",
+        "backend/src/synthesis/livePreview/store.ts:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [
+        "backend/src/synthesis/livePreview/access.ts#authorizedPreviewTarget"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/synthesis/livePreview/access.ts#authorizedPreviewTarget"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/synthesis/livePreview/access.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:456114949c3373f121ef",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/livePreview/agentBridge.ts",
@@ -27949,7 +28001,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/middleware/runtimePreviewGateway.ts:30",
+        "backend/src/middleware/runtimePreviewGateway.ts:31",
         "backend/src/routes/projectRuntime.ts:25",
         "backend/src/synthesis/livePreview/coordinator.ts:33",
         "backend/src/synthesis/livePreview/index.ts:5",
@@ -28019,23 +28071,35 @@
       "id": "surface:b1a640e240cb2100e3b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/livePreview/store.ts",
-      "sha256": "1668aa45a31d43631ff7ed4ef402a7ada2de4fdc449473d57017e29e78a8abb8",
+      "sha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc",
       "symbols": [
+        "candidate",
+        "context",
         "createLivePreviewGrant",
         "getLatestLivePreviewGrant",
         "getLivePreviewGrant",
         "mapGrant",
+        "now",
         "previewId",
         "query",
-        "revokeLivePreviewGrants"
+        "revokeLivePreviewGrants",
+        "session"
       ],
       "imports": [
-        "../../config/supabase.js",
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js",
+        "../../security/tenantErrors.js",
+        "../projectRuntime/store.js",
+        "./access.js",
         "./types.js",
         "node:crypto"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts"
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/security/tenantErrors.ts",
+        "backend/src/synthesis/livePreview/access.ts",
+        "backend/src/synthesis/projectRuntime/store.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -28043,6 +28107,7 @@
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:26",
         "backend/src/routes/projectRuntime.ts:20",
+        "backend/src/security/tenantIsolation.local.integration.ts:31",
         "backend/src/synthesis/livePreview/coordinator.ts:27",
         "backend/src/synthesis/livePreview/index.ts:3"
       ],
@@ -28053,15 +28118,21 @@
       "externalProviderDependencies": [
         "node:crypto"
       ],
-      "authBoundary": [],
-      "tenantBoundary": [
-        "backend/src/synthesis/livePreview/store.ts:222 (user_id)",
-        "backend/src/synthesis/livePreview/store.ts:303 (user_id)"
+      "authBoundary": [
+        "backend/src/synthesis/livePreview/store.ts#authorizedPreviewTarget"
       ],
-      "approvalBoundary": [],
+      "tenantBoundary": [
+        "backend/src/synthesis/livePreview/store.ts:233 (user_id)",
+        "backend/src/synthesis/livePreview/store.ts:315 (user_id)"
+      ],
+      "approvalBoundary": [
+        "backend/src/synthesis/livePreview/store.ts#authorizedPreviewTarget"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -28103,6 +28174,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/synthesis/livePreview/access.test.ts",
         "backend/src/synthesis/livePreview/livePreview.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -29335,6 +29408,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:138",
         "backend/src/security/tenantIsolation.local.integration.ts:14",
+        "backend/src/synthesis/livePreview/store.ts:8",
         "backend/src/synthesis/projectRuntime/index.ts:3",
         "backend/src/synthesis/projectRuntime/manager.ts:22",
         "backend/src/synthesis/projectRuntime/projectHistory.ts:9",
@@ -29426,6 +29500,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/synthesis/livePreview/access.test.ts",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -45033,13 +45109,13 @@
       "id": "surface:5e1f3fc484ac4949f8b0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/Companion.tsx",
-      "sha256": "8f787f15ab2b3c09319cd2280e44ce5cbe925516e5c37fcfc268800ab108a71c",
+      "sha256": "da2202794f6fe254c7d41a396d86ca5977662a6c8d509d65b5e67805bc55a4b0",
       "symbols": [
         "Companion"
       ],
       "imports": [
         "./Companion.module.css",
-        "./script",
+        "./team",
         "react"
       ],
       "runtimeImports": [
@@ -45049,7 +45125,9 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:15"
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:23",
+        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:14",
+        "frontend/src/components/homepage-next/s02/Workspaces.tsx:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -45070,39 +45148,107 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:2769246c5d3a604810d9",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/Glyphs.tsx",
+      "sha256": "5c54acfbf6be987ff9068f20cf88462e2d7761cd3b4e9500b082bab1027db112",
+      "symbols": [
+        "MissionGlyph"
+      ],
+      "imports": [
+        "./script"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:24"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:a09d7caa6e5e0faa73e0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/Missions.tsx",
-      "sha256": "a6d325c54c0e0fb31f38377eb2c4f6da159470b9bd1f892a7fe5724cdd86ad45",
+      "sha256": "9bb270d8d5b7689493700bfebf5027318e8e710e5b6f124fad23417c3294c1b6",
       "symbols": [
         "AdsApp",
-        "ArticleApp",
+        "AdsBrief",
+        "AdsCampaign",
+        "AdsResearch",
+        "BrowserTab",
         "BugApp",
-        "ExtensionApp",
+        "BugRepo",
+        "BugStore",
+        "CODE",
+        "Check",
+        "ExtApp",
+        "ExtListing",
+        "ExtProject",
+        "H1",
+        "KEYWORDS",
         "MISSION_APPS",
         "MissionApp",
+        "OutApp",
+        "OutBrief",
+        "OutCrm",
+        "OutMail",
+        "OutSite",
+        "PROSPECTS",
+        "adsView",
         "applied",
+        "bugView",
+        "building",
+        "built",
         "checked",
+        "checks",
+        "decided",
         "devtools",
+        "extView",
+        "failed",
         "fixed",
-        "goal",
-        "image",
+        "found",
+        "h1",
+        "h2",
         "inspected",
-        "listing",
-        "looped",
-        "manifest",
+        "narrowed",
         "on",
+        "one",
+        "open",
+        "opened",
+        "outView",
         "paying",
-        "perm",
-        "phone",
         "picked",
-        "pub",
-        "radius",
-        "site",
-        "slug",
+        "queued",
+        "r",
+        "repaired",
+        "retest",
+        "retested",
+        "rows",
+        "sent",
+        "shown",
         "smoke",
-        "stage",
-        "submitted"
+        "t3bad",
+        "tab",
+        "tested",
+        "tests",
+        "v",
+        "viewOf"
       ],
       "imports": [
         "./Missions.module.css",
@@ -45117,7 +45263,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/Theater.tsx:15"
+        "frontend/src/components/homepage-next/s02/Theater.tsx:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -45141,34 +45287,43 @@
       "id": "surface:e91efcfd09bfe6cbb4b9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/S02Work.tsx",
-      "sha256": "60d2a6c35a89e2c4ca8d4090943378ce92295c7dcb03455d5e681903b68f1bfa",
+      "sha256": "7830c4155f1ee010005189a71775bba97b53f46b5bb406ab8b7cf3fbfd049db0",
       "symbols": [
         "Hold",
         "MODES",
         "S02Work",
         "Theater",
         "el",
+        "gate",
         "gen",
         "id",
         "io",
         "last",
         "live",
+        "live1",
         "mission",
         "next",
+        "on",
         "onTabKey",
         "phase",
-        "pick",
         "prefersReduced",
         "root",
+        "sel",
+        "selThread",
         "steps",
+        "t",
         "tabs",
-        "wfLive"
+        "timers"
       ],
       "imports": [
+        "./Companion",
+        "./Glyphs",
         "./S02.module.css",
         "./Theater",
         "./engine",
+        "./labels",
         "./script",
+        "./team",
         "./useDemoClock",
         "./workforce",
         "motion/react",
@@ -45177,10 +45332,14 @@
         "react"
       ],
       "runtimeImports": [
+        "frontend/src/components/homepage-next/s02/Companion.tsx",
+        "frontend/src/components/homepage-next/s02/Glyphs.tsx",
         "frontend/src/components/homepage-next/s02/S02.module.css",
         "frontend/src/components/homepage-next/s02/Theater.tsx",
         "frontend/src/components/homepage-next/s02/engine.ts",
+        "frontend/src/components/homepage-next/s02/labels.ts",
         "frontend/src/components/homepage-next/s02/script.ts",
+        "frontend/src/components/homepage-next/s02/team.ts",
         "frontend/src/components/homepage-next/s02/useDemoClock.ts",
         "frontend/src/components/homepage-next/s02/workforce.ts"
       ],
@@ -45215,11 +45374,9 @@
       "id": "surface:c99f71f1a449010d1d98",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/Theater.tsx",
-      "sha256": "43089fb13d3413b05a019cc3a4731b9886aeb0cbb25f69f8d971aa4d5bb8e93b",
+      "sha256": "58667edf998ed1afcf9e051247e91ef227bd12ca2ea5ec722222df113dd840a8",
       "symbols": [
         "BrowserScene",
-        "Dock",
-        "MissionGlyph",
         "OutcomeCard",
         "Theater",
         "XBLUE",
@@ -45228,8 +45385,10 @@
         "ctx",
         "cur",
         "mission",
+        "o",
         "push",
-        "steps"
+        "steps",
+        "tabs"
       ],
       "imports": [
         "./Missions",
@@ -45255,7 +45414,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:26"
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:31"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -45279,46 +45438,35 @@
       "id": "surface:3141491f6b15bca270c9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx",
-      "sha256": "8365a29f97a7a5d264fe0dfb9840b7ad04813684c0b1b90317dabd4de82938f2",
+      "sha256": "a23268b21ee451dcbab111d271b0213b2cf6d8473f00f98fd98779ff4f28bdf5",
       "symbols": [
-        "AssignmentSheet",
-        "Atrium",
-        "Away",
-        "D",
-        "Desk",
-        "SPOTS",
-        "Surface",
-        "SurfaceProps",
-        "TICKS",
+        "CardView",
+        "Chat",
+        "Entrance",
+        "Message",
         "Workforce",
         "WorkforceMenu",
-        "a",
-        "active",
-        "c",
-        "clock",
         "d",
-        "decision",
-        "done",
         "e",
-        "growth",
-        "handed",
-        "latest",
-        "mine",
-        "now",
-        "p",
-        "playing",
-        "research",
-        "saved",
+        "el",
+        "follow",
+        "gate",
+        "isBusy",
+        "log",
+        "mo",
+        "ro",
+        "send",
+        "suggestions",
         "t",
-        "task",
-        "vis",
-        "waiting"
+        "typing"
       ],
       "imports": [
         "./Companion",
         "./Workforce.module.css",
         "./Workspaces",
+        "./labels",
         "./script",
+        "./team",
         "./workforce",
         "react"
       ],
@@ -45326,14 +45474,16 @@
         "frontend/src/components/homepage-next/s02/Companion.tsx",
         "frontend/src/components/homepage-next/s02/Workforce.module.css",
         "frontend/src/components/homepage-next/s02/Workspaces.tsx",
+        "frontend/src/components/homepage-next/s02/labels.ts",
         "frontend/src/components/homepage-next/s02/script.ts",
+        "frontend/src/components/homepage-next/s02/team.ts",
         "frontend/src/components/homepage-next/s02/workforce.ts"
       ],
       "entryPoints": [
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/Theater.tsx:16"
+        "frontend/src/components/homepage-next/s02/Theater.tsx:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -45357,35 +45507,49 @@
       "id": "surface:111b0452e418dff5c8f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/Workspaces.tsx",
-      "sha256": "b0998d51ae7de4cbfdba3afa82e06354f9ba47cc2486e113ad7f37716444983d",
+      "sha256": "55b2730bed7f44d6ced878825a0990bf2e068779eb72c7002e73508182033605",
       "symbols": [
-        "Asset",
-        "Builder",
-        "Creative",
         "Data",
-        "EMPLOYEE_SURFACES",
-        "Gate",
-        "Growth",
-        "Issue",
-        "Ops",
-        "Research",
-        "d",
-        "days"
+        "Intake",
+        "Meter",
+        "OPPS",
+        "Panel",
+        "Reliability",
+        "Rows",
+        "Scout",
+        "Seo",
+        "Spark",
+        "TAB_OF",
+        "Tag",
+        "Trading",
+        "V",
+        "VIEWS",
+        "View",
+        "Workspace",
+        "e",
+        "fixed",
+        "on",
+        "tab",
+        "working",
+        "ws"
       ],
       "imports": [
-        "./WorkforceSurface",
+        "./Companion",
         "./Workspaces.module.css",
-        "./script",
+        "./team",
+        "./workforce",
         "react"
       ],
       "runtimeImports": [
-        "frontend/src/components/homepage-next/s02/Workspaces.module.css"
+        "frontend/src/components/homepage-next/s02/Companion.tsx",
+        "frontend/src/components/homepage-next/s02/Workspaces.module.css",
+        "frontend/src/components/homepage-next/s02/team.ts"
       ],
       "entryPoints": [
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:16"
+        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -45431,7 +45595,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/Theater.tsx:13"
+        "frontend/src/components/homepage-next/s02/Theater.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -45475,7 +45639,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:17",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:20",
         "frontend/src/components/homepage-next/s02/s02.test.ts:4",
         "frontend/src/components/homepage-next/s02/useDemoClock.ts:4"
       ],
@@ -45511,7 +45675,44 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/Theater.tsx:19"
+        "frontend/src/components/homepage-next/s02/Theater.tsx:21"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:d77906587df62baae31d",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/labels.ts",
+      "sha256": "c7a730b04e4499f60fd6c0149b44f0d991d758ca911dee45edfc35ad6fadbfd1",
+      "symbols": [
+        "STATE_LABEL",
+        "stateLabel"
+      ],
+      "imports": [
+        "./team",
+        "./workforce"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:19",
+        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -45579,7 +45780,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/Theater.tsx:14",
+        "frontend/src/components/homepage-next/s02/Theater.tsx:16",
         "frontend/src/components/homepage-next/s02/ctx.tsx:8"
       ],
       "reachable": true,
@@ -45604,36 +45805,24 @@
       "id": "surface:2ea7d69e957166ca400d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/script.ts",
-      "sha256": "b33a5c114fb245f2053eadd803ec5ace145c0372d3bbac93daa96e0c94a1f0c8",
+      "sha256": "ed968a7ce41cf92e38ea309004c52517f7c543024fbe242b849b9528d62e98cc",
       "symbols": [
-        "AWAY_BEATS",
-        "AWAY_BEAT_MS",
         "Action",
-        "Assignment",
-        "Block",
         "COPY",
-        "EMPLOYEES",
-        "Employee",
-        "EmployeeId",
         "FIRST",
         "HOLD",
-        "INTRO_MS",
         "MISSIONS",
         "Mission",
         "MissionId",
         "Mode",
         "Outcome",
         "Pin",
-        "REFERENCE",
-        "Return",
         "Step",
         "TrackId",
-        "employeeOf",
         "missionOf",
         "s",
         "stepDurations",
-        "stepsOf",
-        "tools"
+        "stepsOf"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -45641,13 +45830,68 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:16",
-        "frontend/src/components/homepage-next/s02/Theater.tsx:17",
-        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:17",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:17",
+        "frontend/src/components/homepage-next/s02/Theater.tsx:19",
+        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:18",
         "frontend/src/components/homepage-next/s02/engine.ts:6",
         "frontend/src/components/homepage-next/s02/s02.test.ts:5",
-        "frontend/src/components/homepage-next/s02/useDemoClock.ts:5",
-        "frontend/src/components/homepage-next/s02/workforce.ts:13"
+        "frontend/src/components/homepage-next/s02/useDemoClock.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/homepage-next/s02/s02.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:ee1d8ab33ad67e6f42ac",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/team.ts",
+      "sha256": "c724c7b4ec2a73e62b0f5add3e4e74e5f3af95610f84af49a02962b759c14a62",
+      "symbols": [
+        "Art",
+        "Beat",
+        "Card",
+        "EMPLOYEES",
+        "EmpBeat",
+        "Employee",
+        "EmployeeId",
+        "FIRST_EMPLOYEE",
+        "Followup",
+        "INTRO_MS",
+        "SkipBeat",
+        "ThreadState",
+        "UserBeat",
+        "WorkBeat",
+        "e",
+        "employeeOf",
+        "skip",
+        "u",
+        "w"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:18",
+        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:16",
+        "frontend/src/components/homepage-next/s02/Workspaces.tsx:12",
+        "frontend/src/components/homepage-next/s02/s02.test.ts:6",
+        "frontend/src/components/homepage-next/s02/workforce.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -45696,7 +45940,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:18"
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -45720,43 +45964,54 @@
       "id": "surface:e4eafc34e3ca35afb8a6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/workforce.ts",
-      "sha256": "2e08516a6ddc92d6a0fec7b287e579b4d81fefa75eb4e8e704d73a6139b6e34b",
+      "sha256": "1ab7b0f1f5b87865ba3bb4412c4e397e0328c39bf0760e64e6b747c1e6937622",
       "symbols": [
-        "Config",
-        "SimTask",
-        "View",
+        "Msg",
+        "Thread",
         "WfAction",
         "WfState",
-        "afterAway",
-        "back",
-        "byId",
+        "at",
+        "b",
+        "base",
+        "busy",
+        "clockOf",
+        "delayOf",
         "e",
-        "emp",
-        "h",
-        "hh",
-        "ids",
+        "f",
+        "followupsOf",
+        "gate",
+        "gateOf",
+        "hint",
+        "i",
+        "id",
         "initialWorkforce",
-        "lastBlock",
-        "standing",
+        "mk",
+        "msgs",
+        "n",
+        "norm",
+        "queue",
+        "r",
+        "release",
+        "script",
         "t",
-        "task",
-        "toggle",
-        "visibleUntil",
+        "text",
+        "thread",
+        "upd",
         "workforceReducer"
       ],
       "imports": [
-        "./script"
+        "./team"
       ],
       "runtimeImports": [
-        "frontend/src/components/homepage-next/s02/script.ts"
+        "frontend/src/components/homepage-next/s02/team.ts"
       ],
       "entryPoints": [
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:19",
-        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:18",
-        "frontend/src/components/homepage-next/s02/s02.test.ts:6"
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:22",
+        "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx:17",
+        "frontend/src/components/homepage-next/s02/s02.test.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -45768,6 +46023,620 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "frontend/src/components/homepage-next/s02/s02.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:7a198fd2e21cc48b0b38",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s03/Artifact.tsx",
+      "sha256": "9e5ab5a633a490de6d075c065923a5077cbd5b7b3cbf5eea305ecdb82e5262a3",
+      "symbols": [
+        "Artifact",
+        "Artwork",
+        "AurelMark",
+        "glow",
+        "sky",
+        "uid"
+      ],
+      "imports": [
+        "./S03.module.css",
+        "./data",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s03/S03.module.css",
+        "frontend/src/components/homepage-next/s03/data.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s03/Campaigns.tsx:9",
+        "frontend/src/components/homepage-next/s03/Launch.tsx:8",
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:13"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:a00252be5de0236fc6f0",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s03/Campaigns.tsx",
+      "sha256": "9c5bc64886754ed85532c05d0a9dde28fe8667d17592f1791a042f56dee3a49b",
+      "symbols": [
+        "Campaigns",
+        "Creative",
+        "ORDER",
+        "a",
+        "d",
+        "i",
+        "pos"
+      ],
+      "imports": [
+        "./Artifact",
+        "./S03.module.css",
+        "./data",
+        "./keys",
+        "./marks",
+        "./state",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s03/Artifact.tsx",
+        "frontend/src/components/homepage-next/s03/S03.module.css",
+        "frontend/src/components/homepage-next/s03/data.ts",
+        "frontend/src/components/homepage-next/s03/keys.ts",
+        "frontend/src/components/homepage-next/s03/marks.tsx"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:14"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/components/homepage-next/s03/Campaigns.tsx#APPROVALS"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:60d78026c75d56d0d3fd",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s03/Discovery.tsx",
+      "sha256": "7273718f1c4cf31969674d3f83d29947dbd63fc40e48a5daeb996adde13eb2fc",
+      "symbols": [
+        "Discovery",
+        "PRESENCE",
+        "o"
+      ],
+      "imports": [
+        "./S03.module.css",
+        "./data",
+        "./keys",
+        "./state",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s03/S03.module.css",
+        "frontend/src/components/homepage-next/s03/data.ts",
+        "frontend/src/components/homepage-next/s03/keys.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:16"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:ad2dc9c84a1752292cc0",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s03/Launch.tsx",
+      "sha256": "1fb1a136432284e645aa3c2b7d929b276be48265cc16691e6299e01712bbab9f",
+      "symbols": [
+        "Launch",
+        "cur",
+        "pick"
+      ],
+      "imports": [
+        "./Artifact",
+        "./S03.module.css",
+        "./data",
+        "./keys",
+        "./state",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s03/Artifact.tsx",
+        "frontend/src/components/homepage-next/s03/S03.module.css",
+        "frontend/src/components/homepage-next/s03/data.ts",
+        "frontend/src/components/homepage-next/s03/keys.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:17"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:88b413cf39a766124c67",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s03/Results.tsx",
+      "sha256": "49c3fcb0b592b63e4678e80cdc241a2a55efffccab570aeefcc3e9fb08b7b121",
+      "symbols": [
+        "H",
+        "Results",
+        "X",
+        "a",
+        "b",
+        "cols",
+        "column",
+        "d",
+        "end",
+        "gap",
+        "h",
+        "k",
+        "m",
+        "pts",
+        "seg",
+        "sel",
+        "span",
+        "stall",
+        "t",
+        "total",
+        "usable",
+        "vals",
+        "x1",
+        "x2",
+        "y"
+      ],
+      "imports": [
+        "./S03.module.css",
+        "./data",
+        "./keys",
+        "./state",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s03/S03.module.css",
+        "frontend/src/components/homepage-next/s03/data.ts",
+        "frontend/src/components/homepage-next/s03/keys.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:18"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:1aeaaff28fa1b90a8110",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s03/S03Growth.tsx",
+      "sha256": "16f87cf19a1aca8e3fbcf9c47241e351263f0415125e6c0035b5c51726730bb3",
+      "symbols": [
+        "HEADER_CLEARANCE",
+        "NEXT",
+        "ORDER",
+        "S03Growth",
+        "act",
+        "at",
+        "cur",
+        "el",
+        "frame",
+        "hint",
+        "io",
+        "n",
+        "next",
+        "onKey",
+        "onPointerLeave",
+        "onPointerMove",
+        "onTabKey",
+        "play",
+        "r",
+        "reduced",
+        "reveal",
+        "root",
+        "stage",
+        "studio",
+        "top",
+        "x",
+        "y"
+      ],
+      "imports": [
+        "./Artifact",
+        "./Campaigns",
+        "./Discovery",
+        "./Launch",
+        "./Results",
+        "./S03.module.css",
+        "./Stack",
+        "./data",
+        "./state",
+        "motion/react",
+        "next/link",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s03/Artifact.tsx",
+        "frontend/src/components/homepage-next/s03/Campaigns.tsx",
+        "frontend/src/components/homepage-next/s03/Discovery.tsx",
+        "frontend/src/components/homepage-next/s03/Launch.tsx",
+        "frontend/src/components/homepage-next/s03/Results.tsx",
+        "frontend/src/components/homepage-next/s03/S03.module.css",
+        "frontend/src/components/homepage-next/s03/Stack.tsx",
+        "frontend/src/components/homepage-next/s03/data.ts",
+        "frontend/src/components/homepage-next/s03/state.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage/HomepageClient.tsx:25"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "motion/react",
+        "next/link",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:3c2328243a836858a0f6",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s03/Stack.tsx",
+      "sha256": "87e147d26ecb71b1c835d13cd851dbeb14122c0a68196981102bf3ef4fce0c67",
+      "symbols": [
+        "Stack",
+        "detail",
+        "opener",
+        "step",
+        "tool"
+      ],
+      "imports": [
+        "./S03.module.css",
+        "./data",
+        "./marks",
+        "./state",
+        "next/link",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s03/S03.module.css",
+        "frontend/src/components/homepage-next/s03/data.ts",
+        "frontend/src/components/homepage-next/s03/marks.tsx"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:19"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "next/link",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:ddd249607e1a66b9a1c1",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s03/data.ts",
+      "sha256": "9f987e32c5cca668d7677da9cce46a307f516bc88f203c9c2163439e46a0b7ac",
+      "symbols": [
+        "ANNOUNCE",
+        "APPROVALS",
+        "ASSETS",
+        "AUDIENCES",
+        "Art",
+        "AssetId",
+        "Audience",
+        "AudienceId",
+        "CHANNELS",
+        "COPY",
+        "Channel",
+        "FIELD",
+        "LISTING",
+        "OPPORTUNITIES",
+        "Opportunity",
+        "OpportunityId",
+        "PERSPECTIVES",
+        "PRODUCT",
+        "Perspective",
+        "QUERY",
+        "RESULTS",
+        "SIGNALS",
+        "SOURCES",
+        "STACK_GROUPS",
+        "STAGES",
+        "Source",
+        "TOOLS",
+        "Tool",
+        "ToolId",
+        "audienceOf",
+        "fmt",
+        "opportunityOf",
+        "pct",
+        "sourceOf",
+        "toolOf",
+        "totals"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s03/Artifact.tsx:8",
+        "frontend/src/components/homepage-next/s03/Campaigns.tsx:10",
+        "frontend/src/components/homepage-next/s03/Discovery.tsx:9",
+        "frontend/src/components/homepage-next/s03/Launch.tsx:9",
+        "frontend/src/components/homepage-next/s03/Results.tsx:9",
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:15",
+        "frontend/src/components/homepage-next/s03/Stack.tsx:10",
+        "frontend/src/components/homepage-next/s03/s03.test.ts:4",
+        "frontend/src/components/homepage-next/s03/state.ts:2"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/components/homepage-next/s03/data.ts#APPROVALS"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/homepage-next/s03/s03.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:1954881a4abc88cb3612",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s03/keys.ts",
+      "sha256": "e2c484fbbec504d892e479193363d9e801f088acfb0f9bcd3a12de518ca5d6bd",
+      "symbols": [
+        "STEP",
+        "i",
+        "items",
+        "n",
+        "rovingKeys"
+      ],
+      "imports": [
+        "react"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s03/Campaigns.tsx:11",
+        "frontend/src/components/homepage-next/s03/Discovery.tsx:10",
+        "frontend/src/components/homepage-next/s03/Launch.tsx:10",
+        "frontend/src/components/homepage-next/s03/Results.tsx:10"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/components/homepage-next/s03/keys.ts#KeyboardEvent"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:064d9e1a4912d131bc5d",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s03/marks.tsx",
+      "sha256": "bf64dc46a463f0f9b187fc6cd7348f109878254eb6ba80279ecd344e0e3eb7cc",
+      "symbols": [
+        "ICONS",
+        "ToolMark",
+        "hasMark",
+        "m"
+      ],
+      "imports": [
+        "./data",
+        "simple-icons"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s03/Campaigns.tsx:12",
+        "frontend/src/components/homepage-next/s03/Stack.tsx:11",
+        "frontend/src/components/homepage-next/s03/s03.test.ts:23"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "simple-icons"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/homepage-next/s03/s03.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:662e455cb505737ae7b1",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s03/state.ts",
+      "sha256": "20148130075fbb024d27890845edce7778121500649b088125edaf670e68fcb0",
+      "symbols": [
+        "Action",
+        "Detail",
+        "State",
+        "d",
+        "initialState",
+        "isDefault",
+        "reducer"
+      ],
+      "imports": [
+        "./data"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s03/data.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:20",
+        "frontend/src/components/homepage-next/s03/s03.test.ts:24"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/homepage-next/s03/s03.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -45963,7 +46832,7 @@
       "id": "surface:5400c5a86d8ffd5dc540",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage/HomepageClient.tsx",
-      "sha256": "00af680b512276cba640c0ac98ea00da4474b43e7c5319b24f6d5820900744c1",
+      "sha256": "a4b72e4f186a8591ef4bd195dd9c65fd39281bb2097edaadc7c20662fe848b2a",
       "symbols": [
         "HomepageClient",
         "active",
@@ -45987,6 +46856,7 @@
         "@/components/homepage-next/phase1/S00Hero",
         "@/components/homepage-next/s01/S01CapabilityDeck",
         "@/components/homepage-next/s02/S02Work",
+        "@/components/homepage-next/s03/S03Growth",
         "@/components/homepage-next/tokens.css",
         "@/components/homepage/HomepageAllInOne",
         "@/components/homepage/HomepageEnterpriseProof",
@@ -46013,6 +46883,7 @@
         "frontend/src/components/homepage-next/phase1/S00Hero.tsx",
         "frontend/src/components/homepage-next/s01/S01CapabilityDeck.tsx",
         "frontend/src/components/homepage-next/s02/S02Work.tsx",
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx",
         "frontend/src/components/homepage-next/tokens.css",
         "frontend/src/components/homepage/HomepageAllInOne.tsx",
         "frontend/src/components/homepage/HomepageEnterpriseProof.tsx",
@@ -46241,7 +47112,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage/HomepageClient.tsx:25"
+        "frontend/src/components/homepage/HomepageClient.tsx:26"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -54789,7 +55660,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage/HomepageClient.tsx:26",
+        "frontend/src/components/homepage/HomepageClient.tsx:27",
         "frontend/src/components/marketing/AiCodingAgentLanding.tsx:32"
       ],
       "reachable": true,
@@ -81897,7 +82768,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "0e94e225f76240c9a3cfce8d1c1e49d8387057b321a8ba511710e5bc17e61d0a",
+      "sha256": "26d173b34c16571a04b19de38df663245b880d67cdf4e5886f4a6bfb82f1a226",
       "symbols": [
         "after",
         "append",
@@ -82035,6 +82906,7 @@
         "scripts/ci/validate-migrations.mjs:5",
         "scripts/ci/verify-toolchain.mjs:1",
         "scripts/security/audit-tenant-policies.mjs:7",
+        "scripts/security/dependency-advisories.mjs:7",
         "scripts/security/tenant-rls.database.test.mjs:7",
         "scripts/xroga/check-runtime-config.mjs:5",
         "scripts/xroga/golden-journeys.mjs:5",
@@ -82939,6 +83811,60 @@
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:03d397dd9ebbd695bd3f",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/dependency-advisories.mjs",
+      "sha256": "8c175922952bb155bcabf222fe40bbf4b28f27173eea738b73af6a9200bf5ac8",
+      "symbols": [
+        "args",
+        "audit",
+        "collectAdvisories",
+        "graphs",
+        "lockBytes",
+        "report",
+        "result",
+        "summarizeAudit"
+      ],
+      "imports": [
+        "../ci/toolchain.mjs",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "scripts/security/dependency-advisories.test.mjs:3"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/security/dependency-advisories.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -94196,20 +95122,20 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:3fcc6c3990827d45e81b",
+      "id": "finding:520201219eba87288a4e",
       "sourcePath": "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx",
-      "line": 37,
-      "kind": "SIMULATED",
+      "line": 170,
+      "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c35c67a2a2cbcd1ab4e8",
+      "id": "finding:c5c49d4ecd987950d5ef",
       "sourcePath": "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx",
-      "line": 220,
-      "kind": "SIMULATION",
+      "line": 183,
+      "kind": "COMING_SOON",
       "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
@@ -100435,6 +101361,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:9584a8c447a0cf53aa0d",
+      "sourcePath": "backend/src/security/clineGitDependency.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9e4fbec6266f2a8ae08d",
       "sourcePath": "backend/src/security/ownedRunPersistence.test.ts",
       "declaredTests": 3,
@@ -100486,7 +101419,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 35,
+      "declaredTests": 36,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -100844,6 +101777,13 @@
       "id": "test-suite:a41af4d9375717185d16",
       "sourcePath": "backend/src/synthesis/integrations/integrations.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9fbc9b8ad5bd05aa21ce",
+      "sourcePath": "backend/src/synthesis/livePreview/access.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101300,7 +102240,14 @@
     {
       "id": "test-suite:56c4145ca5797ced77a3",
       "sourcePath": "frontend/src/components/homepage-next/s02/s02.test.ts",
-      "declaredTests": 14,
+      "declaredTests": 16,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e5363972ca71eff9cf74",
+      "sourcePath": "frontend/src/components/homepage-next/s03/s03.test.ts",
+      "declaredTests": 18,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102399,6 +103346,13 @@
     {
       "id": "test-suite:391d343edda2653fa467",
       "sourcePath": "scripts/security/audit-tenant-policies.test.mjs",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:977df470f72477be2064",
+      "sourcePath": "scripts/security/dependency-advisories.test.mjs",
       "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
