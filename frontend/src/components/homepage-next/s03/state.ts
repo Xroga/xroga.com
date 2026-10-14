@@ -19,6 +19,7 @@ import {
 export type Chapter = 'search' | 'growth';
 
 export interface State {
+  view: Chapter; // the selected mode
   // A · search
   lens: Lens;
   issue: IssueId;
@@ -51,6 +52,7 @@ export interface State {
 
 export type Action =
   | { type: 'set'; patch: Partial<State> }
+  | { type: 'view'; view: Chapter }
   | { type: 'lens'; lens: Lens }
   | { type: 'mission'; mission: Mission }
   | { type: 'mode'; mode: LinkMode }
@@ -66,7 +68,7 @@ const searchDefaults = () => ({
   repair: false,
   query: QUERIES[1].id,
   brief: false,
-  sample: 's1',
+  sample: 'today',
   aiFix: false,
   mode: 'gap' as LinkMode,
   source: 'guide',
@@ -85,7 +87,7 @@ const growthDefaults = () => ({
   channel: CHANNELS[0].id,
 });
 
-export const initialState = (): State => ({ ...searchDefaults(), ...growthDefaults(), tool: null, detail: null, sheet: null, about: false });
+export const initialState = (): State => ({ view: 'search', ...searchDefaults(), ...growthDefaults(), tool: null, detail: null, sheet: null, about: false });
 
 /** the first source a link mode shows: switching modes never leaves a hidden source selected */
 export const visibleIn = (mode: LinkMode) => SOURCES.filter((s) => LINK_MODES.find((m) => m.id === mode)!.show.includes(s.cls));
@@ -94,6 +96,9 @@ export function reducer(s: State, a: Action): State {
   switch (a.type) {
     case 'set':
       return { ...s, ...a.patch };
+    case 'view':
+      // modes keep every selection inside them; only the shared layers close
+      return { ...s, view: a.view, detail: null, tool: null, sheet: null };
     case 'lens':
       // lenses keep every selection; details and provider notes belong to the lens they were opened in
       return { ...s, lens: a.lens, detail: null, tool: s.tool?.chapter === 'search' ? null : s.tool };

@@ -6,13 +6,13 @@
  * providers it runs through. A slim ribbon under the stage ties each campaign to the customers it brings in.
  */
 import type { Dispatch } from 'react';
-import { BRAND, COPY, MISSIONS, channelOf, fmt, type Mission } from './data';
+import { MISSIONS, channelOf, fmt, type Mission } from './data';
 import { LaunchControls, LaunchStage } from './growth/Launch';
 import { PathsControls, PathsStage } from './growth/Paths';
 import { SearchAdsControls, SearchAdsStage } from './growth/SearchAds';
 import { SocialControls, SocialStage } from './growth/Social';
 import { rovingKeys } from './keys';
-import { isDefault, type Action, type State } from './state';
+import type { Action, State } from './state';
 import { ToolChip } from './ui';
 import s from './S03.module.css';
 
@@ -29,28 +29,7 @@ export function GrowthStudio({ st, dispatch }: { st: State; dispatch: Dispatch<A
   const m = MISSIONS.find((x) => x.id === st.mission)!;
   const ch = channelOf(FEEDS[st.mission]);
   return (
-    <section id="s03-growth" className={s.chapter} data-chapter="growth" aria-labelledby="s03-growth-title">
-      <header className={s.chHead}>
-        <span className={s.chKicker}>
-          <i aria-hidden="true" />
-          {COPY.growth.kicker}
-        </span>
-        <h3 id="s03-growth-title" className={s.chTitle} tabIndex={-1}>
-          {COPY.growth.title}
-        </h3>
-        <p className={s.chLine}>{COPY.growth.line}</p>
-        <span className={s.chMeta}>
-          <span className={s.example}>
-            {COPY.disclosure} · {BRAND.name}
-          </span>
-          {!isDefault(st, 'growth') && (
-            <button type="button" className={s.linkBtn} data-quiet="" onClick={() => dispatch({ type: 'reset', chapter: 'growth' })}>
-              Start over
-            </button>
-          )}
-        </span>
-      </header>
-
+    <div id="s03-growth" className={s.chapter} data-chapter="growth">
       <div className={s.atelier} data-mission={st.mission}>
         <div className={s.missions} role="tablist" aria-orientation="vertical" aria-label="Growth work" onKeyDown={rovingKeys}>
           {MISSIONS.map((x, i) => (
@@ -118,6 +97,6 @@ export function GrowthStudio({ st, dispatch }: { st: State; dispatch: Dispatch<A
           </div>
         </aside>
       </div>
-    </section>
+    </div>
   );
 }

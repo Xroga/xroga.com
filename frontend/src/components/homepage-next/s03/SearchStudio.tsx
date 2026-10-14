@@ -6,14 +6,14 @@
  * stage only for the lens they serve. On phones the inspector is a bottom sheet opened from the stage.
  */
 import { useEffect, useRef, type Dispatch } from 'react';
-import { COPY, LENSES, SITE } from './data';
+import { LENSES } from './data';
 import { rovingKeys } from './keys';
 import { AiInspector, AiStage } from './search/Ai';
 import { ContentInspector, ContentStage } from './search/Content';
 import { HealthInspector, HealthStage } from './search/Health';
 import { LinksInspector, LinksStage } from './search/Links';
 import { LocalInspector, LocalStage } from './search/Local';
-import { isDefault, type Action, type State } from './state';
+import type { Action, State } from './state';
 import { NoTool, ToolChip } from './ui';
 import s from './S03.module.css';
 
@@ -38,28 +38,7 @@ export function SearchStudio({ st, dispatch }: { st: State; dispatch: Dispatch<A
   }, [open]);
 
   return (
-    <section id="s03-search" className={s.chapter} data-chapter="search" aria-labelledby="s03-search-title">
-      <header className={s.chHead}>
-        <span className={s.chKicker}>
-          <i aria-hidden="true" />
-          {COPY.search.kicker}
-        </span>
-        <h3 id="s03-search-title" className={s.chTitle} tabIndex={-1}>
-          {COPY.search.title}
-        </h3>
-        <p className={s.chLine}>{COPY.search.line}</p>
-        <span className={s.chMeta}>
-          <span className={s.example}>
-            {COPY.disclosure} · {SITE.domain}
-          </span>
-          {!isDefault(st, 'search') && (
-            <button type="button" className={s.linkBtn} data-quiet="" onClick={() => dispatch({ type: 'reset', chapter: 'search' })}>
-              Start over
-            </button>
-          )}
-        </span>
-      </header>
-
+    <div id="s03-search" className={s.chapter} data-chapter="search">
       <div className={s.bench}>
         <nav className={s.lenses} aria-label="Search work">
           <div role="tablist" aria-orientation="vertical" aria-label="Search work" onKeyDown={rovingKeys}>
@@ -79,7 +58,7 @@ export function SearchStudio({ st, dispatch }: { st: State; dispatch: Dispatch<A
                 <i aria-hidden="true" />
                 <span>
                   {l.label}
-                  <small>{l.status}</small>
+                  <small>{l.expert}</small>
                 </span>
               </button>
             ))}
@@ -146,6 +125,6 @@ export function SearchStudio({ st, dispatch }: { st: State; dispatch: Dispatch<A
           />
         )}
       </div>
-    </section>
+    </div>
   );
 }

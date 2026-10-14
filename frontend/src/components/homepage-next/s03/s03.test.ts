@@ -3,7 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
 import {
   AD_GROUPS,
-  AI_SOURCES,
+  AI_QUESTIONS,
   AUDIENCES,
   BRAND,
   CHANNELS,
@@ -25,6 +25,7 @@ import {
 } from './data';
 import { hasMark } from './marks';
 import { initialState, isDefault, reducer, visibleIn, type Action, type State } from './state';
+import { BEATS, TOUR_MS } from './tourBeats';
 
 const dir = new URL('./', import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, dir), 'utf8');
@@ -36,13 +37,14 @@ const SHELL = read('./S03Growth.tsx');
 const SEARCH = read('./SearchStudio.tsx');
 const GROWTH = read('./GrowthStudio.tsx');
 const UI = read('./ui.tsx');
+const TOUR = read('./Tour.tsx');
 const SCENES = [...files('./search/'), ...files('./growth/')].join('\n');
 const LINKS_SRC = read('./search/Links.tsx');
 const ADS_SRC = read('./growth/SearchAds.tsx');
 const CSS = read('./S03.module.css');
 const PAGE = read('../../homepage/HomepageClient.tsx');
 const CATALOG = read('../../../lib/integrations-catalog.ts');
-const ALL = SHELL + SEARCH + GROWTH + UI + SCENES + read('./data.ts');
+const ALL = SHELL + SEARCH + GROWTH + UI + TOUR + SCENES + read('./data.ts') + read('./tourBeats.ts');
 const words = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
 const run = (s: State, ...as: Action[]) => as.reduce(reducer, s);
 
@@ -59,17 +61,36 @@ test('S03 is independent of S02: no S02 imports or components', () => {
 });
 
 /* --------------------------------------------------------------------------------------------------- copy */
-test('one short headline, one supporting line, and two chapter entrances', () => {
-  assert.ok(words(COPY.title) >= 5 && words(COPY.title) <= 11, COPY.title);
+test('one section, one headline, one supporting line, and two modes on one shared stage', () => {
+  assert.ok(words(COPY.title) >= 4 && words(COPY.title) <= 11, COPY.title);
   assert.ok(words(COPY.lede) >= 15 && words(COPY.lede) <= 22, `lede is ${words(COPY.lede)} words`);
-  for (const c of [COPY.search, COPY.growth]) {
-    assert.ok(words(c.title) >= 4 && words(c.title) <= 9, c.title);
-    assert.ok(words(c.line) <= 13, c.line);
+  assert.equal((SHELL.match(/<section/g) ?? []).length, 1, 'S03 has one section boundary');
+  assert.doesNotMatch(SEARCH + GROWTH, /<section|<h3/, 'modes are panels of the one stage, not chapters');
+  assert.match(SHELL, /role="tablist" aria-label="What Xroga works on"/);
+  assert.match(SHELL, /id="s03-stage" role="tabpanel"/);
+  assert.deepEqual([COPY.search.label, COPY.growth.label], ['Search & Visibility', 'Launch & Marketing']);
+  for (const m of [COPY.search, COPY.growth]) assert.ok(words(m.line) <= 9, m.line);
+});
+
+test('plain language first: lens names are what a business owner wants, expert terms second', () => {
+  assert.deepEqual(
+    LENSES.map((l) => l.label),
+    ['Fix my website', 'Find search opportunities', 'Appear in AI answers', 'Earn authority', 'Show up locally'],
+  );
+  for (const l of LENSES) assert.ok(l.expert.length > 0);
+});
+
+test('AI answers are named for real questions, never sample numbers', () => {
+  assert.doesNotMatch(ALL, /Sample \d|['"]s[123]['"]/);
+  for (const q of AI_QUESTIONS) {
+    assert.match(q.q, /\?$/, q.id);
+    for (const a of q.answer) if (a.cite) assert.ok(q.sources[a.cite - 1], `${q.id} cites ${a.cite}`);
   }
-  assert.match(SHELL, /href="#s03-search"/);
-  assert.match(SHELL, /href="#s03-growth"/);
-  assert.match(SEARCH, /id="s03-search"/);
-  assert.match(GROWTH, /id="s03-growth"/);
+});
+
+test('one quiet disclosure, not repeated caveats', () => {
+  assert.equal(COPY.disclosure, 'Interactive preview');
+  assert.doesNotMatch(ALL, /Interactive example|sample data|fake demo/i);
 });
 
 test('no generic slogans, no repeated "sample data", no promises of rankings or results', () => {
@@ -128,7 +149,7 @@ test('content: gaps are queries Northlane has no page for; intents are all repre
 });
 
 test('AI answers: explicit cited / not cited / not tested / conflicting states, no guaranteed citation', () => {
-  const states = new Set([...AI_SOURCES.map((x) => x.state), 'absent', 'untested']);
+  const states = new Set(AI_QUESTIONS.flatMap((q) => [...q.sources.map((x) => x.state), q.you]));
   for (const s of ['cited', 'absent', 'untested', 'conflicting']) assert.ok(states.has(s as never), s);
 });
 
@@ -213,7 +234,7 @@ test('exactly one route into the product, plus the integrations directory', () =
 test('lenses and missions keep every selection; switching never replays', () => {
   const s = run(
     initialState(),
-    { type: 'set', patch: { issue: 'noindex', query: 'combi', sample: 's2' } },
+    { type: 'set', patch: { issue: 'noindex', query: 'combi', sample: 'cost' } },
     { type: 'mode', mode: 'mentions' },
     { type: 'lens', lens: 'health' },
     { type: 'mission', mission: 'social' },
@@ -259,13 +280,54 @@ test('escape closes the innermost layer first; reset clears one chapter only', (
 });
 
 /* ----------------------------------------------------------------------------------------- motion & a11y */
-test('one entrance, no autoplay timers, reduced motion respected, header-aware', () => {
-  assert.doesNotMatch(ALL, /setInterval|setTimeout|autoPlay|loop=/);
+test('the guided tour: both modes, a real narrative, under 26 seconds, ending with the visitor in control', () => {
+  assert.ok(TOUR_MS >= 15000 && TOUR_MS <= 26000, `${TOUR_MS} ms`);
+  assert.equal(BEATS[0].view, 'search');
+  assert.equal(BEATS[BEATS.length - 1].view, 'growth');
+  // every search lens and every growth job is shown at least once
+  const actions = BEATS.flatMap((b) => b.steps.flatMap((s) => s.actions));
+  for (const l of LENSES)
+    assert.ok(
+      actions.some((a) => a.type === 'lens' && a.lens === l.id),
+      l.id,
+    );
+  for (const m of MISSIONS)
+    assert.ok(
+      actions.some((a) => a.type === 'mission' && a.mission === m.id),
+      m.id,
+    );
+  for (const b of BEATS) {
+    assert.ok(words(b.caption) <= 9, b.caption);
+    for (const st of b.steps) assert.ok(st.at < b.dur, b.caption);
+  }
+  // the tour only selects local states: it never marks anything published, verified or live
+  assert.doesNotMatch(JSON.stringify(BEATS), /publish|verified|live|launched|sent/i);
+  // replaying the tour from the start reaches a valid state
+  const end = actions.reduce(reducer, initialState());
+  assert.equal(end.view, 'growth');
+  assert.equal(end.mission, 'paths');
+});
+
+test('the tour hands over on any input, pauses offscreen and hidden, and never runs on phones or reduced motion', () => {
+  assert.match(TOUR, /addEventListener\('pointerdown', onInput, true\)/);
+  assert.match(TOUR, /addEventListener\('keydown', onInput, true\)/);
+  assert.match(TOUR, /data-tour-ctl/);
+  assert.match(TOUR, /visibilitychange/);
+  assert.match(TOUR, /intersectionRatio >= 0\.5/);
+  assert.match(TOUR, /clearTimeout/);
+  assert.match(SHELL, /useTour\(root, stage, dispatch, wide && !reduced\)/);
+  assert.match(SHELL, /min-width: 701px/);
+  assert.match(TOUR, /Skip/);
+  assert.match(TOUR, /Replay/);
+});
+
+test('no stray timers, reduced motion respected, header-aware', () => {
+  for (const src of [SHELL, SEARCH, GROWTH, UI, SCENES]) assert.doesNotMatch(src, /setInterval|setTimeout|autoPlay|loop=/);
+  assert.doesNotMatch(TOUR, /setInterval/);
   assert.match(SHELL, /useReducedMotion/);
-  assert.match(SHELL, /IntersectionObserver/);
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]*animation: none !important/);
   assert.match(CSS, /\.section\[data-under\] \.shield/);
-  assert.doesNotMatch(SHELL, /addEventListener\('wheel'|scrollIntoView\(/);
+  assert.doesNotMatch(SHELL + TOUR, /addEventListener\('wheel'|scrollIntoView\(|scrollTo\(/);
   assert.match(CSS, /@keyframes sceneIn \{\s*from \{\s*opacity: 0\.5;/);
 });
 

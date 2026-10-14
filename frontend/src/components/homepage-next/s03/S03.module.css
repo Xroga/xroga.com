@@ -147,44 +147,108 @@
   line-height: 1.5;
   color: var(--sub);
 }
-.doors {
+/* the two modes: large, readable choices above the one shared stage */
+.modes {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 40px;
+  gap: 14px;
+  margin-top: 28px;
 }
-.door {
+.mode {
   position: relative;
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-columns: 124px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 22px;
-  min-height: 152px;
-  padding: 16px 24px 16px 16px;
-  overflow: hidden;
-  border-radius: 22px;
-  text-decoration: none;
+  gap: 18px;
+  min-height: 88px;
+  padding: 12px 22px 12px 12px;
+  border: 0;
+  border-radius: 20px;
+  text-align: left;
+  font: inherit;
   color: var(--text);
+  background: rgba(255, 255, 255, 0.025);
   box-shadow: inset 0 0 0 1px var(--hair);
+  cursor: pointer;
   transition:
-    transform 200ms var(--ease),
-    box-shadow 200ms linear;
+    background 220ms linear,
+    box-shadow 220ms linear,
+    transform 140ms var(--ease);
 }
-.door[data-door='search'] {
-  background: radial-gradient(70% 90% at 18% 50%, rgba(112, 215, 183, 0.14), transparent 70%), linear-gradient(135deg, #0f1f25, #0c141a);
+.mode:hover {
+  background: rgba(255, 255, 255, 0.045);
 }
-.door[data-door='growth'] {
-  background: radial-gradient(70% 90% at 18% 50%, rgba(237, 158, 125, 0.16), transparent 70%), linear-gradient(135deg, #22180f, #15110d);
+.mode:active {
+  transform: scale(0.99);
 }
-.door:hover {
-  transform: translateY(-2px);
+.mode[data-mode='search'][aria-selected='true'] {
+  background: radial-gradient(70% 120% at 15% 50%, rgba(112, 215, 183, 0.16), transparent 70%), linear-gradient(135deg, #0f1f25, #0c141a);
   box-shadow:
-    inset 0 0 0 1px var(--hair2),
+    inset 0 0 0 1.5px rgba(112, 215, 183, 0.55),
     0 24px 50px -30px rgba(0, 0, 0, 0.9);
 }
-.doorArt {
-  width: 220px;
-  height: 120px;
+.mode[data-mode='growth'][aria-selected='true'] {
+  background: radial-gradient(70% 120% at 15% 50%, rgba(237, 158, 125, 0.18), transparent 70%), linear-gradient(135deg, #22180f, #15110d);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(237, 158, 125, 0.6),
+    0 24px 50px -30px rgba(0, 0, 0, 0.9);
+}
+.mode:not([aria-selected='true']) .modeArt {
+  opacity: 0.55;
+  filter: saturate(0.6);
+}
+.mode[aria-selected='true']::after {
+  /* an underlight under the chosen mode */
+  content: '';
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+}
+.mode[data-mode='search'][aria-selected='true']::after {
+  background: linear-gradient(90deg, transparent, var(--mint), transparent);
+}
+.mode[data-mode='growth'][aria-selected='true']::after {
+  background: linear-gradient(90deg, transparent, var(--apricot), transparent);
+}
+.modeText {
+  display: grid;
+  gap: 6px;
+}
+.modeText b {
+  font-size: 22px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 640;
+}
+.modeText small {
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: var(--sub);
+}
+.modeCheck {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--hair2);
+  transition:
+    background 200ms linear,
+    box-shadow 200ms linear;
+}
+.mode[aria-selected='true'] .modeCheck {
+  background: var(--text)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4 8.5 2.5 2.5L12 5.5' fill='none' stroke='%23070a0f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 14px no-repeat;
+  box-shadow: none;
+}
+.modeArt {
+  width: 124px;
+  height: 68px;
+  transition:
+    opacity 260ms linear,
+    filter 260ms linear;
 }
 .dLink,
 .gFlow {
@@ -256,45 +320,8 @@
 .gPerson {
   fill: var(--apricot);
 }
-.doorText {
-  display: grid;
-  gap: 8px;
-  justify-items: start;
-}
-.doorText small {
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--mute);
-}
-.door[data-door='search'] .doorText small {
-  color: var(--mint);
-}
-.door[data-door='growth'] .doorText small {
-  color: var(--apricot);
-}
-.doorText b {
-  font-size: 21px;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  font-weight: 620;
-}
-.doorText em {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 4px;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 650;
-  color: var(--sub);
-}
-.door:hover .doorText em {
-  color: var(--text);
-}
-.doorText svg,
-.cta svg {
+.cta svg,
+.tourBtn svg {
   width: 15px;
   height: 15px;
   fill: none;
@@ -307,81 +334,152 @@
 /* ---------------------------------------------------------------------------------------- chapter framing */
 .chapter {
   position: relative;
-  margin-top: 88px;
-  scroll-margin-top: 92px;
 }
-.chHead {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    'kicker meta'
-    'title meta'
-    'line meta';
-  align-items: end;
-  gap: 8px 24px;
-  margin-bottom: 22px;
-}
-.chKicker {
-  grid-area: kicker;
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-.chKicker i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-.chapter[data-chapter='search'] .chKicker {
-  color: var(--mint);
-}
-.chapter[data-chapter='search'] .chKicker i {
-  background: var(--mint);
-  box-shadow: 0 0 10px var(--mint);
-}
-.chapter[data-chapter='growth'] .chKicker {
-  color: var(--apricot);
-}
-.chapter[data-chapter='growth'] .chKicker i {
-  background: var(--apricot);
-  box-shadow: 0 0 10px var(--apricot);
-}
-.chTitle.chTitle {
-  grid-area: title;
-  margin: 0;
-  font-size: clamp(28px, 0.8rem + 1.9vw, 40px);
-  line-height: 1.08;
-  letter-spacing: -0.035em;
-  font-weight: 620;
-}
-.chLine.chLine {
-  grid-area: line;
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.5;
-  color: var(--sub);
-}
-.chMeta {
-  grid-area: meta;
-  display: inline-flex;
+/* the guided demonstration's slim bar: progress, one caption, and a way out */
+.tourBar {
+  display: flex;
   align-items: center;
   gap: 16px;
+  min-height: 52px;
+  margin-top: 12px;
+  padding: 6px 8px 6px 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.025);
+  box-shadow: inset 0 0 0 1px var(--hair);
 }
-.example {
+.tourSteps {
+  display: flex;
+  gap: 4px;
+  flex: none;
+}
+.tourSteps i {
+  position: relative;
+  width: 18px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.12);
+}
+.tourSteps i[data-done][data-view='search'],
+.tourSteps i[data-now][data-view='search'] b {
+  background: var(--mint);
+}
+.tourSteps i[data-done][data-view='growth'],
+.tourSteps i[data-now][data-view='growth'] b {
+  background: var(--apricot);
+}
+.tourSteps i b {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  animation: fill var(--dur) linear forwards;
+}
+.tourSteps i b[data-paused] {
+  animation-play-state: paused;
+}
+@keyframes fill {
+  from {
+    transform: scaleX(0);
+  }
+}
+.tourCaption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+.tourCaption > span {
+  animation: popIn 300ms var(--ease) backwards;
+}
+.tourCaption em {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+}
+.tourCaption em[data-stage='Noticed'] {
+  color: #2d0f05;
+  background: var(--warn);
+}
+.tourCaption em[data-stage='Prepared'] {
+  color: #072019;
+  background: var(--mint);
+}
+.tourCaption em[data-stage='For review'] {
+  color: #2a1e08;
+  background: var(--gold);
+}
+.tourBar[data-status='done'] .tourCaption em,
+.tourCaption em[data-stage='Yours'] {
+  color: var(--paper-ink);
+  background: var(--paper);
+}
+.tourBar:not([data-status='playing']):not([data-status='paused']) .tourCaption {
+  font-weight: 500;
+  color: var(--sub);
+}
+.tourBtn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 30px;
-  padding: 0 12px;
-  border-radius: 999px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--sub);
+  flex: none;
+  min-height: 40px;
+  margin-left: auto;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 11px;
+  font:
+    650 13.5px/1 var(--font-inter),
+    system-ui,
+    sans-serif;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.07);
   box-shadow: inset 0 0 0 1px var(--hair2);
+  cursor: pointer;
+}
+.tourBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+.tourBtn svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+  stroke: none;
+}
+/* one shared stage for both modes */
+.shared {
+  position: relative;
+  margin-top: 14px;
+  scroll-margin-top: 92px;
+}
+.scenario {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 28px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mute);
+}
+.modePanel {
+  animation: fadeIn 480ms var(--ease) backwards;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0.35;
+  }
 }
 .linkBtn {
   padding: 4px 0;
@@ -518,7 +616,7 @@
 }
 .stage {
   position: relative;
-  height: 540px;
+  height: 510px;
   overflow: hidden;
   border-radius: 24px;
   background: radial-gradient(60% 55% at var(--kx, 40%) var(--ky, 50%), rgba(70, 150, 150, 0.16), transparent 72%), linear-gradient(180deg, #0f1a21, #0b1117);
@@ -1327,7 +1425,7 @@
 .answerText [data-cite] {
   background: linear-gradient(transparent 62%, rgba(168, 160, 234, 0.45) 62%);
 }
-.answerText [data-cite='directory'] {
+.answerText [data-cite='conflicting'] {
   background: linear-gradient(transparent 62%, rgba(213, 182, 126, 0.5) 62%);
 }
 .answerText sup {
@@ -1617,7 +1715,7 @@
 /* ---- inspector and provider chips */
 .inspector {
   position: relative;
-  min-height: 540px;
+  min-height: 510px;
   padding: 22px 20px;
   border-radius: 24px;
   background: linear-gradient(180deg, rgba(23, 32, 43, 0.85), rgba(14, 19, 26, 0.85));
@@ -1990,7 +2088,7 @@
 }
 .canvas {
   position: relative;
-  height: 520px;
+  height: 500px;
   overflow: hidden;
   border-radius: 24px;
   background:
@@ -2014,7 +2112,7 @@
   display: grid;
   align-content: start;
   gap: 14px;
-  min-height: 520px;
+  min-height: 500px;
   padding: 20px;
   border-radius: 24px;
   background: linear-gradient(180deg, rgba(34, 27, 21, 0.75), rgba(18, 15, 12, 0.75));
@@ -3039,22 +3137,48 @@
 }
 
 /* ------------------------------------------------------------------------------------------------- footer */
-.foot.foot {
+.foot {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 14px 24px;
-  margin: 40px 0 0;
+  gap: 14px 20px;
+  margin-top: 28px;
+}
+.preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  font:
+    600 13px/1 var(--font-inter),
+    system-ui,
+    sans-serif;
+  color: var(--sub);
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--hair2);
+  cursor: pointer;
+}
+.preview:hover,
+.preview[aria-expanded='true'] {
+  color: var(--text);
+}
+.preview i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sub);
+}
+.aboutNote.aboutNote {
+  flex-basis: 100%;
+  max-width: 70ch;
+  margin: 0;
   font-size: 13.5px;
   line-height: 1.5;
   color: var(--sub);
-}
-.foot .linkBtn {
-  min-height: 36px;
-}
-.foot span {
-  flex-basis: 100%;
-  max-width: 70ch;
+  animation: popIn 240ms var(--ease) backwards;
 }
 .cta {
   display: inline-flex;
@@ -3075,26 +3199,6 @@
 }
 .cta:hover {
   background: rgba(47, 123, 255, 0.2);
-}
-
-/* ------------------------------------------------------------------------------------------------- entrance */
-.section[data-entry='armed'] :is(.doors, .chapter) {
-  opacity: 0;
-}
-.section[data-entry='played'] .doors {
-  animation: popIn 520ms var(--ease) 120ms backwards;
-}
-/* chapters fade only: a transform on them would trap the phone sheets inside */
-.section[data-entry='played'] .chapter[data-chapter='search'] {
-  animation: fadeIn 620ms var(--ease) 280ms backwards;
-}
-.section[data-entry='played'] .chapter[data-chapter='growth'] {
-  animation: fadeIn 620ms var(--ease) 450ms backwards;
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
 }
 
 /* ---------------------------------------------------------------------------------------------- ≤1240 */
@@ -3155,16 +3259,24 @@
   }
 }
 @media (max-width: 900px) {
-  .doors {
-    grid-template-columns: minmax(0, 1fr);
+  .mode {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 12px;
+    min-height: 92px;
+    padding: 10px 14px 10px 8px;
   }
-  .chHead {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      'kicker'
-      'title'
-      'line'
-      'meta';
+  .modeArt {
+    width: 96px;
+    height: 54px;
+  }
+  .modeCheck {
+    display: none;
+  }
+  .modeText b {
+    font-size: 18px;
+  }
+  .modeText small {
+    font-size: 13px;
   }
 }
 
@@ -3186,25 +3298,43 @@
   .lede.lede {
     font-size: 15.5px;
   }
-  .doors {
-    margin-top: 26px;
-    gap: 10px;
+  /* phones: two large mode buttons side by side, art above the words */
+  .modes {
+    margin-top: 24px;
+    gap: 8px;
   }
-  .door {
-    grid-template-columns: 96px minmax(0, 1fr);
-    gap: 14px;
+  .mode {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+    gap: 6px;
     min-height: 0;
-    padding: 12px 14px 12px 10px;
+    padding: 10px 12px 12px;
   }
-  .doorArt {
-    width: 96px;
-    height: 70px;
+  .modeArt {
+    width: 84px;
+    height: 46px;
   }
-  .doorText b {
-    font-size: 16.5px;
+  .modeText b {
+    font-size: 16px;
   }
-  .chapter {
-    margin-top: 64px;
+  .modeText small {
+    font-size: 12px;
+  }
+  .tourBar {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 10px 10px 10px 14px;
+  }
+  .tourSteps i {
+    width: 12px;
+  }
+  .tourCaption {
+    flex-basis: 100%;
+    order: 2;
+    font-size: 14px;
+  }
+  .scenario {
+    font-size: 12px;
   }
   .lens {
     min-height: 46px;

@@ -33,12 +33,26 @@ export const AVAILABILITY_LABEL: Record<Availability, string> = { connect: 'Avai
 export const SITE = { name: 'Northlane Heating', domain: 'northlane.example', city: 'Leeds' };
 
 export type Lens = 'health' | 'content' | 'ai' | 'links' | 'local';
-export const LENSES: { id: Lens; label: string; status: string; discipline: string; tools: ToolId[] }[] = [
-  { id: 'health', label: 'Site health', status: '3 crawl issues', discipline: 'Technical SEO', tools: ['gsc', 'semrush'] },
-  { id: 'content', label: 'Keywords & content', status: '1 missing page', discipline: 'On-page & content', tools: ['gsc', 'semrush', 'ahrefs'] },
-  { id: 'ai', label: 'AI answers', status: 'Not cited', discipline: 'AEO · GEO', tools: [] },
-  { id: 'links', label: 'Authority & links', status: '3 link gaps', discipline: 'Off-page & digital PR', tools: ['ahrefs', 'semrush'] },
-  { id: 'local', label: 'Local presence', status: '2 missing details', discipline: 'Local SEO', tools: ['gbp', 'gsc'] },
+export const LENSES: { id: Lens; label: string; expert: string; status: string; discipline: string; tools: ToolId[] }[] = [
+  { id: 'health', label: 'Fix my website', expert: 'Technical SEO', status: '3 crawl issues', discipline: 'Technical SEO', tools: ['gsc', 'semrush'] },
+  {
+    id: 'content',
+    label: 'Find search opportunities',
+    expert: 'Keywords & content',
+    status: '1 missing page',
+    discipline: 'On-page & content',
+    tools: ['gsc', 'semrush', 'ahrefs'],
+  },
+  { id: 'ai', label: 'Appear in AI answers', expert: 'AEO · GEO', status: 'Not cited', discipline: 'AEO · GEO', tools: [] },
+  {
+    id: 'links',
+    label: 'Earn authority',
+    expert: 'Backlinks & digital PR',
+    status: '3 link gaps',
+    discipline: 'Off-page & digital PR',
+    tools: ['ahrefs', 'semrush'],
+  },
+  { id: 'local', label: 'Show up locally', expert: 'Local SEO', status: '2 missing details', discipline: 'Local SEO', tools: ['gbp', 'gsc'] },
 ];
 
 /* --- site health: a small crawlable site ------------------------------------------------------------ */
@@ -145,21 +159,72 @@ export const BRIEF = {
 
 /* --- AI answers ----------------------------------------------------------------------------------------- */
 export type CiteState = 'cited' | 'absent' | 'untested' | 'conflicting';
-export const AI_QUESTION = 'Who should I call for a boiler repair in Leeds?';
-export const AI_SOURCES: { id: string; domain: string; kind: string; state: CiteState }[] = [
-  { id: 'brightflow', domain: 'brightflow.example', kind: 'Competitor service page', state: 'cited' },
-  { id: 'homeguide', domain: 'homeguide.example', kind: 'Buyer guide', state: 'cited' },
-  { id: 'directory', domain: 'tradefinder.example', kind: 'Trade directory', state: 'conflicting' },
-];
-export const AI_SAMPLES = [
-  { id: 's1', label: 'Sample 1', you: 'absent' as CiteState },
-  { id: 's2', label: 'Sample 2', you: 'absent' as CiteState },
-  { id: 's3', label: 'Sample 3', you: 'untested' as CiteState },
+export interface AiSource {
+  domain: string;
+  kind: string;
+  state: CiteState;
+}
+export interface AiQuestion {
+  id: string;
+  label: string; // the button: a human question, never a sample number
+  q: string;
+  answer: { text: string; cite?: number }[]; // sentences, each optionally citing a source by index (1-based)
+  sources: AiSource[];
+  you: CiteState; // where Northlane stands for this question
+  why: string;
+}
+export const AI_QUESTIONS: AiQuestion[] = [
+  {
+    id: 'today',
+    label: 'Repair today',
+    q: 'Who can repair my boiler today in Leeds?',
+    answer: [
+      { text: 'Several engineers offer same-day repair in Leeds, including Brightflow', cite: 1 },
+      { text: 'Look for Gas Safe registration and listed service areas', cite: 2 },
+      { text: 'Call-out fees usually run £60 to £95', cite: 3 },
+    ],
+    sources: [
+      { domain: 'brightflow.example', kind: 'Competitor service page', state: 'cited' },
+      { domain: 'homeguide.example', kind: 'Buyer guide', state: 'cited' },
+      { domain: 'tradefinder.example', kind: 'Trade directory', state: 'conflicting' },
+    ],
+    you: 'absent',
+    why: 'Cited pages list services, areas and response times. Yours list none of the three.',
+  },
+  {
+    id: 'cost',
+    label: 'What it costs',
+    q: 'How much does a new boiler cost in Leeds?',
+    answer: [
+      { text: 'A new combi boiler typically costs £2,000 to £3,500 fitted', cite: 1 },
+      { text: 'Prices rise if the flue or pipework needs moving', cite: 2 },
+    ],
+    sources: [
+      { domain: 'cityboiler.example', kind: 'Competitor price guide', state: 'cited' },
+      { domain: 'homeguide.example', kind: 'Buyer guide', state: 'cited' },
+    ],
+    you: 'absent',
+    why: 'Answers cite pages with prices. Northlane has no pricing page for new boilers.',
+  },
+  {
+    id: 'near',
+    label: 'Who is nearby',
+    q: 'Which heating engineers cover Headingley?',
+    answer: [
+      { text: 'Brightflow and Warm Hands both list Headingley as a service area', cite: 1 },
+      { text: 'Directory listings show more local options', cite: 2 },
+    ],
+    sources: [
+      { domain: 'brightflow.example', kind: 'Competitor area page', state: 'cited' },
+      { domain: 'tradefinder.example', kind: 'Trade directory', state: 'cited' },
+    ],
+    you: 'untested',
+    why: 'Not tested yet for this area. Northlane’s pages do not name the areas it covers.',
+  },
 ];
 export const AI_GAP = {
-  why: 'Answers cite pages that list services, areas and response times. Yours list none of the three.',
   move: 'Add service areas and response times to /services',
-  method: 'Three sampled answers, 12 Oct, one location. Answers vary by assistant, date and place; nothing here is a guarantee.',
+  method: 'Example answers for illustration, collected for one location. Real answers vary by assistant, date and place; nothing here is a guarantee.',
 };
 
 /* --- authority & links (the signature graph) -------------------------------------------------------------- */
@@ -428,21 +493,11 @@ export const audienceOf = (id: Audience) => AUDIENCES.find((a) => a.id === id)!;
 
 export const COPY = {
   eyebrow: 'Xroga / Search & Growth',
-  title: 'Getting found is work. So is winning the customer.',
-  lede: 'Xroga inspects how people find you and prepares the marketing work, through the tools you connect and with your approval.',
-  search: {
-    kicker: 'Search & AI visibility',
-    title: 'See what search engines miss.',
-    line: 'Find the pages, sources and links holding your visibility back.',
-    enter: 'Explore search work',
-  },
-  growth: {
-    kicker: 'Launch & marketing',
-    title: 'From search intent to a campaign ready for review.',
-    line: 'Give every channel a job, then trace what it brings in.',
-    enter: 'Explore growth work',
-  },
-  disclosure: 'Interactive example',
+  title: 'Get discovered. Win the customer.',
+  lede: 'Xroga finds what stops people finding you, prepares the marketing that brings them in, and asks before anything goes live.',
+  search: { label: 'Search & Visibility', line: 'Find what stops people finding you', scenario: 'Northlane Heating · a local heating engineer' },
+  growth: { label: 'Launch & Marketing', line: 'Put your offer in front of the right people', scenario: 'Ember Roasters · a coffee subscription' },
+  disclosure: 'Interactive preview',
   about:
-    'Northlane Heating and Ember Roasters are fictional. Their figures illustrate how Xroga works: no accounts are connected, and nothing is published, sent or spent.',
+    'Northlane Heating and Ember Roasters are fictional examples. Their pages, answers and figures illustrate how Xroga works: no accounts are connected, and nothing is published, sent or spent.',
 };

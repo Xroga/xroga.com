@@ -1,30 +1,33 @@
 'use client';
 
 /**
- * S03 — Search & Growth. Two chapters inside one section, each understandable on its own: A, the Search & Authority
- * Studio (site health, content, AI answers, links, local presence) and B, the Launch, Campaigns & Growth Studio (launch,
- * search ads, social ads, conversions). Two entrances at the top show what each chapter does and take the visitor
- * straight to it. Everything is a local, interactive example: one short entrance plays when the section is reached,
- * nothing autoplays, and nothing leaves the page.
+ * S03 — Search & Growth. One section, two modes on one shared stage: Search & Visibility (website, search, AI answers,
+ * authority, local) and Launch & Marketing (launch, search ads, social ads, conversions). When the stage is first seen,
+ * a short guided demonstration drives the real components so a first-time visitor sees Xroga do the work; any input
+ * hands control over at once. Everything is a local, interactive preview: no account is linked and nothing is published or spent.
  */
 import Link from 'next/link';
 import { useReducedMotion } from 'motion/react';
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { COPY } from './data';
 import { GrowthStudio } from './GrowthStudio';
 import { SearchStudio } from './SearchStudio';
-import { initialState, reducer, type Chapter } from './state';
+import { initialState, isDefault, reducer, type Chapter } from './state';
+import { TourBar, useTour } from './Tour';
 import s from './S03.module.css';
 
-/** The site header is fixed over the page; chapter jumps land below it. */
-const HEADER_CLEARANCE = 88;
+const MODES: Chapter[] = ['search', 'growth'];
 
 export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
   const root = useRef<HTMLElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
   const [st, dispatch] = useReducer(reducer, undefined, initialState);
   const reduced = !!useReducedMotion();
-  const [entry, setEntry] = useState<'none' | 'armed' | 'played'>('none');
   const [under, setUnder] = useState(false);
+  // phones and reduced motion never autoplay; the tour is one tap away
+  const [wide, setWide] = useState(false);
+  useEffect(() => setWide(window.matchMedia('(min-width: 701px)').matches), []);
+  const tour = useTour(root, stage, dispatch, wide && !reduced);
 
   useEffect(() => {
     const el = root.current;
@@ -33,29 +36,6 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
     io.observe(el);
     return () => io.disconnect();
   }, []);
-
-  // the entrance is armed only when the section starts below the fold, and plays once when reached
-  useEffect(() => {
-    const el = root.current;
-    if (!el || reduced) return;
-    if (el.getBoundingClientRect().top < window.innerHeight * 0.75) return;
-    setEntry('armed');
-    const play = () => {
-      setEntry('played');
-      io.disconnect();
-      el.removeEventListener('focusin', play);
-      el.removeEventListener('pointerdown', play);
-    };
-    const io = new IntersectionObserver(([e]) => e.isIntersecting && play(), { rootMargin: '0px 0px -25% 0px', threshold: 0 });
-    io.observe(el);
-    el.addEventListener('focusin', play);
-    el.addEventListener('pointerdown', play);
-    return () => {
-      io.disconnect();
-      el.removeEventListener('focusin', play);
-      el.removeEventListener('pointerdown', play);
-    };
-  }, [reduced]);
 
   useEffect(() => {
     const el = root.current;
@@ -77,12 +57,12 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
     };
   }, [st.sheet]);
 
-  /** Jump to a chapter: below the fixed header, focus on its heading, no scroll hijacking. */
-  const go = (c: Chapter) => {
-    const target = root.current?.querySelector<HTMLElement>(`#s03-${c}`);
-    if (!target) return;
-    window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - HEADER_CLEARANCE, behavior: reduced ? 'auto' : 'smooth' });
-    target.querySelector<HTMLElement>('h3')?.focus({ preventScroll: true });
+  const onModeKey = (ev: ReactKeyboardEvent, i: number) => {
+    if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(ev.key)) return;
+    ev.preventDefault();
+    const n = ev.key === 'Home' ? 0 : ev.key === 'End' ? 1 : (i + 1) % 2;
+    dispatch({ type: 'view', view: MODES[n] });
+    root.current?.querySelector<HTMLElement>(`#s03-mode-${MODES[n]}`)?.focus({ preventScroll: true });
   };
 
   return (
@@ -91,10 +71,11 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
       id="s03"
       className={s.section}
       aria-labelledby="s03-title"
-      data-entry={entry}
+      data-view={st.view}
       data-reduced={reduced || undefined}
       data-modal={st.sheet ? '' : undefined}
       data-under={under || undefined}
+      data-tour={tour.status}
     >
       <div className={s.shield} aria-hidden="true" />
       <div className={s.inner}>
@@ -106,55 +87,48 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
           <p className={s.lede}>{COPY.lede}</p>
         </header>
 
-        <div className={s.doors}>
-          <a
-            href="#s03-search"
-            className={s.door}
-            data-door="search"
-            onClick={(e) => {
-              e.preventDefault();
-              go('search');
-            }}
-          >
-            <DoorSearch />
-            <span className={s.doorText}>
-              <small>{COPY.search.kicker}</small>
-              <b>{COPY.search.title}</b>
-              <em>
-                {COPY.search.enter}
-                <svg viewBox="0 0 16 16" aria-hidden="true">
-                  <path d="M8 3v9M4.5 8.5 8 12l3.5-3.5" />
-                </svg>
-              </em>
-            </span>
-          </a>
-          <a
-            href="#s03-growth"
-            className={s.door}
-            data-door="growth"
-            onClick={(e) => {
-              e.preventDefault();
-              go('growth');
-            }}
-          >
-            <DoorGrowth />
-            <span className={s.doorText}>
-              <small>{COPY.growth.kicker}</small>
-              <b>{COPY.growth.title}</b>
-              <em>
-                {COPY.growth.enter}
-                <svg viewBox="0 0 16 16" aria-hidden="true">
-                  <path d="M8 3v9M4.5 8.5 8 12l3.5-3.5" />
-                </svg>
-              </em>
-            </span>
-          </a>
+        <div className={s.modes} role="tablist" aria-label="What Xroga works on">
+          {MODES.map((m, i) => (
+            <button
+              key={m}
+              type="button"
+              role="tab"
+              id={`s03-mode-${m}`}
+              aria-selected={st.view === m}
+              aria-controls="s03-stage"
+              tabIndex={st.view === m ? 0 : -1}
+              className={s.mode}
+              data-mode={m}
+              onClick={() => dispatch({ type: 'view', view: m })}
+              onKeyDown={(ev) => onModeKey(ev, i)}
+            >
+              {m === 'search' ? <ModeSearch /> : <ModeGrowth />}
+              <span className={s.modeText}>
+                <b>{COPY[m].label}</b>
+                <small>{COPY[m].line}</small>
+              </span>
+              <i className={s.modeCheck} aria-hidden="true" />
+            </button>
+          ))}
         </div>
 
-        <SearchStudio st={st} dispatch={dispatch} />
-        <GrowthStudio st={st} dispatch={dispatch} />
+        <TourBar tour={tour} view={st.view} />
 
-        <p className={s.foot}>
+        <div ref={stage} id="s03-stage" role="tabpanel" aria-labelledby={`s03-mode-${st.view}`} className={s.shared} data-view={st.view}>
+          <div className={s.scenario}>
+            <span>{COPY[st.view].scenario}</span>
+            {!isDefault(st, st.view) && tour.status !== 'playing' && (
+              <button type="button" className={s.linkBtn} data-quiet="" onClick={() => dispatch({ type: 'reset', chapter: st.view })}>
+                Start over
+              </button>
+            )}
+          </div>
+          <div key={st.view} className={s.modePanel}>
+            {st.view === 'search' ? <SearchStudio st={st} dispatch={dispatch} /> : <GrowthStudio st={st} dispatch={dispatch} />}
+          </div>
+        </div>
+
+        <div className={s.foot}>
           <Link href={loggedIn ? '/workspace' : '/auth/signup'} className={s.cta}>
             Open the Xroga workspace
             <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -163,29 +137,29 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
           </Link>
           <button
             type="button"
-            className={s.linkBtn}
-            data-quiet=""
+            className={s.preview}
             aria-expanded={st.about}
             aria-controls="s03-about"
             onClick={() => dispatch({ type: 'set', patch: { about: !st.about } })}
           >
-            About these examples
+            <i aria-hidden="true" />
+            {COPY.disclosure}
           </button>
           {st.about && (
-            <span id="s03-about" role="note">
+            <p id="s03-about" className={s.aboutNote} role="note">
               {COPY.about}
-            </span>
+            </p>
           )}
-        </p>
+        </div>
       </div>
     </section>
   );
 }
 
-/** Door art: a site with one verified link, one competitor-only link and one AI citation. */
-function DoorSearch() {
+/** Mode art: a site with one verified link, one competitor-only link and one AI citation. */
+function ModeSearch() {
   return (
-    <svg className={s.doorArt} viewBox="0 0 220 120" aria-hidden="true">
+    <svg className={s.modeArt} viewBox="0 0 220 120" aria-hidden="true">
       <path className={s.dLink} data-k="verified" d="M150 26 C120 26 110 60 70 60" />
       <path className={s.dLink} data-k="rival" d="M160 98 C130 98 120 104 96 104" />
       <path className={s.dLink} data-k="ai" d="M176 62 C140 62 120 62 74 64" />
@@ -202,10 +176,10 @@ function DoorSearch() {
   );
 }
 
-/** Door art: one product becoming a search ad and a social post, ending in a customer. */
-function DoorGrowth() {
+/** Mode art: one product becoming a search ad and a social post, ending in a customer. */
+function ModeGrowth() {
   return (
-    <svg className={s.doorArt} viewBox="0 0 220 120" aria-hidden="true">
+    <svg className={s.modeArt} viewBox="0 0 220 120" aria-hidden="true">
       <path className={s.gFlow} d="M60 64 C90 64 96 30 120 30" />
       <path className={s.gFlow} d="M60 64 C90 64 96 92 120 92" />
       <path className={s.gFlow} d="M160 30 C180 30 182 62 196 62 M160 92 C180 92 182 62 196 62" />
