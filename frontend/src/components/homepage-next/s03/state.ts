@@ -1,24 +1,29 @@
-/** S03 local state: one sample market explored through three views. Pure reducer; nothing leaves the page. */
-import { AUDIENCES, QUERIES, SOURCES, type PaperMode, type ToolId, type View } from './data';
+/** S03 local state: one sample shop explored through three worlds. Pure reducer; nothing leaves the page. */
+import { AUDIENCES, CHANNELS, QUERIES, SOURCES, type Channel, type Lens, type ToolId, type World } from './data';
+
+/** The one on-demand layer open over a world, if any. */
+export type Layer = 'evidence' | 'compare' | 'preview' | 'method' | null;
 
 export interface State {
-  view: View;
+  world: World;
   query: string;
-  paper: PaperMode;
-  why: boolean;
+  lens: Lens;
   audience: string;
+  channel: Channel;
   approved: boolean;
   source: string;
+  layer: Layer;
   tool: ToolId | null;
 }
 
 export type Action =
-  | { type: 'view'; view: View }
+  | { type: 'world'; world: World }
   | { type: 'query'; id: string }
   | { type: 'next-query' }
-  | { type: 'paper'; mode: PaperMode }
-  | { type: 'why'; open: boolean }
+  | { type: 'lens'; lens: Lens }
+  | { type: 'layer'; layer: Layer }
   | { type: 'audience'; id: string }
+  | { type: 'channel'; id: Channel }
   | { type: 'approve' }
   | { type: 'source'; id: string }
   | { type: 'tool'; id: ToolId | null }
@@ -26,46 +31,36 @@ export type Action =
   | { type: 'escape' };
 
 export const initialState = (): State => ({
-  view: 'market',
+  world: 'discover',
   query: QUERIES[0].id,
-  paper: 'organic',
-  why: false,
+  lens: 'organic',
   audience: AUDIENCES[0].id,
+  channel: CHANNELS[0].id,
   approved: false,
   source: SOURCES[0].id,
+  layer: null,
   tool: null,
 });
 
 export function reducer(s: State, a: Action): State {
   switch (a.type) {
-    case 'view':
-      // views keep every selection; nothing replays
-      return { ...s, view: a.view };
+    case 'world':
+      // worlds keep every selection; switching never replays anything
+      return { ...s, world: a.world, layer: null };
     case 'query':
-      // a new search keeps the chosen lens (organic or AI answer) but closes detail panels
-      return {
-        ...s,
-        view: 'market',
-        query: a.id,
-        paper: s.paper === 'ai' ? 'ai' : 'organic',
-        why: false,
-      };
+      return { ...s, world: 'discover', query: a.id, layer: s.layer === 'compare' ? 'compare' : null };
     case 'next-query': {
       const i = QUERIES.findIndex((q) => q.id === s.query);
-      return {
-        ...s,
-        view: 'market',
-        query: QUERIES[(i + 1) % QUERIES.length].id,
-        paper: 'organic',
-        why: false,
-      };
+      return { ...s, world: 'discover', query: QUERIES[(i + 1) % QUERIES.length].id, layer: null };
     }
-    case 'paper':
-      return { ...s, view: 'market', paper: a.mode };
-    case 'why':
-      return { ...s, why: a.open };
+    case 'lens':
+      return { ...s, lens: a.lens };
+    case 'layer':
+      return { ...s, layer: a.layer };
     case 'audience':
       return { ...s, audience: a.id };
+    case 'channel':
+      return { ...s, channel: a.id };
     case 'approve':
       // a preview decision only: nothing is published, sent or spent
       return { ...s, approved: !s.approved };
@@ -74,19 +69,15 @@ export function reducer(s: State, a: Action): State {
     case 'tool':
       return { ...s, tool: a.id };
     case 'reset':
-      return { ...initialState(), tool: null };
+      return initialState();
     case 'escape':
+      if (s.layer) return { ...s, layer: null };
       if (s.tool) return { ...s, tool: null };
-      if (s.why) return { ...s, why: false };
-      if (s.paper !== 'organic') return { ...s, paper: 'organic' };
       return s;
   }
 }
 
 export const isDefault = (s: State) => {
   const d = initialState();
-  return s.view === d.view && s.query === d.query && s.paper === d.paper && !s.why && s.audience === d.audience && !s.approved && s.source === d.source;
+  return (Object.keys(d) as (keyof State)[]).every((k) => k === 'tool' || s[k] === d[k]);
 };
-
-/** Changes whenever the X trace should re-draw. */
-export const traceKey = (s: State) => `${s.view}:${s.query}:${s.paper}:${s.audience}:${s.source}:${s.why ? 1 : 0}`;
