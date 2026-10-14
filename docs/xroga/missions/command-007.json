@@ -10,6 +10,11 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "frontend/src/app/crypto/fonts.ts",
+    "frontend/src/app/crypto/page.tsx",
+    "frontend/src/lib/localFontBuild.test.ts",
+    "docs/xroga/security/FONT_BUILD_RELIABILITY.md",
+    "docs/xroga/security/CRYPTO_FONT_REGISTER.json",
     "backend/src/security/clineGitDependency.test.ts",
     "backend/src/synthesis/livePreview/access.ts",
     "backend/src/synthesis/livePreview/access.test.ts",

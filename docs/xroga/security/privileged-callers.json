@@ -6670,15 +6670,15 @@
       "sourceSha256": "8791cb3af7da75e7bd24283460a2893b714ca3fd3ef0dd1b811059491b90e1a2"
     },
     {
-      "id": "430d6a63c74c6cfec0ae",
+      "id": "74b49e94277d79ed5781",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 227,
+      "line": 213,
       "enclosing": "GlowButton",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "5b502244cf59bf5c7979aba9a1cb7cb01250d4a54d04d525ffe1ce00e9b0a2af"
+      "sourceSha256": "203327cd15585e63c043071fd5b8bdebf3a6c7aeb8178649bde583799e2b4ff3"
     },
     {
       "id": "bffc711570b62f9a351e",

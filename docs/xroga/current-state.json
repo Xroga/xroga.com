@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "131ac75600d28f3c90f1c573344a75f76cab9be0",
-    "sourceTimestampUtc": "2026-10-14T19:08:41+05:00",
-    "auditStartedUtc": "2026-10-14T14:15:31.850Z",
+    "sha": "e6ae62b2b3ff806cfcdd7bd84b509ec7a86ce10b",
+    "sourceTimestampUtc": "2026-10-14T19:31:44+05:00",
+    "auditStartedUtc": "2026-10-14T18:22:33.060Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -35846,10 +35846,47 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:7c21f81019b258a28f0a",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/crypto/fonts.ts",
+      "sha256": "1093a76edaf5c1627eed37ac46997d650e865cbd11c73f7c28f30a81582f826d",
+      "symbols": [
+        "editorial",
+        "manrope"
+      ],
+      "imports": [
+        "next/font/local"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/crypto/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/crypto/page.tsx:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "next/font/local"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:f1eadd2701eed9bc91c1",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/crypto/page.tsx",
-      "sha256": "5b502244cf59bf5c7979aba9a1cb7cb01250d4a54d04d525ffe1ce00e9b0a2af",
+      "sha256": "203327cd15585e63c043071fd5b8bdebf3a6c7aeb8178649bde583799e2b4ff3",
       "symbols": [
         "CryptoPage",
         "DASHBOARD_EXAMPLES",
@@ -35860,9 +35897,7 @@
         "PROCESS",
         "PRODUCT_TYPES",
         "SAAS_EXAMPLES",
-        "editorial",
         "ld",
-        "manrope",
         "metadata"
       ],
       "imports": [
@@ -35870,11 +35905,11 @@
         "./CryptoPromptBar",
         "./crypto-seo.module.css",
         "./crypto-uiverse-exact.css",
+        "./fonts",
         "@/lib/seo",
         "@/styles/homepage-coding.css",
         "lucide-react",
         "next",
-        "next/font/google",
         "next/link",
         "react"
       ],
@@ -35883,6 +35918,7 @@
         "frontend/src/app/crypto/CryptoPromptBar.tsx",
         "frontend/src/app/crypto/crypto-seo.module.css",
         "frontend/src/app/crypto/crypto-uiverse-exact.css",
+        "frontend/src/app/crypto/fonts.ts",
         "frontend/src/lib/seo.ts",
         "frontend/src/styles/homepage-coding.css"
       ],
@@ -35898,7 +35934,6 @@
         "declared-host:xroga.com",
         "lucide-react",
         "next",
-        "next/font/google",
         "next/link",
         "react"
       ],
@@ -94672,6 +94707,16 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
+      "id": "finding:c71246720ac5975a09f8",
+      "sourcePath": "frontend/src/app/crypto/fonts.ts",
+      "line": 5,
+      "kind": "MOCK",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
       "id": "finding:afe3af0e6ab8c614a213",
       "sourcePath": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
       "line": 388,
@@ -102598,6 +102643,13 @@
       "id": "test-suite:2b5eb20e119aefa49b45",
       "sourcePath": "frontend/src/lib/legacyLandingRunRecovery.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e28cd77a4e26622d0e08",
+      "sourcePath": "frontend/src/lib/localFontBuild.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

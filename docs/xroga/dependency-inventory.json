@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "131ac75600d28f3c90f1c573344a75f76cab9be0",
+  "source_sha": "e6ae62b2b3ff806cfcdd7bd84b509ec7a86ce10b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13357,8 +13357,12 @@
       "sha256": "6a72412c0541e3f2d9d86f6d9b85bbd6852ef132d3d3a2ca80e3a94eccf6a41c"
     },
     {
+      "path": "frontend/src/app/crypto/fonts.ts",
+      "sha256": "1093a76edaf5c1627eed37ac46997d650e865cbd11c73f7c28f30a81582f826d"
+    },
+    {
       "path": "frontend/src/app/crypto/page.tsx",
-      "sha256": "5b502244cf59bf5c7979aba9a1cb7cb01250d4a54d04d525ffe1ce00e9b0a2af"
+      "sha256": "203327cd15585e63c043071fd5b8bdebf3a6c7aeb8178649bde583799e2b4ff3"
     },
     {
       "path": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
@@ -18627,21 +18631,49 @@
       "hostname": "www.w3.org",
       "protocol": "http:",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 237,
+      "line": 223,
       "credentialsInUrl": false
     },
     {
       "hostname": "schema.org",
       "protocol": "https:",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 253,
+      "line": 239,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 257,
+      "line": 243,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 244,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 248,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 252,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 253,
       "credentialsInUrl": false
     },
     {
@@ -18662,56 +18694,28 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 266,
+      "line": 271,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 267,
+      "line": 278,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 272,
+      "line": 289,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 276,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "frontend/src/app/crypto/page.tsx",
-      "line": 285,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "frontend/src/app/crypto/page.tsx",
-      "line": 292,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "frontend/src/app/crypto/page.tsx",
-      "line": 303,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "frontend/src/app/crypto/page.tsx",
-      "line": 309,
+      "line": 295,
       "credentialsInUrl": false
     },
     {

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "131ac75600d28f3c90f1c573344a75f76cab9be0",
+  "source_sha": "e6ae62b2b3ff806cfcdd7bd84b509ec7a86ce10b",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -2919,9 +2919,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "6cb486bc81de2aa4d1fea7442c705b0c729560d94813f037be7807883ffcddc8",
-      "byte_size": 3773258,
-      "modified_timestamp": "2026-10-14T14:15:32.486Z",
+      "sha256": "133509504866c90ba1119631c6dc2dcf247ccf445fd75d743c25e4156e773cb6",
+      "byte_size": 3775365,
+      "modified_timestamp": "2026-10-14T18:22:33.466Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -10014,12 +10014,25 @@
       "notes": "Git-canonical LF source bytes and AST/import metadata, not manual behavioral verification"
     },
     {
+      "source_id": "SRC-7c21f81019b258a2",
+      "filename": "fonts.ts",
+      "path_or_url": "frontend/src/app/crypto/fonts.ts",
+      "sha256": "1093a76edaf5c1627eed37ac46997d650e865cbd11c73f7c28f30a81582f826d",
+      "byte_size": 790,
+      "modified_timestamp": "2026-10-14T18:18:55.932Z",
+      "parse_status": "AST_METADATA",
+      "category": "SOURCE_CODE",
+      "authority": "CURRENT_CODE",
+      "analyzed": true,
+      "notes": "Git-canonical LF source bytes and AST/import metadata, not manual behavioral verification"
+    },
+    {
       "source_id": "SRC-f1eadd2701eed9bc",
       "filename": "page.tsx",
       "path_or_url": "frontend/src/app/crypto/page.tsx",
-      "sha256": "5b502244cf59bf5c7979aba9a1cb7cb01250d4a54d04d525ffe1ce00e9b0a2af",
-      "byte_size": 26769,
-      "modified_timestamp": "2026-10-01T09:27:14.172Z",
+      "sha256": "203327cd15585e63c043071fd5b8bdebf3a6c7aeb8178649bde583799e2b4ff3",
+      "byte_size": 26461,
+      "modified_timestamp": "2026-10-14T18:18:55.934Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

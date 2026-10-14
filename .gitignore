@@ -67,3 +67,5 @@ artifacts/batch-01-golden/
 supabase/.temp/
 artifacts/batch-01-local-security/
 artifacts/ci-*/
+artifacts/font-toolchain-packages/
+artifacts/font-sources/
