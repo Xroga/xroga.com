@@ -159,22 +159,119 @@
   height: 1.5px;
   background: currentColor;
 }
-.tabIcon[data-k='workforce'] {
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #b9e3ff, #3f7bff 55%, #6a43d8);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
+.tabMark {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  filter: drop-shadow(0 0 6px rgba(69, 137, 255, 0.55));
 }
 
 /* ---------------------------------------------------------------------------------------------------- stage */
 .stage {
   position: relative;
-  margin-top: clamp(16px, 2.6svh, 26px);
+  margin-top: clamp(14px, 2svh, 22px);
 }
 .hold {
-  height: calc(clamp(470px, calc(100svh - 350px), 580px) + 84px);
+  height: calc(clamp(430px, calc(100svh - 420px), 560px) + 84px);
   border-radius: 26px;
   background: #0b0e15;
   box-shadow: inset 0 0 0 1px var(--hair);
+}
+/* the selector row above the computer: four missions, or six employees */
+.picker {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  max-width: 1188px;
+  margin: 0 auto 12px;
+  animation: pickerIn 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes pickerIn {
+  from { opacity: 0; transform: translateY(6px); }
+}
+.pick {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 6px 16px 6px 8px;
+  border: 0;
+  border-radius: 14px;
+  font: 600 14px/1.2 var(--font-inter), system-ui, sans-serif;
+  color: #b9c1cf;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)), #0d1018;
+  box-shadow: inset 0 0 0 1px rgba(226, 232, 245, 0.1), 0 10px 24px -16px rgba(0, 0, 0, 0.9);
+  cursor: pointer;
+  text-align: left;
+  transition: color 180ms linear, box-shadow 220ms linear, transform 220ms cubic-bezier(0.22, 1, 0.36, 1), background 220ms linear;
+}
+.pick:hover {
+  color: #eef1f6;
+  transform: translateY(-1px);
+}
+.pick:focus-visible {
+  outline: 2px solid var(--accent, #4589ff);
+  outline-offset: 2px;
+}
+.pick[aria-pressed='true'] {
+  color: #ffffff;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent, #4589ff) 16%, transparent), rgba(255, 255, 255, 0.02)), #111624;
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--accent, #4589ff) 75%, transparent), 0 14px 30px -14px color-mix(in oklab, var(--accent, #4589ff) 70%, transparent);
+}
+.glyph {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 10px;
+  color: #dfe7ff;
+  background: linear-gradient(160deg, #2a3350, #151a29);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+.glyph[data-id='bug'] { background: linear-gradient(160deg, #3a2a3a, #1b1622); color: #ffb3ad; }
+.glyph[data-id='ads'] { background: linear-gradient(160deg, #2b3a2a, #151d18); color: #b5f0b7; }
+.glyph[data-id='extension'] { background: linear-gradient(160deg, #23324d, #121a2b); color: #a9c9ff; }
+.glyph[data-id='outreach'] { background: linear-gradient(160deg, #3a3426, #1d1a13); color: #f2d9a3; }
+.glyph svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pickText {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.pickText b {
+  font-weight: 650;
+  white-space: nowrap;
+}
+.pickText small {
+  font-size: 11.5px;
+  font-weight: 550;
+  color: #8f98a9;
+  white-space: nowrap;
+}
+.pickText small[data-state='working'],
+.pickText small[data-state='thinking'] { color: #9cc0ff; }
+.pickText small[data-state='report'] { color: #8ff0bf; }
+.pickText small[data-state='decision'],
+.pickText small[data-state='blocked'] { color: #f0c27d; }
+.mate {
+  display: block;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  overflow: visible;
+}
+.picker[data-kind='team'] .pick {
+  padding-right: 12px;
 }
 .foot {
   display: flex;
@@ -234,26 +331,31 @@
 @media (min-width: 960px) {
   .head {
     grid-template-columns: 1fr auto;
+    grid-template-areas: 'eyebrow eyebrow' 'title title' 'lede switch';
     align-items: end;
     justify-items: stretch;
     text-align: left;
-    gap: 32px;
+    gap: 0 32px;
     max-width: 1188px;
     margin: 0 auto;
   }
   .copy {
-    justify-items: start;
+    display: contents;
   }
+  .eyebrow { grid-area: eyebrow; justify-self: start; }
+  .title { grid-area: title; }
+  .lede { grid-area: lede; align-self: center; }
+  .switch { grid-area: switch; margin-top: 10px; }
   .eyebrow::before {
     display: none;
   }
   .title {
     margin-top: 10px;
-    font-size: clamp(32px, 0.6rem + 2.2vw, 44px);
+    font-size: clamp(30px, 0.4rem + 2.2vw, 42px);
   }
   .lede {
-    margin-top: 8px;
-    max-width: 620px;
+    margin-top: 10px;
+    max-width: 640px;
   }
 }
 @media (max-width: 720px) {
@@ -279,6 +381,34 @@
     gap: 10px;
   }
 }
+/* narrower than the six employee chips: the selector row scrolls sideways (snap), never wraps or overflows */
+@media (max-width: 1180px) {
+  .picker {
+    justify-content: flex-start;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding: 2px 2px 6px;
+  }
+  .picker::-webkit-scrollbar {
+    display: none;
+  }
+  .pick {
+    flex: none;
+    scroll-snap-align: start;
+  }
+}
+@media (max-width: 720px) {
+  .picker {
+    margin-inline: -12px;
+    padding-inline: 12px;
+    scroll-padding-inline: 12px;
+  }
+  .pick {
+    min-height: 48px;
+    font-size: 13px;
+  }
+}
 @media (max-width: 360px) {
   .tab {
     gap: 6px;
@@ -294,7 +424,11 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .thumb,
-  .cta {
+  .cta,
+  .pick {
     transition: none;
+  }
+  .picker {
+    animation: none;
   }
 }

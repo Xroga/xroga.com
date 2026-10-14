@@ -1,165 +1,176 @@
 /**
- * AI workforce preview state (V10): a pure reducer, separate from the browser mission engine so that switching
- * modes never wipes either side.
+ * AI Employees preview state (V12): one persistent conversation per employee, a pure reducer.
  *
- * team        the atrium: six specialists, each with a standing responsibility (the entrance plays once per visit)
- * assignment  a two-step sheet: responsibility (goal, trigger, deliverable) then boundaries (tools, approvals)
- * away        the night away: a playhead crosses Mon 17:42 → Tue 18:00 while work lands on each lane
- * workspace   back at the desk: what changed, the latest artifact, the decision waiting, and the employee's own tools
+ * Every thread walks its employee's script (team.ts): a user beat waits for the visitor to send it (or pick its
+ * suggestion), then the employee's replies, work beats and time skips are queued and released one by one by a
+ * timer in the section (paused offscreen). After the report, follow-ups can be asked in any order.
  *
- * `tasks` is client-local demo state for this page session only. It is derived from a fixed reference clock in
- * script.ts, never from real elapsed time, and no action here reaches a server or an outside service.
+ * Threads, drafts and decisions persist while the visitor switches employees or modes. Nothing here calls a
+ * model, a server or any outside service: unscripted messages get an honest "sample conversation" reply.
  */
-import { AWAY_BEATS, EMPLOYEES, REFERENCE, type EmployeeId } from './script';
+import { EMPLOYEES, FIRST_EMPLOYEE, employeeOf, type Beat, type Card, type EmployeeId, type ThreadState, type UserBeat } from './team';
 
-export type View = 'team' | 'assignment' | 'away' | 'workspace';
-
-export interface SimTask {
-  assignedAt: string;
-  lastActivity: string;
-  nextRun: string;
-  status: 'scheduled' | 'working' | 'review' | 'delivered';
-  artifacts: string[];
-  approvalNeeded: number;
-  /** standing: part of the sample team · you: assigned by the visitor in this preview */
-  source: 'standing' | 'you';
+export interface Msg {
+  id: number;
+  from: 'user' | 'emp' | 'skip';
+  text: string;
+  at: string;
+  card?: Card;
 }
 
-export interface Config {
-  trigger: number;
-  tools: boolean[];
-  approvals: boolean[];
+export interface Thread {
+  msgs: Msg[];
+  /** Index of the next script beat that has not been released. */
+  pos: number;
+  /** Beats released by the timer, in order. */
+  queue: Beat[];
+  /** The employee's computer stage. */
+  ws: number;
+  /** One live "working on" line while work is happening. */
+  status: string | null;
+  state: ThreadState;
+  used: string[];
+  draft: string;
+  decisions: Record<string, 'approved' | 'held'>;
+  gen: number;
 }
 
 export interface WfState {
-  view: View;
+  view: 'intro' | 'chat';
   selected: EmployeeId;
-  /** Assignment sheet step: 0 responsibility, 1 boundaries. */
-  sheet: 0 | 1;
-  intro: 'pending' | 'done';
-  /** Index into AWAY_BEATS while away. */
-  beat: number;
-  /** The night away has been shown at least once, so every employee has results to inspect. */
-  returned: boolean;
-  tasks: Record<EmployeeId, SimTask>;
-  config: Record<EmployeeId, Config>;
-  decisions: Partial<Record<EmployeeId, 'approved' | 'held'>>;
-  gen: number;
+  /** Until the visitor touches the AI Employees mode, the first assignment plays itself once. */
+  auto: boolean;
+  /** Phones show one panel at a time. */
+  pane: 'chat' | 'computer';
+  threads: Record<EmployeeId, Thread>;
 }
 
 export type WfAction =
   | { type: 'intro-done' }
-  | { type: 'open'; id: EmployeeId }
-  | { type: 'sheet'; step: 0 | 1 }
-  | { type: 'trigger'; index: number }
-  | { type: 'tool'; index: number }
-  | { type: 'approval'; index: number }
-  | { type: 'preview' }
-  | { type: 'tick'; gen: number }
-  | { type: 'skip' }
-  /** Reduced motion: show the whole night at once (the visitor moves on with "See what changed"). */
-  | { type: 'settle' }
-  | { type: 'inspect'; id: EmployeeId }
-  | { type: 'team' }
-  | { type: 'decide'; id: EmployeeId; value: 'approved' | 'held' };
+  | { type: 'select'; id: EmployeeId }
+  | { type: 'draft'; id: EmployeeId; text: string; manual?: boolean }
+  | { type: 'send'; id: EmployeeId; text?: string; manual?: boolean }
+  | { type: 'tick'; id: EmployeeId; gen: number }
+  | { type: 'decide'; id: EmployeeId; key: string; value: 'approved' | 'held' }
+  | { type: 'pane'; pane: 'chat' | 'computer' }
+  | { type: 'stop-auto' };
 
-const ids = EMPLOYEES.map((e) => e.id);
-const byId = <T>(f: (id: EmployeeId) => T) => Object.fromEntries(ids.map((id) => [id, f(id)])) as Record<EmployeeId, T>;
-const emp = (id: EmployeeId) => EMPLOYEES.find((e) => e.id === id)!;
-
-const standing = (id: EmployeeId): SimTask => ({
-  assignedAt: 'Mon 6 Oct',
-  lastActivity: 'Mon 16:50',
-  nextRun: emp(id).assignment.triggers[0],
-  status: 'scheduled',
-  artifacts: [],
-  approvalNeeded: 0,
-  source: 'standing',
-});
-
-/** What every task looks like at Tue 18:00, after the night away. */
-const afterAway = (id: EmployeeId, t: SimTask): SimTask => {
-  const e = emp(id);
-  const lastBlock = e.away[e.away.length - 1];
-  const h = 18 + lastBlock.at;
-  const hh = Math.floor(h) % 24;
-  return {
-    ...t,
-    lastActivity: `Tue ${String(hh).padStart(2, '0')}:${String(Math.round((h % 1) * 60)).padStart(2, '0')}`,
-    nextRun: e.ret.next,
-    status: e.ret.decisions > 0 ? 'review' : 'delivered',
-    artifacts: [e.ret.artifact.title],
-    approvalNeeded: e.ret.decisions,
-  };
-};
+const thread = (): Thread => ({ msgs: [], pos: 0, queue: [], ws: 0, status: null, state: 'ready', used: [], draft: '', decisions: {}, gen: 0 });
 
 export const initialWorkforce = (): WfState => ({
-  view: 'team',
-  selected: 'ops',
-  sheet: 0,
-  intro: 'pending',
-  beat: 0,
-  returned: false,
-  tasks: byId(standing),
-  config: byId((id) => ({ trigger: 0, tools: emp(id).assignment.tools.map((t) => t.on), approvals: emp(id).assignment.approvals.map((a) => a.on) })),
-  decisions: {},
-  gen: 0,
+  view: 'intro',
+  selected: FIRST_EMPLOYEE,
+  auto: true,
+  pane: 'chat',
+  threads: Object.fromEntries(EMPLOYEES.map((x) => [x.id, thread()])) as Record<EmployeeId, Thread>,
 });
 
-const toggle = (xs: boolean[], i: number) => xs.map((v, j) => (j === i ? !v : v));
-const back = (s: WfState): WfState => ({
-  ...s,
-  view: 'workspace',
-  beat: AWAY_BEATS.length - 1,
-  returned: true,
-  tasks: byId((id) => afterAway(id, s.tasks[id])),
-  gen: s.gen + 1,
-});
+export const norm = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9 ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/** The user beat the thread is waiting on, if any. */
+export function gateOf(id: EmployeeId, t: Thread) {
+  const b = employeeOf(id).script[t.pos];
+  return t.queue.length === 0 && b?.t === 'user' ? b : null;
+}
+/** Follow-ups that can still be asked (only once the scripted story has finished). */
+export function followupsOf(id: EmployeeId, t: Thread) {
+  const e = employeeOf(id);
+  if (t.queue.length > 0 || t.pos < e.script.length) return [];
+  return e.followups.filter((f) => !t.used.includes(f.id));
+}
+export const busy = (t: Thread) => t.queue.length > 0;
+export const clockOf = (t: Thread, id: EmployeeId) => t.msgs.at(-1)?.at ?? (employeeOf(id).script[0] as UserBeat).at;
+
+/** Releases script beats from `from` up to (not including) the next user beat. */
+function release(id: EmployeeId, from: number): { queue: Beat[]; pos: number } {
+  const script = employeeOf(id).script;
+  const queue: Beat[] = [];
+  let i = from;
+  while (i < script.length && script[i].t !== 'user') queue.push(script[i++]);
+  return { queue, pos: i };
+}
+
+const upd = (s: WfState, id: EmployeeId, f: (t: Thread) => Thread): WfState => ({ ...s, threads: { ...s.threads, [id]: f(s.threads[id]) } });
 
 export function workforceReducer(s: WfState, a: WfAction): WfState {
   switch (a.type) {
     case 'intro-done':
-      return { ...s, intro: 'done' };
-    case 'open':
-      // choosing a specialist opens their assignment sheet; the team entrance never replays
-      return { ...s, view: 'assignment', selected: a.id, sheet: 0, intro: 'done', gen: s.gen + 1 };
-    case 'sheet':
-      return { ...s, sheet: a.step };
-    case 'trigger':
-      return { ...s, config: { ...s.config, [s.selected]: { ...s.config[s.selected], trigger: a.index } } };
-    case 'tool':
-      return { ...s, config: { ...s.config, [s.selected]: { ...s.config[s.selected], tools: toggle(s.config[s.selected].tools, a.index) } } };
-    case 'approval':
-      return { ...s, config: { ...s.config, [s.selected]: { ...s.config[s.selected], approvals: toggle(s.config[s.selected].approvals, a.index) } } };
-    case 'preview': {
-      const e = emp(s.selected);
-      const task: SimTask = { ...s.tasks[s.selected], source: 'you', assignedAt: REFERENCE.assigned, nextRun: e.assignment.triggers[s.config[s.selected].trigger], status: 'scheduled' };
-      return { ...s, view: 'away', beat: 0, tasks: { ...s.tasks, [s.selected]: task }, decisions: { ...s.decisions, [s.selected]: undefined }, gen: s.gen + 1 };
+      return s.view === 'intro' ? { ...s, view: 'chat' } : s;
+    case 'select':
+      // a deliberate choice: the entrance never replays and the intro autoplay stops
+      return { ...s, view: 'chat', selected: a.id, auto: false, pane: 'chat' };
+    case 'stop-auto':
+      return s.auto ? { ...s, auto: false } : s;
+    case 'pane':
+      return { ...s, pane: a.pane, auto: false };
+    case 'draft':
+      return upd({ ...s, auto: a.manual ? false : s.auto }, a.id, (t) => ({ ...t, draft: a.text }));
+    case 'send': {
+      const t = s.threads[a.id];
+      const text = (a.text ?? t.draft).trim();
+      const base = { ...s, auto: a.manual ? false : s.auto };
+      if (!text || busy(t)) return base;
+      const id = a.id;
+      const gate = gateOf(id, t);
+      const at = gate?.at ?? clockOf(t, id);
+      const mk = (from: Msg['from'], body: string, when: string): Msg => ({ id: t.msgs.length, from, text: body, at: when });
+      const n = norm(text);
+      // the scripted next message (typed exactly, or picked as a suggestion)
+      if (gate && (n === norm(gate.text) || n === norm(gate.chip))) {
+        const r = release(id, t.pos + 1);
+        return upd(base, id, (x) => ({ ...x, msgs: [...x.msgs, mk('user', gate.text, gate.at)], pos: r.pos, queue: r.queue, draft: '', state: 'thinking', gen: x.gen + 1 }));
+      }
+      // a follow-up after the report
+      const f = followupsOf(id, t).find((x) => n === norm(x.text) || n === norm(x.chip) || x.keys.some((k) => n.includes(norm(k))));
+      if (f) {
+        return upd(base, id, (x) => ({ ...x, msgs: [...x.msgs, mk('user', f.text, f.reply[0].at)], queue: [...f.reply], used: [...x.used, f.id], draft: '', state: 'thinking', gen: x.gen + 1 }));
+      }
+      // anything else: honest about the limits of a sample conversation
+      const hint = gate ? `To continue this example, send: “${gate.chip}”.` : 'Pick one of the suggestions below to continue this example.';
+      return upd(base, id, (x) => ({
+        ...x,
+        msgs: [...x.msgs, mk('user', text, at)],
+        queue: [{ t: 'emp', text: `This is a sample conversation, so I can only follow the suggested messages here. ${hint} To give me a real job, start in Xroga.`, at, delay: 700 }],
+        draft: '',
+        gen: x.gen + 1,
+      }));
     }
-    case 'tick':
-      if (a.gen !== s.gen || s.view !== 'away') return s;
-      if (s.beat < AWAY_BEATS.length - 1) return { ...s, beat: s.beat + 1, gen: s.gen + 1 };
-      return back(s);
-    case 'skip':
-      return s.view === 'away' ? back(s) : s;
-    case 'settle':
-      return s.view === 'away' ? { ...s, beat: AWAY_BEATS.length - 1, gen: s.gen + 1 } : s;
-    case 'inspect':
-      // after the night away, any employee's results can be opened directly from the team or the roster
-      return s.returned ? { ...s, view: 'workspace', selected: a.id, intro: 'done', gen: s.gen + 1 } : { ...s, view: 'assignment', selected: a.id, sheet: 0, intro: 'done', gen: s.gen + 1 };
-    case 'team':
-      return { ...s, view: 'team', intro: 'done', gen: s.gen + 1 };
-    case 'decide': {
-      const t = s.tasks[a.id];
-      // a preview decision only marks the local demo state; nothing is merged, sent, bought or posted
-      return {
-        ...s,
-        decisions: { ...s.decisions, [a.id]: a.value },
-        tasks: { ...s.tasks, [a.id]: { ...t, approvalNeeded: 0, status: a.value === 'approved' ? 'delivered' : 'review' } },
-      };
+    case 'tick': {
+      const t = s.threads[a.id];
+      if (a.gen !== t.gen || t.queue.length === 0) return s;
+      const [b, ...rest] = t.queue;
+      return upd(s, a.id, (x) => {
+        const msgs = x.msgs;
+        const id = msgs.length;
+        if (b.t === 'work') return { ...x, queue: rest, ws: b.ws, status: b.status, state: 'working', gen: x.gen + 1 };
+        if (b.t === 'user') return { ...x, queue: rest };
+        if (b.t === 'skip') return { ...x, queue: rest, msgs: [...msgs, { id, from: 'skip', text: b.label, at: b.at }], status: null, gen: x.gen + 1 };
+        return {
+          ...x,
+          queue: rest,
+          msgs: [...msgs, { id, from: 'emp', text: b.text, at: b.at, card: b.card }],
+          ws: b.ws ?? x.ws,
+          status: b.state && b.state !== 'working' ? null : x.status,
+          state: b.state ?? x.state,
+          gen: x.gen + 1,
+        };
+      });
     }
+    case 'decide':
+      // a preview decision only marks this page's local state; nothing is published, merged or deleted
+      return upd(s, a.id, (t) => ({ ...t, decisions: { ...t.decisions, [a.key]: a.value }, state: t.state === 'decision' ? 'report' : t.state }));
   }
 }
 
-/** Blocks on a lane that have happened by the current beat. */
-export const visibleUntil = (beat: number) => AWAY_BEATS[Math.min(beat, AWAY_BEATS.length - 1)].hour;
+/** How long the next queued beat waits before it lands. */
+export function delayOf(b: Beat): number {
+  if (b.t !== 'user' && b.delay) return b.delay;
+  if (b.t === 'emp') return 900 + Math.min(1100, b.text.length * 7);
+  return 1500;
+}

@@ -1,8 +1,8 @@
-/* The S02 computer: a machined titanium display with a graphite stand, an Xroga desktop, floating app windows,
-   the result window and a glass dock. Depth comes from layered shadows and one gentle camera push. */
+/* The S02 computer: a machined titanium display with a graphite stand. Browser mode: an Xroga desktop with one
+   multi-tab browser window and a result card. AI Employees mode: the workforce interior (Workforce.module.css).
+   Depth comes from layered shadows and one gentle camera push. */
 .computer {
-  --desk-h: clamp(470px, calc(100svh - 350px), 580px);
-  --dock-room: 104px;
+  --desk-h: clamp(430px, calc(100svh - 420px), 560px);
   position: relative;
   margin: 0 auto;
   max-width: 1188px;
@@ -127,17 +127,12 @@
   inset: -20% -10%;
   background: linear-gradient(118deg, transparent 38%, rgba(160, 200, 255, 0.07) 46%, rgba(180, 160, 255, 0.05) 52%, transparent 60%);
 }
-.computer[data-mode='workforce'] .wallpaper {
-  background:
-    radial-gradient(60% 80% at 8% 100%, color-mix(in oklab, var(--accent) 42%, transparent), transparent 62%),
-    radial-gradient(60% 70% at 96% -8%, rgba(132, 86, 240, 0.32), transparent 64%),
-    conic-gradient(from 210deg at 38% 60%, rgba(14, 22, 52, 0.92), rgba(7, 10, 24, 0.96) 30%, rgba(24, 16, 52, 0.9) 60%, rgba(8, 12, 30, 0.96)),
-    #070a16;
-  transition: background 600ms linear;
-}
 .desk[data-mode='workforce'] {
+  /* a conversation needs more height than a browser frame */
+  height: clamp(500px, calc(100svh - 370px), 600px);
   background: #07080d;
 }
+
 .scene {
   position: absolute;
   inset: 0;
@@ -147,13 +142,10 @@
   from { opacity: 0; transform: translateY(10px) scale(0.985); }
 }
 
-/* --------------------------------------------------------------------------------------------- app window */
+/* --------------------------------------------------------------------------------------------- browser window */
 .window {
   position: absolute;
-  left: 30px;
-  right: 30px;
-  top: 20px;
-  bottom: var(--dock-room);
+  inset: 16px 22px 18px;
   border-radius: 13px;
   overflow: hidden;
   background: #0c0f16;
@@ -173,14 +165,14 @@
   position: relative;
   z-index: 5;
   display: grid;
-  grid-template-columns: auto auto 1fr auto;
+  grid-template-columns: auto minmax(0, auto) minmax(160px, 1fr) auto;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   height: 42px;
   padding: 0 12px 0 14px;
   background: linear-gradient(180deg, #171b25, #12151d);
   box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06);
-  font: 500 13px/1 var(--font-inter), system-ui, sans-serif;
+  font: 500 12.5px/1 var(--font-inter), system-ui, sans-serif;
   color: #c7cdd8;
 }
 .lights {
@@ -199,35 +191,50 @@
 .lights i:nth-child(3) { background: #5cc36a; }
 .tabStrip {
   display: flex;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
 }
 .tab {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   height: 30px;
-  padding: 0 14px 0 11px;
+  padding: 0 12px 0 10px;
   border-radius: 9px;
-  background: #1f2430;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
-  color: #e6e9ef;
+  color: #8f98a9;
   white-space: nowrap;
+  transition: background 220ms linear, color 220ms linear;
+}
+.tab[data-on] {
+  color: #eef1f6;
+  background: #1f2430;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.tab[data-new] {
+  animation: tabIn 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes tabIn {
+  from { opacity: 0; transform: translateY(6px); }
 }
 .tab i {
-  width: 12px;
-  height: 12px;
-  border-radius: 4px;
+  width: 11px;
+  height: 11px;
+  flex: none;
+  border-radius: 3px;
 }
 .url {
   display: flex;
   align-items: center;
   gap: 8px;
   height: 30px;
+  min-width: 0;
   padding: 0 12px;
   border-radius: 9px;
   background: #0b0e14;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
   font-family: var(--font-xv-mono), ui-monospace, monospace;
-  font-size: 12.5px;
+  font-size: 12px;
   color: #b8bfcc;
   overflow: hidden;
   white-space: nowrap;
@@ -239,11 +246,6 @@
   fill: none;
   stroke: #7ec79a;
   stroke-width: 1.3;
-}
-.title {
-  justify-self: center;
-  font-weight: 600;
-  color: #d7dce5;
 }
 .driver {
   display: inline-flex;
@@ -259,18 +261,6 @@
   box-shadow: inset 0 0 0 1px rgba(69, 137, 255, 0.4);
   white-space: nowrap;
 }
-.driver i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--c);
-  box-shadow: 0 0 8px var(--c);
-}
-.window[data-kind='workspace'] .driver {
-  color: #fff;
-  background: color-mix(in oklab, var(--accent) 16%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 45%, transparent);
-}
 .viewport {
   position: absolute;
   left: 0;
@@ -280,20 +270,14 @@
   overflow: hidden;
   container-type: inline-size;
 }
-.viewport[data-scroll] {
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
-}
 
 /* ------------------------------------------------------------------------------------------- the result */
 .outcome {
   position: absolute;
   z-index: 35;
-  right: 18px;
-  bottom: calc(var(--dock-room) + 14px);
-  width: 344px;
+  right: 34px;
+  bottom: 30px;
+  width: 384px;
   padding: 16px 16px 14px;
   border-radius: 16px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)), rgba(13, 16, 24, 0.97);
@@ -312,33 +296,60 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font: 650 16px/1.2 var(--font-inter), system-ui, sans-serif;
+  font: 650 16px/1.25 var(--font-inter), system-ui, sans-serif;
   color: #f4f6fa;
 }
-.outcome ul {
+.outcome ul,
+.trail {
   display: grid;
-  gap: 8px;
+  gap: 7px;
   margin: 12px 0 14px;
   padding: 0;
   list-style: none;
 }
 .outcome li {
   display: grid;
-  grid-template-columns: 16px 1fr;
+  grid-template-columns: 14px auto 1fr;
+  align-items: baseline;
   gap: 8px;
-  font: 500 13.5px/1.4 var(--font-inter), system-ui, sans-serif;
+  font: 500 13px/1.4 var(--font-inter), system-ui, sans-serif;
   color: #cdd3dd;
 }
+.outcome li b {
+  font-weight: 650;
+  color: #f1f3f7;
+  min-width: 70px;
+}
 .outcome li i {
-  margin-top: 4px;
-  width: 11px;
-  height: 11px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
+  transform: translateY(1px);
 }
 .outcome li[data-mark='pass'] i { background: #60d6a0; box-shadow: 0 0 8px rgba(96, 214, 160, 0.55); }
 .outcome li[data-mark='fail'] i { background: #ff6e66; box-shadow: 0 0 8px rgba(255, 110, 102, 0.6); }
 .outcome li[data-mark='wait'] i { background: #e5aa59; box-shadow: 0 0 8px rgba(229, 170, 89, 0.6); }
 .outcome li[data-mark='note'] i { background: transparent; box-shadow: inset 0 0 0 2px #7e8aa0; }
+.trail {
+  max-height: 260px;
+  overflow-y: auto;
+  counter-reset: none;
+}
+.trail li {
+  grid-template-columns: 22px 1fr;
+  align-items: start;
+}
+.trail li span {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 650;
+  color: #cfe0ff;
+  background: rgba(69, 137, 255, 0.16);
+}
 .gate {
   display: flex;
   align-items: center;
@@ -362,8 +373,8 @@
   border-radius: 4px;
   box-shadow: inset 0 0 0 1.5px currentColor;
 }
-.again {
-  min-height: 32px;
+.inspect {
+  min-height: 34px;
   padding: 0 12px;
   border: 0;
   border-radius: 999px;
@@ -374,117 +385,26 @@
   cursor: pointer;
   white-space: nowrap;
 }
-.again:hover { background: rgba(255, 255, 255, 0.11); }
-.again:focus-visible { outline: 2px solid #4589ff; outline-offset: 2px; }
+.inspect:hover { background: rgba(255, 255, 255, 0.11); }
+.inspect:focus-visible { outline: 2px solid #4589ff; outline-offset: 2px; }
 
-/* ------------------------------------------------------------------------------------------------- dock */
-.desk > .dock {
-  position: absolute;
-  z-index: 38;
-  left: 0;
-  right: 0;
-  bottom: 12px;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-}
-.dockShelf {
-  display: flex;
-  align-items: flex-end;
-  gap: 6px;
-  padding: 8px 10px 6px;
-  border-radius: 22px;
-  /* dense glass instead of a live backdrop blur: the scene behind animates, and a blur over it roughly halves the frame budget */
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03)), rgba(16, 19, 30, 0.94);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 24px 50px -20px rgba(0, 0, 0, 0.9);
-  pointer-events: auto;
-  max-width: calc(100% - 24px);
-}
-.dockItem {
-  position: relative;
-  display: grid;
-  justify-items: center;
-  gap: 5px;
-  min-width: 64px;
-  padding: 4px 8px 6px;
-  border: 0;
-  border-radius: 14px;
-  background: none;
-  color: #a6aebc;
-  cursor: pointer;
-  transition: color 180ms linear, background 180ms linear;
-}
-.dockItem[data-kind='mission'] {
-  min-width: 132px;
-}
-.dockItem:hover {
-  color: #eef1f6;
-  background: rgba(255, 255, 255, 0.05);
-}
-.dockItem:focus-visible {
-  outline: 2px solid var(--accent, #4589ff);
-  outline-offset: 1px;
-}
-.dockItem[aria-pressed='true'] {
-  color: #ffffff;
-}
-.dockItem[aria-pressed='true']::after {
-  content: '';
-  position: absolute;
-  bottom: -3px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--accent, #4589ff);
-  box-shadow: 0 0 8px var(--accent, #4589ff);
-}
-.dockLabel {
-  font: 600 12.5px/1.2 var(--font-inter), system-ui, sans-serif;
-  white-space: nowrap;
-}
-.appIcon {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 13px;
-  color: #dfe7ff;
-  background: linear-gradient(160deg, #2a3350, #151a29);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 18px -8px rgba(0, 0, 0, 0.8);
-  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 240ms linear;
-}
-.appIcon[data-id='bug'] { background: linear-gradient(160deg, #3a2a3a, #1b1622); color: #ffb3ad; }
-.appIcon[data-id='ads'] { background: linear-gradient(160deg, #2b3a2a, #151d18); color: #b5f0b7; }
-.appIcon[data-id='extension'] { background: linear-gradient(160deg, #23324d, #121a2b); color: #a9c9ff; }
-.appIcon[data-id='article'] { background: linear-gradient(160deg, #3a3426, #1d1a13); color: #f2d9a3; }
-.appIcon svg {
-  width: 24px;
-  height: 24px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.dockItem:hover .appIcon,
-.dockItem[aria-pressed='true'] .appIcon {
-  transform: translateY(-4px);
-}
-.dockItem[aria-pressed='true'] .appIcon {
-  box-shadow: inset 0 0 0 1.5px rgba(120, 170, 255, 0.85), 0 12px 24px -8px rgba(69, 137, 255, 0.6);
-}
 /* ------------------------------------------------------------------------------------------------ narrow */
 @media (max-width: 900px) {
   .outcome {
-    left: 18px;
-    right: 18px;
+    left: 30px;
+    right: 30px;
     width: auto;
+  }
+  .driver {
+    display: none;
+  }
+  .chrome {
+    grid-template-columns: auto minmax(0, 1fr) minmax(120px, 0.8fr);
   }
 }
 @media (max-width: 720px) {
   .computer {
-    --desk-h: 560px;
-    --dock-room: 14px;
+    --desk-h: 520px;
   }
   .bezel {
     padding: 7px;
@@ -499,9 +419,7 @@
     padding: 10px 12px;
     row-gap: 6px;
   }
-  .brand {
-    display: none;
-  }
+  .brand,
   .clock {
     display: none;
   }
@@ -510,68 +428,35 @@
     justify-self: start;
     white-space: normal;
     font-size: 13px;
-    line-height: 1.4;
+    line-height: 1.45;
   }
   .ask b {
     display: inline-block;
     margin-bottom: 4px;
   }
-  /* phones, Browser mode: the mission dock becomes a swipeable row above the screen */
-  .desk {
-    display: flex;
-    flex-direction: column;
+  .desk[data-mode='browser'] {
     height: auto;
     container-type: inline-size;
   }
-  .desk > .dock {
-    position: relative;
-    order: -1;
-    bottom: auto;
-    justify-content: flex-start;
-    padding: 10px 0 2px;
-  }
-  .dockShelf {
-    max-width: none;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    margin: 0 10px;
-    border-radius: 18px;
-  }
-  .dockShelf::-webkit-scrollbar {
-    display: none;
-  }
-  .dockItem {
-    scroll-snap-align: start;
-  }
-  .dockItem[data-kind='mission'] {
-    min-width: 108px;
-  }
-  .dockItem[data-kind='mission'] .dockLabel {
-    white-space: normal;
-    text-align: center;
-    font-size: 12px;
-    max-width: 100px;
+  .desk[data-mode='workforce'] {
+    height: auto;
+    container-type: inline-size;
   }
   .scene {
     position: relative;
     inset: auto;
-    min-height: 520px;
   }
   .window {
     position: relative;
-    left: auto;
-    right: auto;
-    top: auto;
-    bottom: auto;
-    margin: 12px 10px 10px;
-    height: 470px;
+    inset: auto;
+    margin: 10px;
+    height: 500px;
   }
   .url {
     display: none;
   }
   .chrome {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr);
   }
   .outcome {
     position: relative;
@@ -589,12 +474,12 @@
 @media (prefers-reduced-motion: reduce) {
   .computer,
   .scene,
-  .ask {
+  .ask,
+  .tab[data-new] {
     animation: none !important;
   }
   .cam,
-  .outcome,
-  .appIcon {
+  .outcome {
     transition: none !important;
   }
 }

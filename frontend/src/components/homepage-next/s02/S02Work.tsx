@@ -1,22 +1,27 @@
 'use client';
 
 /**
- * S02: Xroga in action (V10). One compact section with two different experiences behind one switch:
+ * S02: Xroga in action (V12). One compact section, two different products behind one switch:
  *
- * Browser Automation: one mission executed inside an application (engine.ts + useDemoClock over script.ts).
- * AI Employees: an ongoing team with responsibilities, a night away and results on return (workforce.ts).
+ * Browser Automation: four bounded missions executed in a browser by Xroga's blue X cursor (engine.ts).
+ * AI Employees: six specialists, each with its own conversation and computer, owning ongoing jobs (workforce.ts).
  *
- * The two keep separate state, so switching modes never resets the other side. Each clock runs only while the
- * section is on screen and the tab is visible; nothing scrolls the page and nothing reaches a server.
+ * The selector row sits ABOVE the computer: four missions, or six employees. Both modes keep their own state, so
+ * switching never resets the other. Every clock pauses offscreen or in a hidden tab; nothing scrolls the page and
+ * nothing leaves the page.
  */
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState, type CSSProperties } from 'react';
 import { useReducedMotion } from 'motion/react';
-import { AWAY_BEAT_MS, AWAY_BEATS, COPY, INTRO_MS, employeeOf, missionOf, stepsOf, type Mode, type TrackId } from './script';
+import { COPY, MISSIONS, missionOf, stepsOf, type Mode, type TrackId } from './script';
+import { EMPLOYEES, INTRO_MS, employeeOf } from './team';
+import { stateLabel } from './labels';
 import { browserPhase } from './engine';
 import { useDemoClock } from './useDemoClock';
-import { initialWorkforce, workforceReducer } from './workforce';
+import { busy, delayOf, gateOf, initialWorkforce, workforceReducer } from './workforce';
+import { Companion } from './Companion';
+import { MissionGlyph } from './Glyphs';
 import s from './S02.module.css';
 
 const MODES: Mode[] = ['browser', 'workforce'];
@@ -45,32 +50,46 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
     return () => io.disconnect();
   }, [near]);
 
-  // workforce timing: the team entrance once, then the night away beat by beat (paused offscreen or hidden)
-  const wfLive = mode === 'workforce' && onScreen && !hidden;
+  /* ---------------------------------------------------------------------------- AI Employees timing */
+  const live = mode === 'workforce' && onScreen && !hidden;
+  // the team entrance, once per visit
   useEffect(() => {
-    if (mode !== 'workforce' || wf.intro === 'done') return;
+    if (mode !== 'workforce' || wf.view !== 'intro') return;
     if (reduced) return wfDispatch({ type: 'intro-done' });
-    if (!wfLive) return;
+    if (!live) return;
     const id = window.setTimeout(() => wfDispatch({ type: 'intro-done' }), INTRO_MS);
     return () => window.clearTimeout(id);
-  }, [mode, wf.intro, wfLive, reduced]);
+  }, [mode, wf.view, live, reduced]);
+  // each conversation releases its queued beats one by one (an employee keeps working while another is open)
   useEffect(() => {
-    if (wf.view === 'away' && reduced && wf.beat < AWAY_BEATS.length - 1) wfDispatch({ type: 'settle' });
-  }, [wf.view, wf.beat, reduced]);
+    if (!live || wf.view !== 'chat') return;
+    const timers = EMPLOYEES.flatMap(({ id }) => {
+      const t = wf.threads[id];
+      if (!busy(t)) return [];
+      const gen = t.gen;
+      return [window.setTimeout(() => wfDispatch({ type: 'tick', id, gen }), reduced ? 60 : delayOf(t.queue[0]))];
+    });
+    return () => timers.forEach((x) => window.clearTimeout(x));
+  }, [live, wf.view, wf.threads, reduced]);
+  // until the visitor touches this mode, the first employee's assignment is typed and sent once, as an example
   useEffect(() => {
-    if (wf.view !== 'away' || !wfLive || reduced) return;
-    const gen = wf.gen;
-    const last = wf.beat >= AWAY_BEATS.length - 1;
-    const id = window.setTimeout(() => wfDispatch({ type: 'tick', gen }), last ? 1100 : AWAY_BEAT_MS);
+    if (!live || !wf.auto || wf.view !== 'chat' || reduced) return;
+    const t = wf.threads[wf.selected];
+    const gate = gateOf(wf.selected, t);
+    if (!gate) return;
+    const id = window.setTimeout(
+      () => (t.draft === gate.text ? wfDispatch({ type: 'send', id: wf.selected }) : wfDispatch({ type: 'draft', id: wf.selected, text: gate.text })),
+      t.draft === gate.text ? 1300 : 1500,
+    );
     return () => window.clearTimeout(id);
-  }, [wf.view, wf.beat, wf.gen, wfLive, reduced]);
+  }, [live, wf.auto, wf.view, wf.selected, wf.threads, reduced]);
 
-  const pick = (m: Mode) => setMode(m);
+  /* -------------------------------------------------------------------------------------------- tabs */
   const onTabKey = (ev: React.KeyboardEvent, i: number) => {
     if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(ev.key)) return;
     ev.preventDefault();
     const next = ev.key === 'Home' ? 0 : ev.key === 'End' ? MODES.length - 1 : (i + (ev.key === 'ArrowRight' ? 1 : -1) + MODES.length) % MODES.length;
-    pick(MODES[next]);
+    setMode(MODES[next]);
     tabs.current[next]?.focus({ preventScroll: true });
   };
 
@@ -78,17 +97,9 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
   const last = state.step >= steps.length - 1;
   const mission = missionOf(state.track)!;
   const phase = browserPhase(state, mission.outcome.state === 'approval');
-  // one short line for screen readers when something settles (no live narration of every step)
-  const live =
-    mode === 'browser'
-      ? last
-        ? `${mission.label}: ${mission.outcome.title}. ${mission.outcome.gate}.`
-        : ''
-      : wf.view === 'workspace'
-        ? `${employeeOf(wf.selected).name}: ${employeeOf(wf.selected).ret.changed.join('. ')}.`
-        : wf.view === 'away' && wf.beat === AWAY_BEATS.length - 1
-          ? 'Tuesday 18:00. Your team’s results are ready.'
-          : '';
+  const sel = employeeOf(wf.selected);
+  const selThread = wf.threads[wf.selected];
+  const live1 = mode === 'browser' ? (last ? `${mission.label}: ${mission.outcome.title}. ${mission.outcome.gate}.` : '') : '';
 
   return (
     <section
@@ -101,8 +112,8 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
       data-step={steps[Math.min(state.step, steps.length - 1)].id}
       data-phase={phase}
       data-view={wf.view}
-      data-beat={wf.view === 'away' ? wf.beat : undefined}
       data-employee={wf.selected}
+      data-thread={selThread.state}
       data-settled={(last && (state.ended || reduced)) || undefined}
       data-running={running || undefined}
       data-reduced={reduced || undefined}
@@ -134,10 +145,14 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
                 aria-controls="s02-stage"
                 tabIndex={mode === m ? 0 : -1}
                 className={s.tab}
-                onClick={() => pick(m)}
+                onClick={() => setMode(m)}
                 onKeyDown={(ev) => onTabKey(ev, i)}
               >
-                <span className={s.tabIcon} data-k={m} aria-hidden="true" />
+                {m === 'browser' ? (
+                  <span className={s.tabIcon} data-k="browser" aria-hidden="true" />
+                ) : (
+                  <img className={s.tabMark} src="/homepage/orb/xroga-orb-icon.webp" alt="" width={18} height={18} />
+                )}
                 {COPY.modes[m]}
               </button>
             ))}
@@ -145,24 +160,59 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
         </header>
 
         <div id="s02-stage" role="tabpanel" aria-labelledby={`s02-tab-${mode}`} className={s.stage}>
-          {near ? (
-            <Theater
-              mode={mode}
-              track={state.track}
-              step={state.step}
-              ended={state.ended}
-              running={running}
-              reduced={reduced}
-              wf={wf}
-              wfDispatch={wfDispatch}
-              onPick={(t: TrackId) => dispatch({ type: 'select', track: t })}
-              onReplay={() => dispatch({ type: 'replay' })}
-            />
+          {/* the selector row sits above the computer: four missions, or six employees */}
+          {mode === 'browser' ? (
+            <div key="m" className={s.picker} role="group" aria-label="Choose a browser mission">
+              {MISSIONS.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  className={s.pick}
+                  data-kind="mission"
+                  data-id={m.id}
+                  aria-pressed={state.track === `browser:${m.id}`}
+                  onClick={() => dispatch({ type: 'select', track: `browser:${m.id}` as TrackId })}
+                >
+                  <span className={s.glyph} data-id={m.id} aria-hidden="true">
+                    <MissionGlyph id={m.id} />
+                  </span>
+                  <span className={s.pickText}>
+                    <b>{m.label}</b>
+                  </span>
+                </button>
+              ))}
+            </div>
           ) : (
-            <Hold />
+            <div key="e" className={s.picker} data-kind="team" role="group" aria-label="Choose an AI Employee">
+              {EMPLOYEES.map((x) => {
+                const t = wf.threads[x.id];
+                const on = wf.view === 'chat' && wf.selected === x.id;
+                return (
+                  <button
+                    key={x.id}
+                    type="button"
+                    className={s.pick}
+                    data-kind="employee"
+                    data-state={t.state}
+                    aria-pressed={on}
+                    onClick={() => wfDispatch({ type: 'select', id: x.id })}
+                    style={{ '--accent': x.accent } as CSSProperties}
+                  >
+                    <span className={s.mate} aria-hidden="true">
+                      <Companion e={x} size={40} state={on ? 'active' : busy(t) ? 'working' : 'idle'} />
+                    </span>
+                    <span className={s.pickText}>
+                      <b>{x.short}</b>
+                      <small data-state={t.state}>{stateLabel(x.id, t)}</small>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           )}
+          {near ? <Theater mode={mode} track={state.track} step={state.step} running={running} reduced={reduced} wf={wf} wfDispatch={wfDispatch} /> : <Hold />}
           <p className={s.sr} aria-live="polite">
-            {live}
+            {mode === 'browser' ? live1 : wf.view === 'chat' ? `${sel.role}: ${stateLabel(sel.id, selThread)}.` : ''}
           </p>
         </div>
 
