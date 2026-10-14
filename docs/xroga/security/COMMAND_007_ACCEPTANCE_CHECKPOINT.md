@@ -2,7 +2,7 @@
 
 ## Latest dependency decision (supersedes the initial candidate below)
 
-Final local rerun: all eight Cline/Git tests PASS, zero failure/skip; all 17 preview access tests PASS; backend typecheck and manifest/lock checks PASS. Two advisory-inventory fixtures PASS. These are scoped local results, not complete Command 007 or integrated CI acceptance.
+Final local rerun: all eight Cline/Git tests PASS, zero failure/skip; all 20 preview access tests PASS (including malformed persisted state); backend typecheck and manifest/lock checks PASS. Two advisory-inventory fixtures PASS. These are scoped local results, not complete Command 007 or integrated CI acceptance.
 
 The actual Cline import test REJECTED Git 4.0.1: `SyntaxError: The requested module 'simple-git' does not provide an export named 'default'`. Git 4.0.2 release fixes the VISUAL parser but does not document restoration of the default import. No Cline SDK/runtime was forked or installed package edited. The Git 4 override was withdrawn; retain SDK/core 0.0.82 and Git 3.36.0, override only its safety parser to 2.0.1 (MIT). Actual SDK repository metadata discovery passes without network; VISUAL casing denials pass; three executable-config tests caught the correct denial but initially assumed the v4 Error.name. They now assert the actual exported v3 GitPluginError instance and unsafe-control reason. No negative assertion removed. Full rerun required.
 

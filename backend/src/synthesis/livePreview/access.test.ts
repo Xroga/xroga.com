@@ -20,6 +20,8 @@ for (const [label, change] of Object.entries({
   'non-HTTP port': { ports: [{ port: 3000, protocol: 'tcp', status: 'listening' }] },
   'host injection': { providerState: { machineId: 'abc/../evil', app: 'xroga-synthetic-runtime' } },
   'foreign domain': { providerState: { machineId: 'abc123', app: 'evil.example' } },
+  'missing provider state': { providerState: null }, 'malformed ports': { ports: [null] },
+  'unknown port status': { ports: [{ port: 3000, protocol: 'http' }] },
 })) test(`preview denies ${label} before any upstream connection`, () => {
   assert.equal(authorizedPreviewTarget(grant, { ...session, ...change } as ProjectRuntimeSession, now), null);
 });

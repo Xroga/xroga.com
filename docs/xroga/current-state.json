@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "a1d4c7f96fda4fee75eef1b563e7477fe1e69c61",
-    "sourceTimestampUtc": "2026-10-14T18:45:33+05:00",
-    "auditStartedUtc": "2026-10-14T14:06:44.206Z",
+    "sha": "c43cc611ed2a3226a040b2014dd911b176cd5bbb",
+    "sourceTimestampUtc": "2026-10-14T19:06:48+05:00",
+    "auditStartedUtc": "2026-10-14T14:08:38.073Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -27588,7 +27588,7 @@
       "id": "surface:f3fdc77942588fe53f5f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/livePreview/access.ts",
-      "sha256": "d3a61e4a1e342dfd1d118c5a862ea6fe4ea86dd8a32ddbf5ab309c7a24a2c846",
+      "sha256": "c01a9bdbac40ebe84699b83bcb815b27a41d1644322ff36396a29074ba23b74f",
       "symbols": [
         "authorizedPreviewTarget",
         "expiry"

@@ -11,7 +11,8 @@ export function authorizedPreviewTarget(grant: LivePreviewGrant, session: Projec
     session.runtimeClass !== 'interactive' || !Number.isInteger(grant.port) ||
     grant.port === null || grant.port < 1 || grant.port > 65535) return null;
   if (session.expiresAt !== null && (!Number.isFinite(Date.parse(session.expiresAt)) || Date.parse(session.expiresAt) <= now)) return null;
-  if (!Array.isArray(session.ports) || !session.ports.some(port => port.port === grant.port && port.protocol === 'http' && port.status !== 'stopped')) return null;
+  if (!Array.isArray(session.ports) || !session.ports.some(port => port && port.port === grant.port && port.protocol === 'http' && ['declared', 'listening'].includes(port.status))) return null;
+  if (!session.providerState || typeof session.providerState !== 'object' || Array.isArray(session.providerState)) return null;
   const { machineId, app } = session.providerState;
   if (typeof machineId !== 'string' || !/^[a-z0-9]{1,64}$/.test(machineId) ||
     typeof app !== 'string' || !/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(app)) return null;

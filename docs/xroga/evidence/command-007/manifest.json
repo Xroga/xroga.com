@@ -5,7 +5,7 @@
     "localMainIntegration": "a1d4c7f96fda4fee75eef1b563e7477fe1e69c61",
     "mainIntegrated": "6aa3963b972fbb22f45398d0e9b7cf17c74bef1e",
     "homepageTests": {"pass":67,"fail":0,"skipped":0},
-    "previewAccessUnitTests": {"pass":17,"fail":0,"skipped":0},
+    "previewAccessUnitTests": {"pass":20,"fail":0,"skipped":0},
     "clineGitCompatibilityAndDenials": {"pass":8,"fail":0,"skipped":0},
     "advisoryInventoryFixtures": {"pass":2,"fail":0,"skipped":0},
     "backendTypecheck": "PASS_LOCAL",

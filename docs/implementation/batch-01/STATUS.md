@@ -2,6 +2,8 @@
 
 ## 2026-10-14 next checkpoint: integrated main, preview binding and critical Git patch candidate
 
+Final local correction also fails closed on missing provider state, null port entries and unknown port status, not a public TypeError from corrupted durable JSON. All 20 preview tests and eight real SDK/Git denial tests PASS; no skipped tests. Runtime changes committed in `c43cc611` with final malformed-state correction to follow. Full integrated CI pending, not inferred from previous green a8d source. Original 243 aliases remain explicitly deferred, not falsely completed.
+
 Superseding dependency decision: actual Cline compatibility test rejected Git 4.0.1 because its default export was removed. Candidate withdrawn, SDK/core 0.0.82 + Git 3.36.0 preserved; parser-only override 2.0.1 mitigates unsafe VISUAL/trailer/include checks without replacing the execution SDK. Current actual audits still FAIL: aggregate 52 / high30 / critical1; frontend18 / high13 / critical0; backend40 / high21 / critical1. Git's package-level critical remains a release blocker, not waived. Three candidate tests initially failed on the expected error-class NAME despite real unsafe-action denial; corrected to assert actual exported GitPluginError instance and reason, rerun pending. No assertions removed. Backend typecheck after frozen installation passed; earlier interrupted-install failure remains recorded below.
 
 Local merge `a1d4c7f96fda4fee75eef1b563e7477fe1e69c61` integrates latest inspected main `6aa3963b972fbb22f45398d0e9b7cf17c74bef1e` while preserving S00/S01/S02 V12 and later S03. All three conflicted hunks resolved narrowly; 67 homepage tests PASS, zero failure/skip. Main unchanged; PR draft and release NO-GO. Full integrated-tree CI remains mandatory.
