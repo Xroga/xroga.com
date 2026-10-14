@@ -318,7 +318,7 @@ test('one timeline, no drift: the deck has no timers, listeners are removed, off
   assert.doesNotMatch(deck, /scrollIntoView/);
 });
 
-test('S01 styles stay inside S01 and the homepage composes it between the hero and browser employees', () => {
+test('S01 styles stay inside S01 and the homepage composes it between the hero and S02', () => {
   for (const f of ['./S01.module.css', './Card.module.css', './Vignettes.module.css', './Focus.module.css']) {
     const css = read(f);
     assert.doesNotMatch(css, /:global/, f);
@@ -327,7 +327,7 @@ test('S01 styles stay inside S01 and the homepage composes it between the hero a
   const page = read('../../homepage/HomepageClient.tsx');
   const hero = page.indexOf('<S00Hero />');
   const s01 = page.indexOf('<S01CapabilityDeck />');
-  const next = page.indexOf('<HomepageBrowserEmployeesExact />');
+  const next = page.indexOf('<S02Work');
   assert.ok(hero !== -1 && hero < s01 && s01 < next);
   assert.doesNotMatch(page, /<HomepageCapabilitiesMosaic \/>/);
 });
