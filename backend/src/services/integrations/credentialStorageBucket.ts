@@ -13,7 +13,9 @@ export async function ensurePrivateOAuthBucket(supabase: SupabaseClient = getSup
   if (existing) return existing.public === false;
   const { error: createErr } = await supabase.storage.createBucket(BUCKET, {
     public: false,
-    fileSizeLimit: 16384,
+    // Preserve the largest existing BYOK fallback allowance (~48KiB plaintext
+    // plus authenticated encryption/JSON overhead), without mutating old buckets.
+    fileSizeLimit: 65536,
   });
   if (createErr && !/already exists|duplicate/i.test(createErr.message)) return false;
   // Neither create success nor a concurrent duplicate proves bucket privacy.

@@ -8,6 +8,7 @@ import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypt
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
 import { isMissingTableError } from './githubTokenStore.js';
+import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 
 const PROVIDER_PREFIX = 'apikey_';
 const KEY_BUCKET = 'xroga-github-tokens';
@@ -16,29 +17,13 @@ function keyStoragePath(userId: string, providerRow: string): string {
   return `${userId}/vault-${providerRow}.json`;
 }
 
-async function ensureKeyBucket(): Promise<boolean> {
-  const supabase = getSupabaseAdmin();
-  const { data: buckets, error: listErr } = await supabase.storage.listBuckets();
-  if (!listErr && buckets?.some((b) => b.id === KEY_BUCKET || b.name === KEY_BUCKET)) {
-    return true;
-  }
-  const { error: createErr } = await supabase.storage.createBucket(KEY_BUCKET, {
-    public: false,
-    fileSizeLimit: 65536,
-  });
-  if (!createErr) return true;
-  if (/already exists|duplicate/i.test(createErr.message)) return true;
-  console.warn('[userProviderKeys] createBucket:', createErr.message);
-  return false;
-}
-
 async function saveKeyToStorage(
   userId: string,
   providerRow: string,
   payload: { access_token: string; metadata: Record<string, unknown> },
 ): Promise<boolean> {
   try {
-    if (!(await ensureKeyBucket())) return false;
+    if (!(await ensurePrivateOAuthBucket())) return false;
     const supabase = getSupabaseAdmin();
     const { error } = await supabase.storage
       .from(KEY_BUCKET)
@@ -209,6 +194,18 @@ const ALLOWED_SET = new Set<string>(ALLOWED_PROVIDERS);
 function normalizeProvider(provider: string): string {
   const p = provider.trim().toLowerCase().replace(/^apikey_/, '');
   if (p === 'xai') return 'grok';
+  return p;
+}
+
+/** Only admitted providers or custom rows produced by sanitizeEnvVarName.
+ * Reject before query/path construction; a caller's string is not a scope.
+ */
+function credentialProviderSelection(provider: string): string {
+  if (typeof provider !== 'string') throw new Error('Unsupported credential provider.');
+  const p = normalizeProvider(provider);
+  if (!ALLOWED_SET.has(p) && !/^custom_[a-z_][a-z0-9_]{1,63}$/.test(p)) {
+    throw new Error('Unsupported credential provider.');
+  }
   return p;
 }
 
@@ -455,7 +452,7 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
 }
 
 export async function deleteUserProviderKey(userId: string, provider: string): Promise<void> {
-  const p = normalizeProvider(provider);
+  const p = credentialProviderSelection(provider);
   const supabase = getSupabaseAdmin();
   // custom_* rows: delete by prefix match when provider is custom_FOO
   if (p.startsWith('custom_') || p === 'custom') {
@@ -561,7 +558,7 @@ ${
 }
 
 export async function getUserProviderKey(userId: string, provider: string): Promise<string | null> {
-  const p = normalizeProvider(provider);
+  const p = credentialProviderSelection(provider);
   const supabase = getSupabaseAdmin();
   if (p === 'custom' || p.startsWith('custom_')) {
     const { data, error } = await supabase

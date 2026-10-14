@@ -25,10 +25,10 @@
     },
     {
       "path": "backend/src/services/integrations/credentialStorageBucket.ts",
-      "sourceSha256": "b8c4cc2611ccb136bc8347ffc5fe76047415c74dc2c928574741ef61e5444d1f",
+      "sourceSha256": "1bc5d086c48e89ac22228bfcfff44bcd072dc3311bbec15cabd4390eaa2e579d",
       "callIds": ["36f74cf393d92fc17a74"],
       "disposition": "REVIEWED_GAP",
-      "authority": "Internal fixed-bucket configuration admission, no supplied tenant/table/object path. Reads catalogue and, only when absent, retains the existing server bootstrap of a private 16KiB bucket. It never changes an existing public or unknown-policy bucket.",
+      "authority": "Internal fixed-bucket configuration admission, no supplied tenant/table/object path. Reads catalogue and, only when absent, retains the existing BYOK server bootstrap allowance of a private 64KiB bucket. It never changes an existing public or unknown-policy bucket.",
       "reason": "Privacy is independently rechecked after create or duplicate, and catalogue failure denies upload. This is not an identity issuer or new CredentialVault. Complete upstream caller review and staged storage compatibility remain outstanding; do not infer authorization of every token caller from this configuration guard.",
       "evidence": [
         {"path":"backend/src/services/integrations/oauthPkceStore.test.ts","marker":"unavailable bucket catalogue fails closed"},

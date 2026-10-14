@@ -64,6 +64,7 @@ for(const duplicate of [false,true])for(const isPrivate of [false,true]){
     assert.equal(await ensurePrivateOAuthBucket(client),isPrivate);
     assert.equal(requests.length,3);
     assert.equal(requests[1].method,'POST');assert.equal((requests[1].body as {public:boolean}).public,false);
+    assert.equal((requests[1].body as {file_size_limit:number}).file_size_limit,65536);
     assert.ok(requests.every(request=>request.path==='/storage/v1/bucket'));
   });
 }

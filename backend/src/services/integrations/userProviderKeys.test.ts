@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
   ENV_VAR_BY_PROVIDER,
+  getUserProviderKey,
+  deleteUserProviderKey,
   envVarForProvider,
   providerCatalog,
 } from './userProviderKeys.js';
@@ -54,6 +56,13 @@ describe('userProviderKeys mapping', () => {
     for (const p of providerCatalog()) {
       if (p.id === 'custom') continue;
       assert.equal(ENV_VAR_BY_PROVIDER[p.id], p.envVar);
+    }
+  });
+
+  it('unsafe provider paths are denied before privileged queries or storage access', async () => {
+    for (const provider of ['x/../../other/vault-apikey_openai','../openai','custom_../../foreign','openai%2F..','openai\\..','custom_', 'not_admitted']) {
+      await assert.rejects(getUserProviderKey('11111111-1111-4111-8111-111111111111',provider),/Unsupported credential provider/);
+      await assert.rejects(deleteUserProviderKey('11111111-1111-4111-8111-111111111111',provider),/Unsupported credential provider/);
     }
   });
 });

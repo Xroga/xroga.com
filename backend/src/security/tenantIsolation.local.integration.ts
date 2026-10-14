@@ -6,7 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 import { createTenantContext, type TenantContext } from './tenantContext.js';
 import { requireOwnedResource, requireOwnedFile } from './ownership.js';
 import { persistOwnedRun, persistOwnedRuntimeSession, persistOwnedRunTrace } from './ownedRunPersistence.js';
-import { listUserProviderKeys } from '../services/integrations/userProviderKeys.js';
+import { listUserProviderKeys,getUserProviderKey,deleteUserProviderKey } from '../services/integrations/userProviderKeys.js';
 import { reconcileOrphanedRuns,failInFlightRuns } from '../ai/runReconciler.js';
 import { getCachedResponse,setCachedResponse } from '../services/responseCache.js';
 import { notifyBuildFailed } from '../services/notificationService.js';
@@ -359,6 +359,20 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
     const publicRead=await fetch(`${url}/storage/v1/object/public/${bucket}/${path}`,{headers:{apikey:process.env.SUPABASE_ANON_KEY!}});assert.equal(publicRead.ok,false);assert.ok(!(await publicRead.text()).includes(canary));
     const status=await request('/api/github/status',other.token);assert.equal(status.status,200);assert.equal((await status.json() as {connected:boolean}).connected,false);
   } finally {const removed=await admin.storage.from(bucket).remove([path]);assert.equal(removed.error,null,'temporary private object cleanup failed');}
+});
+
+test('real credential helper denies a traversal provider without reading or deleting another owner object',async()=>{
+  const [owner,other]=users,bucket='xroga-github-tokens',path=`${other.id}/vault-apikey_openai.json`;
+  const canary='SYNTHETIC_FOREIGN_STORAGE_CANARY_NOT_A_CREDENTIAL';
+  const body=JSON.stringify({access_token:`enc:${Buffer.from(`fixture:${canary}`).toString('base64')}`,metadata:{}});
+  try {
+    const upload=await admin.storage.from(bucket).upload(path,body,{contentType:'application/json',upsert:false});assert.equal(upload.error,null);
+    const provider=`x/../../${other.id}/vault-apikey_openai`;
+    await assert.rejects(getUserProviderKey(owner.id,provider),/Unsupported credential provider/);
+    await assert.rejects(deleteUserProviderKey(owner.id,provider),/Unsupported credential provider/);
+    const retained=await admin.storage.from(bucket).download(path);assert.equal(retained.error,null);assert.equal(await retained.data!.text(),body);
+    assert.equal((await listUserProviderKeys(owner.id)).some(key=>JSON.stringify(key).includes(canary)),false);
+  } finally {const removed=await admin.storage.from(bucket).remove([path]);assert.equal(removed.error,null,'foreign synthetic object cleanup failed');}
 });
 
 test('real credential writer refuses a public bucket without uploading or silently repairing it',async()=>{

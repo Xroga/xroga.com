@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
 // Actual guest UI with intercepted fixture transport. Not authenticated-chat/provider proof.
 test.beforeEach(async ({page,baseURL})=>{
@@ -52,8 +54,12 @@ test('GJ narrow guest UI shows a truthful actionable failure rather than Coming 
 
 test('production crypto typography loads real local normal and italic faces without a font service',async({page,baseURL})=>{
   const fonts:{url:string;status:number}[]=[];
+  const payloads:Promise<string>[]=[];
   page.on('response',response=>{
-    if(response.request().resourceType()==='font')fonts.push({url:response.url(),status:response.status()});
+    if(response.request().resourceType()==='font'){
+      fonts.push({url:response.url(),status:response.status()});
+      payloads.push(response.body().then(bytes=>createHash('sha256').update(bytes).digest('hex')));
+    }
   });
   const response=await page.goto('/crypto',{waitUntil:'domcontentloaded'});
   expect(response?.status()).toBe(200);
@@ -76,9 +82,14 @@ test('production crypto typography loads real local normal and italic faces with
   expect(fonts.length).toBeGreaterThanOrEqual(3);
   for(const font of fonts){
     expect(new URL(font.url).origin).toBe(new URL(baseURL!).origin);
-    expect(new URL(font.url).pathname).toMatch(/^\/_next\/static\/media\/.+\.woff2$/);
+    // Root typography already uses local TTFs; preserve it, do not require a
+    // format migration merely to validate this route's three new WOFF2 assets.
+    expect(new URL(font.url).pathname).toMatch(/^\/_next\/static\/media\/.+\.(?:woff2|ttf)$/);
     expect(font.status).toBe(200);
   }
+  const received=await Promise.all(payloads);
+  const register=JSON.parse(readFileSync(new URL('../../../docs/xroga/security/CRYPTO_FONT_REGISTER.json',import.meta.url),'utf8')) as {fonts:{sha256:string}[]};
+  for(const font of register.fonts)expect(received).toContain(font.sha256);
   await page.setViewportSize({width:390,height:844});
   await expect(page.locator('main[data-crypto-page]')).toBeVisible();
 });

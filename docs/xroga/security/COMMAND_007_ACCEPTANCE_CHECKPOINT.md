@@ -2,6 +2,8 @@
 
 ## Superseding current candidate
 
+Actual subsequent Supabase run38619968286 passed37 real cases/3 browser cases/full69 migration history on web/API revision `f2585ccf44a37c75a9987c09e510979a4e8c919e`, PR event headb1202530, actual main parentcaba3dc7. These trees differ; older231/46bf runtime proof is not substituted. The next source includes BYOK private admission, provider traversal denial, MCP1.32.1 compatible patch and actual Agent-loop/issuer tests;38 real cases defined and exact-source CI required. Full criteria2/10 still FAIL; others retain only their scoped evidence. No007 VERIFIED claim, no008–010 or production action.
+
 `46bf5e5f` real isolated38614645431, golden38614645450, frontend38614645527 and Docker38614645498 PASS. Aggregate38614645707 FAIL at inventory-drift after both builds/type/lint and backend2807/frontend1041 PASS. This is retained; regenerated source and new font-loading assertion must pass complete repeated aggregate/golden and real isolated CI before any new scoped proof is recorded. No prior SHA certifies these later changes.
 
 Manual semantic register: 51 reviewed of669 candidates (11 scoped helper boundaries,2 readiness exception sites,7 buffer/non-persistence,31 reviewed gaps),618 unreviewed/649 unresolved. Nested factory/query IDs no longer collide; records pin source hashes and evidence markers. Changed resource helpers reject inherited resource names and malformed file IDs before injected clients are used. Both existing OAuth/GitHub storage writers now require shared private bucket admission and recheck create/duplicate postcondition. New actual disposable Storage public-bucket refusal case brings defined real tenant tests to37; execution pending. No live bucket/KMS/cloud mutation.

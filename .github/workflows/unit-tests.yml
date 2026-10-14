@@ -23,6 +23,10 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          # A feature inventory cannot describe changes subsequently merged to
+          # main. Check committed feature truth here; verify the actual GitHub
+          # virtual merge independently below with the same complete baseline.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v6
         with:
           node-version-file: '.node-version'
@@ -51,5 +55,47 @@ jobs:
         with:
           name: batch-01-baseline-${{ github.sha }}
           path: artifacts/batch-01-baseline/
+          if-no-files-found: error
+          retention-days: 14
+
+  integrated-candidate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.node-version'
+          cache: npm
+      - run: npm ci
+      - name: Verify and record the actual virtual merge inventory
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: node scripts/ci/prepare-pr-integration.mjs
+      - name: Install the same pinned browser for integrated regression
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
+        run: npx playwright install --with-deps chromium
+      - name: Complete integrated baseline twice without source mutation
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
+        run: |
+          npm run verify:baseline
+          cp artifacts/batch-01-baseline/manifest.json artifacts/batch-01-baseline/run-a-manifest.json
+          npm run verify:baseline
+          cp artifacts/batch-01-baseline/manifest.json artifacts/batch-01-baseline/run-b-manifest.json
+          node scripts/ci/compare-baseline-runs.mjs
+      - name: Preserve separately labelled candidate evidence (never committed automatically)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch-01-integrated-candidate-${{ github.sha }}
+          path: |
+            artifacts/batch-01-baseline/
+            artifacts/batch-01-integration/
           if-no-files-found: error
           retention-days: 14

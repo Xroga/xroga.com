@@ -7,6 +7,8 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { generateWorkspaceInfoWithDiagnostics } from '@cline/core';
+import { Agent } from '@cline/sdk';
+import { z } from 'zod';
 
 // Resolve the dependency used by the real, unchanged Cline SDK, not an unrelated
 // top-level patched copy. No model calls, credentials or remote Git operations.
@@ -63,6 +65,25 @@ for (const key of ['VISUAL', 'visual', 'Visual']) {
     assert.ok(findings.some((finding: { category?: string }) => finding.category === 'allowUnsafeEditor'));
   });
 }
+
+test('real Cline Agent executes a bounded prebuilt-model turn without providers or tools', async () => {
+  let turns=0;
+  // Validate the real runtime values rather than importing an internal type
+  // absent from this SDK version's @cline/shared package-root exports.
+  const model={async *stream(request:unknown){
+      turns++;assert.equal(z.object({tools:z.array(z.unknown())}).parse(request).tools.length,0);
+      yield {type:'text-delta' as const,text:'Synthetic SDK execution receipt'};
+      yield {type:'finish' as const,reason:'stop' as const};
+    }};
+  const agent=new Agent({tools:[],maxIterations:1,completionPolicy:{requireCompletionTool:false},model});
+  const result=z.object({status:z.string(),iterations:z.number(),outputText:z.string(),error:z.unknown().optional(),
+    messages:z.array(z.object({role:z.string(),content:z.array(z.object({type:z.string(),text:z.string().optional()}))})),
+  }).parse(await agent.run('Isolated compatibility fixture only'));
+  assert.equal(turns,1);
+  assert.ok(result.messages.some(message=>message.role==='assistant'&&message.content.some(part=>part.type==='text'&&part.text==='Synthetic SDK execution receipt')));
+  assert.equal(result.iterations,1);assert.equal(result.status,'completed');
+  assert.equal(result.outputText,'Synthetic SDK execution receipt');assert.equal(result.error,undefined);
+});
 
 for (const config of ['trailer.audit.cmd=untrusted-command', 'trailer.audit.command=untrusted-command', 'include.path=/untrusted/config']) {
   test(`Git rejects executable configuration before spawning: ${config.split('=')[0]}`, async () => {

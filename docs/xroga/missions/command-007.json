@@ -10,6 +10,13 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/services/integrations/userProviderKeys.ts",
+    "backend/src/services/integrations/userProviderKeys.test.ts",
+    "backend/src/security/mcpDependency.test.ts",
+    "scripts/ci/prepare-pr-integration.mjs",
+    "scripts/ci/prepare-pr-integration.test.mjs",
+    ".github/workflows/unit-tests.yml",
+    "docs/xroga/security/DEPENDENCY_REMEDIATION.md",
     "backend/src/services/integrations/credentialStorageBucket.ts",
     "backend/src/services/integrations/githubTokenStore.ts",
     "backend/src/services/integrations/oauthPkceStore.ts",

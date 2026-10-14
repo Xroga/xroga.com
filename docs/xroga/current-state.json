@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "46bf5e5f566c36b60dba672724a086e4ff68f2e6",
-    "sourceTimestampUtc": "2026-10-14T23:22:35+05:00",
-    "auditStartedUtc": "2026-10-14T18:58:18.501Z",
+    "sha": "b12025302a09c0828f58f174434563e192093340",
+    "sourceTimestampUtc": "2026-10-14T23:59:51+05:00",
+    "auditStartedUtc": "2026-10-14T20:07:41.148Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -21715,7 +21715,7 @@
       "id": "surface:8554dadffc6cd0a3fbde",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/credentialStorageBucket.ts",
-      "sha256": "b8c4cc2611ccb136bc8347ffc5fe76047415c74dc2c928574741ef61e5444d1f",
+      "sha256": "1bc5d086c48e89ac22228bfcfff44bcd072dc3311bbec15cabd4390eaa2e579d",
       "symbols": [
         "BUCKET",
         "ensurePrivateOAuthBucket",
@@ -21735,7 +21735,8 @@
         "backend/src/security/tenantIsolation.local.integration.ts:24",
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
-        "backend/src/services/integrations/oauthPkceStore.ts:9"
+        "backend/src/services/integrations/oauthPkceStore.ts:9",
+        "backend/src/services/integrations/userProviderKeys.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -22988,7 +22989,7 @@
         "backend/src/lib/platformReady.ts:8",
         "backend/src/routes/supabaseOAuth.ts:10",
         "backend/src/services/integrations/supabaseProvision.ts:506",
-        "backend/src/services/integrations/userProviderKeys.ts:804"
+        "backend/src/services/integrations/userProviderKeys.ts:801"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23119,8 +23120,8 @@
         "backend/src/routes/integrations.ts:672",
         "backend/src/routes/supabaseOAuth.ts:20",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
-        "backend/src/services/integrations/userProviderKeys.ts:867",
-        "backend/src/services/integrations/userProviderKeys.ts:876"
+        "backend/src/services/integrations/userProviderKeys.ts:864",
+        "backend/src/services/integrations/userProviderKeys.ts:873"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -23152,7 +23153,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "eae8ef68d42d549df2580bc8d74cc3f664a424dcaac406ddcb255d0f3254af0f",
+      "sha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -23176,6 +23177,7 @@
         "cipher",
         "connectUserSupabase",
         "connected",
+        "credentialProviderSelection",
         "custom",
         "data",
         "dbPass",
@@ -23187,7 +23189,6 @@
         "encryptApiKey",
         "encrypted",
         "encryptionKey",
-        "ensureKeyBucket",
         "envVar",
         "envVarForProvider",
         "err",
@@ -23254,6 +23255,7 @@
       "imports": [
         "../../config/supabase.js",
         "../../db/ensureGithubSchema.js",
+        "./credentialStorageBucket.js",
         "./githubTokenStore.js",
         "./supabaseAuth.js",
         "./supabaseProvision.js",
@@ -23262,6 +23264,7 @@
       "runtimeImports": [
         "backend/src/config/supabase.ts",
         "backend/src/db/ensureGithubSchema.ts",
+        "backend/src/services/integrations/credentialStorageBucket.ts",
         "backend/src/services/integrations/githubTokenStore.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/supabaseProvision.ts"
@@ -23294,16 +23297,17 @@
         "crypto"
       ],
       "authBoundary": [
+        "backend/src/services/integrations/userProviderKeys.ts#ensurePrivateOAuthBucket",
         "backend/src/services/integrations/userProviderKeys.ts#oauthConnected"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/userProviderKeys.ts:415 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:462 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:469 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:484 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:567 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:586 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:609 (user_id)"
+        "backend/src/services/integrations/userProviderKeys.ts:412 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:459 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:466 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:481 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:564 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:583 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:606 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -82808,6 +82812,68 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:276c4109416eb12460ad",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/ci/prepare-pr-integration.mjs",
+      "sha256": "2d366ee8b37c47d16a83cbee65103465981475939a6ec06492294c30fcf20081",
+      "symbols": [
+        "args",
+        "baseSnapshotIsAncestor",
+        "changed",
+        "git",
+        "identity",
+        "main",
+        "outputs",
+        "parents",
+        "path",
+        "target",
+        "validateIntegrationIdentity"
+      ],
+      "imports": [
+        "./toolchain.mjs",
+        "node:child_process",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs"
+      ],
+      "entryPoints": [
+        "scripts/ci/prepare-pr-integration.mjs"
+      ],
+      "callers": [
+        "scripts/ci/prepare-pr-integration.test.mjs:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [
+        "scripts/ci/prepare-pr-integration.mjs#identity",
+        "scripts/ci/prepare-pr-integration.mjs#validateIntegrationIdentity"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/ci/prepare-pr-integration.mjs#verifyToolchain"
+      ],
+      "testCoverage": [
+        "scripts/ci/prepare-pr-integration.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:27c317c410ffae0628eb",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/register-existing-skips.mjs",
@@ -82858,7 +82924,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "26d173b34c16571a04b19de38df663245b880d67cdf4e5886f4a6bfb82f1a226",
+      "sha256": "f3b1ed468efd77685e117d24d649b7bf1ce183f775872559ea8a992389979d3d",
       "symbols": [
         "after",
         "append",
@@ -82979,6 +83045,7 @@
       "runtimeImports": [],
       "entryPoints": [
         "scripts/ci/check-lockfile-integrity.mjs",
+        "scripts/ci/prepare-pr-integration.mjs",
         "scripts/ci/validate-migrations.mjs",
         "scripts/security/audit-tenant-policies.mjs",
         "scripts/xroga/mission-check.mjs",
@@ -82991,6 +83058,7 @@
         "scripts/ci/check-installed-dependencies.mjs:6",
         "scripts/ci/check-lockfile-integrity.mjs:5",
         "scripts/ci/check-test-skips.mjs:7",
+        "scripts/ci/prepare-pr-integration.mjs:5",
         "scripts/ci/register-existing-skips.mjs:5",
         "scripts/ci/run-baseline.mjs:7",
         "scripts/ci/validate-migrations.mjs:5",
@@ -94066,9 +94134,10 @@
     {
       "id": "workflow:cd0effce06f425599e96",
       "sourcePath": ".github/workflows/unit-tests.yml",
-      "sha256": "0d751855323e3aea2500819e9a5e0b84d179ace12181ec8bc8df87554c016350",
+      "sha256": "6234e4234c41366da18496a09cb441fe6fc4b959cedd3130fc2b43b07da10014",
       "sourceEntrypoints": [
-        "scripts/ci/compare-baseline-runs.mjs"
+        "scripts/ci/compare-baseline-runs.mjs",
+        "scripts/ci/prepare-pr-integration.mjs"
       ],
       "hasSchedule": false
     },
@@ -101515,6 +101584,13 @@
     {
       "id": "test-suite:9584a8c447a0cf53aa0d",
       "sourcePath": "backend/src/security/clineGitDependency.test.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9a3f2cdf99fa97b3092e",
+      "sourcePath": "backend/src/security/mcpDependency.test.ts",
       "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
@@ -101571,7 +101647,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 37,
+      "declaredTests": 38,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101683,7 +101759,7 @@
     {
       "id": "test-suite:5c2e5dbb2449708a9b7b",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -103485,6 +103561,13 @@
       "id": "test-suite:7982efca5502ac728203",
       "sourcePath": "scripts/ci/postcss-resolution.test.mjs",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:29dc8a9e57d60e0e7b24",
+      "sourcePath": "scripts/ci/prepare-pr-integration.test.mjs",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

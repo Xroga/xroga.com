@@ -34,6 +34,7 @@
     "zod": "3.25.76"
   },
   "overrides": {
+    "@modelcontextprotocol/sdk": "1.32.1",
     "@simple-git/argv-parser": "2.0.1"
   },
   "devDependencies": {

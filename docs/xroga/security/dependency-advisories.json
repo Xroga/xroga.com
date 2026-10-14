@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "observedAt": "2026-10-14T14:02:51.791Z",
+  "observedAt": "2026-10-14T19:20:02.520Z",
   "result": "ADVISORY_INVENTORY_NOT_RELEASE_APPROVAL",
   "graphs": [
     {
@@ -8,14 +8,14 @@
       "command": "npm audit --json",
       "cwd": ".",
       "exitCode": 1,
-      "lockSha256": "2593e73cf23aa75df33b8b63c12c7fb21236c9814d33e3004cb39104a32e9ae6",
+      "lockSha256": "25f0fa56ddb1d9619c6fb5b475784bab60ca50a6fa03059ccadef80288ab9498",
       "counts": {
         "info": 0,
         "low": 6,
         "moderate": 15,
-        "high": 30,
+        "high": 29,
         "critical": 1,
-        "total": 52
+        "total": 51
       },
       "findings": [
         {
@@ -273,29 +273,6 @@
           "effects": [
             "@cline/llms"
           ],
-          "fixAvailable": true,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
-          "name": "@modelcontextprotocol/sdk",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "1.12.0 - 1.30.1",
-          "installed": [
-            {
-              "path": "node_modules/@modelcontextprotocol/sdk",
-              "version": "1.30.0"
-            }
-          ],
-          "via": [
-            {
-              "title": "MCP TypeScript SDK: OAuth client could send credentials to an authorization server chosen by the MCP server",
-              "url": "https://github.com/advisories/GHSA-6qxp-vccf-f47h",
-              "severity": "high",
-              "range": ">=1.12.0 <1.31.0"
-            }
-          ],
-          "effects": [],
           "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
@@ -666,9 +643,7 @@
               "dependency": "@sap-cloud-sdk/connectivity"
             }
           ],
-          "effects": [
-            "@sap-ai-sdk/orchestration"
-          ],
+          "effects": [],
           "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
@@ -695,6 +670,7 @@
             }
           ],
           "effects": [
+            "@sap-ai-sdk/orchestration",
             "@sap-ai-sdk/prompt-registry"
           ],
           "fixAvailable": true,
@@ -2173,14 +2149,14 @@
       "command": "npm audit --json --workspaces=false",
       "cwd": "backend",
       "exitCode": 1,
-      "lockSha256": "c796ba8157494407d5636f363816445aab2ab5ec6cb8cdbd6bac79430c50a447",
+      "lockSha256": "99b8bd9dc13db5c84f68baa876f1393ee2632a64f5112a988d3812a305eebf69",
       "counts": {
         "info": 0,
         "low": 5,
         "moderate": 13,
-        "high": 21,
+        "high": 20,
         "critical": 1,
-        "total": 40
+        "total": 39
       },
       "findings": [
         {
@@ -2458,29 +2434,6 @@
           "effects": [
             "@cline/llms"
           ],
-          "fixAvailable": true,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
-          "name": "@modelcontextprotocol/sdk",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "1.12.0 - 1.30.1",
-          "installed": [
-            {
-              "path": "node_modules/@modelcontextprotocol/sdk",
-              "version": "1.30.0"
-            }
-          ],
-          "via": [
-            {
-              "title": "MCP TypeScript SDK: OAuth client could send credentials to an authorization server chosen by the MCP server",
-              "url": "https://github.com/advisories/GHSA-6qxp-vccf-f47h",
-              "severity": "high",
-              "range": ">=1.12.0 <1.31.0"
-            }
-          ],
-          "effects": [],
           "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
@@ -2805,9 +2758,7 @@
               "dependency": "@sap-cloud-sdk/connectivity"
             }
           ],
-          "effects": [
-            "@sap-ai-sdk/orchestration"
-          ],
+          "effects": [],
           "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
@@ -2834,6 +2785,7 @@
             }
           ],
           "effects": [
+            "@sap-ai-sdk/orchestration",
             "@sap-ai-sdk/prompt-registry"
           ],
           "fixAvailable": true,

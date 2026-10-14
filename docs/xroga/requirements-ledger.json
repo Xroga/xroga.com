@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "46bf5e5f566c36b60dba672724a086e4ff68f2e6",
+  "source_sha": "b12025302a09c0828f58f174434563e192093340",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -768,6 +768,7 @@
         "scripts/ci/check-test-skips.mjs",
         "scripts/ci/compare-baseline-runs.mjs",
         "scripts/ci/ignore-vercel-build.mjs",
+        "scripts/ci/prepare-pr-integration.mjs",
         "scripts/ci/register-existing-skips.mjs",
         "scripts/ci/run-baseline.mjs",
         "scripts/ci/toolchain.mjs",
