@@ -118,7 +118,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
       refreshToken: tokens.refresh_token,
       expiresIn: tokens.expires_in,
       authKind: 'sign_in_with_vercel',
-    });
+    }, undefined, tokens.authorizationRevision);
 
     res.json({
       connected: true,

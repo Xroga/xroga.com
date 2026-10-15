@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { test } from 'node:test';
+import { randomUUID } from 'node:crypto';
 import { clearPkceSession, clearProviderToken, loadPkceSession, loadProviderToken, storePkceSession, storeProviderToken } from './oauthPkceStore.js';
 import { getUserPluginPermissionMode, setUserPluginPermissionMode } from './pluginPermissionPolicy.js';
 import { getSupabaseOAuthAccessToken } from './supabaseAuth.js';
@@ -22,6 +23,13 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
       if (fail) return res.end(JSON.stringify({ message: 'SYNTHETIC_PRIVATE_FAILURE', code: '42P01' }));
       if (url.pathname === '/storage/v1/bucket') return res.end(JSON.stringify([{ id: 'xroga-github-tokens', public: false }]));
       if (storage) return res.end(JSON.stringify({ access_token: 'stale', verifier: 'stale', state: 'state' }));
+      if (url.pathname === '/rest/v1/rpc/save_oauth_connection') {
+        const key=`${body.p_owner_id}/${body.p_provider}`,current=rows.get(key);
+        if (!current || current.credential_revision!==body.p_revision
+          || (body.p_expected_refresh_token!=null && current.refresh_token!==body.p_expected_refresh_token)) return res.end('false');
+        rows.set(key,{...current,access_token:body.p_access_token,refresh_token:body.p_refresh_token,
+          metadata:body.p_metadata,credential_revision:randomUUID()});return res.end('true');
+      }
       if (req.method === 'POST') {
         rows.set(`${body.user_id}/${body.provider}`, body);
         return res.end('null');
@@ -90,7 +98,9 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
     await storeProviderToken('owner', 'provider', { access_token: 'reconnected' });
     assert.equal((await loadProviderToken('owner', 'provider'))?.access_token, 'reconnected');
     const expired = { access_token: 'EXPIRED', refresh_token: 'ORIGINAL_REFRESH', metadata: { expires_at: '2000-01-01T00:00:00Z' } };
-    await storeProviderToken('owner', 'supabase_oauth', expired);
+    const seedSupabase=(token:Record<string,unknown>)=>rows.set('owner/supabase_oauth',{
+      user_id:'owner',provider:'supabase_oauth',...token,credential_revision:randomUUID()});
+    seedSupabase(expired);
     let tokenRequests = 0;
     let revokeDuringRefresh = false;
     let providerFailure = false;
@@ -106,20 +116,20 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
     };
     assert.equal(await getSupabaseOAuthAccessToken('owner'), 'REFRESHED');
     assert.equal((await loadProviderToken('owner', 'supabase_oauth'))?.refresh_token, 'ROTATED_REFRESH');
-    await storeProviderToken('owner', 'supabase_oauth', expired);
+    seedSupabase(expired);
     revokeDuringRefresh = true;
     assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
     assert.equal(await loadProviderToken('owner', 'supabase_oauth'), null);
     assert.equal((await loadProviderToken('other', 'provider'))?.access_token, 'other-token');
     revokeDuringRefresh = false;
     providerFailure = true;
-    await storeProviderToken('owner', 'supabase_oauth', expired);
+    seedSupabase(expired);
     assert.equal(await getSupabaseOAuthAccessToken('owner'), null, 'a failed refresh cannot return the expired credential');
-    await storeProviderToken('owner', 'supabase_oauth', { ...expired, refresh_token: null });
+    seedSupabase({ ...expired, refresh_token: null });
     assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
-    await storeProviderToken('owner', 'supabase_oauth', { ...expired, refresh_token: null, metadata: { expires_at: '1970-01-01T00:00:00Z' } });
+    seedSupabase({ ...expired, refresh_token: null, metadata: { expires_at: '1970-01-01T00:00:00Z' } });
     assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
-    await storeProviderToken('owner', 'supabase_oauth', { ...expired, metadata: { expires_at: 'malformed' } });
+    seedSupabase({ ...expired, metadata: { expires_at: 'malformed' } });
     assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
     assert.equal(tokenRequests, 3);
   } finally {

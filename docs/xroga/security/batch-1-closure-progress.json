@@ -1,6 +1,47 @@
 {
   "version": "1.0",
-  "status": "BATCH_1_BLOCKED",
+  "status": "IN_PROGRESS",
+  "acceptanceStatus": "BLOCKED",
+  "oauthEpoch": {
+    "status": "IN PROGRESS",
+    "lifecycle": "NEGATIVE TEST PASSED",
+    "baseline": "b4d1b817027878358a94147c2e2315a87ee6fc9d",
+    "scope": "Supabase and Vercel authorization start through consumed state, conditional callback save and revision-bound refresh",
+    "rootCause": "Unconditional callback upsert could resurrect a disconnected credential after provider exchange. Refresh-token equality alone did not distinguish reused provider token values.",
+    "fix": "Reuse credential_revision, serialize start/consume/save on the token row, require unexpired consumed receipt for callback saves, rotate revision on disconnect and every successful save. No absent-authority mirror fallback for these providers.",
+    "focusedTests": 14,
+    "localSqlAssertions": 44,
+    "integration": "PENDING exact-source two-client disposable Supabase",
+    "remaining": "CWS, GitHub, full caller provenance and production credential/KMS acceptance are separate unresolved requirements. No full caller or command certified."
+  },
+  "workQueue": [
+    {
+      "item": "Supabase/Vercel epoch integration",
+      "status": "IN PROGRESS"
+    },
+    {
+      "item": "CWS epoch and BYOK admission",
+      "status": "READY"
+    },
+    {
+      "item": "GitHub authorization and connection persistence",
+      "status": "READY"
+    },
+    {
+      "item": "Remaining caller root-cause groups",
+      "status": "READY"
+    },
+    {
+      "item": "Original Commands008-010 dependent acceptance",
+      "status": "BLOCKED",
+      "dependency": "Command007 strict acceptance"
+    },
+    {
+      "item": "R2 and production schema/KMS proof",
+      "status": "BLOCKED",
+      "dependency": "Separately authorized isolated provider acceptance and production evidence"
+    }
+  ],
   "additionalSpend": 0,
   "replayCorrection": {
     "source": "470666cf",
@@ -9,7 +50,7 @@
     "failure": "SQLSTATE42710 duplicate OAuth policies on upgrade-reapply",
     "fix": "Idempotent recreation with unchanged restrictive predicates",
     "localSqlAssertions": 120,
-    "finalSupabase": "PENDING"
+    "finalSupabase": "PASS at b4d1b817, run38795480831"
   },
   "credentialCodec": {
     "source": "d2c6cb53",
@@ -48,12 +89,12 @@
     "result": "PASS twice on both branch and integrated candidate"
   },
   "verifiedBaseline": {
-    "branch": "3e2748cc24b185de76fee315dfaf5f10fe079f3a",
-    "integrated": "ce96ea1097eb9767a90a278fcbcd65b5cb24714d",
-    "aggregateCi": "38781915615",
-    "isolatedCi": "38781915585",
+    "branch": "b4d1b817027878358a94147c2e2315a87ee6fc9d",
+    "integrated": "a1999553629623c1391bb36186f335015e4e52d0",
+    "aggregateCi": "38795480746",
+    "isolatedCi": "38795480831",
     "workflows": 11,
-    "securityTests": 53,
+    "securityTests": 63,
     "newSourceCertified": false
   },
   "counts": {
@@ -61,7 +102,7 @@
     "rlsEnabled": 118,
     "privilegedFactorySites": 163,
     "persistenceCandidates": 680,
-    "ownerPredicateCandidates": 169,
+    "ownerPredicateCandidates": 168,
     "reviewRequired": 0,
     "reviewedCandidates": 680,
     "unresolvedSafetyCandidates": 493,
@@ -114,7 +155,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Execute final-source disposable Supabase races and full branch/integrated baseline. Fix failures without weakening criteria, then close shared caller groups with semantic evidence and continue isolated 008-010 engineering.",
+  "nextTask": "Verify current OAuth epoch source in disposable Supabase and repeated branch/integrated CI. Continue CWS BYOK epoch and GitHub persistence independently, then reconcile only semantically proven caller groups. Strict007 remains mandatory.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
@@ -192,28 +233,31 @@
           "08adc22ee116d34993ce"
         ],
         "backend/src/services/integrations/oauthPkceStore.ts": [
-          "0cf7d2200643c48eef05",
-          "d1ca96a4d901dcee9262",
-          "c5c6f9d077ea50fe881c",
-          "b1551174ad8f281d1030",
-          "eb4f54b0f4935ade518b",
-          "3cec60f277b9a79aee9d",
-          "ada7194e5f69f0546794",
-          "4fa39554aeb5bb449206",
-          "c33424838c99f0183e91",
-          "5515d3d49f583057b8c7",
-          "758e9631fe27aa08e158",
-          "2a665e42804fda04c2e4",
-          "04a8c4b310fa62f030e2",
-          "5b49efbd2be7dfc31ae9",
-          "e0015d75f84bf9b76467",
-          "3d15c886b134531108da",
-          "c9200b797c4ca7e37fe9",
-          "b6d4cb3d19e67bf12225",
-          "59642a20b827b2b26241",
-          "a0adbd2f590a96a7d153",
-          "fe395dfad59ca2ef6b13",
-          "5442f511a1f4ffbdd09e"
+          "372b30381ae05e3bffdb",
+          "8391ad0add011a52ecad",
+          "1644913d538abf61c960",
+          "253bb622a020a199dca0",
+          "26d2bf2270e0421e4bb6",
+          "d4be4e8bdfa197e08e76",
+          "dcec9a9843bdf5afb1f5",
+          "dfd64a81844408cf77d6",
+          "6060adfc7cd590c49c87",
+          "ecd4ea462063b19cc4f5",
+          "8f6dfcb3562eb2117b07",
+          "8940e38182206b243784",
+          "398508f67454790b76ca",
+          "26e6427ad843f72fc87d",
+          "5d546d2c49ee261103ed",
+          "dee48db1d13599c1a019",
+          "cb4b725c6c351643f585",
+          "e8c58dd78c96f2f72bd3",
+          "78de3fcbb23b31cc3518",
+          "b7611e474793973093da",
+          "e167127409cd8336203d",
+          "8bb35ef910c1ab533293",
+          "d9c244c20fc704201edd",
+          "3d5808c630067950ecef",
+          "f7c26dfb42719301e2c9"
         ],
         "backend/src/services/integrations/userProviderKeys.ts": [
           "1820ca770e3eb79483c2",
@@ -240,22 +284,19 @@
           "eece34389c51a3ba79d3"
         ],
         "backend/src/services/integrations/vercelAuth.ts": [
-          "de3eee657d8403ccf6e9",
-          "454726a571d14c60bbd5",
-          "3a096e057703d508dd26",
-          "ea92a7350c3295acbf59",
-          "ffcaf3e03fc8cb12c125",
-          "8372b7ecc3cdc392edd2",
-          "7595516c6d98b59ee517",
-          "1208226e3a88b86e9ff3",
-          "95bb65e4416e615f05e5",
-          "f19578ae3bd0614a9e79",
-          "7b31925a24719e238bdf",
-          "85d54b1caf21d8db9dec",
-          "18ee3812cc76b825d7f8",
-          "9b588ddc7b596ae516c4",
-          "7ff15828263a92dfb83e",
-          "ffb4f027b8979aefa983"
+          "793ac6ded3969a9efb2d",
+          "3c729fe42e934a5e35f9",
+          "a5265510df04878983c9",
+          "3a2b2f074f09b4a839d9",
+          "6e718043f40d9d6c197f",
+          "872ffe5b5e8ca8d5e7d2",
+          "0be4624d8406ba21cfb3",
+          "62ababe316fef5d470d3",
+          "531a7c3556c640e99ef2",
+          "0dce3725b945d210bc9d",
+          "2ecefcac357a1ecad40c",
+          "0f73386d763e6f72fcc0",
+          "d07fcee48b62e6bb7501"
         ]
       }
     },

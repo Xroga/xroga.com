@@ -4,6 +4,7 @@
  */
 
 import { getSupabaseAdmin } from '../../config/supabase.js';
+import { randomUUID } from 'node:crypto';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 
@@ -21,13 +22,33 @@ export type PkceSession = {
   redirect_uri: string;
   nonce?: string;
   created_at: string;
+  authorization_revision?: string;
 };
 
 export type StoredProviderToken = {
   access_token: string;
   refresh_token?: string | null;
   metadata?: Record<string, unknown>;
+  credential_revision?: string;
 };
+
+const epochProviders = new Set(['supabase_oauth', 'vercel']);
+const validRevision = (value: unknown): value is string => typeof value === 'string'
+  && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+
+/** Conditional credential persistence, never an upsert or automatic retry. */
+export async function saveOAuthConnection(userId: string, provider: string, token: StoredProviderToken,
+  revision: string | undefined, expectedRefreshToken?: string, providerUserId?: string): Promise<void> {
+  assertStorageIdentity(userId, provider);
+  if (!epochProviders.has(provider) || !validRevision(revision)) throw new Error('OAuth authorization revision required. Reconnect to continue.');
+  const { data, error } = await getSupabaseAdmin().rpc('save_oauth_connection', {
+    p_owner_id: userId, p_provider: provider, p_revision: revision,
+    p_access_token: token.access_token, p_refresh_token: token.refresh_token ?? null,
+    p_metadata: token.metadata ?? {}, p_provider_user_id: providerUserId ?? null,
+    p_expected_refresh_token: expectedRefreshToken ?? null,
+  });
+  if (error || data !== true) throw new Error('OAuth connection changed during authorization or refresh. Reconnect to continue.');
+}
 
 function pkcePath(userId: string, provider: string): string {
   return `${userId}/pkce-${provider}.json`;
@@ -101,6 +122,14 @@ export async function storePkceSession(
   }
 
   const supabase = getSupabaseAdmin();
+  if (provider === 'supabase_oauth_pkce' || provider === 'vercel_oauth_pkce') {
+    const { data, error } = await supabase.rpc('begin_oauth_session', {
+      p_owner_id: userId, p_provider: provider, p_session: session,
+    });
+    if (error || data !== true) throw new Error('OAuth session could not be saved. Retry shortly.');
+    // New sessions are database-only. A mirror is not authorization authority.
+    return;
+  }
   const row = {
     user_id: userId,
     provider,
@@ -186,9 +215,11 @@ export async function consumePkceSession(userId: string, provider: string, expec
     || data.state !== expectedState || typeof data.verifier !== 'string' || !data.verifier
     || typeof data.redirect_uri !== 'string' || !data.redirect_uri
     || typeof data.created_at !== 'string'
+    || (provider !== 'cws_oauth_pkce' && !validRevision(data.authorization_revision))
     || (data.nonce != null && typeof data.nonce !== 'string')) return null;
   return { verifier: data.verifier, state: data.state, redirect_uri: data.redirect_uri,
-    created_at: data.created_at, ...(data.nonce == null ? {} : { nonce: data.nonce }) };
+    created_at: data.created_at, ...(data.nonce == null ? {} : { nonce: data.nonce }),
+    ...(provider === 'cws_oauth_pkce' ? {} : { authorization_revision: data.authorization_revision }) };
 }
 
 /** Save OAuth access tokens only after authoritative database persistence. */
@@ -197,6 +228,7 @@ export async function storeProviderToken(
   provider: string,
   token: StoredProviderToken,
   expectedRefreshToken?: string,
+  revision?: string,
 ): Promise<void> {
   assertStorageIdentity(userId, provider);
   if (githubSchemaAutoBootstrapEnabled()) {
@@ -204,6 +236,10 @@ export async function storeProviderToken(
   }
 
   const supabase = getSupabaseAdmin();
+  if (epochProviders.has(provider)) {
+    await saveOAuthConnection(userId, provider, token, revision, expectedRefreshToken);
+    return;
+  }
   const row = {
     user_id: userId,
     provider,
@@ -237,7 +273,7 @@ export async function loadProviderToken(
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('user_integrations')
-    .select('access_token, refresh_token, metadata')
+    .select('access_token, refresh_token, metadata, credential_revision')
     .eq('user_id', userId)
     .eq('provider', provider)
     .maybeSingle();
@@ -252,10 +288,11 @@ export async function loadProviderToken(
       access_token: data.access_token.trim(),
       refresh_token: data.refresh_token,
       metadata: (data.metadata as Record<string, unknown>) ?? {},
+      credential_revision: data.credential_revision,
     };
   }
 
-  if (options.authoritativeOnly) return null;
+  if (options.authoritativeOnly || epochProviders.has(provider)) return null;
   const stored = await downloadJson<StoredProviderToken & { updated_at?: string }>(
     tokenPath(userId, provider),
   );
@@ -271,7 +308,7 @@ export async function clearProviderToken(userId: string, provider: string): Prom
   assertStorageIdentity(userId, provider);
   const supabase = getSupabaseAdmin();
   const { error } = await supabase.from('user_integrations').upsert({ user_id: userId, provider,
-    access_token: '', refresh_token: null, metadata: { revoked: true } }, { onConflict: 'user_id,provider' });
+    access_token: '', refresh_token: null, credential_revision: randomUUID(), metadata: { revoked: true } }, { onConflict: 'user_id,provider' });
   if (error) throw new Error('OAuth connection revocation could not be recorded. Retry shortly.');
   if (!(await removePath(tokenPath(userId, provider)))) throw new Error('OAuth connection revoked, but legacy cleanup is pending. Retry shortly.');
 }

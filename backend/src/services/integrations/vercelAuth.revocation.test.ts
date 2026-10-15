@@ -47,11 +47,11 @@ test('Vercel authority outages, revocation, public buckets and lost refresh leas
     mode = 'lost-lease';calls.length = 0;
     await assert.rejects(saveVercelConnection(user, 'synthetic-rotated-token', {}, 'synthetic-old-lease'),
       { message: 'Vercel connection changed during refresh. Reconnect or retry.' });
-    assert.equal(calls.length, 1);assert.equal(calls[0].method, 'PATCH');
+    assert.equal(calls.length, 1);assert.equal(calls[0].method, 'GET');
     const query = new URL(calls[0].path, 'http://127.0.0.1').searchParams;
     assert.equal(query.get('user_id'), `eq.${user}`);
     assert.equal(query.get('provider'), 'eq.vercel');
-    assert.equal(query.get('refresh_token'), 'eq.synthetic-old-lease');
+    assert.ok(query.get('select')?.includes('credential_revision'));
     mode = 'cleanup-failure';calls.length = 0;
     await assert.rejects(clearVercelConnection(user), { message: 'Vercel disconnected, but legacy copy cleanup is pending. Retry shortly.' });
     assert.equal(JSON.parse(calls[0].body).metadata.revoked, true);

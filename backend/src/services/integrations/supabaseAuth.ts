@@ -166,7 +166,7 @@ export async function exchangeSupabaseOAuthCode(opts: {
       expires_at: expiresAt,
       token_type: json.token_type || 'bearer',
     },
-  });
+  }, undefined, pkce.authorization_revision);
 
   return json;
 }
@@ -196,6 +196,12 @@ export async function refreshSupabaseOAuthToken(
   userId: string,
   refreshToken: string,
 ): Promise<SupabaseOAuthTokens> {
+  // Capture the durable revision before external I/O. Reused refresh-token values
+  // cannot let an older response replace a newer connection or refresh winner.
+  const observed = await loadProviderToken(userId, PROVIDER, { authoritativeOnly: true });
+  if (!observed?.credential_revision || observed.refresh_token !== refreshToken) {
+    throw new Error('Supabase connection changed before refresh. Reconnect to continue.');
+  }
   const body = new URLSearchParams({
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
@@ -232,7 +238,7 @@ export async function refreshSupabaseOAuthToken(
       expires_at: expiresAt,
       refreshed_at: new Date().toISOString(),
     },
-  }, refreshToken);
+  }, refreshToken, observed.credential_revision);
 
   return json;
 }

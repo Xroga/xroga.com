@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "267cea2400f2e28281624b9dd29ce5e7e83a213941afe33bdf6535384df20528",
+  "reviewRegistrySha256": "4aa250a1737d10cf707207804543deedf3883bf537067d1fe3a8e77507d78a8f",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -9,7 +9,7 @@
     "rlsEnabled": 118,
     "privilegedFactorySites": 163,
     "persistenceCandidates": 680,
-    "ownerPredicateCandidates": 169,
+    "ownerPredicateCandidates": 168,
     "reviewRequired": 0,
     "reviewedCandidates": 680,
     "unresolvedSafetyCandidates": 493,
@@ -10059,18 +10059,68 @@
       }
     },
     {
-      "id": "0cf7d2200643c48eef05",
+      "id": "372b30381ae05e3bffdb",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 47,
+      "line": 44,
+      "enclosing": "saveOAuthConnection",
+      "kind": "RPC_CANDIDATE",
+      "target": "save_oauth_connection",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
+      "semanticReview": {
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8391ad0add011a52ecad",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 44,
+      "enclosing": "saveOAuthConnection",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
+      "semanticReview": {
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1644913d538abf61c960",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 68,
       "enclosing": "uploadJson",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10084,18 +10134,18 @@
       }
     },
     {
-      "id": "d1ca96a4d901dcee9262",
+      "id": "253bb622a020a199dca0",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 49,
+      "line": 70,
       "enclosing": "uploadJson",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10109,18 +10159,18 @@
       }
     },
     {
-      "id": "c5c6f9d077ea50fe881c",
+      "id": "26d2bf2270e0421e4bb6",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 55,
+      "line": 76,
       "enclosing": "uploadJson",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10134,18 +10184,18 @@
       }
     },
     {
-      "id": "b1551174ad8f281d1030",
+      "id": "d4be4e8bdfa197e08e76",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 73,
+      "line": 94,
       "enclosing": "downloadJson",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10159,18 +10209,18 @@
       }
     },
     {
-      "id": "eb4f54b0f4935ade518b",
+      "id": "dcec9a9843bdf5afb1f5",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 74,
+      "line": 95,
       "enclosing": "downloadJson",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10184,18 +10234,18 @@
       }
     },
     {
-      "id": "3cec60f277b9a79aee9d",
+      "id": "dfd64a81844408cf77d6",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 84,
+      "line": 105,
       "enclosing": "removePath",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10209,18 +10259,18 @@
       }
     },
     {
-      "id": "ada7194e5f69f0546794",
+      "id": "6060adfc7cd590c49c87",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 85,
+      "line": 106,
       "enclosing": "removePath",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10234,18 +10284,18 @@
       }
     },
     {
-      "id": "4fa39554aeb5bb449206",
+      "id": "ecd4ea462063b19cc4f5",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 103,
+      "line": 124,
       "enclosing": "storePkceSession",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10259,18 +10309,43 @@
       }
     },
     {
-      "id": "c33424838c99f0183e91",
+      "id": "8f6dfcb3562eb2117b07",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 116,
+      "line": 126,
+      "enclosing": "storePkceSession",
+      "kind": "RPC_CANDIDATE",
+      "target": "begin_oauth_session",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
+      "semanticReview": {
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8940e38182206b243784",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 145,
       "enclosing": "storePkceSession",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10284,18 +10359,18 @@
       }
     },
     {
-      "id": "5515d3d49f583057b8c7",
+      "id": "398508f67454790b76ca",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 130,
+      "line": 159,
       "enclosing": "loadPkceSession",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10309,18 +10384,18 @@
       }
     },
     {
-      "id": "758e9631fe27aa08e158",
+      "id": "26e6427ad843f72fc87d",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 131,
+      "line": 160,
       "enclosing": "loadPkceSession",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10334,18 +10409,18 @@
       }
     },
     {
-      "id": "2a665e42804fda04c2e4",
+      "id": "5d546d2c49ee261103ed",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 170,
+      "line": 199,
       "enclosing": "clearPkceSession",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10359,18 +10434,18 @@
       }
     },
     {
-      "id": "04a8c4b310fa62f030e2",
+      "id": "dee48db1d13599c1a019",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 171,
+      "line": 200,
       "enclosing": "clearPkceSession",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10384,18 +10459,18 @@
       }
     },
     {
-      "id": "5b49efbd2be7dfc31ae9",
+      "id": "cb4b725c6c351643f585",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 182,
+      "line": 211,
       "enclosing": "consumePkceSession",
       "kind": "RPC_CANDIDATE",
       "target": "consume_oauth_session",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10409,18 +10484,18 @@
       }
     },
     {
-      "id": "e0015d75f84bf9b76467",
+      "id": "e8c58dd78c96f2f72bd3",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 182,
+      "line": 211,
       "enclosing": "consumePkceSession",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10434,118 +10509,118 @@
       }
     },
     {
-      "id": "3d15c886b134531108da",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 206,
-      "enclosing": "storeProviderToken",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "c9200b797c4ca7e37fe9",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 218,
-      "enclosing": "storeProviderToken",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "b6d4cb3d19e67bf12225",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 223,
-      "enclosing": "storeProviderToken",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "59642a20b827b2b26241",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 237,
-      "enclosing": "loadProviderToken",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "a0adbd2f590a96a7d153",
+      "id": "78de3fcbb23b31cc3518",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
       "line": 238,
+      "enclosing": "storeProviderToken",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
+      "semanticReview": {
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b7611e474793973093da",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 254,
+      "enclosing": "storeProviderToken",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
+      "semanticReview": {
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e167127409cd8336203d",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 259,
+      "enclosing": "storeProviderToken",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
+      "semanticReview": {
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8bb35ef910c1ab533293",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 273,
+      "enclosing": "loadProviderToken",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
+      "semanticReview": {
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d9c244c20fc704201edd",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 274,
       "enclosing": "loadProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10559,18 +10634,18 @@
       }
     },
     {
-      "id": "fe395dfad59ca2ef6b13",
+      "id": "3d5808c630067950ecef",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 272,
+      "line": 309,
       "enclosing": "clearProviderToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10584,18 +10659,18 @@
       }
     },
     {
-      "id": "5442f511a1f4ffbdd09e",
+      "id": "f7c26dfb42719301e2c9",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 273,
+      "line": 310,
       "enclosing": "clearProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10617,7 +10692,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "57adf32873294a87c026e5796528aa7e5578bb2c74383e0b0198b0440caad9be",
+      "sourceSha256": "ec760ecf3ae67ffdb4537cce430417b3d0a1b71fecec8eeb311e449b32046c09",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -10642,7 +10717,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "57adf32873294a87c026e5796528aa7e5578bb2c74383e0b0198b0440caad9be",
+      "sourceSha256": "ec760ecf3ae67ffdb4537cce430417b3d0a1b71fecec8eeb311e449b32046c09",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -10659,15 +10734,15 @@
       }
     },
     {
-      "id": "6d7d073ed2cbbf4222f7",
+      "id": "cc4affbb6103619d1319",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 255,
+      "line": 261,
       "enclosing": "parseOAuthState",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "57adf32873294a87c026e5796528aa7e5578bb2c74383e0b0198b0440caad9be",
+      "sourceSha256": "ec760ecf3ae67ffdb4537cce430417b3d0a1b71fecec8eeb311e449b32046c09",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -11372,15 +11447,15 @@
       }
     },
     {
-      "id": "a294f1e1adb1d7daf588",
+      "id": "0c26df3bc36db72e64bb",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 42,
+      "line": 43,
       "enclosing": "encodeVercelRefreshLease",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in encodeVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11393,15 +11468,15 @@
       }
     },
     {
-      "id": "98b850e6866f3a5d08f0",
+      "id": "601ca1cf096e8ae2abc7",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 49,
+      "line": 50,
       "enclosing": "parseVercelRefreshLease",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in parseVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11414,15 +11489,15 @@
       }
     },
     {
-      "id": "de3eee657d8403ccf6e9",
+      "id": "793ac6ded3969a9efb2d",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 101,
+      "line": 102,
       "enclosing": "saveVercelTokenToStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11435,15 +11510,15 @@
       }
     },
     {
-      "id": "454726a571d14c60bbd5",
+      "id": "3c729fe42e934a5e35f9",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 103,
+      "line": 104,
       "enclosing": "saveVercelTokenToStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11456,57 +11531,15 @@
       }
     },
     {
-      "id": "3a096e057703d508dd26",
-      "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 120,
-      "enclosing": "getVercelTokenFromStorage",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
-      "semanticReview": {
-        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
-        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
-            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
-          }
-        ]
-      }
-    },
-    {
-      "id": "ea92a7350c3295acbf59",
+      "id": "a5265510df04878983c9",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 121,
-      "enclosing": "getVercelTokenFromStorage",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
-      "semanticReview": {
-        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
-        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
-            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
-          }
-        ]
-      }
-    },
-    {
-      "id": "ffcaf3e03fc8cb12c125",
-      "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 133,
       "enclosing": "deleteVercelTokenFromStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11519,15 +11552,15 @@
       }
     },
     {
-      "id": "8372b7ecc3cdc392edd2",
+      "id": "3a2b2f074f09b4a839d9",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 134,
+      "line": 122,
       "enclosing": "deleteVercelTokenFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11540,15 +11573,15 @@
       }
     },
     {
-      "id": "1f964408f31e51a99cd9",
+      "id": "b214cc9ea8da7a4ae7e7",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 238,
+      "line": 226,
       "enclosing": "buildVercelAuthorizeUrl",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in buildVercelAuthorizeUrl. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11561,15 +11594,15 @@
       }
     },
     {
-      "id": "96be6dd16fa0d29508d8",
+      "id": "3b569fbc8c4c03aa4cc3",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 329,
+      "line": 318,
       "enclosing": "parseVercelOAuthState",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in parseVercelOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11582,15 +11615,15 @@
       }
     },
     {
-      "id": "7595516c6d98b59ee517",
+      "id": "6e718043f40d9d6c197f",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 454,
+      "line": 443,
       "enclosing": "refreshVercelOAuthTokenWithLease",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11603,15 +11636,15 @@
       }
     },
     {
-      "id": "1208226e3a88b86e9ff3",
+      "id": "872ffe5b5e8ca8d5e7d2",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 456,
+      "line": 445,
       "enclosing": "refreshVercelOAuthTokenWithLease",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11624,15 +11657,15 @@
       }
     },
     {
-      "id": "95bb65e4416e615f05e5",
+      "id": "0be4624d8406ba21cfb3",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 480,
+      "line": 469,
       "enclosing": "refreshVercelOAuthTokenWithLease",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11645,15 +11678,15 @@
       }
     },
     {
-      "id": "f19578ae3bd0614a9e79",
+      "id": "62ababe316fef5d470d3",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 497,
+      "line": 487,
       "enclosing": "loadVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11666,15 +11699,15 @@
       }
     },
     {
-      "id": "7b31925a24719e238bdf",
+      "id": "531a7c3556c640e99ef2",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 498,
+      "line": 488,
       "enclosing": "loadVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11687,15 +11720,15 @@
       }
     },
     {
-      "id": "85d54b1caf21d8db9dec",
+      "id": "0dce3725b945d210bc9d",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 727,
+      "line": 715,
       "enclosing": "saveVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11708,36 +11741,15 @@
       }
     },
     {
-      "id": "18ee3812cc76b825d7f8",
+      "id": "2ecefcac357a1ecad40c",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 747,
-      "enclosing": "saveVercelConnection",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
-      "semanticReview": {
-        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
-        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
-            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
-          }
-        ]
-      }
-    },
-    {
-      "id": "9b588ddc7b596ae516c4",
-      "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 752,
+      "line": 745,
       "enclosing": "saveVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11750,15 +11762,15 @@
       }
     },
     {
-      "id": "7ff15828263a92dfb83e",
+      "id": "0f73386d763e6f72fcc0",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 762,
+      "line": 755,
       "enclosing": "clearVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11771,15 +11783,15 @@
       }
     },
     {
-      "id": "ffb4f027b8979aefa983",
+      "id": "d07fcee48b62e6bb7501",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 763,
+      "line": 756,
       "enclosing": "clearVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sourceSha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",

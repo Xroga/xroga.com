@@ -11715,7 +11715,7 @@
       "callers": [
         "backend/src/index.ts:45",
         "backend/src/services/integrations/githubAuth.ts:2",
-        "backend/src/services/integrations/oauthPkceStore.ts:7",
+        "backend/src/services/integrations/oauthPkceStore.ts:8",
         "backend/src/services/integrations/userProviderKeys.ts:10",
         "backend/src/services/integrations/vercelAuth.ts:8"
       ],
@@ -19925,7 +19925,7 @@
       "id": "surface:fe368c4f6dde9b73b08c",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "sha256": "9731de5c29b76f98a6bc348548cce66db4dbb0fea81bef113a5c5ed61fc75e8f",
+      "sha256": "8918d4c0e5d4771cf68c18c7b9884aa1a5469d1f5c78d39f77bfa3b046080b30",
       "symbols": [
         "VercelProject",
         "added",
@@ -21968,7 +21968,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts:25",
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
-        "backend/src/services/integrations/oauthPkceStore.ts:8",
+        "backend/src/services/integrations/oauthPkceStore.ts:9",
         "backend/src/services/integrations/userProviderKeys.ts:12",
         "backend/src/services/integrations/vercelAuth.ts:9"
       ],
@@ -23039,7 +23039,7 @@
       "id": "surface:949ba325e98bab6b63c3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "sha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
       "symbols": [
         "BUCKET",
         "PkceSession",
@@ -23050,6 +23050,7 @@
         "clearProviderToken",
         "consumePkceSession",
         "downloadJson",
+        "epochProviders",
         "err",
         "isBucketMissingError",
         "loadPkceSession",
@@ -23058,17 +23059,20 @@
         "pkcePath",
         "removePath",
         "row",
+        "saveOAuthConnection",
         "storePkceSession",
         "storeProviderToken",
         "stored",
         "supabase",
         "tokenPath",
-        "uploadJson"
+        "uploadJson",
+        "validRevision"
       ],
       "imports": [
         "../../config/supabase.js",
         "../../db/ensureGithubSchema.js",
-        "./credentialStorageBucket.js"
+        "./credentialStorageBucket.js",
+        "node:crypto"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
@@ -23080,8 +23084,9 @@
       ],
       "callers": [
         "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:6",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:4",
-        "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:4",
+        "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:5",
         "backend/src/services/integrations/oauthPkceStore.test.ts:6",
         "backend/src/services/integrations/pluginPermissionPolicy.ts:1",
         "backend/src/services/integrations/supabaseAuth.ts:8",
@@ -23092,21 +23097,25 @@
       "persistenceDependencies": [
         "user_integrations"
       ],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
       "authBoundary": [
         "backend/src/services/integrations/oauthPkceStore.ts#assertStorageIdentity",
-        "backend/src/services/integrations/oauthPkceStore.ts#ensurePrivateOAuthBucket"
+        "backend/src/services/integrations/oauthPkceStore.ts#ensurePrivateOAuthBucket",
+        "backend/src/services/integrations/oauthPkceStore.ts#saveOAuthConnection"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/oauthPkceStore.ts:131 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:218 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:238 (user_id)"
+        "backend/src/services/integrations/oauthPkceStore.ts:160 (user_id)",
+        "backend/src/services/integrations/oauthPkceStore.ts:254 (user_id)",
+        "backend/src/services/integrations/oauthPkceStore.ts:274 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
         "backend/src/services/integrations/oauthPkceStore.test.ts"
@@ -23152,7 +23161,7 @@
       "callers": [
         "backend/src/routes/integrations.ts:31",
         "backend/src/services/integrations/businessAction.ts:38",
-        "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:5"
+        "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23188,7 +23197,7 @@
       "id": "surface:84d59728979a7f8187e6",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/supabaseAuth.ts",
-      "sha256": "57adf32873294a87c026e5796528aa7e5578bb2c74383e0b0198b0440caad9be",
+      "sha256": "ec760ecf3ae67ffdb4537cce430417b3d0a1b71fecec8eeb311e449b32046c09",
       "symbols": [
         "AUTHORIZE",
         "PKCE_PROVIDER",
@@ -23215,6 +23224,7 @@
         "makeVerifier",
         "meta",
         "needsRefresh",
+        "observed",
         "params",
         "parseOAuthState",
         "path",
@@ -23244,8 +23254,9 @@
       "callers": [
         "backend/src/lib/platformReady.ts:8",
         "backend/src/routes/supabaseOAuth.ts:10",
+        "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:6",
-        "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6",
+        "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:7",
         "backend/src/services/integrations/supabaseProvision.ts:530",
         "backend/src/services/integrations/userProviderKeys.ts:822"
       ],
@@ -23284,6 +23295,7 @@
         "backend/src/services/integrations/supabaseAuth.ts#verifier"
       ],
       "testCoverage": [
+        "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts"
       ],
@@ -23605,7 +23617,7 @@
       "id": "surface:083de6ff7f0ffdcc0165",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "sha256": "84eec2c40ab0b8131df813171d4480849be960c991db71a078e0815f213ae8ea",
       "symbols": [
         "ALLOWED_CALLBACK_ORIGINS",
         "CALLBACK_PATH",
@@ -23644,7 +23656,6 @@
         "explicit",
         "getVercelOAuthCallbackUrl",
         "getVercelToken",
-        "getVercelTokenFromStorage",
         "getVercelUsername",
         "headers",
         "identityOk",
@@ -23660,6 +23671,7 @@
         "marker",
         "meta",
         "nonce",
+        "observed",
         "observedRefreshToken",
         "params",
         "parseVercelOAuthState",
@@ -23690,7 +23702,6 @@
         "scope",
         "state",
         "storagePayload",
-        "stored",
         "supabase",
         "token",
         "tokenData",
@@ -23732,6 +23743,7 @@
         "backend/src/routes/vercel.ts:4",
         "backend/src/security/tenantIsolation.local.integration.ts:27",
         "backend/src/services/integrations/githubDeploy.ts:16",
+        "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:5",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:5",
         "backend/src/services/integrations/vercelAuth.refresh.test.ts:3",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts:4",
@@ -23765,15 +23777,15 @@
         "backend/src/services/integrations/vercelAuth.ts#refreshVercelOAuthToken",
         "backend/src/services/integrations/vercelAuth.ts#refreshVercelOAuthTokenSingleFlight",
         "backend/src/services/integrations/vercelAuth.ts#refreshVercelOAuthTokenWithLease",
+        "backend/src/services/integrations/vercelAuth.ts#saveOAuthConnection",
         "backend/src/services/integrations/vercelAuth.ts#vercelOAuthConfigured",
         "backend/src/services/integrations/vercelAuth.ts#vercelOAuthScope",
         "backend/src/services/integrations/vercelAuth.ts#verifyVercelTokenLive"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/vercelAuth.ts:456 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:480 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:498 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:747 (user_id)"
+        "backend/src/services/integrations/vercelAuth.ts:445 (user_id)",
+        "backend/src/services/integrations/vercelAuth.ts:469 (user_id)",
+        "backend/src/services/integrations/vercelAuth.ts:488 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/vercelAuth.ts#buildVercelAuthorizeUrl"
@@ -23786,6 +23798,7 @@
       ],
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/vercelAuth.refresh.test.ts",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts",
@@ -89752,7 +89765,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a2273eb9d3df04c27bbf",
+      "id": "registration:b59445734740bde00fa5",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 56,
       "receiver": "router",
@@ -89764,7 +89777,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9c0372f76591561efe7f",
+      "id": "registration:d706200739b97ee2900c",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 134,
       "receiver": "router",
@@ -89776,7 +89789,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f0362ff1f0e3118d862c",
+      "id": "registration:80631e77a27ce415862b",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 170,
       "receiver": "router",
@@ -89788,7 +89801,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:841a80587f03902b5579",
+      "id": "registration:af40d84f9c0a4ffad849",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 180,
       "receiver": "router",
@@ -89800,7 +89813,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:37ae06f99c4c09d43d5b",
+      "id": "registration:28dc674d6d541d0f94eb",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 250,
       "receiver": "router",
@@ -89812,7 +89825,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d7287e7a63b34e9c48fd",
+      "id": "registration:7ccf127b63898b799403",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 307,
       "receiver": "router",
@@ -89824,7 +89837,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0cc4aa20f2cd7c2a0e87",
+      "id": "registration:a01e9e35288824efad20",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 327,
       "receiver": "router",
@@ -89836,7 +89849,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b95d5e07166263f421b4",
+      "id": "registration:672c5cdfde1e9a56b5e5",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 362,
       "receiver": "router",
@@ -89848,7 +89861,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:346f15339c021382d76b",
+      "id": "registration:324d5814f9ebe904b72a",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 392,
       "receiver": "router",
@@ -92360,8 +92373,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c2b37781f15f61d96cfc",
-      "registrationId": "registration:a2273eb9d3df04c27bbf",
+      "id": "route:55b73ffc0f961cede4ec",
+      "registrationId": "registration:b59445734740bde00fa5",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 56,
       "method": "POST",
@@ -92377,8 +92390,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b655e38f497e04f35644",
-      "registrationId": "registration:9c0372f76591561efe7f",
+      "id": "route:641ab7bfe0559246d0d6",
+      "registrationId": "registration:d706200739b97ee2900c",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 134,
       "method": "GET",
@@ -92394,8 +92407,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:6ff0559f31a1c9bda1ce",
-      "registrationId": "registration:f0362ff1f0e3118d862c",
+      "id": "route:b81b1609979e923a8740",
+      "registrationId": "registration:80631e77a27ce415862b",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 170,
       "method": "DELETE",
@@ -92411,8 +92424,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:964d11e2d2be810fd3c2",
-      "registrationId": "registration:841a80587f03902b5579",
+      "id": "route:ca1035254dadce358331",
+      "registrationId": "registration:af40d84f9c0a4ffad849",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 180,
       "method": "GET",
@@ -92428,8 +92441,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b68a40f54ea32fb2868e",
-      "registrationId": "registration:37ae06f99c4c09d43d5b",
+      "id": "route:2d3597a6cc18905312dc",
+      "registrationId": "registration:28dc674d6d541d0f94eb",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 250,
       "method": "POST",
@@ -92445,8 +92458,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:dd7ed3b52bd155ddcb74",
-      "registrationId": "registration:d7287e7a63b34e9c48fd",
+      "id": "route:b559a36070dd230107c6",
+      "registrationId": "registration:7ccf127b63898b799403",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 307,
       "method": "GET",
@@ -92462,8 +92475,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:be57027db94e17aba275",
-      "registrationId": "registration:0cc4aa20f2cd7c2a0e87",
+      "id": "route:bebff7a72c8a515be0cd",
+      "registrationId": "registration:a01e9e35288824efad20",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 327,
       "method": "POST",
@@ -92479,8 +92492,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a4ba6bd118bd128d4249",
-      "registrationId": "registration:b95d5e07166263f421b4",
+      "id": "route:307f90d6da4bbfd5b890",
+      "registrationId": "registration:672c5cdfde1e9a56b5e5",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 362,
       "method": "POST",
@@ -92496,8 +92509,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e6bf5577a960e7a1bce4",
-      "registrationId": "registration:346f15339c021382d76b",
+      "id": "route:2784a2fd84dc425e0304",
+      "registrationId": "registration:324d5814f9ebe904b72a",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 392,
       "method": "DELETE",
@@ -94432,6 +94445,13 @@
       "version": "20261015000500",
       "order": 74,
       "sha256": "34a1cb46063fb4680176d0d58725d39d247e72f779588a167cb60e9082a965ad"
+    },
+    {
+      "id": "migration:c994f47d43a96aff33b6",
+      "sourcePath": "supabase/migrations/20261016000100_oauth_authorization_epoch.sql",
+      "version": "20261016000100",
+      "order": 75,
+      "sha256": "87b5f2a625e08060349df68bf88c2de1f151599f7117af9205b8150e2190a300"
     }
   ],
   "workflows": [
@@ -102081,7 +102101,7 @@
     {
       "id": "test-suite:b392dbba0626fe9de839",
       "sourcePath": "backend/src/security/oauthSession.local.integration.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102271,6 +102291,13 @@
       "id": "test-suite:7a343d86b87dae6efcdd",
       "sourcePath": "backend/src/services/integrations/managedVercelDeployment.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:10e48a03de3f55b7c000",
+      "sourcePath": "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

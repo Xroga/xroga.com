@@ -21,7 +21,7 @@ test('one-use OAuth admission fails closed on unavailable or malformed receipts 
   const previous={url:process.env.SUPABASE_URL,key:process.env.SUPABASE_SERVICE_ROLE_KEY};
   process.env.SUPABASE_URL=`http://127.0.0.1:${address.port}`;process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-only';
   try {
-    const valid={state,verifier:'synthetic-verifier',redirect_uri:'https://example.invalid/callback',created_at:new Date().toISOString()};
+    const valid={state,verifier:'synthetic-verifier',redirect_uri:'https://example.invalid/callback',created_at:new Date().toISOString(),authorization_revision:'10000000-0000-4000-8000-000000000001'};
     for(body of [null,[],{}, {...valid,state:'wrong'}, {...valid,verifier:''},{...valid,nonce:{}}])
       assert.equal(await consumePkceSession('owner','vercel_oauth_pkce',state),null);
     status=400;body={message:'PRIVATE_CANARY'};
