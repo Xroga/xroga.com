@@ -179,6 +179,7 @@ export async function storeProviderToken(
   userId: string,
   provider: string,
   token: StoredProviderToken,
+  expectedRefreshToken?: string,
 ): Promise<void> {
   assertStorageIdentity(userId, provider);
   if (githubSchemaAutoBootstrapEnabled()) {
@@ -194,11 +195,19 @@ export async function storeProviderToken(
     metadata: token.metadata ?? {},
   };
 
-  const { error } = await supabase.from('user_integrations').upsert(row, {
-    onConflict: 'user_id,provider',
-  });
-
-  if (error) throw new Error('OAuth connection could not be saved. Retry shortly.');
+  if (expectedRefreshToken !== undefined) {
+    // A refresh can replace only the credential it observed. A disconnect or
+    // reconnect changes that predicate and must never be undone by a late reply.
+    const { data, error } = await supabase.from('user_integrations').update(row)
+      .eq('user_id', userId).eq('provider', provider).eq('refresh_token', expectedRefreshToken)
+      .select('user_id').maybeSingle();
+    if (error || !data) throw new Error('OAuth connection changed during refresh. Reconnect to continue.');
+  } else {
+    const { error } = await supabase.from('user_integrations').upsert(row, {
+      onConflict: 'user_id,provider',
+    });
+    if (error) throw new Error('OAuth connection could not be saved. Retry shortly.');
+  }
   await uploadJson(tokenPath(userId, provider), { ...token, updated_at: new Date().toISOString() });
 }
 

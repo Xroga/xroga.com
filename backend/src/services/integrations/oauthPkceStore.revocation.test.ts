@@ -3,6 +3,7 @@ import { createServer } from 'node:http';
 import { test } from 'node:test';
 import { clearPkceSession, clearProviderToken, loadPkceSession, loadProviderToken, storePkceSession, storeProviderToken } from './oauthPkceStore.js';
 import { getUserPluginPermissionMode, setUserPluginPermissionMode } from './pluginPermissionPolicy.js';
+import { getSupabaseOAuthAccessToken } from './supabaseAuth.js';
 
 test('shared OAuth requires authority, persists revocation and rejects path traversal before I/O', async () => {
   const calls: Array<{ path: string; method: string; body: Record<string, unknown> }> = [];
@@ -26,11 +27,17 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
         return res.end('null');
       }
       const key = `${url.searchParams.get('user_id')?.slice(3)}/${url.searchParams.get('provider')?.slice(3)}`;
+      if (req.method === 'PATCH') {
+        const current = rows.get(key);
+        if (current?.refresh_token !== url.searchParams.get('refresh_token')?.slice(3)) return res.end('[]');
+        rows.set(key, { ...current, ...body });
+      }
       return res.end(JSON.stringify(rows.has(key) ? [rows.get(key)] : []));
     });
   });
   const keys = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'DATABASE_URL', 'SUPABASE_DB_URL', 'SUPABASE_DB_PASSWORD'];
   const previous = new Map(keys.map(key => [key, process.env[key]]));
+  const originalFetch = globalThis.fetch;
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const address = server.address(); assert.ok(address && typeof address !== 'string');
   const session = { verifier: 'verifier', state: 'state', redirect_uri: 'http://127.0.0.1/callback', created_at: new Date().toISOString() };
@@ -82,7 +89,41 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
     await clearPkceSession('owner', 'pkce');
     await storeProviderToken('owner', 'provider', { access_token: 'reconnected' });
     assert.equal((await loadProviderToken('owner', 'provider'))?.access_token, 'reconnected');
+    const expired = { access_token: 'EXPIRED', refresh_token: 'ORIGINAL_REFRESH', metadata: { expires_at: '2000-01-01T00:00:00Z' } };
+    await storeProviderToken('owner', 'supabase_oauth', expired);
+    let tokenRequests = 0;
+    let revokeDuringRefresh = false;
+    let providerFailure = false;
+    globalThis.fetch = async (input, init) => {
+      const target = String(input instanceof Request ? input.url : input);
+      if (target === 'https://api.supabase.com/v1/oauth/token') {
+        tokenRequests++;
+        if (revokeDuringRefresh) await clearProviderToken('owner', 'supabase_oauth');
+        return Response.json(providerFailure ? { error_description: 'SYNTHETIC_PRIVATE_ERROR' } : { access_token: 'REFRESHED', refresh_token: 'ROTATED_REFRESH', expires_in: 3600 }, { status: providerFailure ? 400 : 200 });
+      }
+      assert.ok(target.startsWith(process.env.SUPABASE_URL!), 'test network must remain loopback-only');
+      return originalFetch(input, init);
+    };
+    assert.equal(await getSupabaseOAuthAccessToken('owner'), 'REFRESHED');
+    assert.equal((await loadProviderToken('owner', 'supabase_oauth'))?.refresh_token, 'ROTATED_REFRESH');
+    await storeProviderToken('owner', 'supabase_oauth', expired);
+    revokeDuringRefresh = true;
+    assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
+    assert.equal(await loadProviderToken('owner', 'supabase_oauth'), null);
+    assert.equal((await loadProviderToken('other', 'provider'))?.access_token, 'other-token');
+    revokeDuringRefresh = false;
+    providerFailure = true;
+    await storeProviderToken('owner', 'supabase_oauth', expired);
+    assert.equal(await getSupabaseOAuthAccessToken('owner'), null, 'a failed refresh cannot return the expired credential');
+    await storeProviderToken('owner', 'supabase_oauth', { ...expired, refresh_token: null });
+    assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
+    await storeProviderToken('owner', 'supabase_oauth', { ...expired, refresh_token: null, metadata: { expires_at: '1970-01-01T00:00:00Z' } });
+    assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
+    await storeProviderToken('owner', 'supabase_oauth', { ...expired, metadata: { expires_at: 'malformed' } });
+    assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
+    assert.equal(tokenRequests, 3);
   } finally {
+    globalThis.fetch = originalFetch;
     for (const [key, value] of previous) {
       if (value === undefined) delete process.env[key]; else process.env[key] = value;
     }

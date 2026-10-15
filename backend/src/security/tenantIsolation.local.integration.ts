@@ -524,7 +524,7 @@ test('real shared OAuth revocation survives delayed mirrors and preserves anothe
   const [owner,other]=users,bucket='xroga-github-tokens',provider='synthetic_oauth',pkce='synthetic_pkce';
   const session={verifier:'SYNTHETIC_VERIFIER',state:'synthetic-state',redirect_uri:'http://127.0.0.1/callback',created_at:new Date().toISOString()};
   try {
-    await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_OWNER'});
+    await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_OWNER',refresh_token:'SYNTHETIC_OLD_REFRESH'});
     await storeProviderToken(other.id,provider,{access_token:'SYNTHETIC_OTHER'});
     await storePkceSession(owner.id,pkce,session);
     await clearProviderToken(owner.id,provider);
@@ -533,11 +533,16 @@ test('real shared OAuth revocation survives delayed mirrors and preserves anothe
       const replay=await admin.storage.from(bucket).upload(path,JSON.stringify(payload),{upsert:true,contentType:'application/json'});assert.equal(replay.error,null);
     }
     assert.equal(await loadProviderToken(owner.id,provider),null);
+    await assert.rejects(storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_LATE_REFRESH'},'SYNTHETIC_OLD_REFRESH'),/changed during refresh/);
+    assert.equal(await loadProviderToken(owner.id,provider),null);
     assert.equal(await loadPkceSession(owner.id,pkce,session.state),null);
     assert.equal((await loadProviderToken(other.id,provider))?.access_token,'SYNTHETIC_OTHER');
     await assert.rejects(clearProviderToken(owner.id,`../${other.id}`),/Invalid OAuth storage identity/);
-    await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_RECONNECTED'});
+    await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_RECONNECTED',refresh_token:'SYNTHETIC_NEW_REFRESH'});
+    await assert.rejects(storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_LATE_REFRESH'},'SYNTHETIC_OLD_REFRESH'),/changed during refresh/);
     assert.equal((await loadProviderToken(owner.id,provider))?.access_token,'SYNTHETIC_RECONNECTED');
+    await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_REFRESHED',refresh_token:'SYNTHETIC_ROTATED'},'SYNTHETIC_NEW_REFRESH');
+    assert.equal((await loadProviderToken(owner.id,provider))?.access_token,'SYNTHETIC_REFRESHED');
   } finally {
     for(const user of users){await clearProviderToken(user.id,provider);await clearPkceSession(user.id,pkce);}
   }

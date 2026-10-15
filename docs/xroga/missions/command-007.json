@@ -10,6 +10,7 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/services/integrations/supabaseAuth.ts",
     "backend/src/services/integrations/pluginPermissionPolicy.ts",
     "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
     "backend/src/services/integrations/vercelAuth.ts",

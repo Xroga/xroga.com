@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "fac82e859a671f789ff7b781e29a5754873d6944",
+  "source_sha": "71b16011bf30bf428685bf87a05ff42eb6cf4b58",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12464,7 +12464,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "e41b77dd013408a97c3b6988ea6cab4cebb89c8e9a33582c22e975389686a734"
+      "sha256": "f24d12c219458138ff577fc93b97a76a17f2b61dfd8faa2ff2fcf77bc0f98eb0"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12544,7 +12544,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc"
+      "sha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063"
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
@@ -12552,7 +12552,7 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "sha256": "9d423376a702c32f13edb190c4e3ed9eb3078db683bd2681a0dc1e91d19393a9"
+      "sha256": "c7a813b166a1c776c431249b5ca9ce85d6ea233a95f1b45de0cd8978c6d95d47"
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
@@ -24043,7 +24043,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 804,
+      "line": 809,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

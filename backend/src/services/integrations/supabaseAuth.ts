@@ -1,7 +1,7 @@
 /**
  * Supabase Management API OAuth — user clicks Authorize, no paste.
  * Tokens grant project list, API keys, and SQL via /database/query.
- * PKCE + tokens work via DB or Storage fallback when user_integrations is missing.
+ * Database authority is required for PKCE and token persistence.
  */
 
 import { createHash, randomBytes } from 'crypto';
@@ -179,17 +179,18 @@ export async function getSupabaseOAuthAccessToken(userId: string): Promise<strin
 
   const meta = (data.metadata ?? {}) as { expires_at?: string };
   const exp = meta.expires_at ? Date.parse(meta.expires_at) : 0;
-  const needsRefresh = exp > 0 && exp < Date.now() + 60_000;
+  if (meta.expires_at && !Number.isFinite(exp)) return null;
+  const needsRefresh = Boolean(meta.expires_at) && exp < Date.now() + 60_000;
 
   if (!needsRefresh) return data.access_token.trim();
-  if (!data.refresh_token) return data.access_token.trim();
+  if (!data.refresh_token) return null;
 
   try {
     const refreshed = await refreshSupabaseOAuthToken(userId, data.refresh_token);
     return refreshed.access_token;
-  } catch (err) {
-    console.warn('[supabaseAuth] refresh failed:', (err as Error).message);
-    return data.access_token.trim();
+  } catch {
+    console.warn('[supabaseAuth] refresh failed');
+    return null;
   }
 }
 
@@ -218,7 +219,7 @@ export async function refreshSupabaseOAuthToken(
   };
 
   if (!res.ok || !json.access_token) {
-    throw new Error(json.error_description || json.error || 'Failed to refresh Supabase token');
+    throw new Error('Failed to refresh Supabase token');
   }
 
   const expiresAt = json.expires_in
@@ -233,7 +234,7 @@ export async function refreshSupabaseOAuthToken(
       expires_at: expiresAt,
       refreshed_at: new Date().toISOString(),
     },
-  });
+  }, refreshToken);
 
   return json;
 }

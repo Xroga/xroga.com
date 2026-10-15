@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "fac82e859a671f789ff7b781e29a5754873d6944",
-    "sourceTimestampUtc": "2026-10-15T20:35:57+05:00",
-    "auditStartedUtc": "2026-10-15T16:39:30.412Z",
+    "sha": "71b16011bf30bf428685bf87a05ff42eb6cf4b58",
+    "sourceTimestampUtc": "2026-10-15T21:39:46+05:00",
+    "auditStartedUtc": "2026-10-15T16:47:19.402Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -22819,7 +22819,7 @@
       "id": "surface:949ba325e98bab6b63c3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "symbols": [
         "BUCKET",
         "PkceSession",
@@ -22877,7 +22877,8 @@
       ],
       "tenantBoundary": [
         "backend/src/services/integrations/oauthPkceStore.ts:131 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:212 (user_id)"
+        "backend/src/services/integrations/oauthPkceStore.ts:201 (user_id)",
+        "backend/src/services/integrations/oauthPkceStore.ts:221 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -22964,7 +22965,7 @@
       "id": "surface:84d59728979a7f8187e6",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/supabaseAuth.ts",
-      "sha256": "9d423376a702c32f13edb190c4e3ed9eb3078db683bd2681a0dc1e91d19393a9",
+      "sha256": "c7a813b166a1c776c431249b5ca9ce85d6ea233a95f1b45de0cd8978c6d95d47",
       "symbols": [
         "AUTHORIZE",
         "PKCE_PROVIDER",
@@ -22979,7 +22980,6 @@
         "clientId",
         "clientSecret",
         "data",
-        "err",
         "exchangeSupabaseOAuthCode",
         "exp",
         "expiresAt",
@@ -23020,6 +23020,7 @@
       "callers": [
         "backend/src/lib/platformReady.ts:8",
         "backend/src/routes/supabaseOAuth.ts:10",
+        "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6",
         "backend/src/services/integrations/supabaseProvision.ts:526",
         "backend/src/services/integrations/userProviderKeys.ts:795"
       ],
@@ -23057,7 +23058,9 @@
         "backend/src/services/integrations/supabaseAuth.ts#makeVerifier",
         "backend/src/services/integrations/supabaseAuth.ts#verifier"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/services/integrations/oauthPkceStore.revocation.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",

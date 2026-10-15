@@ -1,18 +1,18 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "88ff2c9f81f2a06d3e39644811fc1ca30cfcef61d57511a010ab7e19b24feba6",
+  "reviewRegistrySha256": "ae1992f24a1d45fa34df0b3e59011b30ab296eb3fc45d3f9c845c6bc554e37ee",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 160,
-    "persistenceCandidates": 664,
-    "ownerPredicateCandidates": 161,
+    "persistenceCandidates": 665,
+    "ownerPredicateCandidates": 162,
     "reviewRequired": 235,
-    "reviewedCandidates": 429,
-    "unresolvedSafetyCandidates": 494,
+    "reviewedCandidates": 430,
+    "unresolvedSafetyCandidates": 495,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -21,7 +21,7 @@
     "SCOPED_BOUNDARY": 35,
     "NARROW_EXCEPTION": 6,
     "NOT_PERSISTENCE": 129,
-    "REVIEWED_GAP": 259
+    "REVIEWED_GAP": 260
   },
   "callers": [
     {
@@ -7670,10 +7670,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -7707,10 +7707,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -7744,10 +7744,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -7781,10 +7781,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -7818,10 +7818,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -7855,10 +7855,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -7892,10 +7892,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -7929,10 +7929,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -7966,10 +7966,10 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -8003,10 +8003,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -8040,10 +8040,10 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -8077,10 +8077,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -8114,10 +8114,10 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -8143,18 +8143,18 @@
       }
     },
     {
-      "id": "a7f7f871c02e5f39f6af",
+      "id": "68c5b0cbc64559830941",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 188,
+      "line": 189,
       "enclosing": "storeProviderToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -8180,18 +8180,55 @@
       }
     },
     {
-      "id": "199bbf45c63b1b453239",
+      "id": "f255c0c7448e4083224f",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 197,
+      "line": 201,
+      "enclosing": "storeProviderToken",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "semanticReview": {
+        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/supabaseOAuth.ts",
+            "marker": "stateInfo.userId !== req.userId"
+          },
+          {
+            "path": "backend/src/index.ts",
+            "marker": "authMiddleware, supabaseOAuthRouter"
+          },
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.ts",
+            "marker": "if (stored?.verifier && stored.state === expectedState)"
+          },
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
+            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
+          },
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
+            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+          }
+        ]
+      }
+    },
+    {
+      "id": "0c0166b452e9a4b93361",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 206,
       "enclosing": "storeProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -8217,18 +8254,18 @@
       }
     },
     {
-      "id": "f0c67208b70fa187e674",
+      "id": "11ea4367141a4718c1bf",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 211,
+      "line": 220,
       "enclosing": "loadProviderToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -8254,18 +8291,18 @@
       }
     },
     {
-      "id": "59c798d746b47e394634",
+      "id": "59477480fcc14475c3e1",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 212,
+      "line": 221,
       "enclosing": "loadProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -8291,18 +8328,18 @@
       }
     },
     {
-      "id": "1684ef0154058c9cea91",
+      "id": "7bb3b08c19b731b73baf",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 246,
+      "line": 255,
       "enclosing": "clearProviderToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -8328,18 +8365,18 @@
       }
     },
     {
-      "id": "1a44c9ae00c2306b2f5b",
+      "id": "a95a2866407c96309fa7",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 247,
+      "line": 256,
       "enclosing": "clearProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
+      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
       "semanticReview": {
         "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Fourteen combined OAuth/Vercel local tests pass; new real delayed-mirror/other-owner/reconnect test awaits execution. Primitive actor provenance, one-use PKCE/expiry, concurrent refresh/save/revoke and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
@@ -8365,7 +8402,7 @@
       }
     },
     {
-      "id": "6f510ef0f75ba531a11a",
+      "id": "7207c97e58311f511e34",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
       "line": 64,
       "enclosing": "basicAuthHeader",
@@ -8373,7 +8410,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9d423376a702c32f13edb190c4e3ed9eb3078db683bd2681a0dc1e91d19393a9",
+      "sourceSha256": "c7a813b166a1c776c431249b5ca9ce85d6ea233a95f1b45de0cd8978c6d95d47",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -8390,7 +8427,7 @@
       }
     },
     {
-      "id": "f45175fbfa5aaa6bb06c",
+      "id": "79b81f6d5bafe2a2bce3",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
       "line": 81,
       "enclosing": "buildSupabaseAuthorizeUrl",
@@ -8398,7 +8435,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9d423376a702c32f13edb190c4e3ed9eb3078db683bd2681a0dc1e91d19393a9",
+      "sourceSha256": "c7a813b166a1c776c431249b5ca9ce85d6ea233a95f1b45de0cd8978c6d95d47",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -8415,15 +8452,15 @@
       }
     },
     {
-      "id": "bf172f37bc468905d080",
+      "id": "7a3589c5283c3d4e539f",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 252,
+      "line": 253,
       "enclosing": "parseOAuthState",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9d423376a702c32f13edb190c4e3ed9eb3078db683bd2681a0dc1e91d19393a9",
+      "sourceSha256": "c7a813b166a1c776c431249b5ca9ce85d6ea233a95f1b45de0cd8978c6d95d47",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
