@@ -21,7 +21,7 @@ const connect = async()=>{const db=new pg.Client({connectionString:url.href,ssl:
 async function apply(db,names,phase) {
   for (const file of names) {
     try { await db.query(readFileSync(join(root,'supabase/migrations',file),'utf8')); }
-    catch (error) { evidence.failure={phase,file,sqlState:error.code ?? 'unknown'};save();throw new Error(`Full migration history failed: ${phase}/${file}, SQLSTATE ${error.code ?? 'unknown'}`); }
+    catch (error) { evidence.failure={phase,file,sqlState:error.code ?? 'unknown',position:error.position ?? null};save();throw new Error(`Full migration history failed: ${phase}/${file}, SQLSTATE ${error.code ?? 'unknown'}, position ${error.position ?? 'unknown'}`); }
     evidence.applied.push({phase,file}); save();
   }
 }

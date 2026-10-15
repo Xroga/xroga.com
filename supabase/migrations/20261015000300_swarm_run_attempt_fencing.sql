@@ -32,7 +32,7 @@ BEGIN
   IF current_run.status = 'running' THEN
     IF current_run.worker_id IS DISTINCT FROM p_worker_id
        OR (next_status = 'running' AND next_sequence = current_run.last_sequence)
-       OR next_iteration <> COALESCE(current_run.iteration_count,0) + CASE WHEN next_status = 'running' THEN 0 ELSE 1 END
+       OR next_iteration <> COALESCE(current_run.iteration_count,0) + (CASE WHEN next_status = 'running' THEN 0 ELSE 1 END)
     THEN RETURN FALSE; END IF;
   ELSIF current_run.status = 'error' THEN
     -- Preserve the established late-error enrichment contract, within this attempt only.
