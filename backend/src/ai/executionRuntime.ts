@@ -5,7 +5,7 @@ import { applyDeletes, applyPatches, buildFileTrail } from './patches.js';
 import type { ModelId } from './models.js';
 import { createTenantContext } from '../security/tenantContext.js';
 import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
-import { persistOwnedExecutionState } from '../security/ownedRunPersistence.js';
+import { requireAdmittedRunAttempt, type AdmittedRunAttempt } from './runStore.js';
 import type { IntelligentRoutePlan } from './intelligentRouter.js';
 import { MODELS } from './models.js';
 
@@ -166,7 +166,11 @@ export class InMemoryExecutionStateStore implements ExecutionStateStore {
 }
 
 export class SupabaseExecutionStateStore implements ExecutionStateStore {
-  constructor(private readonly userId: string) {}
+  private readonly attempt?: AdmittedRunAttempt;
+  private writes: Promise<void> = Promise.resolve();
+  constructor(private readonly userId: string, attempt?: AdmittedRunAttempt) {
+    this.attempt = attempt ? requireAdmittedRunAttempt(attempt) : undefined;
+  }
 
   async load(runId: string): Promise<CanonicalExecutionState | null> {
     const context=createTenantContext({userId:this.userId,via:'persisted_owner'});
@@ -176,17 +180,32 @@ export class SupabaseExecutionStateStore implements ExecutionStateStore {
   }
 
   async save(state: CanonicalExecutionState): Promise<void> {
+    const attempt = this.attempt;
+    if (!attempt || attempt.userId !== this.userId || attempt.runId !== state.runId) {
+      throw Object.assign(new Error('Execution checkpoint authority is missing.'), { code: 'RUN_STATE_CONFLICT' });
+    }
+    requireAdmittedRunAttempt(attempt);
+    state = structuredClone(state);
+    const pending = this.writes.then(() => this.saveSnapshot(state, attempt));
+    // A failed write poisons this attempt's queue. Later writes cannot mask it.
+    this.writes = pending;
+    void pending.catch(() => {});
+    await pending;
+  }
+
+  private async saveSnapshot(state: CanonicalExecutionState, attempt: AdmittedRunAttempt): Promise<void> {
     const terminal = state.tasks.every((task) => ['completed', 'blocked', 'failed', 'cancelled'].includes(task.status));
     const hasFailure = state.tasks.some((task) => task.status === 'failed');
     const hasBlocked = state.tasks.some((task) => task.status === 'blocked');
     const hasComplete = state.tasks.some((task) => task.status === 'completed');
     const status = !terminal ? 'running' : hasFailure && !hasComplete ? 'failed' : hasBlocked ? (hasComplete ? 'partially_completed' : 'blocked') : 'completed';
     const context=createTenantContext({userId:this.userId,via:'persisted_owner'});
-    await persistOwnedExecutionState(getTenantSupabaseAdmin(context),context,{
-      run_id: state.runId, user_id: this.userId, project_id: state.projectId,
-      repository_identity: state.repository, selected_branch: state.selectedBranch,
-      starting_commit_sha: state.startingCommitSha, state, status, updated_at: state.updatedAt,
+    const { data, error } = await getTenantSupabaseAdmin(context).rpc('persist_execution_checkpoint_attempt', {
+      p_run_id: state.runId, p_owner_id: this.userId, p_worker_id: attempt.workerId,
+      p_generation: attempt.generation, p_state: state, p_status: status,
     });
+    if (error) throw Object.assign(new Error('Execution checkpoint persistence is unavailable.'), { code: 'RESOURCE_ACCESS_UNAVAILABLE' });
+    if (data !== true) throw Object.assign(new Error('Execution checkpoint is no longer authoritative.'), { code: 'RUN_STATE_CONFLICT' });
   }
 }
 
@@ -202,6 +221,7 @@ export function restoreOwnerBoundExecutionState(row:unknown,userId:string,runId:
 
 export function createCanonicalExecutionState(input: {
   projectId: string;
+  databaseProjectId?: string | null;
   runId?: string;
   repository?: CanonicalExecutionState['repository'];
   selectedBranch?: string;
@@ -213,6 +233,7 @@ export function createCanonicalExecutionState(input: {
   const now = new Date().toISOString();
   return {
     projectId: input.projectId,
+    ...(input.databaseProjectId !== undefined ? { databaseProjectId: input.databaseProjectId } : {}),
     runId: input.runId ?? randomUUID(),
     repository: input.repository ?? null,
     selectedBranch: input.selectedBranch ?? 'main',

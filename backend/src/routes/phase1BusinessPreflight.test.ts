@@ -30,6 +30,7 @@ test('ambiguous confirmation messages never select or execute a latest action ac
   process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-only';
   const original = globalThis.fetch;
   const calls: string[] = [];
+  let missingUsage = false;
   const app = express(); app.use(express.json());
   app.use((req, _res, next) => { (req as AuthRequest).userId = '11111111-1111-4111-8111-111111111111'; next(); });
   app.use(router); app.use((_req, res) => res.status(418).json({ semanticPlanner: true }));
@@ -43,7 +44,9 @@ test('ambiguous confirmation messages never select or execute a latest action ac
     assert.equal(url.origin, process.env.SUPABASE_URL, 'No provider/paid model calls');
     assert.equal(init?.method ?? 'GET', 'GET', 'No state changes');
     assert.ok(!url.pathname.includes('business_action_confirmations'), 'No latest-row selection');
-    return Response.json([]);
+    return Response.json(missingUsage ? null : { user_id: '11111111-1111-4111-8111-111111111111', plan_tier: 'free',
+      plan_budget_usd: 1.65, quota_period_start: `${new Date().toISOString().slice(0, 7)}-01`,
+      input_tokens: 0, output_tokens: 0, spent_usd: 0, rollover_usd: 0, model_usage: {} });
   };
   const plan = (message: string, conversationId: string) => fetch(`${base}/plan`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -58,6 +61,8 @@ test('ambiguous confirmation messages never select or execute a latest action ac
       assert.doesNotMatch(body.directResponse, /Done|completed|already cancelled/);
     }
     assert.equal((await plan('Build a scheduling interface', 'ordinary')).status, 418);
+    missingUsage = true;
+    assert.equal((await plan('Confirm it', 'missing-usage')).status, 503);
     assert.ok(calls.every(call => !call.includes('business_action_confirmations')));
     assert.ok(calls.every(call => call.startsWith(`GET ${process.env.SUPABASE_URL}/rest/v1/`)));
   } finally {

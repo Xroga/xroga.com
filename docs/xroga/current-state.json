@@ -274,7 +274,7 @@
       ],
       "callers": [
         "backend/src/ai/compileValidate.test.ts:9",
-        "backend/src/ai/pipeline.ts:204"
+        "backend/src/ai/pipeline.ts:205"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2082,7 +2082,7 @@
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.test.ts:12",
-        "backend/src/ai/pipeline.ts:230",
+        "backend/src/ai/pipeline.ts:231",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:34",
         "backend/src/synthesis/universalEntrypoint.ts:88"
       ],
@@ -2368,7 +2368,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutcomeRoutingMemory.test.ts:8",
-        "backend/src/ai/pipeline.ts:229",
+        "backend/src/ai/pipeline.ts:230",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:29",
         "backend/src/synthesis/universalEntrypoint.ts:83"
       ],
@@ -2512,7 +2512,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:231",
+        "backend/src/ai/pipeline.ts:232",
         "backend/src/ai/step7LearningStrategy.test.ts:21",
         "backend/src/synthesis/productIntelligence.ts:18",
         "backend/src/synthesis/universalFlow.ts:24"
@@ -2568,7 +2568,7 @@
       ],
       "callers": [
         "backend/src/ai/buildStreamNarrator.test.ts:3",
-        "backend/src/ai/pipeline.ts:95"
+        "backend/src/ai/pipeline.ts:96"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2985,7 +2985,7 @@
       "callers": [
         "backend/src/ai/compileBlockerMessage.ts:3",
         "backend/src/ai/compileValidate.test.ts:3",
-        "backend/src/ai/pipeline.ts:199",
+        "backend/src/ai/pipeline.ts:200",
         "backend/src/ai/validationVerdict.ts:3",
         "backend/src/sandbox/sandboxIsolation.test.ts:11"
       ],
@@ -3062,7 +3062,7 @@
       ],
       "callers": [
         "backend/src/ai/contextPreparation.test.ts:3",
-        "backend/src/ai/pipeline.ts:233",
+        "backend/src/ai/pipeline.ts:234",
         "backend/src/ai/repositoryTools.ts:23",
         "backend/src/synthesis/coherentImplementation.ts:12"
       ],
@@ -3302,7 +3302,7 @@
       ],
       "callers": [
         "backend/src/ai/engineeringTasks.test.ts:3",
-        "backend/src/ai/pipeline.ts:246"
+        "backend/src/ai/pipeline.ts:247"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3331,7 +3331,7 @@
       "id": "surface:370916abf23ea75d609b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/executionRuntime.ts",
-      "sha256": "5205ba30975ba7302b500d5fdbe6b810532151a5d2f7af3b5e2a975a5760d03c",
+      "sha256": "502c07ade36c1844d3d76849ff3d469ef0388cb687eb02c4b091a76e2cf6f82a",
       "symbols": [
         "CanonicalExecutionState",
         "CanonicalMutationService",
@@ -3352,6 +3352,7 @@
         "ValidationRecord",
         "abortOnRunCancel",
         "appliedPatches",
+        "attempt",
         "batch",
         "before",
         "blocked",
@@ -3386,6 +3387,7 @@
         "operation",
         "operationPath",
         "path",
+        "pending",
         "persistedTaskFailure",
         "previous",
         "promise",
@@ -3413,19 +3415,19 @@
       ],
       "imports": [
         "../lib/truthfulExecution.js",
-        "../security/ownedRunPersistence.js",
         "../security/serviceRoleGuard.js",
         "../security/tenantContext.js",
         "./intelligentRouter.js",
         "./models.js",
         "./patches.js",
+        "./runStore.js",
         "crypto"
       ],
       "runtimeImports": [
         "backend/src/ai/models.ts",
         "backend/src/ai/patches.ts",
+        "backend/src/ai/runStore.ts",
         "backend/src/lib/truthfulExecution.ts",
-        "backend/src/security/ownedRunPersistence.ts",
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts"
       ],
@@ -3436,10 +3438,12 @@
         "backend/src/ai/blackBoxExecution.test.ts:6",
         "backend/src/ai/engineeringRoles.test.ts:16",
         "backend/src/ai/engineeringTasks.test.ts:4",
+        "backend/src/ai/executionRuntime.attempt.test.ts:4",
         "backend/src/ai/executionRuntime.owner.test.ts:3",
         "backend/src/ai/executionRuntime.test.ts:3",
-        "backend/src/ai/pipeline.ts:234",
+        "backend/src/ai/pipeline.ts:235",
         "backend/src/hardening/launchHardening.test.ts:47",
+        "backend/src/security/executionCheckpointAttempt.local.integration.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:18",
         "backend/src/synthesis/foundation.fixture.test.ts:3",
         "backend/src/synthesis/foundation.ts:3",
@@ -3457,7 +3461,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/executionRuntime.ts:173 (user_id)"
+        "backend/src/ai/executionRuntime.ts:177 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -3471,9 +3475,11 @@
         "backend/src/ai/blackBoxExecution.test.ts",
         "backend/src/ai/engineeringRoles.test.ts",
         "backend/src/ai/engineeringTasks.test.ts",
+        "backend/src/ai/executionRuntime.attempt.test.ts",
         "backend/src/ai/executionRuntime.owner.test.ts",
         "backend/src/ai/executionRuntime.test.ts",
         "backend/src/hardening/launchHardening.test.ts",
+        "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/dynamicPlanning.test.ts",
         "backend/src/synthesis/foundation.fixture.test.ts",
@@ -3529,7 +3535,7 @@
       ],
       "callers": [
         "backend/src/ai/fileSelector.test.ts:3",
-        "backend/src/ai/pipeline.ts:184"
+        "backend/src/ai/pipeline.ts:185"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3569,7 +3575,7 @@
       ],
       "callers": [
         "backend/src/ai/githubShippingPlan.test.ts:3",
-        "backend/src/ai/pipeline.ts:214"
+        "backend/src/ai/pipeline.ts:215"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3716,7 +3722,7 @@
         "backend/src/ai/blackBoxExecution.test.ts:4",
         "backend/src/ai/executionRuntime.test.ts:13",
         "backend/src/ai/intelligentRouter.test.ts:3",
-        "backend/src/ai/pipeline.ts:220",
+        "backend/src/ai/pipeline.ts:221",
         "backend/src/routes/capabilities.ts:22"
       ],
       "reachable": true,
@@ -3962,7 +3968,7 @@
       ],
       "callers": [
         "backend/src/ai/legacyBuilderAdapter.test.ts:3",
-        "backend/src/ai/pipeline.ts:87"
+        "backend/src/ai/pipeline.ts:88"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4247,7 +4253,7 @@
         "backend/src/ai/executionRuntime.test.ts:14",
         "backend/src/ai/intelligentRouter.test.ts:10",
         "backend/src/ai/intelligentRouter.ts:3",
-        "backend/src/ai/pipeline.ts:232",
+        "backend/src/ai/pipeline.ts:233",
         "backend/src/ai/providerPolicy.test.ts:330",
         "backend/src/ai/providerPolicy.test.ts:389",
         "backend/src/ai/providerPolicy.test.ts:468",
@@ -4892,7 +4898,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "fe7f3ad02c37fc679d299d9b17d7b14dcd030bca4b949ee7ce397beb0b5de82a",
+      "sha256": "57fabfb9d31efb4c2bce74e27df97efa3c7f5c5aabe00370f45a1a10f53fee30",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -5521,7 +5527,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:100",
+        "backend/src/ai/pipeline.ts:101",
         "backend/src/ai/progressHeartbeat.test.ts:3"
       ],
       "reachable": true,
@@ -5607,7 +5613,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:185",
+        "backend/src/ai/pipeline.ts:186",
         "backend/src/ai/projectMemoryCommit.test.ts:4",
         "backend/src/ai/repoSummarize.ts:26"
       ],
@@ -6132,7 +6138,7 @@
         "backend/src/ai/blackBoxExecution.test.ts:7",
         "backend/src/ai/modelCapabilityRegistry.ts:4",
         "backend/src/ai/openaiCompat.ts:10",
-        "backend/src/ai/pipeline.ts:225",
+        "backend/src/ai/pipeline.ts:226",
         "backend/src/ai/providerBudget.ts:4",
         "backend/src/ai/providerHealthStore.test.ts:9",
         "backend/src/ai/providerRuntime.test.ts:3",
@@ -6269,10 +6275,11 @@
       "id": "surface:4f4e874ab49e2fbcd255",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/quota.ts",
-      "sha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "sha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
       "symbols": [
         "MemRow",
         "UsageSnapshot",
+        "amount",
         "assertCanUseModel",
         "assertHasQuota",
         "budget",
@@ -6283,8 +6290,10 @@
         "creditTotal",
         "d",
         "def",
+        "durable",
         "err",
         "getUsage",
+        "input",
         "inputUsed",
         "key",
         "m",
@@ -6292,8 +6301,12 @@
         "memKey",
         "memUsage",
         "modelBudgetRemaining",
+        "modelInput",
+        "modelOutput",
         "modelUsed",
-        "mu",
+        "models",
+        "number",
+        "output",
         "outputUsed",
         "percentCreditUsed",
         "percentUsed",
@@ -6304,32 +6317,30 @@
         "poolRole",
         "poolRoleFor",
         "prev",
-        "prevBudget",
-        "prevRollover",
-        "prevSpent",
         "publicId",
         "quotaError",
+        "readUsageRow",
         "recordUsage",
-        "resolvePlanTier",
         "role",
+        "rollover",
         "rolloverUsd",
         "roundUsd",
-        "rowPeriod",
-        "samePeriod",
+        "row",
         "spent",
         "spentUsd",
         "start",
         "supabase",
         "syncPlanBudget",
-        "tier",
         "totalLimit",
         "totalModelUsed",
         "totalRemaining",
         "totalUsed",
+        "unavailable",
         "usage",
         "usageToTokenUsage",
         "usedIn",
-        "usedOut"
+        "usedOut",
+        "value"
       ],
       "imports": [
         "../config/plans.js",
@@ -6346,11 +6357,13 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:58",
+        "backend/src/ai/quota.failure.test.ts:3",
         "backend/src/ai/quota.test.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:19",
         "backend/src/ai/universal/semanticRequestPlanner.ts:23",
         "backend/src/routes/phase1.ts:17",
         "backend/src/routes/phase1BusinessPreflight.ts:3",
+        "backend/src/security/quotaEvidence.local.integration.ts:5",
         "backend/src/services/BillingService.ts:9",
         "backend/src/services/integrations/businessAction.ts:15",
         "backend/src/services/integrations/businessRead.ts:11"
@@ -6362,8 +6375,7 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/quota.ts:170 (user_id)",
-        "backend/src/ai/quota.ts:195 (user_id)"
+        "backend/src/ai/quota.ts:182 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [
@@ -6374,13 +6386,14 @@
         "backend/src/ai/quota.ts#getApiBudgetUsd",
         "backend/src/ai/quota.ts#modelBudgetRemaining",
         "backend/src/ai/quota.ts#planBudgetUsd",
-        "backend/src/ai/quota.ts#prevBudget",
         "backend/src/ai/quota.ts#quotaError",
         "backend/src/ai/quota.ts#syncPlanBudget"
       ],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/ai/quota.test.ts"
+        "backend/src/ai/quota.failure.test.ts",
+        "backend/src/ai/quota.test.ts",
+        "backend/src/security/quotaEvidence.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -6421,7 +6434,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:192"
+        "backend/src/ai/pipeline.ts:193"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -6794,7 +6807,7 @@
         "backend/src/ai/black-hole/router.ts:47",
         "backend/src/ai/buildOutcomeMemory.ts:5",
         "backend/src/ai/intelligentRouter.ts:11",
-        "backend/src/ai/pipeline.ts:228",
+        "backend/src/ai/pipeline.ts:229",
         "backend/src/ai/routingPersistence.test.ts:3"
       ],
       "reachable": true,
@@ -6885,8 +6898,9 @@
       "id": "surface:ec198557da445d2b1385",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "sha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "symbols": [
+        "AdmittedRunAttempt",
         "MAX_EVENTS_PER_RUN",
         "MAX_PER_USER",
         "RUN_HEARTBEAT_MS",
@@ -6896,12 +6910,14 @@
         "active",
         "activeRunIds",
         "appendRunEvent",
+        "attempt",
         "attemptGenerations",
         "attemptScope",
         "cancelledAt",
         "cancelledOutput",
         "canonicalOutput",
         "canonicalPrompt",
+        "captureAdmittedRunAttempt",
         "claim",
         "claimLocalRun",
         "codedError",
@@ -6930,6 +6946,7 @@
         "id",
         "ids",
         "isRunCancellationRequested",
+        "issuedRunAttempts",
         "iterationCount",
         "latest",
         "list",
@@ -6956,6 +6973,7 @@
         "releaseLocalRun",
         "rememberTerminalOutcome",
         "requestRunCancellation",
+        "requireAdmittedRunAttempt",
         "resumeRunDurable",
         "resumed",
         "row",
@@ -6998,6 +7016,8 @@
       "callers": [
         "backend/src/ai/artifactDurability.test.ts:5",
         "backend/src/ai/conversationPersist.test.ts:3",
+        "backend/src/ai/executionRuntime.attempt.test.ts:5",
+        "backend/src/ai/executionRuntime.ts:8",
         "backend/src/ai/failRun.test.ts:4",
         "backend/src/ai/pipeline.ts:81",
         "backend/src/ai/runReconciler.test.ts:12",
@@ -7016,6 +7036,7 @@
         "backend/src/routes/swarm.notificationAuthority.test.ts:6",
         "backend/src/routes/swarm.ts:14",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:8",
+        "backend/src/security/executionCheckpointAttempt.local.integration.ts:8",
         "backend/src/security/tenantIsolation.integration.test.ts:13",
         "backend/src/security/tenantIsolation.local.integration.ts:32",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:16"
@@ -7030,12 +7051,12 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/runStore.ts:113 (user_id)",
-        "backend/src/ai/runStore.ts:464 (user_id)",
-        "backend/src/ai/runStore.ts:780 (user_id)",
-        "backend/src/ai/runStore.ts:882 (user_id)",
-        "backend/src/ai/runStore.ts:1170 (user_id)",
-        "backend/src/ai/runStore.ts:1315 (user_id)"
+        "backend/src/ai/runStore.ts:136 (user_id)",
+        "backend/src/ai/runStore.ts:487 (user_id)",
+        "backend/src/ai/runStore.ts:803 (user_id)",
+        "backend/src/ai/runStore.ts:905 (user_id)",
+        "backend/src/ai/runStore.ts:1193 (user_id)",
+        "backend/src/ai/runStore.ts:1338 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -7048,6 +7069,7 @@
       "testCoverage": [
         "backend/src/ai/artifactDurability.test.ts",
         "backend/src/ai/conversationPersist.test.ts",
+        "backend/src/ai/executionRuntime.attempt.test.ts",
         "backend/src/ai/failRun.test.ts",
         "backend/src/ai/runReconciler.test.ts",
         "backend/src/ai/runStore.authority.test.ts",
@@ -7061,6 +7083,7 @@
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts",
         "backend/src/routes/swarm.notificationAuthority.test.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+        "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/reliability/step7cReliability.test.ts"
@@ -7097,7 +7120,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:210"
+        "backend/src/ai/pipeline.ts:211"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -7143,7 +7166,7 @@
       ],
       "callers": [
         "backend/src/ai/benchmarkExecutor.ts:29",
-        "backend/src/ai/pipeline.ts:193",
+        "backend/src/ai/pipeline.ts:194",
         "backend/src/ai/securityScan.test.ts:3",
         "backend/src/synthesis/coherentImplementation.ts:13"
       ],
@@ -7202,7 +7225,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:205"
+        "backend/src/ai/pipeline.ts:206"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -7254,7 +7277,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:213",
+        "backend/src/ai/pipeline.ts:214",
         "backend/src/ai/shipOutcome.test.ts:3"
       ],
       "reachable": true,
@@ -8703,7 +8726,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:255",
+        "backend/src/ai/pipeline.ts:256",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:19",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:45"
       ],
@@ -9168,7 +9191,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:88",
+        "backend/src/ai/pipeline.ts:89",
         "backend/src/ai/startupProgress.test.ts:3"
       ],
       "reachable": true,
@@ -9237,7 +9260,7 @@
       ],
       "callers": [
         "backend/src/ai/htmlTruncation.test.ts:4",
-        "backend/src/ai/pipeline.ts:194",
+        "backend/src/ai/pipeline.ts:195",
         "backend/src/ai/qa.ts:3",
         "backend/src/ai/securityScan.test.ts:4"
       ],
@@ -9660,7 +9683,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
-        "backend/src/ai/pipeline.ts:151",
+        "backend/src/ai/pipeline.ts:152",
         "backend/src/ai/universal/goalContract.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:21",
         "backend/src/ai/universal/semanticRequestPlanner.ts:37",
@@ -9856,7 +9879,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:152",
+        "backend/src/ai/pipeline.ts:153",
         "backend/src/ai/universal/capabilityReadiness.test.ts:4",
         "backend/src/ai/universal/semanticRequestPlanner.ts:50",
         "backend/src/lib/xrogaCapabilities.ts:1"
@@ -9907,7 +9930,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:149",
+        "backend/src/ai/pipeline.ts:150",
         "backend/src/ai/universal/resumeProjectContext.test.ts:4",
         "backend/src/ai/universal/universalContracts.test.ts:7",
         "backend/src/synthesis/universalEntrypoint.ts:106"
@@ -10014,7 +10037,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:153",
+        "backend/src/ai/pipeline.ts:154",
         "backend/src/ai/providerRuntime.ts:8",
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.ts:54",
@@ -10254,7 +10277,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:154",
+        "backend/src/ai/pipeline.ts:155",
         "backend/src/ai/universal/capabilityReadiness.test.ts:5",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:12",
@@ -10289,6 +10312,50 @@
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:084f5dd8a0e62e481535",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/usageAccounting.ts",
+      "sha256": "c1b6b050622cfa76e1daf090d78007da8d29afcaad6fd6ab5cad223292b97e68",
+      "symbols": [
+        "UsageAccountingInput",
+        "UsageAccountingReceipt",
+        "db",
+        "expected",
+        "persistUsageAccounting",
+        "unavailable"
+      ],
+      "imports": [
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js"
+      ],
+      "runtimeImports": [
+        "backend/src/security/serviceRoleGuard.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/ai/usageAccounting.test.ts:3"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/ai/usageAccounting.ts#UsageAccountingReceipt"
+      ],
+      "testCoverage": [
+        "backend/src/ai/usageAccounting.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -10376,7 +10443,7 @@
       ],
       "callers": [
         "backend/src/ai/intentReasoning.ts:25",
-        "backend/src/ai/pipeline.ts:245",
+        "backend/src/ai/pipeline.ts:246",
         "backend/src/ai/previewNotVerified.test.ts:21",
         "backend/src/ai/verificationLifecycle.test.ts:12"
       ],
@@ -11640,7 +11707,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:150",
+        "backend/src/ai/pipeline.ts:151",
         "backend/src/ai/softwareAgent/agentV2LaunchGate.test.ts:9",
         "backend/src/config/universalAgentFlags.test.ts:12",
         "backend/src/synthesis/browserGateVerification.test.ts:18",
@@ -13604,7 +13671,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:226",
+        "backend/src/ai/pipeline.ts:227",
         "backend/src/lib/adaptiveEngine.test.ts:7"
       ],
       "reachable": true,
@@ -13979,7 +14046,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:211"
+        "backend/src/ai/pipeline.ts:212"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -14239,7 +14306,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:2",
         "backend/src/ai/blackBoxExecution.test.ts:3",
         "backend/src/ai/intelligentRouter.ts:9",
-        "backend/src/ai/pipeline.ts:227",
+        "backend/src/ai/pipeline.ts:228",
         "backend/src/ai/router.ts:5",
         "backend/src/lib/adaptiveOrchestrator.ts:30",
         "backend/src/lib/taskClassifier.test.ts:3"
@@ -14301,7 +14368,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:5",
         "backend/src/ai/executionRuntime.ts:2",
         "backend/src/ai/parallelWeb.ts:2",
-        "backend/src/ai/pipeline.ts:215",
+        "backend/src/ai/pipeline.ts:216",
         "backend/src/ai/research.ts:3",
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:47",
         "backend/src/ai/softwareAgent/xrogaTools.ts:5",
@@ -14853,6 +14920,7 @@
         "backend/src/routes/admin.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/github.settings.test.ts",
+        "backend/src/routes/phase1.quota.test.ts",
         "backend/src/routes/phase1BusinessPreflight.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
         "backend/src/routes/projects.creation.test.ts",
@@ -18640,7 +18708,7 @@
       "id": "surface:ab58061e67cd2f877ad4",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "sha256": "c92debf25ae1ca9634658bee52b5eafc0b69501cc6f9dc927b0de4493ebc2102",
+      "sha256": "4bfbc1d8eec9c4e146da3d76344e05a1c29e8950153b1cd8f2cd451e70d7989a",
       "symbols": [
         "ToolUiConnectionCandidate",
         "ToolUiDescriptor",
@@ -18733,7 +18801,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:27"
+        "backend/src/index.ts:27",
+        "backend/src/routes/phase1.quota.test.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18764,7 +18833,9 @@
         "backend/src/routes/phase1.ts#projectEvidence",
         "backend/src/routes/phase1.ts#selectRepositoryChatEvidence"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/routes/phase1.quota.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -20555,7 +20626,6 @@
       "callers": [
         "backend/src/ai/buildOutcomeMemory.test.ts:13",
         "backend/src/ai/buildOutcomeMemory.ts:3",
-        "backend/src/ai/executionRuntime.ts:8",
         "backend/src/ai/runStore.ts:12",
         "backend/src/ai/runTrace.ts:7",
         "backend/src/security/ownedRunPersistence.test.ts:4",
@@ -20591,11 +20661,13 @@
       "id": "surface:0dddf537042ea36631e9",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/ownedTerminalPersistence.ts",
-      "sha256": "32c010ffa61272f6f164cb9d9c2ec58148a297b6bf2086f55f48584aa446fe92",
+      "sha256": "137e8e16b217933c3f5381bb1f09d2483c829ec3870e80ca0228b0b16bebef0f",
       "symbols": [
         "allowedMetadata",
         "insertion",
         "persistOwnedTerminal",
+        "projected",
+        "receipt",
         "scope"
       ],
       "imports": [
@@ -20612,7 +20684,8 @@
       ],
       "callers": [
         "backend/src/routes/terminalSessions.ts:17",
-        "backend/src/security/ownedTerminalPersistence.test.ts:5"
+        "backend/src/security/ownedTerminalPersistence.test.ts:5",
+        "backend/src/security/terminalIdentity.local.integration.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -20623,13 +20696,16 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/security/ownedTerminalPersistence.ts:15 (user_id)"
+        "backend/src/security/ownedTerminalPersistence.ts:19 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/security/ownedTerminalPersistence.ts#receipt"
+      ],
       "testCoverage": [
-        "backend/src/security/ownedTerminalPersistence.test.ts"
+        "backend/src/security/ownedTerminalPersistence.test.ts",
+        "backend/src/security/terminalIdentity.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -20724,6 +20800,7 @@
         "backend/src/ai/executionRuntime.ts:7",
         "backend/src/ai/providerHealthStore.ts:29",
         "backend/src/ai/runReconciler.ts:1",
+        "backend/src/ai/usageAccounting.ts:1",
         "backend/src/index.ts:55",
         "backend/src/middleware/admin.ts:2",
         "backend/src/routes/admin.ts:2",
@@ -20796,6 +20873,7 @@
         "backend/src/ai/executionRuntime.ts:6",
         "backend/src/ai/runStore.ts:11",
         "backend/src/ai/runTrace.ts:6",
+        "backend/src/ai/usageAccounting.test.ts:4",
         "backend/src/middleware/admin.ts:3",
         "backend/src/middleware/auth.ts:4",
         "backend/src/routes/admin.test.ts:5",
@@ -20829,6 +20907,7 @@
         "backend/src/security/tenantContext.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:15",
         "backend/src/security/tenantIsolation.local.integration.ts:8",
+        "backend/src/security/terminalIdentity.local.integration.ts:5",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:8",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:5",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:8",
@@ -20872,6 +20951,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/buildOutcomeMemory.test.ts",
+        "backend/src/ai/usageAccounting.test.ts",
         "backend/src/routes/admin.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
@@ -20888,6 +20968,7 @@
         "backend/src/security/tenantContext.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/terminalIdentity.local.integration.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
@@ -22076,7 +22157,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:156",
+        "backend/src/ai/pipeline.ts:157",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.ts:58",
         "backend/src/routes/github.settings.test.ts:17",
@@ -22512,7 +22593,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:101",
+        "backend/src/ai/pipeline.ts:102",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:17",
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts:1",
         "backend/src/routes/github.ts:370",
@@ -23148,8 +23229,8 @@
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:7",
-        "backend/src/services/integrations/supabaseProvision.ts:546",
-        "backend/src/services/integrations/userProviderKeys.ts:882"
+        "backend/src/services/integrations/supabaseProvision.ts:536",
+        "backend/src/services/integrations/userProviderKeys.ts:880"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23198,10 +23279,49 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:a14676fcb2ab6a68fd0d",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/supabaseProjectUrl.ts",
+      "sha256": "286363bca51c4baa4c58215174038e9207b596afe7fb687ac5c09324cd52736e",
+      "symbols": [
+        "match",
+        "projectRefFromUrl",
+        "url"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/services/integrations/supabaseProvision.ts:19",
+        "backend/src/services/integrations/supabaseProvision.ts:20",
+        "backend/src/services/integrations/userProviderKeys.supabaseHost.test.ts:4",
+        "backend/src/services/integrations/userProviderKeys.ts:14"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/userProviderKeys.supabaseHost.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:20b164dcdac7e7fd299f",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/supabaseProvision.ts",
-      "sha256": "1bc213464352ee8f766c1484e6b829b3a6ab67897454b9b4cb2695a7ef88f752",
+      "sha256": "1edb71ab5819aad28ac87a65bffb4639569a68e1c6e444300eba08efb283ba8c",
       "symbols": [
         "MGMT",
         "MgmtProject",
@@ -23231,7 +23351,6 @@
         "keys",
         "lastError",
         "listSupabaseProjects",
-        "m",
         "memorySql",
         "method",
         "mgmtFetch",
@@ -23244,7 +23363,6 @@
         "ports",
         "pred",
         "prepareSupabaseWriteAdmissions",
-        "projectRefFromUrl",
         "provision",
         "provisionUserSupabase",
         "ref",
@@ -23259,26 +23377,27 @@
         "storageSql",
         "supabase",
         "text",
-        "url",
         "user",
         "userSupabaseMemoryReady"
       ],
       "imports": [
         "./supabaseAuth.js",
+        "./supabaseProjectUrl.js",
         "./userProviderKeys.js",
         "@supabase/supabase-js",
         "pg"
       ],
       "runtimeImports": [
         "backend/src/services/integrations/supabaseAuth.ts",
+        "backend/src/services/integrations/supabaseProjectUrl.ts",
         "backend/src/services/integrations/userProviderKeys.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3771",
         "backend/src/ai/pipeline.ts:3777",
+        "backend/src/ai/pipeline.ts:3783",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/routes/integrations.ts:226",
@@ -23290,8 +23409,8 @@
         "backend/src/security/tenantIsolation.local.integration.ts:42",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
-        "backend/src/services/integrations/userProviderKeys.ts:950",
-        "backend/src/services/integrations/userProviderKeys.ts:959"
+        "backend/src/services/integrations/userProviderKeys.ts:990",
+        "backend/src/services/integrations/userProviderKeys.ts:999"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -23326,7 +23445,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -23384,6 +23503,7 @@
         "issuedWriteAdmissions",
         "iv",
         "k",
+        "key",
         "keyStoragePath",
         "keys",
         "lines",
@@ -23400,6 +23520,7 @@
         "now",
         "oauthConnected",
         "offset",
+        "omitted",
         "out",
         "p",
         "page",
@@ -23407,9 +23528,13 @@
         "parsed",
         "parts",
         "pat",
+        "payload",
         "plain",
         "prepareUserProviderKeyWrite",
         "prepared",
+        "prior",
+        "priorUrl",
+        "projectRef",
         "provider",
         "providerCatalog",
         "providerRow",
@@ -23450,6 +23575,7 @@
         "./credentialStorageBucket.js",
         "./githubTokenStore.js",
         "./supabaseAuth.js",
+        "./supabaseProjectUrl.js",
         "./supabaseProvision.js",
         "crypto"
       ],
@@ -23460,14 +23586,15 @@
         "backend/src/services/integrations/credentialStorageBucket.ts",
         "backend/src/services/integrations/githubTokenStore.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
+        "backend/src/services/integrations/supabaseProjectUrl.ts",
         "backend/src/services/integrations/supabaseProvision.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:113",
-        "backend/src/ai/pipeline.ts:3770",
+        "backend/src/ai/pipeline.ts:114",
+        "backend/src/ai/pipeline.ts:3776",
         "backend/src/routes/integrations.ts:16",
         "backend/src/routes/integrations.ts:638",
         "backend/src/routes/publish.ts:12",
@@ -23481,6 +23608,7 @@
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:5",
         "backend/src/services/integrations/userProviderKeys.revocation.test.ts:4",
+        "backend/src/services/integrations/userProviderKeys.supabaseHost.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.test.ts:4",
         "backend/src/services/publish/chromeWebStore.ts:13",
         "backend/src/services/publish/easCredentials.ts:6",
@@ -23500,12 +23628,13 @@
         "backend/src/services/integrations/userProviderKeys.ts#oauthConnected"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/userProviderKeys.ts:64 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:432 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:487 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:644 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:665 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:688 (user_id)"
+        "backend/src/services/integrations/userProviderKeys.ts:65 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:425 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:480 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:637 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:658 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:681 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:956 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -23518,6 +23647,7 @@
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts",
         "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+        "backend/src/services/integrations/userProviderKeys.supabaseHost.test.ts",
         "backend/src/services/integrations/userProviderKeys.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -23653,7 +23783,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:112",
+        "backend/src/ai/pipeline.ts:113",
         "backend/src/lib/platformReady.ts:7",
         "backend/src/routes/integrations.ts:27",
         "backend/src/routes/supabaseOAuth.ts:35",
@@ -24017,7 +24147,7 @@
       ],
       "callers": [
         "backend/src/ai/builderScaffoldFallback.test.ts:3",
-        "backend/src/ai/pipeline.ts:118",
+        "backend/src/ai/pipeline.ts:119",
         "backend/src/routes/github.ts:559",
         "backend/src/routes/swarm.ts:10",
         "backend/src/routes/vercel.ts:21",
@@ -24117,7 +24247,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:173",
+        "backend/src/ai/pipeline.ts:174",
         "backend/src/routes/publish.ts:210",
         "backend/src/routes/publish.ts:252",
         "backend/src/routes/publish.ts:289",
@@ -24234,7 +24364,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:175",
+        "backend/src/ai/pipeline.ts:176",
         "backend/src/routes/publish.ts:171",
         "backend/src/routes/publish.ts:316",
         "backend/src/routes/publish.ts:337",
@@ -24322,7 +24452,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:168",
+        "backend/src/ai/pipeline.ts:169",
         "backend/src/routes/publish.ts:61",
         "backend/src/routes/publish.ts:8",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:9",
@@ -24393,7 +24523,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:174",
+        "backend/src/ai/pipeline.ts:175",
         "backend/src/routes/publish.ts:361"
       ],
       "reachable": true,
@@ -24482,7 +24612,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:162"
+        "backend/src/ai/pipeline.ts:163"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -24788,7 +24918,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:157",
+        "backend/src/ai/pipeline.ts:158",
         "backend/src/services/projectScaffold.ts:11",
         "backend/src/services/projectScaffold.ts:5",
         "backend/src/services/scaffolds/nextjsScaffold.ts:3",
@@ -25104,7 +25234,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:182",
+        "backend/src/ai/pipeline.ts:183",
         "backend/src/services/publish/nonWebShip.ts:11",
         "backend/src/services/scaffolds/scaffolds.test.ts:8",
         "backend/src/synthesis/delivery/projectDelivery.ts:9"
@@ -25155,7 +25285,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:183",
+        "backend/src/ai/pipeline.ts:184",
         "backend/src/services/scaffolds/scaffoldIntegrity.test.ts:3"
       ],
       "reachable": true,
@@ -26817,7 +26947,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:142",
+        "backend/src/ai/pipeline.ts:143",
         "backend/src/routes/delivery.ts:17",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:25",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:24"
@@ -27148,7 +27278,7 @@
       "id": "surface:2cfcea6475fa8a836f50",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/foundation.ts",
-      "sha256": "dabea357b044f35999fa0a6f79141e8bb10816d9a020738093929975ced43949",
+      "sha256": "46e29fa311b3f208e7dcb15b3db6c4554d7259f1851be79261b952990f3e9723",
       "symbols": [
         "UniversalSynthesisArtifacts",
         "UniversalSynthesisResult",
@@ -27204,7 +27334,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:247",
+        "backend/src/ai/executionRuntime.attempt.test.ts:6",
+        "backend/src/ai/pipeline.ts:248",
         "backend/src/synthesis/foundation.fixture.test.ts:4"
       ],
       "reachable": true,
@@ -27225,6 +27356,7 @@
         "backend/src/synthesis/foundation.ts#verificationPlan"
       ],
       "testCoverage": [
+        "backend/src/ai/executionRuntime.attempt.test.ts",
         "backend/src/synthesis/foundation.fixture.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -28118,7 +28250,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:145",
+        "backend/src/ai/pipeline.ts:146",
         "backend/src/routes/projectRuntime.ts:16",
         "backend/src/synthesis/livePreview/agentBridge.ts:39",
         "backend/src/synthesis/livePreview/index.ts:9"
@@ -28726,7 +28858,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:89",
+        "backend/src/ai/pipeline.ts:90",
         "backend/src/synthesis/productBlueprints.test.ts:3"
       ],
       "reachable": true,
@@ -29106,7 +29238,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:130",
+        "backend/src/ai/pipeline.ts:131",
         "backend/src/synthesis/canonicalFoundation.test.ts:13",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:16",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:40",
@@ -29710,7 +29842,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:138",
+        "backend/src/ai/pipeline.ts:139",
         "backend/src/security/tenantIsolation.local.integration.ts:16",
         "backend/src/synthesis/livePreview/store.ts:8",
         "backend/src/synthesis/projectRuntime/index.ts:3",
@@ -29855,7 +29987,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:241",
+        "backend/src/ai/pipeline.ts:242",
         "backend/src/synthesis/reliability/canonicalResume.test.ts:9",
         "backend/src/synthesis/universalCanonicalTasks.ts:47"
       ],
@@ -31246,7 +31378,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:135",
+        "backend/src/ai/pipeline.ts:136",
         "backend/src/synthesis/canonicalFoundation.test.ts:18",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:20",
         "backend/src/synthesis/livePreview/agentBridge.ts:31",
@@ -31472,7 +31604,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:155",
+        "backend/src/ai/pipeline.ts:156",
         "backend/src/synthesis/universalCommit.test.ts:3"
       ],
       "reachable": true,
@@ -31589,7 +31721,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:129",
+        "backend/src/ai/pipeline.ts:130",
         "backend/src/ai/providerPolicy.test.ts:19",
         "backend/src/synthesis/universalEntrypoint.test.ts:14"
       ],
@@ -32111,7 +32243,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:125",
+        "backend/src/ai/pipeline.ts:126",
         "backend/src/synthesis/universalShadow.test.ts:13"
       ],
       "reachable": true,
@@ -88996,7 +89128,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:ee1378b35b071890e191",
+      "id": "registration:a4bba6047095ef8271dc",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 1992,
       "receiver": "router",
@@ -89008,7 +89140,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:8d8c2c199b7a035dfaca",
+      "id": "registration:3ce1d0e7496798893422",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2063,
       "receiver": "router",
@@ -89020,7 +89152,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7bb9a7b612951da54c7b",
+      "id": "registration:2ec67277eeefc33d4581",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2122,
       "receiver": "router",
@@ -89032,7 +89164,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:3e1fecb9645e8b205322",
+      "id": "registration:caeb746faf553b20405b",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2147,
       "receiver": "router",
@@ -89044,7 +89176,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:1567d3a9c970865c787f",
+      "id": "registration:6b1a3880852d6c2b1c53",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2169,
       "receiver": "router",
@@ -90425,8 +90557,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:2cc1a593b413eecfcb9f",
-      "registrationId": "registration:ee1378b35b071890e191",
+      "id": "route:fc2a249833b12af7504e",
+      "registrationId": "registration:a4bba6047095ef8271dc",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 1992,
       "method": "GET",
@@ -90442,8 +90574,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:983a0c3e14ee2b8930a3",
-      "registrationId": "registration:8d8c2c199b7a035dfaca",
+      "id": "route:ea93efd8386ec7d9dd99",
+      "registrationId": "registration:3ce1d0e7496798893422",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2063,
       "method": "GET",
@@ -90459,8 +90591,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3f54a6306734530da079",
-      "registrationId": "registration:7bb9a7b612951da54c7b",
+      "id": "route:f17700158ca6b16f4b7a",
+      "registrationId": "registration:2ec67277eeefc33d4581",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2122,
       "method": "POST",
@@ -90476,8 +90608,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:60e6b936b9ed59de46cf",
-      "registrationId": "registration:3e1fecb9645e8b205322",
+      "id": "route:f24d047ac532748a0f3e",
+      "registrationId": "registration:caeb746faf553b20405b",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2147,
       "method": "GET",
@@ -90493,8 +90625,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:d2665c2e15698726f9a9",
-      "registrationId": "registration:1567d3a9c970865c787f",
+      "id": "route:706bf08c5ac596267b3e",
+      "registrationId": "registration:6b1a3880852d6c2b1c53",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2169,
       "method": "GET",
@@ -93741,9 +93873,9 @@
   ],
   "scheduledJobs": [
     {
-      "id": "schedule:be14e0d937c0929a7ca8",
+      "id": "schedule:f323a195bdf183642fb2",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "line": 164,
+      "line": 187,
       "kind": "setInterval",
       "symbol": "claimLocalRun",
       "reachable": true,
@@ -94504,6 +94636,20 @@
       "version": "20261016000900",
       "order": 82,
       "sha256": "09cebde93616fd9806179fe2a6bea68d1ae88c675623f51c895d15f6d988eb77"
+    },
+    {
+      "id": "migration:d8317976b8f26b9f61a8",
+      "sourcePath": "supabase/migrations/20261016001000_execution_checkpoint_attempt.sql",
+      "version": "20261016001000",
+      "order": 83,
+      "sha256": "66de5ad5185dcba29f9158739cf4d1fd98f1a1098a4ae259b1ec943f0a7339ad"
+    },
+    {
+      "id": "migration:23097cdb9c1ae1055b8b",
+      "sourcePath": "supabase/migrations/20261016001100_atomic_usage_accounting.sql",
+      "version": "20261016001100",
+      "order": 84,
+      "sha256": "e1f30b40e279f75d008be5f495fcd184273291d1a8b8f41afd607870aefdfbec"
     }
   ],
   "workflows": [
@@ -94732,9 +94878,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:db2ad0ecf2b808be892e",
+      "id": "finding:d532c10884942591130b",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "line": 750,
+      "line": 773,
       "kind": "STUB",
       "reachable": true,
       "state": "PARTIAL",
@@ -101226,6 +101372,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:341c621f3dfbc50a335c",
+      "sourcePath": "backend/src/ai/executionRuntime.attempt.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:602a22dfaf676b38c4fa",
       "sourcePath": "backend/src/ai/executionRuntime.owner.test.ts",
       "declaredTests": 2,
@@ -101453,6 +101606,13 @@
       "id": "test-suite:56b998547d903f28f982",
       "sourcePath": "backend/src/ai/qa.test.ts",
       "declaredTests": 21,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c975afc47bfbc079d578",
+      "sourcePath": "backend/src/ai/quota.failure.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101775,6 +101935,13 @@
       "id": "test-suite:54e6848515c48696b593",
       "sourcePath": "backend/src/ai/universalCostMigration.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:14e11a546d8b5ab42639",
+      "sourcePath": "backend/src/ai/usageAccounting.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102103,6 +102270,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:2b4578a4ca5fc3a449cc",
+      "sourcePath": "backend/src/routes/phase1.quota.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:bb1a3a635e9b70d6b649",
       "sourcePath": "backend/src/routes/phase1BusinessPreflight.test.ts",
       "declaredTests": 3,
@@ -102264,6 +102438,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:640551d38883d98b1bdc",
+      "sourcePath": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:b366c5010a557ccca622",
       "sourcePath": "backend/src/security/growthReferral.local.integration.ts",
       "declaredTests": 1,
@@ -102294,7 +102475,7 @@
     {
       "id": "test-suite:8724e58d19769f71c1bb",
       "sourcePath": "backend/src/security/ownedTerminalPersistence.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102323,6 +102504,13 @@
       "id": "test-suite:e317bdcc8525180a373a",
       "sourcePath": "backend/src/security/providerKeyRevision.local.integration.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c4b9a156fadcf139dfee",
+      "sourcePath": "backend/src/security/quotaEvidence.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102358,6 +102546,20 @@
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
       "declaredTests": 67,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:f6e8f9bf3ae1d7321b00",
+      "sourcePath": "backend/src/security/terminalIdentity.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:afee1b52b046b94f940e",
+      "sourcePath": "backend/src/security/usageAccounting.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102553,6 +102755,13 @@
     {
       "id": "test-suite:45f726e2bb311b278c0d",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e80004c2abc337e82b58",
+      "sourcePath": "backend/src/services/integrations/userProviderKeys.supabaseHost.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

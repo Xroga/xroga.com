@@ -29,7 +29,7 @@ import { clearGitHubConnection, getGitHubToken, saveGitHubConnection, saveGitHub
 import { clearVercelConnection, getVercelToken, saveVercelConnection } from '../services/integrations/vercelAuth.js';
 import { clearPkceSession, clearProviderToken, consumePkceSession, loadProviderToken, storePkceSession, storeProviderToken } from '../services/integrations/oauthPkceStore.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
-import { createRunDurable, getRun, activeRunIds, resumeRunDurable, withRunAttempt, appendRunEvent, persistRunState } from '../ai/runStore.js';
+import { captureAdmittedRunAttempt, createRunDurable, getRun, activeRunIds, resumeRunDurable, withRunAttempt, appendRunEvent, persistRunState } from '../ai/runStore.js';
 import { GrowthService } from '../growth/growthService.js';
 import { storeProjectFile } from '../services/storage/projectFiles.js';
 import { ownedFile } from '../services/storage/privateFileDelivery.js';
@@ -46,6 +46,10 @@ import { registerBuildOutcomeAttemptTests } from './buildOutcomeAttempt.local.in
 import { registerProjectCreationTests } from './projectCreation.local.integration.js';
 import { registerProfileDeletionTests } from './profileDeletion.local.integration.js';
 import { registerGrowthReferralTests } from './growthReferral.local.integration.js';
+import { registerTerminalIdentityTests } from './terminalIdentity.local.integration.js';
+import { registerExecutionCheckpointAttemptTests } from './executionCheckpointAttempt.local.integration.js';
+import { registerQuotaEvidenceTests } from './quotaEvidence.local.integration.js';
+import { registerUsageAccountingTests } from './usageAccounting.local.integration.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -57,6 +61,10 @@ registerBuildOutcomeAttemptTests(admin, () => users);
 registerProjectCreationTests(admin, () => users);
 registerProfileDeletionTests(admin);
 registerGrowthReferralTests(admin, () => users);
+registerTerminalIdentityTests(admin, () => users);
+registerExecutionCheckpointAttemptTests(admin, () => users);
+registerQuotaEvidenceTests(admin);
+registerUsageAccountingTests(admin);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }
@@ -339,10 +347,14 @@ test('real run persistence concurrent collision never transfers the durable owne
 });
 
 test('canonical execution store denies foreign overwrite and corrupt resume state against real database',async()=>{
-  const [owner,other]=users,foreignStore=new SupabaseExecutionStateStore(other.id),ownStore=new SupabaseExecutionStateStore(owner.id),runId=randomUUID();
+  const admittedStore=async(user:{id:string},id:string)=>withRunAttempt(async()=>{
+    await createRunDurable(user.id,'Synthetic checkpoint fixture',id);
+    return new SupabaseExecutionStateStore(user.id,captureAdmittedRunAttempt(id,user.id));
+  });
+  const [owner,other]=users,runId=randomUUID(),foreignStore=await admittedStore(other,runId),ownStore=new SupabaseExecutionStateStore(owner.id);
   const state=createCanonicalExecutionState({runId,projectId:other.project,files:[{path:'private.txt',content:'FOREIGN_EXECUTION_STATE_CANARY'}]});
   await foreignStore.save(state);
-  await assert.rejects(ownStore.save(createCanonicalExecutionState({runId,projectId:owner.project})),{status:404});
+  await assert.rejects(ownStore.save(createCanonicalExecutionState({runId,projectId:owner.project})),{code:'RUN_STATE_CONFLICT'});
   assert.equal(await ownStore.load(runId),null);
   const preserved=await foreignStore.load(runId);assert.ok(JSON.stringify(preserved).includes('FOREIGN_EXECUTION_STATE_CANARY'));
   for(const mutation of [{runId:randomUUID()},{projectId:owner.project}]) {
@@ -351,9 +363,10 @@ test('canonical execution store denies foreign overwrite and corrupt resume stat
   }
   assert.equal((await admin.from('execution_runs').update({state}).eq('run_id',runId)).error,null);
   const collision=randomUUID();
-  const outcomes=await Promise.allSettled(users.map(user=>new SupabaseExecutionStateStore(user.id).save(createCanonicalExecutionState({runId:collision,projectId:user.project}))));
+  const winner=await admittedStore(owner,collision);
+  const outcomes=await Promise.allSettled([winner.save(createCanonicalExecutionState({runId:collision,projectId:owner.project})),new SupabaseExecutionStateStore(other.id).save(createCanonicalExecutionState({runId:collision,projectId:other.project}))]);
   assert.equal(outcomes.filter(result=>result.status==='fulfilled').length,1);
-  const actual=await admin.from('execution_runs').select('user_id').eq('run_id',collision).single();assert.equal(actual.error,null);assert.ok(users.some(user=>user.id===actual.data?.user_id));
+  const actual=await admin.from('execution_runs').select('user_id').eq('run_id',collision).single();assert.equal(actual.error,null);assert.equal(actual.data?.user_id,owner.id);
 });
 
 test('real universal spec and plan collision cannot transfer ownership or reference a foreign parent',async()=>{

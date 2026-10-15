@@ -142,6 +142,7 @@ function evidence(kind: string, summary: string, value: unknown): ExecutionEvide
 export async function runUniversalSynthesisFoundation(input: {
   prompt: string;
   projectId: string;
+  databaseProjectId?: string | null;
   runId: string;
   files: ProjectFile[];
   store: ExecutionStateStore;
@@ -155,6 +156,7 @@ export async function runUniversalSynthesisFoundation(input: {
     input.existingState ??
     createCanonicalExecutionState({
       projectId: input.projectId,
+      databaseProjectId: input.databaseProjectId,
       runId: input.runId,
       repository: input.repository,
       selectedBranch: input.selectedBranch,

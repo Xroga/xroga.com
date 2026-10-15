@@ -11,6 +11,7 @@ import { requireTenantContext, type TenantContext } from '../../security/tenantC
 import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { isMissingTableError } from './githubTokenStore.js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
+import { projectRefFromUrl } from './supabaseProjectUrl.js';
 
 const PROVIDER_PREFIX = 'apikey_';
 const KEY_BUCKET = 'xroga-github-tokens';
@@ -368,15 +369,7 @@ export async function saveUserProviderKey(
   if (trimmed.length > 48_000) throw new Error('Credential too long (max ~48KB)');
 
   if (p === 'supabase_url') {
-    let parsed: URL;
-    try {
-      parsed = new URL(trimmed);
-    } catch {
-      throw new Error('Supabase URL must be a valid https URL (e.g. https://xxxx.supabase.co)');
-    }
-    if (parsed.protocol !== 'https:') {
-      throw new Error('Supabase URL must use https://');
-    }
+    if (!projectRefFromUrl(trimmed)) throw new Error('Supabase URL must be a hosted https://PROJECT.supabase.co origin.');
   }
 
   const envVar = envVarForProvider(p, opts?.envVarName);
@@ -728,6 +721,11 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
     const plain = row.access_token ? decryptApiKey(row.access_token) : null;
     if (plain && varName) out[varName] = plain;
   }
+  // Validate the final map too, including historical values and custom env
+  // overrides. Generated server clients send the retained service key here.
+  if (out.NEXT_PUBLIC_SUPABASE_URL && !projectRefFromUrl(out.NEXT_PUBLIC_SUPABASE_URL)) {
+    throw new Error('Supabase deploy URL is not a verified hosted project origin. Reconnect before syncing credentials.');
+  }
   return out;
 }
 
@@ -930,6 +928,20 @@ export async function connectUserSupabase(
     serviceRoleKey: input.serviceRoleKey?.trim(), accessToken: input.accessToken?.trim(),
     dbPassword: input.dbPassword?.trim(), projectName: input.projectName,
   };
+  const projectRef = projectRefFromUrl(input.projectUrl);
+  if (!projectRef) throw new Error('Supabase URL must be a hosted https://PROJECT.supabase.co origin.');
+  // Legacy JWT claims are only a negative mismatch check, not verified identity.
+  // Opaque publishable/secret formats remain supported.
+  for (const key of [input.anonKey, input.serviceRoleKey]) {
+    if (!key || key.split('.').length !== 3) continue;
+    let payload: unknown;
+    try { payload = JSON.parse(Buffer.from(key.split('.')[1]!, 'base64url').toString('utf8')); }
+    catch { continue; }
+    if (payload && typeof payload === 'object' && 'ref' in payload
+      && (payload as { ref: unknown }).ref !== projectRef) {
+      throw new Error('Supabase credential project does not match the supplied URL.');
+    }
+  }
   const entries: Array<[string, string]> = [
     ['supabase_url', input.projectUrl], ['supabase_anon', input.anonKey],
   ];
@@ -937,6 +949,34 @@ export async function connectUserSupabase(
   if (input.accessToken) entries.push(['supabase_pat', input.accessToken]);
   if (input.dbPassword) entries.push(['supabase_db_password', input.dbPassword]);
   const admissions = await Promise.all(entries.map(([provider]) => prepareUserProviderKeyWrite(userId, provider)));
+  const omitted = [!input.serviceRoleKey && 'apikey_supabase', !input.dbPassword && 'apikey_supabase_db_password']
+    .filter((provider): provider is string => Boolean(provider));
+  if (omitted.length) {
+    const providers = ['apikey_supabase_url', ...omitted];
+    const { data, error } = await getTenantSupabaseAdmin(context).from('user_integrations')
+      .select('user_id,provider,access_token,metadata,credential_revision')
+      .eq('user_id', userId).in('provider', providers);
+    if (error || !Array.isArray(data) || data.some(row => !row || row.user_id !== userId
+      || !providers.includes(row.provider) || typeof row.access_token !== 'string'
+      || typeof row.credential_revision !== 'string')
+      || new Set(data.map(row => row.provider)).size !== data.length) {
+      throw new Error('Existing Supabase connection could not be verified. Retry before changing projects.');
+    }
+    const prior = data.find(row => row.provider === 'apikey_supabase_url');
+    if (!prior || prior.credential_revision !== issuedWriteAdmissions.get(admissions[0]!)?.revision) {
+      throw Object.assign(new Error('Supabase connection changed. Retry explicitly.'), { code: 'CREDENTIAL_WRITE_CONFLICT' });
+    }
+    const priorUrl = prior.metadata?.revoked === true || !prior.access_token ? null : decryptApiKey(prior.access_token);
+    if (prior.access_token && prior.metadata?.revoked !== true && !priorUrl) {
+      throw new Error('Existing Supabase connection could not be verified. Retry before changing projects.');
+    }
+    if (projectRefFromUrl(priorUrl ?? '') !== projectRef
+      && data.some(row => omitted.includes(row.provider) && row.access_token && row.metadata?.revoked !== true)) {
+      throw new Error('Disconnect the existing Supabase project before reconnecting with omitted service credentials or database password.');
+    }
+    // This guard covers authoritative active rows, not absent-row legacy mirrors
+    // or concurrent changes across independently versioned credential rows.
+  }
   const saved: UserProviderKeyStatus[] = [];
   for (const [index, [provider, value]] of entries.entries()) {
     saved.push(await saveUserProviderKey(userId, provider, value, { writeAdmission: admissions[index] }));

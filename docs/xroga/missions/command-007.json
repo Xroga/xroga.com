@@ -10,6 +10,19 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "supabase/migrations/20261016001000_execution_checkpoint_attempt.sql",
+    "supabase/migrations/20261016001100_atomic_usage_accounting.sql",
+    "backend/src/ai/executionRuntime.attempt.test.ts",
+    "backend/src/ai/quota.failure.test.ts",
+    "backend/src/routes/phase1.quota.test.ts",
+    "backend/src/ai/usageAccounting.ts",
+    "backend/src/ai/usageAccounting.test.ts",
+    "backend/src/security/executionCheckpointAttempt.local.integration.ts",
+    "backend/src/security/usageAccounting.local.integration.ts",
+    "backend/src/security/quotaEvidence.local.integration.ts",
+    "backend/src/security/terminalIdentity.local.integration.ts",
+    "backend/src/services/integrations/supabaseProjectUrl.ts",
+    "backend/src/services/integrations/userProviderKeys.supabaseHost.test.ts",
     "supabase/migrations/20261016000600_cancelled_build_outcome_receipt.sql",
     "supabase/migrations/20261016000700_atomic_project_creation.sql",
     "supabase/migrations/20261016000900_guard_growth_referral_event.sql",
@@ -273,6 +286,8 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
+      "supabase/migrations/20261016001000_execution_checkpoint_attempt.sql",
+      "supabase/migrations/20261016001100_atomic_usage_accounting.sql",
       "supabase/migrations/20261016000600_cancelled_build_outcome_receipt.sql",
       "supabase/migrations/20261016000700_atomic_project_creation.sql",
       "supabase/migrations/20261016000900_guard_growth_referral_event.sql",

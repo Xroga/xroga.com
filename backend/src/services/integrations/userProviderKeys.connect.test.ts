@@ -16,6 +16,7 @@ test('manual Supabase connection binds all writes before yielding and reports on
   const rows = new Map<string, Record<string, unknown>>();
   let prepares = 0, writes = 0, external = 0, io = 0, defer = true;
   let privateBucketAvailable = false;
+  let inventoryFailure = '';
   let release: () => void = () => {};
   let reached: () => void = () => {};
   const waiting = new Promise<void>(resolve => { reached = resolve; });
@@ -54,6 +55,14 @@ test('manual Supabase connection binds all writes before yielding and reports on
     }
     if (url.pathname === '/rest/v1/user_integrations') {
       const provider = url.searchParams.get('provider');
+      if (provider?.startsWith('in.')) {
+        if (inventoryFailure === 'outage') return reply({ message: 'synthetic unavailable' }, 503);
+        if (inventoryFailure === 'malformed') return reply({});
+        return reply([...revisions].filter(([name]) => provider.slice(4, -1).split(',').includes(name)).map(([name, revision]) => ({
+        user_id: context.userId, provider: name, access_token: '', metadata: { revoked: true },
+        ...rows.get(name), credential_revision: inventoryFailure === 'revision' ? randomUUID() : revision,
+      })));
+      }
       return reply(provider?.startsWith('like.') ? [...rows.values()] : []);
     }
     if (url.pathname === '/storage/v1/bucket') return reply([{ id: 'xroga-github-tokens', public: false }]);
@@ -66,6 +75,11 @@ test('manual Supabase connection binds all writes before yielding and reports on
       await assert.rejects(connectUserSupabase(forged as TenantContext, request));
     }
     assert.equal(io, 0);
+    const jwt = (ref: unknown) => `e30.${Buffer.from(JSON.stringify({ ref })).toString('base64url')}.signature`;
+    for (const field of ['anonKey', 'serviceRoleKey']) {
+      await assert.rejects(connectUserSupabase(context, { ...request, [field]: jwt('otherproject') }), /does not match/);
+    }
+    assert.equal(io, 0, 'Known legacy ref mismatches fail before admission');
     const pending = connectUserSupabase(context, request);
     const denied = assert.rejects(pending, { code: 'CREDENTIAL_WRITE_CONFLICT' });
     await waiting;
@@ -82,7 +96,7 @@ test('manual Supabase connection binds all writes before yielding and reports on
     assert.equal(failed.provision?.ok, false); assert.equal(failed.status.provisioned, false);
     assert.equal(failed.status.ready, true);
     rows.set('apikey_supabase_pat', { provider: 'apikey_supabase_pat', metadata: { provider: 'supabase_pat' } });
-    rows.set('apikey_supabase_db_password', { provider: 'apikey_supabase_db_password', metadata: { provider: 'supabase_db_password' } });
+    rows.set('apikey_supabase_db_password', { provider: 'apikey_supabase_db_password', access_token: 'synthetic-active-ciphertext', metadata: { provider: 'supabase_db_password' } });
     const status = await getUserSupabaseStatus(context.userId);
     assert.equal(status.provisioned, false); assert.equal(status.ready, true);
     assert.equal(status.hasAccessToken, true); assert.equal(status.hasDbPassword, true);
@@ -92,6 +106,24 @@ test('manual Supabase connection binds all writes before yielding and reports on
     assert.equal(storageOnly.provision?.ok, true);
     assert.equal(storageOnly.provision?.schemaApplied, false);
     assert.equal(storageOnly.status.provisioned, false, 'A private bucket alone does not prove schema provisioning');
+    const changing = { projectUrl: 'https://otherproject.supabase.co', anonKey: 'sb_publishable_synthetic_opaque' };
+    const beforeBlocked = writes;
+    await assert.rejects(connectUserSupabase(context, changing), /Disconnect the existing/);
+    assert.equal(writes, beforeBlocked, 'Omitted active service credential cannot carry into another project');
+    rows.delete('apikey_supabase');
+    await assert.rejects(connectUserSupabase(context, changing), /Disconnect the existing/);
+    assert.equal(writes, beforeBlocked, 'Omitted active database password cannot carry into another project');
+    rows.delete('apikey_supabase_db_password');
+    for (const failure of ['outage', 'malformed', 'revision']) {
+      inventoryFailure = failure;
+      await assert.rejects(connectUserSupabase(context, changing));
+      assert.equal(writes, beforeBlocked, 'Unverified or stale inventory cannot mutate the bundle');
+    }
+    inventoryFailure = '';
+    const patOnly = await connectUserSupabase(context, changing);
+    assert.equal(patOnly.status.hasAccessToken, true, 'Account-scoped PAT may remain without project-specific credentials');
+    assert.equal(patOnly.status.hasUrl, true);
+    await connectUserSupabase(context, { ...changing, anonKey: jwt('otherproject') });
   } finally {
     release(); globalThis.fetch = originalFetch;
     names.forEach((name, index) => { if (before[index] === undefined) delete process.env[name]; else process.env[name] = before[index]; });

@@ -54,15 +54,15 @@
   ],
   "additionalSpend": 0,
   "latestDisposable": {
-    "source": "f4b7acf478b2e47f179e0e49b14ee246bb4aed27",
-    "run": "38817558178",
+    "source": "5fa74cd4244b61736cccb076d073fcfdda469b1a",
+    "run": "38820218030",
     "result": "VERIFIED",
-    "migrations": 79,
-    "securityTests": 76,
+    "migrations": 82,
+    "securityTests": 83,
     "browserTests": 3,
     "failures": 0,
     "skips": 0,
-    "aggregate": "FAIL38817558285 and golden38817558129 from golden generated-contract drift. Canonical fixture correction and exact drift regression now prepared, not waived. This does not replace the last fully green baseline."
+    "aggregate": "PASS38820217998: branch5fa74cd4244b61736cccb076d073fcfdda469b1a and integratedab3884db29ad9458eddcdf6bc51b964c9e6fedab each passed21 stages twice, sourceTreeMutated=false. Previous f4b7acf4 aggregate38817558285 and golden38817558129 failed generated-contract drift, corrected at917e53ed without weakening12 blocked journeys."
   },
   "overnightEngineering": {
     "status": "IN PROGRESS",
@@ -79,7 +79,16 @@
     "resumeLineageAndHistory": "READY FOR CI: resumed repository/branch/root and separate database project UUID are bound to existing canonical JSON evidence before worker/provider IO. Unverifiable legacy UUID binding fails closed. History cannot replace admitted authority-bearing objects, non-admitted history still refreshes.19 focused tests plus extra history-refresh run pass. Canonical checkpoint save generation race remains open.",
     "growthReferralBoundary": "READY FOR CI: service requires existing exact tenant/project/referral attribution and insert/update trigger locks that same tuple through event commit.14 focused tests and tsc pass. Actual service-role denial and observed two-client removal race prepared. No qualification/reward implementation claimed.",
     "sourceSemantics": "32 families and203 historical records have source-specific planning ownership, not implementation certification. Eight specialized chain/hackathon owners remain unresolved,80 evidence-only records still lack original normative acceptance, and two private transcripts remain unanalyzed. All211 historical identities retained.22 mapping/private-source/golden tests pass. All12 product journeys remain BLOCKED with actual later mission owners.",
-    "integration": "f4b7acf4 disposable PASS79 migrations/76 security/3 browser/zero failures or skips. Aggregate failed golden generated-contract drift, fixed in917e53ed with8 regression tests and unchanged12 blocked journeys. New creation/cancellation/deletion/enumeration changes await final-source CI. Prior CI success is not final-source acceptance."
+    "integration": "5fa74cd4 disposable38820218030 PASS82 migrations/83 security/3 browser/zero failures or skips, all11 workflows pass. This verifies the preceding creation, cancellation, account-deletion, enumeration, manual-connect, resume-lineage and growth-referral changes described above as READY FOR CI. It does not certify their explicitly remaining limitations. Repeated branch/integrated38820217998 passes21 stages twice on each source with no mutation.",
+    "nextSource": {
+      "status": "IN PROGRESS",
+      "canonicalCheckpoint": "Issued attempt identity, serialized immutable saves and service-only parent-row-locked RPC bind canonical state to worker generation and immutable lineage. Database project identity is captured before first foundation checkpoint. Focused tests and18 local SQL assertions pass. Actual two-session disposable tests await this source's CI. Software-agent checkpoint and project-runtime writers remain separate open paths.",
+      "quota": "Missing, mismatched or malformed durable quota evidence fails503 instead of inventing a paid-plan allowance. Explicit zero budget remains zero. One owner snapshot supplies plan and usage.44 focused tests pass, dedicated real owner/foreign/missing-row fixtures prepared.",
+      "terminalIdentity": "Insert-only terminal identity cannot be changed by losing same-ID save. Exact returned ID and requested metadata validated.17 focused tests pass. Actual same-owner race/foreign-owner test prepared.",
+      "credentialDestination": "Strict existing Supabase project URL validation now applies at save and final deployment environment assembly, including historic/custom overrides. Manual project changes cannot retain omitted active database-backed service key or password.15 focused tests pass. Legacy Storage and concurrent multi-key bundle binding remain unresolved.",
+      "atomicUsagePreparation": "UNWIRED: receipt-deduplicated transaction reuses existing usage increment, role merge and ledger functions. Issued-context helper validates receipt. Focused helper tests pass, real concurrency/replay/role/rollover/four-stage rollback tests prepared. Provider consumers and uncertain-outcome retry handling remain unchanged, no Command008 acceptance claimed.",
+      "localVerification": "Backend suite before final manual-connect guard and unwired accounting additions:2923 tests,2905 pass,0 fail,18 policy-registered skips. Skip governance passes with0 focused tests. Later additions have focused tests.84 migrations parse. Final-source disposable and complete CI remain mandatory."
+    }
   },
   "replayCorrection": {
     "source": "470666cf",
@@ -108,7 +117,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:474 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:469 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -127,23 +136,23 @@
     "result": "PASS twice on both branch and integrated candidate"
   },
   "verifiedBaseline": {
-    "branch": "c22bd6a48d6fb263df5c228daf938b34dc254cbd",
-    "integrated": "13db522c149bbdd074fd05457091439778c0cd81",
-    "aggregateCi": "38815413051",
-    "isolatedCi": "38815412927",
+    "branch": "5fa74cd4244b61736cccb076d073fcfdda469b1a",
+    "integrated": "ab3884db29ad9458eddcdf6bc51b964c9e6fedab",
+    "aggregateCi": "38820217998",
+    "isolatedCi": "38820218030",
     "workflows": 11,
-    "securityTests": 70,
+    "securityTests": 83,
     "newSourceCertified": false
   },
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 161,
-    "persistenceCandidates": 672,
-    "ownerPredicateCandidates": 163,
+    "privilegedFactorySites": 162,
+    "persistenceCandidates": 676,
+    "ownerPredicateCandidates": 165,
     "reviewRequired": 0,
-    "reviewedCandidates": 672,
-    "unresolvedSafetyCandidates": 474,
+    "reviewedCandidates": 676,
+    "unresolvedSafetyCandidates": 469,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -224,22 +233,22 @@
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/runStore.ts": [
-          "cc8d4e13f30e23763e11",
-          "7546a027b39362b04539",
-          "8c4f8584687b0b9d3179",
-          "dbbbf253b87349d116cc",
-          "ebd0ebb2546faf7ebfed",
-          "cfd5423522a994aef22f",
-          "8b0c543bcc365cc645f6",
-          "34abfeab29977e827a60",
-          "887e6203c51c57e7514b",
-          "299680232da2cc3efb92",
-          "447d11ff3564d9f97762",
-          "f130012174b078c718d0",
-          "ca7a78a2b8a6fba2bdf3",
-          "96d9bd349fa2a2fe611a",
-          "f8051610fdb3fc9476f4",
-          "311ce557dc46d7d9b8e6"
+          "895a61d6a49f1cfdee31",
+          "50edc8bae8f27dacf910",
+          "a4bce2e2c16c58ec90ed",
+          "eeecad9a21d8290f2cd2",
+          "d870b789568c8679b1db",
+          "a761046ffcd795c11469",
+          "b6307e91cbe4456df72e",
+          "9068cc3c3a3d43572339",
+          "c15d549616080c99b045",
+          "8c10c4794ee82ad23d08",
+          "281fa5f0b0e2578a4413",
+          "802f509bd4e2869a5584",
+          "fbb883c6ec93bb927082",
+          "6f7915fc18e24fb190f7",
+          "6e8604e226f545e3bbda",
+          "1ab496a614183176fa46"
         ]
       }
     },
@@ -249,7 +258,7 @@
       "existingImplementation": "Existing OAuth, BYOK and credential mirrors",
       "missingBehavior": "Atomic save/revoke ordering, one-use PKCE, encrypted vault migration and KMS boundary",
       "acceptanceTest": "Wrong owner, revocation during read/write, replay, rotation and tampering",
-      "pendingCandidates": 82,
+      "pendingCandidates": 84,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/services/integrations/credentialStorageBucket.ts": [
@@ -307,31 +316,33 @@
           "f783a00232045d6275d4"
         ],
         "backend/src/services/integrations/userProviderKeys.ts": [
-          "4819922a0403fc594cdd",
-          "5213429e98f7fc9df25f",
-          "9b417af1f0c788f42d4a",
-          "93e3678aaedeaf18c92f",
-          "97290062c338a908477b",
-          "8b29d60d49882509ecdc",
-          "2ea546676d44df8b5742",
-          "054c117ff813bfc55a41",
-          "38b6fbcd90fe4d9c9119",
-          "b19c104abb6d3588b4bc",
-          "53cf9c487ef1d5efaa5a",
-          "1ecfbcb367a17ed0aba9",
-          "bfc98e57f029ac9dbc19",
-          "ace5433c4a82096b97e1",
-          "6276fda034423f620cf0",
-          "10222d80089b489fe6dd",
-          "d49a76bbfbbfc96e30b1",
-          "9826ba08eaba50847c90",
-          "4f759979342372ba9789",
-          "245ea1d83ae81aace6c0",
-          "cd9f21613ce7d59d01cb",
-          "25ae28ee257dc1fba403",
-          "c1534ebe7ac6192557e2",
-          "28b2096a40683f77b2ff",
-          "140d1bf9a1065ddf1fec"
+          "c3f2ca136ccab92884f3",
+          "8466decbcb9ca41d5da8",
+          "945c1743c499e90155c7",
+          "30c947b4c1a108a17b92",
+          "00329f071464b8e43b18",
+          "9dee422de25d294a7357",
+          "c5490d9431dfdae9ca6a",
+          "bfeadb5a70e55effa461",
+          "21518f375580ef1180b5",
+          "5a2c5a330fca8f01b555",
+          "c010ad005707c48970a3",
+          "8101f6b5d45ee21f3444",
+          "072164727ef0d532cc09",
+          "297b4c8d1563011de56a",
+          "3780da5aa30b6e36942a",
+          "d16d4eeb14983fcfb869",
+          "0b0467cdb1dddd4e822f",
+          "21c2281b6499e3e36fcf",
+          "bc9849a362989fd1be0f",
+          "a48719fc054d143422f5",
+          "c62406a2035c6f39b956",
+          "c7fb8eb6a9b01efcb56f",
+          "16e64917713c6190c707",
+          "6cc6ec56f502c38555cd",
+          "458c8f074a88f2ed9bef",
+          "789ab1a9efb91682ba59",
+          "a7b846b42a97d24c68a1"
         ],
         "backend/src/services/integrations/vercelAuth.ts": [
           "c47cd353f14ba5046be8",
@@ -510,7 +521,7 @@
       "existingImplementation": "Existing owner checks, project/file stores and runtime",
       "missingBehavior": "Inherited parent identity, durable receipt, revision and runtime ownership gaps",
       "acceptanceTest": "Wrong parent, orphan, stale revision, failed persistence and cross-tenant download",
-      "pendingCandidates": 88,
+      "pendingCandidates": 87,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/buildImprovementMemory.ts": [
@@ -531,9 +542,10 @@
           "51e187f3cd0b99673791"
         ],
         "backend/src/ai/executionRuntime.ts": [
-          "e0410bf09638cc267edc",
-          "a3a8ac60a6dac8cbc484",
-          "f0cd545f5abd1730f734"
+          "6cb302dec6a7d693df42",
+          "09b6dc142ebd7f16df10",
+          "4dc631d51c7697b2c46b",
+          "1ddfe4538b453a2ccc62"
         ],
         "backend/src/ai/projectMemory.ts": [
           "b5dbf612dd5fc0118e85",
@@ -555,9 +567,7 @@
           "a1602e2131ac55ae41f2",
           "b0fcef8a6524e67436e8",
           "3e189d48b17db98a088f",
-          "6b27c8a68d7fed4a22cb",
           "7305a5f03336a229a8ac",
-          "067d56d20f64c8e676b6",
           "99fbb1f3e5395b85b5b3",
           "e83d9ad87d86fa040e65",
           "3f1a0da9608e9aca5b55",
@@ -743,7 +753,7 @@
       "existingImplementation": "Existing services and source-bound register",
       "missingBehavior": "Inspect the exact remaining reason for each listed caller, grouping shared helpers",
       "acceptanceTest": "Per-caller negative verification proportional to risk",
-      "pendingCandidates": 83,
+      "pendingCandidates": 77,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/benchmarkRunner.ts": [
@@ -760,16 +770,14 @@
           "fe7e6e4fe911ed9a75e1"
         ],
         "backend/src/ai/quota.ts": [
-          "5e95bf6c7d0380725ccc",
-          "ef9bc4249b1f1a1ea138",
-          "3f7ebc2452934b91569a",
-          "08dbd05001850f04fcab",
-          "4553b62b15acf23253a8",
-          "1c0cb41d1b21e60ac90a",
-          "7d4f5462b76808bef4ac",
-          "c6d8629deea7c5578ce7",
-          "60f2bbea0da7d23af686",
-          "deaf2c316f526f91086e"
+          "52edc4559577671284c2",
+          "39d17e6c2a9120f50030",
+          "9c24629d02c4cc6ff46e",
+          "4e15e83fa030b0549a15",
+          "b6dc5487deaef7059310",
+          "c9e32ad98134083e4318",
+          "313209300bd6c30b4157",
+          "998fbd939f34507081d0"
         ],
         "backend/src/ai/routingOutcomes.ts": [
           "8c57a0debf51a7a340f8",
@@ -785,6 +793,10 @@
           "4a0e14dc44e602b5dd0b",
           "6670d6131fd79e76cc99",
           "a52351b1c608251b6bd5"
+        ],
+        "backend/src/ai/usageAccounting.ts": [
+          "8c7615ae94f3ecbfe8ed",
+          "224d992ddd99b8389fed"
         ],
         "backend/src/ai/webBudget.ts": [
           "6d55007bf3ddd2edc540",
@@ -810,13 +822,7 @@
           "b4f7c7e759ffc010fe2f"
         ],
         "backend/src/routes/profile.ts": [
-          "69348e841941208b2323",
-          "0d86495063002c4ecffb",
-          "5051a4856f4fe27770f4",
-          "7db18803d9573b2c4c27",
-          "f060c7afeb1437072a23",
-          "c63711764b566827ca55",
-          "385dc97c4ae6fabe7be9"
+          "f060c7afeb1437072a23"
         ],
         "backend/src/routes/terminalSessions.ts": [
           "353aa869f7c46574b7a6",
@@ -831,8 +837,8 @@
           "c9362c0020f645f8eada"
         ],
         "backend/src/security/ownedTerminalPersistence.ts": [
-          "23ebc46b462130d9105d",
-          "bcda9359b20948e1a38c"
+          "ca2e291f7b6ac805445e",
+          "aa68762dad5ac84c6092"
         ],
         "backend/src/security/serviceRoleGuard.ts": [
           "d84df34ff692e4fb31c1",
@@ -846,7 +852,7 @@
           "f2586952366ff60faf5e"
         ],
         "backend/src/services/integrations/supabaseProvision.ts": [
-          "206a86b695b9c00be8d6"
+          "48d9c36879473bfb6ecf"
         ],
         "backend/src/services/notificationService.ts": [
           "75cd82142cc716ceb6ad",

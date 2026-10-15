@@ -81,6 +81,7 @@ import { reviewBuildOutput } from './qa.js';
 import {
   completeRun,
   createRunDurable,
+  captureAdmittedRunAttempt,
   failRun,
   resumeRunDurable,
 } from './runStore.js';
@@ -1176,7 +1177,7 @@ export async function runBuildPipeline(opts: {
   emit({ ...startupProgress('accepted'), swarmTodos: todosForBuild('route', 'omit') });
 
   const metaRaw = parseClientMeta(opts.clientMeta);
-  const executionStore = process.env.SUPABASE_SERVICE_ROLE_KEY
+  let executionStore = process.env.SUPABASE_SERVICE_ROLE_KEY
     ? new SupabaseExecutionStateStore(opts.userId)
     : new InMemoryExecutionStateStore();
   // Check durable lineage before worker admission, repository IO or provider work.
@@ -1219,7 +1220,11 @@ if (
     userFacingPrompt,
     runId,
   );
-}  emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });
+}
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    executionStore = new SupabaseExecutionStateStore(opts.userId, captureAdmittedRunAttempt(runId, opts.userId));
+  }
+  emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });
   await assertHasQuota(opts.userId);
   throwIfAborted();
 
@@ -1422,6 +1427,7 @@ if (
       : await runUniversalSynthesisFoundation({
           prompt: opts.prompt,
           projectId: canonicalProjectId,
+          databaseProjectId: opts.projectId ?? null,
           runId,
           repository: meta?.githubTargetRepo
             ? {
@@ -1483,7 +1489,7 @@ if (
     return executionState;
   });
 
-  await executionStore.save(executionState).catch((error) => console.warn('[executionRuntime] initial persistence skipped:', (error as Error).message));
+  await executionStore.save(executionState);
   const route: RouteDecision = {
     ...baseRoute,
     builder: implementationTask?.selectedModel ?? baseRoute.builder,
@@ -3669,7 +3675,7 @@ publicationReason:
       blocker: qa.ok ? undefined : qa.issues.join('; '),
     });
   }
-  await executionStore.save(executionState).catch((error) => console.warn('[executionRuntime] validation persistence skipped:', (error as Error).message));
+  await executionStore.save(executionState);
 
   await recordRoutingOutcome({
     runId,

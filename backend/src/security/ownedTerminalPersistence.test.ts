@@ -18,7 +18,7 @@ test('terminal autosave snapshots owner, key and transcript before insertion awa
   const result=await persistOwnedTerminal(db,createTenantContext({userId:owner,via:'local_jwt'}),row,'id');
   assert.deepEqual(result.data,{id:'original'});
   assert.deepEqual(requests[0].body,{id:'original',user_id:owner,messages:[{content:'original'}]});
-  assert.deepEqual(requests[1].body,requests[0].body);
+  assert.deepEqual(requests[1].body,{messages:[{content:'original'}]});
   assert.equal(requests[1].url.searchParams.get('id'),'eq.original');
   assert.equal(requests[1].url.searchParams.get('user_id'),`eq.${owner}`);
 });
@@ -48,7 +48,24 @@ test('terminal writer refuses transcripts, wildcard projections and malformed re
     requests++;return new Response(JSON.stringify(init?.method==='PATCH'?'invalid-metadata':[]),{headers:{'Content-Type':'application/json'}});
   }}});
   const context=createTenantContext({userId:owner,via:'local_jwt'}),row={id:'terminal',user_id:owner};
-  for(const columns of ['*','messages','id,prompt',''])await assert.rejects(persistOwnedTerminal(db,context,row,columns),TenantAccessError);
+  for(const columns of ['*','messages','id,prompt','','title'])await assert.rejects(persistOwnedTerminal(db,context,row,columns),TenantAccessError);
   assert.equal(requests,0);
   await assert.rejects(persistOwnedTerminal(db,context,row,'id'),error=>error instanceof TenantAccessError&&error.status===503);
+});
+
+test('a losing initial autosave cannot relocate the winning session or replace its number and creation time',async()=>{
+  const original={id:'racing-terminal',user_id:owner,github_repo_name:'fixture/winner',terminal_number:3,created_at:'2026-01-01T00:00:00Z',messages:[{content:'winner'}]};
+  const contender={...original,github_repo_name:'fixture/contender',terminal_number:9,created_at:'2026-02-02T00:00:00Z',messages:[{content:'latest content'}]};
+  let stored=structuredClone(original),writes=0;
+  const db=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(input,init)=>{
+    const url=new URL(String(input));writes++;
+    if(init?.method==='POST')return Response.json([]); // The other insert won this conflict.
+    assert.equal(url.searchParams.get('id'),'eq.racing-terminal');assert.equal(url.searchParams.get('user_id'),`eq.${owner}`);
+    const patch=JSON.parse(String(init?.body));
+    for(const key of ['id','user_id','github_repo_name','terminal_number','created_at'])assert.equal(Object.hasOwn(patch,key),false);
+    stored={...stored,...patch};return Response.json({...stored,prompt:'PRIVATE_TRANSCRIPT_CANARY'});
+  }}});
+  const result=await persistOwnedTerminal(db,createTenantContext({userId:owner,via:'local_jwt'}),contender,'id,github_repo_name,terminal_number,created_at');
+  assert.equal(writes,2);assert.deepEqual(stored,{...original,messages:contender.messages});
+  assert.deepEqual(result.data,{id:original.id,github_repo_name:original.github_repo_name,terminal_number:3,created_at:original.created_at});
 });

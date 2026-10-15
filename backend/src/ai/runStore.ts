@@ -62,6 +62,29 @@ export function hasAdmittedRunAttempt(runId: string): boolean {
   return Boolean(record && record.id === runId && !pendingCreations.has(runId));
 }
 
+export interface AdmittedRunAttempt { readonly runId: string; readonly userId: string; readonly workerId: string; readonly generation: string }
+const issuedRunAttempts = new WeakSet<object>();
+
+export function requireAdmittedRunAttempt(attempt: AdmittedRunAttempt): AdmittedRunAttempt {
+  if (!attempt || !issuedRunAttempts.has(attempt)) {
+    throw Object.assign(new Error('Execution attempt authority was not issued.'), { code: 'RUN_STATE_CONFLICT' });
+  }
+  return attempt;
+}
+
+/** Capture authority once, never let a later callback borrow a resumed generation. */
+export function captureAdmittedRunAttempt(runId: string, userId: string): AdmittedRunAttempt {
+  const record = attemptScope.getStore()?.record;
+  const generation = record && attemptGenerations.get(record);
+  if (!record || runs.get(runId) !== record || record.id !== runId || record.userId !== userId ||
+      record.status !== 'running' || pendingCreations.has(runId) || !generation) {
+    throw Object.assign(new Error('Execution attempt authority is missing.'), { code: 'RUN_STATE_CONFLICT' });
+  }
+  const attempt = Object.freeze({ runId, userId, workerId: RUN_WORKER_ID, generation });
+  issuedRunAttempts.add(attempt);
+  return attempt;
+}
+
 function mutableAttempt(runId: string): SwarmRunRecord | undefined {
   const record = runs.get(runId);
   const scope = attemptScope.getStore();

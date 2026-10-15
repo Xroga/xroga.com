@@ -1,27 +1,27 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "d275b28f3e90209b30c81372c1b46c59c8ea6a8a2cfc57d2918981a74ab14307",
+  "reviewRegistrySha256": "81c54aaa6924c68db62e2c6a575db0857a675602fc1e7cd10965e4e34665d9f2",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 161,
-    "persistenceCandidates": 672,
-    "ownerPredicateCandidates": 163,
+    "privilegedFactorySites": 162,
+    "persistenceCandidates": 676,
+    "ownerPredicateCandidates": 165,
     "reviewRequired": 0,
-    "reviewedCandidates": 672,
-    "unresolvedSafetyCandidates": 474,
+    "reviewedCandidates": 676,
+    "unresolvedSafetyCandidates": 469,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 54,
+    "SCOPED_BOUNDARY": 62,
     "NARROW_EXCEPTION": 8,
-    "NOT_PERSISTENCE": 136,
-    "REVIEWED_GAP": 474
+    "NOT_PERSISTENCE": 137,
+    "REVIEWED_GAP": 469
   },
   "callers": [
     {
@@ -340,15 +340,15 @@
       }
     },
     {
-      "id": "e0410bf09638cc267edc",
+      "id": "6cb302dec6a7d693df42",
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 173,
+      "line": 177,
       "enclosing": "load",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "execution_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5205ba30975ba7302b500d5fdbe6b810532151a5d2f7af3b5e2a975a5760d03c",
+      "sourceSha256": "502c07ade36c1844d3d76849ff3d469ef0388cb687eb02c4b091a76e2cf6f82a",
       "semanticReview": {
         "authority": "SupabaseExecutionStateStore builds issued tenant context from its constructor userId. Load filters owner/run and restoreOwnerBoundExecutionState checks stored owner/run/project against embedded state. Save delegates owner-bound global-key persistence to the existing helper.",
         "reason": "Owner-bound row persistence and embedded consistency do not establish parent project/run authorization. Full constructor caller provenance, same-owner concurrency and lifecycle transition control remain unresolved. This record covers the persistence sites, not certification of the entire execution runtime.",
@@ -361,15 +361,15 @@
       }
     },
     {
-      "id": "a3a8ac60a6dac8cbc484",
+      "id": "09b6dc142ebd7f16df10",
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 173,
+      "line": 177,
       "enclosing": "load",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5205ba30975ba7302b500d5fdbe6b810532151a5d2f7af3b5e2a975a5760d03c",
+      "sourceSha256": "502c07ade36c1844d3d76849ff3d469ef0388cb687eb02c4b091a76e2cf6f82a",
       "semanticReview": {
         "authority": "SupabaseExecutionStateStore builds issued tenant context from its constructor userId. Load filters owner/run and restoreOwnerBoundExecutionState checks stored owner/run/project against embedded state. Save delegates owner-bound global-key persistence to the existing helper.",
         "reason": "Owner-bound row persistence and embedded consistency do not establish parent project/run authorization. Full constructor caller provenance, same-owner concurrency and lifecycle transition control remain unresolved. This record covers the persistence sites, not certification of the entire execution runtime.",
@@ -382,22 +382,43 @@
       }
     },
     {
-      "id": "f0cd545f5abd1730f734",
+      "id": "4dc631d51c7697b2c46b",
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 185,
-      "enclosing": "save",
+      "line": 203,
+      "enclosing": "saveSnapshot",
+      "kind": "RPC_CANDIDATE",
+      "target": "persist_execution_checkpoint_attempt",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "502c07ade36c1844d3d76849ff3d469ef0388cb687eb02c4b091a76e2cf6f82a",
+      "semanticReview": {
+        "authority": "Canonical checkpoint writes require an immutable issued descriptor captured from the current AsyncLocalStorage admitted worker. Service-only RPC locks existing swarm_runs and matches exact owner/run/worker/generation and running status, then preserves owner and project/repository/branch/database lineage. Required writes propagate errors without direct-table fallback.",
+        "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
+            "marker": "real checkpoint fence rejects wrong owner epoch lineage"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1ddfe4538b453a2ccc62",
+      "path": "backend/src/ai/executionRuntime.ts",
+      "line": 203,
+      "enclosing": "saveSnapshot",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5205ba30975ba7302b500d5fdbe6b810532151a5d2f7af3b5e2a975a5760d03c",
+      "sourceSha256": "502c07ade36c1844d3d76849ff3d469ef0388cb687eb02c4b091a76e2cf6f82a",
       "semanticReview": {
-        "authority": "SupabaseExecutionStateStore builds issued tenant context from its constructor userId. Load filters owner/run and restoreOwnerBoundExecutionState checks stored owner/run/project against embedded state. Save delegates owner-bound global-key persistence to the existing helper.",
-        "reason": "Owner-bound row persistence and embedded consistency do not establish parent project/run authorization. Full constructor caller provenance, same-owner concurrency and lifecycle transition control remain unresolved. This record covers the persistence sites, not certification of the entire execution runtime.",
+        "authority": "Canonical checkpoint writes require an immutable issued descriptor captured from the current AsyncLocalStorage admitted worker. Service-only RPC locks existing swarm_runs and matches exact owner/run/worker/generation and running status, then preserves owner and project/repository/branch/database lineage. Required writes propagate errors without direct-table fallback.",
+        "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
         "evidence": [
           {
-            "path": "backend/src/ai/executionRuntime.ts",
-            "marker": "restoreOwnerBoundExecutionState"
+            "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
+            "marker": "real checkpoint fence rejects wrong owner epoch lineage"
           }
         ]
       }
@@ -466,15 +487,15 @@
       }
     },
     {
-      "id": "58703538b993cf615058",
+      "id": "f3f3efb65bdb91678f0a",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3762,
+      "line": 3768,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "fe7f3ad02c37fc679d299d9b17d7b14dcd030bca4b949ee7ce397beb0b5de82a",
+      "sourceSha256": "57fabfb9d31efb4c2bce74e27df97efa3c7f5c5aabe00370f45a1a10f53fee30",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -487,15 +508,15 @@
       }
     },
     {
-      "id": "47baf2f80d4a70f5fd8f",
+      "id": "f0004706bdc1cb423cca",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3945,
+      "line": 3951,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "fe7f3ad02c37fc679d299d9b17d7b14dcd030bca4b949ee7ce397beb0b5de82a",
+      "sourceSha256": "57fabfb9d31efb4c2bce74e27df97efa3c7f5c5aabe00370f45a1a10f53fee30",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -1142,99 +1163,57 @@
       }
     },
     {
-      "id": "5e95bf6c7d0380725ccc",
+      "id": "52edc4559577671284c2",
       "path": "backend/src/ai/quota.ts",
-      "line": 169,
-      "enclosing": "resolvePlanTier",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
-      "semanticReview": {
-        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
-        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
-        "evidence": [
-          {
-            "path": "backend/src/ai/quota.ts",
-            "marker": "export async function recordUsage"
-          }
-        ]
-      }
-    },
-    {
-      "id": "ef9bc4249b1f1a1ea138",
-      "path": "backend/src/ai/quota.ts",
-      "line": 170,
-      "enclosing": "resolvePlanTier",
+      "line": 182,
+      "enclosing": "readUsageRow",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_token_usage",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "sourceSha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
       "semanticReview": {
-        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
-        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
+        "authority": "Usage admission reads one exact server-actor row, validates returned owner, known plan, period and finite nonnegative numeric evidence. Missing configuration, missing row, malformed values and transport/store errors fail closed with QUOTA_UNAVAILABLE503. No paid default or memory entitlement override. This read is not a spend reservation.",
+        "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
         "evidence": [
           {
-            "path": "backend/src/ai/quota.ts",
-            "marker": "export async function recordUsage"
+            "path": "backend/src/ai/quota.failure.test.ts",
+            "marker": "quota admission requires current owner-bound durable evidence"
           }
         ]
       }
     },
     {
-      "id": "3f7ebc2452934b91569a",
+      "id": "39d17e6c2a9120f50030",
       "path": "backend/src/ai/quota.ts",
-      "line": 194,
-      "enclosing": "getUsage",
+      "line": 182,
+      "enclosing": "readUsageRow",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
-      "semanticReview": {
-        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
-        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
-        "evidence": [
-          {
-            "path": "backend/src/ai/quota.ts",
-            "marker": "export async function recordUsage"
-          }
-        ]
-      }
-    },
-    {
-      "id": "08dbd05001850f04fcab",
-      "path": "backend/src/ai/quota.ts",
-      "line": 195,
-      "enclosing": "getUsage",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_token_usage",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "sourceSha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
       "semanticReview": {
-        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
-        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
+        "authority": "Usage admission reads one exact server-actor row, validates returned owner, known plan, period and finite nonnegative numeric evidence. Missing configuration, missing row, malformed values and transport/store errors fail closed with QUOTA_UNAVAILABLE503. No paid default or memory entitlement override. This read is not a spend reservation.",
+        "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
         "evidence": [
           {
-            "path": "backend/src/ai/quota.ts",
-            "marker": "export async function recordUsage"
+            "path": "backend/src/ai/quota.failure.test.ts",
+            "marker": "quota admission requires current owner-bound durable evidence"
           }
         ]
       }
     },
     {
-      "id": "4553b62b15acf23253a8",
+      "id": "9c24629d02c4cc6ff46e",
       "path": "backend/src/ai/quota.ts",
-      "line": 293,
+      "line": 267,
       "enclosing": "syncPlanBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "sourceSha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
       "semanticReview": {
         "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
         "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
@@ -1247,15 +1226,15 @@
       }
     },
     {
-      "id": "1c0cb41d1b21e60ac90a",
+      "id": "4e15e83fa030b0549a15",
       "path": "backend/src/ai/quota.ts",
-      "line": 294,
+      "line": 268,
       "enclosing": "syncPlanBudget",
       "kind": "RPC_CANDIDATE",
       "target": "set_user_ai_plan_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "sourceSha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
       "semanticReview": {
         "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
         "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
@@ -1268,15 +1247,15 @@
       }
     },
     {
-      "id": "7d4f5462b76808bef4ac",
+      "id": "b6dc5487deaef7059310",
       "path": "backend/src/ai/quota.ts",
-      "line": 343,
+      "line": 320,
       "enclosing": "recordUsage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "sourceSha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
       "semanticReview": {
         "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
         "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
@@ -1289,15 +1268,15 @@
       }
     },
     {
-      "id": "c6d8629deea7c5578ce7",
+      "id": "c9e32ad98134083e4318",
       "path": "backend/src/ai/quota.ts",
-      "line": 344,
+      "line": 321,
       "enclosing": "recordUsage",
       "kind": "RPC_CANDIDATE",
       "target": "increment_user_token_usage",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "sourceSha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
       "semanticReview": {
         "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
         "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
@@ -1310,15 +1289,15 @@
       }
     },
     {
-      "id": "60f2bbea0da7d23af686",
+      "id": "313209300bd6c30b4157",
       "path": "backend/src/ai/quota.ts",
-      "line": 353,
+      "line": 330,
       "enclosing": "recordUsage",
       "kind": "RPC_CANDIDATE",
       "target": "merge_user_model_usage",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "sourceSha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
       "semanticReview": {
         "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
         "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
@@ -1331,15 +1310,15 @@
       }
     },
     {
-      "id": "deaf2c316f526f91086e",
+      "id": "998fbd939f34507081d0",
       "path": "backend/src/ai/quota.ts",
-      "line": 360,
+      "line": 337,
       "enclosing": "recordUsage",
       "kind": "RPC_CANDIDATE",
       "target": "insert_ai_usage_ledger",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "sourceSha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
       "semanticReview": {
         "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
         "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
@@ -1557,15 +1536,15 @@
       }
     },
     {
-      "id": "cc8d4e13f30e23763e11",
+      "id": "895a61d6a49f1cfdee31",
       "path": "backend/src/ai/runStore.ts",
-      "line": 113,
+      "line": 136,
       "enclosing": "persistRunHeartbeat",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1582,15 +1561,15 @@
       }
     },
     {
-      "id": "7546a027b39362b04539",
+      "id": "50edc8bae8f27dacf910",
       "path": "backend/src/ai/runStore.ts",
-      "line": 113,
+      "line": 136,
       "enclosing": "persistRunHeartbeat",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1607,15 +1586,15 @@
       }
     },
     {
-      "id": "8c4f8584687b0b9d3179",
+      "id": "a4bce2e2c16c58ec90ed",
       "path": "backend/src/ai/runStore.ts",
-      "line": 463,
+      "line": 486,
       "enclosing": "resumeRunDurable",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1632,15 +1611,15 @@
       }
     },
     {
-      "id": "dbbbf253b87349d116cc",
+      "id": "eeecad9a21d8290f2cd2",
       "path": "backend/src/ai/runStore.ts",
-      "line": 464,
+      "line": 487,
       "enclosing": "resumeRunDurable",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1657,15 +1636,15 @@
       }
     },
     {
-      "id": "ebd0ebb2546faf7ebfed",
+      "id": "d870b789568c8679b1db",
       "path": "backend/src/ai/runStore.ts",
-      "line": 774,
+      "line": 797,
       "enclosing": "persistConversationOnly",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1682,15 +1661,15 @@
       }
     },
     {
-      "id": "cfd5423522a994aef22f",
+      "id": "a761046ffcd795c11469",
       "path": "backend/src/ai/runStore.ts",
-      "line": 780,
+      "line": 803,
       "enclosing": "persistConversationOnly",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1707,15 +1686,15 @@
       }
     },
     {
-      "id": "8b0c543bcc365cc645f6",
+      "id": "b6307e91cbe4456df72e",
       "path": "backend/src/ai/runStore.ts",
-      "line": 880,
+      "line": 903,
       "enclosing": "getRunAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1732,15 +1711,15 @@
       }
     },
     {
-      "id": "34abfeab29977e827a60",
+      "id": "9068cc3c3a3d43572339",
       "path": "backend/src/ai/runStore.ts",
-      "line": 882,
+      "line": 905,
       "enclosing": "getRunAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1757,15 +1736,15 @@
       }
     },
     {
-      "id": "887e6203c51c57e7514b",
+      "id": "c15d549616080c99b045",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1055,
+      "line": 1078,
       "enclosing": "requestRunCancellation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1782,15 +1761,15 @@
       }
     },
     {
-      "id": "299680232da2cc3efb92",
+      "id": "8c10c4794ee82ad23d08",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1061,
+      "line": 1084,
       "enclosing": "requestRunCancellation",
       "kind": "RPC_CANDIDATE",
       "target": "cancel_swarm_run_owned",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated run cancellation supplies the server actor to cancel_swarm_run_owned, which conditionally transitions only its owned running row, clears the old worker epoch and returns database-clock terminal evidence. The route validates exact owner/run/status/iteration receipt before success or learning.",
         "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
@@ -1803,15 +1782,15 @@
       }
     },
     {
-      "id": "447d11ff3564d9f97762",
+      "id": "281fa5f0b0e2578a4413",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1164,
+      "line": 1187,
       "enclosing": "isRunCancellationRequested",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1828,15 +1807,15 @@
       }
     },
     {
-      "id": "f130012174b078c718d0",
+      "id": "802f509bd4e2869a5584",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1170,
+      "line": 1193,
       "enclosing": "isRunCancellationRequested",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1853,15 +1832,15 @@
       }
     },
     {
-      "id": "ca7a78a2b8a6fba2bdf3",
+      "id": "fbb883c6ec93bb927082",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1309,
+      "line": 1332,
       "enclosing": "listRunsForUserAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1878,15 +1857,15 @@
       }
     },
     {
-      "id": "96d9bd349fa2a2fe611a",
+      "id": "6f7915fc18e24fb190f7",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1315,
+      "line": 1338,
       "enclosing": "listRunsForUserAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1903,15 +1882,15 @@
       }
     },
     {
-      "id": "f8051610fdb3fc9476f4",
+      "id": "6e8604e226f545e3bbda",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1508,
+      "line": 1531,
       "enclosing": "persistToSupabase",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1928,15 +1907,15 @@
       }
     },
     {
-      "id": "311ce557dc46d7d9b8e6",
+      "id": "1ab496a614183176fa46",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1581,
+      "line": 1604,
       "enclosing": "persistToSupabase",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -2224,6 +2203,56 @@
           {
             "path": "backend/src/ai/universal/repositoryChatEvidence.ts",
             "marker": "      ? `${Buffer.from(redacted, 'utf8').subarray(0, PER_FILE_MAX_BYTES).toString('utf8')}\\n[truncated by repository evidence budget]`\n      : redacted;\n    const bytes = Buffer.byteLength(file.path, 'utf8') + Buffer.byteLength(content, 'utf8');"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8c7615ae94f3ecbfe8ed",
+      "path": "backend/src/ai/usageAccounting.ts",
+      "line": 29,
+      "enclosing": "persistUsageAccounting",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "c1b6b050622cfa76e1daf090d78007da8d29afcaad6fd6ab5cad223292b97e68",
+      "semanticReview": {
+        "authority": "Prepared, unwired helper requires issued TenantContext and sends only its owner with validated immutable receipt/model/role/token/cost evidence to service-only record_ai_usage_atomic. SQL locks existing owner usage row and reuses existing increment/merge/ledger functions with the locked current plan. Same receipt requires identical payload and cannot increment twice.",
+        "reason": "Focused forged-context, numeric and substituted-receipt negatives pass. Actual rollback/concurrency/role/month tests prepared but pending disposable CI. No provider consumer is wired. Trusted cost/model provenance, completed-output preservation during accounting outage and cross-invocation provider deduplication remain open. This is not Command008 budget acceptance or an authorization to spend.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/usageAccounting.test.ts",
+            "marker": "prepared accounting helper requires issued owner"
+          },
+          {
+            "path": "backend/src/security/usageAccounting.local.integration.ts",
+            "marker": "prepared atomic accounting serializes receipts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "224d992ddd99b8389fed",
+      "path": "backend/src/ai/usageAccounting.ts",
+      "line": 41,
+      "enclosing": "persistUsageAccounting",
+      "kind": "RPC_CANDIDATE",
+      "target": "record_ai_usage_atomic",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "c1b6b050622cfa76e1daf090d78007da8d29afcaad6fd6ab5cad223292b97e68",
+      "semanticReview": {
+        "authority": "Prepared, unwired helper requires issued TenantContext and sends only its owner with validated immutable receipt/model/role/token/cost evidence to service-only record_ai_usage_atomic. SQL locks existing owner usage row and reuses existing increment/merge/ledger functions with the locked current plan. Same receipt requires identical payload and cannot increment twice.",
+        "reason": "Focused forged-context, numeric and substituted-receipt negatives pass. Actual rollback/concurrency/role/month tests prepared but pending disposable CI. No provider consumer is wired. Trusted cost/model provenance, completed-output preservation during accounting outage and cross-invocation provider deduplication remain open. This is not Command008 budget acceptance or an authorization to spend.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/usageAccounting.test.ts",
+            "marker": "prepared accounting helper requires issued owner"
+          },
+          {
+            "path": "backend/src/security/usageAccounting.local.integration.ts",
+            "marker": "prepared atomic accounting serializes receipts"
           }
         ]
       }
@@ -7414,7 +7443,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c92debf25ae1ca9634658bee52b5eafc0b69501cc6f9dc927b0de4493ebc2102",
+      "sourceSha256": "4bfbc1d8eec9c4e146da3d76344e05a1c29e8950153b1cd8f2cd451e70d7989a",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -7434,11 +7463,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
       "semanticReview": {
-        "authority": "Inspected all profile routes, auth mount, strict patch schema and companion/onboarding transformations. Actor-derived profile reads/writes cannot set role; activity joins suppress foreign project names. Delete targets the authenticated actor with exact DELETE confirmation and clears existence cache.",
-        "reason": "Owner-bound update/read and role denial have real API evidence. Account deletion lacks a fresh remote session check and dedicated revoked-session/cascade race proof. Local JWT acceptance and downstream FK/storage cleanup need further work; schema confirmation unit tests are not a real account lifecycle test.",
+        "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
+        "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -7455,11 +7484,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
       "semanticReview": {
-        "authority": "Inspected all profile routes, auth mount, strict patch schema and companion/onboarding transformations. Actor-derived profile reads/writes cannot set role; activity joins suppress foreign project names. Delete targets the authenticated actor with exact DELETE confirmation and clears existence cache.",
-        "reason": "Owner-bound update/read and role denial have real API evidence. Account deletion lacks a fresh remote session check and dedicated revoked-session/cascade race proof. Local JWT acceptance and downstream FK/storage cleanup need further work; schema confirmation unit tests are not a real account lifecycle test.",
+        "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
+        "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -7476,11 +7505,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
       "semanticReview": {
-        "authority": "Inspected all profile routes, auth mount, strict patch schema and companion/onboarding transformations. Actor-derived profile reads/writes cannot set role; activity joins suppress foreign project names. Delete targets the authenticated actor with exact DELETE confirmation and clears existence cache.",
-        "reason": "Owner-bound update/read and role denial have real API evidence. Account deletion lacks a fresh remote session check and dedicated revoked-session/cascade race proof. Local JWT acceptance and downstream FK/storage cleanup need further work; schema confirmation unit tests are not a real account lifecycle test.",
+        "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
+        "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -7497,11 +7526,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
       "semanticReview": {
-        "authority": "Inspected all profile routes, auth mount, strict patch schema and companion/onboarding transformations. Actor-derived profile reads/writes cannot set role; activity joins suppress foreign project names. Delete targets the authenticated actor with exact DELETE confirmation and clears existence cache.",
-        "reason": "Owner-bound update/read and role denial have real API evidence. Account deletion lacks a fresh remote session check and dedicated revoked-session/cascade race proof. Local JWT acceptance and downstream FK/storage cleanup need further work; schema confirmation unit tests are not a real account lifecycle test.",
+        "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
+        "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -7521,12 +7550,12 @@
       "review": "REVIEWED_GAP",
       "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
       "semanticReview": {
-        "authority": "Inspected all profile routes, auth mount, strict patch schema and companion/onboarding transformations. Actor-derived profile reads/writes cannot set role; activity joins suppress foreign project names. Delete targets the authenticated actor with exact DELETE confirmation and clears existence cache.",
-        "reason": "Owner-bound update/read and role denial have real API evidence. Account deletion lacks a fresh remote session check and dedicated revoked-session/cascade race proof. Local JWT acceptance and downstream FK/storage cleanup need further work; schema confirmation unit tests are not a real account lifecycle test.",
+        "authority": "Destructive account deletion requires issued owner context, exact DELETE confirmation and a fresh Auth getUser response matching that owner immediately before admin deletion. It never accepts an independently supplied target user ID.",
+        "reason": "Fresh identity positive/mismatch/deleted-user checks verified against actual disposable Auth at5fa74cd4 run38820218030. This is not atomic logout revocation, recent-login/MFA or proof of every FK and Storage cleanup race. Complete account deletion lifecycle remains unresolved.",
         "evidence": [
           {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "profile activity keeps own and project-less entries"
+            "path": "backend/src/security/profileDeletion.local.integration.ts",
+            "marker": "profile deletion rechecks disposable Auth ownership"
           }
         ]
       }
@@ -7539,11 +7568,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
       "semanticReview": {
-        "authority": "Inspected all profile routes, auth mount, strict patch schema and companion/onboarding transformations. Actor-derived profile reads/writes cannot set role; activity joins suppress foreign project names. Delete targets the authenticated actor with exact DELETE confirmation and clears existence cache.",
-        "reason": "Owner-bound update/read and role denial have real API evidence. Account deletion lacks a fresh remote session check and dedicated revoked-session/cascade race proof. Local JWT acceptance and downstream FK/storage cleanup need further work; schema confirmation unit tests are not a real account lifecycle test.",
+        "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
+        "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -7560,11 +7589,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "activity_logs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
       "semanticReview": {
-        "authority": "Inspected all profile routes, auth mount, strict patch schema and companion/onboarding transformations. Actor-derived profile reads/writes cannot set role; activity joins suppress foreign project names. Delete targets the authenticated actor with exact DELETE confirmation and clears existence cache.",
-        "reason": "Owner-bound update/read and role denial have real API evidence. Account deletion lacks a fresh remote session check and dedicated revoked-session/cascade race proof. Local JWT acceptance and downstream FK/storage cleanup need further work; schema confirmation unit tests are not a real account lifecycle test.",
+        "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
+        "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -7644,15 +7673,19 @@
       "kind": "RPC_CANDIDATE",
       "target": "save_owned_project_atomic",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "6776769d6e1785e9ecb7635fc8d68b4d3d9d896c6a17dda9ba6846affd10c087",
       "semanticReview": {
         "authority": "Authenticated projects router derives owner from issued TenantContext and passes validated project fields to save_owned_project_atomic. The service-only transaction serializes same-owner repository saves, locks an existing owner row and commits required message/activity writes with the project.",
-        "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+        "reason": "Exact transaction verified at5fa74cd4 disposable38820218030: concurrent same-owner repository saves produce one project with both messages and one creation activity, another owner receives a separate project, browser RPC calls deny, malformed owner fields deny, message/activity failure rolls back both new and existing project changes. HTTP validates owner-bound receipt. Scope excludes global repository uniqueness across legacy writers, optional retry-idempotency and external provider acceptance.",
         "evidence": [
           {
             "path": "backend/src/routes/projects.creation.test.ts",
             "marker": "project creation requires an owner-bound atomic receipt"
+          },
+          {
+            "path": "backend/src/security/projectCreation.local.integration.ts",
+            "marker": "real project saves serialize repository identity"
           }
         ]
       }
@@ -7686,15 +7719,19 @@
       "kind": "RPC_CANDIDATE",
       "target": "delete_owned_project_atomic",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "6776769d6e1785e9ecb7635fc8d68b4d3d9d896c6a17dda9ba6846affd10c087",
       "semanticReview": {
         "authority": "Authenticated projects router requires issued TenantContext, derives owner and invokes service-only delete_owned_project_atomic with exact owner/project. The SQL locks that owner row and commits deletion with a retained actor-owned activity receipt.",
-        "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+        "reason": "Exact transactional RPC only, verified at5fa74cd4 disposable38820218030: two concurrent deletes cannot both claim deletion, foreign owner and browser-role calls deny, forced audit failure rolls back deletion and retained activity has exact actor/project reference. HTTP validates exact returned owner/project and denies outage or malformed receipt. Scope excludes external provider/object cleanup and whole-router certification.",
         "evidence": [
           {
             "path": "backend/src/routes/projects.deletion.test.ts",
             "marker": "project deletion requires the exact transactional owner receipt"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "delete_owned_project_atomic"
           }
         ]
       }
@@ -8277,7 +8314,7 @@
       }
     },
     {
-      "id": "23ebc46b462130d9105d",
+      "id": "ca2e291f7b6ac805445e",
       "path": "backend/src/security/ownedTerminalPersistence.ts",
       "line": 13,
       "enclosing": "persistOwnedTerminal",
@@ -8285,7 +8322,7 @@
       "target": "terminal_sessions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "32c010ffa61272f6f164cb9d9c2ec58148a297b6bf2086f55f48584aa446fe92",
+      "sourceSha256": "137e8e16b217933c3f5381bb1f09d2483c829ec3870e80ca0228b0b16bebef0f",
       "semanticReview": {
         "authority": "Inspected full helper and terminal router caller. Issued context must match row.user_id, insert ignores primary-key collisions, subsequent update binds both id and user_id, and dynamic return projection accepts only an explicit metadata allowlist. Missing owner-bound result fails closed.",
         "reason": "Collision and projection unit tests plus existing disposable foreign-owner tests support the narrow boundary. Insert and update are separate statements, same-owner stale/concurrent writes are not serialized, and the internal row accepts arbitrary fields. Upstream lifecycle and staging proof remain unresolved, so this is not a globally certified privileged caller.",
@@ -8298,15 +8335,15 @@
       }
     },
     {
-      "id": "bcda9359b20948e1a38c",
+      "id": "aa68762dad5ac84c6092",
       "path": "backend/src/security/ownedTerminalPersistence.ts",
-      "line": 15,
+      "line": 19,
       "enclosing": "persistOwnedTerminal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "32c010ffa61272f6f164cb9d9c2ec58148a297b6bf2086f55f48584aa446fe92",
+      "sourceSha256": "137e8e16b217933c3f5381bb1f09d2483c829ec3870e80ca0228b0b16bebef0f",
       "semanticReview": {
         "authority": "Inspected full helper and terminal router caller. Issued context must match row.user_id, insert ignores primary-key collisions, subsequent update binds both id and user_id, and dynamic return projection accepts only an explicit metadata allowlist. Missing owner-bound result fails closed.",
         "reason": "Collision and projection unit tests plus existing disposable foreign-owner tests support the narrow boundary. Insert and update are separate statements, same-owner stale/concurrent writes are not serialized, and the internal row accepts arbitrary fields. Upstream lifecycle and staging proof remain unresolved, so this is not a globally certified privileged caller.",
@@ -10590,15 +10627,15 @@
       }
     },
     {
-      "id": "206a86b695b9c00be8d6",
+      "id": "48d9c36879473bfb6ecf",
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "line": 558,
+      "line": 548,
       "enclosing": "userSupabaseMemoryReady",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_session_memory",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1bc213464352ee8f766c1484e6b829b3a6ab67897454b9b4cb2695a7ef88f752",
+      "sourceSha256": "1edb71ab5819aad28ac87a65bffb4639569a68e1c6e444300eba08efb283ba8c",
       "semanticReview": {
         "authority": "The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
         "reason": "Full helper examined, including Management API, direct SQL and Storage calls outside the scanner. Generated memory tables lacked browser-role isolation and existing public buckets were falsely accepted; both corrected with pending real CI. Full caller provenance, provider/project binding, legacy customer catalog review, direct-PG TLS validation and explicit consequential approval remain unresolved, not certified from owner syntax.",
@@ -10615,40 +10652,15 @@
       }
     },
     {
-      "id": "4819922a0403fc594cdd",
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 29,
-      "enclosing": "saveKeyToStorage",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
-      "semanticReview": {
-        "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
-            "marker": "rejects a concurrent revoke"
-          },
-          {
-            "path": "backend/src/security/providerKeyRevision.local.integration.ts",
-            "marker": "real provider revision binds exact owner"
-          }
-        ]
-      }
-    },
-    {
-      "id": "5213429e98f7fc9df25f",
+      "id": "c3f2ca136ccab92884f3",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "line": 30,
       "enclosing": "saveKeyToStorage",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10665,15 +10677,40 @@
       }
     },
     {
-      "id": "9b417af1f0c788f42d4a",
+      "id": "8466decbcb9ca41d5da8",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 52,
+      "line": 31,
+      "enclosing": "saveKeyToStorage",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
+      "semanticReview": {
+        "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+            "marker": "rejects a concurrent revoke"
+          },
+          {
+            "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+            "marker": "real provider revision binds exact owner"
+          }
+        ]
+      }
+    },
+    {
+      "id": "945c1743c499e90155c7",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 53,
       "enclosing": "loadKeyFromStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10690,15 +10727,15 @@
       }
     },
     {
-      "id": "93e3678aaedeaf18c92f",
+      "id": "30c947b4c1a108a17b92",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 53,
+      "line": 54,
       "enclosing": "loadKeyFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10715,15 +10752,15 @@
       }
     },
     {
-      "id": "97290062c338a908477b",
+      "id": "00329f071464b8e43b18",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 64,
+      "line": 65,
       "enclosing": "loadKeyFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10740,15 +10777,15 @@
       }
     },
     {
-      "id": "8b29d60d49882509ecdc",
+      "id": "9dee422de25d294a7357",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 81,
+      "line": 82,
       "enclosing": "listKeysFromStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10765,15 +10802,15 @@
       }
     },
     {
-      "id": "2ea546676d44df8b5742",
+      "id": "c5490d9431dfdae9ca6a",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 82,
+      "line": 83,
       "enclosing": "listKeysFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10790,15 +10827,15 @@
       }
     },
     {
-      "id": "d891fcb0ad8cfcfcda75",
+      "id": "55de5ef85d89dc71dbca",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 254,
+      "line": 255,
       "enclosing": "decryptApiKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10811,28 +10848,7 @@
       }
     },
     {
-      "id": "4fc19e5ede4bd387fe39",
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 264,
-      "enclosing": "decryptApiKey",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
-      "semanticReview": {
-        "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
-        "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/userProviderKeys.ts",
-            "marker": "const decipher = createDecipheriv"
-          }
-        ]
-      }
-    },
-    {
-      "id": "285d63597d2df7b0a9ca",
+      "id": "0faaee654f69015661e2",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "line": 265,
       "enclosing": "decryptApiKey",
@@ -10840,7 +10856,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10853,7 +10869,7 @@
       }
     },
     {
-      "id": "995fb69296902b86f336",
+      "id": "254b8c9f66173c4394e1",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "line": 266,
       "enclosing": "decryptApiKey",
@@ -10861,7 +10877,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10874,15 +10890,36 @@
       }
     },
     {
-      "id": "054c117ff813bfc55a41",
+      "id": "42a0a702348a67457d9b",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 325,
+      "line": 267,
+      "enclosing": "decryptApiKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
+      "semanticReview": {
+        "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
+        "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.ts",
+            "marker": "const decipher = createDecipheriv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bfeadb5a70e55effa461",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 326,
       "enclosing": "prepareUserProviderKeyWrite",
       "kind": "RPC_CANDIDATE",
       "target": "prepare_provider_key_write",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10899,15 +10936,15 @@
       }
     },
     {
-      "id": "38b6fbcd90fe4d9c9119",
+      "id": "21518f375580ef1180b5",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 325,
+      "line": 326,
       "enclosing": "prepareUserProviderKeyWrite",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10924,15 +10961,15 @@
       }
     },
     {
-      "id": "b19c104abb6d3588b4bc",
+      "id": "5a2c5a330fca8f01b555",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 383,
+      "line": 376,
       "enclosing": "saveUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10949,15 +10986,15 @@
       }
     },
     {
-      "id": "53cf9c487ef1d5efaa5a",
+      "id": "c010ad005707c48970a3",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 417,
+      "line": 410,
       "enclosing": "saveUserProviderKey",
       "kind": "RPC_CANDIDATE",
       "target": "save_cws_oauth_key_if_current",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "CWS callback consumes the exact owner/state before provider I/O and obtains an issued BYOK admission only when the current revision matches the consumed epoch. save_cws_oauth_key_if_current locks that owner/key, checks the unexpired consumed receipt, then delegates encrypted metadata validation and revision CAS to the existing BYOK RPC.",
         "reason": "Focused CWS tests deny changes before exchange and before encrypted persistence. Local SQL checks cover lost revision, duplicate save, revoke, reconnect and receipt expiry. Actual two-client CI is pending. Complete caller admission, legacy cryptography and external provider revocation remain open.",
@@ -10970,15 +11007,15 @@
       }
     },
     {
-      "id": "1ecfbcb367a17ed0aba9",
+      "id": "8101f6b5d45ee21f3444",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 418,
+      "line": 411,
       "enclosing": "saveUserProviderKey",
       "kind": "RPC_CANDIDATE",
       "target": "save_provider_key_if_current",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10995,15 +11032,15 @@
       }
     },
     {
-      "id": "bfc98e57f029ac9dbc19",
+      "id": "072164727ef0d532cc09",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 431,
+      "line": 424,
       "enclosing": "listUserProviderKeys",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11020,15 +11057,15 @@
       }
     },
     {
-      "id": "ace5433c4a82096b97e1",
+      "id": "297b4c8d1563011de56a",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 432,
+      "line": 425,
       "enclosing": "listUserProviderKeys",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11045,15 +11082,15 @@
       }
     },
     {
-      "id": "6276fda034423f620cf0",
+      "id": "3780da5aa30b6e36942a",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 479,
+      "line": 472,
       "enclosing": "deleteUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11070,15 +11107,15 @@
       }
     },
     {
-      "id": "10222d80089b489fe6dd",
+      "id": "d16d4eeb14983fcfb869",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 487,
+      "line": 480,
       "enclosing": "deleteUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11095,15 +11132,15 @@
       }
     },
     {
-      "id": "d49a76bbfbbfc96e30b1",
+      "id": "0b0467cdb1dddd4e822f",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 529,
+      "line": 522,
       "enclosing": "listCustomRowsForRevocation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Explicit authenticated disconnect passes issued TenantContext. Custom provider enumeration reads only that owner database rows and legacy Storage object names with bounded pagination, never downloads secrets, and fails closed when complete enumeration cannot be established. Exact selected provider revocations retain existing CAS tombstones.",
         "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
@@ -11116,15 +11153,15 @@
       }
     },
     {
-      "id": "9826ba08eaba50847c90",
+      "id": "21c2281b6499e3e36fcf",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 534,
+      "line": 527,
       "enclosing": "listCustomRowsForRevocation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Explicit authenticated disconnect passes issued TenantContext. Custom provider enumeration reads only that owner database rows and legacy Storage object names with bounded pagination, never downloads secrets, and fails closed when complete enumeration cannot be established. Exact selected provider revocations retain existing CAS tombstones.",
         "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
@@ -11137,15 +11174,15 @@
       }
     },
     {
-      "id": "4f759979342372ba9789",
+      "id": "bc9849a362989fd1be0f",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 561,
+      "line": 554,
       "enclosing": "revokeProviderRow",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11162,15 +11199,15 @@
       }
     },
     {
-      "id": "224cb6fc7aaf4728e158",
+      "id": "2a3d4e965db6ad27894c",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 562,
+      "line": 555,
       "enclosing": "revokeProviderRow",
       "kind": "RPC_CANDIDATE",
       "target": "revoke_provider_key",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact-row revocation RPC only. Authenticated integration and Supabase disconnect routes supply req.userId. Private helper admits validated provider or exact delete-only legacy alias, calls service-only revoke_provider_key and requires true receipt. SQL binds owner/provider, clears credentials, retains revoked tombstone and rotates revision atomically.",
         "reason": "Real421a6b10 disposable38791937032 passed four BYOK cases for existing/absent save-revoke ordering, exact owner/provider binding, stale-save denial and browser mutation/RPC denial. SQL is unchanged. Current legacy alias and disconnect failure semantics have focused tests. Scope excludes bulk-custom completeness, mirror cleanup success, upstream reconnect admission, already-issued credentials and provider-side revocation. Those remain separately unresolved.",
@@ -11191,15 +11228,15 @@
       }
     },
     {
-      "id": "245ea1d83ae81aace6c0",
+      "id": "a48719fc054d143422f5",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 565,
+      "line": 558,
       "enclosing": "revokeProviderRow",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11216,15 +11253,15 @@
       }
     },
     {
-      "id": "cd9f21613ce7d59d01cb",
+      "id": "c62406a2035c6f39b956",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 642,
+      "line": 635,
       "enclosing": "getUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11241,15 +11278,15 @@
       }
     },
     {
-      "id": "25ae28ee257dc1fba403",
+      "id": "c7fb8eb6a9b01efcb56f",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 644,
+      "line": 637,
       "enclosing": "getUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11266,15 +11303,15 @@
       }
     },
     {
-      "id": "c1534ebe7ac6192557e2",
+      "id": "16e64917713c6190c707",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 665,
+      "line": 658,
       "enclosing": "getUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11291,15 +11328,15 @@
       }
     },
     {
-      "id": "28b2096a40683f77b2ff",
+      "id": "6cc6ec56f502c38555cd",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 687,
+      "line": 680,
       "enclosing": "resolveProviderEnvForDeploy",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11316,15 +11353,15 @@
       }
     },
     {
-      "id": "140d1bf9a1065ddf1fec",
+      "id": "458c8f074a88f2ed9bef",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 688,
+      "line": 681,
       "enclosing": "resolveProviderEnvForDeploy",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11336,6 +11373,69 @@
           {
             "path": "backend/src/security/providerKeyRevision.local.integration.ts",
             "marker": "real provider revision binds exact owner"
+          }
+        ]
+      }
+    },
+    {
+      "id": "231c1df84536db123a0e",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 938,
+      "enclosing": "connectUserSupabase",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
+      "semanticReview": {
+        "authority": "Node Buffer.from decodes a supplied JWT payload for negative project-ref mismatch detection. The receiver is Buffer, not a database/Storage client, and no side effect occurs in this expression.",
+        "reason": "Exclude only this AST conversion false positive. It does not authenticate the JWT claims or certify subsequent credential persistence/provisioning.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.ts",
+            "marker": "Buffer.from(key.split('.')[1]!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "789ab1a9efb91682ba59",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 956,
+      "enclosing": "connectUserSupabase",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
+      "semanticReview": {
+        "authority": "Manual connect's sole authenticated route passes issued context. After original key admissions, this exact-owner/provider read checks the original URL revision and refuses project changes retaining omitted active service key or database password. Account-level PAT is independent. No arbitrary client identity or provider name enters this query.",
+        "reason": "Focused stale-revision/outage/malformed and project carryover negatives pass. Legacy absent-row Storage fallback and independently versioned concurrent bundles remain unresolved, so this interim defense is not complete credential-bundle certification. Supplied JWT ref mismatch is only a negative consistency check, not authenticated pairing.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.connect.test.ts",
+            "marker": "manual Supabase connection binds all writes"
+          }
+        ]
+      }
+    },
+    {
+      "id": "a7b846b42a97d24c68a1",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 956,
+      "enclosing": "connectUserSupabase",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
+      "semanticReview": {
+        "authority": "Manual connect's sole authenticated route passes issued context. After original key admissions, this exact-owner/provider read checks the original URL revision and refuses project changes retaining omitted active service key or database password. Account-level PAT is independent. No arbitrary client identity or provider name enters this query.",
+        "reason": "Focused stale-revision/outage/malformed and project carryover negatives pass. Legacy absent-row Storage fallback and independently versioned concurrent bundles remain unresolved, so this interim defense is not complete credential-bundle certification. Supplied JWT ref mismatch is only a negative consistency check, not authenticated pairing.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.connect.test.ts",
+            "marker": "manual Supabase connection binds all writes"
           }
         ]
       }

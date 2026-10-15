@@ -2,6 +2,15 @@
   "version": "1.0",
   "reviews": [
     {
+      "path": "backend/src/ai/usageAccounting.ts",
+      "sourceSha256": "c1b6b050622cfa76e1daf090d78007da8d29afcaad6fd6ab5cad223292b97e68",
+      "callIds": ["8c7615ae94f3ecbfe8ed","224d992ddd99b8389fed"],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Prepared, unwired helper requires issued TenantContext and sends only its owner with validated immutable receipt/model/role/token/cost evidence to service-only record_ai_usage_atomic. SQL locks existing owner usage row and reuses existing increment/merge/ledger functions with the locked current plan. Same receipt requires identical payload and cannot increment twice.",
+      "reason": "Focused forged-context, numeric and substituted-receipt negatives pass. Actual rollback/concurrency/role/month tests prepared but pending disposable CI. No provider consumer is wired. Trusted cost/model provenance, completed-output preservation during accounting outage and cross-invocation provider deduplication remain open. This is not Command008 budget acceptance or an authorization to spend.",
+      "evidence": [{"path":"backend/src/ai/usageAccounting.test.ts","marker":"prepared accounting helper requires issued owner"},{"path":"backend/src/security/usageAccounting.local.integration.ts","marker":"prepared atomic accounting serializes receipts"}]
+    },
+    {
       "path": "backend/src/services/integrations/credentialEnvelope.ts",
       "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
       "callIds": [
@@ -628,18 +637,14 @@
     },
     {
       "path": "backend/src/ai/quota.ts",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "sourceSha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
       "callIds": [
-        "5e95bf6c7d0380725ccc",
-        "ef9bc4249b1f1a1ea138",
-        "3f7ebc2452934b91569a",
-        "08dbd05001850f04fcab",
-        "4553b62b15acf23253a8",
-        "1c0cb41d1b21e60ac90a",
-        "7d4f5462b76808bef4ac",
-        "c6d8629deea7c5578ce7",
-        "60f2bbea0da7d23af686",
-        "deaf2c316f526f91086e"
+        "9c24629d02c4cc6ff46e",
+        "4e15e83fa030b0549a15",
+        "b6dc5487deaef7059310",
+        "c9e32ad98134083e4318",
+        "313209300bd6c30b4157",
+        "998fbd939f34507081d0"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
@@ -690,11 +695,10 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "sourceSha256": "5205ba30975ba7302b500d5fdbe6b810532151a5d2f7af3b5e2a975a5760d03c",
+      "sourceSha256": "502c07ade36c1844d3d76849ff3d469ef0388cb687eb02c4b091a76e2cf6f82a",
       "callIds": [
-        "e0410bf09638cc267edc",
-        "a3a8ac60a6dac8cbc484",
-        "f0cd545f5abd1730f734"
+        "6cb302dec6a7d693df42",
+        "09b6dc142ebd7f16df10"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "SupabaseExecutionStateStore builds issued tenant context from its constructor userId. Load filters owner/run and restoreOwnerBoundExecutionState checks stored owner/run/project against embedded state. Save delegates owner-bound global-key persistence to the existing helper.",
@@ -899,10 +903,10 @@
     },
     {
       "path": "backend/src/security/ownedTerminalPersistence.ts",
-      "sourceSha256": "32c010ffa61272f6f164cb9d9c2ec58148a297b6bf2086f55f48584aa446fe92",
+      "sourceSha256": "137e8e16b217933c3f5381bb1f09d2483c829ec3870e80ca0228b0b16bebef0f",
       "callIds": [
-        "23ebc46b462130d9105d",
-        "bcda9359b20948e1a38c"
+        "ca2e291f7b6ac805445e",
+        "aa68762dad5ac84c6092"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Inspected full helper and terminal router caller. Issued context must match row.user_id, insert ignores primary-key collisions, subsequent update binds both id and user_id, and dynamic return projection accepts only an explicit metadata allowlist. Missing owner-bound result fails closed.",
@@ -1168,9 +1172,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "fe7f3ad02c37fc679d299d9b17d7b14dcd030bca4b949ee7ce397beb0b5de82a",
+      "sourceSha256": "57fabfb9d31efb4c2bce74e27df97efa3c7f5c5aabe00370f45a1a10f53fee30",
       "callIds": [
-        "58703538b993cf615058"
+        "f3f3efb65bdb91678f0a"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1184,9 +1188,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "fe7f3ad02c37fc679d299d9b17d7b14dcd030bca4b949ee7ce397beb0b5de82a",
+      "sourceSha256": "57fabfb9d31efb4c2bce74e27df97efa3c7f5c5aabe00370f45a1a10f53fee30",
       "callIds": [
-        "47baf2f80d4a70f5fd8f"
+        "f0004706bdc1cb423cca"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1392,7 +1396,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "c92debf25ae1ca9634658bee52b5eafc0b69501cc6f9dc927b0de4493ebc2102",
+      "sourceSha256": "4bfbc1d8eec9c4e146da3d76344e05a1c29e8950153b1cd8f2cd451e70d7989a",
       "callIds": [
         "74229d60e093f2e44542"
       ],
@@ -3028,17 +3032,32 @@
         "0d86495063002c4ecffb",
         "5051a4856f4fe27770f4",
         "7db18803d9573b2c4c27",
-        "f060c7afeb1437072a23",
         "c63711764b566827ca55",
         "385dc97c4ae6fabe7be9"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Inspected all profile routes, auth mount, strict patch schema and companion/onboarding transformations. Actor-derived profile reads/writes cannot set role; activity joins suppress foreign project names. Delete targets the authenticated actor with exact DELETE confirmation and clears existence cache.",
-      "reason": "Owner-bound update/read and role denial have real API evidence. Account deletion lacks a fresh remote session check and dedicated revoked-session/cascade race proof. Local JWT acceptance and downstream FK/storage cleanup need further work; schema confirmation unit tests are not a real account lifecycle test.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
+      "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "profile activity keeps own and project-less entries"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/routes/profile.ts",
+      "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
+      "callIds": [
+        "f060c7afeb1437072a23"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Destructive account deletion requires issued owner context, exact DELETE confirmation and a fresh Auth getUser response matching that owner immediately before admin deletion. It never accepts an independently supplied target user ID.",
+      "reason": "Fresh identity positive/mismatch/deleted-user checks verified against actual disposable Auth at5fa74cd4 run38820218030. This is not atomic logout revocation, recent-login/MFA or proof of every FK and Storage cleanup race. Complete account deletion lifecycle remains unresolved.",
+      "evidence": [
+        {
+          "path": "backend/src/security/profileDeletion.local.integration.ts",
+          "marker": "profile deletion rechecks disposable Auth ownership"
         }
       ]
     },
@@ -3252,9 +3271,9 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "sourceSha256": "1bc213464352ee8f766c1484e6b829b3a6ab67897454b9b4cb2695a7ef88f752",
+      "sourceSha256": "1edb71ab5819aad28ac87a65bffb4639569a68e1c6e444300eba08efb283ba8c",
       "callIds": [
-        "206a86b695b9c00be8d6"
+        "48d9c36879473bfb6ecf"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
@@ -3748,13 +3767,17 @@
       "callIds": [
         "067d56d20f64c8e676b6"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated projects router requires issued TenantContext, derives owner and invokes service-only delete_owned_project_atomic with exact owner/project. The SQL locks that owner row and commits deletion with a retained actor-owned activity receipt.",
-      "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+      "reason": "Exact transactional RPC only, verified at5fa74cd4 disposable38820218030: two concurrent deletes cannot both claim deletion, foreign owner and browser-role calls deny, forced audit failure rolls back deletion and retained activity has exact actor/project reference. HTTP validates exact returned owner/project and denies outage or malformed receipt. Scope excludes external provider/object cleanup and whole-router certification.",
       "evidence": [
         {
           "path": "backend/src/routes/projects.deletion.test.ts",
           "marker": "project deletion requires the exact transactional owner receipt"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "delete_owned_project_atomic"
         }
       ]
     },
@@ -3764,13 +3787,17 @@
       "callIds": [
         "6b27c8a68d7fed4a22cb"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated projects router derives owner from issued TenantContext and passes validated project fields to save_owned_project_atomic. The service-only transaction serializes same-owner repository saves, locks an existing owner row and commits required message/activity writes with the project.",
-      "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+      "reason": "Exact transaction verified at5fa74cd4 disposable38820218030: concurrent same-owner repository saves produce one project with both messages and one creation activity, another owner receives a separate project, browser RPC calls deny, malformed owner fields deny, message/activity failure rolls back both new and existing project changes. HTTP validates owner-bound receipt. Scope excludes global repository uniqueness across legacy writers, optional retry-idempotency and external provider acceptance.",
       "evidence": [
         {
           "path": "backend/src/routes/projects.creation.test.ts",
           "marker": "project creation requires an owner-bound atomic receipt"
+        },
+        {
+          "path": "backend/src/security/projectCreation.local.integration.ts",
+          "marker": "real project saves serialize repository identity"
         }
       ]
     },
@@ -3808,23 +3835,23 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "callIds": [
-        "cc8d4e13f30e23763e11",
-        "7546a027b39362b04539",
-        "8c4f8584687b0b9d3179",
-        "dbbbf253b87349d116cc",
-        "ebd0ebb2546faf7ebfed",
-        "cfd5423522a994aef22f",
-        "8b0c543bcc365cc645f6",
-        "34abfeab29977e827a60",
-        "887e6203c51c57e7514b",
-        "447d11ff3564d9f97762",
-        "f130012174b078c718d0",
-        "ca7a78a2b8a6fba2bdf3",
-        "96d9bd349fa2a2fe611a",
-        "f8051610fdb3fc9476f4",
-        "311ce557dc46d7d9b8e6"
+        "895a61d6a49f1cfdee31",
+        "50edc8bae8f27dacf910",
+        "a4bce2e2c16c58ec90ed",
+        "eeecad9a21d8290f2cd2",
+        "d870b789568c8679b1db",
+        "a761046ffcd795c11469",
+        "b6307e91cbe4456df72e",
+        "9068cc3c3a3d43572339",
+        "c15d549616080c99b045",
+        "281fa5f0b0e2578a4413",
+        "802f509bd4e2869a5584",
+        "fbb883c6ec93bb927082",
+        "6f7915fc18e24fb190f7",
+        "6e8604e226f545e3bbda",
+        "1ab496a614183176fa46"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
@@ -3842,12 +3869,12 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "callIds": [
-        "d891fcb0ad8cfcfcda75",
-        "4fc19e5ede4bd387fe39",
-        "285d63597d2df7b0a9ca",
-        "995fb69296902b86f336"
+        "55de5ef85d89dc71dbca",
+        "0faaee654f69015661e2",
+        "254b8c9f66173c4394e1",
+        "42a0a702348a67457d9b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
@@ -3861,26 +3888,26 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "callIds": [
-        "4819922a0403fc594cdd",
-        "5213429e98f7fc9df25f",
-        "9b417af1f0c788f42d4a",
-        "93e3678aaedeaf18c92f",
-        "8b29d60d49882509ecdc",
-        "2ea546676d44df8b5742",
-        "b19c104abb6d3588b4bc",
-        "bfc98e57f029ac9dbc19",
-        "ace5433c4a82096b97e1",
-        "6276fda034423f620cf0",
-        "10222d80089b489fe6dd",
-        "4f759979342372ba9789",
-        "245ea1d83ae81aace6c0",
-        "cd9f21613ce7d59d01cb",
-        "25ae28ee257dc1fba403",
-        "c1534ebe7ac6192557e2",
-        "28b2096a40683f77b2ff",
-        "140d1bf9a1065ddf1fec"
+        "c3f2ca136ccab92884f3",
+        "8466decbcb9ca41d5da8",
+        "945c1743c499e90155c7",
+        "30c947b4c1a108a17b92",
+        "9dee422de25d294a7357",
+        "c5490d9431dfdae9ca6a",
+        "5a2c5a330fca8f01b555",
+        "072164727ef0d532cc09",
+        "297b4c8d1563011de56a",
+        "3780da5aa30b6e36942a",
+        "d16d4eeb14983fcfb869",
+        "bc9849a362989fd1be0f",
+        "a48719fc054d143422f5",
+        "c62406a2035c6f39b956",
+        "c7fb8eb6a9b01efcb56f",
+        "16e64917713c6190c707",
+        "6cc6ec56f502c38555cd",
+        "458c8f074a88f2ed9bef"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -3898,9 +3925,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "callIds": [
-        "97290062c338a908477b"
+        "00329f071464b8e43b18"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -3918,9 +3945,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "callIds": [
-        "1ecfbcb367a17ed0aba9"
+        "8101f6b5d45ee21f3444"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -3938,10 +3965,10 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "callIds": [
-        "054c117ff813bfc55a41",
-        "38b6fbcd90fe4d9c9119"
+        "bfeadb5a70e55effa461",
+        "21518f375580ef1180b5"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -3959,9 +3986,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "callIds": [
-        "224cb6fc7aaf4728e158"
+        "2a3d4e965db6ad27894c"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact-row revocation RPC only. Authenticated integration and Supabase disconnect routes supply req.userId. Private helper admits validated provider or exact delete-only legacy alias, calls service-only revoke_provider_key and requires true receipt. SQL binds owner/provider, clears credentials, retains revoked tombstone and rotates revision atomically.",
@@ -3983,9 +4010,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "callIds": [
-        "53cf9c487ef1d5efaa5a"
+        "c010ad005707c48970a3"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "CWS callback consumes the exact owner/state before provider I/O and obtains an issued BYOK admission only when the current revision matches the consumed epoch. save_cws_oauth_key_if_current locks that owner/key, checks the unexpired consumed receipt, then delegates encrypted metadata validation and revision CAS to the existing BYOK RPC.",
@@ -3999,9 +4026,9 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
+      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
       "callIds": [
-        "299680232da2cc3efb92"
+        "8c10c4794ee82ad23d08"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Authenticated run cancellation supplies the server actor to cancel_swarm_run_owned, which conditionally transitions only its owned running row, clears the old worker epoch and returns database-clock terminal evidence. The route validates exact owner/run/status/iteration receipt before success or learning.",
@@ -4015,10 +4042,10 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
       "callIds": [
-        "d49a76bbfbbfc96e30b1",
-        "9826ba08eaba50847c90"
+        "0b0467cdb1dddd4e822f",
+        "21c2281b6499e3e36fcf"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Explicit authenticated disconnect passes issued TenantContext. Custom provider enumeration reads only that owner database rows and legacy Storage object names with bounded pagination, never downloads secrets, and fails closed when complete enumeration cannot be established. Exact selected provider revocations retain existing CAS tombstones.",
@@ -4029,6 +4056,66 @@
           "marker": "bulk custom revocation enumerates"
         }
       ]
+    },
+    {
+      "path": "backend/src/ai/quota.ts",
+      "sourceSha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
+      "callIds": [
+        "52edc4559577671284c2",
+        "39d17e6c2a9120f50030"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Usage admission reads one exact server-actor row, validates returned owner, known plan, period and finite nonnegative numeric evidence. Missing configuration, missing row, malformed values and transport/store errors fail closed with QUOTA_UNAVAILABLE503. No paid default or memory entitlement override. This read is not a spend reservation.",
+      "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/quota.failure.test.ts",
+          "marker": "quota admission requires current owner-bound durable evidence"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "sourceSha256": "502c07ade36c1844d3d76849ff3d469ef0388cb687eb02c4b091a76e2cf6f82a",
+      "callIds": [
+        "4dc631d51c7697b2c46b",
+        "1ddfe4538b453a2ccc62"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Canonical checkpoint writes require an immutable issued descriptor captured from the current AsyncLocalStorage admitted worker. Service-only RPC locks existing swarm_runs and matches exact owner/run/worker/generation and running status, then preserves owner and project/repository/branch/database lineage. Required writes propagate errors without direct-table fallback.",
+      "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
+          "marker": "real checkpoint fence rejects wrong owner epoch lineage"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
+      "callIds": [
+        "789ab1a9efb91682ba59",
+        "a7b846b42a97d24c68a1"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Manual connect's sole authenticated route passes issued context. After original key admissions, this exact-owner/provider read checks the original URL revision and refuses project changes retaining omitted active service key or database password. Account-level PAT is independent. No arbitrary client identity or provider name enters this query.",
+      "reason": "Focused stale-revision/outage/malformed and project carryover negatives pass. Legacy absent-row Storage fallback and independently versioned concurrent bundles remain unresolved, so this interim defense is not complete credential-bundle certification. Supplied JWT ref mismatch is only a negative consistency check, not authenticated pairing.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/userProviderKeys.connect.test.ts",
+          "marker": "manual Supabase connection binds all writes"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24",
+      "callIds": ["231c1df84536db123a0e"],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Node Buffer.from decodes a supplied JWT payload for negative project-ref mismatch detection. The receiver is Buffer, not a database/Storage client, and no side effect occurs in this expression.",
+      "reason": "Exclude only this AST conversion false positive. It does not authenticate the JWT claims or certify subsequent credential persistence/provisioning.",
+      "evidence": [{"path":"backend/src/services/integrations/userProviderKeys.ts","marker":"Buffer.from(key.split('.')[1]!"}]
     }
   ]
 }

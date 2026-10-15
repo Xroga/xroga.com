@@ -16,18 +16,8 @@ import {
 } from './userProviderKeys.js';
 
 const MGMT = 'https://api.supabase.com/v1';
-
-export function projectRefFromUrl(projectUrl: string): string | null {
-  try {
-    const url = new URL(projectUrl.trim());
-    if (url.protocol !== 'https:' || url.username || url.password || url.port
-      || url.pathname !== '/' || url.search || url.hash) return null;
-    const m = url.hostname.match(/^([a-z0-9]+)\.supabase\.co$/i);
-    return m?.[1] ?? null;
-  } catch {
-    return null;
-  }
-}
+import { projectRefFromUrl } from './supabaseProjectUrl.js';
+export { projectRefFromUrl } from './supabaseProjectUrl.js';
 
 /** SQL applied to the user's project — app data + Xroga memory/storage. */
 export function buildUserSupabaseProvisionSql(opts?: {

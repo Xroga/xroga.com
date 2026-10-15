@@ -8,13 +8,19 @@ export async function persistOwnedTerminal(db: SupabaseClient, context: TenantCo
   const scope=requireTenantContext(context);
   // Caller mutations while insertion awaits must not alter the validated write.
   row=structuredClone(row);
-  if(!columns.trim()||columns.split(',').some(column=>!allowedMetadata.has(column.trim())))throw new TenantAccessError(503,'RESOURCE_ACCESS_UNAVAILABLE');
+  if(!columns.split(',').some(column=>column.trim()==='id')||columns.split(',').some(column=>!allowedMetadata.has(column.trim())))throw new TenantAccessError(503,'RESOURCE_ACCESS_UNAVAILABLE');
   if(row.user_id!==scope.userId)throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
   const insertion=await db.from('terminal_sessions').upsert(row,{onConflict:'id',ignoreDuplicates:true});
   if(insertion.error)return {data:null,error:insertion.error};
-  const {data,error}=await db.from('terminal_sessions').update(row).eq('id',row.id).eq('user_id',scope.userId).select(columns).maybeSingle();
+  // Insert-only identity fields must not be rewritten from a stale preflight.
+  // Two simultaneous first saves may have chosen different repositories/numbers.
+  // The winning insert establishes these fields, later autosaves update content.
+  const {id: _id,user_id: _owner,github_repo_name: _repo,terminal_number: _number,created_at: _created,...patch}=row;
+  const {data,error}=await db.from('terminal_sessions').update(patch).eq('id',row.id).eq('user_id',scope.userId).select(columns).maybeSingle();
   if(!error&&!data)throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
-  if(!error&&(typeof data!=='object'||Array.isArray(data)))throw new TenantAccessError(503,'RESOURCE_ACCESS_UNAVAILABLE');
+  const receipt:unknown=data;
+  if(!error&&(!receipt||typeof receipt!=='object'||Array.isArray(receipt)||!('id' in receipt)||receipt.id!==row.id))throw new TenantAccessError(503,'RESOURCE_ACCESS_UNAVAILABLE');
   // Dynamic metadata projection is intentionally checked, not asserted to an SDK query type.
-  return {data:data&&typeof data==='object'?Object.fromEntries(Object.entries(data)):null,error};
+  const projected=new Set(columns.split(',').map(column=>column.trim()));
+  return {data:data&&typeof data==='object'?Object.fromEntries(Object.entries(data).filter(([key])=>projected.has(key))):null,error};
 }

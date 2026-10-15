@@ -81,7 +81,7 @@ type MemRow = {
   byModel: Record<string, { in: number; out: number; cost: number }>;
 };
 
-/** In-memory fallback when DB/RPC unavailable — still shared per process; Supabase is source of truth across devices. */
+/** Conservative process-local usage floor, never an entitlement or outage fallback. */
 const memUsage = new Map<string, MemRow>();
 
 function memKey(userId: string): string {
@@ -163,19 +163,47 @@ function buildSnapshot(opts: {
   };
 }
 
-async function resolvePlanTier(userId: string): Promise<string> {
+function unavailable(): Error {
+  return Object.assign(new Error('AI usage could not be verified. Retry shortly.'), { code: 'QUOTA_UNAVAILABLE', statusCode: 503 });
+}
+
+function amount(value: unknown, integer = false): number {
+  if (typeof value !== 'number' && (typeof value !== 'string' || !/^\d+(?:\.\d+)?$/.test(value))) throw unavailable();
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < 0 || number > Number.MAX_SAFE_INTEGER
+    || (integer && !Number.isSafeInteger(number))) throw unavailable();
+  return number;
+}
+
+async function readUsageRow(userId: string) {
   try {
-    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return 'spark';
-    const supabase = getSupabaseAdmin();
-    const { data } = await supabase
+    if (typeof userId !== 'string' || !userId.trim() || userId !== userId.trim()
+      || !process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.SUPABASE_URL) throw unavailable();
+    const { data, error } = await getSupabaseAdmin()
       .from('user_token_usage')
-      .select('plan_tier')
+      .select('user_id,input_tokens,output_tokens,model_usage,quota_period_start,spent_usd,rollover_usd,plan_budget_usd,plan_tier')
       .eq('user_id', userId)
       .maybeSingle();
-    const tier = data?.plan_tier ? String(data.plan_tier) : 'unpaid';
-    return getPlanByTier(tier) ? tier : 'unpaid';
+    if (error || !data || data.user_id !== userId || typeof data.plan_tier !== 'string' || !getPlanByTier(data.plan_tier)) throw unavailable();
+    if (typeof data.quota_period_start !== 'string' || !/^\d{4}-(0[1-9]|1[0-2])-01$/.test(data.quota_period_start)
+      || data.quota_period_start > periodStart()) throw unavailable();
+    const input = amount(data.input_tokens, true), output = amount(data.output_tokens, true);
+    if (!Number.isSafeInteger(input + output)) throw unavailable();
+    const spent = amount(data.spent_usd), rollover = amount(data.rollover_usd), budget = amount(data.plan_budget_usd);
+    if (!Number.isFinite(budget + rollover) || budget + rollover > Number.MAX_SAFE_INTEGER) throw unavailable();
+    if (!data.model_usage || typeof data.model_usage !== 'object' || Array.isArray(data.model_usage)) throw unavailable();
+    const models: Record<string, { in: number; out: number; cost: number }> = {};
+    for (const [role, raw] of Object.entries(data.model_usage)) {
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw unavailable();
+      const value = raw as Record<string, unknown>;
+      const modelInput = amount(value.input === undefined ? 0 : value.input, true);
+      const modelOutput = amount(value.output === undefined ? 0 : value.output, true);
+      if (!Number.isSafeInteger(modelInput + modelOutput)) throw unavailable();
+      models[role] = { in: modelInput, out: modelOutput, cost: amount(value.cost_usd === undefined ? 0 : value.cost_usd) };
+    }
+    return { plan_tier: data.plan_tier, start: data.quota_period_start, input, output, spent, rollover, budget, models };
   } catch {
-    return 'spark';
+    throw unavailable();
   }
 }
 
@@ -185,68 +213,17 @@ export async function getUsage(userId: string): Promise<UsageSnapshot> {
   let outputUsed = 0;
   let spentUsd = 0;
   let rolloverUsd = 0;
-  let planTier = await resolvePlanTier(userId);
-  let planBudgetUsd = getApiBudgetUsd(planTier);
+  const row = await readUsageRow(userId);
+  const planTier = row.plan_tier;
+  const planBudgetUsd = row.budget;
   const modelUsed: Record<string, { in: number; out: number; cost: number }> = {};
 
-  try {
-    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      const supabase = getSupabaseAdmin();
-      const { data } = await supabase
-        .from('user_token_usage')
-        .select(
-          'input_tokens, output_tokens, model_usage, quota_period_start, spent_usd, rollover_usd, plan_budget_usd, plan_tier',
-        )
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (data) {
-        const rowPeriod = data.quota_period_start
-          ? String(data.quota_period_start).slice(0, 10)
-          : start;
-        const samePeriod =
-          rowPeriod === start || rowPeriod.startsWith(start.slice(0, 7));
-
-        if (data.plan_tier) {
-          planTier = String(data.plan_tier);
-          planBudgetUsd = Number(data.plan_budget_usd) || getApiBudgetUsd(planTier);
-        } else {
-          planBudgetUsd = getApiBudgetUsd(planTier);
-        }
-
-        if (samePeriod) {
-          inputUsed = Number(data.input_tokens) || 0;
-          outputUsed = Number(data.output_tokens) || 0;
-          spentUsd = Number(data.spent_usd) || 0;
-          rolloverUsd = Number(data.rollover_usd) || 0;
-          const mu = (data.model_usage ?? {}) as Record<
-            string,
-            { input?: number; output?: number; cost_usd?: number }
-          >;
-          for (const [role, v] of Object.entries(mu)) {
-            modelUsed[role] = {
-              in: Number(v?.input) || 0,
-              out: Number(v?.output) || 0,
-              cost: Number(v?.cost_usd) || 0,
-            };
-          }
-        } else {
-          // Month flipped but row not yet reset via RPC — treat as fresh period with rollover.
-          const prevBudget = Number(data.plan_budget_usd) || planBudgetUsd;
-          const prevSpent = Number(data.spent_usd) || 0;
-          const prevRollover = Number(data.rollover_usd) || 0;
-          rolloverUsd = roundUsd(
-            Math.min(
-              Math.max(0, prevBudget + prevRollover - prevSpent),
-              planBudgetUsd,
-            ),
-          );
-          spentUsd = 0;
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('[quota] getUsage DB skipped:', (err as Error).message);
+  if (row.start === start) {
+    inputUsed = row.input; outputUsed = row.output; spentUsd = row.spent; rolloverUsd = row.rollover;
+    Object.assign(modelUsed, row.models);
+  } else {
+    // Preserve the existing month-transition projection from validated evidence.
+    rolloverUsd = roundUsd(Math.min(Math.max(0, row.budget + row.rollover - row.spent), planBudgetUsd));
   }
 
   const mem = memUsage.get(memKey(userId));
@@ -254,9 +231,6 @@ export async function getUsage(userId: string): Promise<UsageSnapshot> {
     inputUsed = Math.max(inputUsed, mem.input);
     outputUsed = Math.max(outputUsed, mem.output);
     spentUsd = Math.max(spentUsd, mem.spentUsd);
-    rolloverUsd = Math.max(rolloverUsd, mem.rolloverUsd);
-    planBudgetUsd = mem.planBudgetUsd || planBudgetUsd;
-    planTier = mem.planTier || planTier;
     for (const [k, v] of Object.entries(mem.byModel)) {
       modelUsed[k] = {
         in: Math.max(modelUsed[k]?.in ?? 0, v.in),
@@ -307,12 +281,15 @@ export async function recordUsage(
   inputTokens: number,
   outputTokens: number,
 ): Promise<UsageSnapshot> {
+  amount(inputTokens, true); amount(outputTokens, true);
+  if (!Number.isSafeInteger(inputTokens + outputTokens)) throw unavailable();
   const start = periodStart();
   const key = memKey(userId);
   const role = poolRoleFor(modelId);
   const costUsd = costUsdForTokens(modelId, inputTokens, outputTokens);
-  const planTier = await resolvePlanTier(userId);
-  const planBudgetUsd = getApiBudgetUsd(planTier);
+  const durable = await readUsageRow(userId);
+  const planTier = durable.plan_tier;
+  const planBudgetUsd = durable.budget;
 
   const prev =
     memUsage.get(key) ??

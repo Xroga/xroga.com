@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "917e53ed14bd88886d2a2be9411096cf41e591c0",
+  "source_sha": "5fa74cd4244b61736cccb076d073fcfdda469b1a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -532,11 +532,15 @@
       "config_sources": [
         "backend/src/routes/github.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+        "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
+        "backend/src/security/quotaEvidence.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/browserVerificationAdapter.ts",
@@ -603,11 +607,15 @@
       "observability_source": [
         "backend/src/routes/github.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+        "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
+        "backend/src/security/quotaEvidence.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/browserVerificationAdapter.ts",
@@ -6874,11 +6882,15 @@
       "name": "CI",
       "consuming_sources": [
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+        "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
+        "backend/src/security/quotaEvidence.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/usageAccounting.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -9476,6 +9488,7 @@
       "consuming_sources": [
         "backend/src/config/supabase.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+        "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -9751,6 +9764,7 @@
     {
       "name": "SUPABASE_URL",
       "consuming_sources": [
+        "backend/src/ai/quota.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/supabase.ts",
         "backend/src/index.ts",
@@ -9760,12 +9774,16 @@
         "backend/src/lib/resolveIdentity.ts",
         "backend/src/lib/verifyJwt.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+        "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
+        "backend/src/security/quotaEvidence.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/usageAccounting.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -10376,11 +10394,15 @@
       "name": "XB01_DISPOSABLE_SUPABASE",
       "consuming_sources": [
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+        "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
+        "backend/src/security/quotaEvidence.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/usageAccounting.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -10404,9 +10426,11 @@
       "name": "XB01_LOCAL_DATABASE_URL",
       "consuming_sources": [
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+        "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/usageAccounting.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -11470,7 +11494,7 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "sha256": "5205ba30975ba7302b500d5fdbe6b810532151a5d2f7af3b5e2a975a5760d03c"
+      "sha256": "502c07ade36c1844d3d76849ff3d469ef0388cb687eb02c4b091a76e2cf6f82a"
     },
     {
       "path": "backend/src/ai/fileSelector.ts",
@@ -11546,7 +11570,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "fe7f3ad02c37fc679d299d9b17d7b14dcd030bca4b949ee7ce397beb0b5de82a"
+      "sha256": "57fabfb9d31efb4c2bce74e27df97efa3c7f5c5aabe00370f45a1a10f53fee30"
     },
     {
       "path": "backend/src/ai/progressHeartbeat.ts",
@@ -11586,7 +11610,7 @@
     },
     {
       "path": "backend/src/ai/quota.ts",
-      "sha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac"
+      "sha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d"
     },
     {
       "path": "backend/src/ai/repoSummarize.ts",
@@ -11618,7 +11642,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8"
+      "sha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16"
     },
     {
       "path": "backend/src/ai/runTrace.ts",
@@ -11831,6 +11855,10 @@
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
       "sha256": "c27a9819459f148587894a325012cddb44989c014cdcb927e2b1da8d29912c76"
+    },
+    {
+      "path": "backend/src/ai/usageAccounting.ts",
+      "sha256": "c1b6b050622cfa76e1daf090d78007da8d29afcaad6fd6ab5cad223292b97e68"
     },
     {
       "path": "backend/src/ai/validationVerdict.ts",
@@ -12410,7 +12438,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "c92debf25ae1ca9634658bee52b5eafc0b69501cc6f9dc927b0de4493ebc2102"
+      "sha256": "4bfbc1d8eec9c4e146da3d76344e05a1c29e8950153b1cd8f2cd451e70d7989a"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -12521,6 +12549,10 @@
       "sha256": "c8ecd16423a72174a3ff9bbeac504d137d3f91527ac9abc8c4115629c526ffdd"
     },
     {
+      "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
+      "sha256": "6ae3a77e6c4551ca3fc6657b1eff6334c757a9a163d4ac3ed4d53f2c00257a69"
+    },
+    {
       "path": "backend/src/security/growthReferral.local.integration.ts",
       "sha256": "b340acf380c9405d8d1af1e4e26adf7f6dc574890974338267e2a8e015e358b3"
     },
@@ -12534,7 +12566,7 @@
     },
     {
       "path": "backend/src/security/ownedTerminalPersistence.ts",
-      "sha256": "32c010ffa61272f6f164cb9d9c2ec58148a297b6bf2086f55f48584aa446fe92"
+      "sha256": "137e8e16b217933c3f5381bb1f09d2483c829ec3870e80ca0228b0b16bebef0f"
     },
     {
       "path": "backend/src/security/ownership.ts",
@@ -12553,6 +12585,10 @@
       "sha256": "b12a4978235027960e22eaec1c72e619fc2180ff805e89f5aee1baa4aa695a58"
     },
     {
+      "path": "backend/src/security/quotaEvidence.local.integration.ts",
+      "sha256": "e41350ae79880eb8ae2c357adaf6f863e4779800585486b57073b5cbfbcf32c2"
+    },
+    {
       "path": "backend/src/security/serviceRoleGuard.ts",
       "sha256": "4987c92eba0570950dac65354c9f5edd4d7152c2ad86ad591bd4680450cb6a65"
     },
@@ -12566,7 +12602,15 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "7b92ccd4ac5320513be09daa999f2022c0b35fc8cfda917395b6c70db79b7c5d"
+      "sha256": "27b6edb77c4c48a06e78ad15b92863845c5e9d80af170aa1f6761f0cd393c8be"
+    },
+    {
+      "path": "backend/src/security/terminalIdentity.local.integration.ts",
+      "sha256": "af7f449c8ae2935837cf34fc821172bb12503169888239316a2bdfebcaa2b775"
+    },
+    {
+      "path": "backend/src/security/usageAccounting.local.integration.ts",
+      "sha256": "6e55149fb017839fd299c36910c3877b5c9c75d2253f24589ad35de646e2223e"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12661,12 +12705,16 @@
       "sha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463"
     },
     {
+      "path": "backend/src/services/integrations/supabaseProjectUrl.ts",
+      "sha256": "286363bca51c4baa4c58215174038e9207b596afe7fb687ac5c09324cd52736e"
+    },
+    {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "sha256": "1bc213464352ee8f766c1484e6b829b3a6ab67897454b9b4cb2695a7ef88f752"
+      "sha256": "1edb71ab5819aad28ac87a65bffb4639569a68e1c6e444300eba08efb283ba8c"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb"
+      "sha256": "2ff8813371760b68e032132029c462a98a4ecca107f074c9d4d73295c0976a24"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -12870,7 +12918,7 @@
     },
     {
       "path": "backend/src/synthesis/foundation.ts",
-      "sha256": "dabea357b044f35999fa0a6f79141e8bb10816d9a020738093929975ced43949"
+      "sha256": "46e29fa311b3f208e7dcb15b3db6c4554d7259f1851be79261b952990f3e9723"
     },
     {
       "path": "backend/src/synthesis/goldenExamples.ts",
@@ -17541,7 +17589,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3993,
+      "line": 3999,
       "credentialsInUrl": false
     },
     {
@@ -18023,6 +18071,13 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
+      "line": 13,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/growthReferral.local.integration.ts",
       "line": 13,
       "credentialsInUrl": false
@@ -18093,57 +18148,78 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
-      "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 50,
+      "path": "backend/src/security/quotaEvidence.local.integration.ts",
+      "line": 9,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 50,
+      "line": 54,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 271,
+      "line": 54,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 279,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 321,
+      "line": 329,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 402,
+      "line": 415,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 508,
+      "line": 521,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 559,
+      "line": 572,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1203,
+      "line": 1216,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/terminalIdentity.local.integration.ts",
+      "line": 10,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/usageAccounting.local.integration.ts",
+      "line": 10,
       "credentialsInUrl": false
     },
     {
@@ -22259,49 +22335,49 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 305,
+      "line": 326,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 364,
+      "line": 385,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 365,
+      "line": 386,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 366,
+      "line": 387,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 410,
+      "line": 431,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 554,
+      "line": 575,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 555,
+      "line": 576,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -22560,56 +22636,56 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 528,
+      "line": 529,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 558,
+      "line": 559,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1107,
+      "line": 1108,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1448,
+      "line": 1454,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2183,
+      "line": 2189,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3760,
+      "line": 3766,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3943,
+      "line": 3949,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4905,
+      "line": 4911,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -22819,21 +22895,21 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 78,
+      "line": 101,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 81,
+      "line": 104,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 1252,
+      "line": 1275,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24246,6 +24322,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/security/ownedTerminalPersistence.ts",
+      "line": 24,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/security/profileDeletion.local.integration.ts",
       "line": 17,
       "scope": "FUNCTION_LOCAL",
@@ -24254,7 +24337,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1039,
+      "line": 1052,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24471,49 +24554,56 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 186,
+      "line": 187,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 201,
+      "line": 202,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 203,
+      "line": 204,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 483,
+      "line": 476,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 530,
+      "line": 523,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 531,
+      "line": 524,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 869,
+      "line": 867,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 962,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24989,7 +25079,7 @@
     },
     {
       "path": "backend/src/synthesis/foundation.ts",
-      "line": 195,
+      "line": 197,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
