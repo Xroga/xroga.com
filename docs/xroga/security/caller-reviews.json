@@ -2,6 +2,15 @@
   "version": "1.0",
   "reviews": [
     {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "callIds": ["26fa4f9ec2b1c2b706eb","53492dad34fb85b82a84","25c7f8ef11b52299ef2d","64f625d38ac95267dfc4","f2bc36a25635940ff4bc","42b163c963d22440b772","e75144f479b27611799d","4d32a7e88bcbc575fe1e","e7d3dfffb00cabdb12e1","caf8c34f6a6ad470f2e7","cf317294ba08b3484a5f","21a631f71ad577a88ffd","008647681f5b1bf1d3b3","03881481406df41623c0","87da92bb2b293576e16d","473638d30e12be7d3b2d"],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+      "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+      "evidence": [{"path":"backend/src/services/integrations/vercelAuth.revocation.test.ts","marker":"Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"}]
+    },
+    {
       "path": "backend/src/services/integrations/githubAuth.ts",
       "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
       "callIds": ["f8bd72ce7b41e47c780a", "69f92d6c218d524974df", "3458113405e334d0de13", "dc59e6f793b207280b2d", "0406dca0597f3236b3b7", "be3bc6ac9507df178e4a", "a098922758b2b1ee2d43", "9f708d8a33157d711655", "26a5feb362efbd53e788", "c7aaad47a8f8145eddcc", "8a230e1bb6f42f536618"],
@@ -666,9 +675,9 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
       "callIds": [
-        "4a571253158f8281ee72"
+        "8bc24cfa8844d90866b4"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in encodeVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -682,9 +691,9 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
       "callIds": [
-        "faa932c66557f902c14a"
+        "331931c30f3362b4a021"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in parseVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -698,9 +707,9 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
       "callIds": [
-        "e868579d52de58ae0e4c"
+        "f3ca8658f8f880004de9"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in buildVercelAuthorizeUrl. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -714,9 +723,9 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
       "callIds": [
-        "6fbf3baa24bb4deb5d7d"
+        "f5a75bb3f1c62654a46c"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in parseVercelOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",

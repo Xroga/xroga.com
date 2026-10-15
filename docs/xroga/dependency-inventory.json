@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ad129eb6963e72c0c62db6bb08c8546283e21e24",
+  "source_sha": "ee980820660baf411ac7ed6bd73bdf3877c188ab",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12400,7 +12400,7 @@
     },
     {
       "path": "backend/src/routes/vercel.ts",
-      "sha256": "eff7075bd1623cc114dd04d43d62e80185a24ea239f68784e5d49058a0b92012"
+      "sha256": "9731de5c29b76f98a6bc348548cce66db4dbb0fea81bef113a5c5ed61fc75e8f"
     },
     {
       "path": "backend/src/routes/voice.ts",
@@ -12464,7 +12464,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "8c70049322181e67cada6c5f19498f5d69795a17279e3fadea19c390aea6310a"
+      "sha256": "a30ce227152251f590f28e200317b81b12863d094a200ff96efa9e400537aa96"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12564,7 +12564,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "sha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a"
     },
     {
       "path": "backend/src/services/memory/buildMemory.ts",
@@ -17876,21 +17876,21 @@
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 194,
+      "line": 198,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 195,
+      "line": 199,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 216,
+      "line": 220,
       "credentialsInUrl": false
     },
     {
@@ -17911,35 +17911,35 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 38,
+      "line": 39,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 38,
+      "line": 39,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 242,
+      "line": 243,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 292,
+      "line": 293,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 373,
+      "line": 374,
       "credentialsInUrl": false
     },
     {
@@ -18114,49 +18114,56 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 167,
+      "line": 156,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 198,
+      "line": 187,
       "credentialsInUrl": false
     },
     {
       "hostname": "vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 275,
+      "line": 264,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 309,
+      "line": 298,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 570,
+      "line": 551,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 606,
+      "line": 587,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 607,
+      "line": 588,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.vercel.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 643,
       "credentialsInUrl": false
     },
     {
@@ -18170,14 +18177,7 @@
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 681,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "api.vercel.com",
-      "protocol": "https:",
-      "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 815,
+      "line": 784,
       "credentialsInUrl": false
     },
     {
@@ -24015,7 +24015,7 @@
     },
     {
       "path": "backend/src/routes/vercel.ts",
-      "line": 190,
+      "line": 194,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24036,7 +24036,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 756,
+      "line": 780,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24274,14 +24274,14 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 210,
+      "line": 199,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 224,
+      "line": 213,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -10,6 +10,10 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/services/integrations/vercelAuth.ts",
+    "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+    "backend/src/services/integrations/vercelAuth.refresh.test.ts",
+    "backend/src/routes/vercel.ts",
     "backend/src/services/integrations/githubAuth.ts",
     "backend/src/routes/github.ts",
     "backend/src/services/integrations/githubAuth.revocation.test.ts",

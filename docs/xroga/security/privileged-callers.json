@@ -1,27 +1,27 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "bf7ac3d453a54d2c7b7cdab34b40e00de3a9c5060332d15d66a50e31342db32c",
+  "reviewRegistrySha256": "1198af4b0b7555d4769f00af0dca8dac45b9ccc2ffb101805ba45d22bf322326",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 161,
-    "persistenceCandidates": 667,
+    "privilegedFactorySites": 160,
+    "persistenceCandidates": 666,
     "ownerPredicateCandidates": 163,
-    "reviewRequired": 252,
-    "reviewedCandidates": 415,
-    "unresolvedSafetyCandidates": 497,
+    "reviewRequired": 235,
+    "reviewedCandidates": 431,
+    "unresolvedSafetyCandidates": 496,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 252,
+    "REVIEW_REQUIRED": 235,
     "SCOPED_BOUNDARY": 35,
     "NARROW_EXCEPTION": 6,
     "NOT_PERSISTENCE": 129,
-    "REVIEWED_GAP": 245
+    "REVIEWED_GAP": 261
   },
   "callers": [
     {
@@ -8896,7 +8896,7 @@
       }
     },
     {
-      "id": "4a571253158f8281ee72",
+      "id": "8bc24cfa8844d90866b4",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 42,
       "enclosing": "encodeVercelRefreshLease",
@@ -8904,7 +8904,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in encodeVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -8917,7 +8917,7 @@
       }
     },
     {
-      "id": "faa932c66557f902c14a",
+      "id": "331931c30f3362b4a021",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 49,
       "enclosing": "parseVercelRefreshLease",
@@ -8925,7 +8925,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in parseVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -8938,92 +8938,141 @@
       }
     },
     {
-      "id": "a9e993daa4e15d3c1087",
+      "id": "26fa4f9ec2b1c2b706eb",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 95,
-      "enclosing": "ensureTokenBucket",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
-    },
-    {
-      "id": "4eeec6e7c777d4865146",
-      "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 113,
+      "line": 101,
       "enclosing": "saveVercelTokenToStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
     },
     {
-      "id": "b804d62f570b6aad0482",
+      "id": "53492dad34fb85b82a84",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 115,
+      "line": 103,
       "enclosing": "saveVercelTokenToStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
     },
     {
-      "id": "47df262533720ccdd40e",
+      "id": "25c7f8ef11b52299ef2d",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 132,
+      "line": 120,
       "enclosing": "getVercelTokenFromStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
     },
     {
-      "id": "d038186d78c4e4f44902",
+      "id": "64f625d38ac95267dfc4",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 121,
+      "enclosing": "getVercelTokenFromStorage",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f2bc36a25635940ff4bc",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 133,
-      "enclosing": "getVercelTokenFromStorage",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
-    },
-    {
-      "id": "c7849821fcc6578aa602",
-      "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 145,
       "enclosing": "deleteVercelTokenFromStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
     },
     {
-      "id": "618873df4e98d6afc03b",
+      "id": "42b163c963d22440b772",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 146,
+      "line": 134,
       "enclosing": "deleteVercelTokenFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
     },
     {
-      "id": "e868579d52de58ae0e4c",
+      "id": "f3ca8658f8f880004de9",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 249,
+      "line": 238,
       "enclosing": "buildVercelAuthorizeUrl",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in buildVercelAuthorizeUrl. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -9036,15 +9085,15 @@
       }
     },
     {
-      "id": "6fbf3baa24bb4deb5d7d",
+      "id": "f5a75bb3f1c62654a46c",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 342,
+      "line": 331,
       "enclosing": "parseVercelOAuthState",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in parseVercelOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -9057,114 +9106,214 @@
       }
     },
     {
-      "id": "f7ac5feedbd553bc790c",
+      "id": "e75144f479b27611799d",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 467,
+      "line": 456,
       "enclosing": "refreshVercelOAuthTokenWithLease",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
     },
     {
-      "id": "3e525e73ed2d4b7572e8",
+      "id": "4d32a7e88bcbc575fe1e",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 469,
+      "line": 458,
       "enclosing": "refreshVercelOAuthTokenWithLease",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
     },
     {
-      "id": "5379d0e45b92b6a6a534",
+      "id": "e7d3dfffb00cabdb12e1",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 482,
+      "enclosing": "refreshVercelOAuthTokenWithLease",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
+    },
+    {
+      "id": "caf8c34f6a6ad470f2e7",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 499,
-      "enclosing": "refreshVercelOAuthTokenWithLease",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
-    },
-    {
-      "id": "9db29570d56a70b3e3c9",
-      "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 516,
       "enclosing": "loadVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
     },
     {
-      "id": "01d25052929feec921b6",
+      "id": "cf317294ba08b3484a5f",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 517,
+      "line": 500,
       "enclosing": "loadVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
     },
     {
-      "id": "2460017af4e98b9dd9fe",
+      "id": "21a631f71ad577a88ffd",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 747,
+      "line": 729,
       "enclosing": "saveVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
     },
     {
-      "id": "d42749d7a8f67df39a03",
+      "id": "008647681f5b1bf1d3b3",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 749,
+      "enclosing": "saveVercelConnection",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
+    },
+    {
+      "id": "03881481406df41623c0",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 754,
+      "enclosing": "saveVercelConnection",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
+    },
+    {
+      "id": "87da92bb2b293576e16d",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 764,
-      "enclosing": "saveVercelConnection",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
-    },
-    {
-      "id": "525c5b6c342da040c352",
-      "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 771,
-      "enclosing": "saveVercelConnection",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
-    },
-    {
-      "id": "c4eae5fdf6801f437ce4",
-      "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 797,
       "enclosing": "clearVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
     },
     {
-      "id": "390b79e1fab4b1dad6e3",
+      "id": "473638d30e12be7d3b2d",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 798,
+      "line": 765,
       "enclosing": "clearVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
     },
     {
       "id": "661ce57ea5e40d34292d",

@@ -24,6 +24,7 @@ import { BUILD_OUTCOME_RETENTION_MS } from '../ai/learningPolicy.js';
 import { saveGitHubTokenToStorage,getGitHubTokenFromStorage } from '../services/integrations/githubTokenStore.js';
 import { ensurePrivateOAuthBucket } from '../services/integrations/credentialStorageBucket.js';
 import { clearGitHubConnection, getGitHubToken, saveGitHubConnection } from '../services/integrations/githubAuth.js';
+import { clearVercelConnection, getVercelToken, saveVercelConnection } from '../services/integrations/vercelAuth.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
 import { storeProjectFile } from '../services/storage/projectFiles.js';
 import { ownedFile } from '../services/storage/privateFileDelivery.js';
@@ -492,6 +493,29 @@ test('real GitHub disconnect persists owner-bound revocation despite a delayed l
     for(const user of users) await clearGitHubConnection(user.id);
     const removed=await admin.storage.from(bucket).remove(users.map(user=>`${user.id}/github.json`));
     assert.equal(removed.error,null,'GitHub synthetic mirror cleanup failed');
+  }
+});
+
+test('real Vercel refresh persistence cannot overwrite a disconnect or another owner',async()=>{
+  const [owner,other]=users,bucket='xroga-github-tokens',path=`${owner.id}/vercel.json`;
+  try {
+    await saveVercelConnection(owner.id,'SYNTHETIC_VERCEL_OWNER',{refreshToken:'synthetic-owner-lease',expiresIn:3600});
+    await saveVercelConnection(other.id,'SYNTHETIC_VERCEL_OTHER',{});
+    await saveVercelConnection(owner.id,'SYNTHETIC_VERCEL_ROTATED',{refreshToken:'synthetic-next-lease',expiresIn:3600},'synthetic-owner-lease');
+    assert.equal(await getVercelToken(owner.id),'SYNTHETIC_VERCEL_ROTATED');
+    const disconnect=await request('/api/vercel/disconnect',owner.token,'DELETE');assert.equal(disconnect.status,200);
+    assert.equal((await disconnect.json() as {ok:boolean}).ok,true);
+    await assert.rejects(saveVercelConnection(owner.id,'SYNTHETIC_LATE_ROTATION',{},'synthetic-next-lease'),/connection changed during refresh/);
+    const delayed=await admin.storage.from(bucket).upload(path,JSON.stringify({access_token:'SYNTHETIC_DELAYED_VERCEL'}),{upsert:true,contentType:'application/json'});
+    assert.equal(delayed.error,null);
+    assert.equal(await getVercelToken(owner.id),null);
+    assert.equal(await getVercelToken(other.id),'SYNTHETIC_VERCEL_OTHER');
+    await saveVercelConnection(owner.id,'SYNTHETIC_VERCEL_RECONNECT',{});
+    assert.equal(await getVercelToken(owner.id),'SYNTHETIC_VERCEL_RECONNECT');
+  } finally {
+    for(const user of users) await clearVercelConnection(user.id);
+    const removed=await admin.storage.from(bucket).remove(users.map(user=>`${user.id}/vercel.json`));
+    assert.equal(removed.error,null,'Vercel synthetic mirror cleanup failed');
   }
 });
 

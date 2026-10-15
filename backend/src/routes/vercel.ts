@@ -168,8 +168,12 @@ router.get('/status', async (req: AuthRequest, res) => {
 });
 
 router.delete('/disconnect', async (req: AuthRequest, res) => {
-  await clearVercelConnection(req.userId!);
-  res.json({ ok: true });
+  try {
+    await clearVercelConnection(req.userId!);
+    res.json({ ok: true });
+  } catch {
+    res.status(503).json({ error: 'Vercel disconnect could not be fully completed. Retry shortly.' });
+  }
 });
 
 /** List Vercel projects for Change project UI (personal + team accounts). */

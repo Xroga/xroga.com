@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "ad129eb6963e72c0c62db6bb08c8546283e21e24",
-    "sourceTimestampUtc": "2026-10-15T19:59:02+05:00",
-    "auditStartedUtc": "2026-10-15T15:22:15.067Z",
+    "sha": "ee980820660baf411ac7ed6bd73bdf3877c188ab",
+    "sourceTimestampUtc": "2026-10-15T20:22:20+05:00",
+    "auditStartedUtc": "2026-10-15T15:27:33.564Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -5791,7 +5791,7 @@
         "backend/src/routes/billing.ts:5",
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:27",
-        "backend/src/security/tenantIsolation.local.integration.ts:27",
+        "backend/src/security/tenantIsolation.local.integration.ts:28",
         "backend/src/services/BillingService.ts:18",
         "backend/src/services/integrations/businessAction.ts:11",
         "backend/src/services/integrations/businessRead.ts:7"
@@ -19876,7 +19876,7 @@
       "id": "surface:fe368c4f6dde9b73b08c",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "sha256": "eff7075bd1623cc114dd04d43d62e80185a24ea239f68784e5d49058a0b92012",
+      "sha256": "9731de5c29b76f98a6bc348548cce66db4dbb0fea81bef113a5c5ed61fc75e8f",
       "symbols": [
         "VercelProject",
         "added",
@@ -21071,7 +21071,7 @@
         "backend/src/routes/billing.ts:3",
         "backend/src/routes/billingWebhook.test.ts:7",
         "backend/src/routes/billingWebhook.ts:3",
-        "backend/src/security/tenantIsolation.local.integration.ts:35",
+        "backend/src/security/tenantIsolation.local.integration.ts:36",
         "backend/src/services/BillingService.test.ts:4"
       ],
       "reachable": true,
@@ -21765,7 +21765,8 @@
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.ts:9",
-        "backend/src/services/integrations/userProviderKeys.ts:12"
+        "backend/src/services/integrations/userProviderKeys.ts:12",
+        "backend/src/services/integrations/vercelAuth.ts:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -22737,8 +22738,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts:24",
         "backend/src/services/integrations/githubAuth.ts:3",
         "backend/src/services/integrations/oauthPkceStore.ts:8",
-        "backend/src/services/integrations/userProviderKeys.ts:11",
-        "backend/src/services/integrations/vercelAuth.ts:9"
+        "backend/src/services/integrations/userProviderKeys.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23149,7 +23149,7 @@
         "backend/src/routes/integrations.ts:644",
         "backend/src/routes/integrations.ts:672",
         "backend/src/routes/supabaseOAuth.ts:20",
-        "backend/src/security/tenantIsolation.local.integration.ts:36",
+        "backend/src/security/tenantIsolation.local.integration.ts:37",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.ts:858",
         "backend/src/services/integrations/userProviderKeys.ts:867"
@@ -23360,7 +23360,7 @@
       "id": "surface:083de6ff7f0ffdcc0165",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "sha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
       "symbols": [
         "ALLOWED_CALLBACK_ORIGINS",
         "CALLBACK_PATH",
@@ -23416,7 +23416,6 @@
         "meta",
         "nonce",
         "observedRefreshToken",
-        "ok",
         "params",
         "parseVercelOAuthState",
         "parseVercelRefreshLease",
@@ -23467,14 +23466,14 @@
       "imports": [
         "../../config/supabase.js",
         "../../db/ensureGithubSchema.js",
-        "./githubTokenStore.js",
+        "./credentialStorageBucket.js",
         "./oauthPkceStore.js",
         "crypto"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
         "backend/src/db/ensureGithubSchema.ts",
-        "backend/src/services/integrations/githubTokenStore.ts",
+        "backend/src/services/integrations/credentialStorageBucket.ts",
         "backend/src/services/integrations/oauthPkceStore.ts"
       ],
       "entryPoints": [
@@ -23486,8 +23485,10 @@
         "backend/src/routes/integrations.ts:27",
         "backend/src/routes/supabaseOAuth.ts:32",
         "backend/src/routes/vercel.ts:4",
+        "backend/src/security/tenantIsolation.local.integration.ts:27",
         "backend/src/services/integrations/githubDeploy.ts:16",
         "backend/src/services/integrations/vercelAuth.refresh.test.ts:3",
+        "backend/src/services/integrations/vercelAuth.revocation.test.ts:4",
         "backend/src/services/integrations/vercelAuth.scope.test.ts:3",
         "backend/src/services/integrations/vercelAuthCapabilities.test.ts:3",
         "backend/src/services/publish/userOwnedPublish.ts:7",
@@ -23510,6 +23511,7 @@
         "backend/src/services/integrations/vercelAuth.ts#VercelAuthKind",
         "backend/src/services/integrations/vercelAuth.ts#authKind",
         "backend/src/services/integrations/vercelAuth.ts#buildVercelAuthorizeUrl",
+        "backend/src/services/integrations/vercelAuth.ts#ensurePrivateOAuthBucket",
         "backend/src/services/integrations/vercelAuth.ts#exchangeVercelOAuthCode",
         "backend/src/services/integrations/vercelAuth.ts#getVercelOAuthCallbackUrl",
         "backend/src/services/integrations/vercelAuth.ts#identityOk",
@@ -23522,10 +23524,10 @@
         "backend/src/services/integrations/vercelAuth.ts#verifyVercelTokenLive"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/vercelAuth.ts:469 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:499 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:517 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:798 (user_id)"
+        "backend/src/services/integrations/vercelAuth.ts:458 (user_id)",
+        "backend/src/services/integrations/vercelAuth.ts:482 (user_id)",
+        "backend/src/services/integrations/vercelAuth.ts:500 (user_id)",
+        "backend/src/services/integrations/vercelAuth.ts:749 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/vercelAuth.ts#buildVercelAuthorizeUrl"
@@ -23537,7 +23539,9 @@
         "backend/src/services/integrations/vercelAuth.ts#verifyVercelTokenLive"
       ],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/vercelAuth.refresh.test.ts",
+        "backend/src/services/integrations/vercelAuth.revocation.test.ts",
         "backend/src/services/integrations/vercelAuth.scope.test.ts",
         "backend/src/services/integrations/vercelAuthCapabilities.test.ts"
       ],
@@ -25208,7 +25212,7 @@
       "callers": [
         "backend/src/lib/r2.ts:3",
         "backend/src/routes/projects.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:30",
+        "backend/src/security/tenantIsolation.local.integration.ts:31",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.ts:6",
         "backend/src/services/storage/projectFiles.ts:6"
@@ -25320,7 +25324,7 @@
       ],
       "callers": [
         "backend/src/routes/projects.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:29",
+        "backend/src/security/tenantIsolation.local.integration.ts:30",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5"
       ],
       "reachable": true,
@@ -25387,7 +25391,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/security/tenantIsolation.integration.test.ts:14",
-        "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/security/tenantIsolation.local.integration.ts:29",
         "backend/src/services/memory/buildProjectStore.ts:8",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7"
       ],
@@ -27695,7 +27699,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:29",
-        "backend/src/security/tenantIsolation.local.integration.ts:31",
+        "backend/src/security/tenantIsolation.local.integration.ts:32",
         "backend/src/synthesis/livePreview/access.test.ts:5",
         "backend/src/synthesis/livePreview/store.ts:9"
       ],
@@ -28199,7 +28203,7 @@
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:26",
         "backend/src/routes/projectRuntime.ts:20",
-        "backend/src/security/tenantIsolation.local.integration.ts:34",
+        "backend/src/security/tenantIsolation.local.integration.ts:35",
         "backend/src/synthesis/livePreview/coordinator.ts:27",
         "backend/src/synthesis/livePreview/index.ts:3"
       ],
@@ -89508,7 +89512,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:42f3a4c5e077d9719eba",
+      "id": "registration:f0362ff1f0e3118d862c",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 170,
       "receiver": "router",
@@ -89520,9 +89524,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7955393adca527040ded",
+      "id": "registration:841a80587f03902b5579",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 176,
+      "line": 180,
       "receiver": "router",
       "method": "get",
       "path": "/projects",
@@ -89532,9 +89536,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a10d28c4a85b0c558258",
+      "id": "registration:37ae06f99c4c09d43d5b",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 246,
+      "line": 250,
       "receiver": "router",
       "method": "post",
       "path": "/deploy",
@@ -89544,9 +89548,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:ea899111657c46ab75f2",
+      "id": "registration:d7287e7a63b34e9c48fd",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 303,
+      "line": 307,
       "receiver": "router",
       "method": "get",
       "path": "/domains",
@@ -89556,9 +89560,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:8cddde630b3fbbf6836d",
+      "id": "registration:0cc4aa20f2cd7c2a0e87",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 323,
+      "line": 327,
       "receiver": "router",
       "method": "post",
       "path": "/domains",
@@ -89568,9 +89572,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5262de5a3bdbf544de18",
+      "id": "registration:b95d5e07166263f421b4",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 358,
+      "line": 362,
       "receiver": "router",
       "method": "post",
       "path": "/domains/verify",
@@ -89580,9 +89584,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d790deaa1ef9b4273ae0",
+      "id": "registration:346f15339c021382d76b",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 388,
+      "line": 392,
       "receiver": "router",
       "method": "delete",
       "path": "/domains",
@@ -92126,8 +92130,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ecae86b0423df824d620",
-      "registrationId": "registration:42f3a4c5e077d9719eba",
+      "id": "route:6ff0559f31a1c9bda1ce",
+      "registrationId": "registration:f0362ff1f0e3118d862c",
       "sourcePath": "backend/src/routes/vercel.ts",
       "line": 170,
       "method": "DELETE",
@@ -92143,10 +92147,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c475958ebd7b0e2820e7",
-      "registrationId": "registration:7955393adca527040ded",
+      "id": "route:964d11e2d2be810fd3c2",
+      "registrationId": "registration:841a80587f03902b5579",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 176,
+      "line": 180,
       "method": "GET",
       "path": "/api/vercel/projects",
       "mountChain": [
@@ -92160,10 +92164,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e068de46bc5025d2be06",
-      "registrationId": "registration:a10d28c4a85b0c558258",
+      "id": "route:b68a40f54ea32fb2868e",
+      "registrationId": "registration:37ae06f99c4c09d43d5b",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 246,
+      "line": 250,
       "method": "POST",
       "path": "/api/vercel/deploy",
       "mountChain": [
@@ -92177,10 +92181,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:2acf9b8fb2949575d586",
-      "registrationId": "registration:ea899111657c46ab75f2",
+      "id": "route:dd7ed3b52bd155ddcb74",
+      "registrationId": "registration:d7287e7a63b34e9c48fd",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 303,
+      "line": 307,
       "method": "GET",
       "path": "/api/vercel/domains",
       "mountChain": [
@@ -92194,10 +92198,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:6ce3072eacdcc2560062",
-      "registrationId": "registration:8cddde630b3fbbf6836d",
+      "id": "route:be57027db94e17aba275",
+      "registrationId": "registration:0cc4aa20f2cd7c2a0e87",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 323,
+      "line": 327,
       "method": "POST",
       "path": "/api/vercel/domains",
       "mountChain": [
@@ -92211,10 +92215,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:238f560e1d000e7dbd99",
-      "registrationId": "registration:5262de5a3bdbf544de18",
+      "id": "route:a4ba6bd118bd128d4249",
+      "registrationId": "registration:b95d5e07166263f421b4",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 358,
+      "line": 362,
       "method": "POST",
       "path": "/api/vercel/domains/verify",
       "mountChain": [
@@ -92228,10 +92232,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:92ff4e6d60816fe38c4e",
-      "registrationId": "registration:d790deaa1ef9b4273ae0",
+      "id": "route:e6bf5577a960e7a1bce4",
+      "registrationId": "registration:346f15339c021382d76b",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 388,
+      "line": 392,
       "method": "DELETE",
       "path": "/api/vercel/domains",
       "mountChain": [
@@ -101785,7 +101789,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 49,
+      "declaredTests": 50,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101919,6 +101923,13 @@
       "id": "test-suite:363a0d151ecd19ff9922",
       "sourcePath": "backend/src/services/integrations/vercelAuth.refresh.test.ts",
       "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:f14c7e580928257f9cff",
+      "sourcePath": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

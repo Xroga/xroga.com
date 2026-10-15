@@ -2,6 +2,8 @@
 
 ## Authoritative continuation, 2026-10-15
 
+Vercel candidate now uses the shared private OAuth bucket guard, authoritative revocation rows, database-required saves and exact-lease conditional refresh updates. Malformed expiry is treated as unusable. Seventeen focused tests and backend build PASS locally; the additional real-Supabase owner/CAS/disconnect/reconnect test awaits final-source CI. All16 remaining Vercel persistence candidates retain REVIEWED_GAP; four unchanged Buffer conversions were rechecked and rebound to current source hashes. Current generated counts:666 total,431 reviewed,235 unreviewed,261 reviewed gaps,496 unresolved. The one-candidate reduction reflects removal of the duplicate bucket factory, not certification. Full --require-complete still fails by design. Historical sections below are retained evidence only.
+
 Source `ad129eb6963e72c0c62db6bb08c8546283e21e24` aggregate38756490633 and isolated38756490883 PASS. Agent dependency-lock38756490791 attempt1 failed fetching playwright-core with ECONNRESET; attempt2 PASSED on unchanged source/locks. No dependency waiver or retry hidden as first-attempt success. All11 workflows passed on that source. New GitHub credential corrections require new final-source CI.
 
 The generated privileged-callers.json is the current register; older counts below are historical checkpoints, not competing current assessments. Before this continuation it contained667 candidates,404 reviewed,263 unreviewed,234 reviewed gaps and497 unresolved. Added GitHub helper review preserves REVIEWED_GAP and does not reduce unresolved safety merely by classifying callers. Follow regenerated counts rather than copying a historical prose total.
