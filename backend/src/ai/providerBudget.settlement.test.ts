@@ -21,7 +21,9 @@ test('settlement requires an exact durable receipt and wrapper failures retain u
     assert.equal(body.p_user_id, userId);
     let response: unknown;
     if (req.url === '/rest/v1/rpc/reserve_xroga_provider_budget') {
-      response = { id: reservation.id, reserved_micro_usd: reservation.reservedMicroUsd, price_version: PROVIDER_PRICE_VERSION };
+      response = { id: reservation.id, reserved_micro_usd: reservation.reservedMicroUsd, price_version: PROVIDER_PRICE_VERSION,
+        user_id: userId, idempotency_key: body.p_idempotency_key, internal_route: body.p_internal_route, purpose: body.p_purpose,
+        estimated_input_tokens: body.p_estimated_input_tokens, maximum_output_tokens: body.p_maximum_output_tokens, status: 'reserved' };
     } else if (req.url === '/rest/v1/rpc/settle_xroga_provider_budget') {
       settlementCalls++;
       assert.equal(body.p_reservation_id, reservation.id);

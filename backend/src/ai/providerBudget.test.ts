@@ -103,6 +103,22 @@ test('verified payment cycle becomes the active paid entitlement', async () => {
   assert.equal((await getProviderEntitlementStatus('paid-user')).requiresCard, true);
 });
 
+test('same-key memory replays bind exact intent and deny settled, released or uncertain reservations', async () => {
+  const input = { userId: 'replay-boundary', modelId: 'kimi_k3' as const, estimatedInputTokens: 100, maximumOutputTokens: 100,
+    idempotencyKey: '33333333-3333-4333-8333-333333333333' };
+  for (const terminal of ['settled', 'released', 'pending']) {
+    resetProviderBudgetMemoryForTests();
+    const reservation = await reserveProviderBudget(input);
+    for (const changed of [{ modelId: 'deepseek_v4_flash' as const }, { purpose: 'completion' as const }, { estimatedInputTokens: 101 }, { maximumOutputTokens: 99 }]) {
+      await assert.rejects(reserveProviderBudget({ ...input, ...changed }), /reservation evidence is invalid/);
+    }
+    assert.equal((await reserveProviderBudget(input)).id, reservation.id);
+    if (terminal === 'settled') await settleProviderBudget({ userId: input.userId, modelId: input.modelId, reservation, result: { inputTokens: 1, outputTokens: 1 } });
+    else await finishFailedProviderReservation({ userId: input.userId, reservation, error: new Error(terminal === 'pending' ? 'timeout' : 'unauthorized') });
+    await assert.rejects(reserveProviderBudget(input), /reservation evidence is invalid/);
+  }
+});
+
 
 test('free entitlement projections never exceed the active cycle ceiling', () => {
   const startsAt = new Date('2026-09-01T00:00:00.000Z');

@@ -50,7 +50,13 @@ type MemoryCycle = {
 };
 
 const memoryCycles = new Map<string, MemoryCycle>();
-const memoryReservations = new Map<string, { userId: string; idempotencyKey: string; amount: number; status: string }>();
+const memoryReservations = new Map<string, { userId: string; idempotencyKey: string; amount: number; status: string;
+  modelId: ModelId; purpose: BudgetPurpose; estimatedInputTokens: number; maximumOutputTokens: number }>();
+
+function exactAccountingCount(value: unknown, expected: number): boolean {
+  return (typeof value === 'number' || (typeof value === 'string' && /^\d+$/.test(value))) &&
+    Number.isSafeInteger(Number(value)) && Number(value) === expected;
+}
 
 function asSafeInteger(value: number): number {
   if (!Number.isFinite(value) || value < 0 || value > Number.MAX_SAFE_INTEGER) throw new Error('Invalid provider accounting amount');
@@ -324,9 +330,13 @@ export async function reserveProviderBudget(input: {
       const atCapacity = status?.availableNowPercent != null && status.availableNowPercent <= 0;
       throw capacityUnavailableError(atCapacity, status?.nextUnlockAt ?? null);
     }
-    const row = result.data as unknown as { id: string; reserved_micro_usd: number; price_version: string } | null;
-    if (!row || typeof row.id !== 'string' || !row.id.trim() ||
-      !Number.isSafeInteger(Number(row.reserved_micro_usd)) || Number(row.reserved_micro_usd) < amount ||
+    const row = result.data as Record<string, unknown> | null;
+    if (!row || Array.isArray(row) || typeof row.id !== 'string' || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(row.id) ||
+      row.user_id !== input.userId || row.idempotency_key !== idempotencyKey ||
+      row.internal_route !== input.modelId || row.purpose !== purpose || row.status !== 'reserved' ||
+      !exactAccountingCount(row.estimated_input_tokens, input.estimatedInputTokens) ||
+      !exactAccountingCount(row.maximum_output_tokens, input.maximumOutputTokens) ||
+      !exactAccountingCount(row.reserved_micro_usd, amount) ||
       row.price_version !== PROVIDER_PRICE_VERSION) throw new Error('Provider reservation evidence is invalid');
     return { id: row.id, reservedMicroUsd: Number(row.reserved_micro_usd), priceVersion: row.price_version };
   }
@@ -335,6 +345,10 @@ export async function reserveProviderBudget(input: {
     row.userId === input.userId && row.idempotencyKey === idempotencyKey,
   );
   if (existingReservation) {
+    const row = existingReservation[1];
+    if (row.status !== 'reserved' || row.modelId !== input.modelId || row.purpose !== purpose ||
+      row.estimatedInputTokens !== input.estimatedInputTokens || row.maximumOutputTokens !== input.maximumOutputTokens ||
+      row.amount !== amount) throw new Error('Provider reservation evidence is invalid');
     return {
       id: existingReservation[0],
       reservedMicroUsd: existingReservation[1].amount,
@@ -368,7 +382,8 @@ export async function reserveProviderBudget(input: {
   }
   cycle.reserved += amount;
   const id = randomUUID();
-  memoryReservations.set(id, { userId: input.userId, idempotencyKey, amount, status: 'reserved' });
+  memoryReservations.set(id, { userId: input.userId, idempotencyKey, amount, status: 'reserved',
+    modelId: input.modelId, purpose, estimatedInputTokens: input.estimatedInputTokens, maximumOutputTokens: input.maximumOutputTokens });
   return { id, reservedMicroUsd: amount, priceVersion: PROVIDER_PRICE_VERSION };
 }
 
@@ -399,9 +414,7 @@ export async function settleProviderBudget(input: {
     });
     if (error) throw new Error('Provider reservation settlement failed');
     const row = data as Record<string, unknown> | null;
-    const exactCount = (value: unknown, expected: number): boolean =>
-      (typeof value === 'number' || (typeof value === 'string' && /^\d+$/.test(value))) &&
-      Number.isSafeInteger(Number(value)) && Number(value) === expected;
+    const exactCount = exactAccountingCount;
     if (!row || Array.isArray(row) ||
       row.id !== input.reservation.id || row.user_id !== input.userId || row.status !== 'settled' ||
       row.internal_route !== input.modelId || row.price_version !== input.reservation.priceVersion ||
