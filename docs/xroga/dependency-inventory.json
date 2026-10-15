@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ee980820660baf411ac7ed6bd73bdf3877c188ab",
+  "source_sha": "b8b8681cda50a351d0985b1a75bef65e1134b68d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12544,7 +12544,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "a76327fe8aa60335ae03512413de7a5dfa921c01df24d7d538c9c040fefab94e"
+      "sha256": "625ac0477bf9a899bb82a9141a71c38295c864f143c48e35e3c9dcc75dcea850"
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",

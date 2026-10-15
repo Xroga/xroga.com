@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "ee980820660baf411ac7ed6bd73bdf3877c188ab",
-    "sourceTimestampUtc": "2026-10-15T20:22:20+05:00",
-    "auditStartedUtc": "2026-10-15T15:27:33.564Z",
+    "sha": "b8b8681cda50a351d0985b1a75bef65e1134b68d",
+    "sourceTimestampUtc": "2026-10-15T20:32:32+05:00",
+    "auditStartedUtc": "2026-10-15T15:34:23.602Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -22820,7 +22820,7 @@
       "id": "surface:949ba325e98bab6b63c3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "a76327fe8aa60335ae03512413de7a5dfa921c01df24d7d538c9c040fefab94e",
+      "sha256": "625ac0477bf9a899bb82a9141a71c38295c864f143c48e35e3c9dcc75dcea850",
       "symbols": [
         "BUCKET",
         "PkceSession",
@@ -22861,6 +22861,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/services/integrations/oauthPkceStore.test.ts:6",
         "backend/src/services/integrations/pluginPermissionPolicy.ts:1",
         "backend/src/services/integrations/supabaseAuth.ts:8",
         "backend/src/services/integrations/vercelAuth.ts:10",
@@ -22876,9 +22877,9 @@
       ],
       "tenantBoundary": [
         "backend/src/services/integrations/oauthPkceStore.ts:147 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:186 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:254 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:287 (user_id)"
+        "backend/src/services/integrations/oauthPkceStore.ts:187 (user_id)",
+        "backend/src/services/integrations/oauthPkceStore.ts:255 (user_id)",
+        "backend/src/services/integrations/oauthPkceStore.ts:285 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -101887,7 +101888,7 @@
     {
       "id": "test-suite:4e143d1613918feb9727",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

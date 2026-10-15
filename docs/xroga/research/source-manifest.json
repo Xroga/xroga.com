@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ee980820660baf411ac7ed6bd73bdf3877c188ab",
+  "source_sha": "b8b8681cda50a351d0985b1a75bef65e1134b68d",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -2919,9 +2919,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "9377fabff14bf0d00e6fd7ea6f7eb55f14416b77c80233e27bd82ddcc584d0ef",
-      "byte_size": 3789696,
-      "modified_timestamp": "2026-10-15T15:27:33.915Z",
+      "sha256": "1f131b1a63bc3b85dc637ee3227737fc0a796abe756f23db89116485c490c1f1",
+      "byte_size": 3789766,
+      "modified_timestamp": "2026-10-15T15:34:23.963Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -7313,9 +7313,9 @@
       "source_id": "SRC-949ba325e98bab6b",
       "filename": "oauthPkceStore.ts",
       "path_or_url": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "a76327fe8aa60335ae03512413de7a5dfa921c01df24d7d538c9c040fefab94e",
-      "byte_size": 8379,
-      "modified_timestamp": "2026-10-14T18:53:25.395Z",
+      "sha256": "625ac0477bf9a899bb82a9141a71c38295c864f143c48e35e3c9dcc75dcea850",
+      "byte_size": 8472,
+      "modified_timestamp": "2026-10-15T15:34:01.059Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

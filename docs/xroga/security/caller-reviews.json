@@ -2386,15 +2386,16 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "a76327fe8aa60335ae03512413de7a5dfa921c01df24d7d538c9c040fefab94e",
-      "callIds": ["c2c53ad00a2bf16323ab","c6ebceaa755ce9241fa9","2e75e200c72f254980c6","d85e6b6345b22ef727df","63d4e8eaf75cec58374e","2f8fe9eb8ec536c6fe4f","7f7791ff48a1bd811756","c3076cc8c8662245bed9","7bfc78c279a5e8ca3411","ef1ad2d1b3b69f9f5c41","adba7e1b629b7e17d6d7","08634e84eb5e85ac5bb1","920d688d339a2a5d8af0","da757aa701f0dc326566","fdcc3e194068a98955a8","671c232d98ba0bbe146e","9c318fe6e0e34a043b7d","5c1bbd460f235c1db06c","edcdccfabd6aa744e666","c8b8c3f4fb260546ee86","67efb8385a7ca3cb0245"],
+      "sourceSha256": "625ac0477bf9a899bb82a9141a71c38295c864f143c48e35e3c9dcc75dcea850",
+      "callIds": ["c2c53ad00a2bf16323ab","c6ebceaa755ce9241fa9","2e75e200c72f254980c6","d85e6b6345b22ef727df","63d4e8eaf75cec58374e","2f8fe9eb8ec536c6fe4f","7f7791ff48a1bd811756","c3076cc8c8662245bed9","7bfc78c279a5e8ca3411","ef1ad2d1b3b69f9f5c41","adba7e1b629b7e17d6d7","08634e84eb5e85ac5bb1","6d4381677c82c5047214","ffdfa1bae38b50a5f4c2","cdaa4c21b22e5a38f72e","8c9deb4e7083459040c1","59c26783c96ef291e9db","7f37199c35a476283fc1","086325b8dd6559e0c2a2","0bef3cf0c746b1b4b90a","ec0407008320a7f29f9a"],
       "disposition": "REVIEWED_GAP",
       "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-      "reason": "Actor provenance at every consuming caller remains to be completed. DB queries constrain user/provider and storage paths include user, but that syntax does not prove all internal callers. Bucket privacy admission is now shared and fail-closed; PKCE fallback mirrors are still not an atomic one-use/expiry authority and removal ignores DB failure. Plaintext credential mirrors and lifecycle races remain Command 009 obligations, not a reason to label access or credential cutover verified here.",
+      "reason": "Full helper reinspection and 12 focused tests verify failed authority reads and existing rejected state cannot fall back to stale mirrors. Actor provenance at every consumer remains incomplete. Bucket privacy admission is shared and fail-closed, but PKCE is still not atomic one-use/expiry authority and removal ignores DB failure. Storage-only saves, plaintext mirrors, provider path validation and lifecycle races remain unresolved. No complete credential or Command009 certification.",
       "evidence": [
         {"path":"backend/src/routes/supabaseOAuth.ts","marker":"stateInfo.userId !== req.userId"},
         {"path":"backend/src/index.ts","marker":"authMiddleware, supabaseOAuthRouter"},
-        {"path":"backend/src/services/integrations/oauthPkceStore.ts","marker":"if (stored?.verifier && stored.state === expectedState)"}
+        {"path":"backend/src/services/integrations/oauthPkceStore.ts","marker":"if (stored?.verifier && stored.state === expectedState)"},
+        {"path":"backend/src/services/integrations/oauthPkceStore.test.ts","marker":"OAuth authority failure or existing rejected state never reads a stale Storage mirror"}
       ]
     },
     {

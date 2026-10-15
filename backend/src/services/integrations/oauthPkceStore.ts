@@ -151,7 +151,11 @@ export async function loadPkceSession(
     .eq('provider', provider)
     .maybeSingle();
 
-  if (!error && data?.access_token) {
+  // A failed authority read or an existing rejected session must never be
+  // replaced by an older mirror, even if that mirror matches the old state.
+  if (error) return null;
+  if (data) {
+    if (!data.access_token || data.metadata?.revoked === true) return null;
     const meta = (data.metadata ?? {}) as {
       state?: string;
       redirect_uri?: string;
@@ -167,10 +171,7 @@ export async function loadPkceSession(
         created_at: meta.created_at || new Date().toISOString(),
       };
     }
-  }
-
-  if (error && !isMissingTableError(error.message)) {
-    console.warn('[oauthPkceStore] PKCE read:', error.message);
+    return null;
   }
 
   const stored = await downloadJson<PkceSession>(pkcePath(userId, provider));
@@ -258,16 +259,13 @@ export async function loadProviderToken(
     .eq('provider', provider)
     .maybeSingle();
 
-  if (!error && data?.access_token?.trim()) {
+  if (error || (data && (data.metadata?.revoked === true || !data.access_token?.trim()))) return null;
+  if (data?.access_token?.trim()) {
     return {
       access_token: data.access_token.trim(),
       refresh_token: data.refresh_token,
       metadata: (data.metadata as Record<string, unknown>) ?? {},
     };
-  }
-
-  if (error && !isMissingTableError(error.message)) {
-    console.warn('[oauthPkceStore] token read:', error.message);
   }
 
   const stored = await downloadJson<StoredProviderToken & { updated_at?: string }>(

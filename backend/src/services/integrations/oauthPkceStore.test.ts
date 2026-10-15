@@ -2,6 +2,44 @@ import assert from 'node:assert/strict';
 import { test, describe, it } from 'node:test';
 import { createClient } from '@supabase/supabase-js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
+import { createServer } from 'node:http';
+import { loadPkceSession, loadProviderToken } from './oauthPkceStore.js';
+
+test('OAuth authority failure or existing rejected state never reads a stale Storage mirror', async () => {
+  let mode = 'outage';
+  const paths: string[] = [];
+  const server = createServer((req, res) => {
+    paths.push(req.url ?? '');
+    res.writeHead(mode === 'outage' ? 400 : 200, { 'Content-Type': 'application/json' });
+    if (mode === 'outage') res.end(JSON.stringify({ message: 'SYNTHETIC_PRIVATE_ERROR', code: '42P01' }));
+    else if (mode === 'empty') res.end(JSON.stringify([{ access_token: '', metadata: {} }]));
+    else if (mode === 'revoked') res.end(JSON.stringify([{ access_token: 'old', metadata: { revoked: true } }]));
+    else res.end(JSON.stringify([{ access_token: 'current', metadata: { state: 'new-state' } }]));
+  });
+  const keys = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
+  const previous = new Map(keys.map(key => [key, process.env[key]]));
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+  const address = server.address(); assert.ok(address && typeof address !== 'string');
+  try {
+    process.env.SUPABASE_URL = `http://127.0.0.1:${address.port}`;
+    process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-loopback-only';
+    for (mode of ['outage', 'empty', 'revoked']) {
+      assert.equal(await loadPkceSession('fixture', 'fixture_pkce', 'old-state'), null);
+      assert.equal(await loadProviderToken('fixture', 'fixture_provider'), null);
+    }
+    mode = 'mismatch';
+    assert.equal(await loadPkceSession('fixture', 'fixture_pkce', 'old-state'), null);
+    assert.equal((await loadPkceSession('fixture', 'fixture_pkce', 'new-state'))?.verifier, 'current');
+    assert.equal((await loadProviderToken('fixture', 'fixture_provider'))?.access_token, 'current');
+    assert.equal(paths.length, 9);
+    assert.ok(paths.every(path => path.startsWith('/rest/v1/user_integrations')));
+  } finally {
+    for (const [key, value] of previous) {
+      if (value === undefined) delete process.env[key]; else process.env[key] = value;
+    }
+    await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+  }
+});
 
 // Preserve the pre-existing contract assertions; admission tests extend them.
 describe('oauth pkce contract', () => {
