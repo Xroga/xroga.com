@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "observedAt": "2026-10-15T10:08:53.987Z",
+  "observedAt": "2026-10-15T10:42:39.414Z",
   "result": "ADVISORY_INVENTORY_NOT_RELEASE_APPROVAL",
   "graphs": [
     {
@@ -377,8 +377,10 @@
               "dependency": "@opentelemetry/sdk-logs"
             }
           ],
-          "effects": [],
-          "fixAvailable": true,
+          "effects": [
+            "@cline/core"
+          ],
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -559,10 +561,9 @@
             }
           ],
           "effects": [
-            "@cline/core",
             "@opentelemetry/otlp-transformer"
           ],
-          "fixAvailable": false,
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -641,7 +642,9 @@
               "dependency": "@sap-cloud-sdk/connectivity"
             }
           ],
-          "effects": [],
+          "effects": [
+            "@sap-ai-sdk/orchestration"
+          ],
           "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
@@ -668,7 +671,6 @@
             }
           ],
           "effects": [
-            "@sap-ai-sdk/orchestration",
             "@sap-ai-sdk/prompt-registry"
           ],
           "fixAvailable": true,
@@ -1392,14 +1394,14 @@
       "command": "npm audit --json --workspaces=false",
       "cwd": "frontend",
       "exitCode": 1,
-      "lockSha256": "fad5fd8b9f05804cf5a944c8f1866993b2c9eef6215b2b7139dc528a89670374",
+      "lockSha256": "425563a05c6d29ddf1db50cd9e7d1e948ca0cf845fcd11f90e7160b117a3ce09",
       "counts": {
         "info": 0,
         "low": 1,
         "moderate": 4,
-        "high": 10,
+        "high": 9,
         "critical": 0,
-        "total": 15
+        "total": 14
       },
       "findings": [
         {
@@ -1649,29 +1651,6 @@
             "version": "4.3.3",
             "isSemVerMajor": true
           },
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
-          "name": "nanoid",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "<3.3.18",
-          "installed": [
-            {
-              "path": "node_modules/nanoid",
-              "version": "3.3.16"
-            }
-          ],
-          "via": [
-            {
-              "title": "nanoid: custom generators can loop indefinitely when size is zero",
-              "url": "https://github.com/advisories/GHSA-2v37-7h3g-55p8",
-              "severity": "high",
-              "range": "<3.3.18"
-            }
-          ],
-          "effects": [],
-          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2163,10 +2142,8 @@
               "dependency": "@opentelemetry/sdk-logs"
             }
           ],
-          "effects": [
-            "@cline/core"
-          ],
-          "fixAvailable": false,
+          "effects": [],
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2197,8 +2174,10 @@
               "dependency": "@opentelemetry/sdk-metrics"
             }
           ],
-          "effects": [],
-          "fixAvailable": true,
+          "effects": [
+            "@cline/core"
+          ],
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2256,7 +2235,7 @@
             "@opentelemetry/exporter-metrics-otlp-http",
             "@opentelemetry/exporter-trace-otlp-http"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2292,7 +2271,7 @@
             "@opentelemetry/exporter-trace-otlp-http",
             "@opentelemetry/otlp-exporter-base"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2349,7 +2328,7 @@
           "effects": [
             "@opentelemetry/otlp-transformer"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2379,7 +2358,7 @@
             "@opentelemetry/exporter-metrics-otlp-http",
             "@opentelemetry/otlp-transformer"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2428,7 +2407,9 @@
               "dependency": "@sap-cloud-sdk/connectivity"
             }
           ],
-          "effects": [],
+          "effects": [
+            "@sap-ai-sdk/orchestration"
+          ],
           "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
@@ -2455,7 +2436,6 @@
             }
           ],
           "effects": [
-            "@sap-ai-sdk/orchestration",
             "@sap-ai-sdk/prompt-registry"
           ],
           "fixAvailable": true,

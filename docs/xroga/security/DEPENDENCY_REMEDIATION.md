@@ -1,5 +1,11 @@
 # Dependency decisions — not release approval
 
+## Standalone frontend Nano ID alignment
+
+The PostCSS8.5.24 standalone receiver remained Nano ID3.3.16 while the root workspace already resolved3.3.20. The compatible `^3.3.16` range admits3.3.20 (MIT; Node10/12/13.7/14/15+, compatible with22.21.1). Registry tarball integrity was checked against the existing workspace entry; exactly the standalone version/URL/integrity were aligned. Targeted npm update reported no change, so this is an explicit reviewed lock edit, not an invented successful resolver run. Frozen-install and full build CI on the new SHA remain required.
+
+[GHSA-2v37-7h3g-55p8](https://github.com/advisories/GHSA-2v37-7h3g-55p8) covers the zero-size custom-generator infinite loop;3.3.18 is the first fixed3.x. The actual PostCSS-resolved3.3.20 module now has a bounded child-process regression for customAlphabet/customRandom zero and ordinary sizes. No vulnerable infinite loop can hang the parent test runner. All11 dependency/audit-registry fixtures PASS, lock integrity PASS. New audits still exit1: aggregate47/high24/critical0, backend37/high17/critical0, frontend14/high9/critical0. Scope counts overlap and must not be added. No audit-clean or full runtime-exposure claim.
+
 ## Same-major parser security patches, 2026-10-15
 
 Three lock graphs now retain brace-expansion1.1.21/5.0.12 (existing2.1.7 unchanged), js-yaml4.3.2 and source-map-js1.2.2. Actual paths: ESLint8/minimatch3 and nodemon3/minimatch10 consume brace expansion; ESLint consumes YAML; PostCSS8 consumes source maps. These parse build/config/glob inputs; malicious source/config can exhaust a process. Existing dependency ranges admit these patch releases, so no major override, application manifest change or framework migration was needed. MIT for brace-expansion/js-yaml; BSD-3-Clause for source-map-js. Selected brace5 requires Node20 or22+, compatible with the pinned22.21.1 toolchain.
