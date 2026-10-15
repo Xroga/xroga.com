@@ -1,5 +1,17 @@
 # Credential-free advisory checkpoint — release remains blocked
 
+## Current authoritative checkpoint, 2026-10-15
+
+The fresh `dependency-advisories.json` observation at 15:20:18 UTC supersedes all historical totals and rejected candidate instructions below. Workspace aggregate: 47 findings, including 24 high and zero critical. Frontend standalone: 14 findings, including 9 high and zero critical. Backend standalone: 37 findings, including 17 high and zero critical. These overlapping graphs must not be summed. All three audit commands still exit 1. No remaining advisory is waived.
+
+Current source uses simple-git 4.0.2 and parser 2.0.1 with the reviewed exact-hash Cline compatibility installer, not the historical Git3 candidate below. The pinned backend build passes that compatibility check. Agent V2 dependency-lock run 38756490791 failed on attempt 1 with registry ECONNRESET fetching playwright-core, then passed attempt 2 on unchanged source and locks. Later source ee980820660baf411ac7ed6bd73bdf3877c188ab passed dependency-lock run 38759745945. Network retry success does not resolve the outstanding high findings.
+
+Registry inspection found no newer compatible patch for installed node-forge 1.4.0 or braces 3.0.3. The image-size 1.x line ends at 1.2.1. Dify 1.1.1 is already installed, and provider-utils 3.0.41 still declares undici ^5.29.0. Major substitutions require actual consumer/API regression evidence. These facts do not establish that every remaining finding has no fix, and remaining reachability/remediation investigation is engineering work, not a founder-access blocker.
+
+## Historical evidence retained below
+
+The following sections describe earlier candidates and must not be read as current install instructions or current audit totals.
+
 ## Latest continuation: actual Cline boundary and rejected incompatible fix
 
 Current exact graphs and every high/critical finding are retained in `dependency-advisories.json`: workspace aggregate 52 (critical1/high30), frontend standalone18 (critical0/high13), backend standalone40 (critical1/high21). All three audit commands return exit1; no exclusions or false passing audit. Paths/versions, advisory URLs, propagated package effects and suggested fixes are recorded, not just totals. Some suggested fixes are incompatible majors/downgrades and are not automatically applied.
