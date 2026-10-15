@@ -76,10 +76,10 @@
     },
     {
       "path": "backend/src/ai/buildOutcomeMemory.ts",
-      "sourceSha256": "a51c00b5bb253febf3853edff423634fdb54f2c1ec5a4f516abd84a5e0d1903a",
+      "sourceSha256": "d4093ee3e303ad931b7be651b21e55dd8e327b48d585655541daec82cfc08f10",
       "callIds": [
-        "4daa7b94f69a992ec78a",
-        "f2354711e3fb436d578b"
+        "ad48da5af3bf1e900c7f",
+        "8a7d14b5915c9b9220cb"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Terminal run outcome capture uses its supplied run identity, issued context and owner-bound run key persistence. Retention deletes only that owner's rows older than its cutoff.",
@@ -144,11 +144,11 @@
     },
     {
       "path": "backend/src/routes/github.ts",
-      "sourceSha256": "ba7c0fd1389a061f1574770c25a00e53e67a3f66a7abacc41dcf6f6dc03af98f",
+      "sourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
       "callIds": [
-        "740ef7f182fb3ff9c197",
-        "b9d1d3b6afe914fded86",
-        "997f802a20a9374530ba"
+        "8a4f5a61a698f969e941",
+        "7ea068acaab899c1c99e",
+        "b4f7c7e759ffc010fe2f"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Authenticated status/settings use req.userId. Settings now delegates to metadata-only saveGitHubSettings, requires a single exact active-owner receipt, returns409 for missing/revoked rows and safe503 for persistence errors. Status resolves the canonical token then legacy metadata.",
@@ -572,7 +572,7 @@
     },
     {
       "path": "backend/src/routes/projects.ts",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "callIds": [
         "37d15cddc22473f02de4",
         "8c9a6fa70d1467503ea2",
@@ -584,21 +584,18 @@
         "1df6e4d57140487a8ba4",
         "9c62c80cb10ba4a0c86a",
         "d22154356fec4d5ba308",
-        "3a12a9b907efc6e5c3d0",
-        "6738a2bf76f90f62b9ad",
-        "a9490857d396005b2b72",
-        "e136cea3e988babfbb75",
-        "88cf1d1b2242fc2fdfce",
-        "19a122cb9c88b3de9372",
-        "118297b8e25bd8471d96",
-        "33bc105bd1743b727beb",
-        "b69fed9cecfaf168e6bb",
-        "3848102dad8df73efa78",
-        "823b3029d8de168c8696"
+        "8ae7523881c1c54d6f68",
+        "580261db22384f184757",
+        "0bf275abce593d7b650c",
+        "76161abf4ef30f3a2b18",
+        "9d8ddd0f694d29cd53b3",
+        "de0621aaa6b24a470fec",
+        "f22f51ab63d5cd2649ae",
+        "2bc74f2602f176505fc3"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-      "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+      "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -637,28 +634,28 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "callIds": [
-        "6553f4da0cba8aa42483",
-        "7f875d23aca7e6d0076c",
-        "1d0f9138d7856b7597e9",
-        "4b9f704a1dbd4f4490ad",
-        "a25df06099ef73e458d0",
-        "433a81aaa1b2203a4982",
-        "b817001a6eefc5fa5c56",
-        "24fa8b793586098a99d5",
-        "5600fde4ecba16ac729b",
-        "e7e829e1957a1981ac1b",
-        "392af08cd1defc992ba6",
-        "ca011991675244b3c155",
-        "d4290b280c724367a917",
-        "7db766f1c27abb1bfeb5",
-        "bf2fb9c5c4c69f4da580",
-        "a78c7005abf7772670ca"
+        "cc8d4e13f30e23763e11",
+        "7546a027b39362b04539",
+        "8c4f8584687b0b9d3179",
+        "dbbbf253b87349d116cc",
+        "ebd0ebb2546faf7ebfed",
+        "cfd5423522a994aef22f",
+        "8b0c543bcc365cc645f6",
+        "34abfeab29977e827a60",
+        "4c8478acb7984319c140",
+        "3db9ea60133c08b80aaa",
+        "5657cd973dd7e0e52c9e",
+        "152114b6abce929ecf6f",
+        "09916da5bbd3ae79049e",
+        "a83f4a54e7e3579930cb",
+        "31c6da268e3107a1d6b1",
+        "439d2bf7d853587123c0"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-      "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+      "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
       "evidence": [
         {
           "path": "backend/src/ai/runStore.authority.test.ts",
@@ -862,21 +859,21 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "callIds": [
-        "5062da1cff236f027460",
-        "020eeed9beee09c651bf",
-        "935dc07d3ee30803d752",
-        "9fb0a7f533e30fa0c5c0",
-        "23873740c23a021413a1",
-        "78b7414fe25347645863",
-        "b9fa3b4c99ee71b3111d",
-        "62706de022ff666e9876",
-        "eef0834b20509852bb95",
-        "b42f7d6fc7cf05f312e7",
-        "fce6f818ade98183e638",
-        "633f8949e87812a97475",
-        "97efc9c17f29e87e9afe"
+        "c47cd353f14ba5046be8",
+        "2d2eae5cbd895d303fc1",
+        "2ae451e4fa2142cb3d3b",
+        "533babcf253a3df300ac",
+        "50cfec47a00c8f934d4c",
+        "9536d36325c5502652c0",
+        "ff1b1bd1a685d5e751ee",
+        "47c7ebecb62681738d31",
+        "1e8333f9bd44c6fd05c9",
+        "305fd58c0a7af15af239",
+        "307321f23e7727be36c8",
+        "bf911ba6ff5494563807",
+        "6a995df3c50a346f6d81"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
@@ -1268,9 +1265,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "a897403b760f71ade9547777a53418ae81ebcc6e3db2143f7b64d3d300225733",
+      "sourceSha256": "497d6719652fe58b7d952b8d01ebe3ce589e11aebb2e70e44e49ccd61163c412",
       "callIds": [
-        "f4dfbc1f6a1dbf30f2af"
+        "b7bc1a4a5cd1a6e102d5"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1284,9 +1281,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "a897403b760f71ade9547777a53418ae81ebcc6e3db2143f7b64d3d300225733",
+      "sourceSha256": "497d6719652fe58b7d952b8d01ebe3ce589e11aebb2e70e44e49ccd61163c412",
       "callIds": [
-        "bd014fdc1d117ff3e105"
+        "a736092d9578ccdb0b7d"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1604,9 +1601,9 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "callIds": [
-        "cf06ea2158ae2747e249"
+        "7202e4ceaf1fab023f7d"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in encodeVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1620,9 +1617,9 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "callIds": [
-        "3b2317cd77aaf7eeb91d"
+        "914547501e0ad5d35cbb"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in parseVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1636,9 +1633,9 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "callIds": [
-        "657429d6c4f3fdb5fb88"
+        "d32647f80bd545a451f4"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in buildVercelAuthorizeUrl. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1652,9 +1649,9 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "callIds": [
-        "f5b4f15b231dd4f82740"
+        "795e7e19975095f341c6"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in parseVercelOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3330,11 +3327,11 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "sourceSha256": "ec760ecf3ae67ffdb4537cce430417b3d0a1b71fecec8eeb311e449b32046c09",
+      "sourceSha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463",
       "callIds": [
-        "00e6d8cc9200a1b19e9d",
-        "222ac226342dba00be50",
-        "cc4affbb6103619d1319"
+        "006a26709183308572df",
+        "57d09be4488bfd059654",
+        "d8dd91081d38b5474a4f"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
@@ -3352,9 +3349,9 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "sourceSha256": "0be0483a7fada343a508b506889d70abcc914bd8290a947f5f07a8e4d2806870",
+      "sourceSha256": "1bc213464352ee8f766c1484e6b829b3a6ab67897454b9b4cb2695a7ef88f752",
       "callIds": [
-        "891c0a5ab9c5f074a5e2"
+        "206a86b695b9c00be8d6"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
@@ -3491,18 +3488,18 @@
     },
     {
       "path": "backend/src/routes/billingWebhook.ts",
-      "sourceSha256": "b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897",
+      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
       "callIds": [
-        "d56574a3766af9147051",
-        "a6afa682e6720f74c5eb",
-        "a098417cad519154bb8c",
-        "a485fd4bfefe62e3a06b",
-        "fee0359b6cd677a28d16",
-        "dbd23ead1b173e8e7f03"
+        "05bb1afcf9e554e379ee",
+        "0868dd015f782d0afe48",
+        "abb420bd0c2f1dd23e61",
+        "a726074753588be4d961",
+        "b46650b51c072e1a3771",
+        "8d7582310ee0460ac163"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-      "reason": "Lost retry claims no longer execute and arbitrary error text no longer enters logs/safe_error. Remaining durable completion-update failure handling, crash recovery, actual signed-provider integration and first-account binding require acceptance evidence. This is not a blanket global exception or completion of Command008's future action authority.",
+      "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
       "evidence": [
         {
           "path": "backend/src/routes/billingWebhook.test.ts",
@@ -3516,33 +3513,31 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "callIds": [
-        "889f99a9b27d3137b9c2",
-        "086cb48f956e2a50f2d2",
-        "fd30feebb4fe8181c26c",
-        "463f4ef07cb2aa1c39dc",
-        "0bd170418d61f7b383b5",
-        "a04489f669004bbf674d",
-        "14d61e4a39627d2b08fc",
-        "c3e6a4586bedf9114df6",
-        "92ea9ce86572d5138da1",
-        "8aa48d325e695ccc0997",
-        "915e4eb29aafa3c94ad2",
-        "43aab875db2304250dd7",
-        "50b156c1cd53813e770b",
-        "cb1a4815edf0f3c9e991",
-        "79eec8d44dcf99db2ecf",
-        "f8c251cb9933644a010f",
-        "9454a1303667e8cb3a2a",
-        "7fb15e404f014cf67bf5",
-        "3cb38a44084cc7227093",
-        "e1da51ff8875fe6278db",
-        "de48a832c5c6c16e6970",
-        "fc290c5d50469a76b472",
-        "bc1732994f397a3484c7",
-        "b31edca9c86cd37ebb5f",
-        "8c320475bc7e80832f4a"
+        "4213ebfe8d580f3d1810",
+        "35c3560302fcd7d1c0af",
+        "1bb4114bf1d58f2983cd",
+        "5e5e11ae385921acb78e",
+        "c8df73e486a411ae81ab",
+        "90346753c6da7057f842",
+        "38cb57dff59169083ea1",
+        "87f1bd2919129bcb5c20",
+        "d7e09aed58d192944e28",
+        "e7074b8f245ab3e5cb5f",
+        "1542c238c31b32816eec",
+        "0656d4270a064fe316ab",
+        "31c79814099fc3444c0f",
+        "a62bfd916a7b8412658c",
+        "a374014449d72ac7df9c",
+        "21808ed2d63d16f41419",
+        "ea1fde2a165680df03cc",
+        "162d38262186b8b46a9a",
+        "63b9f8389be5a7806442",
+        "777d7e7be63e460d764c",
+        "bd3be70d0cd5d49f7053",
+        "807bebcbce8e217c3e8a",
+        "7796a1fd20531dd3d926"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
@@ -3928,9 +3923,9 @@
         "19013a85522f8091214b",
         "b84d863183aaa4892dcd"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Issued authenticated context scopes summary referrals/rewards. Before any label read, every referral code must match the actor profile code, self-links are denied, and a second user_referral_profiles read requires exact referred IDs plus referred_by_user_id=actor and referred_by_code=actor code. Complete unique receipts are validated before profiles display-name lookup.",
-      "reason": "Corrupt relation disclosure fixed with focused positive/empty and missing, foreign, mismatched, duplicate, substituted and unavailable backlink negatives. New real disposable test covers missing/wrong-owner/wrong-code backlinks, valid linked label and corrupt referral code. Final-source database execution pending, so all three label-boundary sites remain REVIEWED_GAP until that evidence is verified.",
+      "reason": "Corrupt relation disclosure fixed with focused positive/empty and missing, foreign, mismatched, duplicate, substituted and unavailable backlink negatives. VERIFIED at c22bd6a48d6fb263df5c228daf938b34dc254cbd, disposable run38815412927:70 real security tests and3 authenticated browser tests passed with zero failures/skips. Real test denies missing/wrong-owner/wrong-code backlinks and corrupt referral code without leaking the display-name canary, while valid linked labels succeed. The service-only atomic linker is the only production writer of these backlink fields, with no ordinary unlink/reassignment path. This closes only this read relation and issued factory boundary, not reward qualification or whole007 acceptance.",
       "evidence": [
         {
           "path": "backend/src/services/referralService.ts",
@@ -3943,6 +3938,38 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real referral summary refuses corrupt label relationships"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/routes/projects.ts",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
+      "callIds": [
+        "2cac9b62127eacaf6c81"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Authenticated projects router requires issued TenantContext, derives owner and invokes service-only delete_owned_project_atomic with exact owner/project. The SQL locks that owner row and commits deletion with a retained actor-owned activity receipt.",
+      "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/projects.deletion.test.ts",
+          "marker": "project deletion requires the exact transactional owner receipt"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/buildOutcomeMemory.ts",
+      "sourceSha256": "d4093ee3e303ad931b7be651b21e55dd8e327b48d585655541daec82cfc08f10",
+      "callIds": [
+        "8cbe84dec4554147950c"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Worker learning adapter receives captured generation, terminal timestamp and output from the admitted run, binds owner/run, and invokes service-only persist_build_outcome_attempt. The SQL locks the canonical run and denies stale or foreign evidence before writing build_outcomes.",
+      "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+          "marker": "real worker learning fence binds owner"
         }
       ]
     }

@@ -4,6 +4,7 @@ import test from 'node:test';
 import express from 'express';
 import router from './supabaseOAuth.js';
 import type { AuthRequest } from '../middleware/auth.js';
+import { createTenantContext } from '../security/tenantContext.js';
 
 async function listen(server:Server) {
   await new Promise<void>(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -27,7 +28,12 @@ test('Supabase disconnect reports incomplete revocation safely and continues ind
   });
   const owner='11111111-1111-4111-8111-111111111111';
   const app=express();app.use(express.json());
-  app.use((req:AuthRequest,_res,next)=>{req.userId=owner;next();});
+  app.use((req:AuthRequest,_res,next)=>{
+    req.userId=owner;
+    const context=createTenantContext({userId:owner,via:'remote_getuser'});
+    req.tenantContext=mode==='unissued'?{...context}:context;
+    next();
+  });
   app.use(router);const api=createServer(app);
   const envNames=['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','DATABASE_URL','SUPABASE_DB_URL','SUPABASE_DB_PASSWORD'];
   const before=new Map(envNames.map(name=>[name,process.env[name]]));
@@ -48,6 +54,9 @@ test('Supabase disconnect reports incomplete revocation safely and continues ind
       assert.deepEqual(calls.filter(call=>call.path.startsWith('/rest/v1/user_integrations'))
         .map(call=>call.body.provider).sort(),['supabase_oauth','supabase_oauth_pkce']);
     }
+    mode='unissued';calls.length=0;
+    assert.equal((await fetch(`${origin}/disconnect`,{method:'DELETE'})).status,401);
+    assert.equal(calls.length,0,'Unissued context cannot revoke OAuth or any vault key');
   } finally {
     for(const [name,value]of before){if(value===undefined)delete process.env[name];else process.env[name]=value;}
     await Promise.all([close(api),close(database)]);

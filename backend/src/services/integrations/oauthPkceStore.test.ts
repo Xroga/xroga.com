@@ -3,7 +3,8 @@ import { test, describe, it } from 'node:test';
 import { createClient } from '@supabase/supabase-js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 import { createServer } from 'node:http';
-import { loadPkceSession, loadProviderToken } from './oauthPkceStore.js';
+import { loadProviderToken } from './oauthPkceStore.js';
+import * as oauthStore from './oauthPkceStore.js';
 
 test('OAuth authority failure or existing rejected state never reads a stale Storage mirror', async () => {
   let mode = 'outage';
@@ -24,14 +25,11 @@ test('OAuth authority failure or existing rejected state never reads a stale Sto
     process.env.SUPABASE_URL = `http://127.0.0.1:${address.port}`;
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-loopback-only';
     for (mode of ['outage', 'empty', 'revoked']) {
-      assert.equal(await loadPkceSession('fixture', 'fixture_pkce', 'old-state'), null);
       assert.equal(await loadProviderToken('fixture', 'fixture_provider'), null);
     }
     mode = 'mismatch';
-    assert.equal(await loadPkceSession('fixture', 'fixture_pkce', 'old-state'), null);
-    assert.equal((await loadPkceSession('fixture', 'fixture_pkce', 'new-state'))?.verifier, 'current');
     assert.equal((await loadProviderToken('fixture', 'fixture_provider'))?.access_token, 'current');
-    assert.equal(paths.length, 9);
+    assert.equal(paths.length, 4);
     assert.ok(paths.every(path => path.startsWith('/rest/v1/user_integrations')));
   } finally {
     for (const [key, value] of previous) {
@@ -39,6 +37,11 @@ test('OAuth authority failure or existing rejected state never reads a stale Sto
     }
     await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   }
+});
+
+test('the unused replayable legacy PKCE loader is no longer exported',()=>{
+  assert.equal('loadPkceSession' in oauthStore,false);
+  assert.equal(typeof oauthStore.consumePkceSession,'function');
 });
 
 // Preserve the pre-existing contract assertions; admission tests extend them.

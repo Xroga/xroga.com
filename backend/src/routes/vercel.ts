@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
+import { requireTenantContext, requireResourceOwner } from '../security/tenantContext.js';
 import {
   buildVercelAuthorizeUrl,
   clearVercelConnection,
@@ -35,7 +36,7 @@ router.get('/oauth', async (req: AuthRequest, res) => {
   const requested = typeof req.query.redirect_uri === 'string' ? req.query.redirect_uri : undefined;
   const redirectUri = getVercelOAuthCallbackUrl(requested);
   try {
-    const built = await buildVercelAuthorizeUrl(req.userId!, redirectUri);
+    const built = await buildVercelAuthorizeUrl(req.tenantContext!, redirectUri);
     res.json({
       url: built?.url ?? null,
       redirectUri,
@@ -73,8 +74,10 @@ router.post('/connect', async (req: AuthRequest, res) => {
 
   try {
     const redirectUri = getVercelOAuthCallbackUrl(parsed.data.redirectUri);
+    const context = requireTenantContext(req.tenantContext);
+    requireResourceOwner(context, req.userId);
     const tokens = await exchangeVercelOAuthCode({
-      userId: req.userId!,
+      tenantContext: context,
       code: parsed.data.code,
       state: parsed.data.state,
       redirectUri,
@@ -169,7 +172,7 @@ router.get('/status', async (req: AuthRequest, res) => {
 
 router.delete('/disconnect', async (req: AuthRequest, res) => {
   try {
-    await clearVercelConnection(req.userId!);
+    await clearVercelConnection(req.tenantContext!);
     res.json({ ok: true });
   } catch {
     res.status(503).json({ error: 'Vercel disconnect could not be fully completed. Retry shortly.' });

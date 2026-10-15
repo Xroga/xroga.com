@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import { randomUUID } from 'node:crypto';
 import express from 'express';
 import type { AuthRequest } from '../middleware/auth.js';
+import { createTenantContext } from '../security/tenantContext.js';
 
 test('GitHub routes persist and consume owner-bound state, reject replay and refuse late callback saves',async()=>{
   const keys=['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','GITHUB_CLIENT_ID','GITHUB_CLIENT_SECRET'];
@@ -11,7 +12,8 @@ test('GitHub routes persist and consume owner-bound state, reject replay and ref
   const original=globalThis.fetch;
   let stored:Record<string,string>|null=null,revision=randomUUID(),consumed=false,lost=false,outage=false;
   let providerCalls=0;const rpcCalls:string[]=[];
-  const app=express();app.use(express.json());app.use((req,_res,next)=>{(req as AuthRequest).userId='owner';next();});
+  const context=createTenantContext({userId:'11111111-1111-4111-8111-111111111111',via:'remote_getuser'});
+  const app=express();app.use(express.json());app.use((req,_res,next)=>{(req as AuthRequest).userId=context.userId;(req as AuthRequest).tenantContext=context;next();});
   const {default:router}=await import('./github.js');app.use('/github',router);
   const server=app.listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));
   const address=server.address();assert.ok(address&&typeof address!=='string');const base=`http://127.0.0.1:${address.port}`;
@@ -19,7 +21,7 @@ test('GitHub routes persist and consume owner-bound state, reject replay and ref
     const url=new URL(String(input instanceof Request?input.url:input));
     if(url.origin===base)return original(input,init);
     if(url.origin===process.env.SUPABASE_URL){
-      rpcCalls.push(url.pathname);const body=JSON.parse(String(init?.body));assert.equal(body.p_owner_id,'owner');
+      rpcCalls.push(url.pathname);const body=JSON.parse(String(init?.body));assert.equal(body.p_owner_id,context.userId);
       if(outage)return Response.json({message:'PRIVATE_DATABASE_CANARY'},{status:503});
       if(url.pathname.endsWith('/begin_oauth_session')){assert.equal(body.p_provider,'github_oauth_pkce');stored=body.p_session;consumed=false;revision=randomUUID();return Response.json(true);}
       if(url.pathname.endsWith('/consume_oauth_session')){

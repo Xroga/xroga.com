@@ -254,7 +254,7 @@ router.post('/cws-oauth/start', async (req: AuthRequest, res) => {
     );
     const redirectUri = getCwsOAuthCallbackUrl(parsed.data.redirectUri);
     const built = await startCwsOAuth({
-      userId: req.userId!,
+      tenantContext: req.tenantContext!,
       clientId: parsed.data.clientId,
       clientSecret: parsed.data.clientSecret,
       extensionId: parsed.data.extensionId,
@@ -288,7 +288,7 @@ router.post('/cws-oauth/callback', async (req: AuthRequest, res) => {
   try {
     const { completeCwsOAuth } = await import('../services/publish/chromeWebStore.js');
     const result = await completeCwsOAuth({
-      userId: req.userId!,
+      tenantContext: req.tenantContext!,
       code: parsed.data.code,
       state: parsed.data.state,
       redirectUri: parsed.data.redirectUri,

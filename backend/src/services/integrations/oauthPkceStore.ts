@@ -6,6 +6,8 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { randomUUID } from 'node:crypto';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
+import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
+import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 
 const BUCKET = 'xroga-github-tokens';
 
@@ -111,13 +113,14 @@ async function removePath(path: string): Promise<boolean> {
 
 /** Persist PKCE verifier only with authoritative database success. */
 export async function storePkceSession(
-  userId: string,
+  context: TenantContext,
   provider: string,
   session: PkceSession,
 ): Promise<void> {
+  const { userId } = requireTenantContext(context);
   assertStorageIdentity(userId, provider);
 
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(context);
   if (['supabase_oauth_pkce', 'vercel_oauth_pkce', 'cws_oauth_pkce', 'github_oauth_pkce'].includes(provider)) {
     const { data, error } = await supabase.rpc('begin_oauth_session', {
       p_owner_id: userId, p_provider: provider, p_session: session,
@@ -146,53 +149,10 @@ export async function storePkceSession(
   await uploadJson(pkcePath(userId, provider), session);
 }
 
-export async function loadPkceSession(
-  userId: string,
-  provider: string,
-  expectedState: string,
-): Promise<PkceSession | null> {
+export async function clearPkceSession(context: TenantContext, provider: string): Promise<void> {
+  const { userId } = requireTenantContext(context);
   assertStorageIdentity(userId, provider);
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from('user_integrations')
-    .select('access_token, metadata')
-    .eq('user_id', userId)
-    .eq('provider', provider)
-    .maybeSingle();
-
-  // A failed authority read or an existing rejected session must never be
-  // replaced by an older mirror, even if that mirror matches the old state.
-  if (error) return null;
-  if (data) {
-    if (!data.access_token || data.metadata?.revoked === true) return null;
-    const meta = (data.metadata ?? {}) as {
-      state?: string;
-      redirect_uri?: string;
-      nonce?: string;
-      created_at?: string;
-    };
-    if (meta.state === expectedState) {
-      return {
-        verifier: data.access_token,
-        state: meta.state,
-        redirect_uri: meta.redirect_uri || '',
-        nonce: meta.nonce,
-        created_at: meta.created_at || new Date().toISOString(),
-      };
-    }
-    return null;
-  }
-
-  const stored = await downloadJson<PkceSession>(pkcePath(userId, provider));
-  if (stored?.verifier && stored.state === expectedState) {
-    return stored;
-  }
-  return null;
-}
-
-export async function clearPkceSession(userId: string, provider: string): Promise<void> {
-  assertStorageIdentity(userId, provider);
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(context);
   const { error } = await supabase.from('user_integrations').upsert({ user_id: userId, provider,
     access_token: '', refresh_token: null, metadata: { revoked: true } }, { onConflict: 'user_id,provider' });
   if (error) throw new Error('OAuth session revocation could not be recorded. Retry shortly.');
@@ -200,11 +160,12 @@ export async function clearPkceSession(userId: string, provider: string): Promis
 }
 
 /** Atomic, expiring one-use admission. Never consult a legacy mirror here. */
-export async function consumePkceSession(userId: string, provider: string, expectedState: string): Promise<PkceSession | null> {
+export async function consumePkceSession(context: TenantContext, provider: string, expectedState: string): Promise<PkceSession | null> {
+  const { userId } = requireTenantContext(context);
   assertStorageIdentity(userId, provider);
   if (!['vercel_oauth_pkce', 'supabase_oauth_pkce', 'cws_oauth_pkce', 'github_oauth_pkce'].includes(provider)
     || typeof expectedState !== 'string' || expectedState.length < 16 || expectedState.length > 512) return null;
-  const { data, error } = await getSupabaseAdmin().rpc('consume_oauth_session', {
+  const { data, error } = await getTenantSupabaseAdmin(context).rpc('consume_oauth_session', {
     p_owner_id: userId, p_provider: provider, p_state: expectedState,
   });
   if (error || !data || Array.isArray(data) || typeof data !== 'object'

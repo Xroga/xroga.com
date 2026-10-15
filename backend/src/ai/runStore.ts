@@ -14,6 +14,7 @@ import { isEngineeringArtifact } from './engineeringArtifact.js';
 import { redactOperationsValue } from '../operations/operationsEngine.js';
 import {
   recordTerminalBuildOutcomeFailOpen,
+  SupabaseBuildOutcomeStore,
 } from './buildOutcomeMemory.js';
 
 export interface SwarmRunEvent {
@@ -45,6 +46,7 @@ const MAX_PER_USER = 40;
 const MAX_EVENTS_PER_RUN = 1000;
 const persistTimers = new Map<string, ReturnType<typeof setTimeout>>();
 const pendingCreations = new Set<string>();
+const terminalPersistence = new WeakMap<SwarmRunRecord, Promise<void>>();
 // Internal attempt authority never appears in the public run record.
 const attemptGenerations = new WeakMap<SwarmRunRecord, string>();
 const observedGenerations = new WeakMap<SwarmRunRecord, string | null>();
@@ -203,10 +205,11 @@ function releaseLocalRun(
   );
 }
 
-function rememberTerminalOutcome(
+async function rememberTerminalOutcome(
   rec:
     SwarmRunRecord,
-): void {
+  generation: string,
+): Promise<void> {
   if (
     rec.status ===
     'running'
@@ -214,7 +217,7 @@ function rememberTerminalOutcome(
     return;
   }
 
-  void recordTerminalBuildOutcomeFailOpen({
+  await recordTerminalBuildOutcomeFailOpen({
     runId:
       rec.id,
 
@@ -238,7 +241,7 @@ function rememberTerminalOutcome(
 
     output:
       rec.output,
-  });
+  }, new SupabaseBuildOutcomeStore({ generation, completedAt: rec.completed_at!, output: rec.output }));
 }
 
 function schedulePersist(rec: SwarmRunRecord) {
@@ -259,7 +262,20 @@ function flushPersist(rec: SwarmRunRecord) {
   if (timer) clearTimeout(timer);
 
   persistTimers.delete(rec.id);
-  void persistToSupabase(rec).catch(() => {});
+  const snapshot = structuredClone(rec);
+  const generation = attemptGenerations.get(rec);
+  const pending = persistToSupabase(rec).then(async () => {
+    // Learning is a side effect of an acknowledged terminal write, not of a
+    // local status change. A rejected worker fence must never create evidence.
+    // Also discard callbacks superseded by a correction or same-process resume.
+    if (generation && process.env.SUPABASE_SERVICE_ROLE_KEY && terminalPersistence.get(rec) === pending && runs.get(rec.id) === rec) {
+      await rememberTerminalOutcome(snapshot, generation);
+    }
+  });
+  terminalPersistence.set(rec, pending);
+  // Synchronous callers remain compatible, while persistRunState observes the
+  // original rejection before a route can acknowledge durable completion.
+  void pending.catch(() => console.warn('[runStore] terminal persistence unavailable'));
 }
 
 function touchUser(userId: string, runId: string) {
@@ -585,10 +601,6 @@ export function completeRun(
     rec,
   );
 
-  rememberTerminalOutcome(
-    rec,
-  );
-
   return rec;
 }
 
@@ -700,10 +712,6 @@ export function failRun(
   );
 
   flushPersist(
-    rec,
-  );
-
-  rememberTerminalOutcome(
     rec,
   );
 
@@ -1485,6 +1493,8 @@ export async function persistRunState(
       'Cannot persist an unknown swarm run',
     );
   }
+
+  await terminalPersistence.get(rec);
 
   await persistToSupabase(
     rec,

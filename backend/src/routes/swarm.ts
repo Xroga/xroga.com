@@ -30,6 +30,20 @@ import {
 const router = Router();
 const activeBuildControllers = new Map<string, AbortController>();
 
+/** A local terminal label alone cannot authorize a user-facing notification. */
+export async function persistTerminalNotificationAuthority(runId: string, userId: string): Promise<'complete' | 'error' | 'cancelled'> {
+  const record = getRun(runId);
+  if (!record || record.userId !== userId || record.status === 'running') {
+    throw new Error('Terminal run authority is unavailable.');
+  }
+  const status = record.status;
+  await persistRunState(runId);
+  if (getRun(runId) !== record || record.status !== status) {
+    throw new Error('Terminal run authority changed.');
+  }
+  return status;
+}
+
 /**
  * POST /api/swarm/execute
  * SSE: start → progress → preview (code ready) → complete
@@ -210,13 +224,16 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
     }
 
     const output = result.output as Record<string, unknown>;
+    if (cancellationAuthorityFailed) throw new Error('Run authority is unavailable. Retry after service recovery.');
+    const terminalStatus = await persistTerminalNotificationAuthority(runId, userId);
+    if (terminalStatus === 'cancelled') throw Object.assign(new Error('Build cancelled'), { code: 'BUILD_CANCELLED' });
     if (output.type === 'landing_page' && clientMeta?.assistantMessageId) {
       const generatedFiles = Array.isArray(output.generatedFiles) ? output.generatedFiles : [];
       const blockers = Array.isArray(output.shipBlockers)
         ? output.shipBlockers.filter((item): item is string => typeof item === 'string')
         : [];
       const hasVerifiedHandoff = output.fullyShipped === true || output.handoffReady === true;
-      if (result.success && hasVerifiedHandoff) {
+      if (terminalStatus === 'complete' && result.success && hasVerifiedHandoff) {
         void notifyBuildComplete(userId, {
           projectName: String(output.projectName ?? 'Xroga project'),
           prompt: prompt.trim(),
@@ -238,8 +255,6 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
         }).catch(() => {});
       }
     }
-    if (cancellationAuthorityFailed) throw new Error('Run authority is unavailable. Retry after service recovery.');
-    await persistRunState(runId);
     if (streamConnected && !res.writableEnded) {
       sendSSE(res, {
         event: 'complete',
@@ -292,16 +307,19 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
     // along so the run knows when to say "try again" without naming a dollar amount.
     const nextUnlockAt = code === 'CAPACITY_UNAVAILABLE' ? e.nextUnlockAt ?? undefined : undefined;
 
+    let failurePersisted = false;
     if (!resumeControlError) {
       failRun(runId, e.message || 'Build failed', code === 'BUILD_CANCELLED' ? 'cancelled' : 'error', {
         code,
         nextUnlockAt,
       });
-      await persistRunState(runId).catch((persistError) => {
-        console.warn('[swarm] failed-run persistence:', (persistError as Error).message);
-      });
+      try {
+        failurePersisted = await persistTerminalNotificationAuthority(runId, userId) === 'error';
+      } catch {
+        console.warn('[swarm] failed-run persistence unavailable');
+      }
     }
-    if (clientMeta?.assistantMessageId && code !== 'BUILD_CANCELLED') {
+    if (failurePersisted && clientMeta?.assistantMessageId && code !== 'BUILD_CANCELLED') {
       void notifyBuildFailed(userId, {
         projectName: 'Xroga project',
         prompt: prompt.trim(),

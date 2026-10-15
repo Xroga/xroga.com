@@ -5,6 +5,8 @@ import { exchangeSupabaseOAuthCode, refreshSupabaseOAuthToken } from './supabase
 import { exchangeVercelOAuthCode, saveVercelConnection } from './vercelAuth.js';
 import { loadProviderToken, storePkceSession, storeProviderToken } from './oauthPkceStore.js';
 import { completeCwsOAuth } from '../publish/chromeWebStore.js';
+import { createTenantContext } from '../../security/tenantContext.js';
+const context=createTenantContext({userId:'11111111-1111-4111-8111-111111111111',via:'remote_getuser'});
 
 test('OAuth entry points carry consumed revisions across provider I/O and never upsert on a lost epoch',async()=>{
   const keys=['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_OAUTH_CLIENT_ID','SUPABASE_OAUTH_CLIENT_SECRET','VERCEL_CLIENT_ID','VERCEL_CLIENT_SECRET'];
@@ -29,12 +31,14 @@ test('OAuth entry points carry consumed revisions across provider I/O and never 
     return Response.json({access_token:'SYNTHETIC_ACCESS',refresh_token:'SYNTHETIC_REFRESH',expires_in:3600});
   };
   try {
-    await storePkceSession('owner','supabase_oauth_pkce',{verifier:'synthetic',state,redirect_uri:'https://example.invalid/callback',created_at:new Date().toISOString()});
+    await storePkceSession(context,'supabase_oauth_pkce',{verifier:'synthetic',state,redirect_uri:'https://example.invalid/callback',created_at:new Date().toISOString()});
     assert.equal(requests[0].path,'/rest/v1/rpc/begin_oauth_session');
-    const opts={userId:'owner',state,code:'synthetic-code',redirectUri:'https://example.invalid/callback'};
+    assert.equal(requests[0].body.p_owner_id,context.userId);
+    const opts={tenantContext:context,state,code:'synthetic-code',redirectUri:'https://example.invalid/callback'};
     await assert.rejects(exchangeSupabaseOAuthCode(opts),/connection changed/);
     assert.equal(requests.at(-1)?.body.p_revision,revision);
     const exchanged=await exchangeVercelOAuthCode(opts);
+    assert.ok(requests.filter(request=>request.path.endsWith('/consume_oauth_session')).every(request=>request.body.p_owner_id===context.userId));
     await assert.rejects(saveVercelConnection('owner',exchanged.access_token,{authKind:'sign_in_with_vercel'},undefined,exchanged.authorizationRevision),/connection changed/);
     assert.equal(requests.at(-1)?.body.p_revision,revision);
     const count=requests.length;
@@ -73,7 +77,7 @@ test('CWS carries the consumed epoch through encrypted BYOK admission and denies
     throw new Error(`Unexpected persistence fallback: ${url.pathname}`);
   };
   try {
-    const opts={userId:'owner',code:'synthetic-code',state};
+    const opts={tenantContext:context,code:'synthetic-code',state};
     await assert.rejects(completeCwsOAuth(opts),/changed during authorization/);assert.equal(providerCalls,0);
     mismatch=false;await assert.rejects(completeCwsOAuth(opts),/Credential changed while saving/);assert.equal(providerCalls,1);
     allowSave=true;assert.equal((await completeCwsOAuth(opts)).ok,true);assert.equal(providerCalls,2);

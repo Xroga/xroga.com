@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { test } from 'node:test';
 import { clearVercelConnection, getVercelToken, isVercelAccessTokenExpiring, saveVercelConnection } from './vercelAuth.js';
+import { createTenantContext } from '../../security/tenantContext.js';
+import { readFileSync } from 'node:fs';
 
 test('Vercel authority outages, revocation, public buckets and lost refresh leases fail closed', async () => {
   let mode = 'outage';
@@ -29,12 +31,13 @@ test('Vercel authority outages, revocation, public buckets and lost refresh leas
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const address = server.address();assert.ok(address && typeof address !== 'string');
   const user = '11111111-1111-4111-8111-111111111111';
+  const context=createTenantContext({userId:user,via:'remote_getuser'});
   try {
     for (const key of keys) delete process.env[key];
     process.env.SUPABASE_URL = `http://127.0.0.1:${address.port}`;
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-loopback-only';
     assert.equal(await getVercelToken(user), null);
-    await assert.rejects(clearVercelConnection(user), { message: 'Vercel revocation could not be recorded. Retry shortly.' });
+    await assert.rejects(clearVercelConnection(context), { message: 'Vercel revocation could not be recorded. Retry shortly.' });
     await assert.rejects(saveVercelConnection(user, 'synthetic-new-token', {}), { message: 'Vercel connection could not be saved. Retry shortly.' });
     assert.ok(calls.every(call => call.path.startsWith('/rest/v1/user_integrations')));
     mode = 'revoked';calls.length = 0;
@@ -53,7 +56,7 @@ test('Vercel authority outages, revocation, public buckets and lost refresh leas
     assert.equal(query.get('provider'), 'eq.vercel');
     assert.ok(query.get('select')?.includes('credential_revision'));
     mode = 'cleanup-failure';calls.length = 0;
-    await assert.rejects(clearVercelConnection(user), { message: 'Vercel disconnected, but legacy copy cleanup is pending. Retry shortly.' });
+    await assert.rejects(clearVercelConnection(context), { message: 'Vercel disconnected, but legacy copy cleanup is pending. Retry shortly.' });
     assert.equal(JSON.parse(calls[0].body).metadata.revoked, true);
     assert.equal(JSON.parse(calls[0].body).refresh_token, null);
     assert.equal(isVercelAccessTokenExpiring('invalid-date'), true);
@@ -63,4 +66,10 @@ test('Vercel authority outages, revocation, public buckets and lost refresh leas
     }
     await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   }
+});
+
+test('delayed pipeline auth failures report reauthorization without revoking a newer connection',()=>{
+  const source=readFileSync(new URL('../../ai/pipeline.ts',import.meta.url),'utf8');
+  assert.doesNotMatch(source,/clearVercelConnection/);
+  assert.equal((source.match(/status: reauth \? 'deploy_reauth_required' : 'deploy_failed'/g)||[]).length,2);
 });

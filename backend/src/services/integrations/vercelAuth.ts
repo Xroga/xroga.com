@@ -4,7 +4,9 @@
  */
 
 import { createHash, randomBytes, randomUUID } from 'crypto';
+import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
+import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 import {
   clearPkceSession,
@@ -216,9 +218,10 @@ function makeVerifier(): string {
 }
 
 export async function buildVercelAuthorizeUrl(
-  userId: string,
+  context: TenantContext,
   redirectUri: string,
 ): Promise<{ url: string; state: string } | null> {
+  const { userId } = requireTenantContext(context);
   if (!vercelOAuthConfigured()) return null;
   const verifier = makeVerifier();
   const nonce = randomBytes(16).toString('base64url');
@@ -226,8 +229,8 @@ export async function buildVercelAuthorizeUrl(
     JSON.stringify({ userId, t: Date.now(), n: randomBytes(8).toString('hex') }),
   ).toString('base64url');
 
-  // DB when available; Storage fallback when user_integrations is missing
-  await storePkceSession(userId, PKCE_PROVIDER, {
+  // OAuth session admission is database-only and bound to the issued context.
+  await storePkceSession(context, PKCE_PROVIDER, {
     verifier,
     state,
     redirect_uri: redirectUri,
@@ -252,16 +255,17 @@ export async function buildVercelAuthorizeUrl(
 }
 
 export async function exchangeVercelOAuthCode(opts: {
-  userId: string;
+  tenantContext: TenantContext;
   code: string;
   state: string;
   redirectUri: string;
 }): Promise<{ access_token: string; refresh_token?: string; expires_in?: number; authorizationRevision: string }> {
+  const context = requireTenantContext(opts.tenantContext);
   if (!vercelOAuthConfigured()) {
     throw new Error('Vercel OAuth not configured — set VERCEL_CLIENT_ID/SECRET');
   }
 
-  const pkce = await consumePkceSession(opts.userId, PKCE_PROVIDER, opts.state);
+  const pkce = await consumePkceSession(context, PKCE_PROVIDER, opts.state);
   if (!pkce?.verifier || !pkce.authorization_revision) {
     throw new Error('Invalid or expired OAuth state — click Authorize Vercel again');
   }
@@ -747,12 +751,13 @@ export async function saveVercelConnection(
   });
 }
 
-export async function clearVercelConnection(userId: string): Promise<void> {
-  const supabase = getSupabaseAdmin();
+export async function clearVercelConnection(context: TenantContext): Promise<void> {
+  const { userId } = requireTenantContext(context);
+  const supabase = getTenantSupabaseAdmin(context);
   const { error } = await supabase.from('user_integrations').upsert({ user_id: userId, provider: 'vercel',
     access_token: '', refresh_token: null, credential_revision: randomUUID(), metadata: { revoked: true } }, { onConflict: 'user_id,provider' });
   if (error) throw new Error('Vercel revocation could not be recorded. Retry shortly.');
-  await clearPkceSession(userId, PKCE_PROVIDER);
+  await clearPkceSession(context, PKCE_PROVIDER);
   if (!(await deleteVercelTokenFromStorage(userId))) throw new Error('Vercel disconnected, but legacy copy cleanup is pending. Retry shortly.');
 }
 

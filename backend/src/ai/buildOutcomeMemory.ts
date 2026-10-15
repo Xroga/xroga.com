@@ -1891,16 +1891,28 @@ export interface BuildOutcomeStore {
   ): Promise<void>;
 }
 
+/** Captured from the admitted worker, never from a client/model outcome. */
+export interface BuildOutcomeAttempt {
+  generation: string;
+  completedAt: string;
+  output: Record<string, unknown> | null;
+}
+
 export class SupabaseBuildOutcomeStore
 implements BuildOutcomeStore {
+  private readonly attempt?: Readonly<BuildOutcomeAttempt>;
+
+  constructor(attempt?: BuildOutcomeAttempt) {
+    this.attempt = attempt ? Object.freeze(structuredClone(attempt)) : undefined;
+  }
+
   async upsert(
     outcome:
       BuildOutcomeRecord,
   ): Promise<void> {
     const context=createTenantContext({userId:outcome.userId,via:'persisted_owner'});
     const supabase = getTenantSupabaseAdmin(context);
-    await persistOwnedUniversalRecord(supabase,context,'build_outcome',
-          {
+    const row = {
             run_id:
               outcome.runId,
 
@@ -2024,8 +2036,22 @@ implements BuildOutcomeStore {
             updated_at:
               new Date()
                 .toISOString(),
-          },
-        );
+          };
+    if (this.attempt) {
+      const { data, error } = await supabase.rpc('persist_build_outcome_attempt', {
+        p_run_id: outcome.runId,
+        p_owner_id: context.userId,
+        p_generation: this.attempt.generation,
+        p_completed_at: this.attempt.completedAt,
+        p_output: this.attempt.output,
+        p_outcome: row,
+      });
+      if (error || data !== true) throw new Error('Build outcome attempt is no longer authoritative.');
+    } else {
+      // Preserve the existing API for non-worker import/reconciliation callers.
+      // These do not acquire worker-generation certification from this adapter.
+      await persistOwnedUniversalRecord(supabase,context,'build_outcome',row);
+    }
 
     /*
      * Keep evaluation memory finite. Selection uses much tighter row/time

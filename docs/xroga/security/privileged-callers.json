@@ -1,27 +1,27 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "79975724303c8989c23f485052af3dfdbaef13338e6eab9b3c2fe1210e9c58b2",
+  "reviewRegistrySha256": "bca8755c71a30d253abf83a913114c2c3d86954831b040d37f0e127f59a3c31c",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 161,
-    "persistenceCandidates": 678,
-    "ownerPredicateCandidates": 167,
+    "privilegedFactorySites": 160,
+    "persistenceCandidates": 675,
+    "ownerPredicateCandidates": 164,
     "reviewRequired": 0,
-    "reviewedCandidates": 678,
-    "unresolvedSafetyCandidates": 483,
+    "reviewedCandidates": 675,
+    "unresolvedSafetyCandidates": 477,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 51,
+    "SCOPED_BOUNDARY": 54,
     "NARROW_EXCEPTION": 8,
     "NOT_PERSISTENCE": 136,
-    "REVIEWED_GAP": 483
+    "REVIEWED_GAP": 477
   },
   "callers": [
     {
@@ -193,15 +193,15 @@
       }
     },
     {
-      "id": "4daa7b94f69a992ec78a",
+      "id": "ad48da5af3bf1e900c7f",
       "path": "backend/src/ai/buildOutcomeMemory.ts",
-      "line": 1901,
+      "line": 1914,
       "enclosing": "upsert",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a51c00b5bb253febf3853edff423634fdb54f2c1ec5a4f516abd84a5e0d1903a",
+      "sourceSha256": "d4093ee3e303ad931b7be651b21e55dd8e327b48d585655541daec82cfc08f10",
       "semanticReview": {
         "authority": "Terminal run outcome capture uses its supplied run identity, issued context and owner-bound run key persistence. Retention deletes only that owner's rows older than its cutoff.",
         "reason": "Parent run admission, same-owner concurrent overwrite, evidence validity and retention policy remain open. Foreign-collision tests prove the helper, not full learning provenance.",
@@ -214,15 +214,36 @@
       }
     },
     {
-      "id": "f2354711e3fb436d578b",
+      "id": "8cbe84dec4554147950c",
       "path": "backend/src/ai/buildOutcomeMemory.ts",
-      "line": 2049,
+      "line": 2041,
+      "enclosing": "upsert",
+      "kind": "RPC_CANDIDATE",
+      "target": "persist_build_outcome_attempt",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "d4093ee3e303ad931b7be651b21e55dd8e327b48d585655541daec82cfc08f10",
+      "semanticReview": {
+        "authority": "Worker learning adapter receives captured generation, terminal timestamp and output from the admitted run, binds owner/run, and invokes service-only persist_build_outcome_attempt. The SQL locks the canonical run and denies stale or foreign evidence before writing build_outcomes.",
+        "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+            "marker": "real worker learning fence binds owner"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8a7d14b5915c9b9220cb",
+      "path": "backend/src/ai/buildOutcomeMemory.ts",
+      "line": 2075,
       "enclosing": "upsert",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "build_outcomes",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a51c00b5bb253febf3853edff423634fdb54f2c1ec5a4f516abd84a5e0d1903a",
+      "sourceSha256": "d4093ee3e303ad931b7be651b21e55dd8e327b48d585655541daec82cfc08f10",
       "semanticReview": {
         "authority": "Terminal run outcome capture uses its supplied run identity, issued context and owner-bound run key persistence. Retention deletes only that owner's rows older than its cutoff.",
         "reason": "Parent run admission, same-owner concurrent overwrite, evidence validity and retention policy remain open. Foreign-collision tests prove the helper, not full learning provenance.",
@@ -445,7 +466,7 @@
       }
     },
     {
-      "id": "f4dfbc1f6a1dbf30f2af",
+      "id": "b7bc1a4a5cd1a6e102d5",
       "path": "backend/src/ai/pipeline.ts",
       "line": 3756,
       "enclosing": "runBuildPipeline",
@@ -453,7 +474,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "a897403b760f71ade9547777a53418ae81ebcc6e3db2143f7b64d3d300225733",
+      "sourceSha256": "497d6719652fe58b7d952b8d01ebe3ce589e11aebb2e70e44e49ccd61163c412",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -466,7 +487,7 @@
       }
     },
     {
-      "id": "bd014fdc1d117ff3e105",
+      "id": "a736092d9578ccdb0b7d",
       "path": "backend/src/ai/pipeline.ts",
       "line": 3939,
       "enclosing": "runBuildPipeline",
@@ -474,7 +495,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "a897403b760f71ade9547777a53418ae81ebcc6e3db2143f7b64d3d300225733",
+      "sourceSha256": "497d6719652fe58b7d952b8d01ebe3ce589e11aebb2e70e44e49ccd61163c412",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -1536,18 +1557,18 @@
       }
     },
     {
-      "id": "6553f4da0cba8aa42483",
+      "id": "cc8d4e13f30e23763e11",
       "path": "backend/src/ai/runStore.ts",
-      "line": 111,
+      "line": 113,
       "enclosing": "persistRunHeartbeat",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1561,18 +1582,18 @@
       }
     },
     {
-      "id": "7f875d23aca7e6d0076c",
+      "id": "7546a027b39362b04539",
       "path": "backend/src/ai/runStore.ts",
-      "line": 111,
+      "line": 113,
       "enclosing": "persistRunHeartbeat",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1586,18 +1607,18 @@
       }
     },
     {
-      "id": "1d0f9138d7856b7597e9",
+      "id": "8c4f8584687b0b9d3179",
       "path": "backend/src/ai/runStore.ts",
-      "line": 447,
+      "line": 463,
       "enclosing": "resumeRunDurable",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1611,18 +1632,18 @@
       }
     },
     {
-      "id": "4b9f704a1dbd4f4490ad",
+      "id": "dbbbf253b87349d116cc",
       "path": "backend/src/ai/runStore.ts",
-      "line": 448,
+      "line": 464,
       "enclosing": "resumeRunDurable",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1636,18 +1657,18 @@
       }
     },
     {
-      "id": "a25df06099ef73e458d0",
+      "id": "ebd0ebb2546faf7ebfed",
       "path": "backend/src/ai/runStore.ts",
-      "line": 766,
+      "line": 774,
       "enclosing": "persistConversationOnly",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1661,18 +1682,18 @@
       }
     },
     {
-      "id": "433a81aaa1b2203a4982",
+      "id": "cfd5423522a994aef22f",
       "path": "backend/src/ai/runStore.ts",
-      "line": 772,
+      "line": 780,
       "enclosing": "persistConversationOnly",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1686,18 +1707,18 @@
       }
     },
     {
-      "id": "b817001a6eefc5fa5c56",
+      "id": "8b0c543bcc365cc645f6",
       "path": "backend/src/ai/runStore.ts",
-      "line": 872,
+      "line": 880,
       "enclosing": "getRunAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1711,18 +1732,18 @@
       }
     },
     {
-      "id": "24fa8b793586098a99d5",
+      "id": "34abfeab29977e827a60",
       "path": "backend/src/ai/runStore.ts",
-      "line": 874,
+      "line": 882,
       "enclosing": "getRunAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1736,18 +1757,18 @@
       }
     },
     {
-      "id": "5600fde4ecba16ac729b",
+      "id": "4c8478acb7984319c140",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1039,
+      "line": 1047,
       "enclosing": "requestRunCancellation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1761,18 +1782,18 @@
       }
     },
     {
-      "id": "e7e829e1957a1981ac1b",
+      "id": "3db9ea60133c08b80aaa",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1045,
+      "line": 1053,
       "enclosing": "requestRunCancellation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1786,18 +1807,18 @@
       }
     },
     {
-      "id": "392af08cd1defc992ba6",
+      "id": "5657cd973dd7e0e52c9e",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1171,
+      "line": 1179,
       "enclosing": "isRunCancellationRequested",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1811,18 +1832,18 @@
       }
     },
     {
-      "id": "ca011991675244b3c155",
+      "id": "152114b6abce929ecf6f",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1177,
+      "line": 1185,
       "enclosing": "isRunCancellationRequested",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1836,18 +1857,18 @@
       }
     },
     {
-      "id": "d4290b280c724367a917",
+      "id": "09916da5bbd3ae79049e",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1316,
+      "line": 1324,
       "enclosing": "listRunsForUserAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1861,18 +1882,18 @@
       }
     },
     {
-      "id": "7db766f1c27abb1bfeb5",
+      "id": "a83f4a54e7e3579930cb",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1322,
+      "line": 1330,
       "enclosing": "listRunsForUserAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1886,18 +1907,18 @@
       }
     },
     {
-      "id": "bf2fb9c5c4c69f4da580",
+      "id": "31c6da268e3107a1d6b1",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1509,
+      "line": 1519,
       "enclosing": "persistToSupabase",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1911,18 +1932,18 @@
       }
     },
     {
-      "id": "a78c7005abf7772670ca",
+      "id": "439d2bf7d853587123c0",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1582,
+      "line": 1592,
       "enclosing": "persistToSupabase",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
+      "sourceSha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Prior worker/conversation fixes and runtime DDL removal pass real disposable suite at c22bd6a4. New complete/fail learning waits for canonical persistence and uses immutable terminal evidence plus existing attempt generation in a service-only same-row-lock SQL transaction. Notifications await persistence and suppress cancelled/resumed/unacknowledged outcomes. Nine learning/worker tests and route ordering tests pass,20 local SQL assertions and replay pass. New real race tests await CI. Remaining obligations include project lineage at admission, cancellation learning's unfenced adapter, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -6711,18 +6732,18 @@
       }
     },
     {
-      "id": "d56574a3766af9147051",
+      "id": "05bb1afcf9e554e379ee",
       "path": "backend/src/routes/billingWebhook.ts",
-      "line": 34,
+      "line": 35,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897",
+      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
       "semanticReview": {
         "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-        "reason": "Lost retry claims no longer execute and arbitrary error text no longer enters logs/safe_error. Remaining durable completion-update failure handling, crash recovery, actual signed-provider integration and first-account binding require acceptance evidence. This is not a blanket global exception or completion of Command008's future action authority.",
+        "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
         "evidence": [
           {
             "path": "backend/src/routes/billingWebhook.test.ts",
@@ -6736,18 +6757,18 @@
       }
     },
     {
-      "id": "a6afa682e6720f74c5eb",
+      "id": "0868dd015f782d0afe48",
       "path": "backend/src/routes/billingWebhook.ts",
-      "line": 35,
+      "line": 36,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897",
+      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
       "semanticReview": {
         "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-        "reason": "Lost retry claims no longer execute and arbitrary error text no longer enters logs/safe_error. Remaining durable completion-update failure handling, crash recovery, actual signed-provider integration and first-account binding require acceptance evidence. This is not a blanket global exception or completion of Command008's future action authority.",
+        "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
         "evidence": [
           {
             "path": "backend/src/routes/billingWebhook.test.ts",
@@ -6761,18 +6782,18 @@
       }
     },
     {
-      "id": "a098417cad519154bb8c",
+      "id": "abb420bd0c2f1dd23e61",
       "path": "backend/src/routes/billingWebhook.ts",
-      "line": 40,
+      "line": 41,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897",
+      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
       "semanticReview": {
         "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-        "reason": "Lost retry claims no longer execute and arbitrary error text no longer enters logs/safe_error. Remaining durable completion-update failure handling, crash recovery, actual signed-provider integration and first-account binding require acceptance evidence. This is not a blanket global exception or completion of Command008's future action authority.",
+        "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
         "evidence": [
           {
             "path": "backend/src/routes/billingWebhook.test.ts",
@@ -6786,18 +6807,18 @@
       }
     },
     {
-      "id": "a485fd4bfefe62e3a06b",
+      "id": "a726074753588be4d961",
       "path": "backend/src/routes/billingWebhook.ts",
-      "line": 50,
+      "line": 59,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897",
+      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
       "semanticReview": {
         "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-        "reason": "Lost retry claims no longer execute and arbitrary error text no longer enters logs/safe_error. Remaining durable completion-update failure handling, crash recovery, actual signed-provider integration and first-account binding require acceptance evidence. This is not a blanket global exception or completion of Command008's future action authority.",
+        "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
         "evidence": [
           {
             "path": "backend/src/routes/billingWebhook.test.ts",
@@ -6811,32 +6832,7 @@
       }
     },
     {
-      "id": "fee0359b6cd677a28d16",
-      "path": "backend/src/routes/billingWebhook.ts",
-      "line": 68,
-      "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "webhook_deliveries",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897",
-      "semanticReview": {
-        "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-        "reason": "Lost retry claims no longer execute and arbitrary error text no longer enters logs/safe_error. Remaining durable completion-update failure handling, crash recovery, actual signed-provider integration and first-account binding require acceptance evidence. This is not a blanket global exception or completion of Command008's future action authority.",
-        "evidence": [
-          {
-            "path": "backend/src/routes/billingWebhook.test.ts",
-            "marker": "signed webhook retry requires an acquired row"
-          },
-          {
-            "path": "backend/src/routes/billingWebhook.ts",
-            "marker": "if (!verifyWhopWebhookSignature(rawBody"
-          }
-        ]
-      }
-    },
-    {
-      "id": "dbd23ead1b173e8e7f03",
+      "id": "b46650b51c072e1a3771",
       "path": "backend/src/routes/billingWebhook.ts",
       "line": 77,
       "enclosing": "<module>",
@@ -6844,10 +6840,35 @@
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897",
+      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
       "semanticReview": {
         "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-        "reason": "Lost retry claims no longer execute and arbitrary error text no longer enters logs/safe_error. Remaining durable completion-update failure handling, crash recovery, actual signed-provider integration and first-account binding require acceptance evidence. This is not a blanket global exception or completion of Command008's future action authority.",
+        "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/billingWebhook.test.ts",
+            "marker": "signed webhook retry requires an acquired row"
+          },
+          {
+            "path": "backend/src/routes/billingWebhook.ts",
+            "marker": "if (!verifyWhopWebhookSignature(rawBody"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8d7582310ee0460ac163",
+      "path": "backend/src/routes/billingWebhook.ts",
+      "line": 92,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "webhook_deliveries",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
+      "semanticReview": {
+        "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
+        "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
         "evidence": [
           {
             "path": "backend/src/routes/billingWebhook.test.ts",
@@ -6903,15 +6924,15 @@
       }
     },
     {
-      "id": "740ef7f182fb3ff9c197",
+      "id": "8a4f5a61a698f969e941",
       "path": "backend/src/routes/github.ts",
-      "line": 224,
+      "line": 227,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ba7c0fd1389a061f1574770c25a00e53e67a3f66a7abacc41dcf6f6dc03af98f",
+      "sourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
       "semanticReview": {
         "authority": "Authenticated status/settings use req.userId. Settings now delegates to metadata-only saveGitHubSettings, requires a single exact active-owner receipt, returns409 for missing/revoked rows and safe503 for persistence errors. Status resolves the canonical token then legacy metadata.",
         "reason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
@@ -6924,15 +6945,15 @@
       }
     },
     {
-      "id": "b9d1d3b6afe914fded86",
+      "id": "7ea068acaab899c1c99e",
       "path": "backend/src/routes/github.ts",
-      "line": 226,
+      "line": 229,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ba7c0fd1389a061f1574770c25a00e53e67a3f66a7abacc41dcf6f6dc03af98f",
+      "sourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
       "semanticReview": {
         "authority": "Authenticated status/settings use req.userId. Settings now delegates to metadata-only saveGitHubSettings, requires a single exact active-owner receipt, returns409 for missing/revoked rows and safe503 for persistence errors. Status resolves the canonical token then legacy metadata.",
         "reason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
@@ -6945,15 +6966,15 @@
       }
     },
     {
-      "id": "997f802a20a9374530ba",
+      "id": "b4f7c7e759ffc010fe2f",
       "path": "backend/src/routes/github.ts",
-      "line": 236,
+      "line": 239,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ba7c0fd1389a061f1574770c25a00e53e67a3f66a7abacc41dcf6f6dc03af98f",
+      "sourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
       "semanticReview": {
         "authority": "Authenticated status/settings use req.userId. Settings now delegates to metadata-only saveGitHubSettings, requires a single exact active-owner receipt, returns409 for missing/revoked rows and safe503 for persistence errors. Status resolves the canonical token then legacy metadata.",
         "reason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
@@ -7544,10 +7565,10 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7565,10 +7586,10 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7586,10 +7607,10 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7607,10 +7628,10 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7628,10 +7649,10 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7649,10 +7670,10 @@
       "target": "project_messages",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7670,10 +7691,10 @@
       "target": "projects",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7691,10 +7712,10 @@
       "target": "project_messages",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7712,10 +7733,10 @@
       "target": "activity_logs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7733,10 +7754,10 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7746,81 +7767,39 @@
       }
     },
     {
-      "id": "3a12a9b907efc6e5c3d0",
+      "id": "2cac9b62127eacaf6c81",
       "path": "backend/src/routes/projects.ts",
-      "line": 177,
+      "line": 181,
       "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "projects",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
-      "semanticReview": {
-        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
-        "evidence": [
-          {
-            "path": "backend/src/security/tenantIsolation.integration.test.ts",
-            "marker": "project creation denies unavailable repository identity before any mutation"
-          }
-        ]
-      }
-    },
-    {
-      "id": "6738a2bf76f90f62b9ad",
-      "path": "backend/src/routes/projects.ts",
-      "line": 189,
-      "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "projects",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
-      "semanticReview": {
-        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
-        "evidence": [
-          {
-            "path": "backend/src/security/tenantIsolation.integration.test.ts",
-            "marker": "project creation denies unavailable repository identity before any mutation"
-          }
-        ]
-      }
-    },
-    {
-      "id": "a9490857d396005b2b72",
-      "path": "backend/src/routes/projects.ts",
-      "line": 196,
-      "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "activity_logs",
+      "kind": "RPC_CANDIDATE",
+      "target": "delete_owned_project_atomic",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
-        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "authority": "Authenticated projects router requires issued TenantContext, derives owner and invokes service-only delete_owned_project_atomic with exact owner/project. The SQL locks that owner row and commits deletion with a retained actor-owned activity receipt.",
+        "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
         "evidence": [
           {
-            "path": "backend/src/security/tenantIsolation.integration.test.ts",
-            "marker": "project creation denies unavailable repository identity before any mutation"
+            "path": "backend/src/routes/projects.deletion.test.ts",
+            "marker": "project deletion requires the exact transactional owner receipt"
           }
         ]
       }
     },
     {
-      "id": "e136cea3e988babfbb75",
+      "id": "8ae7523881c1c54d6f68",
       "path": "backend/src/routes/projects.ts",
-      "line": 207,
+      "line": 191,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7830,18 +7809,18 @@
       }
     },
     {
-      "id": "88cf1d1b2242fc2fdfce",
+      "id": "580261db22384f184757",
       "path": "backend/src/routes/projects.ts",
-      "line": 210,
+      "line": 194,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7851,18 +7830,18 @@
       }
     },
     {
-      "id": "19a122cb9c88b3de9372",
+      "id": "0bf275abce593d7b650c",
       "path": "backend/src/routes/projects.ts",
-      "line": 222,
+      "line": 206,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_files",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7872,18 +7851,18 @@
       }
     },
     {
-      "id": "118297b8e25bd8471d96",
+      "id": "76161abf4ef30f3a2b18",
       "path": "backend/src/routes/projects.ts",
-      "line": 237,
+      "line": 221,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7893,18 +7872,18 @@
       }
     },
     {
-      "id": "33bc105bd1743b727beb",
+      "id": "9d8ddd0f694d29cd53b3",
       "path": "backend/src/routes/projects.ts",
-      "line": 240,
+      "line": 224,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7914,39 +7893,39 @@
       }
     },
     {
-      "id": "b69fed9cecfaf168e6bb",
+      "id": "de0621aaa6b24a470fec",
+      "path": "backend/src/routes/projects.ts",
+      "line": 236,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "project_files",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f22f51ab63d5cd2649ae",
       "path": "backend/src/routes/projects.ts",
       "line": 252,
       "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "project_files",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
-      "semanticReview": {
-        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
-        "evidence": [
-          {
-            "path": "backend/src/security/tenantIsolation.integration.test.ts",
-            "marker": "project creation denies unavailable repository identity before any mutation"
-          }
-        ]
-      }
-    },
-    {
-      "id": "3848102dad8df73efa78",
-      "path": "backend/src/routes/projects.ts",
-      "line": 268,
-      "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -7956,18 +7935,18 @@
       }
     },
     {
-      "id": "823b3029d8de168c8696",
+      "id": "2bc74f2602f176505fc3",
       "path": "backend/src/routes/projects.ts",
-      "line": 269,
+      "line": 253,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "sourceSha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
       "semanticReview": {
         "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
-        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "reason": "Repository identity lookup errors return a safe503 before mutation. Deletion now invokes one owner-row-locked transaction that retains its activity receipt or rolls back, and validates exact owner/project response. Focused deletion negatives and existing tenant regressions pass13 tests. Actual deletion concurrency/rollback/role denial await new-source disposable CI. Remaining gaps: unchecked creation message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.integration.test.ts",
@@ -10074,15 +10053,15 @@
       }
     },
     {
-      "id": "889f99a9b27d3137b9c2",
+      "id": "4213ebfe8d580f3d1810",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 43,
+      "line": 45,
       "enclosing": "saveOAuthConnection",
       "kind": "RPC_CANDIDATE",
       "target": "save_oauth_connection",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10099,15 +10078,15 @@
       }
     },
     {
-      "id": "086cb48f956e2a50f2d2",
+      "id": "35c3560302fcd7d1c0af",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 43,
+      "line": 45,
       "enclosing": "saveOAuthConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10124,40 +10103,15 @@
       }
     },
     {
-      "id": "fd30feebb4fe8181c26c",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 67,
-      "enclosing": "uploadJson",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "463f4ef07cb2aa1c39dc",
+      "id": "1bb4114bf1d58f2983cd",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
       "line": 69,
       "enclosing": "uploadJson",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10174,15 +10128,15 @@
       }
     },
     {
-      "id": "0bd170418d61f7b383b5",
+      "id": "5e5e11ae385921acb78e",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 75,
+      "line": 71,
       "enclosing": "uploadJson",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10199,15 +10153,40 @@
       }
     },
     {
-      "id": "a04489f669004bbf674d",
+      "id": "c8df73e486a411ae81ab",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 93,
+      "line": 77,
+      "enclosing": "uploadJson",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
+      "semanticReview": {
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "90346753c6da7057f842",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 95,
       "enclosing": "downloadJson",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10224,15 +10203,15 @@
       }
     },
     {
-      "id": "14d61e4a39627d2b08fc",
+      "id": "38cb57dff59169083ea1",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 94,
+      "line": 96,
       "enclosing": "downloadJson",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10249,15 +10228,15 @@
       }
     },
     {
-      "id": "c3e6a4586bedf9114df6",
+      "id": "87f1bd2919129bcb5c20",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 104,
+      "line": 106,
       "enclosing": "removePath",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10274,15 +10253,15 @@
       }
     },
     {
-      "id": "92ea9ce86572d5138da1",
+      "id": "d7e09aed58d192944e28",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 105,
+      "line": 107,
       "enclosing": "removePath",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10299,15 +10278,15 @@
       }
     },
     {
-      "id": "8aa48d325e695ccc0997",
+      "id": "e7074b8f245ab3e5cb5f",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 120,
+      "line": 123,
       "enclosing": "storePkceSession",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10324,15 +10303,15 @@
       }
     },
     {
-      "id": "915e4eb29aafa3c94ad2",
+      "id": "1542c238c31b32816eec",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 122,
+      "line": 125,
       "enclosing": "storePkceSession",
       "kind": "RPC_CANDIDATE",
       "target": "begin_oauth_session",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10349,15 +10328,15 @@
       }
     },
     {
-      "id": "43aab875db2304250dd7",
+      "id": "0656d4270a064fe316ab",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 141,
+      "line": 144,
       "enclosing": "storePkceSession",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10374,15 +10353,15 @@
       }
     },
     {
-      "id": "50b156c1cd53813e770b",
+      "id": "31c79814099fc3444c0f",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
       "line": 155,
-      "enclosing": "loadPkceSession",
+      "enclosing": "clearPkceSession",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10399,65 +10378,15 @@
       }
     },
     {
-      "id": "cb1a4815edf0f3c9e991",
+      "id": "a62bfd916a7b8412658c",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
       "line": 156,
-      "enclosing": "loadPkceSession",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "79eec8d44dcf99db2ecf",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 195,
-      "enclosing": "clearPkceSession",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "f8c251cb9933644a010f",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 196,
       "enclosing": "clearPkceSession",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10474,15 +10403,15 @@
       }
     },
     {
-      "id": "9454a1303667e8cb3a2a",
+      "id": "a374014449d72ac7df9c",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 207,
+      "line": 168,
       "enclosing": "consumePkceSession",
       "kind": "RPC_CANDIDATE",
       "target": "consume_oauth_session",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10499,15 +10428,15 @@
       }
     },
     {
-      "id": "7fb15e404f014cf67bf5",
+      "id": "21808ed2d63d16f41419",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 207,
+      "line": 168,
       "enclosing": "consumePkceSession",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10524,15 +10453,15 @@
       }
     },
     {
-      "id": "3cb38a44084cc7227093",
+      "id": "ea1fde2a165680df03cc",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 231,
+      "line": 192,
       "enclosing": "storeProviderToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10549,15 +10478,15 @@
       }
     },
     {
-      "id": "e1da51ff8875fe6278db",
+      "id": "162d38262186b8b46a9a",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 247,
+      "line": 208,
       "enclosing": "storeProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10574,15 +10503,15 @@
       }
     },
     {
-      "id": "de48a832c5c6c16e6970",
+      "id": "63b9f8389be5a7806442",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 252,
+      "line": 213,
       "enclosing": "storeProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10599,15 +10528,15 @@
       }
     },
     {
-      "id": "fc290c5d50469a76b472",
+      "id": "777d7e7be63e460d764c",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 266,
+      "line": 227,
       "enclosing": "loadProviderToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10624,15 +10553,15 @@
       }
     },
     {
-      "id": "bc1732994f397a3484c7",
+      "id": "bd3be70d0cd5d49f7053",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 267,
+      "line": 228,
       "enclosing": "loadProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10649,15 +10578,15 @@
       }
     },
     {
-      "id": "b31edca9c86cd37ebb5f",
+      "id": "807bebcbce8e217c3e8a",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 302,
+      "line": 263,
       "enclosing": "clearProviderToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10674,15 +10603,15 @@
       }
     },
     {
-      "id": "8c320475bc7e80832f4a",
+      "id": "7796a1fd20531dd3d926",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 303,
+      "line": 264,
       "enclosing": "clearProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5",
+      "sourceSha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
       "semanticReview": {
         "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
         "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
@@ -10699,15 +10628,15 @@
       }
     },
     {
-      "id": "00e6d8cc9200a1b19e9d",
+      "id": "006a26709183308572df",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 64,
+      "line": 65,
       "enclosing": "basicAuthHeader",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ec760ecf3ae67ffdb4537cce430417b3d0a1b71fecec8eeb311e449b32046c09",
+      "sourceSha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -10724,15 +10653,15 @@
       }
     },
     {
-      "id": "222ac226342dba00be50",
+      "id": "57d09be4488bfd059654",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 81,
+      "line": 83,
       "enclosing": "buildSupabaseAuthorizeUrl",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ec760ecf3ae67ffdb4537cce430417b3d0a1b71fecec8eeb311e449b32046c09",
+      "sourceSha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -10749,15 +10678,15 @@
       }
     },
     {
-      "id": "cc4affbb6103619d1319",
+      "id": "d8dd91081d38b5474a4f",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 261,
+      "line": 266,
       "enclosing": "parseOAuthState",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ec760ecf3ae67ffdb4537cce430417b3d0a1b71fecec8eeb311e449b32046c09",
+      "sourceSha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -10774,15 +10703,15 @@
       }
     },
     {
-      "id": "891c0a5ab9c5f074a5e2",
+      "id": "206a86b695b9c00be8d6",
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "line": 542,
+      "line": 558,
       "enclosing": "userSupabaseMemoryReady",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_session_memory",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0be0483a7fada343a508b506889d70abcc914bd8290a947f5f07a8e4d2806870",
+      "sourceSha256": "1bc213464352ee8f766c1484e6b829b3a6ab67897454b9b4cb2695a7ef88f752",
       "semanticReview": {
         "authority": "The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
         "reason": "Full helper examined, including Management API, direct SQL and Storage calls outside the scanner. Generated memory tables lacked browser-role isolation and existing public buckets were falsely accepted; both corrected with pending real CI. Full caller provenance, provider/project binding, legacy customer catalog review, direct-PG TLS validation and explicit consequential approval remain unresolved, not certified from owner syntax.",
@@ -11483,15 +11412,15 @@
       }
     },
     {
-      "id": "cf06ea2158ae2747e249",
+      "id": "7202e4ceaf1fab023f7d",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 42,
+      "line": 44,
       "enclosing": "encodeVercelRefreshLease",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in encodeVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11504,15 +11433,15 @@
       }
     },
     {
-      "id": "3b2317cd77aaf7eeb91d",
+      "id": "914547501e0ad5d35cbb",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 49,
+      "line": 51,
       "enclosing": "parseVercelRefreshLease",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in parseVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11525,36 +11454,15 @@
       }
     },
     {
-      "id": "5062da1cff236f027460",
-      "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 101,
-      "enclosing": "saveVercelTokenToStorage",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
-      "semanticReview": {
-        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
-        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
-            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
-          }
-        ]
-      }
-    },
-    {
-      "id": "020eeed9beee09c651bf",
+      "id": "c47cd353f14ba5046be8",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 103,
       "enclosing": "saveVercelTokenToStorage",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11567,15 +11475,36 @@
       }
     },
     {
-      "id": "935dc07d3ee30803d752",
+      "id": "2d2eae5cbd895d303fc1",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 120,
+      "line": 105,
+      "enclosing": "saveVercelTokenToStorage",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2ae451e4fa2142cb3d3b",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 122,
       "enclosing": "deleteVercelTokenFromStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11588,15 +11517,15 @@
       }
     },
     {
-      "id": "9fb0a7f533e30fa0c5c0",
+      "id": "533babcf253a3df300ac",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 121,
+      "line": 123,
       "enclosing": "deleteVercelTokenFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11609,15 +11538,15 @@
       }
     },
     {
-      "id": "657429d6c4f3fdb5fb88",
+      "id": "d32647f80bd545a451f4",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 225,
+      "line": 228,
       "enclosing": "buildVercelAuthorizeUrl",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in buildVercelAuthorizeUrl. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11630,15 +11559,15 @@
       }
     },
     {
-      "id": "f5b4f15b231dd4f82740",
+      "id": "795e7e19975095f341c6",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 317,
+      "line": 321,
       "enclosing": "parseVercelOAuthState",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in parseVercelOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11651,15 +11580,15 @@
       }
     },
     {
-      "id": "23873740c23a021413a1",
+      "id": "50cfec47a00c8f934d4c",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 442,
+      "line": 446,
       "enclosing": "refreshVercelOAuthTokenWithLease",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11672,15 +11601,15 @@
       }
     },
     {
-      "id": "78b7414fe25347645863",
+      "id": "9536d36325c5502652c0",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 444,
+      "line": 448,
       "enclosing": "refreshVercelOAuthTokenWithLease",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11693,15 +11622,15 @@
       }
     },
     {
-      "id": "b9fa3b4c99ee71b3111d",
+      "id": "ff1b1bd1a685d5e751ee",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 468,
+      "line": 472,
       "enclosing": "refreshVercelOAuthTokenWithLease",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11714,15 +11643,15 @@
       }
     },
     {
-      "id": "62706de022ff666e9876",
+      "id": "47c7ebecb62681738d31",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 486,
+      "line": 490,
       "enclosing": "loadVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11735,15 +11664,15 @@
       }
     },
     {
-      "id": "eef0834b20509852bb95",
+      "id": "1e8333f9bd44c6fd05c9",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 487,
+      "line": 491,
       "enclosing": "loadVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11756,15 +11685,15 @@
       }
     },
     {
-      "id": "b42f7d6fc7cf05f312e7",
+      "id": "305fd58c0a7af15af239",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 711,
+      "line": 715,
       "enclosing": "saveVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11777,15 +11706,15 @@
       }
     },
     {
-      "id": "fce6f818ade98183e638",
+      "id": "307321f23e7727be36c8",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 741,
+      "line": 745,
       "enclosing": "saveVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11798,15 +11727,15 @@
       }
     },
     {
-      "id": "633f8949e87812a97475",
+      "id": "bf911ba6ff5494563807",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 751,
+      "line": 756,
       "enclosing": "clearVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11819,15 +11748,15 @@
       }
     },
     {
-      "id": "97efc9c17f29e87e9afe",
+      "id": "6a995df3c50a346f6d81",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 752,
+      "line": 757,
       "enclosing": "clearVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1",
+      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -12371,11 +12300,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
         "authority": "Issued authenticated context scopes summary referrals/rewards. Before any label read, every referral code must match the actor profile code, self-links are denied, and a second user_referral_profiles read requires exact referred IDs plus referred_by_user_id=actor and referred_by_code=actor code. Complete unique receipts are validated before profiles display-name lookup.",
-        "reason": "Corrupt relation disclosure fixed with focused positive/empty and missing, foreign, mismatched, duplicate, substituted and unavailable backlink negatives. New real disposable test covers missing/wrong-owner/wrong-code backlinks, valid linked label and corrupt referral code. Final-source database execution pending, so all three label-boundary sites remain REVIEWED_GAP until that evidence is verified.",
+        "reason": "Corrupt relation disclosure fixed with focused positive/empty and missing, foreign, mismatched, duplicate, substituted and unavailable backlink negatives. VERIFIED at c22bd6a48d6fb263df5c228daf938b34dc254cbd, disposable run38815412927:70 real security tests and3 authenticated browser tests passed with zero failures/skips. Real test denies missing/wrong-owner/wrong-code backlinks and corrupt referral code without leaking the display-name canary, while valid linked labels succeed. The service-only atomic linker is the only production writer of these backlink fields, with no ordinary unlink/reassignment path. This closes only this read relation and issued factory boundary, not reward qualification or whole007 acceptance.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.ts",
@@ -12450,11 +12379,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
         "authority": "Issued authenticated context scopes summary referrals/rewards. Before any label read, every referral code must match the actor profile code, self-links are denied, and a second user_referral_profiles read requires exact referred IDs plus referred_by_user_id=actor and referred_by_code=actor code. Complete unique receipts are validated before profiles display-name lookup.",
-        "reason": "Corrupt relation disclosure fixed with focused positive/empty and missing, foreign, mismatched, duplicate, substituted and unavailable backlink negatives. New real disposable test covers missing/wrong-owner/wrong-code backlinks, valid linked label and corrupt referral code. Final-source database execution pending, so all three label-boundary sites remain REVIEWED_GAP until that evidence is verified.",
+        "reason": "Corrupt relation disclosure fixed with focused positive/empty and missing, foreign, mismatched, duplicate, substituted and unavailable backlink negatives. VERIFIED at c22bd6a48d6fb263df5c228daf938b34dc254cbd, disposable run38815412927:70 real security tests and3 authenticated browser tests passed with zero failures/skips. Real test denies missing/wrong-owner/wrong-code backlinks and corrupt referral code without leaking the display-name canary, while valid linked labels succeed. The service-only atomic linker is the only production writer of these backlink fields, with no ordinary unlink/reassignment path. This closes only this read relation and issued factory boundary, not reward qualification or whole007 acceptance.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.ts",
@@ -12479,11 +12408,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
         "authority": "Issued authenticated context scopes summary referrals/rewards. Before any label read, every referral code must match the actor profile code, self-links are denied, and a second user_referral_profiles read requires exact referred IDs plus referred_by_user_id=actor and referred_by_code=actor code. Complete unique receipts are validated before profiles display-name lookup.",
-        "reason": "Corrupt relation disclosure fixed with focused positive/empty and missing, foreign, mismatched, duplicate, substituted and unavailable backlink negatives. New real disposable test covers missing/wrong-owner/wrong-code backlinks, valid linked label and corrupt referral code. Final-source database execution pending, so all three label-boundary sites remain REVIEWED_GAP until that evidence is verified.",
+        "reason": "Corrupt relation disclosure fixed with focused positive/empty and missing, foreign, mismatched, duplicate, substituted and unavailable backlink negatives. VERIFIED at c22bd6a48d6fb263df5c228daf938b34dc254cbd, disposable run38815412927:70 real security tests and3 authenticated browser tests passed with zero failures/skips. Real test denies missing/wrong-owner/wrong-code backlinks and corrupt referral code without leaking the display-name canary, while valid linked labels succeed. The service-only atomic linker is the only production writer of these backlink fields, with no ordinary unlink/reassignment path. This closes only this read relation and issued factory boundary, not reward qualification or whole007 acceptance.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.ts",

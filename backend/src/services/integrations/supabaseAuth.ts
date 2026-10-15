@@ -5,6 +5,7 @@
  */
 
 import { createHash, randomBytes } from 'crypto';
+import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
 import {
   clearPkceSession,
   clearProviderToken,
@@ -73,16 +74,17 @@ function makeVerifier(): string {
 }
 
 export async function buildSupabaseAuthorizeUrl(
-  userId: string,
+  context: TenantContext,
   redirectUri: string,
 ): Promise<{ url: string; state: string } | null> {
+  const { userId } = requireTenantContext(context);
   if (!supabaseOAuthConfigured()) return null;
   const verifier = makeVerifier();
   const state = Buffer.from(
     JSON.stringify({ userId, t: Date.now(), n: randomBytes(8).toString('hex') }),
   ).toString('base64url');
 
-  await storePkceSession(userId, PKCE_PROVIDER, {
+  await storePkceSession(context, PKCE_PROVIDER, {
     verifier,
     state,
     redirect_uri: redirectUri,
@@ -109,16 +111,18 @@ export interface SupabaseOAuthTokens {
 }
 
 export async function exchangeSupabaseOAuthCode(opts: {
-  userId: string;
+  tenantContext: TenantContext;
   code: string;
   state: string;
   redirectUri: string;
 }): Promise<SupabaseOAuthTokens> {
+  const context = requireTenantContext(opts.tenantContext);
+  const { userId } = context;
   if (!supabaseOAuthConfigured()) {
     throw new Error('Supabase OAuth not configured — set SUPABASE_OAUTH_CLIENT_ID/SECRET');
   }
 
-  const pkce = await consumePkceSession(opts.userId, PKCE_PROVIDER, opts.state);
+  const pkce = await consumePkceSession(context, PKCE_PROVIDER, opts.state);
   if (!pkce?.verifier) {
     throw new Error('Invalid or expired OAuth state — try Connect Supabase again');
   }
@@ -158,7 +162,7 @@ export async function exchangeSupabaseOAuthCode(opts: {
     ? new Date(Date.now() + json.expires_in * 1000).toISOString()
     : null;
 
-  await storeProviderToken(opts.userId, PROVIDER, {
+  await storeProviderToken(userId, PROVIDER, {
     access_token: json.access_token,
     refresh_token: json.refresh_token ?? null,
     metadata: {
@@ -247,9 +251,10 @@ export async function isSupabaseOAuthConnected(userId: string): Promise<boolean>
   return Boolean(await getSupabaseOAuthAccessToken(userId));
 }
 
-export async function clearSupabaseOAuth(userId: string): Promise<void> {
+export async function clearSupabaseOAuth(context: TenantContext): Promise<void> {
+  const { userId } = requireTenantContext(context);
   const results = await Promise.allSettled([
-    clearProviderToken(userId, PROVIDER), clearPkceSession(userId, PKCE_PROVIDER),
+    clearProviderToken(userId, PROVIDER), clearPkceSession(context, PKCE_PROVIDER),
   ]);
   if (results.some(result => result.status === 'rejected')) {
     throw new Error('Supabase OAuth disconnect is incomplete. Retry shortly.');

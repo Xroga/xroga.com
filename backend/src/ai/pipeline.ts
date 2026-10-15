@@ -109,7 +109,7 @@ import {
   inspectConnectedRepositoryState,
   hasManagedVercelDeployment,
 } from '../services/integrations/githubDeploy.js';
-import { clearVercelConnection, getVercelToken } from '../services/integrations/vercelAuth.js';
+import { getVercelToken } from '../services/integrations/vercelAuth.js';
 import {
   getUserSupabaseStatus,
   buildProviderEnvFiles,
@@ -4765,7 +4765,6 @@ publicationReason:
           { githubRepoName },
         );
         const reauth = Boolean(vercelToken) && isVercelAuthFailure(deployed.deployError);
-        if (reauth) await clearVercelConnection(opts.userId).catch(() => {});
         shipBlockers.push(deployFailure);
         emit({
           agent: 'deploy',
@@ -4779,11 +4778,9 @@ publicationReason:
     } catch (err) {
       const raw = redactSecrets((err as Error).message || 'Unknown Vercel error');
       const deployFailure = describeVercelDeployFailure(raw, { githubRepoName });
-      // An `invalidToken` rejection means the stored authorization is dead. Leaving it
-      // in place makes the account look connected, so every later build repeats this
-      // same failure with no way for the user to know why.
+      // This response describes the token used by this attempt, not necessarily
+      // the current connection. A delayed failure must not revoke a reconnect.
       const reauth = Boolean(vercelToken) && isVercelAuthFailure(raw);
-      if (reauth) await clearVercelConnection(opts.userId).catch(() => {});
       shipBlockers.push(deployFailure);
       console.warn('[pipeline] Vercel deploy failed:', deployFailure);
       emit({

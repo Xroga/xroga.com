@@ -10,6 +10,13 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "supabase/migrations/20261016000500_build_outcome_attempt_fencing.sql",
+    "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+    "supabase/migrations/20261016000400_atomic_project_deletion.sql",
+    "backend/src/routes/projects.deletion.test.ts",
+    "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
+    "backend/src/ai/runStore.terminalLearning.test.ts",
+    "backend/src/routes/swarm.notificationAuthority.test.ts",
     "scripts/security/fixtures/pre-security-message-shares.sql",
     "scripts/security/historical-share-fixture.mjs",
     "backend/src/ai/runStore.conversationReceipt.test.ts",
@@ -252,6 +259,8 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
+      "supabase/migrations/20261016000500_build_outcome_attempt_fencing.sql",
+      "supabase/migrations/20261016000400_atomic_project_deletion.sql",
       "supabase/migrations/20261016000300_atomic_referral_link.sql",
       "supabase/migrations/20261016000200_github_oauth_atomic_connection.sql",
       "supabase/migrations/20261016000100_oauth_authorization_epoch.sql",

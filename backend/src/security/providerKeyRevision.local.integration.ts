@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { test, type TestContext } from 'node:test';
 import { createClient,type SupabaseClient } from '@supabase/supabase-js';
+import { prepareSupabaseWriteAdmissions } from '../services/integrations/supabaseProvision.js';
+import { saveUserProviderKey } from '../services/integrations/userProviderKeys.js';
 
 type FixtureUser={id:string;token:string};
 const metadata=(key:string)=>({type:'user_api_key',provider:'custom',env_var:key.slice('apikey_custom_'.length).toUpperCase(),sync_target:'vercel',connected_at:new Date().toISOString(),masked:'fixture-mask'});
@@ -32,6 +34,21 @@ export function registerProviderKeyRevisionTests(admin:SupabaseClient,getUsers:(
     });
     return key;
   }
+  test('real Supabase callback admission bundle cannot restore any credential after disconnect',async(t)=>{
+    const [owner,other]=getUsers(),revoker=client();
+    const providers=['supabase_url','supabase_anon','supabase','supabase_pat'] as const;
+    for(const name of providers)cleanup(t,owner.id,`apikey_${name}`);
+    const foreignBefore=await admin.from('user_integrations').select('*').eq('user_id',other.id).order('provider');assert.equal(foreignBefore.error,null);
+    const admitted=await prepareSupabaseWriteAdmissions(owner.id);
+    const handles=[admitted.url,admitted.anon,admitted.service,admitted.pat];
+    for(const name of providers){const result=await revoker.rpc('revoke_provider_key',{p_owner_id:owner.id,p_provider:`apikey_${name}`});assert.equal(result.error,null);assert.equal(result.data,true);}
+    const read=()=>admin.from('user_integrations').select('*').eq('user_id',owner.id).in('provider',providers.map(name=>`apikey_${name}`)).order('provider');
+    const tombstones=await read();assert.equal(tombstones.error,null);assert.equal(tombstones.data?.length,4);
+    assert.ok(tombstones.data?.every(row=>row.access_token==='' && row.metadata.revoked===true));
+    for(const [index,name] of providers.entries())await assert.rejects(saveUserProviderKey(owner.id,name,name==='supabase_url'?'https://fixture.supabase.co':'synthetic-not-a-provider-credential',{writeAdmission:handles[index]}),{code:'CREDENTIAL_WRITE_CONFLICT'});
+    const retained=await read();assert.equal(retained.error,null);assert.deepEqual(retained.data,tombstones.data);
+    const foreignAfter=await admin.from('user_integrations').select('*').eq('user_id',other.id).order('provider');assert.equal(foreignAfter.error,null);assert.deepEqual(foreignAfter.data,foreignBefore.data);
+  });
   for(const initiallyPresent of [false,true])test(`real two-client BYOK ${initiallyPresent?'existing':'absent'} save/revoke race retains revocation`,async(t)=>{
     const owner=getUsers()[0],writer=client(),revoker=client();
     for(let iteration=0;iteration<3;iteration++) {

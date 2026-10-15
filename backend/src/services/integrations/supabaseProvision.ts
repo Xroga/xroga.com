@@ -12,6 +12,7 @@ import {
   getUserSupabaseStatus,
   prepareUserProviderKeyWrite,
   saveUserProviderKey,
+  type ProviderKeyWriteAdmission,
 } from './userProviderKeys.js';
 
 const MGMT = 'https://api.supabase.com/v1';
@@ -470,6 +471,21 @@ export async function provisionUserSupabase(opts: {
   };
 }
 
+export type SupabaseWriteAdmissions = Readonly<{
+  url: ProviderKeyWriteAdmission;
+  anon: ProviderKeyWriteAdmission;
+  service: ProviderKeyWriteAdmission;
+  pat: ProviderKeyWriteAdmission;
+}>;
+
+/** Capture before OAuth exchange or other asynchronous credential acquisition. */
+export async function prepareSupabaseWriteAdmissions(userId: string): Promise<SupabaseWriteAdmissions> {
+  const [url, anon, service, pat] = await Promise.all(
+    ['supabase_url', 'supabase_anon', 'supabase', 'supabase_pat'].map(provider => prepareUserProviderKeyWrite(userId, provider)),
+  );
+  return Object.freeze({ url: url!, anon: anon!, service: service!, pat: pat! });
+}
+
 /** One-click: PAT + project ref → save keys + provision everything. */
 export async function oneClickConnectSupabase(opts: {
   userId: string;
@@ -477,30 +493,30 @@ export async function oneClickConnectSupabase(opts: {
   projectRef: string;
   vercelProject?: string;
   projectName?: string;
+  writeAdmissions?: SupabaseWriteAdmissions;
 }): Promise<{
   status: Awaited<ReturnType<typeof getUserSupabaseStatus>>;
   provision: ProvisionResult;
   keysSaved: boolean;
 }> {
+  const { userId, projectRef, projectName, writeAdmissions } = opts;
   const accessToken = opts.accessToken.trim();
-  const [urlWrite,anonWrite,serviceWrite,patWrite]=await Promise.all(
-    ['supabase_url','supabase_anon','supabase','supabase_pat'].map(provider=>prepareUserProviderKeyWrite(opts.userId,provider)),
-  );
-  const keys = await fetchProjectApiKeys(accessToken, opts.projectRef);
-  await saveUserProviderKey(opts.userId, 'supabase_url', keys.url,{writeAdmission:urlWrite});
-  await saveUserProviderKey(opts.userId, 'supabase_anon', keys.anonKey,{writeAdmission:anonWrite});
-  await saveUserProviderKey(opts.userId, 'supabase', keys.serviceRoleKey,{writeAdmission:serviceWrite});
-  await saveUserProviderKey(opts.userId, 'supabase_pat', accessToken,{writeAdmission:patWrite});
+  const {url, anon, service, pat} = writeAdmissions ?? await prepareSupabaseWriteAdmissions(userId);
+  const keys = await fetchProjectApiKeys(accessToken, projectRef);
+  await saveUserProviderKey(userId, 'supabase_url', keys.url,{writeAdmission:url});
+  await saveUserProviderKey(userId, 'supabase_anon', keys.anonKey,{writeAdmission:anon});
+  await saveUserProviderKey(userId, 'supabase', keys.serviceRoleKey,{writeAdmission:service});
+  await saveUserProviderKey(userId, 'supabase_pat', accessToken,{writeAdmission:pat});
 
   const provision = await provisionUserSupabase({
     projectUrl: keys.url,
     serviceRoleKey: keys.serviceRoleKey,
     accessToken,
-    projectName: opts.projectName || opts.projectRef,
+    projectName: projectName || projectRef,
   });
 
   // Mark provision metadata on status via a lightweight custom key note — stored in PAT metadata already
-  const status = await getUserSupabaseStatus(opts.userId);
+  const status = await getUserSupabaseStatus(userId);
   return {
     status: {
       ...status,

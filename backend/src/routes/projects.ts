@@ -174,32 +174,16 @@ router.delete('/:id', async (req: AuthRequest, res) => {
   const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
   const projectId = String(req.params.id);
 
-  const { data: project } = await supabase
-    .from('projects')
-    .select('id, name')
-    .eq('id', projectId)
-    .eq('user_id', req.userId!)
-    .maybeSingle();
-
-  if (!project) {
+  if (!z.string().uuid().safeParse(projectId).success) {
     res.status(404).json({ error: 'Project not found' });
     return;
   }
-
-  const { error } = await supabase.from('projects').delete().eq('id', projectId).eq('user_id', req.userId!);
-
-  if (error) {
+  const { data, error } = await supabase.rpc('delete_owned_project_atomic', { p_owner_id: req.userId!, p_project_id: projectId });
+  if (error || (data !== null && (!data || Array.isArray(data) || data.id !== projectId || data.user_id !== req.userId))) {
     res.status(503).json({ error: 'Project could not be removed. Retry shortly.' });
     return;
   }
-
-  await supabase.from('activity_logs').insert({
-    user_id: req.userId!,
-    project_id: projectId,
-    action: 'deleted_project',
-    details: { name: project.name },
-  });
-
+  if (data === null) { res.status(404).json({ error: 'Project not found' }); return; }
   res.json({ success: true, id: projectId });
 });
 

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "67644e2c274b879f25192c8ecedabf68f29ca736",
+  "source_sha": "c22bd6a48d6fb263df5c228daf938b34dc254cbd",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -531,6 +531,7 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/routes/github.ts",
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
@@ -576,6 +577,7 @@
         "VERCEL_OAUTH_SCOPES",
         "WHOP_COMPANY_ID",
         "WHOP_PLAN_ID",
+        "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
         "XB01_LOCAL_DATABASE_URL",
         "XROGA_DEPLOYMENT_ENVIRONMENT",
@@ -597,6 +599,7 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/routes/github.ts",
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
@@ -3074,6 +3077,7 @@
         "SUPABASE_URL",
         "WHOP_COMPANY_ID",
         "WHOP_PLAN_ID",
+        "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
         "XB01_LOCAL_DATABASE_URL"
       ],
@@ -3163,6 +3167,46 @@
         "backend/src/services/publish/easCredentials.ts",
         "backend/src/services/publish/userOwnedPublish.ts",
         "frontend/src/components/publish/MobilePublishPanel.tsx"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-fixture-supabase-co",
+      "provider": "Source-defined endpoint fixture.supabase.co",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/security/providerKeyRevision.local.integration.ts"
+      ],
+      "hostnames": [
+        "fixture.supabase.co"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "CI",
+        "SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_URL",
+        "XB01_DISPOSABLE_SUPABASE"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/security/providerKeyRevision.local.integration.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -4294,6 +4338,7 @@
         "SUPABASE_URL",
         "WHOP_COMPANY_ID",
         "WHOP_PLAN_ID",
+        "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
         "XB01_LOCAL_DATABASE_URL"
       ],
@@ -6822,6 +6867,7 @@
     {
       "name": "CI",
       "consuming_sources": [
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
@@ -6839,6 +6885,7 @@
       "dependency_ids": [
         "endpoint-127-0-0-1",
         "endpoint-example-invalid",
+        "endpoint-fixture-supabase-co",
         "endpoint-public-example-invalid"
       ]
     },
@@ -9418,6 +9465,7 @@
       "name": "SUPABASE_ANON_KEY",
       "consuming_sources": [
         "backend/src/config/supabase.ts",
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
@@ -9436,6 +9484,7 @@
         "supabase",
         "endpoint-127-0-0-1",
         "endpoint-example-invalid",
+        "endpoint-fixture-supabase-co",
         "endpoint-public-example-invalid"
       ]
     },
@@ -9679,6 +9728,7 @@
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
+        "endpoint-fixture-supabase-co",
         "endpoint-github-com",
         "endpoint-localhost",
         "endpoint-public-example-invalid",
@@ -9696,6 +9746,7 @@
         "backend/src/lib/postgresConnect.ts",
         "backend/src/lib/resolveIdentity.ts",
         "backend/src/lib/verifyJwt.ts",
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
@@ -9717,6 +9768,7 @@
         "supabase",
         "endpoint-127-0-0-1",
         "endpoint-example-invalid",
+        "endpoint-fixture-supabase-co",
         "endpoint-localhost",
         "endpoint-public-example-invalid",
         "endpoint-xrogaaicom-vercel-app"
@@ -10253,6 +10305,7 @@
         "backend/src/config/envSecrets.ts",
         "backend/src/lib/platformReady.ts",
         "backend/src/routes/billingWebhook.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/BillingService.ts"
       ],
       "environments": [
@@ -10268,7 +10321,10 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-api-whop-com"
+        "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -10303,6 +10359,7 @@
     {
       "name": "XB01_DISPOSABLE_SUPABASE",
       "consuming_sources": [
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
@@ -10320,12 +10377,14 @@
       "dependency_ids": [
         "endpoint-127-0-0-1",
         "endpoint-example-invalid",
+        "endpoint-fixture-supabase-co",
         "endpoint-public-example-invalid"
       ]
     },
     {
       "name": "XB01_LOCAL_DATABASE_URL",
       "consuming_sources": [
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "environments": [
@@ -11322,7 +11381,7 @@
     },
     {
       "path": "backend/src/ai/buildOutcomeMemory.ts",
-      "sha256": "a51c00b5bb253febf3853edff423634fdb54f2c1ec5a4f516abd84a5e0d1903a"
+      "sha256": "d4093ee3e303ad931b7be651b21e55dd8e327b48d585655541daec82cfc08f10"
     },
     {
       "path": "backend/src/ai/buildOutcomeRoutingMemory.ts",
@@ -11466,7 +11525,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "a897403b760f71ade9547777a53418ae81ebcc6e3db2143f7b64d3d300225733"
+      "sha256": "497d6719652fe58b7d952b8d01ebe3ce589e11aebb2e70e44e49ccd61163c412"
     },
     {
       "path": "backend/src/ai/progressHeartbeat.ts",
@@ -11538,7 +11597,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce"
+      "sha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711"
     },
     {
       "path": "backend/src/ai/runTrace.ts",
@@ -12262,7 +12321,7 @@
     },
     {
       "path": "backend/src/routes/billingWebhook.ts",
-      "sha256": "b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897"
+      "sha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80"
     },
     {
       "path": "backend/src/routes/capabilities.ts",
@@ -12290,7 +12349,7 @@
     },
     {
       "path": "backend/src/routes/github.ts",
-      "sha256": "ba7c0fd1389a061f1574770c25a00e53e67a3f66a7abacc41dcf6f6dc03af98f"
+      "sha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091"
     },
     {
       "path": "backend/src/routes/growth.ts",
@@ -12346,11 +12405,11 @@
     },
     {
       "path": "backend/src/routes/projects.ts",
-      "sha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074"
+      "sha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820"
     },
     {
       "path": "backend/src/routes/publish.ts",
-      "sha256": "8c67b2e1bcb2324985a8118d8b6d295d8cd1771d67667ae46279c0674962497b"
+      "sha256": "638bbd12670be7c7464af6278b68d5a5740772e4095341e9e9a43eaa211e25af"
     },
     {
       "path": "backend/src/routes/referrals.ts",
@@ -12370,11 +12429,11 @@
     },
     {
       "path": "backend/src/routes/supabaseOAuth.ts",
-      "sha256": "67ae763c4d343f9eb42daf99426f5d8b0c0c6bf0466aa934c75f4b0b54a56594"
+      "sha256": "889c3eeb3fca1e65ac020204dcfb5127d9c481cf6635f8f36f14bbbf505b0ad6"
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "sha256": "91a3e97c3dca2ba6b33340d2eed020bedae1dc54abebfbac47f6156132070929"
+      "sha256": "4afd2c0da1fafaf24125af6478bdfc0f08967f762f49f86f76c3286738138d05"
     },
     {
       "path": "backend/src/routes/tasks.ts",
@@ -12394,7 +12453,7 @@
     },
     {
       "path": "backend/src/routes/vercel.ts",
-      "sha256": "8918d4c0e5d4771cf68c18c7b9884aa1a5469d1f5c78d39f77bfa3b046080b30"
+      "sha256": "615bbf629daad489a4d762cabbebcff310330032b3289c63ab82f06b9194c1bf"
     },
     {
       "path": "backend/src/routes/voice.ts",
@@ -12437,6 +12496,10 @@
       "sha256": "4e65815a53307b4e4941e305bd84ab9eac9ea0720e71a84b4f5b7b2278dad76c"
     },
     {
+      "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+      "sha256": "46dbea61da9d70b31167f62ed08cb3777161310ff2bf9904ead963b019f1477d"
+    },
+    {
       "path": "backend/src/security/oauthSession.local.integration.ts",
       "sha256": "199bd787a29b02c2f340254ea665b66ad9ddcff43e335edbbe3c03f898f25370"
     },
@@ -12454,7 +12517,7 @@
     },
     {
       "path": "backend/src/security/providerKeyRevision.local.integration.ts",
-      "sha256": "db74a8217de1417fd476bbef6dcefe50b8e4a7b2559eba86bd601dacf55333d4"
+      "sha256": "b12a4978235027960e22eaec1c72e619fc2180ff805e89f5aee1baa4aa695a58"
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
@@ -12470,7 +12533,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "b5c066785e26124f3704c22c47cc67387b07870726aa953604f7a8df33cea326"
+      "sha256": "6ae08d8146eb187df3fdd2d9ad099cf552dbbad1649016a70ccceff2cfe30eb1"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12554,7 +12617,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "99676b636914c522e3550191db6d3be4a3ae76bad58f5a549933f903d998e5c5"
+      "sha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065"
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
@@ -12562,11 +12625,11 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "sha256": "ec760ecf3ae67ffdb4537cce430417b3d0a1b71fecec8eeb311e449b32046c09"
+      "sha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463"
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "sha256": "0be0483a7fada343a508b506889d70abcc914bd8290a947f5f07a8e4d2806870"
+      "sha256": "1bc213464352ee8f766c1484e6b829b3a6ab67897454b9b4cb2695a7ef88f752"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
@@ -12574,7 +12637,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "4bdd78352a347694d3189b4787fd3cd2cf30836ee1d7fe1ea7d438055ac376d1"
+      "sha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1"
     },
     {
       "path": "backend/src/services/memory/buildMemory.ts",
@@ -12598,7 +12661,7 @@
     },
     {
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "sha256": "4f82f9c460dd695759d8cfbbc5c9ec6555eaa6edc3716bf4df7ee100523c995a"
+      "sha256": "87d760025ee32b4368d941538084d360a1fab68ac44c9c2a4b49c2ca4af9233b"
     },
     {
       "path": "backend/src/services/publish/easCredentials.ts",
@@ -17774,70 +17837,70 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 21,
+      "line": 22,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 22,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "localhost",
-      "protocol": "http:",
-      "path": "backend/src/routes/github.ts",
       "line": 23,
       "credentialsInUrl": false
     },
     {
-      "hostname": "127.0.0.1",
+      "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/routes/github.ts",
       "line": 24,
       "credentialsInUrl": false
     },
     {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/routes/github.ts",
+      "line": 25,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 32,
+      "line": 33,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/routes/github.ts",
-      "line": 47,
+      "line": 48,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 70,
+      "line": 71,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 92,
+      "line": 94,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 167,
+      "line": 170,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 189,
+      "line": 192,
       "credentialsInUrl": false
     },
     {
@@ -17858,49 +17921,49 @@
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/routes/supabaseOAuth.ts",
-      "line": 312,
+      "line": 325,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/routes/supabaseOAuth.ts",
-      "line": 396,
+      "line": 409,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 89,
+      "line": 92,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 102,
+      "line": 105,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 198,
+      "line": 201,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 199,
+      "line": 202,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 220,
+      "line": 223,
       "credentialsInUrl": false
     },
     {
@@ -17915,6 +17978,13 @@
       "protocol": "https:",
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
       "line": 99,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+      "line": 13,
       "credentialsInUrl": false
     },
     {
@@ -17942,56 +18012,70 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/providerKeyRevision.local.integration.ts",
-      "line": 11,
+      "line": 13,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "fixture.supabase.co",
+      "protocol": "https:",
+      "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+      "line": 48,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 44,
+      "line": 47,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 44,
+      "line": 47,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 255,
+      "line": 259,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 305,
+      "line": 309,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 386,
+      "line": 390,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 491,
+      "line": 496,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 542,
+      "line": 547,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 1186,
       "credentialsInUrl": false
     },
     {
@@ -18075,26 +18159,19 @@
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 19,
+      "line": 20,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 20,
+      "line": 21,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
-      "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 35,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
       "line": 36,
       "credentialsInUrl": false
@@ -18103,133 +18180,140 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 43,
+      "line": 37,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
       "line": 44,
       "credentialsInUrl": false
     },
     {
-      "hostname": "localhost",
-      "protocol": "http:",
+      "hostname": "www.xroga.com",
+      "protocol": "https:",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
       "line": 45,
       "credentialsInUrl": false
     },
     {
-      "hostname": "127.0.0.1",
+      "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
       "line": 46,
       "credentialsInUrl": false
     },
     {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/services/integrations/supabaseAuth.ts",
+      "line": 47,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "line": 17,
+      "line": 18,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 68,
+      "line": 70,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 69,
+      "line": 71,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 70,
+      "line": 72,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 71,
+      "line": 73,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 143,
+      "line": 145,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 174,
+      "line": 176,
       "credentialsInUrl": false
     },
     {
       "hostname": "vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 251,
+      "line": 254,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 285,
+      "line": 289,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 535,
+      "line": 539,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 571,
+      "line": 575,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 572,
+      "line": 576,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 627,
+      "line": 631,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 646,
+      "line": 650,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 771,
+      "line": 776,
       "credentialsInUrl": false
     },
     {
@@ -18250,47 +18334,40 @@
       "hostname": "oauth2.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 23,
+      "line": 24,
       "credentialsInUrl": false
     },
     {
       "hostname": "accounts.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 24,
+      "line": 25,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 25,
+      "line": 26,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 48,
+      "line": 49,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 54,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
       "line": 55,
       "credentialsInUrl": false
     },
     {
-      "hostname": "localhost",
-      "protocol": "http:",
+      "hostname": "www.xroga.com",
+      "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
       "line": 56,
       "credentialsInUrl": false
@@ -18299,56 +18376,63 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 79,
+      "line": 57,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "localhost",
+      "protocol": "http:",
+      "path": "backend/src/services/publish/chromeWebStore.ts",
+      "line": 80,
       "credentialsInUrl": false
     },
     {
       "hostname": "chromewebstore.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 368,
+      "line": 372,
       "credentialsInUrl": false
     },
     {
       "hostname": "chrome.google.com",
-      "protocol": "https:",
-      "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 393,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "chromewebstore.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
       "line": 397,
       "credentialsInUrl": false
     },
     {
-      "hostname": "chrome.google.com",
+      "hostname": "chromewebstore.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 418,
+      "line": 401,
       "credentialsInUrl": false
     },
     {
       "hostname": "chrome.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 432,
+      "line": 422,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "chrome.google.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/chromeWebStore.ts",
+      "line": 436,
       "credentialsInUrl": false
     },
     {
       "hostname": "chromewebstore.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 462,
+      "line": 466,
       "credentialsInUrl": false
     },
     {
       "hostname": "chrome.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 475,
+      "line": 479,
       "credentialsInUrl": false
     },
     {
@@ -22457,7 +22541,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4902,
+      "line": 4899,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -22639,13 +22723,6 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 42,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/runStore.ts",
       "line": 43,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
@@ -22653,7 +22730,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 46,
+      "line": 44,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -22667,21 +22744,28 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 76,
+      "line": 48,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 79,
+      "line": 78,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 1259,
+      "line": 81,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "line": 1267,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -23997,7 +24081,7 @@
     },
     {
       "path": "backend/src/routes/billingWebhook.ts",
-      "line": 75,
+      "line": 90,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24074,7 +24158,7 @@
     },
     {
       "path": "backend/src/routes/vercel.ts",
-      "line": 194,
+      "line": 197,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24095,7 +24179,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1017,
+      "line": 1022,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24298,7 +24382,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 34,
+      "line": 36,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24333,21 +24417,21 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 28,
+      "line": 30,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 186,
+      "line": 188,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 200,
+      "line": 202,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24368,7 +24452,7 @@
     },
     {
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 59,
+      "line": 60,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -1,7 +1,9 @@
 /** Explicit CI integration suite: actual disposable Supabase/Auth/PG/PostgREST and API, no mocks. */
 import assert from 'node:assert/strict';
 import { before, after, test } from 'node:test';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash, createHmac } from 'node:crypto';
+import express from 'express';
+import billingWebhookRouter from '../routes/billingWebhook.js';
 import { createClient } from '@supabase/supabase-js';
 import { createTenantContext, type TenantContext } from './tenantContext.js';
 import { requireOwnedResource, requireOwnedFile } from './ownership.js';
@@ -25,7 +27,7 @@ import { saveGitHubTokenToStorage,getGitHubTokenFromStorage } from '../services/
 import { ensurePrivateOAuthBucket } from '../services/integrations/credentialStorageBucket.js';
 import { clearGitHubConnection, getGitHubToken, saveGitHubConnection, saveGitHubSettings } from '../services/integrations/githubAuth.js';
 import { clearVercelConnection, getVercelToken, saveVercelConnection } from '../services/integrations/vercelAuth.js';
-import { clearPkceSession, clearProviderToken, consumePkceSession, loadPkceSession, loadProviderToken, storePkceSession, storeProviderToken } from '../services/integrations/oauthPkceStore.js';
+import { clearPkceSession, clearProviderToken, consumePkceSession, loadProviderToken, storePkceSession, storeProviderToken } from '../services/integrations/oauthPkceStore.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
 import { createRunDurable, getRun, activeRunIds, resumeRunDurable, withRunAttempt, appendRunEvent, persistRunState } from '../ai/runStore.js';
 import { GrowthService } from '../growth/growthService.js';
@@ -40,6 +42,7 @@ import { BillingService } from '../services/BillingService.js';
 import { buildUserSupabaseProvisionSql } from '../services/integrations/supabaseProvision.js';
 import { registerProviderKeyRevisionTests } from './providerKeyRevision.local.integration.js';
 import { registerOAuthSessionTests } from './oauthSession.local.integration.js';
+import { registerBuildOutcomeAttemptTests } from './buildOutcomeAttempt.local.integration.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -47,6 +50,7 @@ const admin=createClient(url,process.env.SUPABASE_SERVICE_ROLE_KEY!,{auth:{persi
 const users: Array<{id:string;token:string;context:TenantContext;project:string;file:string;run:string;provider:string;session:string;cost:string}>=[];
 registerProviderKeyRevisionTests(admin, () => users);
 registerOAuthSessionTests(admin, () => users);
+registerBuildOutcomeAttemptTests(admin, () => users);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }
@@ -488,8 +492,9 @@ test('real GitHub disconnect persists owner-bound revocation despite a delayed l
   const [owner,other]=users,bucket='xroga-github-tokens';
   const payload={access_token:'SYNTHETIC_DELAYED_GITHUB_COPY',username:'fixture',provider_user_id:'fixture',repo_strategy:'auto' as const,default_repo:null,updated_at:new Date().toISOString()};
   const authorize=async(userId:string)=>{
-    const state=randomUUID();await storePkceSession(userId,'github_oauth_pkce',{verifier:'synthetic',state,redirect_uri:'https://example.invalid/callback',created_at:new Date().toISOString()});
-    const session=await consumePkceSession(userId,'github_oauth_pkce',state);assert.ok(session?.authorization_revision);return session.authorization_revision;
+    const context=users.find(user=>user.id===userId)!.context;
+    const state=randomUUID();await storePkceSession(context,'github_oauth_pkce',{verifier:'synthetic',state,redirect_uri:'https://example.invalid/callback',created_at:new Date().toISOString()});
+    const session=await consumePkceSession(context,'github_oauth_pkce',state);assert.ok(session?.authorization_revision);return session.authorization_revision;
   };
   try {
     await saveGitHubConnection(owner.id,'SYNTHETIC_OWNER_GITHUB',{providerUserId:'owner-fixture',username:'owner-fixture',authorizationRevision:await authorize(owner.id)});
@@ -531,28 +536,28 @@ test('real Vercel refresh persistence cannot overwrite a disconnect or another o
     await saveVercelConnection(owner.id,'SYNTHETIC_VERCEL_RECONNECT',{});
     assert.equal(await getVercelToken(owner.id),'SYNTHETIC_VERCEL_RECONNECT');
   } finally {
-    for(const user of users) await clearVercelConnection(user.id);
+    for(const user of users) await clearVercelConnection(user.context);
     const removed=await admin.storage.from(bucket).remove(users.map(user=>`${user.id}/vercel.json`));
     assert.equal(removed.error,null,'Vercel synthetic mirror cleanup failed');
   }
 });
 
 test('real shared OAuth revocation survives delayed mirrors and preserves another owner',async()=>{
-  const [owner,other]=users,bucket='xroga-github-tokens',provider='synthetic_oauth',pkce='synthetic_pkce';
-  const session={verifier:'SYNTHETIC_VERIFIER',state:'synthetic-state',redirect_uri:'http://127.0.0.1/callback',created_at:new Date().toISOString()};
+  const [owner,other]=users,bucket='xroga-github-tokens',provider='synthetic_oauth',pkce='supabase_oauth_pkce';
+  const session={verifier:'SYNTHETIC_VERIFIER',state:randomUUID(),redirect_uri:'http://127.0.0.1/callback',created_at:new Date().toISOString()};
   try {
     await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_OWNER',refresh_token:'SYNTHETIC_OLD_REFRESH'});
     await storeProviderToken(other.id,provider,{access_token:'SYNTHETIC_OTHER'});
-    await storePkceSession(owner.id,pkce,session);
+    await storePkceSession(owner.context,pkce,session);
     await clearProviderToken(owner.id,provider);
-    await clearPkceSession(owner.id,pkce);
+    await clearPkceSession(owner.context,pkce);
     for(const [path,payload] of [[`${owner.id}/oauth-${provider}.json`,{access_token:'SYNTHETIC_DELAYED'}],[`${owner.id}/pkce-${pkce}.json`,session]] as const){
       const replay=await admin.storage.from(bucket).upload(path,JSON.stringify(payload),{upsert:true,contentType:'application/json'});assert.equal(replay.error,null);
     }
     assert.equal(await loadProviderToken(owner.id,provider),null);
     await assert.rejects(storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_LATE_REFRESH'},'SYNTHETIC_OLD_REFRESH'),/changed during refresh/);
     assert.equal(await loadProviderToken(owner.id,provider),null);
-    assert.equal(await loadPkceSession(owner.id,pkce,session.state),null);
+    assert.equal(await consumePkceSession(owner.context,pkce,session.state),null);
     assert.equal((await loadProviderToken(other.id,provider))?.access_token,'SYNTHETIC_OTHER');
     await assert.rejects(clearProviderToken(owner.id,`../${other.id}`),/Invalid OAuth storage identity/);
     await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_RECONNECTED',refresh_token:'SYNTHETIC_NEW_REFRESH'});
@@ -561,7 +566,7 @@ test('real shared OAuth revocation survives delayed mirrors and preserves anothe
     await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_REFRESHED',refresh_token:'SYNTHETIC_ROTATED'},'SYNTHETIC_NEW_REFRESH');
     assert.equal((await loadProviderToken(owner.id,provider))?.access_token,'SYNTHETIC_REFRESHED');
   } finally {
-    for(const user of users){await clearProviderToken(user.id,provider);await clearPkceSession(user.id,pkce);}
+    for(const user of users){await clearProviderToken(user.id,provider);await clearPkceSession(user.context,pkce);}
   }
 });
 
@@ -1157,6 +1162,42 @@ test('generated external-project memory SQL denies browser roles and preserves s
   }finally{try{await db.query('rollback');}finally{await db.end();}}
 });
 
+test('real webhook delivery acknowledges only durable completion and serializes failed retries',async(t)=>{
+  // Exercise the actual router and PostgREST with a synthetic unsupported event.
+  // This event returns before account lookup, billing fulfillment or provider I/O.
+  const previousSecret=process.env.WHOP_WEBHOOK_SECRET;
+  const secret=`synthetic-${randomUUID()}`;
+  process.env.WHOP_WEBHOOK_SECRET=secret;
+  const app=express();app.use('/billing',billingWebhookRouter);
+  const server=app.listen(0,'127.0.0.1');
+  await new Promise<void>(resolve=>server.once('listening',resolve));
+  const address=server.address();assert.ok(address && typeof address!=='string');
+  const deliveryId=`fixture_${randomUUID()}`;
+  t.after(async()=>{
+    await new Promise<void>((resolve,reject)=>server.close(error=>error?reject(error):resolve()));
+    previousSecret===undefined?delete process.env.WHOP_WEBHOOK_SECRET:process.env.WHOP_WEBHOOK_SECRET=previousSecret;
+    assert.equal((await admin.from('webhook_deliveries').delete().eq('provider','whop').eq('delivery_id',deliveryId)).error,null);
+  });
+  const raw=JSON.stringify({type:'fixture.unsupported',data:{id:'synthetic-no-fulfillment'}});
+  const digest=createHash('sha256').update(raw).digest('hex');
+  const send=()=>{
+    const timestamp=String(Math.floor(Date.now()/1000));
+    const signature=createHmac('sha256',secret).update(`${deliveryId}.${timestamp}.${raw}`).digest('base64');
+    return fetch(`http://127.0.0.1:${address.port}/billing/whop`,{method:'POST',headers:{'content-type':'application/json','webhook-id':deliveryId,'webhook-timestamp':timestamp,'webhook-signature':`v1,${signature}`},body:raw});
+  };
+  const read=async()=>{const result=await admin.from('webhook_deliveries').select('*').eq('provider','whop').eq('delivery_id',deliveryId).single();assert.equal(result.error,null);return result.data;};
+  assert.equal((await admin.from('webhook_deliveries').insert({provider:'whop',delivery_id:deliveryId,payload_digest:digest,status:'processing',event_type:'fixture.unsupported',signature_verified:true})).error,null);
+  assert.equal((await send()).status,503);
+  assert.equal((await read()).status,'processing');
+  assert.equal((await admin.from('webhook_deliveries').update({status:'failed'}).eq('provider','whop').eq('delivery_id',deliveryId)).error,null);
+  const responses=await Promise.all([send(),send()]);
+  assert.ok(responses.some(response=>response.status===200));
+  assert.ok(responses.every(response=>[200,503].includes(response.status)));
+  const completed=await read();assert.equal(completed.status,'completed');assert.equal(completed.response_status,200);assert.equal(completed.payload_digest,digest);
+  const duplicate=await send();assert.equal(duplicate.status,200);assert.equal((await duplicate.json() as {duplicate?:boolean}).duplicate,true);
+  assert.deepEqual(await read(),completed,'completed duplicates cannot mutate the durable receipt');
+});
+
 test('real membership callbacks preserve existing ownership and reject competing tenant creation',async(t)=>{
   const [owner,other]=users;
   const previousPlan=process.env.WHOP_PLAN_ID,previousCompany=process.env.WHOP_COMPANY_ID;
@@ -1248,6 +1289,46 @@ test('real referral summary refuses corrupt label relationships and preserves va
   assert.deepEqual(result.referrals.map(row => ({ id: row.id, referredLabel: row.referredLabel })), [{ id: referralId, referredLabel: label }]);
   assert.equal((await admin.from('referrals').update({ code: 'XROGA-DEF235' }).eq('id', referralId)).error, null);
   await denied();
+});
+
+test('real project deletion serializes requests, denies foreign actors and retains one durable activity receipt', async(t) => {
+  const [owner, foreign] = users;
+  const project = await insert('projects', { user_id: owner.id, name: 'Atomic deletion fixture', type: 'app' });
+  t.after(async () => {
+    assert.equal((await admin.from('activity_logs').delete().eq('user_id', owner.id).eq('action', 'deleted_project').contains('details', { projectId: project })).error, null);
+    assert.equal((await admin.from('projects').delete().eq('id', project).eq('user_id', owner.id)).error, null);
+  });
+  assert.equal((await request(`/api/projects/${project}`, foreign.token, 'DELETE')).status, 404);
+  assert.ok((await admin.from('projects').select('id').eq('id', project).single()).data);
+  const results = await Promise.all([0, 1].map(() => request(`/api/projects/${project}`, owner.token, 'DELETE', { user_id: foreign.id })));
+  assert.deepEqual(results.map(result => result.status).sort(), [200, 404]);
+  const audit = await admin.from('activity_logs').select('user_id,project_id,action,details').eq('user_id', owner.id).eq('action', 'deleted_project').contains('details', { projectId: project });
+  assert.equal(audit.error, null);
+  assert.deepEqual(audit.data, [{ user_id: owner.id, project_id: null, action: 'deleted_project', details: { projectId: project, name: 'Atomic deletion fixture' } }]);
+  for (const token of [undefined, owner.token]) {
+    const browser = createClient(url, process.env.SUPABASE_ANON_KEY!, { ...(token ? { global: { headers: { Authorization: `Bearer ${token}` } } } : {}), auth: { persistSession: false, autoRefreshToken: false } });
+    assert.ok((await browser.rpc('delete_owned_project_atomic', { p_owner_id: owner.id, p_project_id: project })).error);
+  }
+});
+
+test('real project deletion rolls back when its activity receipt cannot persist', async () => {
+  const database = new URL(process.env.XB01_LOCAL_DATABASE_URL!);
+  assert.equal(database.hostname, '127.0.0.1'); assert.equal(database.port, '54322'); assert.equal(database.pathname, '/postgres');
+  const db = new pg.Client({ connectionString: database.href, ssl: false }); await db.connect();
+  try {
+    await db.query('begin');
+    const owner = randomUUID(), project = randomUUID();
+    await db.query("insert into auth.users(id,email,raw_user_meta_data) values($1,$2,'{}')", [owner, `delete-${owner}@example.invalid`]);
+    await db.query("insert into public.projects(id,user_id,name,type) values($1,$2,'Retained project','app')", [project, owner]);
+    await db.query("insert into public.project_messages(project_id,role,content) values($1,'user','Retained message')", [project]);
+    await db.query("alter table public.activity_logs add constraint fixture_project_delete_rollback check(action <> 'deleted_project') not valid");
+    await db.query('savepoint before_delete');
+    await assert.rejects(db.query('select public.delete_owned_project_atomic($1,$2)', [owner, project]), (error: unknown) => (error as { code?: string }).code === '23514');
+    await db.query('rollback to savepoint before_delete');
+    assert.equal((await db.query('select id from public.projects where id=$1 and user_id=$2', [project, owner])).rowCount, 1);
+    assert.equal((await db.query('select content from public.project_messages where project_id=$1', [project])).rows[0].content, 'Retained message');
+    assert.equal((await db.query("select id from public.activity_logs where user_id=$1 and action='deleted_project'", [owner])).rowCount, 0);
+  } finally { await db.query('rollback'); await db.end(); }
 });
 
 test('real referral transaction rolls back its insert when the profile update fails', async () => {

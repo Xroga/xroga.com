@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from '../middleware/auth.js';
+import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
 import { createOAuthState, verifyOAuthState } from '../lib/oauthState.js';
 import { storePkceSession, consumePkceSession } from '../services/integrations/oauthPkceStore.js';
 import {
@@ -81,13 +82,14 @@ async function ghApi<T>(token: string, path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-async function buildGitHubAuthorizeUrl(userId: string, redirectUri: string): Promise<string | null> {
+async function buildGitHubAuthorizeUrl(context: TenantContext, redirectUri: string): Promise<string | null> {
+  const { userId } = requireTenantContext(context);
   if (!GITHUB_CLIENT_ID) return null;
   if (!GITHUB_CLIENT_SECRET) return null;
   const state = createOAuthState(userId, GITHUB_CLIENT_SECRET);
   // GitHub's current flow uses a signed state, not a PKCE verifier. Reuse the
   // existing one-use server session with an explicit non-secret flow marker.
-  await storePkceSession(userId, 'github_oauth_pkce', {verifier:'github-signed-state',state,
+  await storePkceSession(context, 'github_oauth_pkce', {verifier:'github-signed-state',state,
     redirect_uri:redirectUri,created_at:new Date().toISOString()});
   return `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=repo,user:email&state=${state}`;
 }
@@ -96,7 +98,7 @@ router.get('/oauth', async (req: AuthRequest, res) => {
   const requested = typeof req.query.redirect_uri === 'string' ? req.query.redirect_uri : undefined;
   const redirectUri = getGitHubOAuthCallbackUrl(requested);
   let url: string | null;
-  try { url = await buildGitHubAuthorizeUrl(req.userId!, redirectUri); }
+  try { url = await buildGitHubAuthorizeUrl(req.tenantContext!, redirectUri); }
   catch { res.status(503).json({error:'GitHub authorization could not be started. Retry shortly.'});return; }
   if (!url) {
     res.status(503).json({ error: 'GitHub OAuth not configured' });
@@ -123,7 +125,7 @@ router.get('/redirect', async (req: AuthRequest, res) => {
   const requested = typeof req.query.redirect_uri === 'string' ? req.query.redirect_uri : undefined;
   const redirectUri = getGitHubOAuthCallbackUrl(requested);
   let url: string | null;
-  try { url = await buildGitHubAuthorizeUrl(req.userId!, redirectUri); }
+  try { url = await buildGitHubAuthorizeUrl(req.tenantContext!, redirectUri); }
   catch { res.status(503).json({error:'GitHub authorization could not be started. Retry shortly.'});return; }
   if (!url) {
     res.status(503).json({ error: 'GitHub OAuth not configured' });
@@ -158,7 +160,8 @@ router.post('/connect', async (req: AuthRequest, res) => {
   }
 
   try {
-  const session = await consumePkceSession(req.userId!, 'github_oauth_pkce', parsed.data.state);
+  const context = requireTenantContext(req.tenantContext);
+  const session = await consumePkceSession(context, 'github_oauth_pkce', parsed.data.state);
   if (!session?.authorization_revision) {
     res.status(400).json({error:'Invalid or expired GitHub authorization state'});return;
   }
@@ -195,7 +198,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
   }
 
   try {
-    await saveGitHubConnection(req.userId!, tokenData.access_token, {
+    await saveGitHubConnection(context.userId, tokenData.access_token, {
       providerUserId: String(ghUser.id),
       username: ghUser.login,
       repoStrategy: parsed.data.repoStrategy ?? 'auto',

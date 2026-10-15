@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `67644e2c274b879f25192c8ecedabf68f29ca736`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `c22bd6a48d6fb263df5c228daf938b34dc254cbd`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -87,6 +87,7 @@ Source SHA: `67644e2c274b879f25192c8ecedabf68f29ca736`; source/config hashes are
 | endpoint-example-invalid | Source-defined endpoint example.invalid | CONFIGURED_BUT_UNVERIFIED | example.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-exp-host | Source-defined endpoint exp.host | CONFIGURED_BUT_UNVERIFIED | exp.host | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-expo-dev | Source-defined endpoint expo.dev | CONFIGURED_BUT_UNVERIFIED | expo.dev | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-fixture-supabase-co | Source-defined endpoint fixture.supabase.co | CONFIGURED_BUT_UNVERIFIED | fixture.supabase.co | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-fonts-gstatic-com | Source-defined endpoint fonts.gstatic.com | CONFIGURED_BUT_UNVERIFIED | fonts.gstatic.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-freetheai-xyz | Source-defined endpoint freetheai.xyz | CONFIGURED_BUT_UNVERIFIED | freetheai.xyz | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-gemini-google-com | Source-defined endpoint gemini.google.com | CONFIGURED_BUT_UNVERIFIED | gemini.google.com | NOT_INDEPENDENTLY_VERIFIED |

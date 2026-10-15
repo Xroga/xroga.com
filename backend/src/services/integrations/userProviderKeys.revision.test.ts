@@ -3,7 +3,8 @@ import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import test from 'node:test';
 import { deleteUserProviderKey, getUserProviderKey, prepareUserProviderKeyWrite, saveUserProviderKey } from './userProviderKeys.js';
-import { oneClickConnectSupabase } from './supabaseProvision.js';
+import { oneClickConnectSupabase, prepareSupabaseWriteAdmissions } from './supabaseProvision.js';
+import { readFileSync } from 'node:fs';
 import { ensureExpoProjectLinked } from '../publish/easPublish.js';
 
 test('BYOK save carries its admitted revision, rejects a concurrent revoke and permits a fresh reconnect',async()=>{
@@ -108,6 +109,25 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
       await assert.rejects(oneClickConnectSupabase({userId:user,accessToken:'SYNTHETIC_PAT',projectRef:'fixtureproject'}),{code:'CREDENTIAL_WRITE_CONFLICT'});
       assert.equal(managementCalls,1);
       assert.equal(revoked,true,'Remote key lookup completion cannot undo revocation');
+      const writeAdmissions = await prepareSupabaseWriteAdmissions(user);
+      await deleteUserProviderKey(user, 'supabase_url');
+      const beforeDelayed = calls.filter(call => call.path.endsWith('/prepare_provider_key_write')).length;
+      const options = {userId:user,accessToken:'SYNTHETIC_PAT',projectRef:'fixtureproject',writeAdmissions};
+      globalThis.fetch = async(input,init) => {
+        const url=String(input instanceof Request?input.url:input);
+        if(url.startsWith(process.env.SUPABASE_URL!))return originalFetch(input,init);
+        assert.equal(url,'https://api.supabase.com/v1/projects/fixtureproject/api-keys?reveal=true');
+        options.userId='22222222-2222-4222-8222-222222222222';
+        options.projectRef='foreignproject';
+        return Response.json([{name:'anon',api_key:'SYNTHETIC_ANON_KEY'},{name:'service_role',api_key:'SYNTHETIC_SERVICE_KEY'}]);
+      };
+      await assert.rejects(oneClickConnectSupabase(options), {code:'CREDENTIAL_WRITE_CONFLICT'});
+      assert.equal(calls.filter(call => call.path.endsWith('/prepare_provider_key_write')).length,beforeDelayed,
+        'A delayed OAuth callback cannot acquire a new admission after disconnect');
+      assert.equal(calls.filter(call => call.path.endsWith('/save_provider_key_if_current')).at(-1)?.body.p_owner_id,user,
+        'Mutable caller options cannot change the admitted owner during project lookup');
+      await assert.rejects(saveUserProviderKey(user,'supabase_pat','SYNTHETIC_PAT',{writeAdmission:writeAdmissions.pat}),{code:'CREDENTIAL_WRITE_CONFLICT'});
+      assert.equal(revoked,true,'Neither delayed project credentials nor the PAT copy can restore revocation');
     } finally {globalThis.fetch=originalFetch;}
     let expoCalls=0;
     globalThis.fetch=async(input,init)=>{
@@ -136,4 +156,13 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
     for(const [name,value]of before){if(value===undefined)delete process.env[name];else process.env[name]=value;}
     await new Promise<void>((resolve,reject)=>server.close(error=>error?reject(error):resolve()));
   }
+});
+
+test('Supabase callback captures derived-key admissions before OAuth exchange and carries them through project selection',()=>{
+  const source=readFileSync(new URL('../../routes/supabaseOAuth.ts',import.meta.url),'utf8');
+  const callback=source.slice(source.indexOf("router.post('/connect'"),source.indexOf("router.get('/projects'"));
+  assert.ok(callback.indexOf('prepareSupabaseWriteAdmissions(req.userId!)') < callback.indexOf('await exchangeSupabaseOAuthCode('));
+  assert.match(callback,/projectName: p\.name,\s+writeAdmissions,/);
+  assert.match(callback,/saveUserProviderKey\(req\.userId!, 'supabase_pat', accessToken, \{ writeAdmission: writeAdmissions\.pat \}\)/);
+  assert.equal((callback.match(/saveUserProviderKey\(/g)||[]).length,1,'Only the non-auto-provision branch writes the PAT directly');
 });
