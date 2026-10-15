@@ -141,6 +141,7 @@
     "isolatedResult": "FAIL SQLSTATE42601 before tests in migration003. CASE expression corrected at319ccde5, new source CI required."
   },
   "newWork": {
+    "groupedIntegration": "VERIFIED_SCOPE at468bd2f98cd41148664b0c8cc453d2c14f11ae3a, disposable run38809008023:69 security/concurrency tests,3 authenticated browser tests,zero failures/skips. Includes GitHub receipt correction, ambiguous chat confirmation denial, referral atomic rollback/race and growth parent relation negatives. Later issued referral-context and foreign summary canary extension still requires exact-source CI.",
     "growthRelations": "IN PROGRESS: segment scope at campaign creation/processing, experiment/assignment tenant consistency, scoped outcome event and event campaign/experiment references. Three focused tests pass. Actual misbound-row and foreign relation negatives plus valid outcome fixture pending disposable CI. Mutable-parent TOCTOU, recipient/approval/lease/idempotency and other parent links remain open.",
     "referrals": "IN PROGRESS: atomic pending referral/profile linking, existing unique referred_id constraint and owner row lock, exact receipt, concurrent profile creation recovery. Local receipt/outage matrix and backend typecheck pass. Two real tests cover concurrent authenticated requests, forged identity, browser RPC denial, no rewards and transaction rollback after profile failure. Fresh/upgrade/exact-source CI pending. No reward or financial account changes.",
     "githubSettingsFixtureCorrection": "Run38806776561 at4f8c56ac:64 security tests passed,1 new GitHub metadata case failed during fixture setup with23505 because upsert omitted onConflict:user_id. Fixed the explicit conflict target, no production criteria relaxed. Case requires corrected-source CI before verification.",
@@ -468,16 +469,16 @@
           "9ab1c2977596ae4e732a"
         ],
         "backend/src/services/referralService.ts": [
-          "9841b636fbaa5309225e",
-          "b501b42e31d5e89bbba2",
-          "4c589a8d6410b088e70c",
-          "f831cbd4b195abcb570e",
-          "f809e679d3188b8f3458",
-          "61c29098f967c908e451",
-          "27783c95776c7ee6d966",
-          "8941fb78418c04bcd58e",
-          "6697e588b2199638084b",
-          "36ff6f05b88cef09b547"
+          "5d597ec498081269f488",
+          "e2c73bf3424617a06286",
+          "70bdc84f64915c28b126",
+          "9c2259647165ca9d72c7",
+          "585534b618b55038d21f",
+          "ccefc2a2294c47378b70",
+          "65bb2aff998578ed86e6",
+          "fb4d0a1caadc7d2d5dc2",
+          "66df501264869d6eb8e5",
+          "6fc393e62e052c967f89"
         ]
       }
     },

@@ -1,12 +1,13 @@
 import { randomInt } from 'node:crypto';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import type { TenantContext } from '../security/tenantContext.js';
 
 const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 function code(): string { return `XROGA-${Array.from({ length: 6 }, () => CHARS[randomInt(0, CHARS.length)]).join('')}`; }
 function site(): string { return (process.env.FRONTEND_URL ?? 'https://xroga.com').replace(/\/$/, ''); }
 
-async function ensureProfile(userId: string): Promise<Record<string, any>> {
-  const db = getSupabaseAdmin();
+async function ensureProfile(context: TenantContext): Promise<Record<string, any>> {
+  const db = getTenantSupabaseAdmin(context), userId = context.userId;
   const { data: existing, error } = await db.from('user_referral_profiles').select('*').eq('user_id', userId).maybeSingle();
   if (error) throw new Error('Referral profile unavailable');
   if (existing) return existing;
@@ -22,9 +23,9 @@ async function ensureProfile(userId: string): Promise<Record<string, any>> {
   throw new Error('Referral profile could not be created');
 }
 
-export async function getReferralSummary(userId: string): Promise<Record<string, unknown>> {
-  const db = getSupabaseAdmin();
-  const profile = await ensureProfile(userId);
+export async function getReferralSummary(context: TenantContext): Promise<Record<string, unknown>> {
+  const db = getTenantSupabaseAdmin(context), userId = context.userId;
+  const profile = await ensureProfile(context);
   const [{ data: rows, error: referralsError }, { data: rewards, error: rewardsError }] = await Promise.all([
     db.from('referrals').select('id,referred_id,created_at,referrer_rewarded,retention_bonus_released,qualification_status').eq('referrer_id', userId).order('created_at', { ascending: false }),
     db.from('referral_rewards').select('ai_token_amount,xrg_amount,status').eq('user_id', userId).eq('status', 'rewarded'),
@@ -43,11 +44,11 @@ export async function getReferralSummary(userId: string): Promise<Record<string,
   };
 }
 
-export async function applyReferralCode(referredUserId: string, raw: string): Promise<{ success: boolean; message: string }> {
+export async function applyReferralCode(context: TenantContext, raw: string): Promise<{ success: boolean; message: string }> {
+  const db = getTenantSupabaseAdmin(context), referredUserId = context.userId;
   const normalized = raw.trim().toUpperCase();
   if (!/^XROGA-[A-HJ-NP-Z2-9]{6}$/.test(normalized)) return { success: false, message: 'Invalid referral code format.' };
-  const db = getSupabaseAdmin();
-  await ensureProfile(referredUserId);
+  await ensureProfile(context);
   const { data, error } = await db.rpc('apply_referral_code_atomic', { p_owner_id: referredUserId, p_code: normalized });
   if (error) throw new Error('Referral could not be recorded');
   if (data === 'recorded') return { success: true, message: 'Referral recorded. Rewards remain pending until qualification evidence is verified.' };

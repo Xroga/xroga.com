@@ -10,6 +10,7 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/routes/referrals.ts",
     "supabase/migrations/20261016000300_atomic_referral_link.sql",
     "supabase/migrations/20261016000200_github_oauth_atomic_connection.sql",
     "backend/src/routes/github.oauth.test.ts",

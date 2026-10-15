@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { test } from 'node:test';
-import { applyReferralCode } from './referralService.js';
+import { applyReferralCode, getReferralSummary } from './referralService.js';
+import { createTenantContext, type TenantContext } from '../security/tenantContext.js';
 
 test('referral eligibility failure denies writes and only an exact atomic receipt reports success', async () => {
   const owner = '11111111-1111-4111-8111-111111111111';
+  const context = createTenantContext({ userId: owner, via: 'remote_getuser' });
   let mode = 'read-failure';
   const mutations: string[] = [];
   const server = createServer((req, res) => {
@@ -33,16 +35,20 @@ test('referral eligibility failure denies writes and only an exact atomic receip
     const address = server.address(); assert.ok(address && typeof address !== 'string');
     process.env.SUPABASE_URL = `http://127.0.0.1:${address.port}`;
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-loopback-only';
-    await assert.rejects(applyReferralCode(owner, 'XROGA-ABC234'), /Referral profile unavailable/);
+    for (const fake of [owner, { ...context }, { userId: owner }, null]) {
+      await assert.rejects(applyReferralCode(fake as TenantContext, 'XROGA-ABC234'), { code: 'TENANT_AUTH_REQUIRED' });
+      await assert.rejects(getReferralSummary(fake as TenantContext), { code: 'TENANT_AUTH_REQUIRED' });
+    }
+    await assert.rejects(applyReferralCode(context, 'XROGA-ABC234'), /Referral profile unavailable/);
     assert.deepEqual(mutations, []);
     for (mode of ['rpc-failure', 'empty', 'malformed', 'profile_unavailable', 'unknown']) {
       mutations.length = 0;
-      await assert.rejects(applyReferralCode(owner, 'XROGA-ABC234'), error => error instanceof Error && /Referral/.test(error.message) && !error.message.includes('CANARY'));
+      await assert.rejects(applyReferralCode(context, 'XROGA-ABC234'), error => error instanceof Error && /Referral/.test(error.message) && !error.message.includes('CANARY'));
       assert.deepEqual(mutations, ['POST']);
     }
     for (mode of ['recorded', 'already_linked', 'not_found', 'self_referral']) {
       mutations.length = 0;
-      assert.equal((await applyReferralCode(owner, ' xroga-abc234 ')).success, mode === 'recorded');
+      assert.equal((await applyReferralCode(context, ' xroga-abc234 ')).success, mode === 'recorded');
       assert.deepEqual(mutations, ['POST']);
     }
   } finally {

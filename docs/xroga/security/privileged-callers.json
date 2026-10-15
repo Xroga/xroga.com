@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "e71951c94c76ab996331a8c43325492a7a6990e2685207d9614cf1f5e666cf77",
+  "reviewRegistrySha256": "0ac365a6d5b54096bf96509525f2944bcdcafe57cff467b34fbe6042033d1981",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -12223,15 +12223,15 @@
       }
     },
     {
-      "id": "5e54e2f09080ef64e1f1",
+      "id": "d572b5a570bf7a6e8210",
       "path": "backend/src/services/referralService.ts",
-      "line": 5,
+      "line": 6,
       "enclosing": "code",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in code. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -12244,38 +12244,42 @@
       }
     },
     {
-      "id": "9841b636fbaa5309225e",
-      "path": "backend/src/services/referralService.ts",
-      "line": 9,
-      "enclosing": "ensureProfile",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
-      "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
-        "evidence": [
-          {
-            "path": "backend/src/services/referralService.failure.test.ts",
-            "marker": "referral eligibility failure denies writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "b501b42e31d5e89bbba2",
+      "id": "5d597ec498081269f488",
       "path": "backend/src/services/referralService.ts",
       "line": 10,
       "enclosing": "ensureProfile",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "semanticReview": {
+        "authority": "All three referral service factories require the existing issued TenantContext and derive owner from that immutable context. Only authenticated referrals routes call the exported helpers, and those routes require req.tenantContext. JSON objects, raw strings and cloned contexts fail before privileged client creation.",
+        "reason": "Focused forged-context and exact persistence receipt negatives pass. Source tracing finds only authMiddleware-mounted routes as production callers. Actual summary foreign reward canary and current-context concurrency integration remain pending. No broad Command007 or referral qualification certification.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/referrals.ts",
+            "marker": "requireTenantContext(req.tenantContext)"
+          },
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "TENANT_AUTH_REQUIRED"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e2c73bf3424617a06286",
+      "path": "backend/src/services/referralService.ts",
+      "line": 11,
+      "enclosing": "ensureProfile",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
         "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
@@ -12286,17 +12290,17 @@
       }
     },
     {
-      "id": "4c589a8d6410b088e70c",
+      "id": "70bdc84f64915c28b126",
       "path": "backend/src/services/referralService.ts",
-      "line": 14,
+      "line": 15,
       "enclosing": "ensureProfile",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
         "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
@@ -12307,17 +12311,17 @@
       }
     },
     {
-      "id": "f831cbd4b195abcb570e",
+      "id": "9c2259647165ca9d72c7",
       "path": "backend/src/services/referralService.ts",
-      "line": 18,
+      "line": 19,
       "enclosing": "ensureProfile",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
-        "authority": "New exact-owner profile re-read after a unique creation race and apply_referral_code_atomic RPC. Only routes/referrals.ts supplies req.userId behind authMiddleware. The service-only function serializes the owner profile, denies existing/self links and commits pending referral evidence and profile linkage together without rewards.",
+        "authority": "Exact-owner profile re-read after a unique creation race and apply_referral_code_atomic RPC. Only routes/referrals.ts supplies the issued request context behind authMiddleware. The service-only function serializes the owner profile, denies existing/self links and commits pending referral evidence and profile linkage together without rewards.",
         "reason": "Local receipt/outage tests pass. Real concurrency, role denial and post-insert profile-failure rollback cases are implemented but await CI. Entire referral qualification/abuse and observed production schema remain uncertified.",
         "evidence": [
           {
@@ -12332,38 +12336,42 @@
       }
     },
     {
-      "id": "f809e679d3188b8f3458",
+      "id": "585534b618b55038d21f",
       "path": "backend/src/services/referralService.ts",
-      "line": 26,
+      "line": 27,
       "enclosing": "getReferralSummary",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
+        "authority": "All three referral service factories require the existing issued TenantContext and derive owner from that immutable context. Only authenticated referrals routes call the exported helpers, and those routes require req.tenantContext. JSON objects, raw strings and cloned contexts fail before privileged client creation.",
+        "reason": "Focused forged-context and exact persistence receipt negatives pass. Source tracing finds only authMiddleware-mounted routes as production callers. Actual summary foreign reward canary and current-context concurrency integration remain pending. No broad Command007 or referral qualification certification.",
         "evidence": [
           {
+            "path": "backend/src/routes/referrals.ts",
+            "marker": "requireTenantContext(req.tenantContext)"
+          },
+          {
             "path": "backend/src/services/referralService.failure.test.ts",
-            "marker": "referral eligibility failure denies writes"
+            "marker": "TENANT_AUTH_REQUIRED"
           }
         ]
       }
     },
     {
-      "id": "61c29098f967c908e451",
+      "id": "ccefc2a2294c47378b70",
       "path": "backend/src/services/referralService.ts",
-      "line": 29,
+      "line": 30,
       "enclosing": "getReferralSummary",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "referrals",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
         "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
@@ -12374,17 +12382,17 @@
       }
     },
     {
-      "id": "27783c95776c7ee6d966",
+      "id": "65bb2aff998578ed86e6",
       "path": "backend/src/services/referralService.ts",
-      "line": 30,
+      "line": 31,
       "enclosing": "getReferralSummary",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "referral_rewards",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
         "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
@@ -12395,17 +12403,17 @@
       }
     },
     {
-      "id": "8941fb78418c04bcd58e",
+      "id": "fb4d0a1caadc7d2d5dc2",
       "path": "backend/src/services/referralService.ts",
-      "line": 34,
+      "line": 35,
       "enclosing": "getReferralSummary",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
         "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
@@ -12416,38 +12424,42 @@
       }
     },
     {
-      "id": "6697e588b2199638084b",
+      "id": "66df501264869d6eb8e5",
       "path": "backend/src/services/referralService.ts",
-      "line": 49,
+      "line": 48,
       "enclosing": "applyReferralCode",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
+        "authority": "All three referral service factories require the existing issued TenantContext and derive owner from that immutable context. Only authenticated referrals routes call the exported helpers, and those routes require req.tenantContext. JSON objects, raw strings and cloned contexts fail before privileged client creation.",
+        "reason": "Focused forged-context and exact persistence receipt negatives pass. Source tracing finds only authMiddleware-mounted routes as production callers. Actual summary foreign reward canary and current-context concurrency integration remain pending. No broad Command007 or referral qualification certification.",
         "evidence": [
           {
+            "path": "backend/src/routes/referrals.ts",
+            "marker": "requireTenantContext(req.tenantContext)"
+          },
+          {
             "path": "backend/src/services/referralService.failure.test.ts",
-            "marker": "referral eligibility failure denies writes"
+            "marker": "TENANT_AUTH_REQUIRED"
           }
         ]
       }
     },
     {
-      "id": "36ff6f05b88cef09b547",
+      "id": "6fc393e62e052c967f89",
       "path": "backend/src/services/referralService.ts",
-      "line": 51,
+      "line": 52,
       "enclosing": "applyReferralCode",
       "kind": "RPC_CANDIDATE",
       "target": "apply_referral_code_atomic",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
-        "authority": "New exact-owner profile re-read after a unique creation race and apply_referral_code_atomic RPC. Only routes/referrals.ts supplies req.userId behind authMiddleware. The service-only function serializes the owner profile, denies existing/self links and commits pending referral evidence and profile linkage together without rewards.",
+        "authority": "Exact-owner profile re-read after a unique creation race and apply_referral_code_atomic RPC. Only routes/referrals.ts supplies the issued request context behind authMiddleware. The service-only function serializes the owner profile, denies existing/self links and commits pending referral evidence and profile linkage together without rewards.",
         "reason": "Local receipt/outage tests pass. Real concurrency, role denial and post-insert profile-failure rollback cases are implemented but await CI. Entire referral qualification/abuse and observed production schema remain uncertified.",
         "evidence": [
           {

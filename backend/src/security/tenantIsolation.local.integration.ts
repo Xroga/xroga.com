@@ -1179,13 +1179,17 @@ test('real membership callbacks preserve existing ownership and reject competing
 
 test('real referral linking serializes concurrent requests without rewarding or accepting a forged actor', async(t) => {
   const [owner, referrer] = users;
+  let rewardFixture: string | undefined;
   t.after(async () => {
+    if (rewardFixture) assert.equal((await admin.from('referral_rewards').delete().eq('id', rewardFixture)).error, null);
     assert.equal((await admin.from('referrals').delete().eq('referred_id', owner.id)).error, null);
     assert.equal((await admin.from('user_referral_profiles').delete().in('user_id', [owner.id, referrer.id])).error, null);
   });
   assert.equal((await admin.from('user_referral_profiles').insert({ user_id: referrer.id, code: 'XROGA-ABC234' })).error, null);
   const before = await admin.from('user_referral_profiles').select('*').eq('user_id', referrer.id).single();
   assert.equal(before.error, null);
+  // Synthetic foreign ledger canary only, not a token grant or real reward.
+  rewardFixture = await insert('referral_rewards', { user_id: referrer.id, ai_token_amount: 8765, xrg_amount: 12345, type: 'referrer_bonus', status: 'rewarded' });
   const rewardsBefore = await admin.from('referral_rewards').select('*').in('user_id', [owner.id, referrer.id]).order('id');
   assert.equal(rewardsBefore.error, null);
   const responses = await Promise.all([0, 1].map(() => request('/api/referrals/apply', owner.token, 'POST', { code: 'XROGA-ABC234', userId: referrer.id })));
@@ -1196,6 +1200,11 @@ test('real referral linking serializes concurrent requests without rewarding or 
   assert.equal(rows.data![0].referrer_rewarded, false); assert.equal(rows.data![0].new_user_rewarded, false);
   const linked = await admin.from('user_referral_profiles').select('referred_by_user_id,referred_by_code').eq('user_id', owner.id).single();
   assert.equal(linked.error, null); assert.deepEqual(linked.data, { referred_by_user_id: referrer.id, referred_by_code: 'XROGA-ABC234' });
+  const summary = await request(`/api/referrals/summary?userId=${referrer.id}`, owner.token);
+  assert.equal(summary.status, 200);
+  const displayed = await summary.json() as { profile: { code: string }; totalAiTokensEarned: number; totalXrgEarned: number };
+  assert.notEqual(displayed.profile.code, 'XROGA-ABC234');
+  assert.equal(displayed.totalAiTokensEarned, 0); assert.equal(displayed.totalXrgEarned, 0);
   assert.deepEqual((await admin.from('user_referral_profiles').select('*').eq('user_id', referrer.id).single()).data, before.data);
   assert.deepEqual((await admin.from('referral_rewards').select('*').in('user_id', [owner.id, referrer.id]).order('id')).data, rewardsBefore.data);
   const self = await admin.rpc('apply_referral_code_atomic', { p_owner_id: referrer.id, p_code: 'XROGA-ABC234' });

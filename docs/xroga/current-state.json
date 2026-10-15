@@ -11555,7 +11555,6 @@
         "backend/src/services/memory/buildPersistence.ts:5",
         "backend/src/services/memory/buildProjectStore.ts:3",
         "backend/src/services/notificationService.ts:1",
-        "backend/src/services/referralService.ts:2",
         "backend/src/services/storage/projectFiles.ts:2",
         "backend/src/services/systemErrorLog.ts:1",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:1",
@@ -19311,7 +19310,7 @@
       "id": "surface:b579f1e57feb760c31b1",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/referrals.ts",
-      "sha256": "63841563478dbeec09d0641a8d7a77ae895e34c63cfa757f4eab7d7c0f3dcd71",
+      "sha256": "e6401228db8bb50e262e90ca60910597e457315526634692a3dbace9a9e26fa9",
       "symbols": [
         "result",
         "router",
@@ -19319,11 +19318,13 @@
       ],
       "imports": [
         "../middleware/auth.js",
+        "../security/tenantContext.js",
         "../services/referralService.js",
         "express",
         "zod"
       ],
       "runtimeImports": [
+        "backend/src/security/tenantContext.ts",
         "backend/src/services/referralService.ts"
       ],
       "entryPoints": [
@@ -20891,6 +20892,7 @@
         "backend/src/security/ownership.ts:2",
         "backend/src/security/serviceRoleGuard.test.ts:3",
         "backend/src/security/tenantContext.test.ts:4",
+        "backend/src/services/referralService.ts:2",
         "backend/src/services/responseCache.ts:2",
         "backend/src/services/storage/privateFileDelivery.ts:3",
         "backend/src/synthesis/livePreview/store.ts:5"
@@ -20955,6 +20957,7 @@
         "backend/src/routes/profile.ts:4",
         "backend/src/routes/projectRuntime.ts:8",
         "backend/src/routes/projects.ts:4",
+        "backend/src/routes/referrals.ts:4",
         "backend/src/routes/swarm.ts:4",
         "backend/src/routes/terminalSessions.failure.test.ts:6",
         "backend/src/routes/terminalSessions.ts:17",
@@ -20968,6 +20971,7 @@
         "backend/src/security/tenantContext.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:15",
         "backend/src/security/tenantIsolation.local.integration.ts:6",
+        "backend/src/services/referralService.failure.test.ts:5",
         "backend/src/services/responseCache.test.ts:3",
         "backend/src/services/responseCache.ts:3",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:3",
@@ -21002,6 +21006,7 @@
         "backend/src/security/tenantContext.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/referralService.failure.test.ts",
         "backend/src/services/responseCache.test.ts",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts",
         "backend/src/synthesis/universalPersistence.owner.test.ts"
@@ -24665,7 +24670,7 @@
       "id": "surface:47e466cca6c0380e1fbe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/referralService.ts",
-      "sha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "sha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "symbols": [
         "CHARS",
         "applyReferralCode",
@@ -24679,21 +24684,24 @@
         "normalized",
         "profile",
         "profiles",
+        "referredUserId",
         "site",
+        "userId",
         "winner"
       ],
       "imports": [
-        "../config/supabase.js",
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
         "node:crypto"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts"
+        "backend/src/security/serviceRoleGuard.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/referrals.ts:4",
+        "backend/src/routes/referrals.ts:5",
         "backend/src/services/referralService.failure.test.ts:4"
       ],
       "reachable": true,
@@ -24709,9 +24717,9 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/services/referralService.ts:10 (user_id)",
-        "backend/src/services/referralService.ts:18 (user_id)",
-        "backend/src/services/referralService.ts:30 (user_id)"
+        "backend/src/services/referralService.ts:11 (user_id)",
+        "backend/src/services/referralService.ts:19 (user_id)",
+        "backend/src/services/referralService.ts:31 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -89464,9 +89472,21 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:73058c351820c0b38259",
+      "id": "registration:0b450b2f5fa9840ab54e",
       "sourcePath": "backend/src/routes/referrals.ts",
-      "line": 7,
+      "line": 8,
+      "receiver": "router",
+      "method": "use",
+      "path": null,
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:b43e6aeafede8a40b27b",
+      "sourcePath": "backend/src/routes/referrals.ts",
+      "line": 12,
       "receiver": "router",
       "method": "get",
       "path": "/summary",
@@ -89476,9 +89496,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f58c61e475d15a85ee3d",
+      "id": "registration:5f825eb927637d0ca888",
       "sourcePath": "backend/src/routes/referrals.ts",
-      "line": 11,
+      "line": 16,
       "receiver": "router",
       "method": "post",
       "path": "/apply",
@@ -90601,10 +90621,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:7971d8b000c9a49b000a",
-      "registrationId": "registration:73058c351820c0b38259",
+      "id": "route:6a3f699bd6c7c09bea24",
+      "registrationId": "registration:b43e6aeafede8a40b27b",
       "sourcePath": "backend/src/routes/referrals.ts",
-      "line": 7,
+      "line": 12,
       "method": "GET",
       "path": "/api/referrals/summary",
       "mountChain": [
@@ -90618,10 +90638,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1e906d465f0806da1eb5",
-      "registrationId": "registration:f58c61e475d15a85ee3d",
+      "id": "route:65fe57fa5772742ac2ce",
+      "registrationId": "registration:5f825eb927637d0ca888",
       "sourcePath": "backend/src/routes/referrals.ts",
-      "line": 11,
+      "line": 16,
       "method": "POST",
       "path": "/api/referrals/apply",
       "mountChain": [
