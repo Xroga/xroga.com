@@ -108,6 +108,8 @@ export interface ReviewFinding {
 
 export interface CanonicalExecutionState {
   projectId: string;
+  /** Database project binding, distinct from the repository/branch/root context key. */
+  databaseProjectId?: string | null;
   runId: string;
   repository: { owner: string; name: string; remote?: string } | null;
   selectedBranch: string;

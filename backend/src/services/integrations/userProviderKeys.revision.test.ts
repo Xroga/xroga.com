@@ -5,6 +5,7 @@ import test from 'node:test';
 import { deleteUserProviderKey, getUserProviderKey, prepareUserProviderKeyWrite, saveUserProviderKey } from './userProviderKeys.js';
 import { oneClickConnectSupabase, prepareSupabaseWriteAdmissions } from './supabaseProvision.js';
 import { readFileSync } from 'node:fs';
+import { createTenantContext } from '../../security/tenantContext.js';
 import { ensureExpoProjectLinked } from '../publish/easPublish.js';
 
 test('BYOK save carries its admitted revision, rejects a concurrent revoke and permits a fresh reconnect',async()=>{
@@ -51,10 +52,11 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
     process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-loopback-key';
     process.env.USER_SECRETS_ENCRYPTION_KEY='synthetic-encryption-fixture-not-a-secret';
     const user='11111111-1111-4111-8111-111111111111';
+    const context=createTenantContext({userId:user,via:'remote_getuser'});
     const stale=saveUserProviderKey(user,'openai','SYNTHETIC_NEW_KEY');
     const denied=assert.rejects(stale,{code:'CREDENTIAL_WRITE_CONFLICT'});
     await admitted;
-    await deleteUserProviderKey(user,'openai');
+    await deleteUserProviderKey(context,'openai');
     assert.equal(revoked,true);assert.ok(deferredSave);deferredSave();await denied;
     assert.equal(revoked,true);
     assert.equal(calls.filter(call=>call.path.endsWith('/save_provider_key_if_current')).length,1,'Conflicts must not be retried against a fresh revision');
@@ -68,18 +70,18 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
     assert.equal(revoked,false);assert.notEqual(revision,freshRevision);
     const latest=calls.filter(call=>call.path.endsWith('/save_provider_key_if_current')).at(-1)!;
     assert.equal(latest.body.p_revision,freshRevision);
-    await deleteUserProviderKey(user,'supabase_service');
+    await deleteUserProviderKey(context,'supabase_service');
     assert.equal(calls.filter(call=>call.path.endsWith('/revoke_provider_key')).at(-1)?.body.p_provider,'apikey_supabase_service');
     assert.equal(revoked,true);
     const aliasCalls=calls.length;
     await assert.rejects(saveUserProviderKey(user,'supabase_service','SYNTHETIC_UNSUPPORTED_KEY'));
     await assert.rejects(getUserProviderKey(user,'supabase_service'),{message:'Unsupported credential provider.'});
     for(const invalid of ['supabase_service_other','../supabase_service','apikey_supabase_service']) {
-      await assert.rejects(deleteUserProviderKey(user,invalid),{message:'Unsupported credential provider.'});
+      await assert.rejects(deleteUserProviderKey(context,invalid),{message:'Unsupported credential provider.'});
     }
     assert.equal(calls.length,aliasCalls,'Delete-only alias must not widen other credential admission');
     const upstreamAdmission=await prepareUserProviderKeyWrite(user,'openai');
-    await deleteUserProviderKey(user,'openai');
+    await deleteUserProviderKey(context,'openai');
     const prepareCount=calls.filter(call=>call.path.endsWith('/prepare_provider_key_write')).length;
     await assert.rejects(saveUserProviderKey(user,'openai','SYNTHETIC_DELAYED_KEY',{writeAdmission:upstreamAdmission}),{code:'CREDENTIAL_WRITE_CONFLICT'});
     assert.equal(revoked,true);
@@ -102,7 +104,7 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
       managementCalls++;
       const admissions=calls.filter(call=>call.path.endsWith('/prepare_provider_key_write')).slice(-4);
       assert.deepEqual(new Set(admissions.map(call=>call.body.p_provider)),new Set(['apikey_supabase_url','apikey_supabase_anon','apikey_supabase','apikey_supabase_pat']));
-      await deleteUserProviderKey(user,'supabase_url');
+      await deleteUserProviderKey(context,'supabase_url');
       return new Response(JSON.stringify([{name:'anon',api_key:'SYNTHETIC_ANON_KEY'},{name:'service_role',api_key:'SYNTHETIC_SERVICE_KEY'}]),{status:200});
     };
     try {
@@ -110,7 +112,7 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
       assert.equal(managementCalls,1);
       assert.equal(revoked,true,'Remote key lookup completion cannot undo revocation');
       const writeAdmissions = await prepareSupabaseWriteAdmissions(user);
-      await deleteUserProviderKey(user, 'supabase_url');
+      await deleteUserProviderKey(context, 'supabase_url');
       const beforeDelayed = calls.filter(call => call.path.endsWith('/prepare_provider_key_write')).length;
       const options = {userId:user,accessToken:'SYNTHETIC_PAT',projectRef:'fixtureproject',writeAdmissions};
       globalThis.fetch = async(input,init) => {
@@ -136,7 +138,7 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
       assert.equal(url,'https://api.expo.dev/graphql');
       expoCalls++;
       assert.equal(calls.filter(call=>call.path.endsWith('/prepare_provider_key_write')).at(-1)?.body.p_provider,'apikey_expo_project_id');
-      await deleteUserProviderKey(user,'expo_project_id');
+      await deleteUserProviderKey(context,'expo_project_id');
       return new Response(JSON.stringify({data:{me:{accounts:[{id:'account',name:'fixture',apps:[{id:'fixture-project-id',name:'fixture'}]}]}}}),{status:200});
     };
     try {

@@ -34,3 +34,43 @@ export function assertProjectWriteTarget(active: ActiveProjectContext, target: A
     throw new Error('PROJECT_CONTEXT_TARGET_MISMATCH');
   }
 }
+
+/** Resume preserves the durable run's target, never a new client-selected repository. */
+export function requireResumeProjectContext(
+  state: { runId: string; projectId: string; databaseProjectId?: string | null; repository: { owner: string; name: string } | null; selectedBranch: string } | null,
+  runId: string,
+  requested: { projectId?: string; repo?: string; branch?: string; projectRoot?: string },
+): ActiveProjectContext | null {
+  const unavailable = () => Object.assign(new Error('This run has no verifiable project target. Start a new run to choose a target.'), { code: 'RUN_RESUME_LINEAGE_UNAVAILABLE' });
+  const mismatch = () => Object.assign(new Error('Resume must use the original repository, branch and project root. Start a new run to change targets.'), { code: 'RUN_RESUME_TARGET_MISMATCH' });
+  if (!state || state.runId !== runId || !state.projectId) throw unavailable();
+  // Old repository checkpoints contain a context key, not the database UUID.
+  // Never authorize a new database binding using that unrelated identifier.
+  if (requested.projectId !== undefined) {
+    const binding = state.databaseProjectId ?? (!state.repository ? state.projectId : undefined);
+    if (binding === undefined) throw unavailable();
+    if (requested.projectId !== binding) throw mismatch();
+  }
+  if (!state.repository) {
+    if (requested.repo || requested.projectId && requested.projectId !== state.projectId ||
+        requested.branch && requested.branch !== state.selectedBranch || requested.projectRoot && requested.projectRoot !== '/') throw mismatch();
+    return null;
+  }
+  let persisted: ActiveProjectContext;
+  try {
+    const parts = state.projectId.split('::').map(decodeURIComponent);
+    if (parts.length !== 3) throw unavailable();
+    persisted = normalizeProjectContext({ repo: parts[0], branch: parts[1], projectRoot: parts[2] });
+    if (projectContextKey(persisted) !== state.projectId ||
+        persisted.repo !== `${state.repository.owner}/${state.repository.name}`.toLowerCase() ||
+        persisted.branch !== state.selectedBranch) throw unavailable();
+  } catch { throw unavailable(); }
+  try {
+    assertProjectWriteTarget(persisted, {
+      repo: requested.repo ?? persisted.repo,
+      branch: requested.branch ?? persisted.branch,
+      projectRoot: requested.projectRoot ?? persisted.projectRoot,
+    });
+  } catch { throw mismatch(); }
+  return persisted;
+}

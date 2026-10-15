@@ -159,8 +159,32 @@ router.delete('/', async (req: AuthRequest, res) => {
     return;
   }
 
-  const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
-  const { error } = await supabase.auth.admin.deleteUser(req.userId!);
+  const context = requireTenantContext(req.tenantContext);
+  const userId = context.userId, accessToken = req.accessToken;
+  const supabase = getTenantSupabaseAdmin(context);
+  if (!accessToken) {
+    res.status(401).json({ error: 'Sign in again before deleting this account.' });
+    return;
+  }
+  // Local JWT admission establishes signed identity, not current user existence.
+  // Recheck Auth immediately before this destructive admin operation. This is
+  // not an atomic session-revocation fence or a substitute for recent-login MFA.
+  try {
+    const fresh = await supabase.auth.getUser(accessToken);
+    if (fresh.error) {
+      res.status(fresh.error.status === 401 || fresh.error.status === 403 ? 401 : 503)
+        .json({ error: 'Account identity could not be verified. Sign in again and retry.' });
+      return;
+    }
+    if (!fresh.data.user || fresh.data.user.id !== userId) {
+      res.status(401).json({ error: 'Sign in again before deleting this account.' });
+      return;
+    }
+  } catch {
+    res.status(503).json({ error: 'Account identity could not be verified. Retry shortly.' });
+    return;
+  }
+  const { error } = await supabase.auth.admin.deleteUser(userId);
   if (error) {
     res.status(503).json({ error: 'Account could not be deleted. Retry shortly.' });
     return;
@@ -168,7 +192,7 @@ router.delete('/', async (req: AuthRequest, res) => {
   // The provisioning cache remembers only that this user's rows existed. Drop the
   // entry so a re-registration under the same id provisions again from scratch
   // rather than inheriting a stale "already provisioned" answer.
-  forgetProvisionedUser(req.userId!);
+  forgetProvisionedUser(userId);
   // profiles/projects/etc. cascade via `ON DELETE CASCADE` FKs to auth.users.
   res.json({ deleted: true });
 });

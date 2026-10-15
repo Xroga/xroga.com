@@ -2181,13 +2181,14 @@
       "id": "surface:10d43c92abd75c1fddae",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/buildOutcomeMemory.ts",
-      "sha256": "d4093ee3e303ad931b7be651b21e55dd8e327b48d585655541daec82cfc08f10",
+      "sha256": "29eade39abd76f0491dee750e76399613b5f5062663d969eef0025d7076447fe",
       "symbols": [
         "BUILD_OUTCOME_SCHEMA_VERSION",
         "BuildFailureCategory",
         "BuildFailureDomain",
         "BuildFailureStage",
         "BuildOutcomeAttempt",
+        "BuildOutcomeCancellation",
         "BuildOutcomeRecord",
         "BuildOutcomeStore",
         "BuildTerminalStatus",
@@ -2198,6 +2199,7 @@
         "browser",
         "browserOutcome",
         "buildOutcomeFromTerminalRun",
+        "cancellation",
         "categoryFromCode",
         "classifyBuildFailure",
         "code",
@@ -2287,7 +2289,7 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/buildOutcomeMemory.ts:2075 (user_id)"
+        "backend/src/ai/buildOutcomeMemory.ts:2084 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -3329,7 +3331,7 @@
       "id": "surface:370916abf23ea75d609b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/executionRuntime.ts",
-      "sha256": "2e6a037be5df43ef9be03d97a49f57ea7282250650b9490be4b210746dd5fb73",
+      "sha256": "5205ba30975ba7302b500d5fdbe6b810532151a5d2f7af3b5e2a975a5760d03c",
       "symbols": [
         "CanonicalExecutionState",
         "CanonicalMutationService",
@@ -3455,7 +3457,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/executionRuntime.ts:171 (user_id)"
+        "backend/src/ai/executionRuntime.ts:173 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -4890,7 +4892,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "497d6719652fe58b7d952b8d01ebe3ce589e11aebb2e70e44e49ccd61163c412",
+      "sha256": "fe7f3ad02c37fc679d299d9b17d7b14dcd030bca4b949ee7ce397beb0b5de82a",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -5153,6 +5155,7 @@
         "resilientStaticPath",
         "resolvedProjectId",
         "result",
+        "resumeContext",
         "retry",
         "reviewerModel",
         "reviewerTask",
@@ -5438,6 +5441,7 @@
         "backend/src/ai/projectName.test.ts:3",
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
+        "backend/src/ai/universal/resumeProjectContext.test.ts:49",
         "backend/src/routes/phase1.ts:13",
         "backend/src/routes/swarm.ts:6"
       ],
@@ -5482,7 +5486,8 @@
         "backend/src/ai/pipelineResearchFailure.test.ts",
         "backend/src/ai/projectName.test.ts",
         "backend/src/ai/repositoryHydrationAuthority.test.ts",
-        "backend/src/ai/repositoryReadFailure.test.ts"
+        "backend/src/ai/repositoryReadFailure.test.ts",
+        "backend/src/ai/universal/resumeProjectContext.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -6880,7 +6885,7 @@
       "id": "surface:ec198557da445d2b1385",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "sha256": "cbd9b0d3b0eb09ea91dba8df824c33f21382e38511e7e59ddff328cbfd10f711",
+      "sha256": "c5b478d7cd31df335e38fc51a3098b0eb700b0290a3aa9879c5dc85f53da20c8",
       "symbols": [
         "MAX_EVENTS_PER_RUN",
         "MAX_PER_USER",
@@ -6905,6 +6910,8 @@
         "createRun",
         "createRunDurable",
         "createRunHot",
+        "createdAt",
+        "current",
         "currentRunWorkerId",
         "error",
         "event",
@@ -6912,6 +6919,7 @@
         "existingArtifact",
         "failRun",
         "failure",
+        "featureCategory",
         "flushPersist",
         "generation",
         "getRun",
@@ -6922,6 +6930,7 @@
         "id",
         "ids",
         "isRunCancellationRequested",
+        "iterationCount",
         "latest",
         "list",
         "listRunsForUser",
@@ -6993,8 +7002,10 @@
         "backend/src/ai/pipeline.ts:81",
         "backend/src/ai/runReconciler.test.ts:12",
         "backend/src/ai/runStore.authority.test.ts:5",
+        "backend/src/ai/runStore.cancellationReceipt.test.ts:5",
         "backend/src/ai/runStore.conversationReceipt.test.ts:5",
         "backend/src/ai/runStore.creation.test.ts:5",
+        "backend/src/ai/runStore.historyAdmission.test.ts:5",
         "backend/src/ai/runStore.resume.test.ts:12",
         "backend/src/ai/runStore.terminalLearning.test.ts:5",
         "backend/src/ai/runStore.test.ts:4",
@@ -7004,6 +7015,7 @@
         "backend/src/routes/dashboard.ts:6",
         "backend/src/routes/swarm.notificationAuthority.test.ts:6",
         "backend/src/routes/swarm.ts:14",
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts:8",
         "backend/src/security/tenantIsolation.integration.test.ts:13",
         "backend/src/security/tenantIsolation.local.integration.ts:32",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:16"
@@ -7022,9 +7034,8 @@
         "backend/src/ai/runStore.ts:464 (user_id)",
         "backend/src/ai/runStore.ts:780 (user_id)",
         "backend/src/ai/runStore.ts:882 (user_id)",
-        "backend/src/ai/runStore.ts:1053 (user_id)",
-        "backend/src/ai/runStore.ts:1185 (user_id)",
-        "backend/src/ai/runStore.ts:1330 (user_id)"
+        "backend/src/ai/runStore.ts:1170 (user_id)",
+        "backend/src/ai/runStore.ts:1315 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -7040,13 +7051,16 @@
         "backend/src/ai/failRun.test.ts",
         "backend/src/ai/runReconciler.test.ts",
         "backend/src/ai/runStore.authority.test.ts",
+        "backend/src/ai/runStore.cancellationReceipt.test.ts",
         "backend/src/ai/runStore.conversationReceipt.test.ts",
         "backend/src/ai/runStore.creation.test.ts",
+        "backend/src/ai/runStore.historyAdmission.test.ts",
         "backend/src/ai/runStore.resume.test.ts",
         "backend/src/ai/runStore.terminalLearning.test.ts",
         "backend/src/ai/runStore.test.ts",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts",
         "backend/src/routes/swarm.notificationAuthority.test.ts",
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/reliability/step7cReliability.test.ts"
@@ -9869,17 +9883,23 @@
       "id": "surface:82460eb2e184d0a9158a",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/projectContext.ts",
-      "sha256": "56d4243f3dcffa2f359115c15f171528a2e98f02120055fe601c85827fc6e84f",
+      "sha256": "4d0f5185481eeb152e6f52a3a1ce5a0194c8ce92fe5be00ba024093d7e4d7a46",
       "symbols": [
         "ActiveProjectContext",
         "assertProjectWriteTarget",
+        "binding",
         "branch",
         "cleanPart",
+        "mismatch",
         "normalizeProjectContext",
         "normalized",
+        "parts",
+        "persisted",
         "projectContextKey",
         "projectRoot",
-        "repo"
+        "repo",
+        "requireResumeProjectContext",
+        "unavailable"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -9888,6 +9908,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:149",
+        "backend/src/ai/universal/resumeProjectContext.test.ts:4",
         "backend/src/ai/universal/universalContracts.test.ts:7",
         "backend/src/synthesis/universalEntrypoint.ts:106"
       ],
@@ -9900,6 +9921,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/universal/resumeProjectContext.test.ts",
         "backend/src/ai/universal/universalContracts.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -11898,7 +11920,7 @@
       "id": "surface:4cd464f7016cf52503dd",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
+      "sha256": "b6aa970ee2ac560750ef3844277d5e935c64dfc7a69e7a651c0762b38d97f28b",
       "symbols": [
         "GrowthService",
         "GrowthServiceError",
@@ -11907,6 +11929,7 @@
         "activated",
         "assignment",
         "assignmentById",
+        "attribution",
         "blocked",
         "campaign",
         "consent",
@@ -11956,7 +11979,9 @@
       ],
       "callers": [
         "backend/src/growth/growthService.boundary.test.ts:4",
+        "backend/src/growth/growthService.referralBoundary.test.ts:4",
         "backend/src/routes/growth.ts:5",
+        "backend/src/security/growthReferral.local.integration.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:33"
       ],
       "reachable": true,
@@ -11973,6 +11998,7 @@
         "growth_lifecycle_state",
         "growth_messages",
         "growth_recommendations",
+        "growth_referral_attribution",
         "growth_segments",
         "growth_suppressions",
         "notifications",
@@ -11996,25 +12022,26 @@
         "backend/src/growth/growthService.ts:56 (tenant_id)",
         "backend/src/growth/growthService.ts:62 (tenant_id)",
         "backend/src/growth/growthService.ts:66 (tenant_id)",
-        "backend/src/growth/growthService.ts:89 (tenant_id)",
-        "backend/src/growth/growthService.ts:92 (user_id)",
-        "backend/src/growth/growthService.ts:92 (tenant_id)",
-        "backend/src/growth/growthService.ts:93 (user_id)",
+        "backend/src/growth/growthService.ts:73 (tenant_id)",
+        "backend/src/growth/growthService.ts:102 (tenant_id)",
+        "backend/src/growth/growthService.ts:105 (user_id)",
+        "backend/src/growth/growthService.ts:105 (tenant_id)",
         "backend/src/growth/growthService.ts:106 (user_id)",
-        "backend/src/growth/growthService.ts:107 (user_id)",
-        "backend/src/growth/growthService.ts:108 (tenant_id)",
-        "backend/src/growth/growthService.ts:109 (tenant_id)",
-        "backend/src/growth/growthService.ts:147 (tenant_id)",
-        "backend/src/growth/growthService.ts:163 (tenant_id)",
-        "backend/src/growth/growthService.ts:166 (tenant_id)",
-        "backend/src/growth/growthService.ts:171 (user_id)",
-        "backend/src/growth/growthService.ts:171 (tenant_id)",
-        "backend/src/growth/growthService.ts:172 (tenant_id)",
-        "backend/src/growth/growthService.ts:196 (tenant_id)",
-        "backend/src/growth/growthService.ts:208 (tenant_id)",
-        "backend/src/growth/growthService.ts:218 (tenant_id)",
-        "backend/src/growth/growthService.ts:220 (tenant_id)",
-        "backend/src/growth/growthService.ts:232 (tenant_id)"
+        "backend/src/growth/growthService.ts:119 (user_id)",
+        "backend/src/growth/growthService.ts:120 (user_id)",
+        "backend/src/growth/growthService.ts:121 (tenant_id)",
+        "backend/src/growth/growthService.ts:122 (tenant_id)",
+        "backend/src/growth/growthService.ts:160 (tenant_id)",
+        "backend/src/growth/growthService.ts:176 (tenant_id)",
+        "backend/src/growth/growthService.ts:179 (tenant_id)",
+        "backend/src/growth/growthService.ts:184 (user_id)",
+        "backend/src/growth/growthService.ts:184 (tenant_id)",
+        "backend/src/growth/growthService.ts:185 (tenant_id)",
+        "backend/src/growth/growthService.ts:209 (tenant_id)",
+        "backend/src/growth/growthService.ts:221 (tenant_id)",
+        "backend/src/growth/growthService.ts:231 (tenant_id)",
+        "backend/src/growth/growthService.ts:233 (tenant_id)",
+        "backend/src/growth/growthService.ts:245 (tenant_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -12026,6 +12053,8 @@
       ],
       "testCoverage": [
         "backend/src/growth/growthService.boundary.test.ts",
+        "backend/src/growth/growthService.referralBoundary.test.ts",
+        "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -13768,7 +13797,7 @@
       "id": "surface:3a08584b5a1be1888d8a",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/resolveIdentity.ts",
-      "sha256": "d842ab8f2a9b3dcbe91bf8f6860ba7088d10d9069aca982471bf6efe39e5d724",
+      "sha256": "b7fbd7ac5636b5c49e1e94bc1c85f374886806defcaf3dbff9aa6ac29ebf7230",
       "symbols": [
         "ResolvedIdentity",
         "existing",
@@ -14825,11 +14854,15 @@
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/github.settings.test.ts",
         "backend/src/routes/phase1BusinessPreflight.test.ts",
+        "backend/src/routes/profile.deletionIdentity.test.ts",
+        "backend/src/routes/projects.creation.test.ts",
         "backend/src/routes/projects.deletion.test.ts",
+        "backend/src/routes/projects.fileAuthority.test.ts",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/security/accountRoutes.test.ts",
+        "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/tenantIsolation.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -18233,7 +18266,7 @@
       "id": "surface:e651ec704dda3ac3aa42",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "sha256": "114021b2345dcf57c6b1a34199dd14195b92e1f6bcfb5944e184d5f4037d72f7",
+      "sha256": "09faf2881644fd67a10bd0ac4de005cf234478d32e0e2fcc5e2c9e7e79a7e3fb",
       "symbols": [
         "callbackUrl",
         "catalog",
@@ -18798,16 +18831,20 @@
       "id": "surface:4681d564b0f04020f4a8",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/profile.ts",
-      "sha256": "fee53587ad176cd91f70a3645a28171117400d0e12e48474b5d345296cf060f8",
+      "sha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
       "symbols": [
+        "accessToken",
         "companionPreferencesSchema",
+        "context",
         "deleteAccountSchema",
+        "fresh",
         "onboardingSchema",
         "parsed",
         "patch",
         "router",
         "schema",
-        "supabase"
+        "supabase",
+        "userId"
       ],
       "imports": [
         "../middleware/auth.js",
@@ -18829,7 +18866,9 @@
         "backend/src/index.ts:13",
         "backend/src/routes/profile.companion.test.ts:3",
         "backend/src/routes/profile.deleteAccount.test.ts:3",
-        "backend/src/security/accountRoutes.test.ts:8"
+        "backend/src/routes/profile.deletionIdentity.test.ts:5",
+        "backend/src/security/accountRoutes.test.ts:8",
+        "backend/src/security/profileDeletion.local.integration.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -18844,7 +18883,7 @@
         "backend/src/routes/profile.ts#AuthRequest"
       ],
       "tenantBoundary": [
-        "backend/src/routes/profile.ts:178 (user_id)"
+        "backend/src/routes/profile.ts:202 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -18852,7 +18891,9 @@
       "testCoverage": [
         "backend/src/routes/profile.companion.test.ts",
         "backend/src/routes/profile.deleteAccount.test.ts",
-        "backend/src/security/accountRoutes.test.ts"
+        "backend/src/routes/profile.deletionIdentity.test.ts",
+        "backend/src/security/accountRoutes.test.ts",
+        "backend/src/security/profileDeletion.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -18945,10 +18986,12 @@
       "id": "surface:367b4030b0826dac3fa7",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/projects.ts",
-      "sha256": "fc4804be5be18f5f37b21a85c8ab81bb30535ed1b37ee0b63fcf37da2160a820",
+      "sha256": "6776769d6e1785e9ecb7635fc8d68b4d3d9d896c6a17dda9ba6846affd10c087",
       "symbols": [
         "error",
+        "fileParentMatches",
         "githubOnly",
+        "parent",
         "parsed",
         "projectId",
         "query",
@@ -18978,14 +19021,14 @@
       ],
       "callers": [
         "backend/src/index.ts:10",
+        "backend/src/routes/projects.creation.test.ts:11",
         "backend/src/routes/projects.deletion.test.ts:15",
+        "backend/src/routes/projects.fileAuthority.test.ts:11",
         "backend/src/security/tenantIsolation.integration.test.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [
-        "activity_logs",
         "project_files",
-        "project_messages",
         "projects"
       ],
       "externalProviderDependencies": [
@@ -18996,18 +19039,18 @@
         "backend/src/routes/projects.ts#AuthRequest"
       ],
       "tenantBoundary": [
-        "backend/src/routes/projects.ts:20 (user_id)",
-        "backend/src/routes/projects.ts:82 (user_id)",
-        "backend/src/routes/projects.ts:95 (user_id)",
-        "backend/src/routes/projects.ts:194 (user_id)",
-        "backend/src/routes/projects.ts:224 (user_id)",
-        "backend/src/routes/projects.ts:253 (user_id)"
+        "backend/src/routes/projects.ts:25 (user_id)",
+        "backend/src/routes/projects.ts:119 (user_id)",
+        "backend/src/routes/projects.ts:152 (user_id)",
+        "backend/src/routes/projects.ts:184 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/routes/projects.creation.test.ts",
         "backend/src/routes/projects.deletion.test.ts",
+        "backend/src/routes/projects.fileAuthority.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -19285,7 +19328,7 @@
       "id": "surface:02d224e67cfed441bb6e",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "sha256": "889c3eeb3fca1e65ac020204dcfb5127d9c481cf6635f8f36f14bbbf505b0ad6",
+      "sha256": "ddeef37d7a8bff5a071366ed28e81d132af2d4fbf0ba05009ac0778979416ce5",
       "symbols": [
         "accessToken",
         "autoSelected",
@@ -20693,6 +20736,7 @@
         "backend/src/security/serviceRoleGuard.test.ts:3",
         "backend/src/security/tenantContext.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.ts:10",
+        "backend/src/services/integrations/userProviderKeys.ts:11",
         "backend/src/services/integrations/vercelAuth.ts:9",
         "backend/src/services/referralService.ts:2",
         "backend/src/services/responseCache.ts:2",
@@ -20759,9 +20803,12 @@
         "backend/src/routes/github.ts:5",
         "backend/src/routes/messageShares.ts:5",
         "backend/src/routes/notifications.ts:3",
+        "backend/src/routes/profile.deletionIdentity.test.ts:7",
         "backend/src/routes/profile.ts:4",
         "backend/src/routes/projectRuntime.ts:8",
+        "backend/src/routes/projects.creation.test.ts:5",
         "backend/src/routes/projects.deletion.test.ts:5",
+        "backend/src/routes/projects.fileAuthority.test.ts:5",
         "backend/src/routes/projects.ts:4",
         "backend/src/routes/referrals.ts:4",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts:8",
@@ -20777,6 +20824,7 @@
         "backend/src/security/ownedTerminalPersistence.ts:2",
         "backend/src/security/ownership.test.ts:4",
         "backend/src/security/ownership.ts:3",
+        "backend/src/security/profileDeletion.local.integration.ts:9",
         "backend/src/security/serviceRoleGuard.ts:2",
         "backend/src/security/tenantContext.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:15",
@@ -20786,6 +20834,12 @@
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:8",
         "backend/src/services/integrations/oauthPkceStore.ts:9",
         "backend/src/services/integrations/supabaseAuth.ts:8",
+        "backend/src/services/integrations/userProviderKeys.connect.test.ts:4",
+        "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts:4",
+        "backend/src/services/integrations/userProviderKeys.revision.test.ts:8",
+        "backend/src/services/integrations/userProviderKeys.revocation.test.ts:5",
+        "backend/src/services/integrations/userProviderKeys.test.ts:3",
+        "backend/src/services/integrations/userProviderKeys.ts:10",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts:5",
         "backend/src/services/integrations/vercelAuth.ts:7",
         "backend/src/services/publish/chromeWebStore.ts:12",
@@ -20820,19 +20874,28 @@
         "backend/src/ai/buildOutcomeMemory.test.ts",
         "backend/src/routes/admin.test.ts",
         "backend/src/routes/github.oauth.test.ts",
+        "backend/src/routes/profile.deletionIdentity.test.ts",
+        "backend/src/routes/projects.creation.test.ts",
         "backend/src/routes/projects.deletion.test.ts",
+        "backend/src/routes/projects.fileAuthority.test.ts",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/security/ownedRunPersistence.test.ts",
         "backend/src/security/ownedTerminalPersistence.test.ts",
         "backend/src/security/ownership.test.ts",
+        "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/tenantContext.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
+        "backend/src/services/integrations/userProviderKeys.connect.test.ts",
+        "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
+        "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+        "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+        "backend/src/services/integrations/userProviderKeys.test.ts",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts",
         "backend/src/services/referralService.failure.test.ts",
         "backend/src/services/referralService.relations.test.ts",
@@ -21795,7 +21858,7 @@
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.ts:8",
-        "backend/src/services/integrations/userProviderKeys.ts:11",
+        "backend/src/services/integrations/userProviderKeys.ts:13",
         "backend/src/services/integrations/vercelAuth.ts:10"
       ],
       "reachable": true,
@@ -22460,7 +22523,7 @@
         "backend/src/routes/github.ts:626",
         "backend/src/routes/integrations.ts:36",
         "backend/src/routes/phase1.ts:41",
-        "backend/src/routes/supabaseOAuth.ts:38",
+        "backend/src/routes/supabaseOAuth.ts:39",
         "backend/src/routes/vercel.ts:22",
         "backend/src/services/integrations/githubAnalysis.test.ts:3",
         "backend/src/services/integrations/githubDeploy.credential.test.ts:4",
@@ -22771,7 +22834,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts:26",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:5",
         "backend/src/services/integrations/githubAuth.ts:2",
-        "backend/src/services/integrations/userProviderKeys.ts:10"
+        "backend/src/services/integrations/userProviderKeys.ts:12"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -22862,7 +22925,7 @@
       "id": "surface:949ba325e98bab6b63c3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "0709da74bbf88455865d0d94be1089ea9660029da526281fa7f34574ce67e065",
+      "sha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
       "symbols": [
         "BUCKET",
         "PkceSession",
@@ -22881,6 +22944,7 @@
         "removePath",
         "row",
         "saveOAuthConnection",
+        "sessionProviders",
         "storePkceSession",
         "storeProviderToken",
         "stored",
@@ -22931,8 +22995,8 @@
         "backend/src/services/integrations/oauthPkceStore.ts#saveOAuthConnection"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/oauthPkceStore.ts:208 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:228 (user_id)"
+        "backend/src/services/integrations/oauthPkceStore.ts:189 (user_id)",
+        "backend/src/services/integrations/oauthPkceStore.ts:209 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -23085,7 +23149,7 @@
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:7",
         "backend/src/services/integrations/supabaseProvision.ts:546",
-        "backend/src/services/integrations/userProviderKeys.ts:828"
+        "backend/src/services/integrations/userProviderKeys.ts:882"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23213,8 +23277,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3765",
         "backend/src/ai/pipeline.ts:3771",
+        "backend/src/ai/pipeline.ts:3777",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/routes/integrations.ts:226",
@@ -23226,8 +23290,8 @@
         "backend/src/security/tenantIsolation.local.integration.ts:42",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
-        "backend/src/services/integrations/userProviderKeys.ts:891",
-        "backend/src/services/integrations/userProviderKeys.ts:900"
+        "backend/src/services/integrations/userProviderKeys.ts:950",
+        "backend/src/services/integrations/userProviderKeys.ts:959"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -23262,7 +23326,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "ee70c7a02c720825eab13b9f97715c9cc1736519ed6c94091e938633c5f32961",
+      "sha256": "ee96595c9a4d09c4f3fa7f024c943790fba0cf9c84e43f99d49ad98b766d0dbb",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -23281,6 +23345,7 @@
         "UserSupabaseStatus",
         "accessToken",
         "admission",
+        "admissions",
         "anon",
         "buckets",
         "buildProviderEnvFiles",
@@ -23300,9 +23365,11 @@
         "encryptApiKey",
         "encrypted",
         "encryptionKey",
+        "entries",
         "envVar",
         "envVarForProvider",
         "err",
+        "expectedCount",
         "file",
         "getUserProviderKey",
         "getUserSupabaseStatus",
@@ -23312,6 +23379,7 @@
         "hasServiceRole",
         "hasUrl",
         "idx",
+        "isCustomProviderRow",
         "issued",
         "issuedWriteAdmissions",
         "iv",
@@ -23319,6 +23387,7 @@
         "keyStoragePath",
         "keys",
         "lines",
+        "listCustomRowsForRevocation",
         "listKeysFromStorage",
         "listUserProviderKeys",
         "loadKeyFromStorage",
@@ -23330,8 +23399,11 @@
         "normalizeProvider",
         "now",
         "oauthConnected",
+        "offset",
         "out",
         "p",
+        "page",
+        "pageSize",
         "parsed",
         "parts",
         "pat",
@@ -23341,6 +23413,7 @@
         "provider",
         "providerCatalog",
         "providerRow",
+        "providers",
         "provision",
         "provisioned",
         "raw",
@@ -23358,6 +23431,7 @@
         "saveUserProviderKey",
         "saved",
         "secret",
+        "seenNames",
         "service",
         "status",
         "stored",
@@ -23371,6 +23445,8 @@
       ],
       "imports": [
         "../../config/supabase.js",
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js",
         "./credentialStorageBucket.js",
         "./githubTokenStore.js",
         "./supabaseAuth.js",
@@ -23379,6 +23455,8 @@
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/credentialStorageBucket.ts",
         "backend/src/services/integrations/githubTokenStore.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
@@ -23389,7 +23467,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:113",
-        "backend/src/ai/pipeline.ts:3764",
+        "backend/src/ai/pipeline.ts:3770",
         "backend/src/routes/integrations.ts:16",
         "backend/src/routes/integrations.ts:638",
         "backend/src/routes/publish.ts:12",
@@ -23399,9 +23477,11 @@
         "backend/src/services/integrations/credentialMirrorRace.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:58",
         "backend/src/services/integrations/supabaseProvision.ts:10",
+        "backend/src/services/integrations/userProviderKeys.connect.test.ts:5",
+        "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:5",
         "backend/src/services/integrations/userProviderKeys.revocation.test.ts:4",
-        "backend/src/services/integrations/userProviderKeys.test.ts:3",
+        "backend/src/services/integrations/userProviderKeys.test.ts:4",
         "backend/src/services/publish/chromeWebStore.ts:13",
         "backend/src/services/publish/easCredentials.ts:6",
         "backend/src/services/publish/easPublish.ts:7",
@@ -23420,12 +23500,12 @@
         "backend/src/services/integrations/userProviderKeys.ts#oauthConnected"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/userProviderKeys.ts:62 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:430 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:480 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:590 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:611 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:634 (user_id)"
+        "backend/src/services/integrations/userProviderKeys.ts:64 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:432 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:487 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:644 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:665 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:688 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -23434,6 +23514,8 @@
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/credentialMirrorRace.test.ts",
+        "backend/src/services/integrations/userProviderKeys.connect.test.ts",
+        "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts",
         "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
         "backend/src/services/integrations/userProviderKeys.test.ts"
@@ -23574,7 +23656,7 @@
         "backend/src/ai/pipeline.ts:112",
         "backend/src/lib/platformReady.ts:7",
         "backend/src/routes/integrations.ts:27",
-        "backend/src/routes/supabaseOAuth.ts:34",
+        "backend/src/routes/supabaseOAuth.ts:35",
         "backend/src/routes/vercel.ts:5",
         "backend/src/security/tenantIsolation.local.integration.ts:29",
         "backend/src/services/integrations/githubDeploy.ts:16",
@@ -24243,7 +24325,7 @@
         "backend/src/ai/pipeline.ts:168",
         "backend/src/routes/publish.ts:61",
         "backend/src/routes/publish.ts:8",
-        "backend/src/services/integrations/userProviderKeys.revision.test.ts:8",
+        "backend/src/services/integrations/userProviderKeys.revision.test.ts:9",
         "backend/src/services/publish/easCredentials.ts:9"
       ],
       "reachable": true,
@@ -84974,7 +85056,7 @@
       "id": "surface:73111c9e9054b9627260",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/golden-journeys.mjs",
-      "sha256": "07e6306fa9fac60200b2e6bca346a710d3a928c700e2f4b13f4e968e5dca63df",
+      "sha256": "20d76b9bbf08f9f6b83fed882fbf73f32e1ad1dd924c4b430da0a200a79ce9fe",
       "symbols": [
         "json",
         "ledger",
@@ -85000,6 +85082,7 @@
         "scripts/xroga/validate-golden-journeys.mjs"
       ],
       "callers": [
+        "scripts/xroga/golden-journeys.test.mjs:6",
         "scripts/xroga/validate-golden-journeys.mjs:5"
       ],
       "reachable": true,
@@ -88199,7 +88282,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:75379cb18357158f4032",
+      "id": "registration:a101c341eff8a4d0b15d",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 420,
       "receiver": "router",
@@ -88211,7 +88294,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:55a5d0f214649fbb6168",
+      "id": "registration:d9e6582b3fc88c1c9756",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 606,
       "receiver": "router",
@@ -88223,7 +88306,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:cda8adc865b6529f537c",
+      "id": "registration:b2e7039259b0e303173c",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 734,
       "receiver": "router",
@@ -88235,7 +88318,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:ddda725a22cdc654a213",
+      "id": "registration:60390a136cdcb1a73e4b",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 758,
       "receiver": "router",
@@ -88247,7 +88330,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:45a5d9b6a8215c836f26",
+      "id": "registration:fb2f6e3f54a800cdfb5f",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 916,
       "receiver": "router",
@@ -88259,7 +88342,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:2ac96a1a22c371259784",
+      "id": "registration:978d2cdb6af4275793e3",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 949,
       "receiver": "router",
@@ -88271,7 +88354,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:46bb9b7935fb5dcf1439",
+      "id": "registration:27af0aa404504b625933",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1076,
       "receiver": "router",
@@ -88283,7 +88366,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:201afc0ccc7c0c071de6",
+      "id": "registration:ba6fd8d0600dcb1f808b",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1128,
       "receiver": "router",
@@ -88295,7 +88378,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5b97e56b1437add4c852",
+      "id": "registration:b9fdfdca130aab45fc3d",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1187,
       "receiver": "router",
@@ -88307,7 +88390,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:69a619fb31d88f06746a",
+      "id": "registration:b856682d8d94c6bcc0da",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1205,
       "receiver": "router",
@@ -88319,7 +88402,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f55247ba92d7f2e3bcf2",
+      "id": "registration:3b6b4739c089db4def53",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1311,
       "receiver": "router",
@@ -88331,7 +88414,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:136abefcf91d8488d1bd",
+      "id": "registration:92772fd7702bc75a1e22",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1330,
       "receiver": "router",
@@ -88343,7 +88426,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:daebe6684e0d5781b07b",
+      "id": "registration:809c5e82c96520d96f4f",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1391,
       "receiver": "router",
@@ -88355,7 +88438,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:63a3e82186c419fb4ace",
+      "id": "registration:f745b8ae4f1655b4f7f9",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1452,
       "receiver": "router",
@@ -88367,7 +88450,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:1d33b9880958d5719e43",
+      "id": "registration:80d765c313cef36fc27b",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1514,
       "receiver": "router",
@@ -88379,7 +88462,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:221ebfe50d058005d1b3",
+      "id": "registration:42ccc85d2aef9daf0eee",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1571,
       "receiver": "router",
@@ -88391,7 +88474,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:47ca29717b64980421ea",
+      "id": "registration:fc16be8f0cbac073aeaa",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1608,
       "receiver": "router",
@@ -88403,7 +88486,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9f27d504e8ed6dbcd924",
+      "id": "registration:4e08af9528b480ed3dc5",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1694,
       "receiver": "router",
@@ -88415,7 +88498,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c37fd84e531f80fc58e7",
+      "id": "registration:9f671064aa9e08d1a893",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1762,
       "receiver": "router",
@@ -88427,7 +88510,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:890ac72f11b236a65c2e",
+      "id": "registration:89cddf74e19481e558f4",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1827,
       "receiver": "router",
@@ -88439,7 +88522,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d6f706ae09dc2ab915be",
+      "id": "registration:3db16affe9c4980f941b",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1846,
       "receiver": "router",
@@ -88451,7 +88534,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3165c5f9b4947f54ca7a",
+      "id": "registration:9ce4aa9e2154e1d256c6",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1887,
       "receiver": "router",
@@ -88463,7 +88546,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:270ab944165bfbe14f31",
+      "id": "registration:7fbf0fae801120543034",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1942,
       "receiver": "router",
@@ -88475,7 +88558,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b83cad142a87de0868a2",
+      "id": "registration:4119391e4ffe15aa4feb",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1989,
       "receiver": "router",
@@ -88487,7 +88570,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:cea82066f4832f777f26",
+      "id": "registration:c9ad9445f9442322cffc",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 2086,
       "receiver": "router",
@@ -88499,7 +88582,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c8a961d06070e17c2446",
+      "id": "registration:410789d1b4d639a64d95",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 2166,
       "receiver": "router",
@@ -88511,7 +88594,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:16890dea7994eadd6423",
+      "id": "registration:767bed2feafae4c9b240",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 2172,
       "receiver": "router",
@@ -89021,7 +89104,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fcd6de1607973dae3db6",
+      "id": "registration:c7279e03c3add2f6ca3a",
       "sourcePath": "backend/src/routes/profile.ts",
       "line": 155,
       "receiver": "router",
@@ -89033,9 +89116,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9fc7843e1173f7da46d6",
+      "id": "registration:7ab1e25d9f1e9127124c",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 176,
+      "line": 200,
       "receiver": "router",
       "method": "get",
       "path": "/activity",
@@ -89093,9 +89176,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:cf63d9a80473034637eb",
+      "id": "registration:80935b7722b3710b67fe",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 11,
+      "line": 16,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -89105,9 +89188,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:8c53d1a5d3c23ec9b32d",
+      "id": "registration:d2ec1953fb7be2edc8ad",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 16,
+      "line": 21,
       "receiver": "router",
       "method": "get",
       "path": "/",
@@ -89117,9 +89200,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4b337e63afb6d77f8424",
+      "id": "registration:4c9ab82fff9619b5baa7",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 40,
+      "line": 45,
       "receiver": "router",
       "method": "get",
       "path": "/:id/files/:fileId/download",
@@ -89129,9 +89212,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:17dc1a0956a4f5d3e2e3",
+      "id": "registration:429f1ee89733b82cd7a2",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 49,
+      "line": 54,
       "receiver": "router",
       "method": "post",
       "path": "/:id/files/:fileId/link",
@@ -89141,9 +89224,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7a0f03dccb56e954b681",
+      "id": "registration:9505766178c775f3900a",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 56,
+      "line": 61,
       "receiver": "router",
       "method": "delete",
       "path": "/:id/files/:fileId/links",
@@ -89153,9 +89236,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4df7bc295a73ec78dc1c",
+      "id": "registration:f5d772c6cadae38dd7c2",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 62,
+      "line": 67,
       "receiver": "router",
       "method": "post",
       "path": "/",
@@ -89165,9 +89248,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3eabea25aca29097b6c4",
+      "id": "registration:6c5a19fd0f77198788b4",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 173,
+      "line": 98,
       "receiver": "router",
       "method": "delete",
       "path": "/:id",
@@ -89177,9 +89260,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b9539a6de81641879407",
+      "id": "registration:b2a5d28140fedef6f5dc",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 190,
+      "line": 115,
       "receiver": "router",
       "method": "get",
       "path": "/:id/files",
@@ -89189,9 +89272,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:802593c334a4369744c2",
+      "id": "registration:9f7d7581389c3324817c",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 220,
+      "line": 148,
       "receiver": "router",
       "method": "get",
       "path": "/:id/code",
@@ -89201,9 +89284,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:1bde9a0990ed7967f0c6",
+      "id": "registration:946ea0dbf2e9404990dc",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 251,
+      "line": 182,
       "receiver": "router",
       "method": "get",
       "path": "/:id",
@@ -89441,9 +89524,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e2032cfc45e11ab6ee87",
+      "id": "registration:7c9b8f66ba1520805cdc",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 61,
+      "line": 62,
       "receiver": "router",
       "method": "get",
       "path": "/oauth",
@@ -89453,9 +89536,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:146431dfa714ecf0315b",
+      "id": "registration:500f84f86a6381673684",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 83,
+      "line": 84,
       "receiver": "router",
       "method": "get",
       "path": "/status",
@@ -89465,9 +89548,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:1b479b3ec5a708a461e0",
+      "id": "registration:f914c8ab73cbb7a9c29e",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 121,
+      "line": 122,
       "receiver": "router",
       "method": "post",
       "path": "/connect",
@@ -89477,9 +89560,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:663cfbda616d84a21f79",
+      "id": "registration:e2c08595138fe709eb2c",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 236,
+      "line": 237,
       "receiver": "router",
       "method": "get",
       "path": "/projects",
@@ -89489,9 +89572,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:aef151f73d28d32619c7",
+      "id": "registration:780d0efd0e458a917ba4",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 253,
+      "line": 254,
       "receiver": "router",
       "method": "post",
       "path": "/select-project",
@@ -89501,9 +89584,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:54d4105b9a8353c76872",
+      "id": "registration:a87430de787bc4ee8673",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 304,
+      "line": 305,
       "receiver": "router",
       "method": "post",
       "path": "/create-project",
@@ -89513,9 +89596,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0c1ddad793acb4ec04e2",
+      "id": "registration:214dde3d349be83f128a",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 402,
+      "line": 409,
       "receiver": "router",
       "method": "get",
       "path": "/organizations",
@@ -89525,9 +89608,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:bbba3cf3cd12d56c9c49",
+      "id": "registration:3cd34dfe7a46e2861937",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 422,
+      "line": 429,
       "receiver": "router",
       "method": "delete",
       "path": "/disconnect",
@@ -91627,10 +91710,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:0c8fc1788e0a570229a1",
-      "registrationId": "registration:8c53d1a5d3c23ec9b32d",
+      "id": "route:15de66a21268a74958cf",
+      "registrationId": "registration:d2ec1953fb7be2edc8ad",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 16,
+      "line": 21,
       "method": "GET",
       "path": "/api/projects",
       "mountChain": [
@@ -91644,10 +91727,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4abfd92ff1fb81ad1403",
-      "registrationId": "registration:4b337e63afb6d77f8424",
+      "id": "route:225bc4e8f61892262190",
+      "registrationId": "registration:4c9ab82fff9619b5baa7",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 40,
+      "line": 45,
       "method": "GET",
       "path": "/api/projects/:id/files/:fileId/download",
       "mountChain": [
@@ -91661,10 +91744,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:62ebbfb216b992d943b2",
-      "registrationId": "registration:17dc1a0956a4f5d3e2e3",
+      "id": "route:aac2598f08e0938f0935",
+      "registrationId": "registration:429f1ee89733b82cd7a2",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 49,
+      "line": 54,
       "method": "POST",
       "path": "/api/projects/:id/files/:fileId/link",
       "mountChain": [
@@ -91678,10 +91761,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:63ab44face5e47d4177f",
-      "registrationId": "registration:7a0f03dccb56e954b681",
+      "id": "route:cf7dfd8a4ffd06a207a5",
+      "registrationId": "registration:9505766178c775f3900a",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 56,
+      "line": 61,
       "method": "DELETE",
       "path": "/api/projects/:id/files/:fileId/links",
       "mountChain": [
@@ -91695,10 +91778,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:adf9e1805de3a30e5a78",
-      "registrationId": "registration:4df7bc295a73ec78dc1c",
+      "id": "route:2bc09ced5c497553c5c2",
+      "registrationId": "registration:f5d772c6cadae38dd7c2",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 62,
+      "line": 67,
       "method": "POST",
       "path": "/api/projects",
       "mountChain": [
@@ -91712,10 +91795,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0edee624ee457ff0c31b",
-      "registrationId": "registration:3eabea25aca29097b6c4",
+      "id": "route:77ab1a391a88c32884e6",
+      "registrationId": "registration:6c5a19fd0f77198788b4",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 173,
+      "line": 98,
       "method": "DELETE",
       "path": "/api/projects/:id",
       "mountChain": [
@@ -91729,10 +91812,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0ed7dc37fb11cee4fdc8",
-      "registrationId": "registration:b9539a6de81641879407",
+      "id": "route:cc0b3fa5d09fa67acf3b",
+      "registrationId": "registration:b2a5d28140fedef6f5dc",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 190,
+      "line": 115,
       "method": "GET",
       "path": "/api/projects/:id/files",
       "mountChain": [
@@ -91746,10 +91829,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9c1d8ecadff5f11d977f",
-      "registrationId": "registration:802593c334a4369744c2",
+      "id": "route:6a6387f6bf2cbe01562f",
+      "registrationId": "registration:9f7d7581389c3324817c",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 220,
+      "line": 148,
       "method": "GET",
       "path": "/api/projects/:id/code",
       "mountChain": [
@@ -91763,10 +91846,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:34f9377100f520094874",
-      "registrationId": "registration:1bde9a0990ed7967f0c6",
+      "id": "route:ac0b36ec2977dee7f071",
+      "registrationId": "registration:946ea0dbf2e9404990dc",
       "sourcePath": "backend/src/routes/projects.ts",
-      "line": 251,
+      "line": 182,
       "method": "GET",
       "path": "/api/projects/:id",
       "mountChain": [
@@ -91882,8 +91965,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e5bc02a80b71b28ccca9",
-      "registrationId": "registration:fcd6de1607973dae3db6",
+      "id": "route:1321b31bd8acf954fb7d",
+      "registrationId": "registration:c7279e03c3add2f6ca3a",
       "sourcePath": "backend/src/routes/profile.ts",
       "line": 155,
       "method": "DELETE",
@@ -91899,10 +91982,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9d925dad1625cc1c04c7",
-      "registrationId": "registration:9fc7843e1173f7da46d6",
+      "id": "route:3fa80a35d0928164078b",
+      "registrationId": "registration:7ab1e25d9f1e9127124c",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 176,
+      "line": 200,
       "method": "GET",
       "path": "/api/profile/activity",
       "mountChain": [
@@ -92514,8 +92597,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ffd71cb2c3fe97ae3dfe",
-      "registrationId": "registration:75379cb18357158f4032",
+      "id": "route:dc6e42aa1e9d96626c3a",
+      "registrationId": "registration:a101c341eff8a4d0b15d",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 420,
       "method": "POST",
@@ -92531,8 +92614,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:76cad36311e4ddc023fe",
-      "registrationId": "registration:55a5d0f214649fbb6168",
+      "id": "route:b752f185a0a77c040627",
+      "registrationId": "registration:d9e6582b3fc88c1c9756",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 606,
       "method": "POST",
@@ -92548,8 +92631,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8b14878f653d230c1966",
-      "registrationId": "registration:cda8adc865b6529f537c",
+      "id": "route:ff87807b00803ff7dad0",
+      "registrationId": "registration:b2e7039259b0e303173c",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 734,
       "method": "GET",
@@ -92565,8 +92648,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c10522e1bc87398b7930",
-      "registrationId": "registration:ddda725a22cdc654a213",
+      "id": "route:300b172626711a27db5a",
+      "registrationId": "registration:60390a136cdcb1a73e4b",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 758,
       "method": "POST",
@@ -92582,8 +92665,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:d4496cc6d29c4851f6b6",
-      "registrationId": "registration:45a5d9b6a8215c836f26",
+      "id": "route:43a6d535719eb100ee7b",
+      "registrationId": "registration:fb2f6e3f54a800cdfb5f",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 916,
       "method": "DELETE",
@@ -92599,8 +92682,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:23480f435bef71a724f3",
-      "registrationId": "registration:2ac96a1a22c371259784",
+      "id": "route:957d648a0c9bb31ef53e",
+      "registrationId": "registration:978d2cdb6af4275793e3",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 949,
       "method": "POST",
@@ -92616,8 +92699,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:bc6eedf8c41d2e8a1ff4",
-      "registrationId": "registration:46bb9b7935fb5dcf1439",
+      "id": "route:a13f65e7ce781df60201",
+      "registrationId": "registration:27af0aa404504b625933",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1076,
       "method": "GET",
@@ -92633,8 +92716,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:d2da37062db75450f263",
-      "registrationId": "registration:201afc0ccc7c0c071de6",
+      "id": "route:0abe830474ebbc245061",
+      "registrationId": "registration:ba6fd8d0600dcb1f808b",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1128,
       "method": "PATCH",
@@ -92650,8 +92733,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:853da13870dcd3e0668c",
-      "registrationId": "registration:5b97e56b1437add4c852",
+      "id": "route:ffe7964b1253ad580b92",
+      "registrationId": "registration:b9fdfdca130aab45fc3d",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1187,
       "method": "GET",
@@ -92667,8 +92750,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:caae735bf7a918ba78c3",
-      "registrationId": "registration:69a619fb31d88f06746a",
+      "id": "route:1f6e5ba66c5346c75f2e",
+      "registrationId": "registration:b856682d8d94c6bcc0da",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1205,
       "method": "GET",
@@ -92684,8 +92767,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:364a92bacdff60166737",
-      "registrationId": "registration:f55247ba92d7f2e3bcf2",
+      "id": "route:090db5eb81c8f27c0cf1",
+      "registrationId": "registration:3b6b4739c089db4def53",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1311,
       "method": "GET",
@@ -92701,8 +92784,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5f38d19af1382815de9d",
-      "registrationId": "registration:136abefcf91d8488d1bd",
+      "id": "route:c0772702ac9d5f111b08",
+      "registrationId": "registration:92772fd7702bc75a1e22",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1330,
       "method": "GET",
@@ -92718,8 +92801,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8bad2aff109e1021d54c",
-      "registrationId": "registration:daebe6684e0d5781b07b",
+      "id": "route:9d03e05fb1dd2bd61dad",
+      "registrationId": "registration:809c5e82c96520d96f4f",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1391,
       "method": "GET",
@@ -92735,8 +92818,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0ef8051dc500813a8f37",
-      "registrationId": "registration:63a3e82186c419fb4ace",
+      "id": "route:ac8e3d9fe866aeef70bd",
+      "registrationId": "registration:f745b8ae4f1655b4f7f9",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1452,
       "method": "GET",
@@ -92752,8 +92835,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:7128f26a92f64e33cb69",
-      "registrationId": "registration:1d33b9880958d5719e43",
+      "id": "route:dcc3acf109eff0a66a3d",
+      "registrationId": "registration:80d765c313cef36fc27b",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1514,
       "method": "GET",
@@ -92769,8 +92852,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b8b6d5b996385ce17242",
-      "registrationId": "registration:221ebfe50d058005d1b3",
+      "id": "route:054d97e44534dc031d68",
+      "registrationId": "registration:42ccc85d2aef9daf0eee",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1571,
       "method": "POST",
@@ -92786,8 +92869,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:998c92088da9f91a8b42",
-      "registrationId": "registration:47ca29717b64980421ea",
+      "id": "route:f29381700e986d73df14",
+      "registrationId": "registration:fc16be8f0cbac073aeaa",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1608,
       "method": "POST",
@@ -92803,8 +92886,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:21b44c1bae1cc81945e1",
-      "registrationId": "registration:9f27d504e8ed6dbcd924",
+      "id": "route:f21a5385cd1e57971438",
+      "registrationId": "registration:4e08af9528b480ed3dc5",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1694,
       "method": "POST",
@@ -92820,8 +92903,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:343aadf4de3bf4af0a7b",
-      "registrationId": "registration:c37fd84e531f80fc58e7",
+      "id": "route:7b2faac9147dfdb6ad4a",
+      "registrationId": "registration:9f671064aa9e08d1a893",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1762,
       "method": "POST",
@@ -92837,8 +92920,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9d80845572bfd7943054",
-      "registrationId": "registration:890ac72f11b236a65c2e",
+      "id": "route:be330e877fde38520720",
+      "registrationId": "registration:89cddf74e19481e558f4",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1827,
       "method": "GET",
@@ -92854,8 +92937,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c4b803fec7cc22920ad2",
-      "registrationId": "registration:d6f706ae09dc2ab915be",
+      "id": "route:96ba97fd4982a1eed580",
+      "registrationId": "registration:3db16affe9c4980f941b",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1846,
       "method": "POST",
@@ -92871,8 +92954,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5e8ec2b6a54d4c9a79c2",
-      "registrationId": "registration:3165c5f9b4947f54ca7a",
+      "id": "route:d5f3cd38189963918a18",
+      "registrationId": "registration:9ce4aa9e2154e1d256c6",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1887,
       "method": "POST",
@@ -92888,8 +92971,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:484e3b9ccaefb2c68a61",
-      "registrationId": "registration:270ab944165bfbe14f31",
+      "id": "route:04b4f0cc626a9352b792",
+      "registrationId": "registration:7fbf0fae801120543034",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1942,
       "method": "DELETE",
@@ -92905,8 +92988,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:97712c110bc90d3f0c30",
-      "registrationId": "registration:b83cad142a87de0868a2",
+      "id": "route:8f3d4d626ef5e686d836",
+      "registrationId": "registration:4119391e4ffe15aa4feb",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 1989,
       "method": "POST",
@@ -92922,8 +93005,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a677ecf32311d3545ff5",
-      "registrationId": "registration:cea82066f4832f777f26",
+      "id": "route:06e1564603ee1bfe4ba6",
+      "registrationId": "registration:c9ad9445f9442322cffc",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 2086,
       "method": "POST",
@@ -92939,10 +93022,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:bc7d2efa1ac579b40617",
-      "registrationId": "registration:e2032cfc45e11ab6ee87",
+      "id": "route:b9d6b851982a640d0975",
+      "registrationId": "registration:7c9b8f66ba1520805cdc",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 61,
+      "line": 62,
       "method": "GET",
       "path": "/api/supabase/oauth",
       "mountChain": [
@@ -92957,10 +93040,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1efca165cd64f18fe5dc",
-      "registrationId": "registration:146431dfa714ecf0315b",
+      "id": "route:b40f057942d67c43d0d2",
+      "registrationId": "registration:500f84f86a6381673684",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 83,
+      "line": 84,
       "method": "GET",
       "path": "/api/supabase/status",
       "mountChain": [
@@ -92975,10 +93058,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:647ce3b3915c0900f38a",
-      "registrationId": "registration:1b479b3ec5a708a461e0",
+      "id": "route:2ffc938653c2cfc83fb6",
+      "registrationId": "registration:f914c8ab73cbb7a9c29e",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 121,
+      "line": 122,
       "method": "POST",
       "path": "/api/supabase/connect",
       "mountChain": [
@@ -92993,10 +93076,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:d4332e807358551250b0",
-      "registrationId": "registration:663cfbda616d84a21f79",
+      "id": "route:60b9f468e39eeecde118",
+      "registrationId": "registration:e2c08595138fe709eb2c",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 236,
+      "line": 237,
       "method": "GET",
       "path": "/api/supabase/projects",
       "mountChain": [
@@ -93011,10 +93094,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:2569155aa6e79cd71c4f",
-      "registrationId": "registration:aef151f73d28d32619c7",
+      "id": "route:6da167bd07619e8e5dce",
+      "registrationId": "registration:780d0efd0e458a917ba4",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 253,
+      "line": 254,
       "method": "POST",
       "path": "/api/supabase/select-project",
       "mountChain": [
@@ -93029,10 +93112,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:24311acef099b16aa70b",
-      "registrationId": "registration:54d4105b9a8353c76872",
+      "id": "route:0859aa16b60f9463619f",
+      "registrationId": "registration:a87430de787bc4ee8673",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 304,
+      "line": 305,
       "method": "POST",
       "path": "/api/supabase/create-project",
       "mountChain": [
@@ -93047,10 +93130,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:029a1022e4f9ee199c4f",
-      "registrationId": "registration:0c1ddad793acb4ec04e2",
+      "id": "route:02a6da8e11bab508bd77",
+      "registrationId": "registration:214dde3d349be83f128a",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 402,
+      "line": 409,
       "method": "GET",
       "path": "/api/supabase/organizations",
       "mountChain": [
@@ -93065,10 +93148,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ffc55f082b48aa06cddc",
-      "registrationId": "registration:bbba3cf3cd12d56c9c49",
+      "id": "route:9b0fc5f1b1b7e89a1b6f",
+      "registrationId": "registration:3cd34dfe7a46e2861937",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 422,
+      "line": 429,
       "method": "DELETE",
       "path": "/api/supabase/disconnect",
       "mountChain": [
@@ -94400,6 +94483,27 @@
       "version": "20261016000500",
       "order": 79,
       "sha256": "ab08ed884cd90b400cd0eb4b25f0f71f7f011478d32efae354e7459752d75caa"
+    },
+    {
+      "id": "migration:80d5008f4c7a0a49ca22",
+      "sourcePath": "supabase/migrations/20261016000600_cancelled_build_outcome_receipt.sql",
+      "version": "20261016000600",
+      "order": 80,
+      "sha256": "46bcdee21a1fc1a4fe2052779dcf19ae691a8da95caf3181dd092cb19433169f"
+    },
+    {
+      "id": "migration:9844e45cad42d8d485a0",
+      "sourcePath": "supabase/migrations/20261016000700_atomic_project_creation.sql",
+      "version": "20261016000700",
+      "order": 81,
+      "sha256": "fc1b6de4b4e964def27118454053782d1ad368292d3c427a9d62d1b145e20c62"
+    },
+    {
+      "id": "migration:0614f6488cb3a7cb77af",
+      "sourcePath": "supabase/migrations/20261016000900_guard_growth_referral_event.sql",
+      "version": "20261016000900",
+      "order": 82,
+      "sha256": "09cebde93616fd9806179fe2a6bea68d1ae88c675623f51c895d15f6d988eb77"
     }
   ],
   "workflows": [
@@ -101458,6 +101562,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:867e8669053fd187f8ea",
+      "sourcePath": "backend/src/ai/runStore.cancellationReceipt.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:56bbf59563fb4bc03e6b",
       "sourcePath": "backend/src/ai/runStore.conversationReceipt.test.ts",
       "declaredTests": 1,
@@ -101467,6 +101578,13 @@
     {
       "id": "test-suite:93b281105e6d5f19eb99",
       "sourcePath": "backend/src/ai/runStore.creation.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4506240ce73123c6bfd9",
+      "sourcePath": "backend/src/ai/runStore.historyAdmission.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
@@ -101619,6 +101737,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:10da8f8ac914295e3aff",
+      "sourcePath": "backend/src/ai/universal/resumeProjectContext.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9ac9d369aae35a3391cb",
       "sourcePath": "backend/src/ai/universal/runtimeFailure.test.ts",
       "declaredTests": 2,
@@ -101713,6 +101838,13 @@
       "id": "test-suite:0f3dad98c31d27f776fb",
       "sourcePath": "backend/src/growth/growthService.boundary.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:cb48eca8bb7e8a0e5ff1",
+      "sourcePath": "backend/src/growth/growthService.referralBoundary.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101992,8 +102124,29 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:3305578eb85a8d0be330",
+      "sourcePath": "backend/src/routes/profile.deletionIdentity.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d08758d014f87dab67a8",
+      "sourcePath": "backend/src/routes/projects.creation.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:5116fc8b077ab2bf45f1",
       "sourcePath": "backend/src/routes/projects.deletion.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9e29e6cc5383e0a27283",
+      "sourcePath": "backend/src/routes/projects.fileAuthority.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
@@ -102099,7 +102252,7 @@
     {
       "id": "test-suite:b4661f97348c378971b1",
       "sourcePath": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
-      "declaredTests": 2,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102107,6 +102260,13 @@
       "id": "test-suite:9584a8c447a0cf53aa0d",
       "sourcePath": "backend/src/security/clineGitDependency.test.ts",
       "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:b366c5010a557ccca622",
+      "sourcePath": "backend/src/security/growthReferral.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102142,6 +102302,20 @@
       "id": "test-suite:202b022e2f1c32eef410",
       "sourcePath": "backend/src/security/ownership.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6a7397d2640193a0135d",
+      "sourcePath": "backend/src/security/profileDeletion.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4487adc992392c1f8cd7",
+      "sourcePath": "backend/src/security/projectCreation.local.integration.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102352,6 +102526,20 @@
       "id": "test-suite:daadaf70bc883c8e260b",
       "sourcePath": "backend/src/services/integrations/universalRepositoryHydration.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:93ee00e5eb6977db1940",
+      "sourcePath": "backend/src/services/integrations/userProviderKeys.connect.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9c747864066fcc50030b",
+      "sourcePath": "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104292,7 +104480,7 @@
     {
       "id": "test-suite:fb1fcccb441070f77622",
       "sourcePath": "scripts/xroga/golden-journeys.test.mjs",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

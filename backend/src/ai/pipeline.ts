@@ -146,7 +146,7 @@ import {
   startOrRefreshLivePreview,
 } from '../synthesis/livePreview/coordinator.js';
 import type { UniversalOutputEnvelope } from './universal/outputEnvelope.js';
-import { projectContextKey } from './universal/projectContext.js';
+import { projectContextKey, requireResumeProjectContext } from './universal/projectContext.js';
 import { routeProject } from '../config/universalAgentFlags.js';
 import { goalContractSchema, type GoalContract } from './universal/goalContract.js';
 import { currentPublicProductTruth } from './universal/productTruth.js';
@@ -476,7 +476,7 @@ function parseClientMeta(raw: unknown): BuildClientMeta | undefined {
     projectRoot:
       typeof m.projectRoot === 'string' && m.projectRoot.startsWith('/')
         ? m.projectRoot
-        : '/',
+        : m.resumeRun === true ? undefined : '/',
     semanticGoalContract: semanticGoal.success ? semanticGoal.data : undefined,
     // Only the exact string "public" grants publication. Anything else — absent, null,
     // "PUBLIC", a truthy object, a client that never learned about this field — is
@@ -1176,10 +1176,22 @@ export async function runBuildPipeline(opts: {
   emit({ ...startupProgress('accepted'), swarmTodos: todosForBuild('route', 'omit') });
 
   const metaRaw = parseClientMeta(opts.clientMeta);
+  const executionStore = process.env.SUPABASE_SERVICE_ROLE_KEY
+    ? new SupabaseExecutionStateStore(opts.userId)
+    : new InMemoryExecutionStateStore();
+  // Check durable lineage before worker admission, repository IO or provider work.
+  const persistedExecutionState = metaRaw?.resumeRun ? await executionStore.load(runId) : null;
+  const resumeContext = metaRaw?.resumeRun ? requireResumeProjectContext(persistedExecutionState, runId, {
+    projectId: opts.projectId, repo: metaRaw.githubTargetRepo, branch: metaRaw.githubTargetBranch, projectRoot: metaRaw.projectRoot,
+  }) : null;
+  if (persistedExecutionState) {
+    opts = { ...opts, projectId: persistedExecutionState.databaseProjectId ??
+      (!persistedExecutionState.repository ? opts.projectId : undefined) };
+  }
   // Sticky default_repo ONLY for explicit updates when the chatbar omitted a target.
   // Greenfield builds must never silently overwrite the last product.
   const stickyDefault =
-    metaRaw?.buildUpdate && !metaRaw?.githubTargetRepo?.includes('/')
+    !metaRaw?.resumeRun && metaRaw?.buildUpdate && !metaRaw?.githubTargetRepo?.includes('/')
       ? await getGithubDefaultRepo(opts.userId).catch(() => null)
       : null;
   const meta: BuildClientMeta | undefined = metaRaw
@@ -1188,6 +1200,7 @@ export async function runBuildPipeline(opts: {
         githubTargetRepo:
           metaRaw.githubTargetRepo ||
           (stickyDefault?.includes('/') ? stickyDefault : undefined),
+        ...(resumeContext ? { githubTargetRepo: resumeContext.repo, githubTargetBranch: resumeContext.branch, projectRoot: resumeContext.projectRoot } : {}),
       }
     : undefined;
   const userFacingPrompt = (meta?.userPrompt || opts.prompt).trim();
@@ -1340,14 +1353,6 @@ if (
 
   await loadRoutingOutcomes();
 
-  const executionStore = process.env.SUPABASE_SERVICE_ROLE_KEY
-    ? new SupabaseExecutionStateStore(opts.userId)
-    : new InMemoryExecutionStateStore();
-
-  const persistedExecutionState = meta?.resumeRun
-    ? await executionStore.load(runId)
-    : null;
-
   const canonicalRecovery = persistedExecutionState
     ? recoverCanonicalExecutionStateForResume(persistedExecutionState)
     : null;
@@ -1437,6 +1442,7 @@ if (
         });
 
   const executionState = synthesis.state;
+  if (!canonicalRecovery) executionState.databaseProjectId = opts.projectId ?? null;
 
   executionState.requiredCapabilities = [
     ...new Set([

@@ -29,6 +29,7 @@ import {
   deleteUserProviderKey,
   getUserProviderKey,
   getUserSupabaseStatus,
+  prepareUserProviderKeyWrite,
   saveUserProviderKey,
 } from '../services/integrations/userProviderKeys.js';
 import {
@@ -315,7 +316,13 @@ router.post('/create-project', async (req: AuthRequest, res) => {
   }
 
   try {
-    const accessToken = await getSupabaseOAuthAccessToken(req.userId!);
+    const context = requireTenantContext(req.tenantContext);
+    requireResourceOwner(context, req.userId);
+    const { userId } = context;
+    const [writeAdmissions, passwordAdmission] = await Promise.all([
+      prepareSupabaseWriteAdmissions(userId), prepareUserProviderKeyWrite(userId, 'supabase_db_password'),
+    ]);
+    const accessToken = await getSupabaseOAuthAccessToken(userId);
     if (!accessToken) {
       res.status(403).json({ error: 'Authorize Supabase first' });
       return;
@@ -352,8 +359,8 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     // Wait briefly for project to become active before keys/SQL
     await new Promise((r) => setTimeout(r, 4000));
 
-    await saveUserProviderKey(req.userId!, 'supabase_db_password', dbPass);
-    await saveUserProviderKey(req.userId!, 'supabase_pat', accessToken);
+    await saveUserProviderKey(userId, 'supabase_db_password', dbPass, { writeAdmission: passwordAdmission });
+    await saveUserProviderKey(userId, 'supabase_pat', accessToken, { writeAdmission: writeAdmissions.pat });
 
     // Retry key fetch — new projects may need a moment
     let keys: { url: string; anonKey: string; serviceRoleKey: string } | null = null;
@@ -367,9 +374,9 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     }
     if (!keys) throw new Error('Project created but API keys not ready yet — click the project in a minute');
 
-    await saveUserProviderKey(req.userId!, 'supabase_url', keys.url);
-    await saveUserProviderKey(req.userId!, 'supabase_anon', keys.anonKey);
-    await saveUserProviderKey(req.userId!, 'supabase', keys.serviceRoleKey);
+    await saveUserProviderKey(userId, 'supabase_url', keys.url, { writeAdmission: writeAdmissions.url });
+    await saveUserProviderKey(userId, 'supabase_anon', keys.anonKey, { writeAdmission: writeAdmissions.anon });
+    await saveUserProviderKey(userId, 'supabase', keys.serviceRoleKey, { writeAdmission: writeAdmissions.service });
 
     const provision = await provisionUserSupabase({
       projectUrl: keys.url,
@@ -436,7 +443,7 @@ router.delete('/disconnect', async (req: AuthRequest, res) => {
     ];
     for (const p of vaultProviders) {
       try {
-        await deleteUserProviderKey(context.userId, p);
+        await deleteUserProviderKey(context, p);
       } catch {
         // Missing keys are handled by the durable tombstone operation. Any
         // thrown error means revocation or legacy cleanup remains unconfirmed.

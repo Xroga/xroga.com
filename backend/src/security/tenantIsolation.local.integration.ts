@@ -43,6 +43,9 @@ import { buildUserSupabaseProvisionSql } from '../services/integrations/supabase
 import { registerProviderKeyRevisionTests } from './providerKeyRevision.local.integration.js';
 import { registerOAuthSessionTests } from './oauthSession.local.integration.js';
 import { registerBuildOutcomeAttemptTests } from './buildOutcomeAttempt.local.integration.js';
+import { registerProjectCreationTests } from './projectCreation.local.integration.js';
+import { registerProfileDeletionTests } from './profileDeletion.local.integration.js';
+import { registerGrowthReferralTests } from './growthReferral.local.integration.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -51,6 +54,9 @@ const users: Array<{id:string;token:string;context:TenantContext;project:string;
 registerProviderKeyRevisionTests(admin, () => users);
 registerOAuthSessionTests(admin, () => users);
 registerBuildOutcomeAttemptTests(admin, () => users);
+registerProjectCreationTests(admin, () => users);
+registerProfileDeletionTests(admin);
+registerGrowthReferralTests(admin, () => users);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }
@@ -129,7 +135,7 @@ test('named custom credentials bind reads and deletion to the exact owner and pr
     assert.equal(await getUserProviderKey(owner.id,second),'SYNTHETIC_SECOND_KEY');
     assert.equal(await getUserProviderKey(other.id,second),'SYNTHETIC_FOREIGN_KEY');
     assert.equal(await getUserProviderKey(owner.id,`custom_absent_${suffix}`),null);
-    await deleteUserProviderKey(owner.id,second);
+    await deleteUserProviderKey(owner.context,second);
     // Model a delayed legacy mirror write AFTER revocation. It must not restore
     // credential access or deployment selection while the durable denial exists.
     const mirror=`${owner.id}/vault-apikey_${second}.json`;
@@ -235,7 +241,13 @@ test('real durable preview session cannot resolve a misbound owner/project or st
 test('actual API ignores client owner and rejects foreign project/file access and unsigned requests',async()=>{
   const [owner,other]=users;
   for(const path of [`/api/projects/${other.project}`,`/api/projects/${other.project}/files`,`/api/projects/${other.project}/code`]) assert.equal((await request(path,owner.token)).status,404);
-  assert.equal((await request(`/api/projects/${owner.project}/files`,owner.token)).status,200);
+  const ownFiles=await request(`/api/projects/${owner.project}/files`,owner.token);assert.equal(ownFiles.status,200);
+  const files=await ownFiles.json() as Array<{id:string;project_id:string;projects?:unknown}>;
+  assert.ok(files.some(row=>row.id===owner.file));assert.ok(files.every(row=>row.project_id===owner.project && row.projects===undefined));
+  const codeId=await insert('project_files',{project_id:owner.project,file_name:'owner-read-fixture.ts',file_type:'code',content:'synthetic owned code'});
+  const ownCode=await request(`/api/projects/${owner.project}/code`,owner.token);assert.equal(ownCode.status,200);
+  const code=await ownCode.json() as {files:Array<{id:string;project_id:string;projects?:unknown}>};
+  assert.ok(code.files.some(row=>row.id===codeId));assert.ok(code.files.every(row=>row.project_id===owner.project && row.projects===undefined));
   assert.equal((await request('/api/projects')).status,401);
   const created=await request('/api/projects',owner.token,'POST',{name:'Ignored client owner',type:'app',user_id:other.id,userId:other.id});
   assert.equal(created.status,201);
@@ -578,7 +590,7 @@ test('real credential helper denies a traversal provider without reading or dele
     const upload=await admin.storage.from(bucket).upload(path,body,{contentType:'application/json',upsert:false});assert.equal(upload.error,null);
     const provider=`x/../../${other.id}/vault-apikey_openai`;
     await assert.rejects(getUserProviderKey(owner.id,provider),/Unsupported credential provider/);
-    await assert.rejects(deleteUserProviderKey(owner.id,provider),/Unsupported credential provider/);
+    await assert.rejects(deleteUserProviderKey(owner.context,provider),/Unsupported credential provider/);
     const retained=await admin.storage.from(bucket).download(path);assert.equal(retained.error,null);assert.equal(await retained.data!.text(),body);
     assert.equal((await listUserProviderKeys(owner.id)).some(key=>JSON.stringify(key).includes(canary)),false);
   } finally {const removed=await admin.storage.from(bucket).remove([path]);assert.equal(removed.error,null,'foreign synthetic object cleanup failed');}
@@ -635,6 +647,11 @@ test('profile activity keeps own and project-less entries but redacts a corrupt 
   const dashboardBody=await dashboard.text();assert.ok(!dashboardBody.includes('FOREIGN_PROJECT_NAME_CANARY'));assert.ok(dashboardBody.includes('PROJECTLESS_ACTIVITY_CANARY'));
   assert.equal((await request('/api/profile')).status,401);
   const promotion=await request('/api/profile',owner.token,'PATCH',{role:'owner',user_id:other.id});assert.equal(promotion.status,400);
+  const beforeOther=await admin.from('profiles').select('display_name,role').eq('id',other.id).single();assert.equal(beforeOther.error,null);
+  const updated=await request('/api/profile',owner.token,'PATCH',{display_name:'Owned profile fixture',timezone:'UTC'});assert.equal(updated.status,200);
+  const updatedProfile=await updated.json() as {id:string;display_name:string;timezone:string;role:string};
+  assert.equal(updatedProfile.id,owner.id);assert.equal(updatedProfile.display_name,'Owned profile fixture');assert.equal(updatedProfile.timezone,'UTC');assert.equal(updatedProfile.role,'member');
+  const afterOther=await admin.from('profiles').select('display_name,role').eq('id',other.id).single();assert.equal(afterOther.error,null);assert.deepEqual(afterOther.data,beforeOther.data);
   const profile=await request('/api/profile',owner.token);assert.equal(profile.status,200);
   const row=await profile.json() as {id:string;role:string};assert.equal(row.id,owner.id);assert.equal(row.role,'member');
 });

@@ -890,6 +890,7 @@ export async function getRunAsync(
     if (error || !data) {
       return null;
     }
+    if (data.id !== runId || data.user_id !== ownerId) return null;
 
     const rec: SwarmRunRecord = {
       id:
@@ -976,6 +977,10 @@ export async function getRunAsync(
 
     observedGenerations.set(rec, typeof data.lease_generation === 'string' ? data.lease_generation : null);
     if (fresh) return rec;
+    // A worker may have been admitted while the cold read was awaiting IO.
+    // Hydration must never replace the object carrying that attempt's authority.
+    const current = runs.get(runId);
+    if (current) return current.userId === ownerId ? current : null;
     runs.set(
       runId,
       rec,
@@ -1031,8 +1036,11 @@ export async function requestRunCancellation(
     return false;
   }
 
-  const cancelledAt =
+  let cancelledAt =
     new Date().toISOString();
+  let iterationCount = (hot?.iteration_count ?? 0) + 1;
+  let featureCategory = hot?.featureCategory;
+  let createdAt = hot?.created_at;
 
   const cancelledOutput = {
     type: 'error',
@@ -1050,38 +1058,7 @@ export async function requestRunCancellation(
       data,
       error,
     } =
-      await supabase
-        .from('swarm_runs')
-        .update({
-          status:
-            'cancelled',
-
-          output:
-            cancelledOutput,
-
-          completed_at:
-            cancelledAt,
-
-          worker_id:
-            null,
-
-          heartbeat_at:
-            null,
-          lease_generation: null,
-        })
-        .eq(
-          'id',
-          runId,
-        )
-        .eq(
-          'user_id',
-          userId,
-        )
-        .eq(
-          'status',
-          'running',
-        )
-        .select('id');
+      await supabase.rpc('cancel_swarm_run_owned', { p_run_id: runId, p_owner_id: userId });
 
     if (error) {
       throw new Error(
@@ -1089,11 +1066,20 @@ export async function requestRunCancellation(
       );
     }
 
-    if (
-      !data?.length
-    ) {
-      return false;
+    if (data === null) return false;
+    if (!data || typeof data !== 'object' || Array.isArray(data) || data.id !== runId || data.user_id !== userId ||
+        data.status !== 'cancelled' || data.lease_generation !== null ||
+        typeof data.completed_at !== 'string' || !Number.isFinite(Date.parse(data.completed_at)) ||
+        typeof data.created_at !== 'string' || !Number.isFinite(Date.parse(data.created_at)) ||
+        !Number.isSafeInteger(data.iteration_count) || data.iteration_count < 1 ||
+        !(data.feature_category === null || typeof data.feature_category === 'string') ||
+        data.output?.type !== cancelledOutput.type || data.output?.code !== cancelledOutput.code || data.output?.error !== cancelledOutput.error) {
+      throw new Error('Platform cancellation receipt is invalid.');
     }
+    cancelledAt = data.completed_at;
+    iterationCount = data.iteration_count;
+    featureCategory = data.feature_category ?? undefined;
+    createdAt = data.created_at;
   } else if (!hot) {
     return false;
   }
@@ -1110,7 +1096,7 @@ export async function requestRunCancellation(
     hot.completed_at =
       cancelledAt;
 
-    hot.iteration_count += 1;
+    hot.iteration_count = iterationCount;
 
     runs.set(
       runId,
@@ -1122,7 +1108,7 @@ export async function requestRunCancellation(
     );
   }
 
-  void recordTerminalBuildOutcomeFailOpen({
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) await recordTerminalBuildOutcomeFailOpen({
     runId,
 
     userId,
@@ -1131,21 +1117,20 @@ export async function requestRunCancellation(
       'cancelled',
 
     featureCategory:
-      hot?.featureCategory,
+      featureCategory,
 
     iterationCount:
-      hot?.iteration_count ??
-      0,
+      iterationCount,
 
     createdAt:
-      hot?.created_at,
+      createdAt,
 
     completedAt:
       cancelledAt,
 
     output:
       cancelledOutput,
-  });
+  }, new SupabaseBuildOutcomeStore({ kind: 'cancellation', completedAt: cancelledAt, output: cancelledOutput }));
 
   return true;
 }
@@ -1361,8 +1346,12 @@ export async function listRunsForUserAsync(
     }
 
     const persisted =
-      data.map(
+      data.flatMap(
         (row) => {
+          if (row.user_id !== userId || typeof row.id !== 'string' || !row.id) return [];
+          const current = runs.get(row.id);
+          if (current && current.userId !== userId) return [];
+          if (current && attemptGenerations.has(current)) return [current];
           const rec: SwarmRunRecord = {
             id:
               String(
@@ -1464,7 +1453,7 @@ export async function listRunsForUserAsync(
             rec.id,
           );
 
-          return rec;
+          return [rec];
         },
       );
 
@@ -1474,7 +1463,7 @@ export async function listRunsForUserAsync(
     // sources, preferring the live record for an ID that exists in each.
     return mergeRunHistory(
       persisted,
-      hot,
+      hot.map(rec => runs.get(rec.id) ?? rec),
       limit,
     );
   } catch {

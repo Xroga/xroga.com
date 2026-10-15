@@ -66,6 +66,19 @@ export class GrowthService {
       const campaign = await query<Row | null>(this.db.from('growth_campaigns').select('id').eq('id', input.campaignId).eq('tenant_id', tenantId).eq('project_id', input.projectId).maybeSingle(), 'Event campaign unavailable', null);
       if (!campaign) throw new GrowthServiceError('not_found', 'Event campaign not found', 404);
     }
+    if (input.referralId) {
+      // A platform referral UUID alone is not authority for this product. Use
+      // the existing server-owned project attribution, without inferring a new
+      // qualification or reward policy from either referral participant.
+      const attribution = await query<Row | null>(this.db.from('growth_referral_attribution')
+        .select('tenant_id,project_id,referral_id').eq('tenant_id', tenantId)
+        .eq('project_id', input.projectId).eq('referral_id', input.referralId).maybeSingle(),
+      'Event referral unavailable', null);
+      if (!attribution || attribution.tenant_id !== tenantId || attribution.project_id !== input.projectId
+        || attribution.referral_id !== input.referralId) {
+        throw new GrowthServiceError('not_found', 'Event referral not found', 404);
+      }
+    }
     const version = Number(input.name.match(/\.v([0-9]+)$/)?.[1] ?? 0);
     const rows = await query<Row[]>(this.db.from('analytics_events').insert({ user_id: userId, tenant_id: tenantId, project_id: input.projectId, event_type: input.name, event_version: version, idempotency_key: input.idempotencyKey, environment: input.environment, anonymous_id: input.anonymousId ?? null, session_id: input.sessionId ?? null, release_id: input.releaseId ?? null, deployment_id: input.deploymentId ?? null, campaign_id: input.campaignId ?? null, referral_id: input.referralId ?? null, experiment_id: input.experimentId ?? null, consent_state: input.consentState, source: input.source.slice(0, 80), evidence_reference: input.evidenceReference.slice(0, 500), metadata: redactGrowthPayload(input.metadata ?? {}), occurred_at: input.occurredAt ?? new Date().toISOString() }).select('*'), 'Event could not be recorded');
     return { event: rows[0], duplicate: false };

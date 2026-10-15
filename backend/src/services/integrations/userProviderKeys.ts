@@ -7,6 +7,8 @@
 
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
 import { getSupabaseAdmin } from '../../config/supabase.js';
+import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
+import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { isMissingTableError } from './githubTokenStore.js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 
@@ -466,45 +468,97 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
   });
 }
 
-export async function deleteUserProviderKey(userId: string, provider: string): Promise<void> {
+export async function deleteUserProviderKey(context: TenantContext, provider: string): Promise<void> {
+  const { userId } = requireTenantContext(context);
   // Historical disconnect alias is delete-only, never a supported save/read key.
   if (provider === 'supabase_service') {
-    await revokeProviderRow(userId, 'apikey_supabase_service');
+    await revokeProviderRow(context, 'apikey_supabase_service');
     return;
   }
   const p = credentialProviderSelection(provider);
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(context);
   // Only the legacy category-level request selects all custom keys. A named
   // custom credential must take the exact provider-row path below.
   if (p === 'custom') {
-    const { data, error } = await supabase
-      .from('user_integrations')
-      .select('provider')
-      .eq('user_id', userId)
-      .like('provider', `${PROVIDER_PREFIX}custom%`);
-    if (!error) {
-      for (const row of data ?? []) {
-        await revokeProviderRow(userId, row.provider);
+    const providers = new Set<string>();
+    let expectedCount: number | undefined;
+    for (let page = 0; page < 100; page++) {
+      const offset = page * 100;
+      const { data, error, count } = await supabase.from('user_integrations')
+        .select('user_id,provider', { count: 'exact' })
+        .eq('user_id', userId).like('provider', `${PROVIDER_PREFIX}custom%`)
+        .order('provider', { ascending: true }).range(offset, offset + 99);
+      if (error) throw new Error('Credential revocation could not be recorded. Retry shortly.');
+      if (!Array.isArray(data) || !Number.isSafeInteger(count) || count === null || count < 0 || count > 10000
+        || (expectedCount !== undefined && count !== expectedCount)
+        || data.length !== Math.min(100, Math.max(0, count - offset))) {
+        throw new Error('Custom credential database enumeration could not be completed. Retry shortly.');
       }
-    } else throw new Error('Credential revocation could not be recorded. Retry shortly.');
-    const stored = await listKeysFromStorage(userId);
-    for (const row of stored) {
-      if (String(row.provider).includes('custom')) {
-        await revokeProviderRow(userId, row.provider);
+      expectedCount = count;
+      for (const row of data) {
+        if (!row || row.user_id !== userId || !isCustomProviderRow(row.provider) || providers.has(row.provider)) {
+          throw new Error('Custom credential database enumeration changed. Retry shortly.');
+        }
+        providers.add(row.provider);
       }
+      if (providers.size === count) break;
+    }
+    if (expectedCount === undefined || providers.size !== expectedCount) {
+      throw new Error('Custom credential database enumeration exceeds the verified limit. Retry shortly.');
+    }
+    // Complete both inventories before the first mutation. Pagination is not a
+    // transaction snapshot, so concurrent new-key creation remains separate.
+    const stored = await listCustomRowsForRevocation(context);
+    for (const providerRow of stored) providers.add(providerRow);
+    for (const providerRow of providers) {
+      await revokeProviderRow(context, providerRow);
     }
     return;
   }
   const providerRow = `${PROVIDER_PREFIX}${p}`;
-  await revokeProviderRow(userId, providerRow);
+  await revokeProviderRow(context, providerRow);
+}
+
+function isCustomProviderRow(value: unknown): value is string {
+  return typeof value === 'string' && /^apikey_custom(?:_[a-z_][a-z0-9_]{1,63})?$/.test(value);
+}
+
+/** Revocation must prove enumeration, unlike optional display-only discovery. */
+async function listCustomRowsForRevocation(context: TenantContext): Promise<string[]> {
+  const { userId } = requireTenantContext(context);
+  const supabase = getTenantSupabaseAdmin(context);
+  const providers = new Set<string>();
+  const seenNames = new Set<string>();
+  const pageSize = 100;
+  for (let page = 0; page < 100; page++) {
+    const { data, error } = await supabase.storage.from(KEY_BUCKET).list(userId, {
+      limit: pageSize, offset: page * pageSize, sortBy: { column: 'name', order: 'asc' },
+    }).catch(() => ({ data: null, error: true }));
+    if (error || !Array.isArray(data) || data.length > pageSize) {
+      throw new Error('Custom credential cleanup could not be enumerated. Retry shortly.');
+    }
+    for (const file of data) {
+      if (!file || typeof file.name !== 'string' || !file.name || seenNames.has(file.name)) {
+        throw new Error('Custom credential cleanup enumeration changed. Retry shortly.');
+      }
+      seenNames.add(file.name);
+      if (!file.name.startsWith('vault-apikey_custom') || !file.name.endsWith('.json')) continue;
+      const providerRow = file.name.slice('vault-'.length, -'.json'.length);
+      if (!isCustomProviderRow(providerRow)) throw new Error('Custom credential cleanup name is invalid. Retry shortly.');
+      providers.add(providerRow);
+    }
+    if (data.length < pageSize) return [...providers];
+  }
+  throw new Error('Custom credential cleanup exceeds the verified enumeration limit. Retry shortly.');
 }
 
 /** Keep an authoritative denial even when a legacy mirror cannot be removed.
  * A missing database cannot safely certify revocation through Storage alone.
  */
-async function revokeProviderRow(userId: string, providerRow: string): Promise<void> {
+async function revokeProviderRow(context: TenantContext, providerRow: string): Promise<void> {
+  const { userId } = requireTenantContext(context);
   if (providerRow !== 'apikey_supabase_service') credentialProviderSelection(providerRow);
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(context);
   const { data,error } = await supabase.rpc('revoke_provider_key', {p_owner_id:userId,p_provider:providerRow});
   if (error || data !== true) throw new Error('Credential revocation could not be recorded. Retry shortly.');
   try {
@@ -831,7 +885,8 @@ export async function getUserSupabaseStatus(userId: string): Promise<UserSupabas
     /* ignore */
   }
   const ready = hasUrl && hasAnonKey && hasServiceRole;
-  const provisioned = ready && (hasAccessToken || hasDbPassword || oauthConnected);
+  // Credential presence is not evidence that schema or storage was provisioned.
+  const provisioned = false;
   return {
     connected: hasUrl || hasAnonKey || hasServiceRole || hasAccessToken || oauthConnected,
     ready,
@@ -842,12 +897,10 @@ export async function getUserSupabaseStatus(userId: string): Promise<UserSupabas
     hasAccessToken: hasAccessToken || oauthConnected,
     hasDbPassword,
     urlMasked: url?.masked,
-    message: provisioned
-      ? 'Your Supabase is connected and auto-provisioned — AI memory & storage live in YOUR project.'
+    message: ready
+      ? 'Keys configured. Schema and private storage setup have not been verified by this status check.'
       : oauthConnected
         ? 'Authorized — pick a project and Xroga sets up schema, memory & storage automatically.'
-        : ready
-          ? 'Keys saved. Authorize Supabase OAuth so Xroga can auto-run SQL on your project.'
           : 'Click Authorize Supabase — no keys to paste. Xroga handles keys, SQL, memory & storage.',
   };
 }
@@ -863,28 +916,34 @@ export interface ConnectUserSupabaseInput {
 
 /** Save URL + anon (+ optional service role) and auto-provision when possible. */
 export async function connectUserSupabase(
-  userId: string,
+  context: TenantContext,
   input: ConnectUserSupabaseInput,
 ): Promise<{
   status: UserSupabaseStatus;
   saved: UserProviderKeyStatus[];
   provision?: import('./supabaseProvision.js').ProvisionResult;
 }> {
+  const { userId } = requireTenantContext(context);
+  // Snapshot the whole request before admission or persistence can yield.
+  input = {
+    projectUrl: input.projectUrl.trim(), anonKey: input.anonKey.trim(),
+    serviceRoleKey: input.serviceRoleKey?.trim(), accessToken: input.accessToken?.trim(),
+    dbPassword: input.dbPassword?.trim(), projectName: input.projectName,
+  };
+  const entries: Array<[string, string]> = [
+    ['supabase_url', input.projectUrl], ['supabase_anon', input.anonKey],
+  ];
+  if (input.serviceRoleKey) entries.push(['supabase', input.serviceRoleKey]);
+  if (input.accessToken) entries.push(['supabase_pat', input.accessToken]);
+  if (input.dbPassword) entries.push(['supabase_db_password', input.dbPassword]);
+  const admissions = await Promise.all(entries.map(([provider]) => prepareUserProviderKeyWrite(userId, provider)));
   const saved: UserProviderKeyStatus[] = [];
-  saved.push(await saveUserProviderKey(userId, 'supabase_url', input.projectUrl.trim()));
-  saved.push(await saveUserProviderKey(userId, 'supabase_anon', input.anonKey.trim()));
+  for (const [index, [provider, value]] of entries.entries()) {
+    saved.push(await saveUserProviderKey(userId, provider, value, { writeAdmission: admissions[index] }));
+  }
   const service = input.serviceRoleKey?.trim();
-  if (service) {
-    saved.push(await saveUserProviderKey(userId, 'supabase', service));
-  }
   const accessToken = input.accessToken?.trim();
-  if (accessToken) {
-    saved.push(await saveUserProviderKey(userId, 'supabase_pat', accessToken));
-  }
   const dbPassword = input.dbPassword?.trim();
-  if (dbPassword) {
-    saved.push(await saveUserProviderKey(userId, 'supabase_db_password', dbPassword));
-  }
 
   let provision: import('./supabaseProvision.js').ProvisionResult | undefined;
   if (service && (accessToken || dbPassword)) {
@@ -917,7 +976,7 @@ export async function connectUserSupabase(
   const status = await getUserSupabaseStatus(userId);
   if (provision?.message) {
     status.message = provision.message;
-    if (provision.schemaApplied) status.provisioned = true;
+    status.provisioned = provision.ok && provision.schemaApplied && provision.memoryTablesReady;
   }
   return { status, saved, provision };
 }

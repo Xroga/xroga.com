@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { test } from 'node:test';
 import { deleteUserProviderKey, getUserProviderKey, listUserProviderKeys, resolveProviderEnvForDeploy } from './userProviderKeys.js';
+import { createTenantContext, type TenantContext } from '../../security/tenantContext.js';
 
 test('unavailable credential authority never reads a legacy mirror or reports successful revocation', async () => {
   const paths: string[] = [];
@@ -33,9 +34,16 @@ test('unavailable credential authority never reads a legacy mirror or reports su
   process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-local-test-key';
   try {
     const user = '11111111-1111-4111-8111-111111111111';
+    const context=createTenantContext({userId:user,via:'remote_getuser'});
+    for(const forged of [user,{...context},JSON.parse(JSON.stringify(context)),{userId:user},null]) {
+      for(const provider of ['openai','custom','supabase_service']) {
+        await assert.rejects(deleteUserProviderKey(forged as TenantContext,provider),{code:'TENANT_AUTH_REQUIRED'});
+      }
+    }
+    assert.equal(paths.length,0,'Unissued authority cannot enumerate, revoke, or clean up any provider');
     for (const provider of ['openai', 'custom', 'custom_named_key']) {
       assert.equal(await getUserProviderKey(user, provider), null);
-      await assert.rejects(deleteUserProviderKey(user, provider), { message: 'Credential revocation could not be recorded. Retry shortly.' });
+      await assert.rejects(deleteUserProviderKey(context, provider), { message: 'Credential revocation could not be recorded. Retry shortly.' });
     }
     await assert.rejects(listUserProviderKeys(user), { message: 'Credential lookup unavailable. Retry shortly.' });
     await assert.rejects(resolveProviderEnvForDeploy(user), { message: 'Credential lookup unavailable. Retry shortly.' });
@@ -43,7 +51,7 @@ test('unavailable credential authority never reads a legacy mirror or reports su
     assert.ok(paths.every((path) => path.startsWith('/rest/v1/user_integrations') || path.startsWith('/rest/v1/rpc/revoke_provider_key')), 'No Storage fallback may bypass unavailable revocation state');
     mode = 'cleanup';
     const start = paths.length;
-    await assert.rejects(deleteUserProviderKey(user, 'openai'), { message: 'Credential revoked, but legacy copy cleanup is pending. Retry shortly.' });
+    await assert.rejects(deleteUserProviderKey(context, 'openai'), { message: 'Credential revoked, but legacy copy cleanup is pending. Retry shortly.' });
     assert.ok(paths[start].startsWith('/rest/v1/rpc/revoke_provider_key'));
     assert.ok(paths[start + 1].startsWith('/storage/'));
     const tombstone = JSON.parse(bodies[start]);

@@ -487,7 +487,7 @@ router.post(
         provision,
       } =
         await connectUserSupabase(
-          req.userId!,
+          req.tenantContext!,
           {
             projectUrl:
               parsed.data
@@ -921,7 +921,7 @@ router.delete(
   ) => {
     try {
       await deleteUserProviderKey(
-        req.userId!,
+        req.tenantContext!,
         String(
           req.params
             .provider,

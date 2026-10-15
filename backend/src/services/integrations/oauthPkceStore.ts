@@ -10,6 +10,7 @@ import { requireTenantContext, type TenantContext } from '../../security/tenantC
 import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 
 const BUCKET = 'xroga-github-tokens';
+const sessionProviders = new Set(['supabase_oauth_pkce', 'vercel_oauth_pkce', 'cws_oauth_pkce', 'github_oauth_pkce']);
 
 function assertStorageIdentity(userId: string, provider: string): void {
   if (!/^[a-zA-Z0-9_-]{1,180}$/.test(userId) || !/^[a-zA-Z0-9_-]{1,180}$/.test(provider)) {
@@ -119,39 +120,19 @@ export async function storePkceSession(
 ): Promise<void> {
   const { userId } = requireTenantContext(context);
   assertStorageIdentity(userId, provider);
-
+  if (!sessionProviders.has(provider)) throw new Error('Unsupported OAuth session provider.');
   const supabase = getTenantSupabaseAdmin(context);
-  if (['supabase_oauth_pkce', 'vercel_oauth_pkce', 'cws_oauth_pkce', 'github_oauth_pkce'].includes(provider)) {
-    const { data, error } = await supabase.rpc('begin_oauth_session', {
-      p_owner_id: userId, p_provider: provider, p_session: session,
-    });
-    if (error || data !== true) throw new Error('OAuth session could not be saved. Retry shortly.');
-    // New sessions are database-only. A mirror is not authorization authority.
-    return;
-  }
-  const row = {
-    user_id: userId,
-    provider,
-    access_token: session.verifier,
-    metadata: {
-      state: session.state,
-      redirect_uri: session.redirect_uri,
-      nonce: session.nonce,
-      created_at: session.created_at,
-    },
-  };
-
-  const { error } = await supabase.from('user_integrations').upsert(row, {
-    onConflict: 'user_id,provider',
+  const { data, error } = await supabase.rpc('begin_oauth_session', {
+    p_owner_id: userId, p_provider: provider, p_session: session,
   });
-
-  if (error) throw new Error('OAuth session could not be saved. Retry shortly.');
-  await uploadJson(pkcePath(userId, provider), session);
+  if (error || data !== true) throw new Error('OAuth session could not be saved. Retry shortly.');
+  // All production sessions are database-only. A mirror is never admission.
 }
 
 export async function clearPkceSession(context: TenantContext, provider: string): Promise<void> {
   const { userId } = requireTenantContext(context);
   assertStorageIdentity(userId, provider);
+  if (!sessionProviders.has(provider)) throw new Error('Unsupported OAuth session provider.');
   const supabase = getTenantSupabaseAdmin(context);
   const { error } = await supabase.from('user_integrations').upsert({ user_id: userId, provider,
     access_token: '', refresh_token: null, metadata: { revoked: true } }, { onConflict: 'user_id,provider' });
@@ -163,7 +144,7 @@ export async function clearPkceSession(context: TenantContext, provider: string)
 export async function consumePkceSession(context: TenantContext, provider: string, expectedState: string): Promise<PkceSession | null> {
   const { userId } = requireTenantContext(context);
   assertStorageIdentity(userId, provider);
-  if (!['vercel_oauth_pkce', 'supabase_oauth_pkce', 'cws_oauth_pkce', 'github_oauth_pkce'].includes(provider)
+  if (!sessionProviders.has(provider)
     || typeof expectedState !== 'string' || expectedState.length < 16 || expectedState.length > 512) return null;
   const { data, error } = await getTenantSupabaseAdmin(context).rpc('consume_oauth_session', {
     p_owner_id: userId, p_provider: provider, p_state: expectedState,

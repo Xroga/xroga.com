@@ -7,6 +7,11 @@ import { createPrivateFileLink,downloadPrivateFile,revokePrivateFileLinks,public
 import { FileDeliveryError,fileResponseHeaders,selectFileRange } from '../services/storage/fileDeliveryPolicy.js';
 
 const router = Router();
+function fileParentMatches(row: {project_id?: unknown; projects?: unknown}, projectId: string, userId: string): boolean {
+  const parent = row.projects;
+  return row.project_id === projectId && !!parent && typeof parent === 'object' && !Array.isArray(parent)
+    && (parent as {user_id?: unknown}).user_id === userId;
+}
 
 router.use((req: AuthRequest, res, next) => {
   try { req.userId = requireTenantContext(req.tenantContext).userId; next(); }
@@ -78,96 +83,16 @@ router.post('/', async (req: AuthRequest, res) => {
 
   const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
 
-  if (parsed.data.github_repo_name) {
-    const { data: existing, error: lookupError } = await supabase
-      .from('projects')
-      .select('id')
-      .eq('user_id', req.userId!)
-      .eq('github_repo_name', parsed.data.github_repo_name)
-      .maybeSingle();
-
-    if (lookupError) {
-      res.status(503).json({ error: 'Project identity could not be checked. Retry shortly.' });
-      return;
-    }
-
-    if (existing) {
-      const { data, error } = await supabase
-        .from('projects')
-        .update({
-          name: parsed.data.name,
-          type: parsed.data.type,
-          github_repo_url: parsed.data.github_repo_url ?? null,
-          github_repo_name: parsed.data.github_repo_name,
-          status: 'completed',
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', existing.id)
-        .eq('user_id', req.userId!)
-        .select()
-        .single();
-      if (error) {
-        res.status(503).json({ error: 'Project could not be saved. Retry shortly.' });
-        return;
-      }
-      if (parsed.data.user_prompt?.trim()) {
-        await supabase.from('project_messages').insert({
-          project_id: existing.id,
-          role: 'user',
-          content: parsed.data.user_prompt.slice(0, 8000),
-          metadata: {
-            deployUrl: parsed.data.deploy_url,
-            githubRepoName: parsed.data.github_repo_name,
-            githubBranch: parsed.data.github_branch ?? 'main',
-            source: 'client_create',
-          },
-        });
-      }
-      res.status(200).json(data);
-      return;
-    }
-  }
-
-  const { data, error } = await supabase
-    .from('projects')
-    .insert({
-      user_id: req.userId!,
-      name: parsed.data.name,
-      type: parsed.data.type,
-      status: 'completed',
-      github_repo_url: parsed.data.github_repo_url ?? null,
-      github_repo_name: parsed.data.github_repo_name ?? null,
-    })
-    .select()
-    .single();
-
-  if (error) {
+  const { data, error } = await supabase.rpc('save_owned_project_atomic', {
+    p_owner_id: req.userId!, p_project: parsed.data,
+  });
+  if (error || !data || Array.isArray(data) || typeof data.created !== 'boolean'
+    || !data.project || Array.isArray(data.project) || data.project.user_id !== req.userId
+    || !z.string().uuid().safeParse(data.project.id).success) {
     res.status(503).json({ error: 'Project could not be saved. Retry shortly.' });
     return;
   }
-
-  if (parsed.data.user_prompt?.trim()) {
-    await supabase.from('project_messages').insert({
-      project_id: data.id,
-      role: 'user',
-      content: parsed.data.user_prompt.slice(0, 8000),
-      metadata: {
-        deployUrl: parsed.data.deploy_url,
-        githubRepoName: parsed.data.github_repo_name,
-        githubBranch: parsed.data.github_branch ?? 'main',
-        source: 'client_create',
-      },
-    });
-  }
-
-  await supabase.from('activity_logs').insert({
-    user_id: req.userId!,
-    project_id: data.id,
-    action: 'created_project',
-    details: { name: data.name, type: data.type },
-  });
-
-  res.status(201).json(data);
+  res.status(data.created ? 201 : 200).json(data.project);
 });
 
 router.delete('/:id', async (req: AuthRequest, res) => {
@@ -191,12 +116,14 @@ router.get('/:id/files', async (req: AuthRequest, res) => {
   const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
   const projectId = String(req.params.id);
 
-  const { data: project } = await supabase
+  const { data: project, error: projectError } = await supabase
     .from('projects')
     .select('id')
     .eq('id', projectId)
     .eq('user_id', req.userId!)
-    .single();
+    .maybeSingle();
+
+  if (projectError) { res.status(503).json({ error: 'Project authority is unavailable. Retry shortly.' }); return; }
 
   if (!project) {
     res.status(404).json({ error: 'Project not found' });
@@ -205,15 +132,16 @@ router.get('/:id/files', async (req: AuthRequest, res) => {
 
   const { data, error } = await supabase
     .from('project_files')
-    .select('*')
+    .select('*,projects!inner(user_id)')
     .eq('project_id', projectId)
+    .eq('projects.user_id', req.userId!)
     .order('created_at', { ascending: false });
 
-  if (error) {
+  if (error || data?.some(row => !fileParentMatches(row, projectId, req.userId!))) {
     res.status(503).json({ error: 'Files could not be loaded. Retry shortly.' });
     return;
   }
-  res.json((data??[]).map(row=>publicFileView(row)));
+  res.json((data??[]).map(({projects: _authority, ...row})=>publicFileView(row)));
 });
 
 /** Fetch stored code files for a project (AI + user restore). */
@@ -221,12 +149,14 @@ router.get('/:id/code', async (req: AuthRequest, res) => {
   const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
   const projectId = String(req.params.id);
 
-  const { data: project } = await supabase
+  const { data: project, error: projectError } = await supabase
     .from('projects')
     .select('id, github_repo_name')
     .eq('id', projectId)
     .eq('user_id', req.userId!)
-    .single();
+    .maybeSingle();
+
+  if (projectError) { res.status(503).json({ error: 'Project authority is unavailable. Retry shortly.' }); return; }
 
   if (!project) {
     res.status(404).json({ error: 'Project not found' });
@@ -235,17 +165,18 @@ router.get('/:id/code', async (req: AuthRequest, res) => {
 
   const { data, error } = await supabase
     .from('project_files')
-    .select('id, project_id, file_name, content, file_url, file_type, storage_metadata')
+    .select('id, project_id, file_name, content, file_url, file_type, storage_metadata,projects!inner(user_id)')
     .eq('project_id', projectId)
+    .eq('projects.user_id', req.userId!)
     .eq('file_type', 'code')
     .order('created_at', { ascending: false });
 
-  if (error) {
+  if (error || data?.some(row => !fileParentMatches(row, projectId, req.userId!))) {
     res.status(503).json({ error: 'Files could not be loaded. Retry shortly.' });
     return;
   }
 
-  res.json({ projectId, githubRepoName: project.github_repo_name, files: (data??[]).map(row=>publicFileView(row)) });
+  res.json({ projectId, githubRepoName: project.github_repo_name, files: (data??[]).map(({projects: _authority, ...row})=>publicFileView(row)) });
 });
 
 router.get('/:id', async (req: AuthRequest, res) => {

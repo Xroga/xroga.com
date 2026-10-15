@@ -25,6 +25,11 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
       if (fail) return res.end(JSON.stringify({ message: 'SYNTHETIC_PRIVATE_FAILURE', code: '42P01' }));
       if (url.pathname === '/storage/v1/bucket') return res.end(JSON.stringify([{ id: 'xroga-github-tokens', public: false }]));
       if (storage) return res.end(JSON.stringify({ access_token: 'stale', verifier: 'stale', state: 'state' }));
+      if (url.pathname === '/rest/v1/rpc/begin_oauth_session') {
+        rows.set(`${body.p_owner_id}/${body.p_provider}`, { user_id:body.p_owner_id, provider:body.p_provider,
+          access_token:body.p_session.verifier, metadata:body.p_session });
+        return res.end('true');
+      }
       if (url.pathname === '/rest/v1/rpc/save_oauth_connection') {
         const key=`${body.p_owner_id}/${body.p_provider}`,current=rows.get(key);
         if (!current || current.credential_revision!==body.p_revision
@@ -61,10 +66,10 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
     outage = true;
     assert.equal(await getUserPluginPermissionMode('owner', 'github'), 'always_ask');
     await assert.rejects(storeProviderToken('owner', 'provider', { access_token: 'token' }), /could not be saved/);
-    await assert.rejects(storePkceSession(context, 'pkce', session), /could not be saved/);
+    await assert.rejects(storePkceSession(context, 'supabase_oauth_pkce', session), /could not be saved/);
     await assert.rejects(clearProviderToken('owner', 'provider'), /could not be recorded/);
-    await assert.rejects(clearPkceSession(context, 'pkce'), /could not be recorded/);
-    assert.ok(calls.every(call => call.path === '/rest/v1/user_integrations'));
+    await assert.rejects(clearPkceSession(context, 'supabase_oauth_pkce'), /could not be recorded/);
+    assert.ok(calls.every(call => call.path === '/rest/v1/user_integrations' || call.path === '/rest/v1/rpc/begin_oauth_session'));
     outage = false;
     assert.equal(await getUserPluginPermissionMode('owner', 'github'), 'low_risk');
     await setUserPluginPermissionMode('owner', 'full_access');
@@ -85,17 +90,17 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
     assert.equal(await getUserPluginPermissionMode('owner', 'github'), 'always_ask');
     await storeProviderToken('owner', 'provider', { access_token: 'token' });
     await storeProviderToken('other', 'provider', { access_token: 'other-token' });
-    await storePkceSession(context, 'pkce', session);
+    await storePkceSession(context, 'supabase_oauth_pkce', session);
     cleanupFailure = true;
     await assert.rejects(clearProviderToken('owner', 'provider'), /legacy cleanup is pending/);
-    await assert.rejects(clearPkceSession(context, 'pkce'), /legacy cleanup is pending/);
+    await assert.rejects(clearPkceSession(context, 'supabase_oauth_pkce'), /legacy cleanup is pending/);
     calls.length = 0;
     assert.equal(await loadProviderToken('owner', 'provider'), null);
     assert.equal((await loadProviderToken('other', 'provider'))?.access_token, 'other-token');
     assert.ok(calls.every(call => call.path === '/rest/v1/user_integrations'));
     cleanupFailure = false;
     await clearProviderToken('owner', 'provider');
-    await clearPkceSession(context, 'pkce');
+    await clearPkceSession(context, 'supabase_oauth_pkce');
     await storeProviderToken('owner', 'provider', { access_token: 'reconnected' });
     assert.equal((await loadProviderToken('owner', 'provider'))?.access_token, 'reconnected');
     const expired = { access_token: 'EXPIRED', refresh_token: 'ORIGINAL_REFRESH', metadata: { expires_at: '2000-01-01T00:00:00Z' } };

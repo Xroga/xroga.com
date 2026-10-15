@@ -1893,16 +1893,24 @@ export interface BuildOutcomeStore {
 
 /** Captured from the admitted worker, never from a client/model outcome. */
 export interface BuildOutcomeAttempt {
+  kind?: 'worker';
   generation: string;
   completedAt: string;
   output: Record<string, unknown> | null;
 }
 
+/** Exact receipt returned by the canonical cancellation transaction. */
+export interface BuildOutcomeCancellation {
+  kind: 'cancellation';
+  completedAt: string;
+  output: Record<string, unknown>;
+}
+
 export class SupabaseBuildOutcomeStore
 implements BuildOutcomeStore {
-  private readonly attempt?: Readonly<BuildOutcomeAttempt>;
+  private readonly attempt?: Readonly<BuildOutcomeAttempt | BuildOutcomeCancellation>;
 
-  constructor(attempt?: BuildOutcomeAttempt) {
+  constructor(attempt?: BuildOutcomeAttempt | BuildOutcomeCancellation) {
     this.attempt = attempt ? Object.freeze(structuredClone(attempt)) : undefined;
   }
 
@@ -2038,10 +2046,11 @@ implements BuildOutcomeStore {
                 .toISOString(),
           };
     if (this.attempt) {
-      const { data, error } = await supabase.rpc('persist_build_outcome_attempt', {
+      const cancellation = this.attempt.kind === 'cancellation';
+      const { data, error } = await supabase.rpc(cancellation ? 'persist_cancelled_build_outcome' : 'persist_build_outcome_attempt', {
         p_run_id: outcome.runId,
         p_owner_id: context.userId,
-        p_generation: this.attempt.generation,
+        ...(this.attempt.kind === 'cancellation' ? {} : { p_generation: this.attempt.generation }),
         p_completed_at: this.attempt.completedAt,
         p_output: this.attempt.output,
         p_outcome: row,

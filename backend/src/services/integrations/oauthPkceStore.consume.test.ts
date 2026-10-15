@@ -70,5 +70,10 @@ test('session persistence and consumption reject raw, cloned or fabricated tenan
     await assert.rejects(buildVercelAuthorizeUrl(forged as TenantContext,session.redirect_uri),{code:'TENANT_AUTH_REQUIRED'});
     await assert.rejects(startCwsOAuth({...options,clientId:'synthetic-client',clientSecret:'synthetic-secret',extensionId:'synthetic-extension',publisherId:'synthetic-publisher'}),{code:'TENANT_AUTH_REQUIRED'});
   }
+  for(const provider of ['apikey_openai','vercel','github','supabase_oauth','xroga_plugin_permission_policy','synthetic_pkce']) {
+    await assert.rejects(storePkceSession(context,provider,session),/Unsupported OAuth session provider/);
+    await assert.rejects(clearPkceSession(context,provider),/Unsupported OAuth session provider/);
+    assert.equal(await consumePkceSession(context,provider,session.state),null);
+  }
   assert.equal(transport.mock.callCount(),0);
 });

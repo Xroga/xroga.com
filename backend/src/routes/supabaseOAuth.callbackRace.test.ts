@@ -18,6 +18,8 @@ const close=(server:Server)=>new Promise<void>((resolve,reject)=>server.close(er
 test('Supabase callback cannot resurrect derived keys after disconnect during project discovery',async()=>{
   const revisions=new Map<string,string>();
   const saved:string[]=[];
+  const attempted:string[]=[];
+  let createdProjects=0;
   let prepares=0,disconnect=true,projectCount=1,oauthToken='',selectRace=false;
   const state=Buffer.from(JSON.stringify({userId:owner})).toString('base64url');
   const database=createServer((req,res)=>{
@@ -37,6 +39,7 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
         oauthToken=body.p_access_token;reply(true);
       } else if(url.pathname.endsWith('/save_provider_key_if_current')) {
         assert.equal(body.p_owner_id,owner);
+        attempted.push(body.p_provider);
         const accepted=body.p_revision===revisions.get(body.p_provider);
         if(accepted){saved.push(body.p_provider);revisions.set(body.p_provider,randomUUID());}
         reply(accepted);
@@ -82,6 +85,12 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
       assert.equal(url.origin,'https://api.supabase.com','No other provider may be contacted');
       if(url.pathname==='/v1/oauth/token')return Response.json({access_token:'SYNTHETIC_OAUTH_TOKEN'});
       if(url.pathname==='/v1/projects') {
+        if(init?.method==='POST') {
+          assert.equal(prepares,5,'All five derived-key admissions precede project creation');
+          createdProjects++;
+          assert.equal((await originalFetch(`${origin}/disconnect`,{method:'DELETE'})).status,200);
+          return Response.json({id:'fixtureproject0'});
+        }
         if(disconnect)assert.equal((await originalFetch(`${origin}/disconnect`,{method:'DELETE'})).status,200);
         return Response.json(Array.from({length:projectCount},(_,i)=>({id:`fixtureproject${i}`,name:`Fixture ${i}`})));
       }
@@ -105,6 +114,12 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
       body:JSON.stringify({projectRef:'fixtureproject0'})});
     assert.equal(selected.status,400);assert.equal(selectRace,false);
     assert.deepEqual(saved,[]);assert.equal(prepares,4);assert.equal(oauthToken,'');
+    revisions.clear();saved.length=0;attempted.length=0;prepares=0;oauthToken='SYNTHETIC_CURRENT_TOKEN';
+    const created=await originalFetch(`${origin}/create-project`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:'Fixture',organizationId:'synthetic-org',userId:'22222222-2222-4222-8222-222222222222'})});
+    assert.equal(created.status,400);assert.equal(createdProjects,1);
+    assert.deepEqual(attempted,['apikey_supabase_db_password']);
+    assert.deepEqual(saved,[]);assert.equal(prepares,5);assert.equal(oauthToken,'');
     await new Promise<void>(resolve=>setTimeout(resolve,50));
   } finally {
     globalThis.fetch=originalFetch;

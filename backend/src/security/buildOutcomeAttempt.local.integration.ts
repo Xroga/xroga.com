@@ -5,6 +5,7 @@ import { test, type TestContext } from 'node:test';
 import pg from 'pg';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { buildOutcomeFromTerminalRun, SupabaseBuildOutcomeStore } from '../ai/buildOutcomeMemory.js';
+import { requestRunCancellation } from '../ai/runStore.js';
 
 type FixtureUser = { id: string; token: string };
 function guard(): void {
@@ -73,8 +74,63 @@ export function registerBuildOutcomeAttemptTests(admin: SupabaseClient, getUsers
     }
   });
 
-  test('real two-session learning write blocked on parent lock loses to resumed epoch', async t => {
+  async function cancelledFixture(t: TestContext) {
     const f = await fixture(t);
+    assert.equal((await admin.from('swarm_runs').update({ status: 'running', completed_at: null }).eq('id', f.runId).eq('user_id', f.owner.id)).error, null);
+    assert.equal(await requestRunCancellation(f.runId, f.owner.id), true);
+    const run = await admin.from('swarm_runs').select('*').eq('id', f.runId).eq('user_id', f.owner.id).single();
+    const saved = await admin.from('build_outcomes').select('*').eq('run_id', f.runId).eq('user_id', f.owner.id).single();
+    assert.equal(run.error, null); assert.equal(saved.error, null);
+    assert.equal(run.data.status, 'cancelled'); assert.equal(run.data.lease_generation, null);
+    assert.equal(run.data.iteration_count, 2); assert.equal(saved.data.terminal_status, 'cancelled');
+    assert.equal(saved.data.iteration_count, run.data.iteration_count);
+    return { ...f, saved: saved.data, args: { p_run_id: f.runId, p_owner_id: f.owner.id,
+      p_completed_at: run.data.completed_at, p_output: run.data.output, p_outcome: saved.data } };
+  }
+
+  test('real cancellation receipt rejects stale evidence, owner spoofing and browser execution', async t => {
+    const f = await cancelledFixture(t);
+    assert.equal(await requestRunCancellation(f.runId, f.owner.id), false);
+    assert.equal(await requestRunCancellation(f.runId, f.other.id), false);
+    for (const patch of [{ p_owner_id: f.other.id }, { p_completed_at: new Date(0).toISOString() },
+      { p_output: { type: 'other' } }, { p_outcome: { ...f.saved, iteration_count: 1 } },
+      { p_outcome: { ...f.saved, terminal_status: 'complete' } }, { p_outcome: { ...f.saved, success: true } },
+      { p_outcome: { ...f.saved, failure_code: 'OTHER' } }]) {
+      const denied = await admin.rpc('persist_cancelled_build_outcome', { ...f.args, ...patch });
+      assert.equal(denied.error, null); assert.equal(denied.data, false);
+    }
+    const workerNull = await admin.rpc('persist_build_outcome_attempt', { ...f.args, p_generation: null });
+    assert.equal(workerNull.error, null); assert.equal(workerNull.data, false, 'cancellation does not weaken worker fence');
+    assert.equal((await admin.rpc('persist_cancelled_build_outcome', f.args)).data, true);
+    const retained = await admin.from('build_outcomes').select('*').eq('run_id', f.runId).single();
+    assert.equal(retained.error, null); assert.deepEqual(retained.data, f.saved);
+    for (const token of [null, f.owner.token]) {
+      const browser = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {
+        auth: { persistSession: false, autoRefreshToken: false },
+        ...(token ? { global: { headers: { Authorization: `Bearer ${token}` } } } : {}),
+      });
+      assert.equal((await browser.rpc('cancel_swarm_run_owned', { p_run_id: f.runId, p_owner_id: f.owner.id })).error?.code, '42501');
+      assert.equal((await browser.rpc('persist_cancelled_build_outcome', f.args)).error?.code, '42501');
+    }
+  });
+
+  test('real concurrent cancellation claims produce one receipt and one iteration transition', async t => {
+    const f = await fixture(t);
+    assert.equal((await admin.from('swarm_runs').update({ status: 'running', completed_at: null }).eq('id', f.runId).eq('user_id', f.owner.id)).error, null);
+    const second = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false, autoRefreshToken: false } });
+    const args = { p_run_id: f.runId, p_owner_id: f.owner.id };
+    const claims = await Promise.all([admin.rpc('cancel_swarm_run_owned', args), second.rpc('cancel_swarm_run_owned', args)]);
+    for (const claim of claims) assert.equal(claim.error, null);
+    assert.equal(claims.filter(claim => claim.data === null).length, 1);
+    const receipt = claims.find(claim => claim.data !== null)!.data;
+    assert.equal(receipt.id, f.runId); assert.equal(receipt.user_id, f.owner.id); assert.equal(receipt.iteration_count, 2);
+    const final = await admin.from('swarm_runs').select('status,iteration_count,lease_generation,completed_at').eq('id', f.runId).eq('user_id', f.owner.id).single();
+    assert.equal(final.error, null); assert.equal(final.data?.status, 'cancelled'); assert.equal(final.data?.iteration_count, 2);
+    assert.equal(final.data?.lease_generation, null); assert.equal(Date.parse(final.data!.completed_at), Date.parse(receipt.completed_at));
+  });
+
+  for (const cancellation of [false, true]) test(`real two-session ${cancellation ? 'cancellation' : 'worker'} learning write blocked on parent lock loses to resumed epoch`, async t => {
+    const f = cancellation ? await cancelledFixture(t) : await fixture(t);
     const url = new URL(process.env.XB01_LOCAL_DATABASE_URL!);
     assert.equal(url.hostname, '127.0.0.1'); assert.equal(url.port, '54322'); assert.equal(url.pathname, '/postgres');
     const locker = new pg.Client({ connectionString: url.href, ssl: false });
@@ -88,8 +144,11 @@ export function registerBuildOutcomeAttemptTests(admin: SupabaseClient, getUsers
       await writer.query('set role service_role');
       await locker.query('begin');
       await locker.query('select id from public.swarm_runs where id=$1 and user_id=$2 for update', [f.runId, f.owner.id]);
-      pending = writer.query('select public.persist_build_outcome_attempt($1,$2,$3,$4,$5,$6) as ok',
-        [f.runId, f.owner.id, f.args.p_generation, f.args.p_completed_at, JSON.stringify(f.args.p_output), JSON.stringify(f.args.p_outcome)]);
+      pending = cancellation
+        ? writer.query('select public.persist_cancelled_build_outcome($1,$2,$3,$4,$5) as ok',
+          [f.runId, f.owner.id, f.args.p_completed_at, JSON.stringify(f.args.p_output), JSON.stringify(f.args.p_outcome)])
+        : writer.query('select public.persist_build_outcome_attempt($1,$2,$3,$4,$5,$6) as ok',
+          [f.runId, f.owner.id, 'p_generation' in f.args ? f.args.p_generation : null, f.args.p_completed_at, JSON.stringify(f.args.p_output), JSON.stringify(f.args.p_outcome)]);
       // Attach rejection handling immediately, but still assert the actual result below.
       void pending.catch(() => {});
       let blocked = false;

@@ -43,6 +43,12 @@ before(async () => {
       const single = String(req.headers.accept).includes('pgrst.object');
       if (url.pathname.endsWith('/profiles')) {res.end(JSON.stringify(single ? {id:OWNER} : [{id:OWNER}]));return;}
       if (url.pathname.endsWith('/user_token_usage')) {res.end(JSON.stringify(single ? {user_id:OWNER} : [{user_id:OWNER}]));return;}
+      if (url.pathname.endsWith('/rpc/save_owned_project_atomic')) {
+        if (body.p_project?.github_repo_name === 'lookup-failure') {
+          res.statusCode=400;res.end(JSON.stringify({code:'XX000',message:'PRIVATE_LOOKUP_DIAGNOSTIC'}));return;
+        }
+        res.end(JSON.stringify({created:true,project:{id:OWN_PROJECT,user_id:body.p_owner_id,...body.p_project}}));return;
+      }
       if (url.pathname.endsWith('/terminal_sessions')) {
         if(req.method==='POST') {
           assert.match(String(req.headers.prefer),/ignore-duplicates/,'Foreign terminal identity must never be merged over');
@@ -97,13 +103,15 @@ test('own project reads work; foreign project/files are non-enumerating and file
 test('project creation ignores malicious owner fields and binds server identity', async () => {
   const response=await fetch(`${apiUrl}/api/projects`,{method:'POST',headers:headers(),body:JSON.stringify({name:'Owner fixture',type:'app',userId:OTHER,user_id:OTHER,tenant_id:OTHER})});
   assert.equal(response.status,201);
-  const insertion=calls.filter(call=>call.path.endsWith('/projects')&&call.method==='POST').at(-1);assert.equal(insertion?.body.user_id,OWNER);
+  const insertion=calls.filter(call=>call.path.endsWith('/rpc/save_owned_project_atomic')).at(-1);assert.equal(insertion?.body.p_owner_id,OWNER);
+  assert.deepEqual(insertion?.body.p_project,{name:'Owner fixture',type:'app'});
 });
-test('project creation denies unavailable repository identity before any mutation', async () => {
+test('project creation denies unavailable repository transaction without independent child writes', async () => {
   const before=calls.filter(call=>call.method!=='GET').length;
   const response=await fetch(`${apiUrl}/api/projects`,{method:'POST',headers:headers(),body:JSON.stringify({name:'Fixture',type:'app',github_repo_name:'lookup-failure',user_prompt:'must not persist'})});
   assert.equal(response.status,503);assert.ok(!(await response.text()).includes('PRIVATE_LOOKUP_DIAGNOSTIC'));
-  assert.equal(calls.filter(call=>call.method!=='GET').length,before);
+  const writes=calls.filter(call=>call.method!=='GET').slice(before);
+  assert.equal(writes.length,1);assert.ok(writes[0].path.endsWith('/rpc/save_owned_project_atomic'));
 });
 
 test('foreign cached conversation cannot mutate run history; unknown and foreign read the same safe state', async () => {
