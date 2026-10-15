@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ad8863532ff1d051135d0804b226ed15742b9dcb",
+  "source_sha": "319ccde5c4754fed693eaf89c470f3bb20bd9109",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -531,6 +531,7 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/routes/github.ts",
+        "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
@@ -596,6 +597,7 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/routes/github.ts",
+        "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
@@ -6818,6 +6820,7 @@
     {
       "name": "CI",
       "consuming_sources": [
+        "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
@@ -9413,6 +9416,7 @@
       "name": "SUPABASE_ANON_KEY",
       "consuming_sources": [
         "backend/src/config/supabase.ts",
+        "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "environments": [
@@ -9646,6 +9650,7 @@
         "backend/src/middleware/auth.ts",
         "backend/src/routes/dashboard.ts",
         "backend/src/routes/swarm.ts",
+        "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/BillingService.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
@@ -9688,6 +9693,7 @@
         "backend/src/lib/postgresConnect.ts",
         "backend/src/lib/resolveIdentity.ts",
         "backend/src/lib/verifyJwt.ts",
+        "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
@@ -10293,6 +10299,7 @@
     {
       "name": "XB01_DISPOSABLE_SUPABASE",
       "consuming_sources": [
+        "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
@@ -11471,7 +11478,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a"
+      "sha256": "c69b9a087fe4b008eb5f76abc57430c69da66c23c05dea055102af84e77cfacd"
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",
@@ -12458,6 +12465,10 @@
       "sha256": "8b240ab552b5d1134b69bad79c31827d4a3854a623b7d045adbb0f45e556dc11"
     },
     {
+      "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+      "sha256": "38b3f9aa78f7afb9b067febbc738ea637713243a28525ed2b06251a33ce5c62a"
+    },
+    {
       "path": "backend/src/security/serviceRoleGuard.ts",
       "sha256": "4987c92eba0570950dac65354c9f5edd4d7152c2ad86ad591bd4680450cb6a65"
     },
@@ -12471,7 +12482,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "bafe2b8a9290577892b90d0f22f4ac27fd7dd8d1b76a9f6a1a0a5a3c8b4845ff"
+      "sha256": "30a886841b58740d6a13971dcbbe519b561bac7351f6c390a971a04130c68298"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12567,7 +12578,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f"
+      "sha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -17917,43 +17928,50 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
-      "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 42,
+      "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+      "line": 11,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 42,
+      "line": 43,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 246,
+      "line": 43,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 248,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 296,
+      "line": 298,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 377,
+      "line": 379,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 529,
+      "line": 531,
       "credentialsInUrl": false
     },
     {
@@ -24057,7 +24075,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 950,
+      "line": 952,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24281,7 +24299,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 791,
+      "line": 774,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

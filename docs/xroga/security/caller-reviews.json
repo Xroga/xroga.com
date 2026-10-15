@@ -4,11 +4,18 @@
     {
       "path": "backend/src/security/boundedPublicGet.ts",
       "sourceSha256": "4e65815a53307b4e4941e305bd84ab9eac9ea0720e71a84b4f5b7b2278dad76c",
-      "callIds": ["c918befd08426d6bc94f"],
+      "callIds": [
+        "c918befd08426d6bc94f"
+      ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "This candidate is Node Buffer.from converting an already received stream chunk before byte accounting. No database, storage bucket, identity or service-role client is accessed at this expression.",
       "reason": "Source tracing proves a byte conversion rather than persistence. The enclosing inactive GET helper has separate SSRF and byte/time fixtures, but this disposition certifies neither future callers nor complete egress policy.",
-      "evidence": [{"path":"backend/src/security/boundedPublicGet.ts","marker":"const chunk = Buffer.isBuffer(item.value) ? item.value : Buffer.from(item.value);"}]
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "const chunk = Buffer.isBuffer(item.value) ? item.value : Buffer.from(item.value);"
+        }
+      ]
     },
     {
       "path": "backend/src/ai/benchmarkRunner.ts",
@@ -763,28 +770,28 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "sourceSha256": "c69b9a087fe4b008eb5f76abc57430c69da66c23c05dea055102af84e77cfacd",
       "callIds": [
-        "69399cbc53adb1e48cd1",
-        "cebac520523e7750af6b",
-        "755cc9be6ebd49fdf53c",
-        "124208d0016fcbc7cbc5",
-        "db5693de45b7d0dbc591",
-        "0073e6aa55133b15867b",
-        "51256378255c76165a51",
-        "1702cdfcf0d67914f993",
-        "e2d3167330a9a2fe2aa9",
-        "15d9c684147f39fda493",
-        "d5949983383a7a3ad482",
-        "c911f50140ca10cfe04f",
-        "dde861aeacaa1d1c163c",
-        "e2e3c8e4432a8fb9d311",
-        "b2034fc33172ee23f655",
-        "7c0f2e006d135063a654"
+        "d5d008d780795acfabe7",
+        "cb3307239d59fcd908bc",
+        "d8a1d14f565486fa970f",
+        "ec9aceced5c85f502583",
+        "8f16c442670fb66e89f6",
+        "2eeb01e186bd6e06836e",
+        "db86037d6fcf150ca413",
+        "b1ee8b27ee7357b7bdf7",
+        "6c1f756fa774a2929fa5",
+        "96be2b9dbc1110a9086b",
+        "53c30e1341b6b4cbe1d2",
+        "2f2319bcb0b668008420",
+        "8bcc7c24955b79c805a2",
+        "bf9352f1ba35a1a9716b",
+        "82141eefbd263e2e0ecc",
+        "99108c9c95c1ea6e6429"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
-      "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+      "reason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
       "evidence": [
         {
           "path": "backend/src/ai/providerBudget.evidence.test.ts",
@@ -1105,7 +1112,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
+      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
       "callIds": [
         "241716ea497721fe54e5",
         "b413c3ab1ace9d65accf",
@@ -1124,7 +1131,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
+      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
       "callIds": [
         "1820ca770e3eb79483c2",
         "5430d13294eb1a13f663",
@@ -1133,28 +1140,29 @@
         "67ccfcf6b0247b2d271d",
         "f68c7243e8023c812ac6",
         "64cda88c40a2dea3b929",
-        "7678dd8c2ff7d9451dc1",
-        "d025e09ce0208d1d0612",
-        "0f3395fb6a71eb421ea8",
-        "b076c1c4bf66ec7f3154",
-        "8818dd3f4cbea04bba6c",
-        "e712f825297f73e76d20",
-        "9988bf3aa279bdf15867",
-        "986cb07b032a907ca999",
-        "52dfcaab9b5f39116d78",
-        "dc97b761954360052133",
-        "67f79f2406e93fba048c",
-        "044b3e7925d35505dfde",
-        "2a8ae80954984f4cfbe6",
-        "3bb4f5d80fd923e568fe"
+        "c277727569550e57ef91",
+        "5cb4a73659dee97d0b6e",
+        "0715ea0df7d94145ca55",
+        "06d1beceaf7785213d0a",
+        "5aeaef001b840fea33ba",
+        "ddbf968addc59fd8ee32",
+        "a3d50063b036971ec880",
+        "ba97216f0fc0cb59644a",
+        "5f7819a21fc0daa0d37e",
+        "42786f09181d109e2515",
+        "1f3d8c10c1191ee67781"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
-      "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+      "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
+      "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
       "evidence": [
         {
-          "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
-          "marker": "unavailable credential authority never reads a legacy mirror"
+          "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+          "marker": "rejects a concurrent revoke"
+        },
+        {
+          "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+          "marker": "real provider revision binds exact owner"
         }
       ]
     },
@@ -3752,9 +3760,31 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
+      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
       "callIds": [
         "e948275ac03420374cc6"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
+      "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+          "marker": "rejects a concurrent revoke"
+        },
+        {
+          "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+          "marker": "real provider revision binds exact owner"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubTokenStore.ts",
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
+      "callIds": [
+        "5af0dfecb133879330e2",
+        "2aa98c887631896938dc",
+        "e8a7ea96116a374773c0"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
@@ -3767,12 +3797,12 @@
       ]
     },
     {
-      "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
       "callIds": [
-        "5af0dfecb133879330e2",
-        "2aa98c887631896938dc",
-        "e8a7ea96116a374773c0"
+        "bbd3d5ae788daaa73756",
+        "fe866cc3c765522289c0",
+        "76b0463f680baea80661"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",

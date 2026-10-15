@@ -10,6 +10,10 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/ai/providerBudget.settlement.test.ts",
+    "backend/src/security/providerKeyRevision.local.integration.ts",
+    "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+    "supabase/migrations/20261015000400_provider_key_revision_fencing.sql",
     "backend/src/ai/runStore.authority.test.ts",
     "backend/src/ai/runStore.resume.test.ts",
     "supabase/migrations/20261015000300_swarm_run_attempt_fencing.sql",
@@ -220,6 +224,7 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
+      "supabase/migrations/20261015000400_provider_key_revision_fencing.sql",
       "supabase/migrations/20261015000300_swarm_run_attempt_fencing.sql",
       "supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql",
       "supabase/migrations/20261013221254_private_project_file_delivery.sql",

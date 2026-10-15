@@ -5694,7 +5694,7 @@
       "id": "surface:faad5cf834fc5eb65afc",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "sha256": "c69b9a087fe4b008eb5f76abc57430c69da66c23c05dea055102af84e77cfacd",
       "symbols": [
         "BudgetPurpose",
         "EntitlementStatus",
@@ -5729,6 +5729,8 @@
         "entitlement",
         "error",
         "estimateProviderReservationMicroUsd",
+        "exactAccountingCount",
+        "exactCount",
         "existingReservation",
         "expired",
         "failure",
@@ -5747,6 +5749,7 @@
         "pending",
         "percent",
         "price",
+        "providerCompleted",
         "purpose",
         "requireUsageCounts",
         "reservation",
@@ -5787,6 +5790,7 @@
         "backend/src/ai/converter.ts:2",
         "backend/src/ai/pipeline.ts:42",
         "backend/src/ai/providerBudget.evidence.test.ts:4",
+        "backend/src/ai/providerBudget.settlement.test.ts:4",
         "backend/src/ai/providerBudget.test.ts:3",
         "backend/src/ai/repoSummarize.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:14",
@@ -5808,7 +5812,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/providerBudget.ts:183 (user_id)"
+        "backend/src/ai/providerBudget.ts:189 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [
@@ -5830,6 +5834,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/providerBudget.evidence.test.ts",
+        "backend/src/ai/providerBudget.settlement.test.ts",
         "backend/src/ai/providerBudget.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
@@ -23173,7 +23178,7 @@
         "backend/src/routes/supabaseOAuth.ts:10",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6",
         "backend/src/services/integrations/supabaseProvision.ts:526",
-        "backend/src/services/integrations/userProviderKeys.ts:804"
+        "backend/src/services/integrations/userProviderKeys.ts:787"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23308,8 +23313,8 @@
         "backend/src/routes/supabaseOAuth.ts:20",
         "backend/src/security/tenantIsolation.local.integration.ts:40",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
-        "backend/src/services/integrations/userProviderKeys.ts:867",
-        "backend/src/services/integrations/userProviderKeys.ts:876"
+        "backend/src/services/integrations/userProviderKeys.ts:850",
+        "backend/src/services/integrations/userProviderKeys.ts:859"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -23342,7 +23347,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
+      "sha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -23412,6 +23417,7 @@
         "parts",
         "pat",
         "plain",
+        "prepared",
         "provider",
         "providerCatalog",
         "providerRow",
@@ -23473,6 +23479,7 @@
         "backend/src/services/integrations/credentialMirrorRace.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:58",
         "backend/src/services/integrations/supabaseProvision.ts:10",
+        "backend/src/services/integrations/userProviderKeys.revision.test.ts:5",
         "backend/src/services/integrations/userProviderKeys.revocation.test.ts:4",
         "backend/src/services/integrations/userProviderKeys.test.ts:3",
         "backend/src/services/publish/chromeWebStore.ts:12",
@@ -23494,11 +23501,11 @@
       ],
       "tenantBoundary": [
         "backend/src/services/integrations/userProviderKeys.ts:63 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:408 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:453 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:566 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:587 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:610 (user_id)"
+        "backend/src/services/integrations/userProviderKeys.ts:394 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:439 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:549 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:570 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:593 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -23506,6 +23513,7 @@
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/credentialMirrorRace.test.ts",
+        "backend/src/services/integrations/userProviderKeys.revision.test.ts",
         "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
         "backend/src/services/integrations/userProviderKeys.test.ts"
       ],
@@ -84427,7 +84435,7 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "b2dfcf97b88ea6ecb3ae85f2a164d9671468abb3cc4d6ef92a173665c53e56f3",
+      "sha256": "4fed84176aa416be17168aa8747b7e9955494a135cce38cc26b79eca56d0109d",
       "symbols": [
         "actual",
         "afterPolicies",
@@ -94319,7 +94327,14 @@
       "sourcePath": "supabase/migrations/20261015000300_swarm_run_attempt_fencing.sql",
       "version": "20261015000300",
       "order": 72,
-      "sha256": "e44b1e815ee36ac0cc71a77b99e3c1eac3a8eb6d3d9787ab99fa056d3983e6e0"
+      "sha256": "1dc3e170a9f437fd8066ebf08c4f7a055fa0555d258c0f346bba461f9167e98d"
+    },
+    {
+      "id": "migration:f7344e1805f4442d5e18",
+      "sourcePath": "supabase/migrations/20261015000400_provider_key_revision_fencing.sql",
+      "version": "20261015000400",
+      "order": 73,
+      "sha256": "3b1c35d2bc2117b9ae04261bcccf89a03c4a98d0df9daed08a8609860901082b"
     }
   ],
   "workflows": [
@@ -101216,9 +101231,16 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:64bbebb1ea8bdf910c3b",
+      "sourcePath": "backend/src/ai/providerBudget.settlement.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:0497d6afd3cbf29c9bfe",
       "sourcePath": "backend/src/ai/providerBudget.test.ts",
-      "declaredTests": 11,
+      "declaredTests": 12,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101974,6 +101996,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:e317bdcc8525180a373a",
+      "sourcePath": "backend/src/security/providerKeyRevision.local.integration.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:ac541d563efcbc546c08",
       "sourcePath": "backend/src/security/serviceRoleGuard.test.ts",
       "declaredTests": 1,
@@ -102152,6 +102181,13 @@
       "id": "test-suite:daadaf70bc883c8e260b",
       "sourcePath": "backend/src/services/integrations/universalRepositoryHydration.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:2c374c0f57692dc25324",
+      "sourcePath": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
