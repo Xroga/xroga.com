@@ -1,5 +1,11 @@
 # Xroga OS Batch 01 implementation tracker
 
+## 2026-10-15 continuation — billing ownership candidate
+
+Verified prior candidate: feature `c41a5ac71827263ab542adc2b474544caa76027b`, actual integrated API/web `5fc967fb9d5f6017a12d1e4e1e836d676726e633`, main parent `caba3dc7a4d2798bcdadade9ced814cf79960a4c`. Aggregate38632740211 PASS on BOTH source trees, each two complete21-stage runs. Feature backend2823/frontend1038; integrated backend2823/frontend1046; each guards20/combined73, no failed/skipped tests or source mutation. Real Supabase38632740228 PASS38 security cases/3 browsers/all69 fresh+representative-upgrade migrations; golden38632740206 PASS including actual local font bytes. Font/aggregate reliability correction has passing evidence for these exact trees. This does not certify the following new edits.
+
+Current unverified billing candidate fixes existing membership owner overwrite, transactional foreign membership/payment collision, lost webhook retry claim and raw exception persistence.14 focused tests PASS;70-file SQL syntax check PASS, full real history/40-case suite and complete repeated aggregate pending. See BILLING_OWNER_BOUNDARY.md for rollback and residual first-binding/staged-provider limitations.73/669 conservative callers classified:15 scoped boundaries,2 narrow exceptions,10 non-persistence,46 reviewed gaps;596 unreviewed and642 unresolved including gaps. Command007 remains IN PROGRESS,008–010 NOT STARTED, PR803 DRAFT, Batch1 NO-GO. No merge/deployment/cloud write/charge/production SQL occurred.
+
 ## Latest candidate — MCP patch and honest PR integration evidence
 
 Source correction:38619968286's actual expected, web and API revision is `f2585ccf44a37c75a9987c09e510979a4e8c919e`; `b1202530` is the PR event head, NOT an equal-tree runtime claim. The branch and virtual merge have different trees because main advanced. Future manifests must distinguish all three exact SHAs. The integration preflight verifies the actual first parent and its ancestry from GitHub's reported (potentially old) base snapshot, not silently assuming the snapshot is latest main.

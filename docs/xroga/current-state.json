@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "adfc30c62f6543ad6ba8e3611e50b7abe8aaaeb8",
-    "sourceTimestampUtc": "2026-10-15T01:20:06+05:00",
-    "auditStartedUtc": "2026-10-14T20:30:41.498Z",
+    "sha": "c41a5ac71827263ab542adc2b474544caa76027b",
+    "sourceTimestampUtc": "2026-10-15T01:30:54+05:00",
+    "auditStartedUtc": "2026-10-15T09:06:54.453Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -17623,11 +17623,12 @@
       "id": "surface:3211d837a0678bf0750e",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
-      "sha256": "2a438580330af97260dd1881013aaeb2ca38f880117fdee57b628a6272354918",
+      "sha256": "b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897",
       "symbols": [
         "error",
         "event",
         "eventType",
+        "knownCodes",
         "payloadDigest",
         "rawBody",
         "result",
@@ -17652,7 +17653,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:24"
+        "backend/src/index.ts:24",
+        "backend/src/routes/billingWebhook.test.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -17675,7 +17677,9 @@
         "backend/src/routes/billingWebhook.ts#eventType",
         "backend/src/routes/billingWebhook.ts#verifyWhopWebhookSignature"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/routes/billingWebhook.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -20953,7 +20957,7 @@
       "id": "surface:9b0c1b5d45c8637e2209",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/BillingService.ts",
-      "sha256": "bc750eb441692ffd9f6f53309b39fadeabce505dcd2af7ec2046403873e40d7a",
+      "sha256": "5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
       "symbols": [
         "APPROVED_ACCOUNT_ID",
         "APPROVED_PLAN_ID",
@@ -20983,11 +20987,13 @@
         "companyId",
         "data",
         "date",
+        "db",
         "encoded",
         "endsAt",
         "expected",
         "fiveMinuteWindow",
         "historical",
+        "inserted",
         "isPaid",
         "key",
         "manageUrl",
@@ -21017,6 +21023,7 @@
         "supported",
         "timestampSeconds",
         "type",
+        "updated",
         "url",
         "userId",
         "value",
@@ -21045,7 +21052,9 @@
       ],
       "callers": [
         "backend/src/routes/billing.ts:3",
+        "backend/src/routes/billingWebhook.test.ts:7",
         "backend/src/routes/billingWebhook.ts:3",
+        "backend/src/security/tenantIsolation.local.integration.ts:33",
         "backend/src/services/BillingService.test.ts:4"
       ],
       "reachable": true,
@@ -21061,7 +21070,8 @@
       "authBoundary": [],
       "tenantBoundary": [
         "backend/src/services/BillingService.ts:1152 (user_id)",
-        "backend/src/services/BillingService.ts:1220 (user_id)"
+        "backend/src/services/BillingService.ts:1220 (user_id)",
+        "backend/src/services/BillingService.ts:2075 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [
@@ -21078,6 +21088,8 @@
         "backend/src/services/BillingService.ts#verifyWhopWebhookSignature"
       ],
       "testCoverage": [
+        "backend/src/routes/billingWebhook.test.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/BillingService.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -87030,7 +87042,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:7134249dd5f8d8f4d72c",
+      "id": "registration:d211260a7f5b396be59c",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
       "line": 8,
       "receiver": "router",
@@ -87044,9 +87056,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:ef6e246f17de52fe5c15",
+      "id": "registration:076b9996b5f0ce4e5653",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
-      "line": 81,
+      "line": 86,
       "receiver": "router",
       "method": "post",
       "path": "/lemon-squeezy",
@@ -87058,9 +87070,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4f1cb724c8777ff313dc",
+      "id": "registration:c806f94dcf5e909fc6ac",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
-      "line": 85,
+      "line": 90,
       "receiver": "router",
       "method": "post",
       "path": "/paddle",
@@ -89506,8 +89518,8 @@
   ],
   "routes": [
     {
-      "id": "route:a291b18559fab9209b93",
-      "registrationId": "registration:7134249dd5f8d8f4d72c",
+      "id": "route:012396d9796a19ef9284",
+      "registrationId": "registration:d211260a7f5b396be59c",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
       "line": 8,
       "method": "POST",
@@ -89521,10 +89533,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:89e6f299f76b9d456f9a",
-      "registrationId": "registration:ef6e246f17de52fe5c15",
+      "id": "route:abdb4c59bb673c38da2c",
+      "registrationId": "registration:076b9996b5f0ce4e5653",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
-      "line": 81,
+      "line": 86,
       "method": "POST",
       "path": "/api/billing/webhook/lemon-squeezy",
       "mountChain": [
@@ -89536,10 +89548,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:398384c77d0321f18de3",
-      "registrationId": "registration:4f1cb724c8777ff313dc",
+      "id": "route:99891acd03643f9edef9",
+      "registrationId": "registration:c806f94dcf5e909fc6ac",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
-      "line": 85,
+      "line": 90,
       "method": "POST",
       "path": "/api/billing/webhook/paddle",
       "mountChain": [
@@ -94027,6 +94039,13 @@
       "version": "20261013221254",
       "order": 69,
       "sha256": "b39f5df3553853f2ac6425970ada444ff45e5a310a1dfdf380ff8ef1d203712c"
+    },
+    {
+      "id": "migration:870f5fdf97c5fd5f350e",
+      "sourcePath": "supabase/migrations/20261015000100_whop_membership_owner_boundary.sql",
+      "version": "20261015000100",
+      "order": 70,
+      "sha256": "331716a142c80d4b8d94cb2428dd5030c6a362dc0d072f1826362d256f336447"
     }
   ],
   "workflows": [
@@ -101484,6 +101503,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:282ee7d2da39584e2d7c",
+      "sourcePath": "backend/src/routes/billingWebhook.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:34d84e09fcecbb621069",
       "sourcePath": "backend/src/routes/guestChat.test.ts",
       "declaredTests": 5,
@@ -101647,14 +101673,14 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 38,
+      "declaredTests": 40,
       "skipLocations": [],
       "focusLocations": []
     },
     {
       "id": "test-suite:91e85398e5908426ad0b",
       "sourcePath": "backend/src/services/BillingService.test.ts",
-      "declaredTests": 12,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },

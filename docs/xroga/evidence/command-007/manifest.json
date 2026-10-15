@@ -1,6 +1,22 @@
 {
   "command": "007",
   "status": "IN_PROGRESS_RELEASE_BLOCKED",
+  "scopedProof20261015": {
+    "featureSha":"c41a5ac71827263ab542adc2b474544caa76027b",
+    "integratedRuntimeSha":"5fc967fb9d5f6017a12d1e4e1e836d676726e633",
+    "mainParentSha":"caba3dc7a4d2798bcdadade9ced814cf79960a4c",
+    "aggregateCi":"https://github.com/Xroga/xroga.com/actions/runs/38632740211",
+    "isolatedCi":"https://github.com/Xroga/xroga.com/actions/runs/38632740228",
+    "goldenCi":"https://github.com/Xroga/xroga.com/actions/runs/38632740206",
+    "frontendBuildCi":"https://github.com/Xroga/xroga.com/actions/runs/38632740177",
+    "result":"PASS_SCOPED_REGRESSION_NOT_FULL_COMMAND007_ACCEPTANCE",
+    "featureBaseline":{"repeats":2,"stages":21,"backend":2823,"frontend":1038,"guards":20,"combinedFixtures":73,"fail":0,"skipped":0,"sourceTreeMutated":false},
+    "integratedBaseline":{"repeats":2,"stages":21,"backend":2823,"frontend":1046,"guards":20,"combinedFixtures":73,"fail":0,"skipped":0,"sourceTreeMutated":false},
+    "realTenantCases":38,"realBrowserCases":3,"fullFreshAndRepresentativeUpgradeFiles":69,
+    "fontFacesAndAssetHashes":"PASS","productionTelemetryRequests":0,
+    "realR2":"NOT_EXECUTED","staging":"BLOCKED","productionKms":"BLOCKED",
+    "subsequentBillingCandidate":"NOT_CERTIFIED_BY_THIS_EVIDENCE"
+  },
   "integratedFirstRun": {
     "sha":"131ac75600d28f3c90f1c573344a75f76cab9be0",
     "aggregateCi":"https://github.com/Xroga/xroga.com/actions/runs/38577911283",

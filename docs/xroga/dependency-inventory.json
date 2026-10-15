@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "adfc30c62f6543ad6ba8e3611e50b7abe8aaaeb8",
+  "source_sha": "c41a5ac71827263ab542adc2b474544caa76027b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -573,6 +573,8 @@
         "VERCEL_OAUTH_CLIENT_ID",
         "VERCEL_OAUTH_CLIENT_SECRET",
         "VERCEL_OAUTH_SCOPES",
+        "WHOP_COMPANY_ID",
+        "WHOP_PLAN_ID",
         "XB01_DISPOSABLE_SUPABASE",
         "XB01_LOCAL_DATABASE_URL",
         "XROGA_DEPLOYMENT_ENVIRONMENT",
@@ -3067,6 +3069,8 @@
         "SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
+        "WHOP_COMPANY_ID",
+        "WHOP_PLAN_ID",
         "XB01_DISPOSABLE_SUPABASE",
         "XB01_LOCAL_DATABASE_URL"
       ],
@@ -4284,6 +4288,8 @@
         "SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
+        "WHOP_COMPANY_ID",
+        "WHOP_PLAN_ID",
         "XB01_DISPOSABLE_SUPABASE",
         "XB01_LOCAL_DATABASE_URL"
       ],
@@ -10166,6 +10172,7 @@
     {
       "name": "WHOP_COMPANY_ID",
       "consuming_sources": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/BillingService.ts"
       ],
       "environments": [
@@ -10179,12 +10186,16 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-api-whop-com"
+        "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
       "name": "WHOP_PLAN_ID",
       "consuming_sources": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/BillingService.ts"
       ],
       "environments": [
@@ -10198,7 +10209,10 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-api-whop-com"
+        "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -12254,7 +12268,7 @@
     },
     {
       "path": "backend/src/routes/billingWebhook.ts",
-      "sha256": "2a438580330af97260dd1881013aaeb2ca38f880117fdee57b628a6272354918"
+      "sha256": "b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897"
     },
     {
       "path": "backend/src/routes/capabilities.ts",
@@ -12450,7 +12464,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "cd97a52552984d742e22f330201bb091c9689018b96e684588304e97f6447957"
+      "sha256": "0b6234eb297371a8b1bd1c1adaab90be69d9fd8416754f1f320cedc55cf668ee"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12458,7 +12472,7 @@
     },
     {
       "path": "backend/src/services/BillingService.ts",
-      "sha256": "bc750eb441692ffd9f6f53309b39fadeabce505dcd2af7ec2046403873e40d7a"
+      "sha256": "5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30"
     },
     {
       "path": "backend/src/services/ensureUserRecords.ts",
@@ -17893,35 +17907,35 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 34,
+      "line": 35,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 34,
+      "line": 35,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 134,
+      "line": 135,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 184,
+      "line": 185,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 265,
+      "line": 266,
       "credentialsInUrl": false
     },
     {
@@ -23919,6 +23933,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/routes/billingWebhook.ts",
+      "line": 75,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/routes/capabilities.ts",
       "line": 46,
       "scope": "MODULE_LIFETIME",
@@ -24011,7 +24032,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 567,
+      "line": 568,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

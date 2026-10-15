@@ -30,6 +30,7 @@ import { authorizedPreviewTarget } from '../synthesis/livePreview/access.js';
 import type { LivePreviewGrant } from '../synthesis/livePreview/types.js';
 import type { ProjectRuntimeSession } from '../synthesis/projectRuntime/types.js';
 import { createLivePreviewGrant, getLivePreviewGrant, revokeLivePreviewGrants } from '../synthesis/livePreview/store.js';
+import { BillingService } from '../services/BillingService.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -598,4 +599,59 @@ test('real catalog and RPC denial prevent browser roles mutating own or foreign 
     }
     const after=await admin.from('user_token_usage').select('*').in('user_id',users.map(user=>user.id)).order('user_id');assert.equal(after.error,null);assert.deepEqual(after.data,before.data);
   } finally {await db.end();}
+});
+
+test('real membership callbacks preserve existing ownership and reject competing tenant creation',async(t)=>{
+  const [owner,other]=users;
+  const previousPlan=process.env.WHOP_PLAN_ID,previousCompany=process.env.WHOP_COMPANY_ID;
+  process.env.WHOP_PLAN_ID='plan_hlV1A10I5QfSP';process.env.WHOP_COMPANY_ID='biz_qhYONL4RebGX96';
+  t.after(()=>{previousPlan===undefined?delete process.env.WHOP_PLAN_ID:process.env.WHOP_PLAN_ID=previousPlan;previousCompany===undefined?delete process.env.WHOP_COMPANY_ID:process.env.WHOP_COMPANY_ID=previousCompany;});
+  const membership=`mem_fixture_${randomUUID()}`;
+  await insert('whop_memberships',{user_id:other.id,whop_membership_id:membership,whop_plan_id:'plan_hlV1A10I5QfSP',whop_account_id:'biz_qhYONL4RebGX96',status:'active'});
+  const read=async(id:string)=>{const r=await admin.from('whop_memberships').select('*').eq('whop_membership_id',id).single();assert.equal(r.error,null);return r.data;};
+  const event=(id:string,user:string)=>({type:'membership.activated' as const,account_id:'biz_qhYONL4RebGX96',data:{id,plan_id:'plan_hlV1A10I5QfSP',status:'active',metadata:{xroga_user_id:user,source:'xroga',plan_tier:'spark'}}});
+  const before=await read(membership);
+  await assert.rejects(BillingService.handleWebhookEvent(event(membership,owner.id),'fixture'),/membership_owner_mismatch/);
+  assert.deepEqual(await read(membership),before);
+  assert.deepEqual(await BillingService.handleWebhookEvent(event(membership,other.id),'fixture'),{fulfilled:false});
+  const race=`mem_fixture_${randomUUID()}`;
+  const results=await Promise.allSettled(users.map(user=>BillingService.handleWebhookEvent(event(race,user.id),'fixture')));
+  assert.equal(results.filter(r=>r.status==='fulfilled').length,1);
+  const denied=results.find(r=>r.status==='rejected');assert.ok(denied?.status==='rejected');assert.match(String(denied.reason),/membership_owner_mismatch/);
+  const winner=results.findIndex(r=>r.status==='fulfilled');assert.equal((await read(race))?.user_id,users[winner].id);
+});
+
+test('real Whop fulfillment rolls back foreign membership collisions and binds concurrent payment replay',async()=>{
+  const [owner,other]=users;
+  const member=`mem_fixture_${randomUUID()}`;
+  await insert('whop_memberships',{user_id:other.id,whop_membership_id:member,whop_plan_id:'plan_hlV1A10I5QfSP',whop_account_id:'biz_qhYONL4RebGX96',status:'active'});
+  const args=(userId:string,payment:string,membership:string)=>({p_user_id:userId,p_webhook_id:`msg_${payment}`,p_payment_id:payment,p_membership_id:membership,p_member_id:null,p_checkout_configuration_id:null,p_plan_id:'plan_hlV1A10I5QfSP',p_account_id:'biz_qhYONL4RebGX96',p_starts_at:'2026-10-15T00:00:00Z',p_ends_at:'2026-11-14T00:00:00Z',p_manage_url:null});
+  const snapshot=async()=>{
+    const result:Record<string,unknown>={};
+    for(const table of ['whop_memberships','whop_payment_fulfillments','xroga_billing_cycles','user_actions','action_transactions','user_token_usage']){
+      const r=await admin.from(table).select('*').in('user_id',users.map(u=>u.id));assert.equal(r.error,null);
+      result[table]=(r.data??[]).map(row=>JSON.stringify(row)).sort();
+    }
+    return result;
+  };
+  const before=await snapshot();
+  const denied=await admin.rpc('fulfill_whop_payment',args(owner.id,`pay_fixture_${randomUUID()}`,member));
+  assert.match(denied.error?.message??'',/membership_owner_mismatch/);
+  assert.deepEqual(await snapshot(),before,'all preceding entitlement, budget and payment changes must roll back');
+  for(const bearer of [undefined,owner.token]){
+    const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{...(bearer?{global:{headers:{Authorization:`Bearer ${bearer}`}}}:{}),auth:{persistSession:false,autoRefreshToken:false}});
+    const forbidden=await client.rpc('fulfill_whop_payment',args(owner.id,`pay_fixture_${randomUUID()}`,member));
+    assert.ok(forbidden.error&&['42501','PGRST202'].includes(forbidden.error.code));
+  }
+  assert.deepEqual(await snapshot(),before);
+  const raceMember=`mem_fixture_${randomUUID()}`;
+  const payments=users.map(()=>`pay_fixture_${randomUUID()}`);
+  const raced=await Promise.all(users.map((user,index)=>admin.rpc('fulfill_whop_payment',args(user.id,payments[index],raceMember))));
+  assert.equal(raced.filter(r=>r.data===true&&!r.error).length,1);
+  assert.equal(raced.filter(r=>r.error?.message.includes('membership_owner_mismatch')).length,1);
+  const winner=raced.findIndex(r=>r.data===true&&!r.error),loser=1-winner;
+  const stored=await admin.from('whop_memberships').select('user_id,whop_payment_id').eq('whop_membership_id',raceMember).single();assert.equal(stored.error,null);assert.equal(stored.data?.user_id,users[winner].id);assert.equal(stored.data?.whop_payment_id,payments[winner]);
+  const missing=await admin.from('whop_payment_fulfillments').select('id').eq('whop_payment_id',payments[loser]);assert.equal(missing.error,null);assert.deepEqual(missing.data,[]);
+  const replay=await admin.rpc('fulfill_whop_payment',args(users[winner].id,payments[winner],raceMember));assert.equal(replay.error,null);assert.equal(replay.data,false);
+  const foreignReplay=await admin.rpc('fulfill_whop_payment',args(users[loser].id,payments[winner],raceMember));assert.match(foreignReplay.error?.message??'',/payment_owner_mismatch/);
 });

@@ -47,11 +47,15 @@ router.post('/whop', express.raw({ type: 'application/json', limit: '1mb' }), as
       res.status(200).json({ received: true, duplicate: true });
       return;
     }
-    const { error: retryError } = await supabase.from('webhook_deliveries').update({
+    const { data: retryClaim, error: retryError } = await supabase.from('webhook_deliveries').update({
       status: 'processing', safe_error: null, response_status: null, updated_at: new Date().toISOString(),
-    }).eq('provider', 'whop').eq('delivery_id', webhookId).eq('status', 'failed');
+    }).eq('provider', 'whop').eq('delivery_id', webhookId).eq('status', 'failed').select('delivery_id');
     if (retryError) {
       res.status(503).json({ error: 'Webhook delivery store unavailable' });
+      return;
+    }
+    if (retryClaim?.length !== 1) {
+      res.status(200).json({ received: true, duplicate: true });
       return;
     }
   } else if (claimError) {
@@ -68,7 +72,8 @@ router.post('/whop', express.raw({ type: 'application/json', limit: '1mb' }), as
     console.info(JSON.stringify({ level: 'info', event: 'whop_webhook_processed', webhookId, eventType, fulfilled: result.fulfilled }));
     res.status(200).json({ received: true, fulfilled: result.fulfilled });
   } catch (error) {
-    const safeError = error instanceof Error ? error.message.slice(0, 80) : 'processing_failed';
+    const knownCodes = new Set(['wrong_account', 'membership_owner_mismatch', 'payment_owner_mismatch', 'membership_sync_failed']);
+    const safeError = error instanceof Error && knownCodes.has(error.message) ? error.message : 'processing_failed';
     await supabase.from('webhook_deliveries').update({
       status: 'failed', safe_error: safeError, response_status: 500,
       completed_at: new Date().toISOString(), updated_at: new Date().toISOString(),

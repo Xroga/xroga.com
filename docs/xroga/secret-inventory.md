@@ -1,6 +1,6 @@
 # Environment/secret NAME inventory
 
-Source SHA: `adfc30c62f6543ad6ba8e3611e50b7abe8aaaeb8`. Values are prohibited, including public credential values. 209 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
+Source SHA: `c41a5ac71827263ab542adc2b474544caa76027b`. Values are prohibited, including public credential values. 209 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
 
 | Name | Class | Requiredness | Consuming source | Validation status |
 | --- | --- | --- | --- | --- |
@@ -172,8 +172,8 @@ Source SHA: `adfc30c62f6543ad6ba8e3611e50b7abe8aaaeb8`. Values are prohibited, i
 | VERCEL_TEAM_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/lib/vercel.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | VERCEL_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/config/envSecrets.ts, backend/src/lib/platformReady.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | WHOP_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/config/envSecrets.ts, backend/src/lib/platformReady.ts, backend/src/services/BillingService.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
-| WHOP_COMPANY_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/services/BillingService.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
-| WHOP_PLAN_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/services/BillingService.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| WHOP_COMPANY_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/security/tenantIsolation.local.integration.ts, backend/src/services/BillingService.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| WHOP_PLAN_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/security/tenantIsolation.local.integration.ts, backend/src/services/BillingService.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | WHOP_REDIRECT_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/services/BillingService.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | WHOP_WEBHOOK_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/config/envSecrets.ts, backend/src/lib/platformReady.ts, backend/src/routes/billingWebhook.ts, backend/src/services/BillingService.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/ai/black-hole/webIntelligence.ts, backend/src/ai/openaiCompat.ts, backend/src/ai/research.ts, backend/src/ai/universal/semanticRequestPlanner.ts, backend/src/capabilities/modules/xResearch.ts, backend/src/config/envSecrets.ts, backend/src/lib/capabilityRegistry.ts, backend/src/lib/platformReady.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |

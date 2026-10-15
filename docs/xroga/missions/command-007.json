@@ -10,6 +10,12 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/services/BillingService.ts",
+    "backend/src/services/BillingService.test.ts",
+    "backend/src/routes/billingWebhook.ts",
+    "backend/src/routes/billingWebhook.test.ts",
+    "supabase/migrations/20261015000100_whop_membership_owner_boundary.sql",
+    "docs/xroga/security/BILLING_OWNER_BOUNDARY.md",
     "backend/src/services/integrations/userProviderKeys.ts",
     "backend/src/services/integrations/userProviderKeys.test.ts",
     "backend/src/security/mcpDependency.test.ts",
@@ -152,7 +158,8 @@
     "changed": true,
     "migrations": [
       "supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql",
-      "supabase/migrations/20261013221254_private_project_file_delivery.sql"
+      "supabase/migrations/20261013221254_private_project_file_delivery.sql",
+      "supabase/migrations/20261015000100_whop_membership_owner_boundary.sql"
     ],
     "rollout": "Expand-only staged restrictive policies; do not apply production until full isolated history/upgrade/E2E/staging gates pass",
     "rollback": "Revert private delivery entry points first, retain expanded metadata/data and all prior RLS. Any scoped SQL rollback needs separate review; never re-enable unsafe public/local fallback or delete existing files"
@@ -183,8 +190,8 @@
       "description": "No pricing/accounting/budget engine change"
     },
     "billing": {
-      "changed": false,
-      "description": "No live payment or charges changed"
+      "changed": true,
+      "description": "Existing callback and fulfillment ownership hardened; foreign membership/payment collisions deny and roll back, retry claims require an affected row, error details are allowlisted. Same prices/allowances, no live payment/provider/configuration changes. New migration restricted to isolated CI until staged approval."
     }
   },
   "tests": [

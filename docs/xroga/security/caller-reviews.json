@@ -2,6 +2,42 @@
   "version": "1.0",
   "reviews": [
     {
+      "path":"backend/src/services/BillingService.ts",
+      "sourceSha256":"5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
+      "callIds":["286bc857714c82f17839","47650e2cf3cc7a9cb97a","c7ed0ee2e36c6c8eaf43"],
+      "disposition":"NOT_PERSISTENCE",
+      "authority":"These three expressions are Buffer.from conversions of webhook signing material or candidate signatures inside the raw-body HMAC verifier; they do not call a database or credential store.",
+      "reason":"The verifier checks a bounded timestamp and uses timingSafeEqual after equal-length validation. This classification only removes false persistence candidates; it does not certify webhook authority, provider metadata, or subsequent membership writes.",
+      "evidence":[{"path":"backend/src/services/BillingService.test.ts","marker":"Standard Webhooks signature verifies the exact raw body"}]
+    },
+    {
+      "path":"backend/src/services/BillingService.ts",
+      "sourceSha256":"5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
+      "callIds":["bcf1e04eaa94fcd2b425","45eeadd879c4d719c11d","65834d9357acbb12a84d","4247256e8f4c4793be3e"],
+      "disposition":"SCOPED_BOUNDARY",
+      "authority":"All production callers of createCustomerPortal/getUserBillingStatus are in routes/billing.ts and pass req.userId; index.ts mounts that router behind authMiddleware. Neither route admits a body/query owner or membership identifier. Helpers have no exported injected database client.",
+      "reason":"Fixed membership projections restrict the server-issued actor and select only its latest subscription. Portal URLs are limited to HTTPS Whop destinations without userinfo. This records the inspected read boundary and caller provenance, not certification of every entitlement helper or provider callback.",
+      "evidence":[{"path":"backend/src/index.ts","marker":"authMiddleware, billingRouter"},{"path":"backend/src/routes/billing.ts","marker":"BillingService.createCustomerPortal(req.userId!)"}]
+    },
+    {
+      "path":"backend/src/services/BillingService.ts",
+      "sourceSha256":"5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
+      "callIds":["b05e41f8f6ba770ee40c","e7b9dbdcf629027dc864","d25e2a7bfb9c46b63136","22f42a26e3ba5039379f","aa292515b336efa98092","63a6800a547d149e963d","20abcd5b1c109c8a31ab","de843e620bbc4282ef23","9ab1c2977596ae4e732a"],
+      "disposition":"REVIEWED_GAP",
+      "authority":"The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
+      "reason":"Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used.",
+      "evidence":[{"path":"backend/src/services/BillingService.test.ts","marker":"membership callback denies a foreign owner"},{"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real Whop fulfillment rolls back foreign membership collisions"}]
+    },
+    {
+      "path":"backend/src/routes/billingWebhook.ts",
+      "sourceSha256":"b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897",
+      "callIds":["d56574a3766af9147051","a6afa682e6720f74c5eb","a098417cad519154bb8c","a485fd4bfefe62e3a06b","fee0359b6cd677a28d16","dbd23ead1b173e8e7f03"],
+      "disposition":"REVIEWED_GAP",
+      "authority":"This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
+      "reason":"Lost retry claims no longer execute and arbitrary error text no longer enters logs/safe_error. Remaining durable completion-update failure handling, crash recovery, actual signed-provider integration and first-account binding require acceptance evidence. This is not a blanket global exception or completion of Command008's future action authority.",
+      "evidence":[{"path":"backend/src/routes/billingWebhook.test.ts","marker":"signed webhook retry requires an acquired row"},{"path":"backend/src/routes/billingWebhook.ts","marker":"if (!verifyWhopWebhookSignature(rawBody"}]
+    },
+    {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
       "sourceSha256": "a76327fe8aa60335ae03512413de7a5dfa921c01df24d7d538c9c040fefab94e",
       "callIds": ["c2c53ad00a2bf16323ab","c6ebceaa755ce9241fa9","2e75e200c72f254980c6","d85e6b6345b22ef727df","63d4e8eaf75cec58374e","2f8fe9eb8ec536c6fe4f","7f7791ff48a1bd811756","c3076cc8c8662245bed9","7bfc78c279a5e8ca3411","ef1ad2d1b3b69f9f5c41","adba7e1b629b7e17d6d7","08634e84eb5e85ac5bb1","920d688d339a2a5d8af0","da757aa701f0dc326566","fdcc3e194068a98955a8","671c232d98ba0bbe146e","9c318fe6e0e34a043b7d","5c1bbd460f235c1db06c","edcdccfabd6aa744e666","c8b8c3f4fb260546ee86","67efb8385a7ca3cb0245"],
