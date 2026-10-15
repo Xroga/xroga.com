@@ -1,8 +1,25 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createPublicKey, verify } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { historicalShareSchema, readHistoricalShareSchema } from './historical-share-fixture.mjs';
 import { assertDisposableConfiguration, assertDisposedStack, redactLocalLog, generateLocalSigningKey, generateLocalApiToken, disposableCliPackages } from './disposable-supabase.mjs';
 const safe = {CI:'true',XB01_DISPOSABLE_SUPABASE:'1',RUNNER_TEMP:'/tmp/xroga-fixture',GITHUB_ENV:'/tmp/fixture-env'};
+
+test('upgrade coverage retains complete historical share SQL after runtime bootstrap removal', () => {
+  const sql = readHistoricalShareSchema();
+  for (const fragment of ['CREATE TABLE IF NOT EXISTS public.message_shares', 'message_shares_response_present',
+    'idx_message_shares_owner_created', 'ENABLE ROW LEVEL SECURITY', 'Owners manage message shares',
+    'WITH CHECK (auth.uid() = owner_id)', 'TO service_role', 'TO authenticated', "NOTIFY pgrst, 'reload schema'"]) assert.ok(sql.includes(fragment));
+  assert.equal(historicalShareSchema.originalCommit, '4472cc0e3fa94eb564abd903d7e3d071546adb25');
+  assert.equal(readHistoricalShareSchema(() => sql.replace(/\n/g, '\r\n')), sql);
+  assert.throws(() => readHistoricalShareSchema(() => sql.replace('ENABLE ROW LEVEL SECURITY', 'DISABLE ROW LEVEL SECURITY')), /integrity mismatch/);
+  assert.throws(() => readHistoricalShareSchema(() => ''), /integrity mismatch/);
+  const harness = readFileSync(new URL('./full-supabase-history.mjs', import.meta.url), 'utf8');
+  assert.ok(harness.includes('readHistoricalShareSchema()'));
+  assert.ok(harness.includes('...disposableCliPackages'));
+  assert.ok(!harness.includes("readFileSync(join(root,'backend/src/db/ensureMessageSharesSchema.ts')"));
+});
 
 test('disposable CLI explicitly requires the matching pinned Linux binary instead of optional-install success',()=>{
   assert.deepEqual(disposableCliPackages,['--package=supabase@2.120.0','--package=@supabase/cli-linux-x64@2.120.0']);

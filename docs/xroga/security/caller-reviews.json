@@ -549,12 +549,12 @@
     },
     {
       "path": "backend/src/services/referralService.ts",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "callIds": [
         "e2c73bf3424617a06286",
         "70bdc84f64915c28b126",
         "ccefc2a2294c47378b70",
-        "65bb2aff998578ed86e6"
+        "095c552d5ddbbe5bc4fd"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
@@ -637,24 +637,24 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "callIds": [
         "6553f4da0cba8aa42483",
         "7f875d23aca7e6d0076c",
         "1d0f9138d7856b7597e9",
         "4b9f704a1dbd4f4490ad",
-        "b337b52d79fafb0c2ca9",
-        "f54db66080705df359ac",
-        "bb5d073f739fd03e053a",
-        "59934bf8afd33680c8d2",
-        "2ae47f2e3356e61ddd99",
-        "67de24dafa1ffc333f24",
-        "b5e5c871ae7499766e2f",
-        "ac839d45e45270524ad0",
-        "84efec4fafe7043133a0",
-        "c34d5e31579715c11691",
-        "f711bb105d89ef517bf8",
-        "40e050471991e59545a9"
+        "a25df06099ef73e458d0",
+        "433a81aaa1b2203a4982",
+        "b817001a6eefc5fa5c56",
+        "24fa8b793586098a99d5",
+        "5600fde4ecba16ac729b",
+        "e7e829e1957a1981ac1b",
+        "392af08cd1defc992ba6",
+        "ca011991675244b3c155",
+        "d4290b280c724367a917",
+        "7db766f1c27abb1bfeb5",
+        "bf2fb9c5c4c69f4da580",
+        "a78c7005abf7772670ca"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
@@ -1684,7 +1684,7 @@
     },
     {
       "path": "backend/src/services/referralService.ts",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "callIds": [
         "d572b5a570bf7a6e8210"
       ],
@@ -3876,10 +3876,10 @@
     },
     {
       "path": "backend/src/services/referralService.ts",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "callIds": [
         "9c2259647165ca9d72c7",
-        "6fc393e62e052c967f89"
+        "274201176af8184d5260"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact-owner profile re-read after a unique creation race and apply_referral_code_atomic RPC. Only routes/referrals.ts supplies the issued request context behind authMiddleware. The service-only function serializes the owner profile, denies existing/self links and commits pending referral evidence and profile linkage together without rewards.",
@@ -3901,10 +3901,10 @@
     },
     {
       "path": "backend/src/services/referralService.ts",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "callIds": [
         "5d597ec498081269f488",
-        "66df501264869d6eb8e5"
+        "d4711d7af15f45b5805c"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "All three referral service factories require the existing issued TenantContext and derive owner from that immutable context. Only authenticated referrals routes call the exported helpers, and those routes require req.tenantContext. JSON objects, raw strings and cloned contexts fail before privileged client creation.",
@@ -3922,18 +3922,27 @@
     },
     {
       "path": "backend/src/services/referralService.ts",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "callIds": [
         "585534b618b55038d21f",
-        "fb4d0a1caadc7d2d5dc2"
+        "19013a85522f8091214b",
+        "b84d863183aaa4892dcd"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Issued authenticated context scopes the summary referrals and reward rows. The profiles display-label query derives IDs from those actor-owned referral rows, not request input.",
-      "reason": "Retained gap for corrupt or mismatched referral relation trust and display-label disclosure. Existing foreign reward and profile canaries do not independently prove this label read. No blanket referral-service certification.",
+      "authority": "Issued authenticated context scopes summary referrals/rewards. Before any label read, every referral code must match the actor profile code, self-links are denied, and a second user_referral_profiles read requires exact referred IDs plus referred_by_user_id=actor and referred_by_code=actor code. Complete unique receipts are validated before profiles display-name lookup.",
+      "reason": "Corrupt relation disclosure fixed with focused positive/empty and missing, foreign, mismatched, duplicate, substituted and unavailable backlink negatives. New real disposable test covers missing/wrong-owner/wrong-code backlinks, valid linked label and corrupt referral code. Final-source database execution pending, so all three label-boundary sites remain REVIEWED_GAP until that evidence is verified.",
       "evidence": [
         {
           "path": "backend/src/services/referralService.ts",
           "marker": "select('id,display_name').in('id', ids)"
+        },
+        {
+          "path": "backend/src/services/referralService.relations.test.ts",
+          "marker": "summary requires independent owner and code backlinks"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real referral summary refuses corrupt label relationships"
         }
       ]
     }

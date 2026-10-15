@@ -1215,6 +1215,41 @@ test('real referral linking serializes concurrent requests without rewarding or 
   }
 });
 
+test('real referral summary refuses corrupt label relationships and preserves valid linked labels', async(t) => {
+  const [referrer, referred] = users;
+  const before = await admin.from('profiles').select('display_name').eq('id', referred.id).single();
+  assert.equal(before.error, null);
+  let referralId: string | undefined;
+  t.after(async () => {
+    if (referralId) assert.equal((await admin.from('referrals').delete().eq('id', referralId)).error, null);
+    assert.equal((await admin.from('user_referral_profiles').delete().in('user_id', [referrer.id, referred.id])).error, null);
+    assert.equal((await admin.from('profiles').update({ display_name: before.data!.display_name }).eq('id', referred.id)).error, null);
+  });
+  const label = 'PRIVATE_UNRELATED_PROFILE_LABEL';
+  assert.equal((await admin.from('profiles').update({ display_name: label }).eq('id', referred.id)).error, null);
+  assert.equal((await admin.from('user_referral_profiles').insert([
+    { user_id: referrer.id, code: 'XROGA-DEF234' }, { user_id: referred.id, code: 'XROGA-DEF235' },
+  ])).error, null);
+  referralId = await insert('referrals', { referrer_id: referrer.id, referred_id: referred.id, code: 'XROGA-DEF234', qualification_status: 'pending' });
+  const denied = async () => {
+    const response = await request('/api/referrals/summary', referrer.token);
+    assert.equal(response.status, 503);
+    assert.ok(!(await response.text()).includes(label));
+  };
+  await denied();
+  assert.equal((await admin.from('user_referral_profiles').update({ referred_by_user_id: referred.id, referred_by_code: 'XROGA-DEF234' }).eq('user_id', referred.id)).error, null);
+  await denied();
+  assert.equal((await admin.from('user_referral_profiles').update({ referred_by_user_id: referrer.id, referred_by_code: 'XROGA-DEF235' }).eq('user_id', referred.id)).error, null);
+  await denied();
+  assert.equal((await admin.from('user_referral_profiles').update({ referred_by_code: 'XROGA-DEF234' }).eq('user_id', referred.id)).error, null);
+  const valid = await request('/api/referrals/summary', referrer.token);
+  assert.equal(valid.status, 200);
+  const result = await valid.json() as { referrals: Array<{ id: string; referredLabel: string }> };
+  assert.deepEqual(result.referrals.map(row => ({ id: row.id, referredLabel: row.referredLabel })), [{ id: referralId, referredLabel: label }]);
+  assert.equal((await admin.from('referrals').update({ code: 'XROGA-DEF235' }).eq('id', referralId)).error, null);
+  await denied();
+});
+
 test('real referral transaction rolls back its insert when the profile update fails', async () => {
   const database = new URL(process.env.XB01_LOCAL_DATABASE_URL!);
   assert.equal(database.hostname, '127.0.0.1'); assert.equal(database.port, '54322'); assert.equal(database.pathname, '/postgres');

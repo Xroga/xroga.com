@@ -5,6 +5,8 @@ import { createHash, randomUUID } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { resolve, join } from 'node:path';
 import pg from 'pg';
+import { historicalShareSchema, readHistoricalShareSchema } from './historical-share-fixture.mjs';
+import { disposableCliPackages } from './disposable-supabase.mjs';
 const root = resolve(import.meta.dirname,'../..');
 if (process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || !process.env.XB01_SUPABASE_WORKDIR) throw new Error('Disposable Supabase configuration required');
 const url = new URL(process.env.XB01_LOCAL_DATABASE_URL ?? '');
@@ -29,11 +31,9 @@ let db = await connect();
 try {
   // No production dump/projection: recreate the actual pre-upgrade repository schema.
   await apply(db,files.slice(0,files.indexOf(target)),'pre-upgrade');
-  const bootstrapSource=readFileSync(join(root,'backend/src/db/ensureMessageSharesSchema.ts'),'utf8');
-  const shareSql=bootstrapSource.match(/const ENSURE_MESSAGE_SHARES_SQL = `([\s\S]*?)`;/)?.[1];
-  assert.ok(shareSql && !shareSql.includes('${'),'Complete canonical share bootstrap SQL required, not a projected table');
+  const shareSql=readHistoricalShareSchema();
   await db.query(shareSql);
-  evidence.upgradeShareBootstrap={source:'backend/src/db/ensureMessageSharesSchema.ts',sha256:createHash('sha256').update(shareSql).digest('hex'),sourceClass:'EXISTING_FULL_RUNTIME_SCHEMA'};
+  evidence.upgradeShareBootstrap={...historicalShareSchema,sourceClass:'RETAINED_FULL_HISTORICAL_RUNTIME_SCHEMA'};
   const owner=randomUUID(),other=randomUUID(),project=randomUUID(),foreign=randomUUID();
   await db.query("insert into auth.users(id,email,raw_user_meta_data) values($1,$2,'{}'),($3,$4,'{}')",[owner,'upgrade-owner@example.invalid',other,'upgrade-other@example.invalid']);
   await db.query("insert into public.projects(id,user_id,name,type) values($1,$2,'Sanitized fixture','app'),($3,$4,'Foreign fixture','app')",[project,owner,foreign,other]);
@@ -75,7 +75,7 @@ try {
   evidence.upgrade='PASS'; save();
 } finally { await db.end(); }
 // Explicit LOCAL reset only; isolated workdir has no linked project or seed files.
-const reset=spawnSync('npx',['--yes','supabase@2.120.0','--workdir',process.env.XB01_SUPABASE_WORKDIR,'db','reset','--local','--no-seed','--yes'],{encoding:'utf8',maxBuffer:32*1024*1024});
+const reset=spawnSync('npx',['--yes',...disposableCliPackages,'supabase','--workdir',process.env.XB01_SUPABASE_WORKDIR,'db','reset','--local','--no-seed','--yes'],{encoding:'utf8',maxBuffer:32*1024*1024});
 if(reset.status!==0){evidence.failure={phase:'local-reset',exit:reset.status};save();throw new Error('Disposable local database reset failed');}
 db=await connect();
 try {

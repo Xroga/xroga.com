@@ -717,14 +717,19 @@ export async function saveConversation(
   const rec = runs.get(runId);
 
   if (!rec) return false;
+  let snapshot: unknown[];
+  try {
+    snapshot = structuredClone(Array.isArray(messages) ? messages.slice(-80) : []);
+  } catch {
+    return false;
+  }
   if (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NODE_ENV === 'production') {
-    if (!(await persistConversationOnly(runId, rec.userId, messages))) return false;
+    if (!(await persistConversationOnly(runId, rec.userId, snapshot))) return false;
   }
 
-  rec.messages =
-    Array.isArray(messages)
-      ? messages.slice(-80)
-      : [];
+  // A resumed attempt may replace this cache entry while persistence is pending.
+  // Never write the old request's snapshot into that newer attempt.
+  if (runs.get(runId) === rec) rec.messages = snapshot;
 
   return true;
 }
@@ -755,12 +760,8 @@ export async function persistConversationOnly(
     return false;
   }
 
-  const trimmed =
-    Array.isArray(messages)
-      ? messages.slice(-80)
-      : [];
-
   try {
+    const trimmed = structuredClone(Array.isArray(messages) ? messages.slice(-80) : []);
     const supabase =
       getSupabaseAdmin();
 
@@ -790,13 +791,7 @@ export async function persistConversationOnly(
       return false;
     }
 
-    return (
-      (
-        data?.length ??
-        0
-      ) >
-      0
-    );
+    return Array.isArray(data) && data.length === 1 && data[0]?.id === runId;
   } catch {
     console.warn('[runStore] conversation-only persistence unavailable');
 

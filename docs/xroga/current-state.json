@@ -6876,7 +6876,7 @@
       "id": "surface:ec198557da445d2b1385",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "sha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "symbols": [
         "MAX_EVENTS_PER_RUN",
         "MAX_PER_USER",
@@ -6950,6 +6950,7 @@
         "saveConversation",
         "schedulePersist",
         "scope",
+        "snapshot",
         "supabase",
         "terminalCorrection",
         "timer",
@@ -6986,6 +6987,7 @@
         "backend/src/ai/pipeline.ts:81",
         "backend/src/ai/runReconciler.test.ts:12",
         "backend/src/ai/runStore.authority.test.ts:5",
+        "backend/src/ai/runStore.conversationReceipt.test.ts:5",
         "backend/src/ai/runStore.creation.test.ts:5",
         "backend/src/ai/runStore.resume.test.ts:12",
         "backend/src/ai/runStore.test.ts:4",
@@ -7010,11 +7012,11 @@
       "tenantBoundary": [
         "backend/src/ai/runStore.ts:111 (user_id)",
         "backend/src/ai/runStore.ts:448 (user_id)",
-        "backend/src/ai/runStore.ts:771 (user_id)",
-        "backend/src/ai/runStore.ts:879 (user_id)",
-        "backend/src/ai/runStore.ts:1050 (user_id)",
-        "backend/src/ai/runStore.ts:1182 (user_id)",
-        "backend/src/ai/runStore.ts:1327 (user_id)"
+        "backend/src/ai/runStore.ts:772 (user_id)",
+        "backend/src/ai/runStore.ts:874 (user_id)",
+        "backend/src/ai/runStore.ts:1045 (user_id)",
+        "backend/src/ai/runStore.ts:1177 (user_id)",
+        "backend/src/ai/runStore.ts:1322 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -7030,6 +7032,7 @@
         "backend/src/ai/failRun.test.ts",
         "backend/src/ai/runReconciler.test.ts",
         "backend/src/ai/runStore.authority.test.ts",
+        "backend/src/ai/runStore.conversationReceipt.test.ts",
         "backend/src/ai/runStore.creation.test.ts",
         "backend/src/ai/runStore.resume.test.ts",
         "backend/src/ai/runStore.test.ts",
@@ -20735,6 +20738,7 @@
         "backend/src/security/tenantIsolation.integration.test.ts:15",
         "backend/src/security/tenantIsolation.local.integration.ts:6",
         "backend/src/services/referralService.failure.test.ts:5",
+        "backend/src/services/referralService.relations.test.ts:5",
         "backend/src/services/responseCache.test.ts:3",
         "backend/src/services/responseCache.ts:3",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:3",
@@ -20771,6 +20775,7 @@
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/referralService.failure.test.ts",
+        "backend/src/services/referralService.relations.test.ts",
         "backend/src/services/responseCache.test.ts",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts",
         "backend/src/synthesis/universalPersistence.owner.test.ts"
@@ -24428,7 +24433,7 @@
       "id": "surface:47e466cca6c0380e1fbe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/referralService.ts",
-      "sha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "symbols": [
         "CHARS",
         "applyReferralCode",
@@ -24438,6 +24443,7 @@
         "ensureProfile",
         "getReferralSummary",
         "ids",
+        "links",
         "names",
         "normalized",
         "profile",
@@ -24460,7 +24466,8 @@
       ],
       "callers": [
         "backend/src/routes/referrals.ts:5",
-        "backend/src/services/referralService.failure.test.ts:4"
+        "backend/src/services/referralService.failure.test.ts:4",
+        "backend/src/services/referralService.relations.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -24483,7 +24490,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/services/referralService.failure.test.ts"
+        "backend/src/services/referralService.failure.test.ts",
+        "backend/src/services/referralService.relations.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -84259,11 +84267,13 @@
       "runtimeImports": [],
       "entryPoints": [
         "scripts/security/collect-local-security-logs.mjs",
-        "scripts/security/disposable-supabase.mjs"
+        "scripts/security/disposable-supabase.mjs",
+        "scripts/security/full-supabase-history.mjs"
       ],
       "callers": [
         "scripts/security/collect-local-security-logs.mjs:3",
-        "scripts/security/disposable-supabase.test.mjs:4"
+        "scripts/security/disposable-supabase.test.mjs:6",
+        "scripts/security/full-supabase-history.mjs:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -84295,14 +84305,13 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "4fed84176aa416be17168aa8747b7e9955494a135cce38cc26b79eca56d0109d",
+      "sha256": "105913ada400683a6f7009b6b8391018d29f7799eb44bb1d8830516942813240",
       "symbols": [
         "actual",
         "afterPolicies",
         "apply",
         "auditBefore",
         "before",
-        "bootstrapSource",
         "connect",
         "db",
         "error",
@@ -84332,6 +84341,8 @@
         "url"
       ],
       "imports": [
+        "./disposable-supabase.mjs",
+        "./historical-share-fixture.mjs",
         "node:assert/strict",
         "node:child_process",
         "node:crypto",
@@ -84339,7 +84350,10 @@
         "node:path",
         "pg"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "scripts/security/disposable-supabase.mjs",
+        "scripts/security/historical-share-fixture.mjs"
+      ],
       "entryPoints": [
         "scripts/security/full-supabase-history.mjs"
       ],
@@ -84362,6 +84376,49 @@
         "scripts/security/full-supabase-history.mjs#evidence"
       ],
       "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:44d0c8769dbca6ff7960",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/historical-share-fixture.mjs",
+      "sha256": "25da373bc46bc894f7ab0c583dead8f0f28ca3fabc04c4ea4a7f46e84c8fe170",
+      "symbols": [
+        "historicalShareSchema",
+        "readHistoricalShareSchema",
+        "sql"
+      ],
+      "imports": [
+        "node:crypto",
+        "node:fs"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/security/full-supabase-history.mjs"
+      ],
+      "callers": [
+        "scripts/security/disposable-supabase.test.mjs:5",
+        "scripts/security/full-supabase-history.mjs:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto",
+        "node:fs"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/security/disposable-supabase.test.mjs"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -94463,9 +94520,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:cb4a4286204ed88ca473",
+      "id": "finding:07e4b577a1327dac926e",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "line": 737,
+      "line": 742,
       "kind": "STUB",
       "reachable": true,
       "state": "PARTIAL",
@@ -101293,6 +101350,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:56bbf59563fb4bc03e6b",
+      "sourcePath": "backend/src/ai/runStore.conversationReceipt.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:93b281105e6d5f19eb99",
       "sourcePath": "backend/src/ai/runStore.creation.test.ts",
       "declaredTests": 1,
@@ -101976,7 +102040,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 63,
+      "declaredTests": 64,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102242,6 +102306,13 @@
     {
       "id": "test-suite:16bdfbb85467d8395738",
       "sourcePath": "backend/src/services/referralService.failure.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:25237141477ba10e026c",
+      "sourcePath": "backend/src/services/referralService.relations.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
@@ -104057,7 +104128,7 @@
     {
       "id": "test-suite:7ad4485dc12ff4206f8f",
       "sourcePath": "scripts/security/disposable-supabase.test.mjs",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

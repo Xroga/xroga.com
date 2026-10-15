@@ -1,18 +1,18 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "b8604d5112f5ffc092d67827271ad25e297128907b038fb1472d926e465244c8",
+  "reviewRegistrySha256": "79975724303c8989c23f485052af3dfdbaef13338e6eab9b3c2fe1210e9c58b2",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 161,
-    "persistenceCandidates": 677,
+    "persistenceCandidates": 678,
     "ownerPredicateCandidates": 167,
     "reviewRequired": 0,
-    "reviewedCandidates": 677,
-    "unresolvedSafetyCandidates": 482,
+    "reviewedCandidates": 678,
+    "unresolvedSafetyCandidates": 483,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -21,7 +21,7 @@
     "SCOPED_BOUNDARY": 51,
     "NARROW_EXCEPTION": 8,
     "NOT_PERSISTENCE": 136,
-    "REVIEWED_GAP": 482
+    "REVIEWED_GAP": 483
   },
   "callers": [
     {
@@ -1544,7 +1544,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1569,7 +1569,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1594,7 +1594,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1619,7 +1619,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1636,15 +1636,15 @@
       }
     },
     {
-      "id": "b337b52d79fafb0c2ca9",
+      "id": "a25df06099ef73e458d0",
       "path": "backend/src/ai/runStore.ts",
-      "line": 765,
+      "line": 766,
       "enclosing": "persistConversationOnly",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1661,15 +1661,15 @@
       }
     },
     {
-      "id": "f54db66080705df359ac",
+      "id": "433a81aaa1b2203a4982",
       "path": "backend/src/ai/runStore.ts",
-      "line": 771,
+      "line": 772,
       "enclosing": "persistConversationOnly",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1686,15 +1686,15 @@
       }
     },
     {
-      "id": "bb5d073f739fd03e053a",
+      "id": "b817001a6eefc5fa5c56",
       "path": "backend/src/ai/runStore.ts",
-      "line": 877,
+      "line": 872,
       "enclosing": "getRunAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1711,15 +1711,15 @@
       }
     },
     {
-      "id": "59934bf8afd33680c8d2",
+      "id": "24fa8b793586098a99d5",
       "path": "backend/src/ai/runStore.ts",
-      "line": 879,
+      "line": 874,
       "enclosing": "getRunAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1736,15 +1736,15 @@
       }
     },
     {
-      "id": "2ae47f2e3356e61ddd99",
+      "id": "5600fde4ecba16ac729b",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1044,
+      "line": 1039,
       "enclosing": "requestRunCancellation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1761,15 +1761,15 @@
       }
     },
     {
-      "id": "67de24dafa1ffc333f24",
+      "id": "e7e829e1957a1981ac1b",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1050,
+      "line": 1045,
       "enclosing": "requestRunCancellation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1786,15 +1786,15 @@
       }
     },
     {
-      "id": "b5e5c871ae7499766e2f",
+      "id": "392af08cd1defc992ba6",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1176,
+      "line": 1171,
       "enclosing": "isRunCancellationRequested",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1811,15 +1811,15 @@
       }
     },
     {
-      "id": "ac839d45e45270524ad0",
+      "id": "ca011991675244b3c155",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1182,
+      "line": 1177,
       "enclosing": "isRunCancellationRequested",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1836,15 +1836,15 @@
       }
     },
     {
-      "id": "84efec4fafe7043133a0",
+      "id": "d4290b280c724367a917",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1321,
+      "line": 1316,
       "enclosing": "listRunsForUserAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1861,15 +1861,15 @@
       }
     },
     {
-      "id": "c34d5e31579715c11691",
+      "id": "7db766f1c27abb1bfeb5",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1327,
+      "line": 1322,
       "enclosing": "listRunsForUserAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1886,15 +1886,15 @@
       }
     },
     {
-      "id": "f711bb105d89ef517bf8",
+      "id": "bf2fb9c5c4c69f4da580",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1514,
+      "line": 1509,
       "enclosing": "persistToSupabase",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -1911,15 +1911,15 @@
       }
     },
     {
-      "id": "40e050471991e59545a9",
+      "id": "a78c7005abf7772670ca",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1587,
+      "line": 1582,
       "enclosing": "persistToSupabase",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
+      "sourceSha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
@@ -12247,7 +12247,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in code. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -12268,7 +12268,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
         "authority": "All three referral service factories require the existing issued TenantContext and derive owner from that immutable context. Only authenticated referrals routes call the exported helpers, and those routes require req.tenantContext. JSON objects, raw strings and cloned contexts fail before privileged client creation.",
         "reason": "Profile creation and referral application factories have source-traced authMiddleware-mounted callers, explicit owner predicates and server-derived RPC owner. Focused forged-context negatives pass before client creation. Disposable run38810704207 at88036057743aa3abbcee2ae85b80db18342e701f verifies current-context concurrent requests, foreign actor denial and transactional rollback. The summary factory remains unresolved separately because its display-label relation read needs independent evidence. No broad Command007 certification.",
@@ -12293,7 +12293,7 @@
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
         "reason": "These four calls only create/read the issued actor profile or read actor-owned referrals/rewards. Verified at88036057743aa3abbcee2ae85b80db18342e701f by disposable run38810704207:69 security/concurrency tests and3 browser tests, zero failures/skips. Foreign query/body actor ignored, foreign reward canary excluded, competing profile creation recovered and foreign referrer unchanged. No reward grant occurs. Display-label relation trust remains a separate unresolved caller. This disposition is a narrow tenant persistence boundary, not complete reward qualification, abuse prevention or production schema certification.",
@@ -12318,7 +12318,7 @@
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
         "reason": "These four calls only create/read the issued actor profile or read actor-owned referrals/rewards. Verified at88036057743aa3abbcee2ae85b80db18342e701f by disposable run38810704207:69 security/concurrency tests and3 browser tests, zero failures/skips. Foreign query/body actor ignored, foreign reward canary excluded, competing profile creation recovered and foreign referrer unchanged. No reward grant occurs. Display-label relation trust remains a separate unresolved caller. This disposition is a narrow tenant persistence boundary, not complete reward qualification, abuse prevention or production schema certification.",
@@ -12343,7 +12343,7 @@
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
         "authority": "Exact-owner profile re-read after a unique creation race and apply_referral_code_atomic RPC. Only routes/referrals.ts supplies the issued request context behind authMiddleware. The service-only function serializes the owner profile, denies existing/self links and commits pending referral evidence and profile linkage together without rewards.",
         "reason": "Verified at88036057743aa3abbcee2ae85b80db18342e701f, disposable run38810704207. Concurrent authenticated requests produce exactly one pending link, foreign actor input cannot redirect ownership, referrer and rewards remain unchanged, browser roles cannot invoke the function and forced post-insert failure rolls back linkage. Exact-owner profile reread recovers a competing create without accepting another owner. Focused unknown/error receipt tests deny success. No external action or reward grant. Production parity and business qualification remain separate unverified obligations.",
@@ -12372,14 +12372,22 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
-        "authority": "Issued authenticated context scopes the summary referrals and reward rows. The profiles display-label query derives IDs from those actor-owned referral rows, not request input.",
-        "reason": "Retained gap for corrupt or mismatched referral relation trust and display-label disclosure. Existing foreign reward and profile canaries do not independently prove this label read. No blanket referral-service certification.",
+        "authority": "Issued authenticated context scopes summary referrals/rewards. Before any label read, every referral code must match the actor profile code, self-links are denied, and a second user_referral_profiles read requires exact referred IDs plus referred_by_user_id=actor and referred_by_code=actor code. Complete unique receipts are validated before profiles display-name lookup.",
+        "reason": "Corrupt relation disclosure fixed with focused positive/empty and missing, foreign, mismatched, duplicate, substituted and unavailable backlink negatives. New real disposable test covers missing/wrong-owner/wrong-code backlinks, valid linked label and corrupt referral code. Final-source database execution pending, so all three label-boundary sites remain REVIEWED_GAP until that evidence is verified.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.ts",
             "marker": "select('id,display_name').in('id', ids)"
+          },
+          {
+            "path": "backend/src/services/referralService.relations.test.ts",
+            "marker": "summary requires independent owner and code backlinks"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real referral summary refuses corrupt label relationships"
           }
         ]
       }
@@ -12393,7 +12401,7 @@
       "target": "referrals",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
         "reason": "These four calls only create/read the issued actor profile or read actor-owned referrals/rewards. Verified at88036057743aa3abbcee2ae85b80db18342e701f by disposable run38810704207:69 security/concurrency tests and3 browser tests, zero failures/skips. Foreign query/body actor ignored, foreign reward canary excluded, competing profile creation recovered and foreign referrer unchanged. No reward grant occurs. Display-label relation trust remains a separate unresolved caller. This disposition is a narrow tenant persistence boundary, not complete reward qualification, abuse prevention or production schema certification.",
@@ -12410,7 +12418,7 @@
       }
     },
     {
-      "id": "65bb2aff998578ed86e6",
+      "id": "095c552d5ddbbe5bc4fd",
       "path": "backend/src/services/referralService.ts",
       "line": 31,
       "enclosing": "getReferralSummary",
@@ -12418,7 +12426,7 @@
       "target": "referral_rewards",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
         "reason": "These four calls only create/read the issued actor profile or read actor-owned referrals/rewards. Verified at88036057743aa3abbcee2ae85b80db18342e701f by disposable run38810704207:69 security/concurrency tests and3 browser tests, zero failures/skips. Foreign query/body actor ignored, foreign reward canary excluded, competing profile creation recovered and foreign referrer unchanged. No reward grant occurs. Display-label relation trust remains a separate unresolved caller. This disposition is a narrow tenant persistence boundary, not complete reward qualification, abuse prevention or production schema certification.",
@@ -12435,36 +12443,73 @@
       }
     },
     {
-      "id": "fb4d0a1caadc7d2d5dc2",
+      "id": "b84d863183aaa4892dcd",
       "path": "backend/src/services/referralService.ts",
-      "line": 35,
+      "line": 42,
       "enclosing": "getReferralSummary",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "profiles",
+      "target": "user_referral_profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
-        "authority": "Issued authenticated context scopes the summary referrals and reward rows. The profiles display-label query derives IDs from those actor-owned referral rows, not request input.",
-        "reason": "Retained gap for corrupt or mismatched referral relation trust and display-label disclosure. Existing foreign reward and profile canaries do not independently prove this label read. No blanket referral-service certification.",
+        "authority": "Issued authenticated context scopes summary referrals/rewards. Before any label read, every referral code must match the actor profile code, self-links are denied, and a second user_referral_profiles read requires exact referred IDs plus referred_by_user_id=actor and referred_by_code=actor code. Complete unique receipts are validated before profiles display-name lookup.",
+        "reason": "Corrupt relation disclosure fixed with focused positive/empty and missing, foreign, mismatched, duplicate, substituted and unavailable backlink negatives. New real disposable test covers missing/wrong-owner/wrong-code backlinks, valid linked label and corrupt referral code. Final-source database execution pending, so all three label-boundary sites remain REVIEWED_GAP until that evidence is verified.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.ts",
             "marker": "select('id,display_name').in('id', ids)"
+          },
+          {
+            "path": "backend/src/services/referralService.relations.test.ts",
+            "marker": "summary requires independent owner and code backlinks"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real referral summary refuses corrupt label relationships"
           }
         ]
       }
     },
     {
-      "id": "66df501264869d6eb8e5",
+      "id": "19013a85522f8091214b",
       "path": "backend/src/services/referralService.ts",
-      "line": 48,
+      "line": 50,
+      "enclosing": "getReferralSummary",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "profiles",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
+      "semanticReview": {
+        "authority": "Issued authenticated context scopes summary referrals/rewards. Before any label read, every referral code must match the actor profile code, self-links are denied, and a second user_referral_profiles read requires exact referred IDs plus referred_by_user_id=actor and referred_by_code=actor code. Complete unique receipts are validated before profiles display-name lookup.",
+        "reason": "Corrupt relation disclosure fixed with focused positive/empty and missing, foreign, mismatched, duplicate, substituted and unavailable backlink negatives. New real disposable test covers missing/wrong-owner/wrong-code backlinks, valid linked label and corrupt referral code. Final-source database execution pending, so all three label-boundary sites remain REVIEWED_GAP until that evidence is verified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.ts",
+            "marker": "select('id,display_name').in('id', ids)"
+          },
+          {
+            "path": "backend/src/services/referralService.relations.test.ts",
+            "marker": "summary requires independent owner and code backlinks"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real referral summary refuses corrupt label relationships"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d4711d7af15f45b5805c",
+      "path": "backend/src/services/referralService.ts",
+      "line": 63,
       "enclosing": "applyReferralCode",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
         "authority": "All three referral service factories require the existing issued TenantContext and derive owner from that immutable context. Only authenticated referrals routes call the exported helpers, and those routes require req.tenantContext. JSON objects, raw strings and cloned contexts fail before privileged client creation.",
         "reason": "Profile creation and referral application factories have source-traced authMiddleware-mounted callers, explicit owner predicates and server-derived RPC owner. Focused forged-context negatives pass before client creation. Disposable run38810704207 at88036057743aa3abbcee2ae85b80db18342e701f verifies current-context concurrent requests, foreign actor denial and transactional rollback. The summary factory remains unresolved separately because its display-label relation read needs independent evidence. No broad Command007 certification.",
@@ -12481,15 +12526,15 @@
       }
     },
     {
-      "id": "6fc393e62e052c967f89",
+      "id": "274201176af8184d5260",
       "path": "backend/src/services/referralService.ts",
-      "line": 52,
+      "line": 67,
       "enclosing": "applyReferralCode",
       "kind": "RPC_CANDIDATE",
       "target": "apply_referral_code_atomic",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
+      "sourceSha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad",
       "semanticReview": {
         "authority": "Exact-owner profile re-read after a unique creation race and apply_referral_code_atomic RPC. Only routes/referrals.ts supplies the issued request context behind authMiddleware. The service-only function serializes the owner profile, denies existing/self links and commits pending referral evidence and profile linkage together without rewards.",
         "reason": "Verified at88036057743aa3abbcee2ae85b80db18342e701f, disposable run38810704207. Concurrent authenticated requests produce exactly one pending link, foreign actor input cannot redirect ownership, referrer and rewards remain unchanged, browser roles cannot invoke the function and forced post-insert failure rolls back linkage. Exact-owner profile reread recovers a competing create without accepting another owner. Focused unknown/error receipt tests deny success. No external action or reward grant. Production parity and business qualification remain separate unverified obligations.",

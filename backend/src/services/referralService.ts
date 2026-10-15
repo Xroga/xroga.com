@@ -27,11 +27,26 @@ export async function getReferralSummary(context: TenantContext): Promise<Record
   const db = getTenantSupabaseAdmin(context), userId = context.userId;
   const profile = await ensureProfile(context);
   const [{ data: rows, error: referralsError }, { data: rewards, error: rewardsError }] = await Promise.all([
-    db.from('referrals').select('id,referred_id,created_at,referrer_rewarded,retention_bonus_released,qualification_status').eq('referrer_id', userId).order('created_at', { ascending: false }),
+    db.from('referrals').select('id,referred_id,code,created_at,referrer_rewarded,retention_bonus_released,qualification_status').eq('referrer_id', userId).order('created_at', { ascending: false }),
     db.from('referral_rewards').select('ai_token_amount,xrg_amount,status').eq('user_id', userId).eq('status', 'rewarded'),
   ]);
   if (referralsError || rewardsError) throw new Error('Referral evidence unavailable');
-  const ids = (rows ?? []).map((row) => row.referred_id);
+  if ((rows ?? []).some(row => row.code !== profile.code || row.referred_id === userId)) {
+    throw new Error('Referral relationship evidence unavailable');
+  }
+  const ids = [...new Set((rows ?? []).map((row) => row.referred_id))];
+  // A referral row alone is not authority to reveal another account's label.
+  // The referred account must independently retain the backlink written by the
+  // atomic link operation. Corrupt legacy relations fail before profile access.
+  if (ids.length) {
+    const links = await db.from('user_referral_profiles').select('user_id,referred_by_user_id,referred_by_code')
+      .in('user_id', ids).eq('referred_by_user_id', userId).eq('referred_by_code', profile.code);
+    if (links.error || !links.data || links.data.length !== ids.length
+      || new Set(links.data.map(item => item.user_id)).size !== ids.length
+      || links.data.some(item => !ids.includes(item.user_id) || item.referred_by_user_id !== userId || item.referred_by_code !== profile.code)) {
+      throw new Error('Referral relationship evidence unavailable');
+    }
+  }
   const profiles = ids.length ? await db.from('profiles').select('id,display_name').in('id', ids) : { data: [], error: null };
   if (profiles.error) throw new Error('Referral identity labels unavailable');
   const names = new Map((profiles.data ?? []).map((item) => [item.id, item.display_name ?? 'Friend']));

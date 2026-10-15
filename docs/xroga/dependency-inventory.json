@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "55da60fbd1681571cf4a4097470c420e6276ff41",
+  "source_sha": "67644e2c274b879f25192c8ecedabf68f29ca736",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11538,7 +11538,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9"
+      "sha256": "5e3d3902891ad9918bdb07d3d246546671133f3ae240e54ff0f0a737b16146ce"
     },
     {
       "path": "backend/src/ai/runTrace.ts",
@@ -12470,7 +12470,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "613ca501e0123e0b40db01ca38ec51465d8036bb9c787801ff3a7ba875038514"
+      "sha256": "b5c066785e26124f3704c22c47cc67387b07870726aa953604f7a8df33cea326"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12622,7 +12622,7 @@
     },
     {
       "path": "backend/src/services/referralService.ts",
-      "sha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb"
+      "sha256": "1b9bc88bf7c58f0c4c112a2df639c68a60c012a97a64f69d71a71a0c898f2dad"
     },
     {
       "path": "backend/src/services/responseCache.ts",
@@ -22681,7 +22681,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 1264,
+      "line": 1259,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24390,6 +24390,20 @@
     {
       "path": "backend/src/services/referralService.ts",
       "line": 37,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/referralService.ts",
+      "line": 45,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/referralService.ts",
+      "line": 52,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
