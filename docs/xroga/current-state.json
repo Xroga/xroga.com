@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "b2a940640d3db6f6a090bfc4fab11fe71fcdac17",
-    "sourceTimestampUtc": "2026-10-15T15:37:56+05:00",
-    "auditStartedUtc": "2026-10-15T10:43:44.657Z",
+    "sha": "06e02e39041e36e60771f168f3647738b9615c6b",
+    "sourceTimestampUtc": "2026-10-15T15:44:04+05:00",
+    "auditStartedUtc": "2026-10-15T10:56:05.072Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -2274,7 +2274,7 @@
         "backend/src/ai/buildOutcomeMemory.test.ts:19",
         "backend/src/ai/runStore.ts:15",
         "backend/src/ai/step7LearningStrategy.test.ts:12",
-        "backend/src/security/tenantIsolation.local.integration.ts:19",
+        "backend/src/security/tenantIsolation.local.integration.ts:20",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:41"
       ],
       "reachable": true,
@@ -3434,7 +3434,7 @@
         "backend/src/ai/executionRuntime.test.ts:3",
         "backend/src/ai/pipeline.ts:234",
         "backend/src/hardening/launchHardening.test.ts:47",
-        "backend/src/security/tenantIsolation.local.integration.ts:15",
+        "backend/src/security/tenantIsolation.local.integration.ts:16",
         "backend/src/synthesis/foundation.fixture.test.ts:3",
         "backend/src/synthesis/foundation.ts:3",
         "backend/src/synthesis/reliability/canonicalResume.test.ts:5",
@@ -3906,7 +3906,7 @@
         "backend/src/ai/buildOutcomeMemory.ts:10",
         "backend/src/ai/buildOutcomeRoutingMemory.ts:9",
         "backend/src/ai/buildStrategyMemory.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:22",
+        "backend/src/security/tenantIsolation.local.integration.ts:23",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:24"
       ],
       "reachable": true,
@@ -5791,7 +5791,7 @@
         "backend/src/routes/billing.ts:5",
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:27",
-        "backend/src/security/tenantIsolation.local.integration.ts:25",
+        "backend/src/security/tenantIsolation.local.integration.ts:26",
         "backend/src/services/BillingService.ts:18",
         "backend/src/services/integrations/businessAction.ts:11",
         "backend/src/services/integrations/businessRead.ts:7"
@@ -20907,7 +20907,8 @@
         "backend/src/security/tenantContext.ts:3",
         "backend/src/security/tenantErrors.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:17",
-        "backend/src/synthesis/livePreview/store.ts:7"
+        "backend/src/synthesis/livePreview/store.ts:7",
+        "backend/src/synthesis/projectRuntime/projectHistory.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21061,7 +21062,7 @@
         "backend/src/routes/billing.ts:3",
         "backend/src/routes/billingWebhook.test.ts:7",
         "backend/src/routes/billingWebhook.ts:3",
-        "backend/src/security/tenantIsolation.local.integration.ts:33",
+        "backend/src/security/tenantIsolation.local.integration.ts:34",
         "backend/src/services/BillingService.test.ts:4"
       ],
       "reachable": true,
@@ -21751,7 +21752,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:24",
+        "backend/src/security/tenantIsolation.local.integration.ts:25",
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.ts:9",
@@ -22724,7 +22725,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:23",
+        "backend/src/security/tenantIsolation.local.integration.ts:24",
         "backend/src/services/integrations/githubAuth.ts:3",
         "backend/src/services/integrations/oauthPkceStore.ts:8",
         "backend/src/services/integrations/userProviderKeys.ts:10",
@@ -23139,7 +23140,7 @@
         "backend/src/routes/integrations.ts:644",
         "backend/src/routes/integrations.ts:672",
         "backend/src/routes/supabaseOAuth.ts:20",
-        "backend/src/security/tenantIsolation.local.integration.ts:34",
+        "backend/src/security/tenantIsolation.local.integration.ts:35",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.ts:864",
         "backend/src/services/integrations/userProviderKeys.ts:873"
@@ -25197,7 +25198,7 @@
       "callers": [
         "backend/src/lib/r2.ts:3",
         "backend/src/routes/projects.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/security/tenantIsolation.local.integration.ts:29",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.ts:6",
         "backend/src/services/storage/projectFiles.ts:6"
@@ -25309,7 +25310,7 @@
       ],
       "callers": [
         "backend/src/routes/projects.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:27",
+        "backend/src/security/tenantIsolation.local.integration.ts:28",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5"
       ],
       "reachable": true,
@@ -25376,7 +25377,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/security/tenantIsolation.integration.test.ts:14",
-        "backend/src/security/tenantIsolation.local.integration.ts:26",
+        "backend/src/security/tenantIsolation.local.integration.ts:27",
         "backend/src/services/memory/buildProjectStore.ts:8",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7"
       ],
@@ -25706,7 +25707,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:18",
+        "backend/src/security/tenantIsolation.local.integration.ts:19",
         "backend/src/synthesis/followUpAndRegression.test.ts:23",
         "backend/src/synthesis/securityControls.test.ts:14",
         "backend/src/synthesis/universalArchitecture.test.ts:21",
@@ -27684,7 +27685,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:29",
-        "backend/src/security/tenantIsolation.local.integration.ts:29",
+        "backend/src/security/tenantIsolation.local.integration.ts:30",
         "backend/src/synthesis/livePreview/access.test.ts:5",
         "backend/src/synthesis/livePreview/store.ts:9"
       ],
@@ -28188,7 +28189,7 @@
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:26",
         "backend/src/routes/projectRuntime.ts:20",
-        "backend/src/security/tenantIsolation.local.integration.ts:32",
+        "backend/src/security/tenantIsolation.local.integration.ts:33",
         "backend/src/synthesis/livePreview/coordinator.ts:27",
         "backend/src/synthesis/livePreview/index.ts:3"
       ],
@@ -29304,7 +29305,7 @@
       "id": "surface:42863a6776e12d023ab4",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/projectHistory.ts",
-      "sha256": "fc48c95cfcac4a235808ed3583a238a966d8dbb4ff7cbeb22f0f807a0eb0f661",
+      "sha256": "54471e2a22a019698a8f5607569a60b260d98466aaedf68515429162bf9f336b",
       "symbols": [
         "CloneProjectRevisionInput",
         "boundedLimit",
@@ -29319,6 +29320,7 @@
         "project",
         "query",
         "restoreProjectRevision",
+        "restored",
         "retryProjectFromRevision",
         "revision",
         "revisionFromRow",
@@ -29330,17 +29332,20 @@
       ],
       "imports": [
         "../../config/supabase.js",
+        "../../security/tenantErrors.js",
         "../softwareProject.js",
         "./store.js"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
+        "backend/src/security/tenantErrors.ts",
         "backend/src/synthesis/projectRuntime/store.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/security/tenantIsolation.local.integration.ts:15",
         "backend/src/synthesis/projectRuntime/index.ts:5",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:36"
       ],
@@ -29352,9 +29357,9 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/synthesis/projectRuntime/projectHistory.ts:97 (user_id)",
-        "backend/src/synthesis/projectRuntime/projectHistory.ts:163 (user_id)",
-        "backend/src/synthesis/projectRuntime/projectHistory.ts:602 (user_id)"
+        "backend/src/synthesis/projectRuntime/projectHistory.ts:66 (user_id)",
+        "backend/src/synthesis/projectRuntime/projectHistory.ts:132 (user_id)",
+        "backend/src/synthesis/projectRuntime/projectHistory.ts:571 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -29362,6 +29367,7 @@
         "backend/src/synthesis/projectRuntime/projectHistory.ts#listProjectRuntimeEvents"
       ],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -29441,7 +29447,7 @@
       "id": "surface:52eacb67555cd24b2de9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7",
+      "sha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
       "symbols": [
         "EncryptedProjectSecretRecord",
         "InMemoryProjectRuntimeStore",
@@ -29451,17 +29457,21 @@
         "ProjectRuntimeStore",
         "SupabaseProjectRuntimeStore",
         "clone",
+        "contract",
         "error",
         "event",
         "file",
         "files",
         "fingerprint",
         "hash",
+        "identity",
         "key",
         "latest",
         "persistSoftwareProjectRevision",
+        "project",
         "projectWorkspaceFingerprint",
         "record",
+        "restoreOwnerBoundProjectRevision",
         "restoreOwnerBoundRuntimeSession",
         "revision",
         "session",
@@ -29492,7 +29502,7 @@
         "backend/src/synthesis/livePreview/store.ts:8",
         "backend/src/synthesis/projectRuntime/index.ts:3",
         "backend/src/synthesis/projectRuntime/manager.ts:22",
-        "backend/src/synthesis/projectRuntime/projectHistory.ts:9",
+        "backend/src/synthesis/projectRuntime/projectHistory.ts:10",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:48",
         "backend/src/synthesis/projectRuntime/store.owner.test.ts:4"
       ],
@@ -29506,12 +29516,14 @@
       "externalProviderDependencies": [
         "node:crypto"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/synthesis/projectRuntime/store.ts#identity"
+      ],
       "tenantBoundary": [
         "backend/src/synthesis/projectRuntime/store.ts:706 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:832 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1015 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1098 (user_id)"
+        "backend/src/synthesis/projectRuntime/store.ts:797 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:980 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:1063 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -29984,7 +29996,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:20",
+        "backend/src/security/tenantIsolation.local.integration.ts:21",
         "backend/src/synthesis/researchEvidence.test.ts:15",
         "backend/src/synthesis/universalPersistence.test.ts:20"
       ],
@@ -31698,7 +31710,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:16",
+        "backend/src/security/tenantIsolation.local.integration.ts:17",
         "backend/src/synthesis/followUpAndRegression.test.ts:24",
         "backend/src/synthesis/universalEntrypoint.test.ts:20",
         "backend/src/synthesis/universalEntrypoint.ts:46",
@@ -31821,7 +31833,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:17",
+        "backend/src/security/tenantIsolation.local.integration.ts:18",
         "backend/src/synthesis/followUpAndRegression.test.ts:22",
         "backend/src/synthesis/securityControls.test.ts:15",
         "backend/src/synthesis/universalArchitecture.test.ts:14",
@@ -101700,7 +101712,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 43,
+      "declaredTests": 44,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102141,7 +102153,7 @@
     {
       "id": "test-suite:06ea418cf83423dcff7b",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

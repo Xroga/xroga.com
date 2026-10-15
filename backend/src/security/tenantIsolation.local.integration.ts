@@ -12,6 +12,7 @@ import { getCachedResponse,setCachedResponse } from '../services/responseCache.j
 import { notifyBuildFailed } from '../services/notificationService.js';
 import pg from 'pg';
 import { SupabaseProjectRuntimeStore } from '../synthesis/projectRuntime/store.js';
+import { listProjectRevisions, loadProjectRevision, restoreProjectRevision, forkProjectRevision } from '../synthesis/projectRuntime/projectHistory.js';
 import { createCanonicalExecutionState,SupabaseExecutionStateStore } from '../ai/executionRuntime.js';
 import { SupabaseUniversalStore } from '../synthesis/universalPersistence.js';
 import { synthesizeUniversalProductSpec } from '../synthesis/universalProductSpec.js';
@@ -83,6 +84,34 @@ test('real owner helpers deny every foreign high-risk resource without enumerati
   }
   await requireOwnedFile(owner.context,owner.file,admin);
   await assert.rejects(requireOwnedFile(owner.context,other.file,admin),{status:404});
+});
+
+test('real revision restore rejects mismatched snapshot identities before restore or fork writes',async()=>{
+  const [owner,other]=users,store=new SupabaseProjectRuntimeStore();
+  const projectId=`revision-binding-${randomUUID()}`,runId=randomUUID();
+  // Only identity restoration is exercised; no fixture is executed or sent to a provider.
+  const snapshot={projectId,runId,contract:{projectId,runId},workspace:{files:[]}};
+  const revisionId=await insert('project_runtime_revisions',{user_id:owner.id,project_id:projectId,run_id:runId,workspace_fingerprint:'synthetic-binding-fixture',software_project:snapshot},'revision_id');
+  try {
+    assert.deepEqual((await store.loadLatestRevision(owner.id,projectId))?.project,snapshot);
+    assert.equal((await loadProjectRevision(owner.id,projectId,revisionId))?.revisionId,revisionId);
+    assert.equal((await listProjectRevisions(owner.id,projectId)).length,1);
+    assert.equal(await store.loadLatestRevision(other.id,projectId),null);
+    assert.equal(await loadProjectRevision(other.id,projectId,revisionId),null);
+    assert.deepEqual(await listProjectRevisions(other.id,projectId),[]);
+    for(const mutation of [{...snapshot,projectId:other.project},{...snapshot,runId:'foreign-run'},{...snapshot,contract:{...snapshot.contract,projectId:other.project}},{...snapshot,contract:{...snapshot.contract,runId:'foreign-run'}}]) {
+      assert.equal((await admin.from('project_runtime_revisions').update({software_project:mutation}).eq('revision_id',revisionId)).error,null);
+      assert.equal(await store.loadLatestRevision(owner.id,projectId),null);
+      await assert.rejects(loadProjectRevision(owner.id,projectId,revisionId),{status:404});
+      await assert.rejects(listProjectRevisions(owner.id,projectId),{status:404});
+      await assert.rejects(restoreProjectRevision({userId:owner.id,projectId,revisionId,runId:randomUUID()}),{status:404});
+      await assert.rejects(forkProjectRevision({userId:owner.id,sourceProjectId:projectId,revisionId,newProjectId:projectId,runId:randomUUID()}),{status:404});
+      const records=await admin.from('project_runtime_revisions').select('revision_id').eq('user_id',owner.id).eq('project_id',projectId);
+      assert.equal(records.error,null);assert.deepEqual(records.data,[{revision_id:revisionId}]);
+      const events=await admin.from('project_runtime_events').select('event_id').eq('user_id',owner.id).eq('project_id',projectId);
+      assert.equal(events.error,null);assert.deepEqual(events.data,[]);
+    }
+  } finally {assert.equal((await admin.from('project_runtime_revisions').delete().eq('revision_id',revisionId).eq('user_id',owner.id)).error,null);}
 });
 
 test('real durable preview session cannot resolve a misbound owner/project or stale capability', async () => {

@@ -108,6 +108,8 @@
     "backend/src/security/tenantIsolation.local.integration.ts",
     "backend/src/services/notificationService.ts",
     "backend/src/synthesis/projectRuntime/store.ts",
+    "backend/src/synthesis/projectRuntime/projectHistory.ts",
+    "docs/xroga/security/RUNTIME_REVISION_BOUNDARY.md",
     "backend/src/synthesis/projectRuntime/manager.ts",
     "backend/src/synthesis/projectRuntime/store.owner.test.ts",
     "backend/src/synthesis/universalPersistence.ts",

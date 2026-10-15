@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "f1913278b64bf92c2dd4a09bb0edb94866b59a19e60e912e69d1c1d89797491b",
+  "reviewRegistrySha256": "4851a0c88eb402ec79b713878e5db6e1a8a3fb523f02dde8823e14c4a966a265",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -10,18 +10,18 @@
     "privilegedFactorySites": 160,
     "persistenceCandidates": 670,
     "ownerPredicateCandidates": 167,
-    "reviewRequired": 472,
-    "reviewedCandidates": 198,
+    "reviewRequired": 451,
+    "reviewedCandidates": 219,
     "unresolvedSafetyCandidates": 623,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 472,
+    "REVIEW_REQUIRED": 451,
     "SCOPED_BOUNDARY": 28,
     "NARROW_EXCEPTION": 6,
     "NOT_PERSISTENCE": 13,
-    "REVIEWED_GAP": 151
+    "REVIEWED_GAP": 172
   },
   "callers": [
     {
@@ -8907,70 +8907,154 @@
       "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2"
     },
     {
-      "id": "e3950e502ab614e8e7e9",
+      "id": "949efba83cbbfbfc99ca",
       "path": "backend/src/synthesis/projectRuntime/projectHistory.ts",
-      "line": 97,
+      "line": 66,
       "enclosing": "listProjectRevisions",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_revisions",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "fc48c95cfcac4a235808ed3583a238a966d8dbb4ff7cbeb22f0f807a0eb0f661"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "54471e2a22a019698a8f5607569a60b260d98466aaedf68515429162bf9f336b",
+      "semanticReview": {
+        "authority": "Read complete history/restore/fork implementation. Fixed-table reads bind user/project and exact revision where applicable. The shared snapshot guard now fails before cloning or writing a misbound revision. Clone deliberately detaches runtime and defaults repository preservation off for forks.",
+        "reason": "History reads and cloning are not independent proof of authenticated caller identity, destination logical-project ownership or repository permission when preservation is requested. Event payload redaction, all consumers and deployed recovery remain unverified. Classified as a reviewed gap rather than certifying filters as sufficient authorization.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+            "marker": "forking canonical project state changes project identity and detaches repository/runtime state"
+          }
+        ]
+      }
     },
     {
-      "id": "5f00c4f19778a0e854c0",
+      "id": "372d392279bd2762ded0",
       "path": "backend/src/synthesis/projectRuntime/projectHistory.ts",
-      "line": 97,
+      "line": 66,
       "enclosing": "listProjectRevisions",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "fc48c95cfcac4a235808ed3583a238a966d8dbb4ff7cbeb22f0f807a0eb0f661"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "54471e2a22a019698a8f5607569a60b260d98466aaedf68515429162bf9f336b",
+      "semanticReview": {
+        "authority": "Read complete history/restore/fork implementation. Fixed-table reads bind user/project and exact revision where applicable. The shared snapshot guard now fails before cloning or writing a misbound revision. Clone deliberately detaches runtime and defaults repository preservation off for forks.",
+        "reason": "History reads and cloning are not independent proof of authenticated caller identity, destination logical-project ownership or repository permission when preservation is requested. Event payload redaction, all consumers and deployed recovery remain unverified. Classified as a reviewed gap rather than certifying filters as sufficient authorization.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+            "marker": "forking canonical project state changes project identity and detaches repository/runtime state"
+          }
+        ]
+      }
     },
     {
-      "id": "2cda084933267b4182e4",
+      "id": "1920604a889551eb4f02",
       "path": "backend/src/synthesis/projectRuntime/projectHistory.ts",
-      "line": 163,
+      "line": 132,
       "enclosing": "loadProjectRevision",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_revisions",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "fc48c95cfcac4a235808ed3583a238a966d8dbb4ff7cbeb22f0f807a0eb0f661"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "54471e2a22a019698a8f5607569a60b260d98466aaedf68515429162bf9f336b",
+      "semanticReview": {
+        "authority": "Read complete history/restore/fork implementation. Fixed-table reads bind user/project and exact revision where applicable. The shared snapshot guard now fails before cloning or writing a misbound revision. Clone deliberately detaches runtime and defaults repository preservation off for forks.",
+        "reason": "History reads and cloning are not independent proof of authenticated caller identity, destination logical-project ownership or repository permission when preservation is requested. Event payload redaction, all consumers and deployed recovery remain unverified. Classified as a reviewed gap rather than certifying filters as sufficient authorization.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+            "marker": "forking canonical project state changes project identity and detaches repository/runtime state"
+          }
+        ]
+      }
     },
     {
-      "id": "d62063105de5cf1412c1",
+      "id": "60655c54ecbb30292812",
       "path": "backend/src/synthesis/projectRuntime/projectHistory.ts",
-      "line": 163,
+      "line": 132,
       "enclosing": "loadProjectRevision",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "fc48c95cfcac4a235808ed3583a238a966d8dbb4ff7cbeb22f0f807a0eb0f661"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "54471e2a22a019698a8f5607569a60b260d98466aaedf68515429162bf9f336b",
+      "semanticReview": {
+        "authority": "Read complete history/restore/fork implementation. Fixed-table reads bind user/project and exact revision where applicable. The shared snapshot guard now fails before cloning or writing a misbound revision. Clone deliberately detaches runtime and defaults repository preservation off for forks.",
+        "reason": "History reads and cloning are not independent proof of authenticated caller identity, destination logical-project ownership or repository permission when preservation is requested. Event payload redaction, all consumers and deployed recovery remain unverified. Classified as a reviewed gap rather than certifying filters as sufficient authorization.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+            "marker": "forking canonical project state changes project identity and detaches repository/runtime state"
+          }
+        ]
+      }
     },
     {
-      "id": "aa6b1a5e5feecb220f31",
+      "id": "f163510c6f5c4132c05f",
       "path": "backend/src/synthesis/projectRuntime/projectHistory.ts",
-      "line": 602,
+      "line": 571,
       "enclosing": "listProjectRuntimeEvents",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_events",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "fc48c95cfcac4a235808ed3583a238a966d8dbb4ff7cbeb22f0f807a0eb0f661"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "54471e2a22a019698a8f5607569a60b260d98466aaedf68515429162bf9f336b",
+      "semanticReview": {
+        "authority": "Read complete history/restore/fork implementation. Fixed-table reads bind user/project and exact revision where applicable. The shared snapshot guard now fails before cloning or writing a misbound revision. Clone deliberately detaches runtime and defaults repository preservation off for forks.",
+        "reason": "History reads and cloning are not independent proof of authenticated caller identity, destination logical-project ownership or repository permission when preservation is requested. Event payload redaction, all consumers and deployed recovery remain unverified. Classified as a reviewed gap rather than certifying filters as sufficient authorization.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+            "marker": "forking canonical project state changes project identity and detaches repository/runtime state"
+          }
+        ]
+      }
     },
     {
-      "id": "6e314a588cc606ef7c12",
+      "id": "73ab17f7a209cc26cc6b",
       "path": "backend/src/synthesis/projectRuntime/projectHistory.ts",
-      "line": 602,
+      "line": 571,
       "enclosing": "listProjectRuntimeEvents",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "fc48c95cfcac4a235808ed3583a238a966d8dbb4ff7cbeb22f0f807a0eb0f661"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "54471e2a22a019698a8f5607569a60b260d98466aaedf68515429162bf9f336b",
+      "semanticReview": {
+        "authority": "Read complete history/restore/fork implementation. Fixed-table reads bind user/project and exact revision where applicable. The shared snapshot guard now fails before cloning or writing a misbound revision. Clone deliberately detaches runtime and defaults repository preservation off for forks.",
+        "reason": "History reads and cloning are not independent proof of authenticated caller identity, destination logical-project ownership or repository permission when preservation is requested. Event payload redaction, all consumers and deployed recovery remain unverified. Classified as a reviewed gap rather than certifying filters as sufficient authorization.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+            "marker": "forking canonical project state changes project identity and detaches repository/runtime state"
+          }
+        ]
+      }
     },
     {
       "id": "8fa3e05253b5cb321d2f",
@@ -9013,8 +9097,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_revisions",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
       "id": "fb111a342e49d30c3a9b",
@@ -9024,8 +9122,22 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
       "id": "4e72541c1ae02e397acf",
@@ -9035,8 +9147,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_revisions",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
       "id": "d9ad9a5d90bb4165dc7d",
@@ -9046,129 +9172,297 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
-      "id": "d8e6f90e642bb84936b8",
+      "id": "41edb400573bacaa555d",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 788,
+      "line": 753,
       "enclosing": "saveSession",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
-      "id": "b140dbff0a0fd7bfa4ad",
+      "id": "89d858807f97969b7dce",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 832,
+      "line": 797,
       "enclosing": "loadSession",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_sessions",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
-      "id": "cd39382bfcd0479fa343",
+      "id": "cb711330e00db90f12bb",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 832,
+      "line": 797,
       "enclosing": "loadSession",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
-      "id": "4c28100ba9a33b746e53",
+      "id": "281a3d3a7e272f923671",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 885,
+      "line": 850,
       "enclosing": "appendEvent",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_events",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
-      "id": "6d1a5bbeae6d951a7ff3",
+      "id": "31c93d187197768b3b71",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 885,
+      "line": 850,
       "enclosing": "appendEvent",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
-      "id": "5fda8c41665278a6a49f",
+      "id": "4645f852d77431f00664",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 961,
+      "line": 926,
       "enclosing": "saveEncryptedSecret",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
-      "id": "159a4f18d6a76198dd41",
+      "id": "c064132c2275b340e97a",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 961,
+      "line": 926,
       "enclosing": "saveEncryptedSecret",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
-      "id": "1b8c0cb73174c1b0224d",
+      "id": "7a4a7a0c551fe84cdb17",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 1015,
+      "line": 980,
       "enclosing": "loadEncryptedSecrets",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
-      "id": "5576b93842cd6c4ae1f9",
+      "id": "7fecfb4d81f547ff8e57",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 1015,
+      "line": 980,
       "enclosing": "loadEncryptedSecrets",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
-      "id": "4fa22bd9890a5104ead9",
+      "id": "4af535a6c0e6f4a53b30",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 1098,
+      "line": 1063,
       "enclosing": "deleteEncryptedSecret",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
-      "id": "4168f9c5153ce0eb183a",
+      "id": "2df9f446963207e45a86",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 1098,
+      "line": 1063,
       "enclosing": "deleteEncryptedSecret",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6e6dd7f4aeb25408165c842eadbc9257d79a6e8ad3f3cea7285b7ad712f4dfd7"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "semanticReview": {
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      }
     },
     {
       "id": "5e80030d0b83a9339b90",

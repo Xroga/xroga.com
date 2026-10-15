@@ -1,5 +1,13 @@
 # Xroga OS Batch 01 implementation tracker
 
+## Revision binding continuation — final-source CI required
+
+Feature06e02e39041e36e60771f168f3647738b9615c6b isolated38722375107 PASS:43 actual security tests,3 authenticated browser tests,70 complete fresh/representative-upgrade migrations and verified whole-cluster teardown. Actual API/web revision d211a05bcb57c3dc84615f4593eb5ac2fa4049f1. Frontend frozen build, Cline compatibility and Docker PASS; aggregate38722374920 still finishing when this checkpoint was written. Earlier b2 aggregate38721662082 was CANCELLED by a subsequent push, not PASS.
+
+New candidate binds restored revision row owner/project/run to both saved snapshot and Outcome Contract. History/restore/fork use the same helper and fail before writes for mismatched data.16 focused runtime tests and backend build PASS.44 real security tests now defined; the new one requires its own CI.21 additional runtime/history candidates classified REVIEWED_GAP:219/670 reviewed,451 unreviewed,172 reviewed gaps,28 scoped boundaries,6 narrow exceptions,13 non-persistence.623 unresolved safety candidates remain. Neither filters nor completed review imply full isolation certification.
+
+NanoID frontend standalone lock is now3.3.20, with actual PostCSS receiver zero-length/bounded-generator tests; current advisory snapshot47 aggregate/high24/critical0,37 backend/high17/critical0,14 frontend/high9/critical0 (overlapping graphs). No security waiver.007 IN_PROGRESS;008–010 NOT_STARTED. Original historical semantic reconciliation, account/audit lifecycle, staging/R2/KMS and all other release gaps remain open. PR803 draft/mergeable, Batch1 NO-GO. No merge/deploy/cloud writes or owner credentials.
+
 ## Nullable-target correction checkpoint
 
 Feature6bd5f576 aggregate38719473284 PASS on feature and actual integrated e63d9a812fcd59468c561f940410061087162a4c (main parent3a208262010f6ddca7789a7a6a8bb0848700c983). Isolated38719473303 FAIL42 cases/one target-denial failure plus cleanup failure; browser3 and full70 fresh/representative upgrade passed. Root cause was missing singleton converted to truthy empty array. Corrected nine action-related nullable reads and added denial-before-write unit coverage. Existing immutable audit versus account cascade conflict remains BLOCKED; disposable teardown verification added, never an audit-policy bypass. Worker review adds eight classified sites, with provider health still REVIEWED_GAP. Full final-source CI required.007 IN_PROGRESS/NO-GO;008–010 NOT_STARTED. No production or cloud changes.

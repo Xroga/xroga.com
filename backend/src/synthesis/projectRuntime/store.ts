@@ -708,7 +708,7 @@ export class SupabaseProjectRuntimeStore
           'project_runtime_revisions',
         )
         .select(
-          'revision_id, run_id, revision_number, workspace_fingerprint, software_project, created_at',
+          'revision_id, user_id, project_id, run_id, revision_number, workspace_fingerprint, software_project, created_at',
         )
         .eq(
           'user_id',
@@ -742,42 +742,7 @@ export class SupabaseProjectRuntimeStore
       return null;
     }
 
-    return {
-      revisionId:
-        String(
-          data.revision_id,
-        ),
-
-      userId,
-
-      projectId,
-
-      runId:
-        String(
-          data.run_id,
-        ),
-
-      revisionNumber:
-        Number(
-          data.revision_number,
-        ),
-
-      workspaceFingerprint:
-        String(
-          data.workspace_fingerprint,
-        ),
-
-      project:
-        clone(
-          data.software_project as
-            SoftwareProject,
-        ),
-
-      createdAt:
-        String(
-          data.created_at,
-        ),
-    };
+    return restoreOwnerBoundProjectRevision(data, userId, projectId);
   }
 
   async saveSession(
@@ -1123,6 +1088,27 @@ export class SupabaseProjectRuntimeStore
       throw error;
     }
   }
+}
+
+/** Bind persisted snapshot identity before any restore/runtime consumer uses it.
+ * This is not a full SoftwareProject schema, repository authorization or credential check.
+ */
+export function restoreOwnerBoundProjectRevision(row: unknown, userId: string, projectId: string): ProjectRevisionRecord | null {
+  if (!row || typeof row !== 'object' || Array.isArray(row)) return null;
+  const record = row as Record<string, unknown>;
+  if (!userId || !projectId || record.user_id !== userId || record.project_id !== projectId || typeof record.run_id !== 'string' || !record.run_id) return null;
+  const project = record.software_project;
+  if (!project || typeof project !== 'object' || Array.isArray(project)) return null;
+  const snapshot = project as Record<string, unknown>;
+  const contract = snapshot.contract;
+  if (!contract || typeof contract !== 'object' || Array.isArray(contract)) return null;
+  const identity = contract as Record<string, unknown>;
+  if (snapshot.projectId !== projectId || snapshot.runId !== record.run_id || identity.projectId !== projectId || identity.runId !== record.run_id) return null;
+  return {
+    revisionId: String(record.revision_id), userId, projectId, runId: record.run_id,
+    revisionNumber: Number(record.revision_number), workspaceFingerprint: String(record.workspace_fingerprint),
+    project: clone(project as SoftwareProject), createdAt: String(record.created_at),
+  };
 }
 
 /** Ownership columns, not embedded restored JSON, are the durable authority. */
