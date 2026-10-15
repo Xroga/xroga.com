@@ -1157,6 +1157,8 @@ export async function isRunCancellationRequested(
 ): Promise<boolean> {
   const hot =
     runs.get(runId);
+  const scope = attemptScope.getStore();
+  if (scope && scope.record !== hot) throw new Error('Run authority is unavailable.');
 
   if (
     hot?.userId === userId && hot.status ===

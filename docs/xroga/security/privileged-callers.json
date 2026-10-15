@@ -1,18 +1,18 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "8c235cf4bf0d505ff41b79d49ebb9ef2fdd3bc299cd5215e569c9065285b02a8",
+  "reviewRegistrySha256": "906c5ebd44a8f8a87bddb398b85d88956a36d71a19f67dfbeee84065cc037a4e",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 160,
-    "persistenceCandidates": 666,
-    "ownerPredicateCandidates": 162,
+    "privilegedFactorySites": 161,
+    "persistenceCandidates": 672,
+    "ownerPredicateCandidates": 169,
     "reviewRequired": 0,
-    "reviewedCandidates": 666,
-    "unresolvedSafetyCandidates": 487,
+    "reviewedCandidates": 672,
+    "unresolvedSafetyCandidates": 492,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -20,8 +20,8 @@
     "REVIEW_REQUIRED": 0,
     "SCOPED_BOUNDARY": 41,
     "NARROW_EXCEPTION": 8,
-    "NOT_PERSISTENCE": 130,
-    "REVIEWED_GAP": 487
+    "NOT_PERSISTENCE": 131,
+    "REVIEWED_GAP": 492
   },
   "callers": [
     {
@@ -1444,7 +1444,7 @@
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "cfb0a5c3f8e3dff46ede12147dfd3155bb1d052ca829a4ed07a0e5db63b3ecb4",
+      "sourceSha256": "0604a2c343ae8eb549de9866040ac3500081e86aa09fa40a64f8ffbffa743b55",
       "semanticReview": {
         "authority": "Only discovered production consumers are index.ts startup and shutdown. Startup uses the registered stale_run_reconcile authority with a minimum five-minute stale-heartbeat predicate and running status; shutdown uses leased_worker_shutdown with current process active IDs, current worker lease and running status.",
         "reason": "Fixed-table lifecycle maintenance intentionally spans tenants, never selects customer payloads or invokes providers. Real disposable PostgreSQL tests preserve fresh/terminal rows and reject another worker lease even when its ID is supplied. This exception certifies only these bounded maintenance updates, not all scheduler identity, staged restart or provider exactly-once behavior.",
@@ -1469,7 +1469,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "cfb0a5c3f8e3dff46ede12147dfd3155bb1d052ca829a4ed07a0e5db63b3ecb4",
+      "sourceSha256": "0604a2c343ae8eb549de9866040ac3500081e86aa09fa40a64f8ffbffa743b55",
       "semanticReview": {
         "authority": "Only discovered production consumers are index.ts startup and shutdown. Startup uses the registered stale_run_reconcile authority with a minimum five-minute stale-heartbeat predicate and running status; shutdown uses leased_worker_shutdown with current process active IDs, current worker lease and running status.",
         "reason": "Fixed-table lifecycle maintenance intentionally spans tenants, never selects customer payloads or invokes providers. Real disposable PostgreSQL tests preserve fresh/terminal rows and reject another worker lease even when its ID is supplied. This exception certifies only these bounded maintenance updates, not all scheduler identity, staged restart or provider exactly-once behavior.",
@@ -1486,15 +1486,15 @@
       }
     },
     {
-      "id": "f992983e637455691c2a",
+      "id": "42f5c4cf7fee8caeddc3",
       "path": "backend/src/ai/runReconciler.ts",
-      "line": 126,
+      "line": 127,
       "enclosing": "failInFlightRuns",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "cfb0a5c3f8e3dff46ede12147dfd3155bb1d052ca829a4ed07a0e5db63b3ecb4",
+      "sourceSha256": "0604a2c343ae8eb549de9866040ac3500081e86aa09fa40a64f8ffbffa743b55",
       "semanticReview": {
         "authority": "Only discovered production consumers are index.ts startup and shutdown. Startup uses the registered stale_run_reconcile authority with a minimum five-minute stale-heartbeat predicate and running status; shutdown uses leased_worker_shutdown with current process active IDs, current worker lease and running status.",
         "reason": "Fixed-table lifecycle maintenance intentionally spans tenants, never selects customer payloads or invokes providers. Real disposable PostgreSQL tests preserve fresh/terminal rows and reject another worker lease even when its ID is supplied. This exception certifies only these bounded maintenance updates, not all scheduler identity, staged restart or provider exactly-once behavior.",
@@ -1511,15 +1511,15 @@
       }
     },
     {
-      "id": "13c06ef7ac5be117d423",
+      "id": "fe1a3b914c605d3f900a",
       "path": "backend/src/ai/runReconciler.ts",
-      "line": 128,
+      "line": 129,
       "enclosing": "failInFlightRuns",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "cfb0a5c3f8e3dff46ede12147dfd3155bb1d052ca829a4ed07a0e5db63b3ecb4",
+      "sourceSha256": "0604a2c343ae8eb549de9866040ac3500081e86aa09fa40a64f8ffbffa743b55",
       "semanticReview": {
         "authority": "Only discovered production consumers are index.ts startup and shutdown. Startup uses the registered stale_run_reconcile authority with a minimum five-minute stale-heartbeat predicate and running status; shutdown uses leased_worker_shutdown with current process active IDs, current worker lease and running status.",
         "reason": "Fixed-table lifecycle maintenance intentionally spans tenants, never selects customer payloads or invokes providers. Real disposable PostgreSQL tests preserve fresh/terminal rows and reject another worker lease even when its ID is supplied. This exception certifies only these bounded maintenance updates, not all scheduler identity, staged restart or provider exactly-once behavior.",
@@ -1536,337 +1536,401 @@
       }
     },
     {
-      "id": "d75d47cbae8757b9d745",
+      "id": "71ee15b6be25c62f87ee",
       "path": "backend/src/ai/runStore.ts",
-      "line": 88,
+      "line": 112,
       "enclosing": "persistRunHeartbeat",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
-      "ownerPredicateCandidate": false,
+      "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "6badd6b375699a87a01a",
+      "id": "0157dacc56fbbe42b689",
       "path": "backend/src/ai/runStore.ts",
-      "line": 88,
+      "line": 112,
       "enclosing": "persistRunHeartbeat",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
+      "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "a0d334b99e8deedce707",
+      "id": "8187f555a51523922a8c",
       "path": "backend/src/ai/runStore.ts",
-      "line": 419,
+      "line": 450,
       "enclosing": "resumeRunDurable",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "7d6affd9e4bb77158024",
+      "id": "358f396a40bcbe23021e",
       "path": "backend/src/ai/runStore.ts",
-      "line": 420,
+      "line": 451,
       "enclosing": "resumeRunDurable",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "2a41e647ff4992cac220",
+      "id": "d5f98c8db3ae05d22a6d",
       "path": "backend/src/ai/runStore.ts",
-      "line": 729,
+      "line": 768,
       "enclosing": "persistConversationOnly",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "9a34ed3891e556cd65b7",
+      "id": "63ca31b0c06dd8841424",
       "path": "backend/src/ai/runStore.ts",
-      "line": 735,
+      "line": 774,
       "enclosing": "persistConversationOnly",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "dc0dca83399b66b35c4c",
+      "id": "a3548ef186fa8b428865",
       "path": "backend/src/ai/runStore.ts",
-      "line": 846,
+      "line": 880,
       "enclosing": "getRunAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "8e289a03ce0b59c8191c",
+      "id": "531b9a5c2bc7ab99f5f6",
       "path": "backend/src/ai/runStore.ts",
-      "line": 848,
+      "line": 882,
       "enclosing": "getRunAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
-      "ownerPredicateCandidate": false,
+      "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "6dd08527dab2b9397123",
+      "id": "cacecec26d66f49efb75",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1010,
+      "line": 1047,
       "enclosing": "requestRunCancellation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "309bfa83ba22ea76bf2d",
+      "id": "7a68a211e8ae3c70dd1b",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1016,
+      "line": 1053,
       "enclosing": "requestRunCancellation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "e100d9ab10d976396c74",
+      "id": "ba47bbf926c652911919",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1138,
+      "line": 1179,
       "enclosing": "isRunCancellationRequested",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "9e4818b801310d7892c8",
+      "id": "b6976d2654e7d13ff835",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1144,
+      "line": 1185,
       "enclosing": "isRunCancellationRequested",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
-      "ownerPredicateCandidate": false,
+      "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "b1aaa9bf42efe40fb96d",
+      "id": "539d5c8afa9283247d91",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1280,
+      "line": 1324,
       "enclosing": "listRunsForUserAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "c44bd4daa5f6b697282e",
+      "id": "88a6d9f1f2d6f28c6575",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1286,
+      "line": 1330,
       "enclosing": "listRunsForUserAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "fa89747b9718a8adda41",
+      "id": "e6962fee1d6609a270ff",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1472,
+      "line": 1519,
       "enclosing": "persistToSupabase",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
     },
     {
-      "id": "33e320e736ad4345a69b",
+      "id": "f57d6bf024f2d9f9e11c",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1544,
+      "line": 1592,
       "enclosing": "persistToSupabase",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "semanticReview": {
-        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+        "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runStore.creation.test.ts",
-            "marker": "durable creation is insert-only"
+            "path": "backend/src/ai/runStore.authority.test.ts",
+            "marker": "worker persistence and cancellation fail closed"
+          },
+          {
+            "path": "backend/src/ai/runStore.resume.test.ts",
+            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
           }
         ]
       }
@@ -8148,15 +8212,57 @@
       }
     },
     {
-      "id": "e96cbab02a43d476a1b1",
+      "id": "c918befd08426d6bc94f",
+      "path": "backend/src/security/boundedPublicGet.ts",
+      "line": 128,
+      "enclosing": "boundedPublicGet",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "4e65815a53307b4e4941e305bd84ab9eac9ea0720e71a84b4f5b7b2278dad76c",
+      "semanticReview": {
+        "authority": "This candidate is Node Buffer.from converting an already received stream chunk before byte accounting. No database, storage bucket, identity or service-role client is accessed at this expression.",
+        "reason": "Source tracing proves a byte conversion rather than persistence. The enclosing inactive GET helper has separate SSRF and byte/time fixtures, but this disposition certifies neither future callers nor complete egress policy.",
+        "evidence": [
+          {
+            "path": "backend/src/security/boundedPublicGet.ts",
+            "marker": "const chunk = Buffer.isBuffer(item.value) ? item.value : Buffer.from(item.value);"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e03585d107361a9dfe3d",
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "line": 47,
+      "line": 9,
+      "enclosing": "persistOwnedRunAttempt",
+      "kind": "RPC_CANDIDATE",
+      "target": "persist_swarm_run_attempt",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
+      "semanticReview": {
+        "authority": "New fixed RPC requires issued TenantContext, owner, worker and attempt generation; database row lock validates owner, generation, status and sequence before updating only execution columns.",
+        "reason": "Real disposable two-client race tests are implemented but not yet executed on this source. Parent project and full caller admission remain separately unresolved. No full Command 007 acceptance is inferred.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real two-client completion and cancellation race"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f8202ba092cd45df58a9",
+      "path": "backend/src/security/ownedRunPersistence.ts",
+      "line": 59,
       "enclosing": "persistOwnerBoundRecord",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "afee97a186c1c4b90314d1530dfa6d30c77b28eefa315463e9fdfb6f8cb3adce",
+      "sourceSha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
       "semanticReview": {
         "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
         "reason": "Insert-ignore prevents transferring a globally keyed row; subsequent update or append-only verification constrains both key and actor and requires exactly one row. Mutation verification also binds run/project. Parent authority and provenance at wrapper callers remain separate review obligations, not inferred from these helper predicates.",
@@ -8173,15 +8279,15 @@
       }
     },
     {
-      "id": "20965f3eb585be67730c",
+      "id": "6b9d0a89325ea2f3ac48",
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "line": 49,
+      "line": 61,
       "enclosing": "persistOwnerBoundRecord",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "afee97a186c1c4b90314d1530dfa6d30c77b28eefa315463e9fdfb6f8cb3adce",
+      "sourceSha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
       "semanticReview": {
         "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
         "reason": "Insert-ignore prevents transferring a globally keyed row; subsequent update or append-only verification constrains both key and actor and requires exactly one row. Mutation verification also binds run/project. Parent authority and provenance at wrapper callers remain separate review obligations, not inferred from these helper predicates.",
@@ -8198,15 +8304,15 @@
       }
     },
     {
-      "id": "f8dec8dfc0826b0b8622",
+      "id": "819538c35037e0ed79a2",
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "line": 49,
+      "line": 61,
       "enclosing": "persistOwnerBoundRecord",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "afee97a186c1c4b90314d1530dfa6d30c77b28eefa315463e9fdfb6f8cb3adce",
+      "sourceSha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
       "semanticReview": {
         "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
         "reason": "Insert-ignore prevents transferring a globally keyed row; subsequent update or append-only verification constrains both key and actor and requires exactly one row. Mutation verification also binds run/project. Parent authority and provenance at wrapper callers remain separate review obligations, not inferred from these helper predicates.",
@@ -8942,15 +9048,15 @@
       }
     },
     {
-      "id": "4bac1f85884552b632aa",
+      "id": "54d7881d096799f0bbbc",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 221,
+      "line": 222,
       "enclosing": "expireIfNeeded",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
@@ -8963,15 +9069,15 @@
       }
     },
     {
-      "id": "e74c47ff08725fc400be",
+      "id": "8498af01e3ea93df075c",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 227,
+      "line": 228,
       "enclosing": "expireIfNeeded",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
@@ -8984,15 +9090,15 @@
       }
     },
     {
-      "id": "1819e6d9f1ef9643530d",
+      "id": "37cdea800bc3a61640e5",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 297,
+      "line": 303,
       "enclosing": "createBusinessActionConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
@@ -9005,15 +9111,15 @@
       }
     },
     {
-      "id": "bf51c138cafd8afd0783",
+      "id": "ceb778e84973feb93a46",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 309,
+      "line": 315,
       "enclosing": "createBusinessActionConfirmation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
@@ -9026,57 +9132,15 @@
       }
     },
     {
-      "id": "2613c2d2dba6835555d0",
-      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 374,
-      "enclosing": "getBusinessActionConfirmation",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
-      "semanticReview": {
-        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
-            "marker": "confirmation claims bind owner, reviewed digest and expiry"
-          }
-        ]
-      }
-    },
-    {
-      "id": "d47e3277b8dabd3c3bde",
+      "id": "fdcd67b3b3f41d8b79d9",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
       "line": 380,
       "enclosing": "getBusinessActionConfirmation",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "business_action_confirmations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
-      "semanticReview": {
-        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
-            "marker": "confirmation claims bind owner, reviewed digest and expiry"
-          }
-        ]
-      }
-    },
-    {
-      "id": "92dbff4fed69e6b29a38",
-      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 454,
-      "enclosing": "cancelBusinessActionConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
@@ -9089,15 +9153,36 @@
       }
     },
     {
-      "id": "460ec409f3f861f72ede",
+      "id": "5b4af0b6dfcc46eab1a0",
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "line": 386,
+      "enclosing": "getBusinessActionConfirmation",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "business_action_confirmations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
+    },
+    {
+      "id": "21d1e6a391c087be536f",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
       "line": 460,
       "enclosing": "cancelBusinessActionConfirmation",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "business_action_confirmations",
-      "ownerPredicateCandidate": true,
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
@@ -9110,15 +9195,36 @@
       }
     },
     {
-      "id": "b1039c41ed0fe1452744",
+      "id": "134d721e6f9615596c9c",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 540,
+      "line": 466,
+      "enclosing": "cancelBusinessActionConfirmation",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "business_action_confirmations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
+    },
+    {
+      "id": "406dc3bc9886c695d266",
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "line": 546,
       "enclosing": "confirmBusinessAction",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
@@ -9131,15 +9237,15 @@
       }
     },
     {
-      "id": "809571aba827da676341",
+      "id": "0ffad26428a284894b4b",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 546,
+      "line": 552,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
@@ -9152,15 +9258,15 @@
       }
     },
     {
-      "id": "fbb11a3fa1dc2ba19a25",
+      "id": "4a8ad3298a6845cef73d",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 648,
+      "line": 657,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
@@ -9173,15 +9279,15 @@
       }
     },
     {
-      "id": "ff5fcd4428ea2b9f6d5c",
+      "id": "0e22a55cfea376535195",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 721,
+      "line": 733,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
@@ -9194,15 +9300,15 @@
       }
     },
     {
-      "id": "95863147dbe50ed4ca98",
+      "id": "b9fb76e8b1209d52b5bb",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 798,
+      "line": 810,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
@@ -9215,15 +9321,15 @@
       }
     },
     {
-      "id": "f853c09d25e5d82e74a9",
+      "id": "a069ca2973370ece67d9",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 870,
+      "line": 882,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
@@ -9626,7 +9732,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
@@ -9647,7 +9753,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
@@ -9668,7 +9774,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
@@ -9681,36 +9787,99 @@
       }
     },
     {
-      "id": "7a6a5adb10ec6d412288",
+      "id": "5af0dfecb133879330e2",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
       "line": 69,
-      "enclosing": "getGitHubTokenFromStorage",
+      "enclosing": "currentGitHubAuthority",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
       "semanticReview": {
-        "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
-        "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
+        "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
+        "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
         "evidence": [
           {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real credential writer refuses a public bucket"
+            "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
+            "marker": "revocation"
           }
         ]
       }
     },
     {
-      "id": "caa03e8305e81d9313ce",
+      "id": "2aa98c887631896938dc",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
       "line": 70,
+      "enclosing": "currentGitHubAuthority",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "github_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
+      "semanticReview": {
+        "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
+        "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
+            "marker": "revocation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e8a7ea96116a374773c0",
+      "path": "backend/src/services/integrations/githubTokenStore.ts",
+      "line": 73,
+      "enclosing": "currentGitHubAuthority",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
+      "semanticReview": {
+        "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
+        "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
+            "marker": "revocation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "55573ca462209ab422c3",
+      "path": "backend/src/services/integrations/githubTokenStore.ts",
+      "line": 84,
+      "enclosing": "getGitHubTokenFromStorage",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
+      "semanticReview": {
+        "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
+        "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real credential writer refuses a public bucket"
+          }
+        ]
+      }
+    },
+    {
+      "id": "36464f94938ad7240220",
+      "path": "backend/src/services/integrations/githubTokenStore.ts",
+      "line": 85,
       "enclosing": "getGitHubTokenFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
@@ -9723,15 +9892,15 @@
       }
     },
     {
-      "id": "d44f9dff5b2904e220a7",
+      "id": "8a8f49466dccccc652af",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "line": 83,
+      "line": 102,
       "enclosing": "deleteGitHubTokenFromStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
@@ -9744,15 +9913,15 @@
       }
     },
     {
-      "id": "db2c2af734b6cbdb4628",
+      "id": "08adc22ee116d34993ce",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "line": 84,
+      "line": 103,
       "enclosing": "deleteGitHubTokenFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
@@ -10613,7 +10782,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10634,7 +10803,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10655,7 +10824,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10676,7 +10845,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10689,15 +10858,36 @@
       }
     },
     {
-      "id": "823abc9d7cb71b54caa7",
+      "id": "e948275ac03420374cc6",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 71,
+      "line": 63,
+      "enclosing": "loadKeyFromStorage",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
+      "semanticReview": {
+        "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
+        "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
+            "marker": "revocation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "67ccfcf6b0247b2d271d",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 80,
       "enclosing": "listKeysFromStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10710,15 +10900,15 @@
       }
     },
     {
-      "id": "024328c35e2e473b15f6",
+      "id": "f68c7243e8023c812ac6",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 72,
+      "line": 81,
       "enclosing": "listKeysFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10731,15 +10921,15 @@
       }
     },
     {
-      "id": "0e5e0a6c907b0012004f",
+      "id": "241716ea497721fe54e5",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 244,
+      "line": 253,
       "enclosing": "decryptApiKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10752,15 +10942,15 @@
       }
     },
     {
-      "id": "6a8e36092dbe3dc13e92",
+      "id": "b413c3ab1ace9d65accf",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 254,
+      "line": 263,
       "enclosing": "decryptApiKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10773,15 +10963,15 @@
       }
     },
     {
-      "id": "ca380eb67c3d6e543fd1",
+      "id": "59f4d2f0eec1fa44b280",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 255,
+      "line": 264,
       "enclosing": "decryptApiKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10794,15 +10984,15 @@
       }
     },
     {
-      "id": "cadef09de6d8f790fdf8",
+      "id": "2a795324dbc14c9e6d74",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 256,
+      "line": 265,
       "enclosing": "decryptApiKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10815,15 +11005,15 @@
       }
     },
     {
-      "id": "17541737a8deed0dea86",
+      "id": "64cda88c40a2dea3b929",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 337,
+      "line": 346,
       "enclosing": "saveUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10836,15 +11026,15 @@
       }
     },
     {
-      "id": "4234b3c7dea4174c8ec4",
+      "id": "7678dd8c2ff7d9451dc1",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 363,
+      "line": 372,
       "enclosing": "saveUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10857,15 +11047,15 @@
       }
     },
     {
-      "id": "d16a0b8bb0c85f9d738a",
+      "id": "d025e09ce0208d1d0612",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 376,
+      "line": 385,
       "enclosing": "saveUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10878,15 +11068,15 @@
       }
     },
     {
-      "id": "7addb4abf2851965688f",
+      "id": "0f3395fb6a71eb421ea8",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 398,
+      "line": 407,
       "enclosing": "listUserProviderKeys",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10899,15 +11089,15 @@
       }
     },
     {
-      "id": "85bd224a1821c3260c15",
+      "id": "b076c1c4bf66ec7f3154",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 399,
+      "line": 408,
       "enclosing": "listUserProviderKeys",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10920,15 +11110,15 @@
       }
     },
     {
-      "id": "6eb81f5722946ce9055b",
+      "id": "8818dd3f4cbea04bba6c",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 440,
+      "line": 449,
       "enclosing": "deleteUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10941,15 +11131,15 @@
       }
     },
     {
-      "id": "9176f7450e0038ecfe95",
+      "id": "e712f825297f73e76d20",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 444,
+      "line": 453,
       "enclosing": "deleteUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10962,15 +11152,15 @@
       }
     },
     {
-      "id": "76e45ad1222197a0b314",
+      "id": "9988bf3aa279bdf15867",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 471,
+      "line": 480,
       "enclosing": "revokeProviderRow",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -10983,15 +11173,15 @@
       }
     },
     {
-      "id": "cbb56f7c9723f7ce0786",
+      "id": "986cb07b032a907ca999",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 472,
+      "line": 481,
       "enclosing": "revokeProviderRow",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -11004,15 +11194,15 @@
       }
     },
     {
-      "id": "00d5747ecf446792e664",
+      "id": "52dfcaab9b5f39116d78",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 478,
+      "line": 487,
       "enclosing": "revokeProviderRow",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -11025,15 +11215,15 @@
       }
     },
     {
-      "id": "852656b30e571d27366f",
+      "id": "dc97b761954360052133",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 555,
+      "line": 564,
       "enclosing": "getUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -11046,15 +11236,15 @@
       }
     },
     {
-      "id": "bcdf1774aaeb2947aea7",
+      "id": "67f79f2406e93fba048c",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 557,
+      "line": 566,
       "enclosing": "getUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -11067,15 +11257,15 @@
       }
     },
     {
-      "id": "732271f13ac74637c562",
+      "id": "044b3e7925d35505dfde",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 578,
+      "line": 587,
       "enclosing": "getUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -11088,15 +11278,15 @@
       }
     },
     {
-      "id": "1d3a4468abc984e7f129",
+      "id": "2a8ae80954984f4cfbe6",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 600,
+      "line": 609,
       "enclosing": "resolveProviderEnvForDeploy",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
@@ -11109,15 +11299,15 @@
       }
     },
     {
-      "id": "5972539630132aefe5af",
+      "id": "3bb4f5d80fd923e568fe",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 601,
+      "line": 610,
       "enclosing": "resolveProviderEnvForDeploy",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "semanticReview": {
         "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
         "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",

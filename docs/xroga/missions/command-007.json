@@ -10,6 +10,14 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/ai/runStore.authority.test.ts",
+    "backend/src/ai/runStore.resume.test.ts",
+    "supabase/migrations/20261015000300_swarm_run_attempt_fencing.sql",
+    "backend/src/services/integrations/credentialMirrorRace.test.ts",
+    "backend/src/services/integrations/businessAction.digest.test.ts",
+    "backend/src/security/boundedPublicGet.ts",
+    "backend/src/security/boundedPublicGet.test.ts",
+    "docs/xroga/security/batch-1-closure-progress.json",
     "backend/src/services/integrations/githubDeploy.ts",
     "backend/src/services/integrations/githubDeploy.credential.test.ts",
     "backend/src/growth/growthService.ts",
@@ -212,6 +220,7 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
+      "supabase/migrations/20261015000300_swarm_run_attempt_fencing.sql",
       "supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql",
       "supabase/migrations/20261013221254_private_project_file_delivery.sql",
       "supabase/migrations/20261015000100_whop_membership_owner_boundary.sql",

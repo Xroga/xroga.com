@@ -2785,6 +2785,7 @@
       "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
       "current_paths": [
         "backend/src/middleware/auth.ts",
+        "backend/src/security/boundedPublicGet.ts",
         "backend/src/security/ownedRunPersistence.ts",
         "backend/src/security/ownedTerminalPersistence.ts",
         "backend/src/security/ownership.ts",

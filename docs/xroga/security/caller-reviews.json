@@ -2,6 +2,15 @@
   "version": "1.0",
   "reviews": [
     {
+      "path": "backend/src/security/boundedPublicGet.ts",
+      "sourceSha256": "4e65815a53307b4e4941e305bd84ab9eac9ea0720e71a84b4f5b7b2278dad76c",
+      "callIds": ["c918befd08426d6bc94f"],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "This candidate is Node Buffer.from converting an already received stream chunk before byte accounting. No database, storage bucket, identity or service-role client is accessed at this expression.",
+      "reason": "Source tracing proves a byte conversion rather than persistence. The enclosing inactive GET helper has separate SSRF and byte/time fixtures, but this disposition certifies neither future callers nor complete egress policy.",
+      "evidence": [{"path":"backend/src/security/boundedPublicGet.ts","marker":"const chunk = Buffer.isBuffer(item.value) ? item.value : Buffer.from(item.value);"}]
+    },
+    {
       "path": "backend/src/ai/benchmarkRunner.ts",
       "sourceSha256": "4fefef73278c98fcc8916030f07c6387ff1de061425f7005215782f996f666f2",
       "callIds": [
@@ -583,22 +592,22 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
       "callIds": [
-        "4bac1f85884552b632aa",
-        "e74c47ff08725fc400be",
-        "1819e6d9f1ef9643530d",
-        "bf51c138cafd8afd0783",
-        "2613c2d2dba6835555d0",
-        "d47e3277b8dabd3c3bde",
-        "92dbff4fed69e6b29a38",
-        "460ec409f3f861f72ede",
-        "b1039c41ed0fe1452744",
-        "809571aba827da676341",
-        "fbb11a3fa1dc2ba19a25",
-        "ff5fcd4428ea2b9f6d5c",
-        "95863147dbe50ed4ca98",
-        "f853c09d25e5d82e74a9"
+        "54d7881d096799f0bbbc",
+        "8498af01e3ea93df075c",
+        "37cdea800bc3a61640e5",
+        "ceb778e84973feb93a46",
+        "fdcd67b3b3f41d8b79d9",
+        "5b4af0b6dfcc46eab1a0",
+        "21d1e6a391c087be536f",
+        "134d721e6f9615596c9c",
+        "406dc3bc9886c695d266",
+        "0ffad26428a284894b4b",
+        "4a8ad3298a6845cef73d",
+        "0e22a55cfea376535195",
+        "b9fb76e8b1209d52b5bb",
+        "a069ca2973370ece67d9"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
@@ -612,32 +621,36 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
       "callIds": [
-        "d75d47cbae8757b9d745",
-        "6badd6b375699a87a01a",
-        "a0d334b99e8deedce707",
-        "7d6affd9e4bb77158024",
-        "2a41e647ff4992cac220",
-        "9a34ed3891e556cd65b7",
-        "dc0dca83399b66b35c4c",
-        "8e289a03ce0b59c8191c",
-        "6dd08527dab2b9397123",
-        "309bfa83ba22ea76bf2d",
-        "e100d9ab10d976396c74",
-        "9e4818b801310d7892c8",
-        "b1aaa9bf42efe40fb96d",
-        "c44bd4daa5f6b697282e",
-        "fa89747b9718a8adda41",
-        "33e320e736ad4345a69b"
+        "71ee15b6be25c62f87ee",
+        "0157dacc56fbbe42b689",
+        "8187f555a51523922a8c",
+        "358f396a40bcbe23021e",
+        "d5f98c8db3ae05d22a6d",
+        "63ca31b0c06dd8841424",
+        "a3548ef186fa8b428865",
+        "531b9a5c2bc7ab99f5f6",
+        "cacecec26d66f49efb75",
+        "7a68a211e8ae3c70dd1b",
+        "ba47bbf926c652911919",
+        "b6976d2654e7d13ff835",
+        "539d5c8afa9283247d91",
+        "88a6d9f1f2d6f28c6575",
+        "e6962fee1d6609a270ff",
+        "f57d6bf024f2d9f9e11c"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
-      "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+      "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
+      "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
       "evidence": [
         {
-          "path": "backend/src/ai/runStore.creation.test.ts",
-          "marker": "durable creation is insert-only"
+          "path": "backend/src/ai/runStore.authority.test.ts",
+          "marker": "worker persistence and cancellation fail closed"
+        },
+        {
+          "path": "backend/src/ai/runStore.resume.test.ts",
+          "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
         }
       ]
     },
@@ -834,38 +847,105 @@
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
-      "callIds": ["26fa4f9ec2b1c2b706eb","53492dad34fb85b82a84","25c7f8ef11b52299ef2d","64f625d38ac95267dfc4","f2bc36a25635940ff4bc","42b163c963d22440b772","e75144f479b27611799d","4d32a7e88bcbc575fe1e","e7d3dfffb00cabdb12e1","caf8c34f6a6ad470f2e7","cf317294ba08b3484a5f","21a631f71ad577a88ffd","008647681f5b1bf1d3b3","03881481406df41623c0","87da92bb2b293576e16d","473638d30e12be7d3b2d"],
+      "callIds": [
+        "26fa4f9ec2b1c2b706eb",
+        "53492dad34fb85b82a84",
+        "25c7f8ef11b52299ef2d",
+        "64f625d38ac95267dfc4",
+        "f2bc36a25635940ff4bc",
+        "42b163c963d22440b772",
+        "e75144f479b27611799d",
+        "4d32a7e88bcbc575fe1e",
+        "e7d3dfffb00cabdb12e1",
+        "caf8c34f6a6ad470f2e7",
+        "cf317294ba08b3484a5f",
+        "21a631f71ad577a88ffd",
+        "008647681f5b1bf1d3b3",
+        "03881481406df41623c0",
+        "87da92bb2b293576e16d",
+        "473638d30e12be7d3b2d"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
       "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
-      "evidence": [{"path":"backend/src/services/integrations/vercelAuth.revocation.test.ts","marker":"Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"}]
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+          "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+        }
+      ]
     },
     {
       "path": "backend/src/services/integrations/githubAuth.ts",
       "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
-      "callIds": ["f8bd72ce7b41e47c780a", "69f92d6c218d524974df", "3458113405e334d0de13", "dc59e6f793b207280b2d", "0406dca0597f3236b3b7", "be3bc6ac9507df178e4a", "a098922758b2b1ee2d43", "9f708d8a33157d711655", "26a5feb362efbd53e788", "c7aaad47a8f8145eddcc", "8a230e1bb6f42f536618"],
+      "callIds": [
+        "f8bd72ce7b41e47c780a",
+        "69f92d6c218d524974df",
+        "3458113405e334d0de13",
+        "dc59e6f793b207280b2d",
+        "0406dca0597f3236b3b7",
+        "be3bc6ac9507df178e4a",
+        "a098922758b2b1ee2d43",
+        "9f708d8a33157d711655",
+        "26a5feb362efbd53e788",
+        "c7aaad47a8f8145eddcc",
+        "8a230e1bb6f42f536618"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
       "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
-      "evidence": [{"path":"backend/src/services/integrations/githubAuth.revocation.test.ts","marker":"GitHub authority outages and durable revocation prevent stale mirror resurrection"}]
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+          "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+        }
+      ]
     },
     {
       "path": "backend/src/routes/terminalSessions.ts",
       "sourceSha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
-      "callIds": ["676c6d166f859de70ed7", "a695c4796bac42721a22", "04b6476a7e94c81cb923", "a5abc7d698866557196e", "8daadf2d62da931790cc", "e192075908a00134d4d8", "7c0b2f550f7657675a65", "ea4067868e8666be56f6", "72de315e5155eb8280e0", "82b1da8a220ec366dfe1"],
+      "callIds": [
+        "676c6d166f859de70ed7",
+        "a695c4796bac42721a22",
+        "04b6476a7e94c81cb923",
+        "a5abc7d698866557196e",
+        "8daadf2d62da931790cc",
+        "e192075908a00134d4d8",
+        "7c0b2f550f7657675a65",
+        "ea4067868e8666be56f6",
+        "72de315e5155eb8280e0",
+        "82b1da8a220ec366dfe1"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
       "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
-      "evidence": [{"path":"backend/src/routes/terminalSessions.failure.test.ts","marker":"terminal autosave refuses writes after failed metadata or number allocation reads"}, {"path":"backend/src/routes/terminalSessions.ts","marker":"requireTenantContext(req.tenantContext).userId"}]
+      "evidence": [
+        {
+          "path": "backend/src/routes/terminalSessions.failure.test.ts",
+          "marker": "terminal autosave refuses writes after failed metadata or number allocation reads"
+        },
+        {
+          "path": "backend/src/routes/terminalSessions.ts",
+          "marker": "requireTenantContext(req.tenantContext).userId"
+        }
+      ]
     },
     {
       "path": "backend/src/security/ownedTerminalPersistence.ts",
       "sourceSha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e",
-      "callIds": ["3a5a6b3c3e6bd70ae047", "ebb34f79cfe457bd9e41"],
+      "callIds": [
+        "3a5a6b3c3e6bd70ae047",
+        "ebb34f79cfe457bd9e41"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Inspected full helper and terminal router caller. Issued context must match row.user_id, insert ignores primary-key collisions, subsequent update binds both id and user_id, and dynamic return projection accepts only an explicit metadata allowlist. Missing owner-bound result fails closed.",
       "reason": "Collision and projection unit tests plus existing disposable foreign-owner tests support the narrow boundary. Insert and update are separate statements, same-owner stale/concurrent writes are not serialized, and the internal row accepts arbitrary fields. Upstream lifecycle and staging proof remain unresolved, so this is not a globally certified privileged caller.",
-      "evidence": [{"path":"backend/src/security/ownedTerminalPersistence.test.ts","marker":"terminal autosave ignores collisions, scopes updates and returns only requested metadata"}]
+      "evidence": [
+        {
+          "path": "backend/src/security/ownedTerminalPersistence.test.ts",
+          "marker": "terminal autosave ignores collisions, scopes updates and returns only requested metadata"
+        }
+      ]
     },
     {
       "path": "frontend/src/app/(shell)/layout.tsx",
@@ -1010,20 +1090,27 @@
     {
       "path": "frontend/src/lib/avatarPersistence.ts",
       "sourceSha256": "b26780997843838a902d06a7dd928454cff64e5d93ce9140984587ab25c0d934",
-      "callIds": ["3056dc2554f54604f101"],
+      "callIds": [
+        "3056dc2554f54604f101"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read the upload helper, browser client, hook, modal, profile endpoint and Storage policies. Browser getUser derives the first key segment and RLS independently restricts writes. No service key is used. Profile success follows an acknowledged API write only.",
       "reason": "Focused failure tests pass, but real Storage isolation and final-source CI are pending. Public avatars are not private-file delivery. Server MIME/size enforcement, orphan reconciliation after failed profile saves, account-switch races and full browser interaction proof remain separate gaps.",
-      "evidence": [{"path":"frontend/src/lib/avatarPersistence.test.ts","marker":"avatar authentication and upload failures never save a fallback profile"}]
+      "evidence": [
+        {
+          "path": "frontend/src/lib/avatarPersistence.test.ts",
+          "marker": "avatar authentication and upload failures never save a fallback profile"
+        }
+      ]
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "callIds": [
-        "0e5e0a6c907b0012004f",
-        "6a8e36092dbe3dc13e92",
-        "ca380eb67c3d6e543fd1",
-        "cadef09de6d8f790fdf8"
+        "241716ea497721fe54e5",
+        "b413c3ab1ace9d65accf",
+        "59f4d2f0eec1fa44b280",
+        "2a795324dbc14c9e6d74"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
@@ -1037,29 +1124,29 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
       "callIds": [
         "1820ca770e3eb79483c2",
         "5430d13294eb1a13f663",
         "07e0223d171d9a07c272",
         "a70e41a64d0371e71b1f",
-        "823abc9d7cb71b54caa7",
-        "024328c35e2e473b15f6",
-        "17541737a8deed0dea86",
-        "4234b3c7dea4174c8ec4",
-        "d16a0b8bb0c85f9d738a",
-        "7addb4abf2851965688f",
-        "85bd224a1821c3260c15",
-        "6eb81f5722946ce9055b",
-        "9176f7450e0038ecfe95",
-        "76e45ad1222197a0b314",
-        "cbb56f7c9723f7ce0786",
-        "00d5747ecf446792e664",
-        "852656b30e571d27366f",
-        "bcdf1774aaeb2947aea7",
-        "732271f13ac74637c562",
-        "1d3a4468abc984e7f129",
-        "5972539630132aefe5af"
+        "67ccfcf6b0247b2d271d",
+        "f68c7243e8023c812ac6",
+        "64cda88c40a2dea3b929",
+        "7678dd8c2ff7d9451dc1",
+        "d025e09ce0208d1d0612",
+        "0f3395fb6a71eb421ea8",
+        "b076c1c4bf66ec7f3154",
+        "8818dd3f4cbea04bba6c",
+        "e712f825297f73e76d20",
+        "9988bf3aa279bdf15867",
+        "986cb07b032a907ca999",
+        "52dfcaab9b5f39116d78",
+        "dc97b761954360052133",
+        "67f79f2406e93fba048c",
+        "044b3e7925d35505dfde",
+        "2a8ae80954984f4cfbe6",
+        "3bb4f5d80fd923e568fe"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
@@ -2834,47 +2921,134 @@
     {
       "path": "backend/src/community/service.ts",
       "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
-      "callIds": ["78935998c35b555e2aae", "6a416d1dca693768c1db"],
+      "callIds": [
+        "78935998c35b555e2aae",
+        "6a416d1dca693768c1db"
+      ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected encodeCursor and decodeCursor: both candidate calls are Buffer.from for base64url encoding/decoding, not Supabase, Storage or a database receiver.",
       "reason": "These two receiver false positives can be excluded from persistence scope. This does not certify cursor filter serialization or the adjacent privileged community queries.",
-      "evidence": [{"path": "backend/src/community/service.ts", "marker": "Buffer.from(cursor, 'base64url').toString('utf8')"}]
+      "evidence": [
+        {
+          "path": "backend/src/community/service.ts",
+          "marker": "Buffer.from(cursor, 'base64url').toString('utf8')"
+        }
+      ]
     },
     {
       "path": "backend/src/community/service.ts",
       "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
-      "callIds": ["93ea06f3b1d77b264edc", "b083947576e6de76709d", "66bf5020eb06402ead61", "91455129ca4d68f6e45b", "549b107e5fb767bde17d", "959648099b822b4e4c09", "387798831f29e57a80c3", "d1fd654773e96beeb89e", "d64f390eb902fb669ec3", "cbfa1dfb86038694dd54", "28e511d91cf6c7a6a62f", "23601ac49976a12cfbc8", "a785ebe72215f398cbed", "7bae5054693628374d2d", "6202880407bfa5d7b6d4", "de28bdb7f59e551b9256", "51a59a00e876815e1bd3", "ac5ebc6cfa07483a5af6", "41165efbb86569ac1662", "2445a821cc00ddbcbaa4", "7ca568ff63f4e854cedb", "98c52c7cbfdf6cebb0f4", "bd0a0308b641e54e611d", "3dc1697c69b185301b2e", "f5608be961439b23cead", "00384cbed0af8d8f23bb", "53837fd5ffe75b74b115", "c34ac3248cf241e155fe"],
+      "callIds": [
+        "93ea06f3b1d77b264edc",
+        "b083947576e6de76709d",
+        "66bf5020eb06402ead61",
+        "91455129ca4d68f6e45b",
+        "549b107e5fb767bde17d",
+        "959648099b822b4e4c09",
+        "387798831f29e57a80c3",
+        "d1fd654773e96beeb89e",
+        "d64f390eb902fb669ec3",
+        "cbfa1dfb86038694dd54",
+        "28e511d91cf6c7a6a62f",
+        "23601ac49976a12cfbc8",
+        "a785ebe72215f398cbed",
+        "7bae5054693628374d2d",
+        "6202880407bfa5d7b6d4",
+        "de28bdb7f59e551b9256",
+        "51a59a00e876815e1bd3",
+        "ac5ebc6cfa07483a5af6",
+        "41165efbb86569ac1662",
+        "2445a821cc00ddbcbaa4",
+        "7ca568ff63f4e854cedb",
+        "98c52c7cbfdf6cebb0f4",
+        "bd0a0308b641e54e611d",
+        "3dc1697c69b185301b2e",
+        "f5608be961439b23cead",
+        "00384cbed0af8d8f23bb",
+        "53837fd5ffe75b74b115",
+        "c34ac3248cf241e155fe"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
       "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
-      "evidence": [{"path": "backend/src/community/community.test.ts", "marker": "accepting an answer never grants body editing or moderation of another author"}, {"path": "backend/src/security/tenantIsolation.local.integration.ts", "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"}]
+      "evidence": [
+        {
+          "path": "backend/src/community/community.test.ts",
+          "marker": "accepting an answer never grants body editing or moderation of another author"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+        }
+      ]
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
       "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
-      "callIds": ["25095802651b5e4dce5f", "fb111a342e49d30c3a9b", "4e72541c1ae02e397acf", "d9ad9a5d90bb4165dc7d", "41edb400573bacaa555d", "89d858807f97969b7dce", "cb711330e00db90f12bb", "281a3d3a7e272f923671", "31c93d187197768b3b71", "4645f852d77431f00664", "c064132c2275b340e97a", "7a4a7a0c551fe84cdb17", "7fecfb4d81f547ff8e57", "4af535a6c0e6f4a53b30", "2df9f446963207e45a86"],
+      "callIds": [
+        "25095802651b5e4dce5f",
+        "fb111a342e49d30c3a9b",
+        "4e72541c1ae02e397acf",
+        "d9ad9a5d90bb4165dc7d",
+        "41edb400573bacaa555d",
+        "89d858807f97969b7dce",
+        "cb711330e00db90f12bb",
+        "281a3d3a7e272f923671",
+        "31c93d187197768b3b71",
+        "4645f852d77431f00664",
+        "c064132c2275b340e97a",
+        "7a4a7a0c551fe84cdb17",
+        "7fecfb4d81f547ff8e57",
+        "4af535a6c0e6f4a53b30",
+        "2df9f446963207e45a86"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
       "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
-      "evidence": [{"path": "backend/src/security/tenantIsolation.local.integration.ts", "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"}, {"path": "backend/src/synthesis/projectRuntime/store.owner.test.ts", "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"}]
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+        },
+        {
+          "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+          "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+        }
+      ]
     },
     {
       "path": "backend/src/synthesis/projectRuntime/projectHistory.ts",
       "sourceSha256": "54471e2a22a019698a8f5607569a60b260d98466aaedf68515429162bf9f336b",
-      "callIds": ["949efba83cbbfbfc99ca", "372d392279bd2762ded0", "1920604a889551eb4f02", "60655c54ecbb30292812", "f163510c6f5c4132c05f", "73ab17f7a209cc26cc6b"],
+      "callIds": [
+        "949efba83cbbfbfc99ca",
+        "372d392279bd2762ded0",
+        "1920604a889551eb4f02",
+        "60655c54ecbb30292812",
+        "f163510c6f5c4132c05f",
+        "73ab17f7a209cc26cc6b"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read complete history/restore/fork implementation. Fixed-table reads bind user/project and exact revision where applicable. The shared snapshot guard now fails before cloning or writing a misbound revision. Clone deliberately detaches runtime and defaults repository preservation off for forks.",
       "reason": "History reads and cloning are not independent proof of authenticated caller identity, destination logical-project ownership or repository permission when preservation is requested. Event payload redaction, all consumers and deployed recovery remain unverified. Classified as a reviewed gap rather than certifying filters as sufficient authorization.",
-      "evidence": [{"path": "backend/src/security/tenantIsolation.local.integration.ts", "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"}, {"path": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts", "marker": "forking canonical project state changes project identity and detaches repository/runtime state"}]
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+        },
+        {
+          "path": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+          "marker": "forking canonical project state changes project identity and detaches repository/runtime state"
+        }
+      ]
     },
     {
       "path": "backend/src/ai/runReconciler.ts",
-      "sourceSha256": "cfb0a5c3f8e3dff46ede12147dfd3155bb1d052ca829a4ed07a0e5db63b3ecb4",
+      "sourceSha256": "0604a2c343ae8eb549de9866040ac3500081e86aa09fa40a64f8ffbffa743b55",
       "callIds": [
         "dd0376eeca45f71ec6f1",
         "bcf07881a45f30e33264",
-        "f992983e637455691c2a",
-        "13c06ef7ac5be117d423"
+        "42f5c4cf7fee8caeddc3",
+        "fe1a3b914c605d3f900a"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Only discovered production consumers are index.ts startup and shutdown. Startup uses the registered stale_run_reconcile authority with a minimum five-minute stale-heartbeat predicate and running status; shutdown uses leased_worker_shutdown with current process active IDs, current worker lease and running status.",
@@ -3143,184 +3317,472 @@
       ]
     },
     {
-      "path":"backend/src/services/integrations/supabaseAuth.ts",
-      "sourceSha256":"c7a813b166a1c776c431249b5ca9ce85d6ea233a95f1b45de0cd8978c6d95d47",
-      "callIds":["7207c97e58311f511e34","79b81f6d5bafe2a2bce3","7a3589c5283c3d4e539f"],
-      "disposition":"NOT_PERSISTENCE",
-      "authority":"All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
-      "reason":"Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
-      "evidence":[{"path":"backend/src/services/integrations/supabaseAuth.ts","marker":"function basicAuthHeader(): string"},{"path":"backend/src/routes/supabaseOAuth.ts","marker":"stateInfo.userId !== req.userId"}]
+      "path": "backend/src/services/integrations/supabaseAuth.ts",
+      "sourceSha256": "c7a813b166a1c776c431249b5ca9ce85d6ea233a95f1b45de0cd8978c6d95d47",
+      "callIds": [
+        "7207c97e58311f511e34",
+        "79b81f6d5bafe2a2bce3",
+        "7a3589c5283c3d4e539f"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
+      "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/supabaseAuth.ts",
+          "marker": "function basicAuthHeader(): string"
+        },
+        {
+          "path": "backend/src/routes/supabaseOAuth.ts",
+          "marker": "stateInfo.userId !== req.userId"
+        }
+      ]
     },
     {
-      "path":"backend/src/services/integrations/supabaseProvision.ts",
-      "sourceSha256":"8b27bfece71d91990d5102b91b6842b3bbd763cbf43ce2d6d5e7e148f013f63e",
-      "callIds":["a903b91c390a73b943ee"],
-      "disposition":"REVIEWED_GAP",
-      "authority":"The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
-      "reason":"Full helper examined, including Management API, direct SQL and Storage calls outside the scanner. Generated memory tables lacked browser-role isolation and existing public buckets were falsely accepted; both corrected with pending real CI. Full caller provenance, provider/project binding, legacy customer catalog review, direct-PG TLS validation and explicit consequential approval remain unresolved, not certified from owner syntax.",
-      "evidence":[{"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"generated external-project memory SQL denies browser roles"},{"path":"backend/src/services/integrations/supabaseProvision.test.ts","marker":"existing public or unknown buckets cannot be reported private"}]
+      "path": "backend/src/services/integrations/supabaseProvision.ts",
+      "sourceSha256": "8b27bfece71d91990d5102b91b6842b3bbd763cbf43ce2d6d5e7e148f013f63e",
+      "callIds": [
+        "a903b91c390a73b943ee"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
+      "reason": "Full helper examined, including Management API, direct SQL and Storage calls outside the scanner. Generated memory tables lacked browser-role isolation and existing public buckets were falsely accepted; both corrected with pending real CI. Full caller provenance, provider/project binding, legacy customer catalog review, direct-PG TLS validation and explicit consequential approval remain unresolved, not certified from owner syntax.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "generated external-project memory SQL denies browser roles"
+        },
+        {
+          "path": "backend/src/services/integrations/supabaseProvision.test.ts",
+          "marker": "existing public or unknown buckets cannot be reported private"
+        }
+      ]
     },
     {
-      "path":"backend/src/ai/sessionMemory.ts",
-      "sourceSha256":"823527b6cbfa02c0908895be7872b5d2923430fcda2ccaaf0b4ea19d929289f6",
-      "callIds":["f7905886591a736e1914","e837a99df841634ba026","98d766017045e8a5d3db","ce716e261403d059a8cd","168c6fa5091bfb16b8c3","34d65bae1c5a105fe1a5"],
-      "disposition":"REVIEWED_GAP",
-      "authority":"Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
-      "reason":"Complete module inspected. Distinct external and platform identities must not be conflated; connected-project browser access is corrected in the generator, not retroactively deployed. Full pipeline option provenance, credential binding, raw error logging, ignored platform write errors and cross-process/callback tests remain incomplete. These queries are not granted blanket scoped certification.",
-      "evidence":[{"path":"backend/src/ai/pipeline.ts","marker":"loadSessionHistory(opts.userId"},{"path":"backend/src/ai/sessionMemory.ts","marker":"onConflict: 'xroga_user_id,repo'"}]
+      "path": "backend/src/ai/sessionMemory.ts",
+      "sourceSha256": "823527b6cbfa02c0908895be7872b5d2923430fcda2ccaaf0b4ea19d929289f6",
+      "callIds": [
+        "f7905886591a736e1914",
+        "e837a99df841634ba026",
+        "98d766017045e8a5d3db",
+        "ce716e261403d059a8cd",
+        "168c6fa5091bfb16b8c3",
+        "34d65bae1c5a105fe1a5"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
+      "reason": "Complete module inspected. Distinct external and platform identities must not be conflated; connected-project browser access is corrected in the generator, not retroactively deployed. Full pipeline option provenance, credential binding, raw error logging, ignored platform write errors and cross-process/callback tests remain incomplete. These queries are not granted blanket scoped certification.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/pipeline.ts",
+          "marker": "loadSessionHistory(opts.userId"
+        },
+        {
+          "path": "backend/src/ai/sessionMemory.ts",
+          "marker": "onConflict: 'xroga_user_id,repo'"
+        }
+      ]
     },
     {
-      "path":"backend/src/ai/projectMemory.ts",
-      "sourceSha256":"ee3a3cde69ab30651cc9f7677c6798c3bdaa1b3149ab5240c2bf3e8aef4590eb",
-      "callIds":["c32965fff6598808b214","3da4920700bfa3a9ec80","2ca12dce241c43d18b5f","5f6d564abb336efdd2fb","91dd048ccce1966378f9","f7680656d9a9b0ab5281"],
-      "disposition":"REVIEWED_GAP",
-      "authority":"Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
-      "reason":"Direct owner predicates alone do not prove all upstream option provenance or credential/project binding. External project tables need the new generated isolation; existing connected schemas are not changed by this branch. Raw provider errors, mutable hot object aliases and background persistence failures still require review and cross-tenant acceptance. This records inspected control flow with explicit gaps, not a new global exemption.",
-      "evidence":[{"path":"backend/src/ai/projectMemory.ts","marker":"onConflict: 'xroga_user_id,repo,branch'"},{"path":"backend/src/ai/pipeline.ts","marker":"const saved = await setProjectMemoryDurable({"}]
+      "path": "backend/src/ai/projectMemory.ts",
+      "sourceSha256": "ee3a3cde69ab30651cc9f7677c6798c3bdaa1b3149ab5240c2bf3e8aef4590eb",
+      "callIds": [
+        "c32965fff6598808b214",
+        "3da4920700bfa3a9ec80",
+        "2ca12dce241c43d18b5f",
+        "5f6d564abb336efdd2fb",
+        "91dd048ccce1966378f9",
+        "f7680656d9a9b0ab5281"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
+      "reason": "Direct owner predicates alone do not prove all upstream option provenance or credential/project binding. External project tables need the new generated isolation; existing connected schemas are not changed by this branch. Raw provider errors, mutable hot object aliases and background persistence failures still require review and cross-tenant acceptance. This records inspected control flow with explicit gaps, not a new global exemption.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/projectMemory.ts",
+          "marker": "onConflict: 'xroga_user_id,repo,branch'"
+        },
+        {
+          "path": "backend/src/ai/pipeline.ts",
+          "marker": "const saved = await setProjectMemoryDurable({"
+        }
+      ]
     },
     {
-      "path":"backend/src/services/BillingService.ts",
-      "sourceSha256":"5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
-      "callIds":["286bc857714c82f17839","47650e2cf3cc7a9cb97a","c7ed0ee2e36c6c8eaf43"],
-      "disposition":"NOT_PERSISTENCE",
-      "authority":"These three expressions are Buffer.from conversions of webhook signing material or candidate signatures inside the raw-body HMAC verifier; they do not call a database or credential store.",
-      "reason":"The verifier checks a bounded timestamp and uses timingSafeEqual after equal-length validation. This classification only removes false persistence candidates; it does not certify webhook authority, provider metadata, or subsequent membership writes.",
-      "evidence":[{"path":"backend/src/services/BillingService.test.ts","marker":"Standard Webhooks signature verifies the exact raw body"}]
+      "path": "backend/src/services/BillingService.ts",
+      "sourceSha256": "5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
+      "callIds": [
+        "286bc857714c82f17839",
+        "47650e2cf3cc7a9cb97a",
+        "c7ed0ee2e36c6c8eaf43"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "These three expressions are Buffer.from conversions of webhook signing material or candidate signatures inside the raw-body HMAC verifier; they do not call a database or credential store.",
+      "reason": "The verifier checks a bounded timestamp and uses timingSafeEqual after equal-length validation. This classification only removes false persistence candidates; it does not certify webhook authority, provider metadata, or subsequent membership writes.",
+      "evidence": [
+        {
+          "path": "backend/src/services/BillingService.test.ts",
+          "marker": "Standard Webhooks signature verifies the exact raw body"
+        }
+      ]
     },
     {
-      "path":"backend/src/services/BillingService.ts",
-      "sourceSha256":"5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
-      "callIds":["bcf1e04eaa94fcd2b425","45eeadd879c4d719c11d","65834d9357acbb12a84d","4247256e8f4c4793be3e"],
-      "disposition":"SCOPED_BOUNDARY",
-      "authority":"All production callers of createCustomerPortal/getUserBillingStatus are in routes/billing.ts and pass req.userId; index.ts mounts that router behind authMiddleware. Neither route admits a body/query owner or membership identifier. Helpers have no exported injected database client.",
-      "reason":"Fixed membership projections restrict the server-issued actor and select only its latest subscription. Portal URLs are limited to HTTPS Whop destinations without userinfo. This records the inspected read boundary and caller provenance, not certification of every entitlement helper or provider callback.",
-      "evidence":[{"path":"backend/src/index.ts","marker":"authMiddleware, billingRouter"},{"path":"backend/src/routes/billing.ts","marker":"BillingService.createCustomerPortal(req.userId!)"}]
+      "path": "backend/src/services/BillingService.ts",
+      "sourceSha256": "5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
+      "callIds": [
+        "bcf1e04eaa94fcd2b425",
+        "45eeadd879c4d719c11d",
+        "65834d9357acbb12a84d",
+        "4247256e8f4c4793be3e"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "All production callers of createCustomerPortal/getUserBillingStatus are in routes/billing.ts and pass req.userId; index.ts mounts that router behind authMiddleware. Neither route admits a body/query owner or membership identifier. Helpers have no exported injected database client.",
+      "reason": "Fixed membership projections restrict the server-issued actor and select only its latest subscription. Portal URLs are limited to HTTPS Whop destinations without userinfo. This records the inspected read boundary and caller provenance, not certification of every entitlement helper or provider callback.",
+      "evidence": [
+        {
+          "path": "backend/src/index.ts",
+          "marker": "authMiddleware, billingRouter"
+        },
+        {
+          "path": "backend/src/routes/billing.ts",
+          "marker": "BillingService.createCustomerPortal(req.userId!)"
+        }
+      ]
     },
     {
-      "path":"backend/src/services/BillingService.ts",
-      "sourceSha256":"5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
-      "callIds":["b05e41f8f6ba770ee40c","e7b9dbdcf629027dc864","d25e2a7bfb9c46b63136","22f42a26e3ba5039379f","aa292515b336efa98092","63a6800a547d149e963d","20abcd5b1c109c8a31ab","de843e620bbc4282ef23","9ab1c2977596ae4e732a"],
-      "disposition":"REVIEWED_GAP",
-      "authority":"The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-      "reason":"Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used.",
-      "evidence":[{"path":"backend/src/services/BillingService.test.ts","marker":"membership callback denies a foreign owner"},{"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real Whop fulfillment rolls back foreign membership collisions"}]
+      "path": "backend/src/services/BillingService.ts",
+      "sourceSha256": "5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
+      "callIds": [
+        "b05e41f8f6ba770ee40c",
+        "e7b9dbdcf629027dc864",
+        "d25e2a7bfb9c46b63136",
+        "22f42a26e3ba5039379f",
+        "aa292515b336efa98092",
+        "63a6800a547d149e963d",
+        "20abcd5b1c109c8a31ab",
+        "de843e620bbc4282ef23",
+        "9ab1c2977596ae4e732a"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
+      "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used.",
+      "evidence": [
+        {
+          "path": "backend/src/services/BillingService.test.ts",
+          "marker": "membership callback denies a foreign owner"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real Whop fulfillment rolls back foreign membership collisions"
+        }
+      ]
     },
     {
-      "path":"backend/src/routes/billingWebhook.ts",
-      "sourceSha256":"b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897",
-      "callIds":["d56574a3766af9147051","a6afa682e6720f74c5eb","a098417cad519154bb8c","a485fd4bfefe62e3a06b","fee0359b6cd677a28d16","dbd23ead1b173e8e7f03"],
-      "disposition":"REVIEWED_GAP",
-      "authority":"This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-      "reason":"Lost retry claims no longer execute and arbitrary error text no longer enters logs/safe_error. Remaining durable completion-update failure handling, crash recovery, actual signed-provider integration and first-account binding require acceptance evidence. This is not a blanket global exception or completion of Command008's future action authority.",
-      "evidence":[{"path":"backend/src/routes/billingWebhook.test.ts","marker":"signed webhook retry requires an acquired row"},{"path":"backend/src/routes/billingWebhook.ts","marker":"if (!verifyWhopWebhookSignature(rawBody"}]
+      "path": "backend/src/routes/billingWebhook.ts",
+      "sourceSha256": "b42b52fc87f17ac475310f1e115d81f72276cd6102d674835c496c7277e3e897",
+      "callIds": [
+        "d56574a3766af9147051",
+        "a6afa682e6720f74c5eb",
+        "a098417cad519154bb8c",
+        "a485fd4bfefe62e3a06b",
+        "fee0359b6cd677a28d16",
+        "dbd23ead1b173e8e7f03"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
+      "reason": "Lost retry claims no longer execute and arbitrary error text no longer enters logs/safe_error. Remaining durable completion-update failure handling, crash recovery, actual signed-provider integration and first-account binding require acceptance evidence. This is not a blanket global exception or completion of Command008's future action authority.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/billingWebhook.test.ts",
+          "marker": "signed webhook retry requires an acquired row"
+        },
+        {
+          "path": "backend/src/routes/billingWebhook.ts",
+          "marker": "if (!verifyWhopWebhookSignature(rawBody"
+        }
+      ]
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
       "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
-      "callIds": ["0cf7d2200643c48eef05","d1ca96a4d901dcee9262","c5c6f9d077ea50fe881c","b1551174ad8f281d1030","eb4f54b0f4935ade518b","3cec60f277b9a79aee9d","ada7194e5f69f0546794","4fa39554aeb5bb449206","c33424838c99f0183e91","5515d3d49f583057b8c7","758e9631fe27aa08e158","2a665e42804fda04c2e4","04a8c4b310fa62f030e2","68c5b0cbc64559830941","f255c0c7448e4083224f","0c0166b452e9a4b93361","11ea4367141a4718c1bf","59477480fcc14475c3e1","7bb3b08c19b731b73baf","a95a2866407c96309fa7"],
+      "callIds": [
+        "0cf7d2200643c48eef05",
+        "d1ca96a4d901dcee9262",
+        "c5c6f9d077ea50fe881c",
+        "b1551174ad8f281d1030",
+        "eb4f54b0f4935ade518b",
+        "3cec60f277b9a79aee9d",
+        "ada7194e5f69f0546794",
+        "4fa39554aeb5bb449206",
+        "c33424838c99f0183e91",
+        "5515d3d49f583057b8c7",
+        "758e9631fe27aa08e158",
+        "2a665e42804fda04c2e4",
+        "04a8c4b310fa62f030e2",
+        "68c5b0cbc64559830941",
+        "f255c0c7448e4083224f",
+        "0c0166b452e9a4b93361",
+        "11ea4367141a4718c1bf",
+        "59477480fcc14475c3e1",
+        "7bb3b08c19b731b73baf",
+        "a95a2866407c96309fa7"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
       "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
       "evidence": [
-        {"path":"backend/src/routes/supabaseOAuth.ts","marker":"stateInfo.userId !== req.userId"},
-        {"path":"backend/src/index.ts","marker":"authMiddleware, supabaseOAuthRouter"},
-        {"path":"backend/src/services/integrations/oauthPkceStore.ts","marker":"if (stored?.verifier && stored.state === expectedState)"},
-        {"path":"backend/src/services/integrations/oauthPkceStore.test.ts","marker":"OAuth authority failure or existing rejected state never reads a stale Storage mirror"},
-        {"path":"backend/src/services/integrations/oauthPkceStore.revocation.test.ts","marker":"shared OAuth requires authority, persists revocation and rejects path traversal before I/O"}
+        {
+          "path": "backend/src/routes/supabaseOAuth.ts",
+          "marker": "stateInfo.userId !== req.userId"
+        },
+        {
+          "path": "backend/src/index.ts",
+          "marker": "authMiddleware, supabaseOAuthRouter"
+        },
+        {
+          "path": "backend/src/services/integrations/oauthPkceStore.ts",
+          "marker": "if (stored?.verifier && stored.state === expectedState)"
+        },
+        {
+          "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
+          "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
+        },
+        {
+          "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
+          "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+        }
       ]
     },
     {
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
-      "callIds": ["3606e6e2a2c84f5d37fd","8ea0355a7a40e6d35fef","0be2ba1bb19f870be5da","7a6a5adb10ec6d412288","caa03e8305e81d9313ce","d44f9dff5b2904e220a7","db2c2af734b6cbdb4628"],
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
+      "callIds": [
+        "3606e6e2a2c84f5d37fd",
+        "8ea0355a7a40e6d35fef",
+        "0be2ba1bb19f870be5da",
+        "55573ca462209ab422c3",
+        "36464f94938ad7240220",
+        "8a8f49466dccccc652af",
+        "08adc22ee116d34993ce"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
       "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
-      "evidence": [{"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real credential writer refuses a public bucket"}]
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real credential writer refuses a public bucket"
+        }
+      ]
     },
     {
       "path": "backend/src/services/integrations/credentialStorageBucket.ts",
       "sourceSha256": "1bc5d086c48e89ac22228bfcfff44bcd072dc3311bbec15cabd4390eaa2e579d",
-      "callIds": ["36f74cf393d92fc17a74"],
+      "callIds": [
+        "36f74cf393d92fc17a74"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Internal fixed-bucket configuration admission, no supplied tenant/table/object path. Reads catalogue and, only when absent, retains the existing BYOK server bootstrap allowance of a private 64KiB bucket. It never changes an existing public or unknown-policy bucket.",
       "reason": "Privacy is independently rechecked after create or duplicate, and catalogue failure denies upload. This is not an identity issuer or new CredentialVault. Complete upstream caller review and staged storage compatibility remain outstanding; do not infer authorization of every token caller from this configuration guard.",
       "evidence": [
-        {"path":"backend/src/services/integrations/oauthPkceStore.test.ts","marker":"unavailable bucket catalogue fails closed"},
-        {"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real credential writer refuses a public bucket"}
+        {
+          "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
+          "marker": "unavailable bucket catalogue fails closed"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real credential writer refuses a public bucket"
+        }
       ]
     },
     {
       "path": "backend/src/security/ownership.ts",
       "sourceSha256": "8b240ab552b5d1134b69bad79c31827d4a3854a623b7d045adbb0f45e556dc11",
-      "callIds": ["7f2999f4b2c508de0829", "48e8f6b398fe79bc2846", "64d3d6a6fc218ad1ee7b", "14b268dddb5863f18706"],
+      "callIds": [
+        "7f2999f4b2c508de0829",
+        "48e8f6b398fe79bc2846",
+        "64d3d6a6fc218ad1ee7b",
+        "14b268dddb5863f18706"
+      ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Both helpers require an issued immutable TenantContext before either the internal or injected database client can be used. Unknown/prototype resource names and malformed IDs are rejected before query construction.",
       "reason": "Fixed resource mapping excludes caller-selected SQL tables and columns; direct resources use actor plus resource predicates. Files join their current project owner in the same request, and missing/foreign records receive the same 404. This certifies this helper boundary, not every caller issuing persisted_owner contexts or future client injection.",
       "evidence": [
-        {"path":"backend/src/security/ownership.test.ts","marker":"injected clients cannot turn invalid resource kinds"},
-        {"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real owner helpers deny every foreign high-risk resource"}
+        {
+          "path": "backend/src/security/ownership.test.ts",
+          "marker": "injected clients cannot turn invalid resource kinds"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real owner helpers deny every foreign high-risk resource"
+        }
       ]
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "sourceSha256": "afee97a186c1c4b90314d1530dfa6d30c77b28eefa315463e9fdfb6f8cb3adce",
-      "callIds": ["e96cbab02a43d476a1b1", "20965f3eb585be67730c", "f8dec8dfc0826b0b8622"],
+      "sourceSha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
+      "callIds": [
+        "f8202ba092cd45df58a9",
+        "6b9d0a89325ea2f3ac48",
+        "819538c35037e0ed79a2"
+      ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
       "reason": "Insert-ignore prevents transferring a globally keyed row; subsequent update or append-only verification constrains both key and actor and requires exactly one row. Mutation verification also binds run/project. Parent authority and provenance at wrapper callers remain separate review obligations, not inferred from these helper predicates.",
       "evidence": [
-        {"path":"backend/src/security/ownedRunPersistence.test.ts","marker":"trace collision cannot merge another owner"},
-        {"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real run persistence concurrent collision never transfers"}
+        {
+          "path": "backend/src/security/ownedRunPersistence.test.ts",
+          "marker": "trace collision cannot merge another owner"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real run persistence concurrent collision never transfers"
+        }
       ]
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
       "sourceSha256": "4987c92eba0570950dac65354c9f5edd4d7152c2ad86ad591bd4680450cb6a65",
-      "callIds": ["d84df34ff692e4fb31c1", "f3727b33de49fb153851"],
+      "callIds": [
+        "d84df34ff692e4fb31c1",
+        "f3727b33de49fb153851"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
       "reason": "These are admission helpers, not automatic RLS or constrained query proxies. The full control flow of every recipient must be reviewed. Registry names cannot certify their callers, raw diagnostic redaction, account authority or arbitrary subsequent queries. Keep unresolved rather than pretending this shared factory completes tenant isolation.",
-      "evidence": [{"path":"backend/src/security/serviceRoleGuard.test.ts","marker":"unregistered or prototype-derived global operations fail"}]
+      "evidence": [
+        {
+          "path": "backend/src/security/serviceRoleGuard.test.ts",
+          "marker": "unregistered or prototype-derived global operations fail"
+        }
+      ]
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
       "sourceSha256": "4987c92eba0570950dac65354c9f5edd4d7152c2ad86ad591bd4680450cb6a65",
-      "callIds": ["a8c91d71cbf6c1a589ee", "6f8fdf0096f2bc603545"],
+      "callIds": [
+        "a8c91d71cbf6c1a589ee",
+        "6f8fdf0096f2bc603545"
+      ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
       "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
-      "evidence": [{"path":"backend/src/security/serviceRoleGuard.ts","marker":".from('profiles').select('id').limit(1)"}]
+      "evidence": [
+        {
+          "path": "backend/src/security/serviceRoleGuard.ts",
+          "marker": ".from('profiles').select('id').limit(1)"
+        }
+      ]
     },
     {
       "path": "backend/src/services/scaffolds/packageBuildZip.ts",
       "sourceSha256": "4c4a769325e95ed267aa2a168aed276f74523c871b53d77b126892ef5c041540",
-      "callIds": ["09fd7c8816ae6e3ba4dd", "725f0bbd4bca836886b1", "c88c08dabe08da091f52", "436acca3c84063f543c1", "bd9067bb3ee07df8b4de"],
+      "callIds": [
+        "09fd7c8816ae6e3ba4dd",
+        "725f0bbd4bca836886b1",
+        "c88c08dabe08da091f52",
+        "436acca3c84063f543c1",
+        "bd9067bb3ee07df8b4de"
+      ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "These five candidates are the built-in Buffer.from calls in an in-memory ZIP serializer. Full module imports are only node:zlib plus a type-only ProjectFile declaration; no database, Storage, network or privileged SDK is present.",
       "reason": "False positives are classified explicitly rather than removed by owner-filter syntax. This proves only absence of persistence at these calls. Archive path/size admission and downstream artifact delivery are independent unresolved security concerns, not certified safe by this disposition.",
-      "evidence": [{"path":"backend/src/services/scaffolds/packageBuildZip.ts","marker":"return Buffer.concat([...localParts, centralDir, end]);"}]
-    },
-    {
-      "path": "backend/src/services/storage/privateFileDelivery.ts",
-      "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399",
-      "callIds": ["1592c394d8f566b6b5c6", "1dc21b8de955c5a67410", "a3fd57e400ae93dcf1bc", "c0d01dcfb09596ce1894"],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Issued context and validated project/file UUIDs precede owner-joined retrieval. Returned payload is independently Zod validated and matched against actor/project/file even when an injected SDK is used. Revocation uses the server actor, not a request owner.",
-      "reason": "Link verification and file read restore current owner before object access; metadata owner/key, bytes and digest are verified without fetching legacy public/data URLs. Revocation's owner-parent predicate is atomic in its existing RPC. Real R2 privacy, key management, staging compatibility and upstream writer identity remain blocked separately.",
       "evidence": [
-        {"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real durable database file delivery is owner-only"},
-        {"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"real RLS and metadata trigger deny client delivery forgery"}
+        {
+          "path": "backend/src/services/scaffolds/packageBuildZip.ts",
+          "marker": "return Buffer.concat([...localParts, centralDir, end]);"
+        }
       ]
     },
     {
       "path": "backend/src/services/storage/privateFileDelivery.ts",
       "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399",
-      "callIds": ["fb08a2d7689ff8e64794", "0052e85ad523398c7685"],
+      "callIds": [
+        "1592c394d8f566b6b5c6",
+        "1dc21b8de955c5a67410",
+        "a3fd57e400ae93dcf1bc",
+        "c0d01dcfb09596ce1894"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Issued context and validated project/file UUIDs precede owner-joined retrieval. Returned payload is independently Zod validated and matched against actor/project/file even when an injected SDK is used. Revocation uses the server actor, not a request owner.",
+      "reason": "Link verification and file read restore current owner before object access; metadata owner/key, bytes and digest are verified without fetching legacy public/data URLs. Revocation's owner-parent predicate is atomic in its existing RPC. Real R2 privacy, key management, staging compatibility and upstream writer identity remain blocked separately.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real durable database file delivery is owner-only"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real RLS and metadata trigger deny client delivery forgery"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/storage/privateFileDelivery.ts",
+      "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399",
+      "callIds": [
+        "fb08a2d7689ff8e64794",
+        "0052e85ad523398c7685"
+      ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Both expressions use the built-in Buffer.from to encode already owner-checked database content; neither invokes the database SDK or an external object store.",
       "reason": "This classification is limited to two buffer conversions, not the surrounding storage lifecycle. The actual privileged reads and revocation RPC in this module have separate semantic dispositions, and the external private R2 acceptance gate remains pending.",
-      "evidence": [{"path":"backend/src/services/storage/privateFileDelivery.ts","marker":"buffer=Buffer.from(row.content)"}]
+      "evidence": [
+        {
+          "path": "backend/src/services/storage/privateFileDelivery.ts",
+          "marker": "buffer=Buffer.from(row.content)"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/security/ownedRunPersistence.ts",
+      "sourceSha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
+      "callIds": [
+        "e03585d107361a9dfe3d"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "New fixed RPC requires issued TenantContext, owner, worker and attempt generation; database row lock validates owner, generation, status and sequence before updating only execution columns.",
+      "reason": "Real disposable two-client race tests are implemented but not yet executed on this source. Parent project and full caller admission remain separately unresolved. No full Command 007 acceptance is inferred.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real two-client completion and cancellation race"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "1f32828da03b18580f8b759abc5aed500e0226f1ff768dd9666a66ef4dfe744f",
+      "callIds": [
+        "e948275ac03420374cc6"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
+      "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
+          "marker": "revocation"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubTokenStore.ts",
+      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
+      "callIds": [
+        "5af0dfecb133879330e2",
+        "2aa98c887631896938dc",
+        "e8a7ea96116a374773c0"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
+      "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
+          "marker": "revocation"
+        }
+      ]
     }
   ]
 }
