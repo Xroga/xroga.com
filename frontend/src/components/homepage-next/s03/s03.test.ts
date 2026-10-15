@@ -492,8 +492,11 @@ test('V12-03: keyword research is a visible chain, with each data source beside 
   assert.doesNotMatch(CONTENT_SRC, /Connected and authorized|Ahrefs analyzed|Semrush analyzed/);
 });
 
-test('V12-04: the approved headline, supporting line and background (main 3a208262) are kept exactly', () => {
-  assert.equal(COPY.title, 'Get found. Get chosen. Grow.');
+test('S03 headline remains concise, its supporting copy stays approved, and the V12 background is preserved', () => {
+  assert.equal(COPY.title, 'Turn visibility into customers.');
+  assert.match(CSS, /white-space: nowrap;/);
+  assert.match(CSS, /\.titleAccent \{/);
+  assert.match(SHELL, /className=\{s\.titleAccent\}/);
   assert.equal(
     COPY.lede,
     'Xroga finds why customers miss you, strengthens your search presence, and prepares marketing that turns attention into customers. You approve each launch.',
@@ -507,7 +510,7 @@ test('V12-04: the approved headline, supporting line and background (main 3a2082
   // the homepage stylesheet clears section backgrounds; S03 re-asserts the same layers with higher specificity so they render
   assert.match(CSS, /\.section\.section\.section \{\s*background-color: #142639 !important;\s*background-image:/);
   assert.match(CSS, /linear-gradient\(145deg, #142639 0%, #182b3d 37%, #23283b 73%, #282735 100%\) !important;/);
-  // V12 adds no competing headline effect or backdrop layer
+  // Preserve the approved V12 backdrop without adding a competing full-section effect.
   assert.doesNotMatch(CSS + SHELL, /titleMark|titleSweep|data-lit=/);
   assert.doesNotMatch(CSS, /\.section::before|\.section::after/);
 });
