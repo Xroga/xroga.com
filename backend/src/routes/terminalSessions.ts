@@ -109,7 +109,7 @@ async function nextTerminalNumber(
   repo: string
 ): Promise<number> {
   const supabase = getSupabaseAdmin();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('terminal_sessions')
     .select('terminal_number')
     .eq('user_id', userId)
@@ -117,6 +117,7 @@ async function nextTerminalNumber(
     .order('terminal_number', { ascending: false })
     .limit(1)
     .maybeSingle();
+  if (error) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
   return Number(data?.terminal_number ?? 0) + 1;
 }
 
@@ -234,12 +235,13 @@ router.put('/:id', async (req: AuthRequest, res) => {
 
   try {
     const supabase = getSupabaseAdmin();
-    const { data: existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
       .from('terminal_sessions')
       .select('id, terminal_number, created_at, github_repo_name')
       .eq('user_id', userId)
       .eq('id', id)
       .maybeSingle();
+    if (existingError) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
 
     // Sticky: once a terminal is under a repo, never relocate it on upsert.
     const githubRepoName =

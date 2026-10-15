@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "afd0ae79cd2f270e165267128f28ab9a74274762296be700a800f689bd30d2a6",
+  "reviewRegistrySha256": "58885cbeb41eae768dc5e2ad6a2ac88ea7aa9819039b29de9c4d06577ac200f3",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -10,18 +10,18 @@
     "privilegedFactorySites": 161,
     "persistenceCandidates": 667,
     "ownerPredicateCandidates": 165,
-    "reviewRequired": 275,
-    "reviewedCandidates": 392,
+    "reviewRequired": 263,
+    "reviewedCandidates": 404,
     "unresolvedSafetyCandidates": 497,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 275,
+    "REVIEW_REQUIRED": 263,
     "SCOPED_BOUNDARY": 35,
     "NARROW_EXCEPTION": 6,
     "NOT_PERSISTENCE": 129,
-    "REVIEWED_GAP": 222
+    "REVIEWED_GAP": 234
   },
   "callers": [
     {
@@ -5920,107 +5920,247 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
+      "semanticReview": {
+        "authority": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
+        "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/terminalSessions.failure.test.ts",
+            "marker": "terminal autosave refuses writes after failed metadata or number allocation reads"
+          },
+          {
+            "path": "backend/src/routes/terminalSessions.ts",
+            "marker": "requireTenantContext(req.tenantContext).userId"
+          }
+        ]
+      }
     },
     {
-      "id": "5b9fb00b3f345a195db9",
+      "id": "a695c4796bac42721a22",
       "path": "backend/src/routes/terminalSessions.ts",
       "line": 112,
       "enclosing": "nextTerminalNumber",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
+      "semanticReview": {
+        "authority": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
+        "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/terminalSessions.failure.test.ts",
+            "marker": "terminal autosave refuses writes after failed metadata or number allocation reads"
+          },
+          {
+            "path": "backend/src/routes/terminalSessions.ts",
+            "marker": "requireTenantContext(req.tenantContext).userId"
+          }
+        ]
+      }
     },
     {
-      "id": "8380665f8c9463844020",
-      "path": "backend/src/routes/terminalSessions.ts",
-      "line": 137,
-      "enclosing": "<module>",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
-    },
-    {
-      "id": "957f694b1a2359069ef3",
+      "id": "04b6476a7e94c81cb923",
       "path": "backend/src/routes/terminalSessions.ts",
       "line": 138,
       "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "terminal_sessions",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
-    },
-    {
-      "id": "268e9b5c55982d1d760b",
-      "path": "backend/src/routes/terminalSessions.ts",
-      "line": 188,
-      "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
+      "semanticReview": {
+        "authority": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
+        "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/terminalSessions.failure.test.ts",
+            "marker": "terminal autosave refuses writes after failed metadata or number allocation reads"
+          },
+          {
+            "path": "backend/src/routes/terminalSessions.ts",
+            "marker": "requireTenantContext(req.tenantContext).userId"
+          }
+        ]
+      }
     },
     {
-      "id": "007a5cfb6116f7ba6d8d",
+      "id": "a5abc7d698866557196e",
+      "path": "backend/src/routes/terminalSessions.ts",
+      "line": 139,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "terminal_sessions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
+      "semanticReview": {
+        "authority": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
+        "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/terminalSessions.failure.test.ts",
+            "marker": "terminal autosave refuses writes after failed metadata or number allocation reads"
+          },
+          {
+            "path": "backend/src/routes/terminalSessions.ts",
+            "marker": "requireTenantContext(req.tenantContext).userId"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8daadf2d62da931790cc",
       "path": "backend/src/routes/terminalSessions.ts",
       "line": 189,
       "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "terminal_sessions",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
-    },
-    {
-      "id": "37c90084bbc6f8720c53",
-      "path": "backend/src/routes/terminalSessions.ts",
-      "line": 236,
-      "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
+      "semanticReview": {
+        "authority": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
+        "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/terminalSessions.failure.test.ts",
+            "marker": "terminal autosave refuses writes after failed metadata or number allocation reads"
+          },
+          {
+            "path": "backend/src/routes/terminalSessions.ts",
+            "marker": "requireTenantContext(req.tenantContext).userId"
+          }
+        ]
+      }
     },
     {
-      "id": "afc23a8618eebedc15ea",
+      "id": "e192075908a00134d4d8",
+      "path": "backend/src/routes/terminalSessions.ts",
+      "line": 190,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "terminal_sessions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
+      "semanticReview": {
+        "authority": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
+        "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/terminalSessions.failure.test.ts",
+            "marker": "terminal autosave refuses writes after failed metadata or number allocation reads"
+          },
+          {
+            "path": "backend/src/routes/terminalSessions.ts",
+            "marker": "requireTenantContext(req.tenantContext).userId"
+          }
+        ]
+      }
+    },
+    {
+      "id": "7c0b2f550f7657675a65",
       "path": "backend/src/routes/terminalSessions.ts",
       "line": 237,
       "enclosing": "<module>",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
+      "semanticReview": {
+        "authority": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
+        "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/terminalSessions.failure.test.ts",
+            "marker": "terminal autosave refuses writes after failed metadata or number allocation reads"
+          },
+          {
+            "path": "backend/src/routes/terminalSessions.ts",
+            "marker": "requireTenantContext(req.tenantContext).userId"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ea4067868e8666be56f6",
+      "path": "backend/src/routes/terminalSessions.ts",
+      "line": 238,
+      "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
+      "semanticReview": {
+        "authority": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
+        "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/terminalSessions.failure.test.ts",
+            "marker": "terminal autosave refuses writes after failed metadata or number allocation reads"
+          },
+          {
+            "path": "backend/src/routes/terminalSessions.ts",
+            "marker": "requireTenantContext(req.tenantContext).userId"
+          }
+        ]
+      }
     },
     {
-      "id": "cd07f14a81f8f0afeb14",
+      "id": "72de315e5155eb8280e0",
       "path": "backend/src/routes/terminalSessions.ts",
-      "line": 309,
+      "line": 311,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
+      "semanticReview": {
+        "authority": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
+        "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/terminalSessions.failure.test.ts",
+            "marker": "terminal autosave refuses writes after failed metadata or number allocation reads"
+          },
+          {
+            "path": "backend/src/routes/terminalSessions.ts",
+            "marker": "requireTenantContext(req.tenantContext).userId"
+          }
+        ]
+      }
     },
     {
-      "id": "c7ea3a094b99e51877f8",
+      "id": "82b1da8a220ec366dfe1",
       "path": "backend/src/routes/terminalSessions.ts",
-      "line": 310,
+      "line": 312,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
+      "semanticReview": {
+        "authority": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
+        "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/terminalSessions.failure.test.ts",
+            "marker": "terminal autosave refuses writes after failed metadata or number allocation reads"
+          },
+          {
+            "path": "backend/src/routes/terminalSessions.ts",
+            "marker": "requireTenantContext(req.tenantContext).userId"
+          }
+        ]
+      }
     },
     {
       "id": "ae7e9656a12e6ead3f39",
@@ -6147,8 +6287,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e",
+      "semanticReview": {
+        "authority": "Inspected full helper and terminal router caller. Issued context must match row.user_id, insert ignores primary-key collisions, subsequent update binds both id and user_id, and dynamic return projection accepts only an explicit metadata allowlist. Missing owner-bound result fails closed.",
+        "reason": "Collision and projection unit tests plus existing disposable foreign-owner tests support the narrow boundary. Insert and update are separate statements, same-owner stale/concurrent writes are not serialized, and the internal row accepts arbitrary fields. Upstream lifecycle and staging proof remain unresolved, so this is not a globally certified privileged caller.",
+        "evidence": [
+          {
+            "path": "backend/src/security/ownedTerminalPersistence.test.ts",
+            "marker": "terminal autosave ignores collisions, scopes updates and returns only requested metadata"
+          }
+        ]
+      }
     },
     {
       "id": "ebb34f79cfe457bd9e41",
@@ -6158,8 +6308,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e",
+      "semanticReview": {
+        "authority": "Inspected full helper and terminal router caller. Issued context must match row.user_id, insert ignores primary-key collisions, subsequent update binds both id and user_id, and dynamic return projection accepts only an explicit metadata allowlist. Missing owner-bound result fails closed.",
+        "reason": "Collision and projection unit tests plus existing disposable foreign-owner tests support the narrow boundary. Insert and update are separate statements, same-owner stale/concurrent writes are not serialized, and the internal row accepts arbitrary fields. Upstream lifecycle and staging proof remain unresolved, so this is not a globally certified privileged caller.",
+        "evidence": [
+          {
+            "path": "backend/src/security/ownedTerminalPersistence.test.ts",
+            "marker": "terminal autosave ignores collisions, scopes updates and returns only requested metadata"
+          }
+        ]
+      }
     },
     {
       "id": "7f2999f4b2c508de0829",

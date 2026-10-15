@@ -1,5 +1,15 @@
 # Command 007 acceptance checkpoint — not verified
 
+## Terminal failure-path and dashboard continuation
+
+Avatar source `c223ae7917d284da552866351bd0f802670c8026` passed isolated run38754647990:48 real security tests with zero failures/skips,3 authenticated browser tests and71 fresh/representative-upgrade migrations. Recorded web/API release is `43cd3c7bd1a03d8febfe1b5b24b8e78b88db3de8`. This includes owner-prefix avatar insert/update isolation, not a complete avatar UI journey or R2 acceptance. Aggregate38754647944 is still pending at this checkpoint. Terminal changes below require their own final-source CI.
+
+Terminal backend build also passes under the pinned toolchain. Rollback is application-code-only and requires no database migration or data removal. Reverting the guards would restore the known write-after-read-failure risk, so retain the guards unless a separately tested correction replaces them.
+
+Terminal autosave now rejects unavailable existing-metadata and number-allocation reads before writing, including automatic database-client retries. Ten focused tests pass under pinned Node22.21.1/npm10.9.4. This is a loopback transport failure test, not additional RLS proof. Twelve terminal/helper persistence candidates have source-bound REVIEWED_GAP dispositions. The caller register has404 reviewed/667 total,263 unreviewed and497 unresolved safety candidates, including234 reviewed gaps. Runtime schema bootstrap, same-owner concurrency and staged lifecycle proof remain unresolved.
+
+Read-only logged-in dashboard inspection identifies the production Supabase project and paused login project, with no designated staging project, plus four existing Xroga R2 buckets and no dedicated staging bucket. See STAGING_READINESS.md for exact resource identifiers, quota warning and scope limits. No production data, credentials, resources or settings were modified. Commands008-010 and Batch1.5 remain gated.
+
 ## Audit lifecycle continuation from 9e26908f
 
 Actual isolated CI [38750509800](https://github.com/Xroga/xroga.com/actions/runs/38750509800) PASSES at feature `0ce29225ae2ce94033976365c7b32b50f550c870`, with actual web/API integrated revision `44b4abd070822c0227fd6e66c8dcc5d65e1cdd29`: 46 security tests, 3 authenticated browser tests, zero security failures/skips, all71 fresh/representative-upgrade migrations. Retained migration evidence explicitly reports `preUpgradeAuditRowsPreservedAfterDeletion=true`. This verifies the audit lifecycle in disposable scope, not later credential changes or staging/production.

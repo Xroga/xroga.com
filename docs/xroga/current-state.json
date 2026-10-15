@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "ca1855d1e4f66f182305bf58e99542bd01947386",
-    "sourceTimestampUtc": "2026-10-15T19:36:02+05:00",
-    "auditStartedUtc": "2026-10-15T14:44:49.350Z",
+    "sha": "c223ae7917d284da552866351bd0f802670c8026",
+    "sourceTimestampUtc": "2026-10-15T19:46:46+05:00",
+    "auditStartedUtc": "2026-10-15T14:57:04.344Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -15005,6 +15005,7 @@
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/lib/authRoundTrips.test.ts",
         "backend/src/middleware/admin.test.ts",
+        "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/security/accountRoutes.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts"
       ],
@@ -19703,7 +19704,7 @@
       "id": "surface:caedaa02c39cf1a79ec7",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "sha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f",
+      "sha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
       "symbols": [
         "DEFAULT_PAGE_SIZE",
         "MAX_PAGE_SIZE",
@@ -19766,6 +19767,7 @@
       ],
       "callers": [
         "backend/src/index.ts:11",
+        "backend/src/routes/terminalSessions.failure.test.ts:5",
         "backend/src/routes/terminalSessions.payload.test.ts:12",
         "backend/src/security/tenantIsolation.integration.test.ts:12"
       ],
@@ -19782,15 +19784,16 @@
       ],
       "tenantBoundary": [
         "backend/src/routes/terminalSessions.ts:112 (user_id)",
-        "backend/src/routes/terminalSessions.ts:138 (user_id)",
-        "backend/src/routes/terminalSessions.ts:189 (user_id)",
-        "backend/src/routes/terminalSessions.ts:237 (user_id)",
-        "backend/src/routes/terminalSessions.ts:310 (user_id)"
+        "backend/src/routes/terminalSessions.ts:139 (user_id)",
+        "backend/src/routes/terminalSessions.ts:190 (user_id)",
+        "backend/src/routes/terminalSessions.ts:238 (user_id)",
+        "backend/src/routes/terminalSessions.ts:312 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/routes/terminalSessions.payload.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts"
       ],
@@ -20827,6 +20830,7 @@
         "backend/src/routes/projectRuntime.ts:8",
         "backend/src/routes/projects.ts:4",
         "backend/src/routes/swarm.ts:4",
+        "backend/src/routes/terminalSessions.failure.test.ts:6",
         "backend/src/routes/terminalSessions.ts:17",
         "backend/src/security/ownedRunPersistence.test.ts:5",
         "backend/src/security/ownedRunPersistence.ts:2",
@@ -20865,6 +20869,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/buildOutcomeMemory.test.ts",
+        "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/security/ownedRunPersistence.test.ts",
         "backend/src/security/ownedTerminalPersistence.test.ts",
         "backend/src/security/ownership.test.ts",
@@ -89419,9 +89424,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9309329b2f0b5f25cde0",
+      "id": "registration:9acb5ea4dc4d53c9e694",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 124,
+      "line": 125,
       "receiver": "router",
       "method": "get",
       "path": "/",
@@ -89431,9 +89436,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e776ec81114ccfa4e28b",
+      "id": "registration:e778e292e184c4c97ae6",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 179,
+      "line": 180,
       "receiver": "router",
       "method": "get",
       "path": "/:id",
@@ -89443,9 +89448,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c0ccfe8b3ad0446c7130",
+      "id": "registration:4b42e9ce2258da5a45b4",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 211,
+      "line": 212,
       "receiver": "router",
       "method": "put",
       "path": "/:id",
@@ -89455,9 +89460,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5c25cfd168f3fc8b9f73",
+      "id": "registration:8776da9604c7e07d3457",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 305,
+      "line": 307,
       "receiver": "router",
       "method": "delete",
       "path": "/:id",
@@ -91574,10 +91579,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:749cd9bd76a8a91ca5f0",
-      "registrationId": "registration:9309329b2f0b5f25cde0",
+      "id": "route:1579c190b88791a2753c",
+      "registrationId": "registration:9acb5ea4dc4d53c9e694",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 124,
+      "line": 125,
       "method": "GET",
       "path": "/api/terminal-sessions",
       "mountChain": [
@@ -91591,10 +91596,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f8db5b3263fde643149e",
-      "registrationId": "registration:e776ec81114ccfa4e28b",
+      "id": "route:371afdea70009fab9c2b",
+      "registrationId": "registration:e778e292e184c4c97ae6",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 179,
+      "line": 180,
       "method": "GET",
       "path": "/api/terminal-sessions/:id",
       "mountChain": [
@@ -91608,10 +91613,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3527d29ce49dd89cf557",
-      "registrationId": "registration:c0ccfe8b3ad0446c7130",
+      "id": "route:2b645e2c955c8150d9f3",
+      "registrationId": "registration:4b42e9ce2258da5a45b4",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 211,
+      "line": 212,
       "method": "PUT",
       "path": "/api/terminal-sessions/:id",
       "mountChain": [
@@ -91625,10 +91630,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f23276cfca4fc54c54a6",
-      "registrationId": "registration:5c25cfd168f3fc8b9f73",
+      "id": "route:bc04c32bc2a52025199c",
+      "registrationId": "registration:8776da9604c7e07d3457",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 305,
+      "line": 307,
       "method": "DELETE",
       "path": "/api/terminal-sessions/:id",
       "mountChain": [
@@ -101654,6 +101659,13 @@
     {
       "id": "test-suite:c81abed57687556894fb",
       "sourcePath": "backend/src/routes/swarmRunId.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:77139519cc5635630e0f",
+      "sourcePath": "backend/src/routes/terminalSessions.failure.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

@@ -1,5 +1,15 @@
 # Batch 01 staged-security readiness — blocked, no deployment authorization
 
+## Read-only dashboard observation, 2026-10-15
+
+Cloudflare account `f14d36fd540c59ad410272122edc1a7e` R2 overview lists `xroga-assets`, `xroga-chat-archive`, `xroga-images` and `xroga-websites`, with pagination disabled and displayed zero objects/bytes for each. No `xroga-security-staging` bucket is present in this observed account. Displayed usage is not independent proof of emptiness, isolation or private access. No bucket object, token value or settings were opened or changed. The earlier checkout-only metadata limitation below is superseded by this browser inventory, not by live R2 security acceptance.
+
+After the user corrected the browser login, the Xroga AI organization `hmxoddxmiewxvrcdevdp` project switcher showed `xroga-ai` (`nzenxdfumxrnsmybazmo`) and `Xroga LOGIN` (`lztqfktsahpzitybthld`, PAUSED). The former exactly matches the frontend production project reference. Neither is established as an approved disposable staging resource. Do not resume, repurpose or test destructively against either project.
+
+The production overview displayed Healthy, a quota/grace-period warning, no branches, no backups, and latest migration `20261002000000_swarm_run_worker_leases.sql`. These are dashboard observations, not a full schema comparison or proof that no externally managed backup exists. The latest repository migrations must not be assumed applied. No SQL, secret panel, customer row, billing change or resource write was performed. The warning needs owner attention; this observation does not authorize an upgrade or spending.
+
+Credential source `ca1855d1e4f66f182305bf58e99542bd01947386` passes aggregate38752868608 and disposable isolated38752869246, with47 real security/3 browser cases on integrated API/web `4a7cf440bcc1d017f660cccc0d0337e979c835c8`. These successful disposable tests do not replace the staged rollout, production-schema parity or R2 acceptance gates below.
+
 2026-10-14 continuation supersedes older source observations below: canonical private-file adapter/signed links/revocation are implemented locally and covered by new real disposable-DB/browser test definitions; actual R2/staging acceptance is still blocked. Stage-only canonical build admission is prepared with exact reviewed origins/SHA and negative tests, not deployed. Revised on-demand vs separated cost/lifetime/network/teardown options: `STAGING_COST_OPTIONS.md`. Earlier “adapter required”/“origin unsupported” descriptions are historical baseline findings, NOT the current code status. Whole Command 007 remains incomplete and no resource creation/canary/deployment/merge is authorized.
 
 Observed 2026-10-14 local date using read-only repository/GitHub/Vercel metadata. No cloud resource, credential, DNS, production data or deployment was changed.

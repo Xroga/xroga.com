@@ -2,6 +2,24 @@
   "version": "1.0",
   "reviews": [
     {
+      "path": "backend/src/routes/terminalSessions.ts",
+      "sourceSha256": "e4298a71fbab9ca0fb01e32ae8df4f546d9e425e0f0c4054bc4b65665ecae7ab",
+      "callIds": ["676c6d166f859de70ed7", "a695c4796bac42721a22", "04b6476a7e94c81cb923", "a5abc7d698866557196e", "8daadf2d62da931790cc", "e192075908a00134d4d8", "7c0b2f550f7657675a65", "ea4067868e8666be56f6", "72de315e5155eb8280e0", "82b1da8a220ec366dfe1"],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
+      "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
+      "evidence": [{"path":"backend/src/routes/terminalSessions.failure.test.ts","marker":"terminal autosave refuses writes after failed metadata or number allocation reads"}, {"path":"backend/src/routes/terminalSessions.ts","marker":"requireTenantContext(req.tenantContext).userId"}]
+    },
+    {
+      "path": "backend/src/security/ownedTerminalPersistence.ts",
+      "sourceSha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e",
+      "callIds": ["3a5a6b3c3e6bd70ae047", "ebb34f79cfe457bd9e41"],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Inspected full helper and terminal router caller. Issued context must match row.user_id, insert ignores primary-key collisions, subsequent update binds both id and user_id, and dynamic return projection accepts only an explicit metadata allowlist. Missing owner-bound result fails closed.",
+      "reason": "Collision and projection unit tests plus existing disposable foreign-owner tests support the narrow boundary. Insert and update are separate statements, same-owner stale/concurrent writes are not serialized, and the internal row accepts arbitrary fields. Upstream lifecycle and staging proof remain unresolved, so this is not a globally certified privileged caller.",
+      "evidence": [{"path":"backend/src/security/ownedTerminalPersistence.test.ts","marker":"terminal autosave ignores collisions, scopes updates and returns only requested metadata"}]
+    },
+    {
       "path": "frontend/src/app/(shell)/layout.tsx",
       "sourceSha256": "fd2a2158b7c7c3a1c3319d0f393630751bde12f4cafbaec41ffab905e4f58304",
       "callIds": [
