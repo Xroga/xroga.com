@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0ce29225ae2ce94033976365c7b32b50f550c870",
+  "source_sha": "ca1855d1e4f66f182305bf58e99542bd01947386",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12464,7 +12464,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "1ade062530e9f1d92de23ebfa201cb78f46269454e3ebd134b6728d1132317cf"
+      "sha256": "c2f82f00d6f82f0978498c3391bc78ee95f9af58e9204914a5bb7a3efaf71241"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -14912,7 +14912,7 @@
     },
     {
       "path": "frontend/src/components/profile/AvatarPickerModal.tsx",
-      "sha256": "679b6bf94407763cc5c8bcd592604059696b121e1f66760628a79f39078308c3"
+      "sha256": "ec619a39028f6108d98b04421b987c6f364516ba32f686daca8ccb5a72e9b760"
     },
     {
       "path": "frontend/src/components/profile/UserProfileBox.tsx",
@@ -15032,7 +15032,7 @@
     },
     {
       "path": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
-      "sha256": "905e878f2e4bdc8485632618ee95252ad79fd73699d6353b6b9539d67529833a"
+      "sha256": "4d75903475cf56eb78df430207affec727e4daf8daa0081b5e95b22f8c3b6e03"
     },
     {
       "path": "frontend/src/components/settings/NotificationsSettingsPanel.tsx",
@@ -15608,7 +15608,7 @@
     },
     {
       "path": "frontend/src/hooks/useAvatarUpdate.ts",
-      "sha256": "7388fd2f143d8692bd175ab91459dee736f048b93991bbb14c10eccc0506db4c"
+      "sha256": "8583f513e0d9ce63fa8c0aead21cefe0350e45e406a47fcd4d26a7a019215dd3"
     },
     {
       "path": "frontend/src/hooks/useBackgroundBuildJobs.ts",
@@ -15661,6 +15661,10 @@
     {
       "path": "frontend/src/lib/avatarGenerate.ts",
       "sha256": "df75b1b7241a25e460f191f76762b06cf92a6197dfe10e2822b41f132fd0de15"
+    },
+    {
+      "path": "frontend/src/lib/avatarPersistence.ts",
+      "sha256": "b26780997843838a902d06a7dd928454cff64e5d93ce9140984587ab25c0d934"
     },
     {
       "path": "frontend/src/lib/brand.ts",
@@ -17921,21 +17925,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 224,
+      "line": 241,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 274,
+      "line": 291,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 355,
+      "line": 372,
       "credentialsInUrl": false
     },
     {
@@ -24032,7 +24036,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 712,
+      "line": 729,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

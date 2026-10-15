@@ -1,5 +1,13 @@
 # Xroga OS Batch 01 implementation tracker
 
+## Avatar persistence continuation
+
+Seven additional frontend profile/role calls have scoped source reviews after tracing cookie-bound publishable clients and auth.uid()-derived role SQL. Eight combined avatar/founder focused tests pass. Current register:392/667 reviewed,275 unreviewed,222 reviewed gaps,497 unresolved safety candidates. No privileged caller is globally certified; full007 remains incomplete.
+
+Credential candidate `ca1855d1e4f66f182305bf58e99542bd01947386` passes isolated [38752869246](https://github.com/Xroga/xroga.com/actions/runs/38752869246):47 real security tests,3 browser cases, zero failures/skips,71 migrations. Actual integrated API/web is `4a7cf440bcc1d017f660cccc0d0337e979c835c8`. Docker, frontend and golden workflows pass; aggregate38752868608 remains pending. Subsequent avatar changes bind upload keys to verified browser identity and stop reporting local/data-URL fallback as successful persistence. The picker keeps failures visible; bundled relative avatar URLs are normalized for the existing absolute-URL API schema. Five pinned focused tests, frontend typecheck and lint pass with existing warnings. A48th real security case now checks owner upload and foreign insert/update denial with unchanged bytes, pending execution. Public avatar semantics are preserved, not private storage certification. Server file-content limits, orphan cleanup and account-switch race coverage remain gaps.
+
+Read-only browser discovery on2026-10-15 found the available Supabase session showing only an unrelated organization in its organization switcher; no Xroga staging resource was established. Cloudflare navigation reached a Google sign-in prompt. No account settings, credentials or resources were changed. Existing staging isolation/approval gates remain unresolved, not disproven by login availability.
+
 ## Verified audit lifecycle and next credential candidate
 
 Feature `0ce29225ae2ce94033976365c7b32b50f550c870` passes isolated CI [38750509800](https://github.com/Xroga/xroga.com/actions/runs/38750509800), actual integrated web/API `44b4abd070822c0227fd6e66c8dcc5d65e1cdd29`: 46 real security tests,3 browser tests,71 fresh/representative-upgrade migrations, and unchanged pre-upgrade audit rows after deletion. Backend build and10 focused scanner/isolation tests pass on pinned toolchain. Aggregate branch/integrated CI [38750509802](https://github.com/Xroga/xroga.com/actions/runs/38750509802) PASSES, including the repeated integrated baseline without source mutation. This evidence does not certify subsequent credential changes.

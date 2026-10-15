@@ -2,6 +2,155 @@
   "version": "1.0",
   "reviews": [
     {
+      "path": "frontend/src/app/(shell)/layout.tsx",
+      "sourceSha256": "fd2a2158b7c7c3a1c3319d0f393630751bde12f4cafbaec41ffab905e4f58304",
+      "callIds": [
+        "9297f8f20c4be94c3742"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
+      "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/supabase/server.ts",
+          "marker": "config.publishableKey"
+        },
+        {
+          "path": "frontend/src/app/(shell)/layout.tsx",
+          "marker": ".eq('id', user.id)"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/(workspace)/layout.tsx",
+      "sourceSha256": "30ae792edc888b89b7c8849cc6c07294564a599b265070abe115846996471e61",
+      "callIds": [
+        "c2126cd594624a77ed05"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
+      "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/supabase/server.ts",
+          "marker": "config.publishableKey"
+        },
+        {
+          "path": "frontend/src/app/(workspace)/layout.tsx",
+          "marker": ".eq('id', user.id)"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/onboarding/page.tsx",
+      "sourceSha256": "f567e423e315e0acefde74830fc6a7a6d2d00045bcca042e98150a1623a6dd09",
+      "callIds": [
+        "4e796f9c87acb51a5f6b"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
+      "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/supabase/server.ts",
+          "marker": "config.publishableKey"
+        },
+        {
+          "path": "frontend/src/app/onboarding/page.tsx",
+          "marker": ".eq('id', user.id)"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/(shell)/admin/page.tsx",
+      "sourceSha256": "995af6cd7e5990488ff17887d0687d8c009888c8959cbbd4845b74aeacbdb2fe",
+      "callIds": [
+        "b605ee8256acf51c3655"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Inspected full page or middleware, cookie-bound publishable server client and current_community_role SQL. The no-argument RPC derives auth.uid(), reads only that profile role with a fixed search_path, and cannot choose another identity. Founder routes additionally require confirmed identity and AAL2; admin routes preserve their broader staff policy.",
+      "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/supabase/server.ts",
+          "marker": "config.publishableKey"
+        },
+        {
+          "path": "supabase/migrations/20260729192159_community_platform.sql",
+          "marker": "where id = (select auth.uid())"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/admin/community/page.tsx",
+      "sourceSha256": "8791cb3af7da75e7bd24283460a2893b714ca3fd3ef0dd1b811059491b90e1a2",
+      "callIds": [
+        "83779ac5d4b86b4ed00a"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Inspected full page or middleware, cookie-bound publishable server client and current_community_role SQL. The no-argument RPC derives auth.uid(), reads only that profile role with a fixed search_path, and cannot choose another identity. Founder routes additionally require confirmed identity and AAL2; admin routes preserve their broader staff policy.",
+      "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/supabase/server.ts",
+          "marker": "config.publishableKey"
+        },
+        {
+          "path": "supabase/migrations/20260729192159_community_platform.sql",
+          "marker": "where id = (select auth.uid())"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/osFounderSession.ts",
+      "sourceSha256": "fc254182f54f0bbdc46aed4e79a7ef91557750b1817b204b901af95d9d2ef281",
+      "callIds": [
+        "664f0e94c6fd847fb7d1"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Inspected full page or middleware, cookie-bound publishable server client and current_community_role SQL. The no-argument RPC derives auth.uid(), reads only that profile role with a fixed search_path, and cannot choose another identity. Founder routes additionally require confirmed identity and AAL2; admin routes preserve their broader staff policy.",
+      "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/supabase/server.ts",
+          "marker": "config.publishableKey"
+        },
+        {
+          "path": "supabase/migrations/20260729192159_community_platform.sql",
+          "marker": "where id = (select auth.uid())"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/supabase/middleware.ts",
+      "sourceSha256": "1e653e4dffce9ff49016519058f8679e9450e93e49c5a0f611176cb75d98af1e",
+      "callIds": [
+        "5c64aa680a603f460991"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Inspected full page or middleware, cookie-bound publishable server client and current_community_role SQL. The no-argument RPC derives auth.uid(), reads only that profile role with a fixed search_path, and cannot choose another identity. Founder routes additionally require confirmed identity and AAL2; admin routes preserve their broader staff policy.",
+      "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/supabase/server.ts",
+          "marker": "config.publishableKey"
+        },
+        {
+          "path": "supabase/migrations/20260729192159_community_platform.sql",
+          "marker": "where id = (select auth.uid())"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/avatarPersistence.ts",
+      "sourceSha256": "b26780997843838a902d06a7dd928454cff64e5d93ce9140984587ab25c0d934",
+      "callIds": ["3056dc2554f54604f101"],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Read the upload helper, browser client, hook, modal, profile endpoint and Storage policies. Browser getUser derives the first key segment and RLS independently restricts writes. No service key is used. Profile success follows an acknowledged API write only.",
+      "reason": "Focused failure tests pass, but real Storage isolation and final-source CI are pending. Public avatars are not private-file delivery. Server MIME/size enforcement, orphan reconciliation after failed profile saves, account-switch races and full browser interaction proof remain separate gaps.",
+      "evidence": [{"path":"frontend/src/lib/avatarPersistence.test.ts","marker":"avatar authentication and upload failures never save a fallback profile"}]
+    },
+    {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
       "callIds": [
@@ -1370,9 +1519,9 @@
     },
     {
       "path": "frontend/src/components/profile/AvatarPickerModal.tsx",
-      "sourceSha256": "679b6bf94407763cc5c8bcd592604059696b121e1f66760628a79f39078308c3",
+      "sourceSha256": "ec619a39028f6108d98b04421b987c6f364516ba32f686daca8ccb5a72e9b760",
       "callIds": [
-        "807be0d1f4f1a26f656a"
+        "f5bf4150693261d32695"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in onKeyDown, with no database or Storage client receiver.",

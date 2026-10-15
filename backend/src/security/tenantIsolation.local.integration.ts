@@ -82,6 +82,23 @@ test('real owner helpers deny every foreign high-risk resource without enumerati
   await assert.rejects(requireOwnedFile(owner.context,other.file,admin),{status:404});
 });
 
+test('avatar Storage accepts owner folders and denies foreign writes without changing bytes',async()=>{
+  const [owner,other]=users;
+  const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${owner.token}`}},auth:{persistSession:false,autoRefreshToken:false}});
+  const ownPath=`${owner.id}/${randomUUID()}.png`,foreignPath=`${other.id}/${randomUUID()}.png`;
+  const body=Buffer.from('synthetic-avatar-fixture');
+  try {
+    const owned=await client.storage.from('avatars').upload(ownPath,body,{contentType:'image/png',upsert:false});assert.equal(owned.error,null);
+    const denied=await client.storage.from('avatars').upload(foreignPath,body,{contentType:'image/png',upsert:false});assert.ok(denied.error);
+    const missing=await admin.storage.from('avatars').download(foreignPath);assert.ok(missing.error);
+    const seed=await admin.storage.from('avatars').upload(foreignPath,body,{contentType:'image/png',upsert:false});assert.equal(seed.error,null);
+    const overwrite=await client.storage.from('avatars').update(foreignPath,Buffer.from('forbidden'),{contentType:'image/png'});assert.ok(overwrite.error);
+    const retained=await admin.storage.from('avatars').download(foreignPath);assert.equal(retained.error,null);assert.equal(await retained.data!.text(),body.toString());
+  } finally {
+    const cleanup=await admin.storage.from('avatars').remove([ownPath,foreignPath]);assert.equal(cleanup.error,null);
+  }
+});
+
 test('named custom credentials bind reads and deletion to the exact owner and provider',async()=>{
   const [owner,other]=users;
   assert.equal(await ensurePrivateOAuthBucket(),true);

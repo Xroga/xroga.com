@@ -10,6 +10,11 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "frontend/src/components/settings/GeneralSettingsPanel.tsx",
+    "frontend/src/lib/avatarPersistence.ts",
+    "frontend/src/lib/avatarPersistence.test.ts",
+    "frontend/src/hooks/useAvatarUpdate.ts",
+    "frontend/src/components/profile/AvatarPickerModal.tsx",
     "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
     "supabase/migrations/20261015000200_immutable_audit_lifecycle.sql",
     "backend/src/community/service.ts",

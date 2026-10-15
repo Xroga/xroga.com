@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "0ce29225ae2ce94033976365c7b32b50f550c870",
-    "sourceTimestampUtc": "2026-10-15T19:20:18+05:00",
-    "auditStartedUtc": "2026-10-15T14:30:00.228Z",
+    "sha": "ca1855d1e4f66f182305bf58e99542bd01947386",
+    "sourceTimestampUtc": "2026-10-15T19:36:02+05:00",
+    "auditStartedUtc": "2026-10-15T14:44:49.350Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -57533,7 +57533,7 @@
       "id": "surface:17b6e03ee2629d7a0ba7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/profile/AvatarPickerModal.tsx",
-      "sha256": "679b6bf94407763cc5c8bcd592604059696b121e1f66760628a79f39078308c3",
+      "sha256": "ec619a39028f6108d98b04421b987c6f364516ba32f686daca8ccb5a72e9b760",
       "symbols": [
         "AvatarPickerModal",
         "AvatarPickerModalProps",
@@ -59255,7 +59255,7 @@
       "id": "surface:7c50ba5c0ee7137f68de",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
-      "sha256": "905e878f2e4bdc8485632618ee95252ad79fd73699d6353b6b9539d67529833a",
+      "sha256": "4d75903475cf56eb78df430207affec727e4daf8daa0081b5e95b22f8c3b6e03",
       "symbols": [
         "GeneralSettingsPanel",
         "LANGUAGES",
@@ -68414,26 +68414,24 @@
       "id": "surface:3560a98bb75597cbce33",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/hooks/useAvatarUpdate.ts",
-      "sha256": "7388fd2f143d8692bd175ab91459dee736f048b93991bbb14c10eccc0506db4c",
+      "sha256": "8583f513e0d9ce63fa8c0aead21cefe0350e45e406a47fcd4d26a7a019215dd3",
       "symbols": [
-        "path",
-        "profile",
-        "reader",
         "setAvatarUrl",
         "setProfile",
-        "supabase",
         "updated",
         "uploadAvatarFile",
         "useAvatarUpdate"
       ],
       "imports": [
         "@/lib/api",
+        "@/lib/avatarPersistence",
         "@/lib/supabase/client",
         "@/store/useAppStore",
         "react-hot-toast"
       ],
       "runtimeImports": [
         "frontend/src/lib/api.ts",
+        "frontend/src/lib/avatarPersistence.ts",
         "frontend/src/lib/supabase/client.ts",
         "frontend/src/store/useAppStore.ts"
       ],
@@ -68450,9 +68448,7 @@
         "frontend/src/components/terminal/ImageStudioCard.tsx:20"
       ],
       "reachable": true,
-      "persistenceDependencies": [
-        "avatars"
-      ],
+      "persistenceDependencies": [],
       "externalProviderDependencies": [
         "react-hot-toast"
       ],
@@ -69467,6 +69463,58 @@
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:1b32bfd9e9ddaf749e64",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/avatarPersistence.ts",
+      "sha256": "b26780997843838a902d06a7dd928454cff64e5d93ce9140984587ab25c0d934",
+      "symbols": [
+        "avatarProfileUrl",
+        "bucket",
+        "extension",
+        "extensions",
+        "path",
+        "persistAvatarUpload",
+        "uploaded",
+        "url"
+      ],
+      "imports": [
+        "@supabase/supabase-js"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/projects/[id]/page.tsx",
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/hooks/useAvatarUpdate.ts:7",
+        "frontend/src/lib/avatarPersistence.test.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "avatars"
+      ],
+      "externalProviderDependencies": [
+        "@supabase/supabase-js"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/avatarPersistence.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -100123,7 +100171,7 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:86dabb0eafff427a1d55",
+      "id": "frontend-call:4481e9d50090e10aa19b",
       "sourcePath": "frontend/src/hooks/useAvatarUpdate.ts",
       "line": 14,
       "callee": "api.profile.update",
@@ -101725,7 +101773,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 47,
+      "declaredTests": 48,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102666,6 +102714,13 @@
       "id": "test-suite:ecad1d13bb43af223f67",
       "sourcePath": "frontend/src/lib/authFlowTiming.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:3facaf2902c4b18e4d22",
+      "sourcePath": "frontend/src/lib/avatarPersistence.test.ts",
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },

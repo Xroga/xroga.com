@@ -25,12 +25,14 @@ export function AvatarPickerModal({
 }: AvatarPickerModalProps) {
   const [picking, setPicking] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
+    setError(null);
     previouslyFocused.current = document.activeElement as HTMLElement | null;
     const panel = panelRef.current;
     panel?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)?.focus();
@@ -68,10 +70,13 @@ export function AvatarPickerModal({
   if (!open) return null;
 
   async function pick(url: string) {
+    setError(null);
     setPicking(url);
     try {
       await onSelect(url);
       onClose();
+    } catch {
+      setError('Profile photo could not be saved. Please retry.');
     } finally {
       setPicking(null);
     }
@@ -80,9 +85,12 @@ export function AvatarPickerModal({
   async function handleFile(file: File) {
     if (!onUpload) return;
     setUploading(true);
+    setError(null);
     try {
       await onUpload(file);
       onClose();
+    } catch {
+      setError('Photo could not be saved. Choose a PNG, JPEG, WebP or GIF up to 5 MB and retry.');
     } finally {
       setUploading(false);
     }
@@ -135,13 +143,15 @@ export function AvatarPickerModal({
         </div>
 
         <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 py-4 sm:px-5">
+          {error && <p role="alert" className="text-sm text-[var(--text-primary)]">{error}</p>}
           <section>
             <h3 className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
               Profile photos
             </h3>
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
               {XROGA_PROFILE_AVATARS.map((avatar, i) => {
-                const selected = currentUrl === avatar.url;
+                const selected = currentUrl === avatar.url ||
+                  (typeof window !== 'undefined' && currentUrl === new URL(avatar.url, window.location.origin).href);
                 const loading = picking === avatar.url;
                 return (
                   <button
@@ -190,7 +200,7 @@ export function AvatarPickerModal({
           <input
             ref={fileRef}
             type="file"
-            accept="image/*"
+            accept="image/png,image/jpeg,image/webp,image/gif"
             className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0];
