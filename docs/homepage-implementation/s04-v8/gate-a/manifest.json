@@ -1,0 +1,7 @@
+{"route":"http://localhost:3010/","branch":"s04-v8","base":"62921b1b","browser":"Chromium 1194 (Playwright, headless)","captured":"2026-10-15T20:09:28Z","shots":[
+{"file":"A-first-1440.png","query":"s04Comp=A","viewport":"1440x900@1","state":"ios, acted"},
+{"file":"B-first-1440.png","query":"s04Comp=B","viewport":"1440x900@1","state":"ios, acted"},
+{"file":"A-mobile-390.png","query":"s04Comp=A","viewport":"390x844@2 touch","state":"ios, acted"},
+{"file":"B-mobile-390.png","query":"s04Comp=B","viewport":"390x844@2 touch","state":"ios, acted"},
+{"file":"A-chrome-1440.png","query":"s04Comp=A&s04Dest=chrome","viewport":"1440x900@1","state":"chrome, panel open"},
+{"file":"B-chrome-1440.png","query":"s04Comp=B&s04Dest=chrome","viewport":"1440x900@1","state":"chrome, panel open"}]}
