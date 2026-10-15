@@ -20,6 +20,14 @@ import s from './S03.module.css';
 
 const MODES: Chapter[] = ['search', 'growth'];
 
+const LEAD_AT = COPY.title.indexOf(COPY.titleLead);
+const LAST_AT = COPY.title.lastIndexOf(' ') + 1;
+const titleParts = {
+  before: COPY.title.slice(0, LEAD_AT),
+  middle: COPY.title.slice(LEAD_AT + COPY.titleLead.length, LAST_AT),
+  last: COPY.title.slice(LAST_AT),
+};
+
 export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
   const root = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
@@ -27,6 +35,9 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
   const reduced = !!useReducedMotion();
   const [under, setUnder] = useState(false);
   const [titleSeen, setTitleSeen] = useState(false);
+  // the heading's cues start hidden only once script runs and motion is allowed; otherwise they are simply shown
+  const [titleReady, setTitleReady] = useState(false);
+  useEffect(() => setTitleReady(!reduced), [reduced]);
   // the full story on wider screens, a shorter one on phones, none at all under reduced motion
   const [beats, setBeats] = useState<Beat[] | null>(null);
   useEffect(() => setBeats(reduced ? null : window.matchMedia('(min-width: 701px)').matches ? BEATS : MOBILE_BEATS), [reduced]);
@@ -45,11 +56,14 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
   useEffect(() => {
     const heading = root.current?.querySelector<HTMLElement>('#s03-title');
     if (!heading) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry?.isIntersecting) return;
-      setTitleSeen(true);
-      observer.disconnect();
-    }, { threshold: 0.3 });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        setTitleSeen(true);
+        observer.disconnect();
+      },
+      { threshold: 0.3 },
+    );
     observer.observe(heading);
     return () => observer.disconnect();
   }, []);
@@ -92,6 +106,7 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
       data-reduced={reduced || undefined}
       data-modal={st.sheet ? '' : undefined}
       data-under={under || undefined}
+      data-title-ready={titleReady || undefined}
       data-title-seen={titleSeen || undefined}
       data-tour={tour.status}
     >
@@ -99,10 +114,23 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
       <div className={s.inner}>
         <header className={s.head}>
           <p className={s.eyebrow}>{COPY.eyebrow}</p>
-          <h2 id="s03-title" className={s.title}>
-            {COPY.title.slice(0, COPY.title.lastIndexOf(' ') + 1)}
-            <span className={s.titleAccent}>{COPY.title.slice(COPY.title.lastIndexOf(' ') + 1)}</span>
-          </h2>
+          <div className={s.titleBlock}>
+            <h2 id="s03-title" className={s.title}>
+              {titleParts.before}
+              <span className={s.titleLead}>{COPY.titleLead}</span>
+              {titleParts.middle}
+              <span className={s.titleAccent}>{titleParts.last}</span>
+            </h2>
+            {/* search visibility + AI discoverability + marketing → potential customers; small cues, no claims */}
+            <ul className={s.cues} aria-label="Where Xroga helps">
+              {COPY.cues.map((cue, i) => (
+                <li key={cue} className={s.cue} data-cue={i}>
+                  {cue}
+                </li>
+              ))}
+              <li className={s.cueLine} aria-hidden="true" />
+            </ul>
+          </div>
           <p className={s.lede}>{COPY.lede}</p>
         </header>
 

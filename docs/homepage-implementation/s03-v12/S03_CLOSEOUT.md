@@ -42,3 +42,25 @@
 ## Known, not S03
 - An intermittent dev-only `useId` hydration warning in the FAQ section after a reload while scrolled. It reproduces on V11 and on `main`.
 - `tsc` reports pre-existing ES2018 regex-flag errors in two unrelated `src/lib/terminal/*.test.ts` files. CI does not run that `tsc` invocation.
+
+## Final refinement: heading value and sequence (on top of `06f96302`)
+- **Kept as approved:**
+  - the headline "Turn visibility into customers.";
+  - the background, both modes, the stage, the V12 animations and the layout.
+- **Supporting copy:** "Xroga spots gaps in search and AI answers, prepares content and campaigns, and helps turn more visitors into customers."
+- **Heading sequence:** plays once when the heading first enters view (3.17 s in all; nothing loops).
+  - 0–0.76 s: one soft pass of light across "visibility".
+  - 0.65 / 0.90 / 1.15 s: three small cues (Search · AI answers · Campaigns) unmask in turn.
+  - 1.45–2.45 s: a thin connector draws toward "customers.", ending in an arrow tip.
+  - 2.25–3.17 s: "customers." takes the final mint/cyan highlight, sweeping in from the left; until then it matches the rest of the title.
+- **No layout movement:** only opacity, clip-path, background-position and transform change. Every element keeps its space, so layout shift is 0.
+- **Accessibility:**
+  - The heading text is unchanged for assistive technology.
+  - The cues are a labelled list, and the connector is hidden from assistive technology.
+  - Without script, or with reduced motion, the finished static state is shown.
+- **Accent bar:** the short gradient bar under the title is folded into the connector, which carries the same mint → cyan accent.
+- **Copy:** nothing implies guaranteed rankings, recommendations or conversions. The copy says Xroga "helps turn more visitors into customers".
+- **Verified:**
+  - **Widths 1440, 1280, 1024, 768, 430, 390, 360 and 320:** header geometry is identical before and after the sequence, layout shift is 0, there is no horizontal overflow and no clipped text, and nothing is still animating once settled.
+  - **320 and 360:** the only boxes that touch are the two wrapped headline lines, an effect of the approved tight line-height. No glyphs collide.
+  - **Reduced motion:** the static final state.

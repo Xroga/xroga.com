@@ -497,10 +497,7 @@ test('S03 headline remains concise, its supporting copy stays approved, and the 
   assert.match(CSS, /white-space: nowrap;/);
   assert.match(CSS, /\.titleAccent \{/);
   assert.match(SHELL, /className=\{s\.titleAccent\}/);
-  assert.equal(
-    COPY.lede,
-    'Xroga finds why customers miss you, strengthens your search presence, and prepares marketing that turns attention into customers. You approve each launch.',
-  );
+  assert.equal(COPY.lede, 'Xroga spots gaps in search and AI answers, prepares content and campaigns, and helps turn more visitors into customers.');
   assert.equal(COPY.search.line, 'See why customers can’t find you');
   assert.equal(COPY.growth.line, 'Reach the right people. Win more customers.');
   assert.match(CSS, /--ink: #142236;/);
@@ -513,4 +510,32 @@ test('S03 headline remains concise, its supporting copy stays approved, and the 
   // Preserve the approved V12 backdrop without adding a competing full-section effect.
   assert.doesNotMatch(CSS + SHELL, /titleMark|titleSweep|data-lit=/);
   assert.doesNotMatch(CSS, /\.section::before|\.section::after/);
+});
+
+test('the heading sequence plays once in ~3.2 s: visibility lit, three cues, a connector, then the customers highlight', () => {
+  // the heading text itself is unchanged and fully readable; the two words are only wrapped
+  assert.equal(COPY.titleLead, 'visibility');
+  assert.ok(COPY.title.includes(COPY.titleLead));
+  assert.deepEqual(COPY.cues, ['Search', 'AI answers', 'Campaigns']);
+  assert.match(SHELL, /className=\{s\.titleLead\}>\{COPY\.titleLead\}</);
+  assert.match(SHELL, /<ul className=\{s\.cues\} aria-label="Where Xroga helps">/);
+  assert.match(SHELL, /<li className=\{s\.cueLine\} aria-hidden="true" \/>/);
+  // order and timing: lead 0–760 ms, cues at 650/900/1150 ms, connector 1450–2310 ms, payoff 2250–3170 ms
+  assert.match(CSS, /\.section\[data-title-seen\] \.titleLead \{\s*animation: s03TitleLead 760ms/);
+  for (const [i, ms] of [
+    [0, 650],
+    [1, 900],
+    [2, 1150],
+  ])
+    assert.match(CSS, new RegExp(`\\.cue\\[data-cue='${i}'\\] \\{\\s*animation-delay: ${ms}ms;`));
+  assert.match(CSS, /animation: s03CueLine 860ms cubic-bezier\(0\.65, 0, 0\.35, 1\) 1450ms both;/);
+  assert.match(CSS, /animation: s03TitleHighlight 920ms var\(--ease\) 2250ms both;/);
+  // no looping, no layout properties animated
+  const keyframes = CSS.match(/@keyframes s03(TitleLead|CueIn|CueLine|CueTip|TitleHighlight) \{[\s\S]*?\n\}/g) ?? [];
+  assert.equal(keyframes.length, 5);
+  for (const k of keyframes) assert.doesNotMatch(k, /\b(width|height|top|left|margin|padding|font-size|letter-spacing)\s*:/, k.slice(0, 40));
+  assert.doesNotMatch(CSS, /s03(TitleLead|CueIn|CueLine|CueTip|TitleHighlight)[^;]*infinite/);
+  // cues are hidden before the sequence only when script runs and motion is allowed; reduced motion shows the final state
+  assert.match(SHELL, /setTitleReady\(!reduced\)/);
+  assert.match(CSS, /\.section\[data-title-ready\]:not\(\[data-title-seen\]\) \.cue,/);
 });

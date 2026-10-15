@@ -566,7 +566,10 @@ export const audienceOf = (id: Audience) => AUDIENCES.find((a) => a.id === id)!;
 export const COPY = {
   eyebrow: 'Xroga / Search & Growth',
   title: 'Turn visibility into customers.',
-  lede: 'Xroga finds why customers miss you, strengthens your search presence, and prepares marketing that turns attention into customers. You approve each launch.',
+  lede: 'Xroga spots gaps in search and AI answers, prepares content and campaigns, and helps turn more visitors into customers.',
+  // the heading's one-time sequence: this word is lit first, the cues follow, and the last word receives the final highlight
+  titleLead: 'visibility',
+  cues: ['Search', 'AI answers', 'Campaigns'],
   search: { label: 'Search & Visibility', line: 'See why customers can’t find you', scenario: 'PeakForm Nutrition · a sports-nutrition brand' },
   growth: { label: 'Launch & Marketing', line: 'Reach the right people. Win more customers.', scenario: 'Ember Roasters · a coffee subscription' },
   disclosure: 'About this walkthrough',

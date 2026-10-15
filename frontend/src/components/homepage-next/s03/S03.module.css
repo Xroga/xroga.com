@@ -162,8 +162,10 @@
 }
 .titleAccent {
   display: inline;
-  background-image: linear-gradient(105deg, #7fdbc1 4%, #a5ebda 45%, #bdd4ff 100%);
-  background-size: 180% 100%;
+  /* the left part is the mint/cyan highlight (the resting state); the right part matches the title, so until the final
+     beat the word reads like the rest of the heading and the highlight then sweeps across it from the left */
+  background-image: linear-gradient(105deg, #7fdbc1 0%, #a5ebda 20%, #7fcfe6 38%, #e2f1f1 56%, #e2f1f1 100%);
+  background-size: 265% 100%;
   background-position: 0 50%;
   background-clip: text;
   -webkit-background-clip: text;
@@ -171,11 +173,16 @@
   font-weight: 720;
 }
 .section[data-title-seen] .titleAccent {
-  animation: s03TitleHighlight 920ms var(--ease) both;
+  /* the last beat of the heading sequence: the payoff word receives the mint/cyan highlight */
+  animation: s03TitleHighlight 920ms var(--ease) 2250ms both;
 }
 @keyframes s03TitleHighlight {
-  from { background-position: 100% 50%; opacity: 0.7; }
-  to { background-position: 0 50%; opacity: 1; }
+  from {
+    background-position: 100% 50%;
+  }
+  to {
+    background-position: 0 50%;
+  }
 }
 /* A restrained, stationary accent gives the first screen a visual hook without
    creating movement near interactive controls or causing layout shifts. */
@@ -188,6 +195,159 @@
   border-radius: 999px;
   background: linear-gradient(90deg, var(--mint), var(--cyan), var(--apricot));
   box-shadow: 0 0 20px rgba(109, 187, 208, 0.28);
+}
+/* The heading sequence (once, ~3.2 s, when the heading first enters view): "visibility" is lit by one soft pass of light,
+   three small capability cues unmask in turn, a thin connector draws toward "customers.", and that word takes the final
+   highlight. Only opacity, clip-path, background-position and transform change, and every element keeps its space from
+   the start, so nothing shifts. Without script or under reduced motion the finished, static state is shown. */
+.titleBlock {
+  grid-area: title;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1vw, 14px);
+  width: fit-content;
+  max-width: 100%;
+}
+/* the connector below carries the brand accent that the short bar under the title used to */
+.titleBlock > .title.title::after {
+  content: none;
+}
+.titleLead {
+  background-image: linear-gradient(100deg, #f4f8ff 0%, #f4f8ff 38%, #ffffff 50%, #eaf6ff 62%, #f4f8ff 100%);
+  background-size: 260% 100%;
+  background-position: 0 50%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.section[data-title-seen] .titleLead {
+  animation: s03TitleLead 760ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes s03TitleLead {
+  from {
+    background-position: 100% 50%;
+    opacity: 0.82;
+  }
+  to {
+    background-position: 0 50%;
+    opacity: 1;
+  }
+}
+.cues {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font:
+    600 13px/1.2 var(--font-inter),
+    system-ui,
+    sans-serif;
+  letter-spacing: 0.01em;
+  color: var(--sub);
+}
+.cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.cue::before {
+  content: '';
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mint);
+}
+.cue[data-cue='1']::before {
+  background: var(--peri);
+}
+.cue[data-cue='2']::before {
+  background: var(--apricot);
+}
+.cueLine {
+  position: relative;
+  flex: 1 1 40px;
+  min-width: 40px;
+  height: 2px;
+  margin-right: 6px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(112, 215, 183, 0.18), var(--mint) 55%, var(--cyan));
+  transform-origin: left center;
+}
+.cueLine::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-top: 2px solid var(--cyan);
+  border-right: 2px solid var(--cyan);
+  transform: translateY(-50%) rotate(45deg);
+}
+.section[data-title-ready]:not([data-title-seen]) .cue,
+.section[data-title-ready]:not([data-title-seen]) .cueLine {
+  opacity: 0;
+}
+.section[data-title-seen] .cue {
+  animation: s03CueIn 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.section[data-title-seen] .cue[data-cue='0'] {
+  animation-delay: 650ms;
+}
+.section[data-title-seen] .cue[data-cue='1'] {
+  animation-delay: 900ms;
+}
+.section[data-title-seen] .cue[data-cue='2'] {
+  animation-delay: 1150ms;
+}
+@keyframes s03CueIn {
+  from {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+.section[data-title-seen] .cueLine {
+  animation: s03CueLine 860ms cubic-bezier(0.65, 0, 0.35, 1) 1450ms both;
+}
+.section[data-title-seen] .cueLine::after {
+  animation: s03CueTip 300ms linear 2150ms both;
+}
+@keyframes s03CueLine {
+  from {
+    opacity: 0.35;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+@keyframes s03CueTip {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (forced-colors: active) {
+  .titleLead,
+  .titleAccent {
+    -webkit-text-fill-color: currentColor;
+    background: none;
+  }
+  .cueLine {
+    background: CanvasText;
+  }
 }
 .lede.lede {
   grid-area: lede;
