@@ -3,8 +3,20 @@ import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { fixtureContracts } from '../../tests/golden/fixtures/fixtures.mjs';
 import { validateGoldenMatrix } from './golden-schema.mjs';
+import { outputs } from './golden-journeys.mjs';
 const ids=new Set(JSON.parse(readFileSync(new URL('../../docs/xroga/requirements-ledger.json',import.meta.url),'utf8')).requirements.map(row=>row.requirement_id));
 const fixture=()=>({version:'1.0',sourceSha:'a'.repeat(40),scope:'ACCEPTANCE_CONTRACTS_NOT_PRODUCT_COMPLETION',journeys:structuredClone(fixtureContracts)});
+
+test('canonical generator retains reviewed mission owners and exactly regenerates committed contracts',()=>{
+  const matrix=JSON.parse(readFileSync(new URL('../../docs/xroga/golden-journey-matrix.json',import.meta.url),'utf8'));
+  for(const journey of fixtureContracts) {
+    assert.equal(journey.state,'BLOCKED_KNOWN_GAP');
+    for(const owner of journey.blockers.flatMap(row=>row.ownerCommands)) assert.ok(ids.has(owner.startsWith('MISSION-')?`XR-${owner}`:`XB01-C${owner}`),owner);
+  }
+  for(const [path,expected] of outputs({sourceSha:matrix.sourceSha})) {
+    assert.equal(readFileSync(new URL(`../../${path}`,import.meta.url),'utf8').replace(/\r\n/g,'\n'),expected,`Generated golden drift: ${path}`);
+  }
+});
 test('all twelve stable contracts declare authority/evidence and blocked journeys count as zero passes',()=>{
   const result=validateGoldenMatrix(fixture(),ids);assert.equal(result.journeyStates.BLOCKED_KNOWN_GAP,12);assert.equal(result.journeyStates.PASS,0);assert.equal(result.liveJourneysCertified,0);
 });

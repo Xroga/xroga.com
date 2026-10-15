@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "sourceSha": "27f93ca19762a46a95c4f724235e1db59355aa43",
+  "sourceSha": "f4b7acf478b2e47f179e0e49b14ee246bb4aed27",
   "scope": "ACCEPTANCE_CONTRACTS_NOT_PRODUCT_COMPLETION",
   "journeys": [
     {
@@ -118,9 +118,12 @@
             "XR-FAMILY-activity-feeds"
           ],
           "ownerCommands": [
-          "MISSION-014", "MISSION-018", "MISSION-053", "MISSION-071"
+            "MISSION-014",
+            "MISSION-018",
+            "MISSION-053",
+            "MISSION-071"
           ],
-        "missingCapability": "Isolated authentication is tested separately. A full streamed provider reply with durable session restoration remains unverified; component/auth tests are not the complete journey."
+          "missingCapability": "Isolated authentication is tested separately. A full streamed provider reply with durable session restoration remains unverified; component/auth tests are not the complete journey."
         }
       ],
       "goal": {
@@ -273,7 +276,10 @@
             "XR-FAMILY-provenance-evidence"
           ],
           "ownerCommands": [
-          "MISSION-020", "MISSION-024", "MISSION-025", "MISSION-071"
+            "MISSION-020",
+            "MISSION-024",
+            "MISSION-025",
+            "MISSION-071"
           ],
           "missingCapability": "Fresh source retrieval, observed timestamps and provider-backed citations require an approved sandbox feed."
         }
@@ -445,7 +451,10 @@
             "XR-FAMILY-sandboxes"
           ],
           "ownerCommands": [
-          "MISSION-014", "MISSION-032", "MISSION-037", "MISSION-071"
+            "MISSION-014",
+            "MISSION-032",
+            "MISSION-037",
+            "MISSION-071"
           ],
           "missingCapability": "Authorized repository/sandbox credentials and isolated mutation/verification fixtures are unavailable."
         }
@@ -611,7 +620,9 @@
             "XR-FAMILY-verification"
           ],
           "ownerCommands": [
-          "MISSION-020", "MISSION-036", "MISSION-071"
+            "MISSION-020",
+            "MISSION-036",
+            "MISSION-071"
           ],
           "missingCapability": "A full model-to-sandbox build and reproducible artifact receipt has not been independently executed."
         }
@@ -775,7 +786,9 @@
             "XR-FAMILY-tenant-isolation"
           ],
           "ownerCommands": [
-          "007", "MISSION-027", "MISSION-071"
+            "007",
+            "MISSION-027",
+            "MISSION-071"
           ],
           "missingCapability": "Only owner/read-policy boundaries can be stub-tested now; approved provider sandbox read and account selection remain unverified."
         }
@@ -943,7 +956,9 @@
           ],
           "ownerCommands": [
             "007",
-          "008", "MISSION-028", "MISSION-071"
+            "008",
+            "MISSION-028",
+            "MISSION-071"
           ],
           "missingCapability": "Durable exact-scope approval/replay and provider postcondition verification need Commands 007–008 plus isolated DB/provider proof."
         }
@@ -1152,7 +1167,11 @@
             "XR-FAMILY-completion-semantics"
           ],
           "ownerCommands": [
-          "MISSION-019", "MISSION-020", "MISSION-023", "MISSION-029", "MISSION-071"
+            "MISSION-019",
+            "MISSION-020",
+            "MISSION-023",
+            "MISSION-029",
+            "MISSION-071"
           ],
           "missingCapability": "Independent dependency fan-out and per-outcome durable partial/recovery evidence are not proved by single-dispatch planning."
         }
@@ -1318,7 +1337,11 @@
             "XR-FAMILY-xroga-blocks"
           ],
           "ownerCommands": [
-          "MISSION-012", "MISSION-048", "MISSION-050", "MISSION-051", "MISSION-071"
+            "MISSION-012",
+            "MISSION-048",
+            "MISSION-050",
+            "MISSION-051",
+            "MISSION-071"
           ],
           "missingCapability": "Existing generators/renderers are partial boundaries; real end-to-end binary validation, durable storage and owner reopen remain unverified."
         }
@@ -1483,7 +1506,10 @@
             "XR-FAMILY-activepieces"
           ],
           "ownerCommands": [
-          "MISSION-042", "MISSION-043", "MISSION-045", "MISSION-071"
+            "MISSION-042",
+            "MISSION-043",
+            "MISSION-045",
+            "MISSION-071"
           ],
           "missingCapability": "Work-pack catalog/scheduler backend is not implemented by the preview."
         }
@@ -1649,7 +1675,10 @@
             "XR-FAMILY-schedulers"
           ],
           "ownerCommands": [
-          "MISSION-039", "MISSION-043", "MISSION-044", "MISSION-071"
+            "MISSION-039",
+            "MISSION-043",
+            "MISSION-044",
+            "MISSION-071"
           ],
           "missingCapability": "A durable scheduled employee runtime is not established; queue definitions without consumers are not working employees."
         }
@@ -1845,7 +1874,12 @@
             "XR-FAMILY-billing"
           ],
           "ownerCommands": [
-          "008", "MISSION-057", "MISSION-059", "MISSION-065", "MISSION-066", "MISSION-071"
+            "008",
+            "MISSION-057",
+            "MISSION-059",
+            "MISSION-065",
+            "MISSION-066",
+            "MISSION-071"
           ],
           "missingCapability": "Approved provider/payment sandbox, staged payment-to-build authority and store receipts are unavailable; normal CI must not charge or submit."
         }
@@ -2012,7 +2046,11 @@
             "XR-FAMILY-drive-docs-slides-sheets"
           ],
           "ownerCommands": [
-          "MISSION-012", "MISSION-048", "MISSION-051", "MISSION-063", "MISSION-071"
+            "MISSION-012",
+            "MISSION-048",
+            "MISSION-051",
+            "MISSION-063",
+            "MISSION-071"
           ],
           "missingCapability": "Multi-tool owner-scoped durable Drive output and actual source freshness remain unverified."
         }

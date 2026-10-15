@@ -1,10 +1,10 @@
 # Golden journey acceptance contracts
 
-Source SHA: `27f93ca19762a46a95c4f724235e1db59355aa43`. Twelve stable contracts; **zero live journeys certified**. A passing stub/component test is not a passing authenticated, provider-backed user journey.
+Source SHA: `f4b7acf478b2e47f179e0e49b14ee246bb4aed27`. Twelve stable contracts; **zero live journeys certified**. A passing stub/component test is not a passing authenticated, provider-backed user journey.
 
 | Journey | State | Missing evidence/capability |
 | --- | --- | --- |
-| GJ-CHAT | BLOCKED_KNOWN_GAP | Authenticated streamed provider reply plus isolated browser/session restoration is not verified without TEST configuration. |
+| GJ-CHAT | BLOCKED_KNOWN_GAP | Isolated authentication is tested separately. A full streamed provider reply with durable session restoration remains unverified; component/auth tests are not the complete journey. |
 | GJ-WEB-RESEARCH | BLOCKED_KNOWN_GAP | Fresh source retrieval, observed timestamps and provider-backed citations require an approved sandbox feed. |
 | GJ-EXISTING-REPO-CODING | BLOCKED_KNOWN_GAP | Authorized repository/sandbox credentials and isolated mutation/verification fixtures are unavailable. |
 | GJ-NEW-SAAS | BLOCKED_KNOWN_GAP | A full model-to-sandbox build and reproducible artifact receipt has not been independently executed. |
@@ -17,9 +17,9 @@ Source SHA: `27f93ca19762a46a95c4f724235e1db59355aa43`. Twelve stable contracts;
 | GJ-PAID-ANDROID-PUBLISH | BLOCKED_KNOWN_GAP | Approved provider/payment sandbox, staged payment-to-build authority and store receipts are unavailable; normal CI must not charge or submit. |
 | GJ-SEO-DRIVE | BLOCKED_KNOWN_GAP | Multi-tool owner-scoped durable Drive output and actual source freshness remain unverified. |
 
-The JSON is canonical and declares actor, connections, graph, authority, budget, durability, provider isolation, verification, events/blocks, timeout/retry, cleanup and positive/negative assertions. Unavailable historical mission ownership remains explicitly deferred, not invented.
+The fixture contracts generate the JSON, which declares actor, connections, graph, authority, budget, durability, provider isolation, verification, events/blocks, timeout/retry, cleanup and positive/negative assertions. Journey owners reference the reviewed supplied mission contracts. Ownership is planning evidence only; private transcript and historical normative acceptance gaps remain separately recorded.
 
-Existing Node/tsx and frontend Playwright infrastructure are extended, not replaced. Deterministic transport stubs test actual action/session/SSE/rendering/recovery boundaries. All external fetches in action fixtures are intercepted in-process and reject unknown hosts/paths. Browser fixtures run only against loopback, with external browser requests blocked. Authenticated-browser testing stays BLOCKED_PENDING_TEST_CONFIGURATION and needs an approved isolated frontend auth realm.
+Existing Node/tsx and frontend Playwright infrastructure are extended, not replaced. Deterministic transport stubs test actual action/session/SSE/rendering/recovery boundaries. All external fetches in action fixtures are intercepted in-process and reject unknown hosts/paths. Browser fixtures run only against loopback, with external browser requests blocked. Isolated authenticated-browser tests provide separate scoped identity evidence. Full authenticated provider journeys remain unverified and are not made passing by those tests.
 
 Tier 1: PR-safe fixture/component/browser suite. Tier 2: approved provider sandbox with namespaced resources and cleanup; unavailable credentials/capabilities remain blocked, never passing. Tier 3: existing `launch-production-verification.yml` read-only release smoke; no service-role users or paid actions. No customer email, charge, publishing, Git write or durable production upload occurs in this harness. Existing independent security tests are retained.
 

@@ -1,6 +1,6 @@
 // Test contracts only. These do not install workers, call providers or certify live journeys.
 const rows = [
-  ['CHAT', 'Explain idempotency in plain language.', 'ANSWER', ['conversation.respond'], [], ['canonical-durable-execution', 'activity-feeds'], 'backend/src/ai/pipeline.ts', 'Authenticated streamed provider reply plus isolated browser/session restoration is not verified without TEST configuration.'],
+  ['CHAT', 'Explain idempotency in plain language.', 'ANSWER', ['conversation.respond'], [], ['canonical-durable-execution', 'activity-feeds'], 'backend/src/ai/pipeline.ts', 'Isolated authentication is tested separately. A full streamed provider reply with durable session restoration remains unverified; component/auth tests are not the complete journey.'],
   ['WEB-RESEARCH', 'Research current accessibility guidance and cite primary sources.', 'INVESTIGATE', ['research.public-web', 'conversation.respond'], [], ['web-research-citations', 'provenance-evidence'], 'backend/src/ai/pipeline.ts', 'Fresh source retrieval, observed timestamps and provider-backed citations require an approved sandbox feed.'],
   ['EXISTING-REPO-CODING', 'Repair the authorized fixture repository and show diff and test evidence.', 'MODIFY', ['repository.read', 'software.implement', 'repository.write'], ['repository.write'], ['github-coding', 'sandboxes'], 'backend/src/ai/pipeline.ts', 'Authorized repository/sandbox credentials and isolated mutation/verification fixtures are unavailable.'],
   ['NEW-SAAS', 'Build a clinic appointment application with reproducible source artifacts.', 'MODIFY', ['software.implement'], ['sandbox.execute'], ['app-site-creation', 'verification'], 'backend/src/ai/pipeline.ts', 'A full model-to-sandbox build and reproducible artifact receipt has not been independently executed.'],
@@ -13,6 +13,23 @@ const rows = [
   ['PAID-ANDROID-PUBLISH', 'In an isolated sandbox, review a quote and publish the fixture Android build.', 'EXTERNAL_ACTION', ['software.implement', 'publish.android'], ['billing.verify', 'publish.submit', 'action.confirm'], ['paid-managed-publishing', 'android-ios-publishing', 'billing'], 'backend/src/services/publish/easPublish.ts', 'Approved provider/payment sandbox, staged payment-to-build authority and store receipts are unavailable; normal CI must not charge or submit.'],
   ['SEO-DRIVE', 'Research an SEO brief and save an authorized report artifact.', 'MIXED', ['research.public-web', 'artifact.generate'], ['artifact.write'], ['seo', 'drive-docs-slides-sheets'], 'backend/src/ai/pipeline.ts', 'Multi-tool owner-scoped durable Drive output and actual source freshness remain unverified.'],
 ];
+
+// Reviewed planning ownership from family-ownership-review.json and the imported
+// 72 mission contracts. These assignments do not promote any journey to PASS.
+const ownerCommands = {
+  CHAT: ['MISSION-014', 'MISSION-018', 'MISSION-053', 'MISSION-071'],
+  'WEB-RESEARCH': ['MISSION-020', 'MISSION-024', 'MISSION-025', 'MISSION-071'],
+  'EXISTING-REPO-CODING': ['MISSION-014', 'MISSION-032', 'MISSION-037', 'MISSION-071'],
+  'NEW-SAAS': ['MISSION-020', 'MISSION-036', 'MISSION-071'],
+  'BUSINESS-READ': ['007', 'MISSION-027', 'MISSION-071'],
+  'BUSINESS-WRITE': ['007', '008', 'MISSION-028', 'MISSION-071'],
+  'MIXED-MULTI-OUTCOME': ['MISSION-019', 'MISSION-020', 'MISSION-023', 'MISSION-029', 'MISSION-071'],
+  DOCUMENTS: ['MISSION-012', 'MISSION-048', 'MISSION-050', 'MISSION-051', 'MISSION-071'],
+  'WORK-PACK': ['MISSION-042', 'MISSION-043', 'MISSION-045', 'MISSION-071'],
+  'AI-EMPLOYEE': ['MISSION-039', 'MISSION-043', 'MISSION-044', 'MISSION-071'],
+  'PAID-ANDROID-PUBLISH': ['008', 'MISSION-057', 'MISSION-059', 'MISSION-065', 'MISSION-066', 'MISSION-071'],
+  'SEO-DRIVE': ['MISSION-012', 'MISSION-048', 'MISSION-051', 'MISSION-063', 'MISSION-071'],
+};
 
 export const fixtureContracts = rows.map(([suffix, intent, semanticIntent, capabilities, authorities, families, implementation, gap]) => {
   const id = `GJ-${suffix}`, fixtureId = `fixture-${suffix.toLowerCase()}`;
@@ -48,7 +65,7 @@ export const fixtureContracts = rows.map(([suffix, intent, semanticIntent, capab
     negativeAssertions: ['Unauthenticated/body-supplied identity rejected', 'Second tenant cannot inspect owner resources', 'Business write without confirmation is rejected', 'Confirmation for modified prepared action is rejected', 'Provider failure cannot become verified', 'Provider timeout does not blindly replay uncertain writes', 'Duplicated webhook/event cannot create a second effect/outcome', 'Browser refresh does not cancel a long execution', 'Unsupported capability stays blocked', 'One failed independent subtask prevents all-success claims', 'A prompt asking to claim success without evidence cannot create a verified receipt'],
     implementationPaths: implementation ? [implementation] : [],
     state: 'BLOCKED_KNOWN_GAP',
-    blockers: [{requirementIds: families.map(family => `XR-FAMILY-${family}`), ownerCommands: suffix === 'BUSINESS-WRITE' ? ['007', '008'] : ['LATER_PENDING_HISTORICAL_EXPORT'], missingCapability: gap}],
+    blockers: [{requirementIds: families.map(family => `XR-FAMILY-${family}`), ownerCommands: ownerCommands[suffix], missingCapability: gap}],
     goal: {version: '1.0', goal: intent, desiredOutcome: intent, semanticIntent, constraints: ['Fixture only; no external side effects'], acceptance: ['Required independent evidence is present'], historyContext: [], projectContext: null,
       ...(suffix === 'WEB-RESEARCH' || suffix === 'SEO-DRIVE' ? {freshnessRequirement:'CURRENT_REQUIRED',sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['www.w3.org']}} : {}),
       ...(suffix === 'NEW-SAAS' || suffix === 'EXISTING-REPO-CODING' ? {previewRequirement:'REQUIRED'} : {}),
