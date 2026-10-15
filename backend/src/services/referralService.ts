@@ -1,4 +1,4 @@
-import { randomInt, randomUUID } from 'node:crypto';
+import { randomInt } from 'node:crypto';
 import { getSupabaseAdmin } from '../config/supabase.js';
 
 const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -13,6 +13,11 @@ async function ensureProfile(userId: string): Promise<Record<string, any>> {
   for (let attempt = 0; attempt < 5; attempt += 1) {
     const { data, error: insertError } = await db.from('user_referral_profiles').insert({ user_id: userId, code: code() }).select('*').single();
     if (!insertError && data) return data;
+    if (insertError?.code !== '23505') throw new Error('Referral profile could not be created');
+    // A concurrent request can win this owner's profile, not just collide on code.
+    const winner = await db.from('user_referral_profiles').select('*').eq('user_id', userId).maybeSingle();
+    if (winner.error) throw new Error('Referral profile unavailable');
+    if (winner.data) return winner.data;
   }
   throw new Error('Referral profile could not be created');
 }
@@ -42,23 +47,12 @@ export async function applyReferralCode(referredUserId: string, raw: string): Pr
   const normalized = raw.trim().toUpperCase();
   if (!/^XROGA-[A-HJ-NP-Z2-9]{6}$/.test(normalized)) return { success: false, message: 'Invalid referral code format.' };
   const db = getSupabaseAdmin();
-  const own = await ensureProfile(referredUserId);
-  if (own.referred_by_code) return { success: false, message: 'A referral is already linked to this account.' };
-  const { data: referrer, error } = await db.from('user_referral_profiles').select('user_id,code').eq('code', normalized).maybeSingle();
-  if (error) throw new Error('Referral lookup failed');
-  if (!referrer) return { success: false, message: 'Referral code not found.' };
-  if (referrer.user_id === referredUserId) return { success: false, message: 'Self-referrals are not allowed.' };
-  const { data: existing, error: existingError } = await db.from('referrals').select('id').eq('referred_id', referredUserId).maybeSingle();
-  if (existingError) throw new Error('Referral eligibility unavailable');
-  if (existing) return { success: false, message: 'A referral is already linked to this account.' };
-  const evidence = `referral-application:${randomUUID()}`;
-  const { data: referral, error: insertError } = await db.from('referrals').insert({ referrer_id: referrer.user_id, referred_id: referredUserId, code: normalized, qualification_status: 'pending', qualification_evidence: evidence }).select('id').single();
-  if (insertError || !referral) throw new Error('Referral could not be recorded');
-  const { data: linked, error: profileError } = await db.from('user_referral_profiles').update({ referred_by_user_id: referrer.user_id, referred_by_code: normalized, updated_at: new Date().toISOString() }).eq('user_id', referredUserId).is('referred_by_user_id', null).select('user_id').maybeSingle();
-  if (profileError || !linked) {
-    const cleanup = await db.from('referrals').delete().eq('id', referral.id).eq('referred_id', referredUserId).eq('referrer_id', referrer.user_id);
-    if (cleanup.error) throw new Error('Referral link recovery is incomplete');
-    throw new Error('Referral link could not be completed');
-  }
-  return { success: true, message: 'Referral recorded. Rewards remain pending until qualification evidence is verified.' };
+  await ensureProfile(referredUserId);
+  const { data, error } = await db.rpc('apply_referral_code_atomic', { p_owner_id: referredUserId, p_code: normalized });
+  if (error) throw new Error('Referral could not be recorded');
+  if (data === 'recorded') return { success: true, message: 'Referral recorded. Rewards remain pending until qualification evidence is verified.' };
+  if (data === 'already_linked') return { success: false, message: 'A referral is already linked to this account.' };
+  if (data === 'not_found') return { success: false, message: 'Referral code not found.' };
+  if (data === 'self_referral') return { success: false, message: 'Self-referrals are not allowed.' };
+  throw new Error('Referral link could not be completed');
 }

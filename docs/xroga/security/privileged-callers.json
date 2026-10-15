@@ -1,18 +1,18 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "b7c312cd7426ba3a42a87a33cc719613bd249baacb14b2fc4294d330b59afe6e",
+  "reviewRegistrySha256": "3c3485f3f7ef0f1e4aa481003615db20c8d21c16eff3a059e7cef8a409ca3ddf",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 161,
-    "persistenceCandidates": 675,
+    "persistenceCandidates": 672,
     "ownerPredicateCandidates": 167,
     "reviewRequired": 0,
-    "reviewedCandidates": 675,
-    "unresolvedSafetyCandidates": 488,
+    "reviewedCandidates": 672,
+    "unresolvedSafetyCandidates": 485,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -21,7 +21,7 @@
     "SCOPED_BOUNDARY": 43,
     "NARROW_EXCEPTION": 8,
     "NOT_PERSISTENCE": 136,
-    "REVIEWED_GAP": 488
+    "REVIEWED_GAP": 485
   },
   "callers": [
     {
@@ -12098,7 +12098,7 @@
       }
     },
     {
-      "id": "292ace218bb5d6be2824",
+      "id": "5e54e2f09080ef64e1f1",
       "path": "backend/src/services/referralService.ts",
       "line": 5,
       "enclosing": "code",
@@ -12106,7 +12106,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in code. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -12119,7 +12119,7 @@
       }
     },
     {
-      "id": "bdca37051b92167cd4e6",
+      "id": "9841b636fbaa5309225e",
       "path": "backend/src/services/referralService.ts",
       "line": 9,
       "enclosing": "ensureProfile",
@@ -12127,10 +12127,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
@@ -12140,7 +12140,7 @@
       }
     },
     {
-      "id": "7701520407b3756d81bd",
+      "id": "b501b42e31d5e89bbba2",
       "path": "backend/src/services/referralService.ts",
       "line": 10,
       "enclosing": "ensureProfile",
@@ -12148,10 +12148,10 @@
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
@@ -12161,7 +12161,7 @@
       }
     },
     {
-      "id": "bf78844540ca5a919d7c",
+      "id": "4c589a8d6410b088e70c",
       "path": "backend/src/services/referralService.ts",
       "line": 14,
       "enclosing": "ensureProfile",
@@ -12169,10 +12169,10 @@
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
@@ -12182,18 +12182,43 @@
       }
     },
     {
-      "id": "efa3981ba3565074ce95",
+      "id": "f831cbd4b195abcb570e",
       "path": "backend/src/services/referralService.ts",
-      "line": 21,
+      "line": 18,
+      "enclosing": "ensureProfile",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_referral_profiles",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "semanticReview": {
+        "authority": "New exact-owner profile re-read after a unique creation race and apply_referral_code_atomic RPC. Only routes/referrals.ts supplies req.userId behind authMiddleware. The service-only function serializes the owner profile, denies existing/self links and commits pending referral evidence and profile linkage together without rewards.",
+        "reason": "Local receipt/outage tests pass. Real concurrency, role denial and post-insert profile-failure rollback cases are implemented but await CI. Entire referral qualification/abuse and observed production schema remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "only an exact atomic receipt reports success"
+          },
+          {
+            "path": "supabase/migrations/20261016000300_atomic_referral_link.sql",
+            "marker": "apply_referral_code_atomic"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f809e679d3188b8f3458",
+      "path": "backend/src/services/referralService.ts",
+      "line": 26,
       "enclosing": "getReferralSummary",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
@@ -12203,18 +12228,18 @@
       }
     },
     {
-      "id": "3d4eb0116c2715da8f7b",
+      "id": "61c29098f967c908e451",
       "path": "backend/src/services/referralService.ts",
-      "line": 24,
+      "line": 29,
       "enclosing": "getReferralSummary",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "referrals",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
@@ -12224,18 +12249,18 @@
       }
     },
     {
-      "id": "a233ad4db9bd5cf25fdc",
+      "id": "27783c95776c7ee6d966",
       "path": "backend/src/services/referralService.ts",
-      "line": 25,
+      "line": 30,
       "enclosing": "getReferralSummary",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "referral_rewards",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
@@ -12245,18 +12270,18 @@
       }
     },
     {
-      "id": "a6fd9b3299841886e86a",
+      "id": "8941fb78418c04bcd58e",
       "path": "backend/src/services/referralService.ts",
-      "line": 29,
+      "line": 34,
       "enclosing": "getReferralSummary",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
@@ -12266,18 +12291,18 @@
       }
     },
     {
-      "id": "551a54ecdec2fd29e830",
+      "id": "6697e588b2199638084b",
       "path": "backend/src/services/referralService.ts",
-      "line": 44,
+      "line": 49,
       "enclosing": "applyReferralCode",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
@@ -12287,106 +12312,26 @@
       }
     },
     {
-      "id": "826cdaee7588c5a9ba41",
-      "path": "backend/src/services/referralService.ts",
-      "line": 47,
-      "enclosing": "applyReferralCode",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_referral_profiles",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
-      "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
-        "evidence": [
-          {
-            "path": "backend/src/services/referralService.failure.test.ts",
-            "marker": "referral eligibility failure denies writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "9916bb115e31c14ee9e0",
+      "id": "36ff6f05b88cef09b547",
       "path": "backend/src/services/referralService.ts",
       "line": 51,
       "enclosing": "applyReferralCode",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "referrals",
+      "kind": "RPC_CANDIDATE",
+      "target": "apply_referral_code_atomic",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "authority": "New exact-owner profile re-read after a unique creation race and apply_referral_code_atomic RPC. Only routes/referrals.ts supplies req.userId behind authMiddleware. The service-only function serializes the owner profile, denies existing/self links and commits pending referral evidence and profile linkage together without rewards.",
+        "reason": "Local receipt/outage tests pass. Real concurrency, role denial and post-insert profile-failure rollback cases are implemented but await CI. Entire referral qualification/abuse and observed production schema remain uncertified.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
-            "marker": "referral eligibility failure denies writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "b2cc8c681e9df7277ed8",
-      "path": "backend/src/services/referralService.ts",
-      "line": 55,
-      "enclosing": "applyReferralCode",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "referrals",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
-      "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
-        "evidence": [
+            "marker": "only an exact atomic receipt reports success"
+          },
           {
-            "path": "backend/src/services/referralService.failure.test.ts",
-            "marker": "referral eligibility failure denies writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "6d51b4f95c009d8d0ddc",
-      "path": "backend/src/services/referralService.ts",
-      "line": 57,
-      "enclosing": "applyReferralCode",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_referral_profiles",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
-      "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
-        "evidence": [
-          {
-            "path": "backend/src/services/referralService.failure.test.ts",
-            "marker": "referral eligibility failure denies writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "421fba537f26adf1792b",
-      "path": "backend/src/services/referralService.ts",
-      "line": 59,
-      "enclosing": "applyReferralCode",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "referrals",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
-      "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
-        "evidence": [
-          {
-            "path": "backend/src/services/referralService.failure.test.ts",
-            "marker": "referral eligibility failure denies writes"
+            "path": "supabase/migrations/20261016000300_atomic_referral_link.sql",
+            "marker": "apply_referral_code_atomic"
           }
         ]
       }

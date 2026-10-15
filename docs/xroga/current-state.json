@@ -24653,24 +24653,22 @@
       "id": "surface:47e466cca6c0380e1fbe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/referralService.ts",
-      "sha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "symbols": [
         "CHARS",
         "applyReferralCode",
         "attempt",
-        "cleanup",
         "code",
         "db",
         "ensureProfile",
-        "evidence",
         "getReferralSummary",
         "ids",
         "names",
         "normalized",
-        "own",
         "profile",
         "profiles",
-        "site"
+        "site",
+        "winner"
       ],
       "imports": [
         "../config/supabase.js",
@@ -24700,14 +24698,12 @@
       "authBoundary": [],
       "tenantBoundary": [
         "backend/src/services/referralService.ts:10 (user_id)",
-        "backend/src/services/referralService.ts:25 (user_id)",
-        "backend/src/services/referralService.ts:57 (user_id)"
+        "backend/src/services/referralService.ts:18 (user_id)",
+        "backend/src/services/referralService.ts:30 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [
-        "backend/src/services/referralService.ts#evidence"
-      ],
+      "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/services/referralService.failure.test.ts"
       ],
@@ -94442,6 +94438,13 @@
       "version": "20261016000200",
       "order": 76,
       "sha256": "1ec4baba4c1682984c83314828e4fa8cce728ef0e53fb28b29c092d2a216f29d"
+    },
+    {
+      "id": "migration:bbb93761dc551ffaac6a",
+      "sourcePath": "supabase/migrations/20261016000300_atomic_referral_link.sql",
+      "version": "20261016000300",
+      "order": 77,
+      "sha256": "bd96e4ae91d7cc5d9070070e5b454a3a02aaa77b5fdb4b21cfdb4813f626d225"
     }
   ],
   "workflows": [
@@ -102169,7 +102172,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 60,
+      "declaredTests": 62,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -1148,6 +1148,53 @@ test('real membership callbacks preserve existing ownership and reject competing
   const winner=results.findIndex(r=>r.status==='fulfilled');assert.equal((await read(race))?.user_id,users[winner].id);
 });
 
+test('real referral linking serializes concurrent requests without rewarding or accepting a forged actor', async(t) => {
+  const [owner, referrer] = users;
+  t.after(async () => {
+    assert.equal((await admin.from('referrals').delete().eq('referred_id', owner.id)).error, null);
+    assert.equal((await admin.from('user_referral_profiles').delete().in('user_id', [owner.id, referrer.id])).error, null);
+  });
+  assert.equal((await admin.from('user_referral_profiles').insert({ user_id: referrer.id, code: 'XROGA-ABC234' })).error, null);
+  const before = await admin.from('user_referral_profiles').select('*').eq('user_id', referrer.id).single();
+  assert.equal(before.error, null);
+  const rewardsBefore = await admin.from('referral_rewards').select('*').in('user_id', [owner.id, referrer.id]).order('id');
+  assert.equal(rewardsBefore.error, null);
+  const responses = await Promise.all([0, 1].map(() => request('/api/referrals/apply', owner.token, 'POST', { code: 'XROGA-ABC234', userId: referrer.id })));
+  assert.deepEqual(responses.map(r => r.status).sort(), [200, 400]);
+  const rows = await admin.from('referrals').select('*').eq('referred_id', owner.id);
+  assert.equal(rows.error, null); assert.equal(rows.data?.length, 1);
+  assert.equal(rows.data![0].referrer_id, referrer.id); assert.equal(rows.data![0].qualification_status, 'pending');
+  assert.equal(rows.data![0].referrer_rewarded, false); assert.equal(rows.data![0].new_user_rewarded, false);
+  const linked = await admin.from('user_referral_profiles').select('referred_by_user_id,referred_by_code').eq('user_id', owner.id).single();
+  assert.equal(linked.error, null); assert.deepEqual(linked.data, { referred_by_user_id: referrer.id, referred_by_code: 'XROGA-ABC234' });
+  assert.deepEqual((await admin.from('user_referral_profiles').select('*').eq('user_id', referrer.id).single()).data, before.data);
+  assert.deepEqual((await admin.from('referral_rewards').select('*').in('user_id', [owner.id, referrer.id]).order('id')).data, rewardsBefore.data);
+  const self = await admin.rpc('apply_referral_code_atomic', { p_owner_id: referrer.id, p_code: 'XROGA-ABC234' });
+  assert.equal(self.error, null); assert.equal(self.data, 'self_referral');
+  for (const bearer of [undefined, owner.token]) {
+    const browser = createClient(url, process.env.SUPABASE_ANON_KEY!, { ...(bearer ? { global: { headers: { Authorization: `Bearer ${bearer}` } } } : {}), auth: { persistSession: false, autoRefreshToken: false } });
+    assert.ok((await browser.rpc('apply_referral_code_atomic', { p_owner_id: referrer.id, p_code: 'XROGA-ABC234' })).error);
+  }
+});
+
+test('real referral transaction rolls back its insert when the profile update fails', async () => {
+  const database = new URL(process.env.XB01_LOCAL_DATABASE_URL!);
+  assert.equal(database.hostname, '127.0.0.1'); assert.equal(database.port, '54322'); assert.equal(database.pathname, '/postgres');
+  const db = new pg.Client({ connectionString: database.href, ssl: false }); await db.connect();
+  try {
+    await db.query('begin');
+    const owner = randomUUID(), referrer = randomUUID();
+    for (const id of [owner, referrer]) await db.query("insert into auth.users(id,email,raw_user_meta_data) values($1,$2,'{}')", [id, `referral-${id}@example.invalid`]);
+    await db.query('insert into public.user_referral_profiles(user_id,code) values($1,$2),($3,$4)', [owner, 'XROGA-XYZ234', referrer, 'XROGA-XYZ235']);
+    await db.query('alter table public.user_referral_profiles add constraint fixture_referral_rollback check(referred_by_user_id is null) not valid');
+    await db.query('savepoint before_link');
+    await assert.rejects(db.query('select public.apply_referral_code_atomic($1,$2)', [owner, 'XROGA-XYZ235']), (error: unknown) => (error as { code?: string }).code === '23514');
+    await db.query('rollback to savepoint before_link');
+    assert.equal((await db.query('select id from public.referrals where referred_id=$1', [owner])).rowCount, 0);
+    assert.equal((await db.query('select referred_by_user_id from public.user_referral_profiles where user_id=$1', [owner])).rows[0].referred_by_user_id, null);
+  } finally { await db.query('rollback'); await db.end(); }
+});
+
 test('real GitHub metadata receipt isolates owners and cannot resurrect a concurrent disconnect', async(t) => {
   const [owner, foreign] = users;
   t.after(async () => {
@@ -1155,7 +1202,7 @@ test('real GitHub metadata receipt isolates owners and cannot resurrect a concur
     assert.equal((await admin.from('user_integrations').delete().eq('user_id', owner.id).eq('provider', 'github')).error, null);
   });
   for (const user of [owner, foreign]) {
-    assert.equal((await admin.from('github_integrations').upsert({ user_id: user.id, access_token: `synthetic-${user.id}`, default_repo: 'fixture/original' })).error, null);
+    assert.equal((await admin.from('github_integrations').upsert({ user_id: user.id, access_token: `synthetic-${user.id}`, default_repo: 'fixture/original' }, { onConflict: 'user_id' })).error, null);
   }
   const foreignBefore = await admin.from('github_integrations').select('*').eq('user_id', foreign.id).single();
   assert.equal(foreignBefore.error, null);

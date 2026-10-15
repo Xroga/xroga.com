@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4f8c56acdf6b9c90a5ea1147dfd79151bffe6c46",
+  "source_sha": "704a402e22b77eea45adb05224bef7db4d47fc7e",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12491,7 +12491,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "5b42034332a0bd1a6c012490e8e0841899ec1298bff8e788f4212b601b046aea"
+      "sha256": "8b293dfb1e10a58556bf22583684046d513f398458e35b38ba7a820a772d0a52"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12643,7 +12643,7 @@
     },
     {
       "path": "backend/src/services/referralService.ts",
-      "sha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822"
+      "sha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494"
     },
     {
       "path": "backend/src/services/responseCache.ts",
@@ -24116,7 +24116,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 963,
+      "line": 988,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24410,7 +24410,7 @@
     },
     {
       "path": "backend/src/services/referralService.ts",
-      "line": 31,
+      "line": 36,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

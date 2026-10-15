@@ -80,7 +80,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:488 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:485 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -111,11 +111,11 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 161,
-    "persistenceCandidates": 675,
+    "persistenceCandidates": 672,
     "ownerPredicateCandidates": 167,
     "reviewRequired": 0,
-    "reviewedCandidates": 675,
-    "unresolvedSafetyCandidates": 488,
+    "reviewedCandidates": 672,
+    "unresolvedSafetyCandidates": 485,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -141,6 +141,8 @@
     "isolatedResult": "FAIL SQLSTATE42601 before tests in migration003. CASE expression corrected at319ccde5, new source CI required."
   },
   "newWork": {
+    "referrals": "IN PROGRESS: atomic pending referral/profile linking, existing unique referred_id constraint and owner row lock, exact receipt, concurrent profile creation recovery. Local receipt/outage matrix and backend typecheck pass. Two real tests cover concurrent authenticated requests, forged identity, browser RPC denial, no rewards and transaction rollback after profile failure. Fresh/upgrade/exact-source CI pending. No reward or financial account changes.",
+    "githubSettingsFixtureCorrection": "Run38806776561 at4f8c56ac:64 security tests passed,1 new GitHub metadata case failed during fixture setup with23505 because upsert omitted onConflict:user_id. Fixed the explicit conflict target, no production criteria relaxed. Case requires corrected-source CI before verification.",
     "ambiguousConfirmation": "IN PROGRESS: removed latest-pending-action lookup and execution/cancellation from conversational preflight. Existing exact-ID Review UI and persisted claim remain unchanged. Four focused route/claim tests pass, including concurrent conversation phrases without action lookup, mutation or paid provider calls. Removed AST sites a4bd236f9d86c07f2ffc andcce0ff1b94d71f3be8f0 are eliminated code, not certified live callers. Full CI pending.",
     "githubSettings": "IN PROGRESS: metadata-only owner updates require exact single-row receipt and active token, no credential mirror rewrite. Three focused GitHub tests and backend typecheck pass. Added real foreign-owner and concurrent disconnect case, pending final-source CI. Reconnect target-selection lifecycle remains open.",
     "worker": "Implemented; five actual DB cases await corrected-source disposable CI. Ten local SQL assertions pass, not Supabase acceptance.",
@@ -424,7 +426,7 @@
       "existingImplementation": "Existing billing functions and provider reservations",
       "missingBehavior": "Remaining source-bound billing/budget replay, numeric and caller authority gaps",
       "acceptanceTest": "Concurrent replay, foreign account, failed reservation/settlement and compensation",
-      "pendingCandidates": 44,
+      "pendingCandidates": 41,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/providerBudget.ts": [
@@ -465,19 +467,16 @@
           "9ab1c2977596ae4e732a"
         ],
         "backend/src/services/referralService.ts": [
-          "bdca37051b92167cd4e6",
-          "7701520407b3756d81bd",
-          "bf78844540ca5a919d7c",
-          "efa3981ba3565074ce95",
-          "3d4eb0116c2715da8f7b",
-          "a233ad4db9bd5cf25fdc",
-          "a6fd9b3299841886e86a",
-          "551a54ecdec2fd29e830",
-          "826cdaee7588c5a9ba41",
-          "9916bb115e31c14ee9e0",
-          "b2cc8c681e9df7277ed8",
-          "6d51b4f95c009d8d0ddc",
-          "421fba537f26adf1792b"
+          "9841b636fbaa5309225e",
+          "b501b42e31d5e89bbba2",
+          "4c589a8d6410b088e70c",
+          "f831cbd4b195abcb570e",
+          "f809e679d3188b8f3458",
+          "61c29098f967c908e451",
+          "27783c95776c7ee6d966",
+          "8941fb78418c04bcd58e",
+          "6697e588b2199638084b",
+          "36ff6f05b88cef09b547"
         ]
       }
     },

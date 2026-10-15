@@ -540,25 +540,20 @@
     },
     {
       "path": "backend/src/services/referralService.ts",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "callIds": [
-        "bdca37051b92167cd4e6",
-        "7701520407b3756d81bd",
-        "bf78844540ca5a919d7c",
-        "efa3981ba3565074ce95",
-        "3d4eb0116c2715da8f7b",
-        "a233ad4db9bd5cf25fdc",
-        "a6fd9b3299841886e86a",
-        "551a54ecdec2fd29e830",
-        "826cdaee7588c5a9ba41",
-        "9916bb115e31c14ee9e0",
-        "b2cc8c681e9df7277ed8",
-        "6d51b4f95c009d8d0ddc",
-        "421fba537f26adf1792b"
+        "9841b636fbaa5309225e",
+        "b501b42e31d5e89bbba2",
+        "4c589a8d6410b088e70c",
+        "f809e679d3188b8f3458",
+        "61c29098f967c908e451",
+        "27783c95776c7ee6d966",
+        "8941fb78418c04bcd58e",
+        "6697e588b2199638084b"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
-      "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+      "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
       "evidence": [
         {
           "path": "backend/src/services/referralService.failure.test.ts",
@@ -1680,9 +1675,9 @@
     },
     {
       "path": "backend/src/services/referralService.ts",
-      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
       "callIds": [
-        "292ace218bb5d6be2824"
+        "5e54e2f09080ef64e1f1"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in code. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3867,6 +3862,27 @@
         {
           "path": "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
           "marker": "CWS carries the consumed epoch"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/referralService.ts",
+      "sourceSha256": "a159305d99f3e44cbbf5b7e99a90d3f9841f224faa38a34796e31e377424e494",
+      "callIds": [
+        "f831cbd4b195abcb570e",
+        "36ff6f05b88cef09b547"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "New exact-owner profile re-read after a unique creation race and apply_referral_code_atomic RPC. Only routes/referrals.ts supplies req.userId behind authMiddleware. The service-only function serializes the owner profile, denies existing/self links and commits pending referral evidence and profile linkage together without rewards.",
+      "reason": "Local receipt/outage tests pass. Real concurrency, role denial and post-insert profile-failure rollback cases are implemented but await CI. Entire referral qualification/abuse and observed production schema remain uncertified.",
+      "evidence": [
+        {
+          "path": "backend/src/services/referralService.failure.test.ts",
+          "marker": "only an exact atomic receipt reports success"
+        },
+        {
+          "path": "supabase/migrations/20261016000300_atomic_referral_link.sql",
+          "marker": "apply_referral_code_atomic"
         }
       ]
     }
