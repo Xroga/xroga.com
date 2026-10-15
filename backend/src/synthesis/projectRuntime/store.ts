@@ -266,6 +266,17 @@ function clone<T>(
   );
 }
 
+/** Take one immutable identity-bound snapshot before any asynchronous persistence. */
+function snapshotRevision(userId: string, project: SoftwareProject): SoftwareProject {
+  const snapshot = clone(project);
+  if (!userId.trim() || !snapshot || typeof snapshot.projectId !== 'string' || !snapshot.projectId.trim() ||
+    typeof snapshot.runId !== 'string' || !snapshot.runId.trim() ||
+    snapshot.contract?.projectId !== snapshot.projectId || snapshot.contract?.runId !== snapshot.runId) {
+    throw new Error('Project revision identity is invalid.');
+  }
+  return snapshot;
+}
+
 export class InMemoryProjectRuntimeStore
   implements
     ProjectRuntimeStore {
@@ -346,6 +357,7 @@ export class InMemoryProjectRuntimeStore
     project:
       SoftwareProject,
   ): Promise<ProjectRevisionRecord> {
+    project = snapshotRevision(userId, project);
     this.revisionCounter +=
       1;
 
@@ -614,6 +626,7 @@ export class SupabaseProjectRuntimeStore
     project:
       SoftwareProject,
   ): Promise<ProjectRevisionRecord> {
+    project = snapshotRevision(userId, project);
     const fingerprint =
       projectWorkspaceFingerprint(
         project,
@@ -644,7 +657,7 @@ export class SupabaseProjectRuntimeStore
             project,
         })
         .select(
-          'revision_id, revision_number, created_at',
+          'revision_id, user_id, project_id, run_id, revision_number, workspace_fingerprint, created_at',
         )
         .single();
 
@@ -653,9 +666,17 @@ export class SupabaseProjectRuntimeStore
       !data
     ) {
       throw new Error(
-        error?.message ??
         'Project revision was not persisted.',
       );
+    }
+
+    if (data.user_id !== userId || data.project_id !== project.projectId || data.run_id !== project.runId ||
+      data.workspace_fingerprint !== fingerprint || typeof data.revision_id !== 'string' ||
+      !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(data.revision_id) ||
+      !(typeof data.revision_number === 'number' || (typeof data.revision_number === 'string' && /^\d+$/.test(data.revision_number))) ||
+      !Number.isSafeInteger(Number(data.revision_number)) || Number(data.revision_number) < 1 ||
+      typeof data.created_at !== 'string' || !Number.isFinite(Date.parse(data.created_at))) {
+      throw new Error('Project revision persistence evidence is invalid.');
     }
 
     return {
