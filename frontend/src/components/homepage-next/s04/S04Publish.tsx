@@ -5,7 +5,7 @@
  * A · Release Lens and B · Distribution Editorial. Both show the same truthful story: a working product, the control
  * Xroga tested, the screen it captured, the store artwork made from it, the prepared package and the owner's next step.
  * The guided motion sequence is built only after a composition is chosen. The composition is chosen by the founder,
- * so until then `?s04Comp=A|B` (development only) switches between them; production renders A.
+ * so until then `?s04Comp=A|B` switches between them in development and preview deployments; production renders A.
  */
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -21,7 +21,9 @@ export function S04Publish({ loggedIn = false }: { loggedIn?: boolean }) {
   const [acted, setActed] = useState(true);
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'production') return;
+    // review hook: development and Vercel preview deployments only, never the production site
+    const preview = process.env.NODE_ENV !== 'production' || (!!process.env.NEXT_PUBLIC_VERCEL_ENV && process.env.NEXT_PUBLIC_VERCEL_ENV !== 'production');
+    if (!preview) return;
     const q = new URLSearchParams(window.location.search);
     const c = q.get('s04Comp');
     if (c === 'A' || c === 'B') setComp(c);
