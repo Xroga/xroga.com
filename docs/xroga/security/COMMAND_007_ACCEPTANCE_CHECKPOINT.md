@@ -1,5 +1,13 @@
 # Command 007 acceptance checkpoint — not verified
 
+## Authoritative continuation, 2026-10-15
+
+Source `ad129eb6963e72c0c62db6bb08c8546283e21e24` aggregate38756490633 and isolated38756490883 PASS. Agent dependency-lock38756490791 attempt1 failed fetching playwright-core with ECONNRESET; attempt2 PASSED on unchanged source/locks. No dependency waiver or retry hidden as first-attempt success. All11 workflows passed on that source. New GitHub credential corrections require new final-source CI.
+
+The generated privileged-callers.json is the current register; older counts below are historical checkpoints, not competing current assessments. Before this continuation it contained667 candidates,404 reviewed,263 unreviewed,234 reviewed gaps and497 unresolved. Added GitHub helper review preserves REVIEWED_GAP and does not reduce unresolved safety merely by classifying callers. Follow regenerated counts rather than copying a historical prose total.
+
+GitHub disconnect now persists primary/legacy revocation before Storage cleanup, errors safely on incomplete work, and token resolution refuses database-outage fallback or stale mirrors behind an authoritative empty row. Save requires DB success, even without runtime schema-bootstrap credentials. Legacy-only reads remain compatible only after two successful empty authority reads. Loopback tests PASS; real delayed-mirror, foreign-owner preservation and reconnect test pending. Plaintext credential storage, in-flight use, concurrent reconnect and external provider revocation remain separate gates. Reverting restores stale-token risk, so no automatic rollback or production activation is proposed.
+
 ## Terminal failure-path and dashboard continuation
 
 Avatar source `c223ae7917d284da552866351bd0f802670c8026` passed isolated run38754647990:48 real security tests with zero failures/skips,3 authenticated browser tests and71 fresh/representative-upgrade migrations. Recorded web/API release is `43cd3c7bd1a03d8febfe1b5b24b8e78b88db3de8`. This includes owner-prefix avatar insert/update isolation, not a complete avatar UI journey or R2 acceptance. Aggregate38754647944 is still pending at this checkpoint. Terminal changes below require their own final-source CI.

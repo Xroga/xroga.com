@@ -325,8 +325,12 @@ router.patch('/settings', async (req: AuthRequest, res) => {
 });
 
 router.delete('/disconnect', async (req: AuthRequest, res) => {
-  await clearGitHubConnection(req.userId!);
-  res.json({ disconnected: true });
+  try {
+    await clearGitHubConnection(req.userId!);
+    res.json({ disconnected: true });
+  } catch {
+    res.status(503).json({ error: 'GitHub disconnect could not be fully completed. Retry shortly.' });
+  }
 });
 
 /** Full repository analysis before builds — tree, languages, and core site files. */

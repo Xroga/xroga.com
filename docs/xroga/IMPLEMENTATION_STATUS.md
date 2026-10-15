@@ -1,6 +1,6 @@
 # Current implementation status — scoped evidence, not marketing claims
 
-Assessment checkpoint: `9fbd989548df908242a42e8c8726284fa4565c2c` scoped CI verified on 2026-10-14 local date: actual isolated run38471854808 and repeated aggregate38471860039 PASS. Subsequent checkpoint edits are documentation/evidence only. Runtime/API health evidence is dated, not continuous certification. Historical “Done” labels in SHIP_COMPLETENESS are not current independent acceptance. No merge/deployment is authorized while the actual security/staging gates remain incomplete.
+Current verification checkpoint: `ad129eb6963e72c0c62db6bb08c8546283e21e24`, 2026-10-15. Aggregate38756490633 and isolated38756490883 PASS; dependency-lock38756490791 passes attempt2 after a documented registry ECONNRESET. All11 workflows pass. Subsequent GitHub credential changes are not certified by that checkpoint. Current caller totals come only from generated security/privileged-callers.json; earlier table rows below retain their original scoped evidence and must not be read as current whole-command completion. See security/COMMAND_007_ACCEPTANCE_CHECKPOINT.md. BATCH_1_BLOCKED: Commands007-010, full002 semantic reconciliation and mandatory external acceptance remain incomplete. No merge/deploy or Batch1.5 is authorized.
 
 | Subsystem | Owner requirement IDs | State / proof | Last verified SHA/date | Production status | Outstanding blocker |
 | --- | --- | --- | --- | --- | --- |

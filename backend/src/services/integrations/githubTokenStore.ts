@@ -54,12 +54,12 @@ export async function saveGitHubTokenToStorage(
     }
 
     if (error) {
-      console.warn('[githubTokenStore] upload failed:', error.message);
+      console.warn('[githubTokenStore] upload failed');
       return false;
     }
     return true;
   } catch (err) {
-    console.warn('[githubTokenStore] save failed:', (err as Error).message);
+    console.warn('[githubTokenStore] save failed');
     return false;
   }
 }
@@ -78,12 +78,13 @@ export async function getGitHubTokenFromStorage(userId: string): Promise<StoredG
   }
 }
 
-export async function deleteGitHubTokenFromStorage(userId: string): Promise<void> {
+export async function deleteGitHubTokenFromStorage(userId: string): Promise<boolean> {
   try {
     const supabase = getSupabaseAdmin();
-    await supabase.storage.from(BUCKET).remove([storagePath(userId)]);
+    const { error } = await supabase.storage.from(BUCKET).remove([storagePath(userId)]);
+    return !error;
   } catch {
-    /* ignore */
+    return false;
   }
 }
 

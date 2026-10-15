@@ -23,6 +23,7 @@ import type { PlanMutation } from '../synthesis/dynamicPlanning.js';
 import { BUILD_OUTCOME_RETENTION_MS } from '../ai/learningPolicy.js';
 import { saveGitHubTokenToStorage,getGitHubTokenFromStorage } from '../services/integrations/githubTokenStore.js';
 import { ensurePrivateOAuthBucket } from '../services/integrations/credentialStorageBucket.js';
+import { clearGitHubConnection, getGitHubToken, saveGitHubConnection } from '../services/integrations/githubAuth.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
 import { storeProjectFile } from '../services/storage/projectFiles.js';
 import { ownedFile } from '../services/storage/privateFileDelivery.js';
@@ -466,6 +467,32 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
     const publicRead=await fetch(`${url}/storage/v1/object/public/${bucket}/${path}`,{headers:{apikey:process.env.SUPABASE_ANON_KEY!}});assert.equal(publicRead.ok,false);assert.ok(!(await publicRead.text()).includes(canary));
     const status=await request('/api/github/status',other.token);assert.equal(status.status,200);assert.equal((await status.json() as {connected:boolean}).connected,false);
   } finally {const removed=await admin.storage.from(bucket).remove([path]);assert.equal(removed.error,null,'temporary private object cleanup failed');}
+});
+
+test('real GitHub disconnect persists owner-bound revocation despite a delayed legacy mirror',async()=>{
+  const [owner,other]=users,bucket='xroga-github-tokens';
+  const payload={access_token:'SYNTHETIC_DELAYED_GITHUB_COPY',username:'fixture',provider_user_id:'fixture',repo_strategy:'auto' as const,default_repo:null,updated_at:new Date().toISOString()};
+  try {
+    await saveGitHubConnection(owner.id,'SYNTHETIC_OWNER_GITHUB',{providerUserId:'owner-fixture',username:'owner-fixture'});
+    await saveGitHubConnection(other.id,'SYNTHETIC_OTHER_GITHUB',{providerUserId:'other-fixture',username:'other-fixture'});
+    assert.equal(await getGitHubToken(owner.id),'SYNTHETIC_OWNER_GITHUB');
+    const disconnect=await request('/api/github/disconnect',owner.token,'DELETE');
+    assert.equal(disconnect.status,200);assert.equal((await disconnect.json() as {disconnected:boolean}).disconnected,true);
+    assert.equal(await saveGitHubTokenToStorage(owner.id,payload),true);
+    assert.equal(await getGitHubToken(owner.id),null);
+    assert.equal(await getGitHubToken(other.id),'SYNTHETIC_OTHER_GITHUB');
+    const revoked=await admin.from('github_integrations').select('access_token').eq('user_id',owner.id).single();
+    assert.equal(revoked.error,null);assert.equal(revoked.data?.access_token,'');
+    const status=await request('/api/github/status',owner.token);assert.equal(status.status,200);
+    assert.equal((await status.json() as {connected:boolean}).connected,false);
+    // Explicit reconnect replaces the tombstone through the authoritative DB.
+    await saveGitHubConnection(owner.id,'SYNTHETIC_RECONNECTED_GITHUB',{providerUserId:'owner-fixture',username:'owner-fixture'});
+    assert.equal(await getGitHubToken(owner.id),'SYNTHETIC_RECONNECTED_GITHUB');
+  } finally {
+    for(const user of users) await clearGitHubConnection(user.id);
+    const removed=await admin.storage.from(bucket).remove(users.map(user=>`${user.id}/github.json`));
+    assert.equal(removed.error,null,'GitHub synthetic mirror cleanup failed');
+  }
 });
 
 test('real credential helper denies a traversal provider without reading or deleting another owner object',async()=>{

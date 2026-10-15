@@ -10,6 +10,9 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/services/integrations/githubAuth.ts",
+    "backend/src/routes/github.ts",
+    "backend/src/services/integrations/githubAuth.revocation.test.ts",
     "backend/src/routes/terminalSessions.failure.test.ts",
     "frontend/src/components/settings/GeneralSettingsPanel.tsx",
     "frontend/src/lib/avatarPersistence.ts",

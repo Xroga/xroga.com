@@ -1,5 +1,9 @@
 # Dependency decisions — not release approval
 
+## Recheck after ad129eb6, 2026-10-15
+
+Agent dependency-lock run38756490791 failed attempt1 with ECONNRESET fetching playwright-core from registry.npmjs.org. Explicit failed-job rerun attempt2 passed on identical source/locks. This resolves that transient CI failure, not advisory findings. Fresh three-graph audit remains aggregate47/high24/critical0, frontend14/high9/critical0, backend37/high17/critical0. Counts overlap. Registry still reports node-forge1.4.0 and braces3.0.3 as latest, and no image-size1.x newer than1.2.1. Dify1.1.1 is already installed. Its provider-utils3.0.37 dependency introduces undici5; latest same-major3.0.41 still requires undici^5.29.0, so a routine patch update does not remove that vulnerable chain. No blind major override or downgrade was made. Thirty actual Git/Cline/MCP/transport/credential fixtures pass locally with the pinned toolchain, backend build passes, and full new-source CI remains required.
+
 ## Standalone frontend Nano ID alignment
 
 The PostCSS8.5.24 standalone receiver remained Nano ID3.3.16 while the root workspace already resolved3.3.20. The compatible `^3.3.16` range admits3.3.20 (MIT; Node10/12/13.7/14/15+, compatible with22.21.1). Registry tarball integrity was checked against the existing workspace entry; exactly the standalone version/URL/integrity were aligned. Targeted npm update reported no change, so this is an explicit reviewed lock edit, not an invented successful resolver run. Frozen-install and full build CI on the new SHA remain required.

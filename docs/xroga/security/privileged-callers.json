@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "58885cbeb41eae768dc5e2ad6a2ac88ea7aa9819039b29de9c4d06577ac200f3",
+  "reviewRegistrySha256": "bf7ac3d453a54d2c7b7cdab34b40e00de3a9c5060332d15d66a50e31342db32c",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -9,19 +9,19 @@
     "rlsEnabled": 118,
     "privilegedFactorySites": 161,
     "persistenceCandidates": 667,
-    "ownerPredicateCandidates": 165,
-    "reviewRequired": 263,
-    "reviewedCandidates": 404,
+    "ownerPredicateCandidates": 163,
+    "reviewRequired": 252,
+    "reviewedCandidates": 415,
     "unresolvedSafetyCandidates": 497,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 263,
+    "REVIEW_REQUIRED": 252,
     "SCOPED_BOUNDARY": 35,
     "NARROW_EXCEPTION": 6,
     "NOT_PERSISTENCE": 129,
-    "REVIEWED_GAP": 234
+    "REVIEWED_GAP": 245
   },
   "callers": [
     {
@@ -5147,7 +5147,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e1b255af1a45708a9fe8dc81a9e1ee9d496901aa443049f89fefcc0d67e42cd7"
+      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe"
     },
     {
       "id": "a9d3d7c94936c3a05e05",
@@ -5158,7 +5158,7 @@
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e1b255af1a45708a9fe8dc81a9e1ee9d496901aa443049f89fefcc0d67e42cd7"
+      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe"
     },
     {
       "id": "ad7eef0f4bbb650da361",
@@ -5169,7 +5169,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e1b255af1a45708a9fe8dc81a9e1ee9d496901aa443049f89fefcc0d67e42cd7"
+      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe"
     },
     {
       "id": "798016ba0fbae052dcdf",
@@ -5180,7 +5180,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e1b255af1a45708a9fe8dc81a9e1ee9d496901aa443049f89fefcc0d67e42cd7"
+      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe"
     },
     {
       "id": "89e14e13b5da53a71045",
@@ -5191,7 +5191,7 @@
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e1b255af1a45708a9fe8dc81a9e1ee9d496901aa443049f89fefcc0d67e42cd7"
+      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe"
     },
     {
       "id": "c56beb0ba7369120a000",
@@ -7220,125 +7220,235 @@
       }
     },
     {
-      "id": "1caeb040e9e4de397126",
+      "id": "f8bd72ce7b41e47c780a",
       "path": "backend/src/services/integrations/githubAuth.ts",
       "line": 14,
       "enclosing": "getGitHubToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ca018691045b0bd61b57c7a40698d83a59b1890e4bd5742bb3da6cee9f089a05"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
+      "semanticReview": {
+        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+        "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+          }
+        ]
+      }
     },
     {
-      "id": "08b480c56a32f7751001",
+      "id": "69f92d6c218d524974df",
       "path": "backend/src/services/integrations/githubAuth.ts",
       "line": 16,
       "enclosing": "getGitHubToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ca018691045b0bd61b57c7a40698d83a59b1890e4bd5742bb3da6cee9f089a05"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
+      "semanticReview": {
+        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+        "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+          }
+        ]
+      }
     },
     {
-      "id": "ba9e4c08c749018d7e93",
+      "id": "3458113405e334d0de13",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 29,
+      "line": 25,
       "enclosing": "getGitHubToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ca018691045b0bd61b57c7a40698d83a59b1890e4bd5742bb3da6cee9f089a05"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
+      "semanticReview": {
+        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+        "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+          }
+        ]
+      }
     },
     {
-      "id": "81994a30fad0ce915932",
+      "id": "dc59e6f793b207280b2d",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 105,
+      "line": 79,
       "enclosing": "saveGitHubConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ca018691045b0bd61b57c7a40698d83a59b1890e4bd5742bb3da6cee9f089a05"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
+      "semanticReview": {
+        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+        "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+          }
+        ]
+      }
     },
     {
-      "id": "76d426d84149fec3b813",
+      "id": "0406dca0597f3236b3b7",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 125,
+      "line": 94,
       "enclosing": "saveGitHubConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ca018691045b0bd61b57c7a40698d83a59b1890e4bd5742bb3da6cee9f089a05"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
+      "semanticReview": {
+        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+        "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+          }
+        ]
+      }
     },
     {
-      "id": "ea99f084cbd0fb77da86",
+      "id": "be3bc6ac9507df178e4a",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 145,
+      "line": 109,
       "enclosing": "saveGitHubConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ca018691045b0bd61b57c7a40698d83a59b1890e4bd5742bb3da6cee9f089a05"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
+      "semanticReview": {
+        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+        "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+          }
+        ]
+      }
     },
     {
-      "id": "d7a7afe16dd72d34d2bf",
+      "id": "a098922758b2b1ee2d43",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 165,
+      "line": 129,
       "enclosing": "clearGitHubConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ca018691045b0bd61b57c7a40698d83a59b1890e4bd5742bb3da6cee9f089a05"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
+      "semanticReview": {
+        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+        "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+          }
+        ]
+      }
     },
     {
-      "id": "89df30b617be1840c05a",
+      "id": "9f708d8a33157d711655",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 166,
+      "line": 131,
       "enclosing": "clearGitHubConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ca018691045b0bd61b57c7a40698d83a59b1890e4bd5742bb3da6cee9f089a05"
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
+      "semanticReview": {
+        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+        "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+          }
+        ]
+      }
     },
     {
-      "id": "f381c226234b3c739d08",
+      "id": "26a5feb362efbd53e788",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 167,
+      "line": 136,
       "enclosing": "clearGitHubConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ca018691045b0bd61b57c7a40698d83a59b1890e4bd5742bb3da6cee9f089a05"
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
+      "semanticReview": {
+        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+        "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+          }
+        ]
+      }
     },
     {
-      "id": "c93a1945a2fda8a91e4a",
+      "id": "c7aaad47a8f8145eddcc",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 180,
+      "line": 149,
       "enclosing": "setGithubDefaultRepo",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ca018691045b0bd61b57c7a40698d83a59b1890e4bd5742bb3da6cee9f089a05"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
+      "semanticReview": {
+        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+        "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+          }
+        ]
+      }
     },
     {
-      "id": "f69522aad32f39bd20f1",
+      "id": "8a230e1bb6f42f536618",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 181,
+      "line": 150,
       "enclosing": "setGithubDefaultRepo",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ca018691045b0bd61b57c7a40698d83a59b1890e4bd5742bb3da6cee9f089a05"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
+      "semanticReview": {
+        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+        "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+          }
+        ]
+      }
     },
     {
       "id": "b4b2b91f3280a140691a",
@@ -7413,10 +7523,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6d23e63e5e822ea5916a3d666ad137709074db0677030d2ac55e7fca012051d4",
+      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
-        "reason": "Full provenance of all publishing/execution/helper callers remains unverified; a path derived from a user argument is not an authorization context. Deletion ignores errors, legacy token JSON is plaintext and read helpers do not prove revocation freshness. Real Storage browser denials and the new public-bucket refusal are separate evidence, not completed credential lifecycle or production migration acceptance.",
+        "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -7434,10 +7544,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6d23e63e5e822ea5916a3d666ad137709074db0677030d2ac55e7fca012051d4",
+      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
-        "reason": "Full provenance of all publishing/execution/helper callers remains unverified; a path derived from a user argument is not an authorization context. Deletion ignores errors, legacy token JSON is plaintext and read helpers do not prove revocation freshness. Real Storage browser denials and the new public-bucket refusal are separate evidence, not completed credential lifecycle or production migration acceptance.",
+        "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -7455,10 +7565,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6d23e63e5e822ea5916a3d666ad137709074db0677030d2ac55e7fca012051d4",
+      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
-        "reason": "Full provenance of all publishing/execution/helper callers remains unverified; a path derived from a user argument is not an authorization context. Deletion ignores errors, legacy token JSON is plaintext and read helpers do not prove revocation freshness. Real Storage browser denials and the new public-bucket refusal are separate evidence, not completed credential lifecycle or production migration acceptance.",
+        "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -7468,7 +7578,7 @@
       }
     },
     {
-      "id": "9bc84e071bdd13202ce7",
+      "id": "7a6a5adb10ec6d412288",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
       "line": 69,
       "enclosing": "getGitHubTokenFromStorage",
@@ -7476,10 +7586,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6d23e63e5e822ea5916a3d666ad137709074db0677030d2ac55e7fca012051d4",
+      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
-        "reason": "Full provenance of all publishing/execution/helper callers remains unverified; a path derived from a user argument is not an authorization context. Deletion ignores errors, legacy token JSON is plaintext and read helpers do not prove revocation freshness. Real Storage browser denials and the new public-bucket refusal are separate evidence, not completed credential lifecycle or production migration acceptance.",
+        "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -7489,7 +7599,7 @@
       }
     },
     {
-      "id": "3a61483e374e23853351",
+      "id": "caa03e8305e81d9313ce",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
       "line": 70,
       "enclosing": "getGitHubTokenFromStorage",
@@ -7497,10 +7607,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6d23e63e5e822ea5916a3d666ad137709074db0677030d2ac55e7fca012051d4",
+      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
-        "reason": "Full provenance of all publishing/execution/helper callers remains unverified; a path derived from a user argument is not an authorization context. Deletion ignores errors, legacy token JSON is plaintext and read helpers do not prove revocation freshness. Real Storage browser denials and the new public-bucket refusal are separate evidence, not completed credential lifecycle or production migration acceptance.",
+        "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -7510,7 +7620,7 @@
       }
     },
     {
-      "id": "0a25a411c643e94deeef",
+      "id": "d44f9dff5b2904e220a7",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
       "line": 83,
       "enclosing": "deleteGitHubTokenFromStorage",
@@ -7518,10 +7628,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6d23e63e5e822ea5916a3d666ad137709074db0677030d2ac55e7fca012051d4",
+      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
-        "reason": "Full provenance of all publishing/execution/helper callers remains unverified; a path derived from a user argument is not an authorization context. Deletion ignores errors, legacy token JSON is plaintext and read helpers do not prove revocation freshness. Real Storage browser denials and the new public-bucket refusal are separate evidence, not completed credential lifecycle or production migration acceptance.",
+        "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -7531,7 +7641,7 @@
       }
     },
     {
-      "id": "8c3e0638491358836bac",
+      "id": "db2c2af734b6cbdb4628",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
       "line": 84,
       "enclosing": "deleteGitHubTokenFromStorage",
@@ -7539,10 +7649,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6d23e63e5e822ea5916a3d666ad137709074db0677030d2ac55e7fca012051d4",
+      "sourceSha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
-        "reason": "Full provenance of all publishing/execution/helper callers remains unverified; a path derived from a user argument is not an authorization context. Deletion ignores errors, legacy token JSON is plaintext and read helpers do not prove revocation freshness. Real Storage browser denials and the new public-bucket refusal are separate evidence, not completed credential lifecycle or production migration acceptance.",
+        "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",

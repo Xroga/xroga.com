@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "c223ae7917d284da552866351bd0f802670c8026",
-    "sourceTimestampUtc": "2026-10-15T19:46:46+05:00",
-    "auditStartedUtc": "2026-10-15T14:57:04.344Z",
+    "sha": "ad129eb6963e72c0c62db6bb08c8546283e21e24",
+    "sourceTimestampUtc": "2026-10-15T19:59:02+05:00",
+    "auditStartedUtc": "2026-10-15T15:22:15.067Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -5791,7 +5791,7 @@
         "backend/src/routes/billing.ts:5",
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:27",
-        "backend/src/security/tenantIsolation.local.integration.ts:26",
+        "backend/src/security/tenantIsolation.local.integration.ts:27",
         "backend/src/services/BillingService.ts:18",
         "backend/src/services/integrations/businessAction.ts:11",
         "backend/src/services/integrations/businessRead.ts:7"
@@ -18028,7 +18028,7 @@
       "id": "surface:e037639d29105e028e8a",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/github.ts",
-      "sha256": "e1b255af1a45708a9fe8dc81a9e1ee9d496901aa443049f89fefcc0d67e42cd7",
+      "sha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe",
       "symbols": [
         "ALLOWED_CALLBACK_ORIGINS",
         "CALLBACK_PATH",
@@ -21071,7 +21071,7 @@
         "backend/src/routes/billing.ts:3",
         "backend/src/routes/billingWebhook.test.ts:7",
         "backend/src/routes/billingWebhook.ts:3",
-        "backend/src/security/tenantIsolation.local.integration.ts:34",
+        "backend/src/security/tenantIsolation.local.integration.ts:35",
         "backend/src/services/BillingService.test.ts:4"
       ],
       "reachable": true,
@@ -21954,7 +21954,7 @@
       "id": "surface:62368ba355b56a1c4f93",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubAuth.ts",
-      "sha256": "ca018691045b0bd61b57c7a40698d83a59b1890e4bd5742bb3da6cee9f089a05",
+      "sha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
       "symbols": [
         "GitHubRepoStrategy",
         "attempt",
@@ -21963,13 +21963,10 @@
         "getGitHubStorageMeta",
         "getGitHubToken",
         "isGitHubConnected",
-        "legacyToken",
-        "primaryToken",
+        "removed",
         "repo",
         "repoStrategy",
         "saveGitHubConnection",
-        "saveToStorageFallback",
-        "schemaReady",
         "setGithubDefaultRepo",
         "storagePayload",
         "stored",
@@ -21994,6 +21991,8 @@
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.ts:58",
         "backend/src/routes/github.ts:6",
+        "backend/src/security/tenantIsolation.local.integration.ts:26",
+        "backend/src/services/integrations/githubAuth.revocation.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:15",
         "backend/src/services/publish/easPublish.ts:11",
         "backend/src/services/publish/electronSecrets.ts:6",
@@ -22010,15 +22009,16 @@
       "authBoundary": [],
       "tenantBoundary": [
         "backend/src/services/integrations/githubAuth.ts:16 (user_id)",
-        "backend/src/services/integrations/githubAuth.ts:29 (user_id)",
-        "backend/src/services/integrations/githubAuth.ts:166 (user_id)",
-        "backend/src/services/integrations/githubAuth.ts:167 (user_id)",
-        "backend/src/services/integrations/githubAuth.ts:181 (user_id)"
+        "backend/src/services/integrations/githubAuth.ts:25 (user_id)",
+        "backend/src/services/integrations/githubAuth.ts:150 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/integrations/githubAuth.revocation.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -22424,12 +22424,12 @@
         "backend/src/ai/pipeline.ts:101",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:17",
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts:1",
-        "backend/src/routes/github.ts:346",
-        "backend/src/routes/github.ts:393",
-        "backend/src/routes/github.ts:416",
-        "backend/src/routes/github.ts:449",
-        "backend/src/routes/github.ts:534",
-        "backend/src/routes/github.ts:602",
+        "backend/src/routes/github.ts:350",
+        "backend/src/routes/github.ts:397",
+        "backend/src/routes/github.ts:420",
+        "backend/src/routes/github.ts:453",
+        "backend/src/routes/github.ts:538",
+        "backend/src/routes/github.ts:606",
         "backend/src/routes/integrations.ts:36",
         "backend/src/routes/phase1.ts:41",
         "backend/src/routes/supabaseOAuth.ts:36",
@@ -22704,7 +22704,7 @@
       "id": "surface:f780b953b9a0b38aa89b",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubTokenStore.ts",
-      "sha256": "6d23e63e5e822ea5916a3d666ad137709074db0677030d2ac55e7fca012051d4",
+      "sha256": "d8b2038a1a3df1a5c22c8bb5f8fdc2b83e032bc3e3e4353c6adb68f9bd637fae",
       "symbols": [
         "BUCKET",
         "StoredGitHubAuth",
@@ -23149,7 +23149,7 @@
         "backend/src/routes/integrations.ts:644",
         "backend/src/routes/integrations.ts:672",
         "backend/src/routes/supabaseOAuth.ts:20",
-        "backend/src/security/tenantIsolation.local.integration.ts:35",
+        "backend/src/security/tenantIsolation.local.integration.ts:36",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.ts:858",
         "backend/src/services/integrations/userProviderKeys.ts:867"
@@ -23835,7 +23835,7 @@
       "callers": [
         "backend/src/ai/builderScaffoldFallback.test.ts:3",
         "backend/src/ai/pipeline.ts:118",
-        "backend/src/routes/github.ts:535",
+        "backend/src/routes/github.ts:539",
         "backend/src/routes/swarm.ts:10",
         "backend/src/routes/vercel.ts:20",
         "backend/src/services/scaffolds/scaffolds.test.ts:9"
@@ -25208,7 +25208,7 @@
       "callers": [
         "backend/src/lib/r2.ts:3",
         "backend/src/routes/projects.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:29",
+        "backend/src/security/tenantIsolation.local.integration.ts:30",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.ts:6",
         "backend/src/services/storage/projectFiles.ts:6"
@@ -25320,7 +25320,7 @@
       ],
       "callers": [
         "backend/src/routes/projects.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/security/tenantIsolation.local.integration.ts:29",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5"
       ],
       "reachable": true,
@@ -25387,7 +25387,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/security/tenantIsolation.integration.test.ts:14",
-        "backend/src/security/tenantIsolation.local.integration.ts:27",
+        "backend/src/security/tenantIsolation.local.integration.ts:28",
         "backend/src/services/memory/buildProjectStore.ts:8",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7"
       ],
@@ -27695,7 +27695,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:29",
-        "backend/src/security/tenantIsolation.local.integration.ts:30",
+        "backend/src/security/tenantIsolation.local.integration.ts:31",
         "backend/src/synthesis/livePreview/access.test.ts:5",
         "backend/src/synthesis/livePreview/store.ts:9"
       ],
@@ -28199,7 +28199,7 @@
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:26",
         "backend/src/routes/projectRuntime.ts:20",
-        "backend/src/security/tenantIsolation.local.integration.ts:33",
+        "backend/src/security/tenantIsolation.local.integration.ts:34",
         "backend/src/synthesis/livePreview/coordinator.ts:27",
         "backend/src/synthesis/livePreview/index.ts:3"
       ],
@@ -87648,7 +87648,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:93c0681cf2e747b2ade5",
+      "id": "registration:ef02ab8ac97e0cb02b84",
       "sourcePath": "backend/src/routes/github.ts",
       "line": 327,
       "receiver": "router",
@@ -87660,9 +87660,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:40de50951488ee5c2c9d",
+      "id": "registration:eb9f2f8a04cf2932f8e2",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 333,
+      "line": 337,
       "receiver": "router",
       "method": "get",
       "path": "/analyze",
@@ -87672,9 +87672,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:075f3470d5fdef5dfe29",
+      "id": "registration:d760f47cfe3f50fdd8b6",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 376,
+      "line": 380,
       "receiver": "router",
       "method": "get",
       "path": "/repo-state",
@@ -87684,9 +87684,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4f916a03dfe7bc66d6ea",
+      "id": "registration:59255e9086a5b5692691",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 408,
+      "line": 412,
       "receiver": "router",
       "method": "get",
       "path": "/build-files",
@@ -87696,9 +87696,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:cb7a2a687ccb6a625612",
+      "id": "registration:ff58e629a738d984f4a3",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 428,
+      "line": 432,
       "receiver": "router",
       "method": "post",
       "path": "/redeploy-preview",
@@ -87708,9 +87708,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:34a9a6a1309fc651beb8",
+      "id": "registration:172ab28558b82bdf40ff",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 503,
+      "line": 507,
       "receiver": "router",
       "method": "post",
       "path": "/push-build",
@@ -87720,9 +87720,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a2c14761141bbc13fc88",
+      "id": "registration:91cdfe01b409a960c603",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 589,
+      "line": 593,
       "receiver": "router",
       "method": "post",
       "path": "/rollback",
@@ -91956,8 +91956,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b53d20833e363c1278ad",
-      "registrationId": "registration:93c0681cf2e747b2ade5",
+      "id": "route:124704c55a998195233c",
+      "registrationId": "registration:ef02ab8ac97e0cb02b84",
       "sourcePath": "backend/src/routes/github.ts",
       "line": 327,
       "method": "DELETE",
@@ -91973,10 +91973,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8a14d72e8b445de447be",
-      "registrationId": "registration:40de50951488ee5c2c9d",
+      "id": "route:f47a84e67b062b5f2076",
+      "registrationId": "registration:eb9f2f8a04cf2932f8e2",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 333,
+      "line": 337,
       "method": "GET",
       "path": "/api/github/analyze",
       "mountChain": [
@@ -91990,10 +91990,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e4de2abc040527738417",
-      "registrationId": "registration:075f3470d5fdef5dfe29",
+      "id": "route:939bff8d9483a8517a34",
+      "registrationId": "registration:d760f47cfe3f50fdd8b6",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 376,
+      "line": 380,
       "method": "GET",
       "path": "/api/github/repo-state",
       "mountChain": [
@@ -92007,10 +92007,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e13942fa55b12319162a",
-      "registrationId": "registration:4f916a03dfe7bc66d6ea",
+      "id": "route:9b448935dbcd1743d3d6",
+      "registrationId": "registration:59255e9086a5b5692691",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 408,
+      "line": 412,
       "method": "GET",
       "path": "/api/github/build-files",
       "mountChain": [
@@ -92024,10 +92024,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:2d528056bad44ac678c9",
-      "registrationId": "registration:cb7a2a687ccb6a625612",
+      "id": "route:fb245d2b9ef305e38b9e",
+      "registrationId": "registration:ff58e629a738d984f4a3",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 428,
+      "line": 432,
       "method": "POST",
       "path": "/api/github/redeploy-preview",
       "mountChain": [
@@ -92041,10 +92041,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:68cc94ba21823d545836",
-      "registrationId": "registration:34a9a6a1309fc651beb8",
+      "id": "route:7140a2a077d362e33194",
+      "registrationId": "registration:172ab28558b82bdf40ff",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 503,
+      "line": 507,
       "method": "POST",
       "path": "/api/github/push-build",
       "mountChain": [
@@ -92058,10 +92058,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a46c5f842745dec008dd",
-      "registrationId": "registration:a2c14761141bbc13fc88",
+      "id": "route:b665452c95e35cbc98e8",
+      "registrationId": "registration:91cdfe01b409a960c603",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 589,
+      "line": 593,
       "method": "POST",
       "path": "/api/github/rollback",
       "mountChain": [
@@ -101785,7 +101785,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 48,
+      "declaredTests": 49,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101814,6 +101814,13 @@
       "id": "test-suite:ff9b944655b28b9cc2fa",
       "sourcePath": "backend/src/services/integrations/githubAtomicWrite.test.ts",
       "declaredTests": 29,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:61d8f5c0f8889bd7e853",
+      "sourcePath": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
