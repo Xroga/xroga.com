@@ -2,6 +2,8 @@
 
 ## Active mission checkpoint, zero additional spending
 
+GitHub deployment credential continuation after a0c60ea7190f2c9247165f7dc1f42189f8660c00: metadata no longer selects/overrides access_token, metadata errors deny admission, and canonical credentials are rechecked after metadata resolution. Two focused credential/revocation tests pass, including disconnect/reconnect interleavings. In-flight revocation after admission and publishing authority remain REVIEWED_GAP, so counts stay666 reviewed/0 unreviewed/487 unresolved. Previous34-test candidate backend build passed. New-source CI remains mandatory.
+
 Current continuation supersedes historical counts below:666/666 reviewed,0 unreviewed,487 reviewed gaps and487 unresolved. Review coverage is complete, security acceptance is not. Nine additional sites were closed with scoped evidence: one non-persistence Buffer conversion, two issued-context admin profile reads and six deliberately scoped message-share sites. Remaining dispositions preserve concrete identity, parent ownership, persistence, concurrency and side-effect gaps.
 
 Follow-up fixes preserve missing growth singleton results as null, reject cross-project growth replay, bind universal mutation history to project as well as owner/run, withhold foreign dashboard project names, and reject malformed operations approval expiry. Focused34 tests pass under Node22.21.1. Real disposable cases extend dashboard and mutation-history checks and add growth replay. No live provider or paid AI call was made.

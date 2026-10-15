@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0e23f09f519b6af5d911d3399f1e42ab8e3748cd",
+  "source_sha": "a0c60ea7190f2c9247165f7dc1f42189f8660c00",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12522,7 +12522,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f"
+      "sha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d"
     },
     {
       "path": "backend/src/services/integrations/githubMutationPlan.ts",
@@ -17983,42 +17983,42 @@
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 274,
+      "line": 277,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 653,
+      "line": 656,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 705,
+      "line": 708,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 831,
+      "line": 834,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 864,
+      "line": 867,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1707,
+      "line": 1710,
       "credentialsInUrl": false
     },
     {
@@ -24171,28 +24171,28 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1429,
+      "line": 1432,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1461,
+      "line": 1464,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1467,
+      "line": 1470,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1541,
+      "line": 1544,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

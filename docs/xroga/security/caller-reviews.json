@@ -141,14 +141,14 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
       "callIds": [
         "b4b2b91f3280a140691a",
-        "954d2cb129f5b902c895"
+        "48c115e3fcc79a824240"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "getIntegration obtains the canonical user-bound GitHub token, then reads legacy access_token/settings for that user. Repository inspection and deploy helpers consume it.",
-      "reason": "The second legacy token can override the canonical token and race reconnect/revocation. Actor/target provenance, metadata authority, errors and external publishing remain unresolved.",
+      "authority": "getIntegration obtains the canonical user-bound GitHub token, reads owner-scoped settings without selecting a token, denies metadata errors, then rechecks the canonical credential before repository inspection/deploy helpers consume it.",
+      "reason": "Loopback negative tests prove revocation/reconnect during metadata lookup and unavailable metadata deny admission. Remaining gaps include revocation after the final check, caller/target provenance, legacy metadata authority and external publishing approvals. This is not full credential lifecycle certification.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/githubDeploy.ts",
@@ -1473,9 +1473,9 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
       "callIds": [
-        "408b490907b38a2277f0"
+        "a6b38f59fd65dcf93b63"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in fetchRepoTextFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1489,9 +1489,9 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
       "callIds": [
-        "e7faca25c9f03c61ec56"
+        "ff18538f080dddb2c506"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in decodeRepositoryTextBlob. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",

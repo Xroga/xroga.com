@@ -22176,7 +22176,7 @@
       "id": "surface:c1b2ae43de1ceeb5e7f3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubDeploy.ts",
-      "sha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "sha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
       "symbols": [
         "AtomicPushOptions",
         "ConnectedRepositoryPushOptions",
@@ -22314,6 +22314,7 @@
         "managedVercelProjectName",
         "merged",
         "message",
+        "metadata",
         "msg",
         "needsAuthorization",
         "netlify",
@@ -22368,7 +22369,6 @@
         "sourcePaths",
         "stack",
         "staticFiles",
-        "storageMeta",
         "summary",
         "supabase",
         "syncUserVaultToVercel",
@@ -22459,6 +22459,7 @@
         "backend/src/routes/supabaseOAuth.ts:36",
         "backend/src/routes/vercel.ts:21",
         "backend/src/services/integrations/githubAnalysis.test.ts:3",
+        "backend/src/services/integrations/githubDeploy.credential.test.ts:4",
         "backend/src/services/integrations/githubRepositoryState.test.ts:3",
         "backend/src/services/integrations/managedVercelDeployment.test.ts:3",
         "backend/src/services/integrations/universalRepositoryHydration.test.ts:4",
@@ -22506,6 +22507,7 @@
       ],
       "testCoverage": [
         "backend/src/services/integrations/githubAnalysis.test.ts",
+        "backend/src/services/integrations/githubDeploy.credential.test.ts",
         "backend/src/services/integrations/githubRepositoryState.test.ts",
         "backend/src/services/integrations/managedVercelDeployment.test.ts",
         "backend/src/services/integrations/universalRepositoryHydration.test.ts",
@@ -101909,6 +101911,13 @@
       "id": "test-suite:273f59f44637a73cddbe",
       "sourcePath": "backend/src/services/integrations/githubBranchSafety.test.ts",
       "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:61bc65413da4d7fb9add",
+      "sourcePath": "backend/src/services/integrations/githubDeploy.credential.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

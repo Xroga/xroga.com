@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "6545729efc6702cf02d66f740ad4b7e8b502d1bd2ee030beea8854e45ee826dc",
+  "reviewRegistrySha256": "8c235cf4bf0d505ff41b79d49ebb9ef2fdd3bc299cd5215e569c9065285b02a8",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -9542,10 +9542,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
       "semanticReview": {
-        "authority": "getIntegration obtains the canonical user-bound GitHub token, then reads legacy access_token/settings for that user. Repository inspection and deploy helpers consume it.",
-        "reason": "The second legacy token can override the canonical token and race reconnect/revocation. Actor/target provenance, metadata authority, errors and external publishing remain unresolved.",
+        "authority": "getIntegration obtains the canonical user-bound GitHub token, reads owner-scoped settings without selecting a token, denies metadata errors, then rechecks the canonical credential before repository inspection/deploy helpers consume it.",
+        "reason": "Loopback negative tests prove revocation/reconnect during metadata lookup and unavailable metadata deny admission. Remaining gaps include revocation after the final check, caller/target provenance, legacy metadata authority and external publishing approvals. This is not full credential lifecycle certification.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/githubDeploy.ts",
@@ -9555,7 +9555,7 @@
       }
     },
     {
-      "id": "954d2cb129f5b902c895",
+      "id": "48c115e3fcc79a824240",
       "path": "backend/src/services/integrations/githubDeploy.ts",
       "line": 164,
       "enclosing": "getIntegration",
@@ -9563,10 +9563,10 @@
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
       "semanticReview": {
-        "authority": "getIntegration obtains the canonical user-bound GitHub token, then reads legacy access_token/settings for that user. Repository inspection and deploy helpers consume it.",
-        "reason": "The second legacy token can override the canonical token and race reconnect/revocation. Actor/target provenance, metadata authority, errors and external publishing remain unresolved.",
+        "authority": "getIntegration obtains the canonical user-bound GitHub token, reads owner-scoped settings without selecting a token, denies metadata errors, then rechecks the canonical credential before repository inspection/deploy helpers consume it.",
+        "reason": "Loopback negative tests prove revocation/reconnect during metadata lookup and unavailable metadata deny admission. Remaining gaps include revocation after the final check, caller/target provenance, legacy metadata authority and external publishing approvals. This is not full credential lifecycle certification.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/githubDeploy.ts",
@@ -9576,15 +9576,15 @@
       }
     },
     {
-      "id": "408b490907b38a2277f0",
+      "id": "a6b38f59fd65dcf93b63",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1284,
+      "line": 1287,
       "enclosing": "fetchRepoTextFile",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in fetchRepoTextFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -9597,15 +9597,15 @@
       }
     },
     {
-      "id": "e7faca25c9f03c61ec56",
+      "id": "ff18538f080dddb2c506",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1346,
+      "line": 1349,
       "enclosing": "decodeRepositoryTextBlob",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in decodeRepositoryTextBlob. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
