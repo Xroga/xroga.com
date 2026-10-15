@@ -2,11 +2,51 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
-import { buildRequirements, parseCommandRequirements, renderOutputs, root } from './reconcile-requirements.mjs';
+import { buildRequirements, parseCommandRequirements, renderOutputs, root, validateFamilyOwnershipReview, validateHistoricalOwnershipReview } from './reconcile-requirements.mjs';
 import { validateLedger } from './requirements-schema.mjs';
 import { validateRepositoryLedger } from './validate-requirements-ledger.mjs';
 
 function fixture() { return buildRequirements(); }
+test('reviewed family ownership preserves unresolved history, private transcripts and unverified journeys', () => {
+  const { ledger, sources } = fixture();
+  assert.equal(ledger.requirements.filter(row => row.implementation_owner_command === 'LATER_SOURCE_MAPPING_REVIEW').length, 8);
+  assert.equal(ledger.requirements.filter(row => row.unresolved_questions.some(question=>question.startsWith('Original normative requirement title'))).length,80);
+  assert.equal(ledger.requirements.filter(row => row.requirement_id.startsWith('XR-HIST-')).length, 211);
+  assert.ok(ledger.requirements.filter(row => row.requirement_id.startsWith('XR-HIST-')).every(row => row.current_state !== 'IMPLEMENTED_AND_REACHABLE'));
+  const families = ledger.requirements.filter(row => row.requirement_id.startsWith('XR-FAMILY-'));
+  assert.ok(families.every(row => row.implementation_owner_command !== 'LATER_SOURCE_MAPPING_REVIEW'));
+  assert.ok(families.every(row => row.current_state !== 'IMPLEMENTED_AND_REACHABLE'));
+  assert.equal(sources.filter(row => row.notes.includes('HASH_VERIFIED_SEMANTIC_REVIEW_PENDING') && !row.analyzed).length, 2);
+  assert.ok(ledger.coverage.deferred.some(value => value.includes('transcript')));
+  const matrix = JSON.parse(readFileSync(resolve(root, 'docs/xroga/golden-journey-matrix.json'), 'utf8'));
+  const ids = new Set(ledger.requirements.map(row => row.requirement_id));
+  assert.equal(matrix.journeys.length, 12);
+  for (const journey of matrix.journeys) {
+    assert.equal(journey.state, 'BLOCKED_KNOWN_GAP');
+    for (const owner of journey.blockers.flatMap(row => row.ownerCommands)) {
+      assert.ok(ids.has(owner.startsWith('MISSION-') ? `XR-${owner}` : `XB01-C${owner}`), owner);
+    }
+  }
+});
+test('historical ownership requires exact source bytes and complete nonduplicate row-specific review', () => {
+  const review = JSON.parse(readFileSync(resolve(root, 'docs/xroga/research/historical-ownership-review.json'), 'utf8'));
+  const original = JSON.parse(readFileSync(resolve(root, 'docs/xroga/research/derived-original-requirements.json'), 'utf8'));
+  const readSource = path => {const text=readFileSync(resolve(root,path),'utf8').replace(/\r\n/g,'\n');return {text,document:JSON.parse(text)};};
+  assert.equal(validateHistoricalOwnershipReview(review,original.missions,readSource).sources.flatMap(source=>source.groups.flatMap(group=>group.rows)).length,203);
+  for(const mutate of [value=>{value.sources[0].sha256='0'.repeat(64);},value=>value.sources[0].groups[0].rows.pop(),value=>value.sources[0].groups[0].rows.push('R2.1'),value=>{value.sources[0].groups[0].primary=999;}]) {
+    const bad=structuredClone(review);mutate(bad);assert.throws(()=>validateHistoricalOwnershipReview(bad,original.missions,readSource));
+  }
+});
+test('family ownership rejects missing, duplicate, unknown and unsupported mission claims', () => {
+  const review = JSON.parse(readFileSync(resolve(root, 'docs/xroga/research/family-ownership-review.json'), 'utf8'));
+  const original = JSON.parse(readFileSync(resolve(root, 'docs/xroga/research/derived-original-requirements.json'), 'utf8'));
+  const families = review.reviews.map(row => row.family);
+  assert.equal(validateFamilyOwnershipReview(review, original.missions, families).reviews.length, 32);
+  for (const mutate of [value => value.reviews.pop(), value => value.reviews.push(value.reviews[0]), value => {value.reviews[0].primary = 999;}, value => {value.reviews[0].reason = 'name match';}]) {
+    const bad = structuredClone(review); mutate(bad);
+    assert.throws(() => validateFamilyOwnershipReview(bad, original.missions, families));
+  }
+});
 test('full ten-command specifications retain exact acceptance criteria and mandatory family/source rows', () => {
   const report = readFileSync(resolve(root, 'docs/xroga/research/inputs/batch-one-report.txt'), 'utf8');
   const commands = parseCommandRequirements(report);

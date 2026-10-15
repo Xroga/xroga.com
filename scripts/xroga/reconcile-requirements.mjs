@@ -19,6 +19,8 @@ const emit = (path, content) => { mkdirSync(dirname(resolve(root, path)), { recu
 const json = value => `${JSON.stringify(value, null, 2)}\n`;
 const reportPath = 'docs/xroga/research/inputs/batch-one-report.txt';
 const sourceManifestPath = 'docs/xroga/research/source-manifest.json';
+const familyReviewPath = 'docs/xroga/research/family-ownership-review.json';
+const historicalReviewPath = 'docs/xroga/research/historical-ownership-review.json';
 export const missingSources = [
   'https://chatgpt.com/share/6acd319b-8244-83ec-ae3f-dfe13f414569',
 ];
@@ -95,7 +97,7 @@ export function buildRequirements() {
   const paths = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' }).trim().split(/\r?\n/).sort();
   const previous = existsSync(resolve(root, sourceManifestPath)) ? JSON.parse(read(sourceManifestPath)) : null;
   const previousById = new Map((previous?.sources ?? []).map(item => [item.source_id, item]));
-  const sourcePaths = sorted([reportPath, 'docs/xroga/current-state.json', 'docs/xroga/research/repository-candidates.json', 'docs/xroga/research/derived-original-requirements.json',
+  const sourcePaths = sorted([reportPath, familyReviewPath, historicalReviewPath, 'docs/xroga/current-state.json', 'docs/xroga/research/repository-candidates.json', 'docs/xroga/research/derived-original-requirements.json',
     ...paths.filter(path => /^docs\//.test(path) && !path.startsWith('docs/xroga/') && !path.startsWith('docs/implementation/batch-01/') && /\.(?:md|json|csv)$/.test(path)),
     ...['AGENTS.md', 'README.md', 'CONTRIBUTING.md', 'DEPLOY.md', 'ROUTING.md', 'SECURITY.md', 'SHIP_COMPLETENESS.md', 'OWNER_SETUP.md'].filter(path => paths.includes(path))]);
   const sources = [], parsedDocuments = new Map();
@@ -176,14 +178,14 @@ export function buildRequirements() {
     if (path.startsWith('docs/xroga/') || !Array.isArray(document.requirements)) continue;
     for (const row of document.requirements) {
       const rowId = String(row.id ?? row.requirement_id ?? hash(JSON.stringify(row)).slice(0, 16));
-      const title = row.title ?? `Historical requirement ${rowId}`;
+      const title = row.title ?? row.sourceSection ?? `Historical requirement ${rowId}`;
       const candidatePaths = sorted([...(row.affectedFiles ?? []), ...(row.files ?? []), ...(row.filesChanged ?? []), ...(row.current_paths ?? [])].filter(value => typeof value === 'string'));
       const currentPaths = candidatePaths.filter(value => existsSync(resolve(root, value)));
       const id = `XR-HIST-${hash(`${path}:${rowId}`).slice(0, 16)}`;
-      const record = base(id, title, row.description ?? row.actualBehaviour ?? row.currentImplementation ?? 'Historical source record retained without inventing an unavailable description',
+      const record = base(id, title, row.description ?? row.actualBehaviour ?? row.currentImplementation ?? (row.notes ? `Historical source notes, not current verification: ${row.notes}` : 'Historical source record retained without inventing an unavailable description'),
         row.user_need ?? 'Original user need remains in the cited historical requirement; current acceptance must be re-established',
         [{ source_id: sourceId(path), locator: `requirements[id=${rowId}]` }], 'historical-repository-requirement', currentPaths,
-        'LATER_PENDING_HISTORICAL_EXPORT', row.acceptance_criteria?.length ? row.acceptance_criteria : row.requiredTests?.length ? row.requiredTests.map(value => `Source-required verification: ${value}`) : ['Re-verify the cited historical requirement against current source and its journey']);
+        'LATER_PENDING_HISTORICAL_EXPORT', row.acceptance_criteria?.length ? row.acceptance_criteria : (row.requiredTests ?? row.tests)?.length ? (row.requiredTests ?? row.tests).map(value => `Source-required verification: ${value}`) : ['Re-verify the cited historical requirement against current source and its journey']);
       record.source_reported_states = [row.classification, row.completionStatus, row.implementationState, row.verificationState, row.status, row.implementationStatus, row.verificationStatus].filter(value => typeof value === 'string');
       record.confidence = 'LOW';
       record.unresolved_questions.push(...candidatePaths.filter(value => !currentPaths.includes(value)).map(value => `Historical evidence path no longer exists: ${value}`));
@@ -220,6 +222,35 @@ export function buildRequirements() {
     requirements.push(record);source_mappings.push({source_id:featureSource,source_row_id:`FEATURE-${String(feature.row).padStart(3,'0')}`,requirement_id:record.requirement_id});
   }
   for(const record of requirements) if(record.implementation_owner_command==='LATER_PENDING_HISTORICAL_EXPORT') record.implementation_owner_command='LATER_SOURCE_MAPPING_REVIEW';
+  const familyReview = validateFamilyOwnershipReview(JSON.parse(read(familyReviewPath)), original.missions, families.filter(family => !familyOwners[family]));
+  for (const review of familyReview.reviews) {
+    const record = requirements.find(item => item.feature_category === review.family && item.requirement_id.startsWith('XR-FAMILY-'));
+    const owners = [review.primary, ...review.supporting];
+    record.implementation_owner_command = review.primary <= 10 ? String(review.primary).padStart(3, '0') : `MISSION-${String(review.primary).padStart(3, '0')}`;
+    record.dependencies = sorted([...record.dependencies, ...owners.map(missionId)]);
+    record.source_refs.push({source_id:sourceId(familyReviewPath),locator:`reviews[family=${review.family}]`}, ...owners.map(number => ({source_id:manifestSource,locator:`commands[number=${number}]; implementation and acceptance`})));
+    record.rationale += `; Reviewed planning ownership: ${review.reason} This is not acceptance equivalence, implementation verification or transcript coverage.`;
+    record.unresolved_questions = record.unresolved_questions.filter(question => !question.startsWith('Original sources are now supplied; precise mapping'));
+    record.unresolved_questions.push('Implementation and supporting mission acceptance remain unverified; historical record aliases and private transcript semantics are not closed by family ownership.');
+  }
+  const historicalReview = validateHistoricalOwnershipReview(JSON.parse(read(historicalReviewPath)), original.missions, path => ({text:read(path),document:parsedDocuments.get(path)}));
+  for (const source of historicalReview.sources) for (const group of source.groups) for (const row of group.rows) {
+    const record = requirements.find(item => item.requirement_id === `XR-HIST-${hash(`${source.path}:${row}`).slice(0,16)}`);
+    const owners = [group.primary, ...group.supporting];
+    record.implementation_owner_command = group.primary <= 10 ? String(group.primary).padStart(3,'0') : `MISSION-${String(group.primary).padStart(3,'0')}`;
+    record.dependencies = sorted([...record.dependencies,...owners.map(missionId)]);
+    record.source_refs.push({source_id:sourceId(historicalReviewPath),locator:`sources[path=${source.path}].groups.rows[${row}]`},...owners.map(number => ({source_id:manifestSource,locator:`commands[number=${number}]; implementation and acceptance`}))) ;
+    for(const path of source.contextSources ?? []) record.source_refs.push({source_id:sourceId(path),locator:'Corroborating historical subsystem contract; not current execution evidence'});
+    record.rationale += `; Historical planning review: ${group.reason} Original record retained independently; no equivalence merge, current implementation certification or transcript coverage asserted.`;
+    record.unresolved_questions = record.unresolved_questions.filter(question => !question.startsWith('Original sources are now supplied; precise mapping'));
+    record.unresolved_questions.push('Historical source assertions and required tests must be reverified against current source; planning ownership does not certify implementation or private transcript coverage.');
+    if(source.evidenceOnly) record.unresolved_questions.push('Original normative requirement title and acceptance text are absent from this evidence-only ledger. Owner is responsible for recovering that contract; corroborating subsystem documentation does not reconstruct or close original semantic acceptance.');
+  }
+  for(const source of historicalReview.sources) for(const gap of source.unreviewed ?? []) for(const row of gap.rows) {
+    const record=requirements.find(item=>item.requirement_id===`XR-HIST-${hash(`${source.path}:${row}`).slice(0,16)}`);
+    record.source_refs.push({source_id:sourceId(historicalReviewPath),locator:`sources[path=${source.path}].unreviewed.rows[${row}]`});
+    record.unresolved_questions.push(gap.reason);
+  }
   const ledger = { version: '1.0', source_sha: inventory.identity.sha, assessment: 'AVAILABLE_SOURCE_RECONCILIATION', requirements,
     source_mappings, coverage: { imported_available_rows: source_mappings.length, mapped_available_rows: source_mappings.length,
       historical_feature_rows_expected: 119, historical_feature_rows_supplied: original.features.length, historical_feature_rows_mapped: original.features.length,
@@ -234,6 +265,47 @@ export function buildRequirements() {
   for (const [name] of expectedCandidates) if (!repositories.some(item => item.name === name)) throw new Error(`Missing mandatory repository candidate: ${name}`);
   validateLedger(ledger, sources, repositories, path => existsSync(resolve(root, path)));
   return { ledger, sources, repositories, families, original };
+}
+
+export function validateFamilyOwnershipReview(value, missions, expectedFamilies) {
+  if (value.version !== '1.0' || value.scope !== 'PLANNING_OWNERSHIP_ONLY_NOT_IMPLEMENTATION_OR_TRANSCRIPT_COVERAGE'
+    || value.source !== 'docs/xroga/research/derived-original-requirements.json' || !Array.isArray(value.reviews)) throw new Error('Invalid family ownership review');
+  const knownMissions = new Set(missions.map(item => item.number)), seen = new Set();
+  for (const item of value.reviews) {
+    if (!expectedFamilies.includes(item.family) || seen.has(item.family)) throw new Error('Unknown or duplicate reviewed family');
+    seen.add(item.family);
+    if (!Array.isArray(item.supporting) || new Set([item.primary, ...item.supporting]).size !== item.supporting.length + 1
+      || [item.primary, ...item.supporting].some(number => !Number.isInteger(number) || !knownMissions.has(number))
+      || typeof item.reason !== 'string' || item.reason.length < 60) throw new Error('Family ownership lacks exact mission evidence');
+  }
+  if (seen.size !== expectedFamilies.length) throw new Error('Missing family ownership review');
+  return value;
+}
+
+export function validateHistoricalOwnershipReview(value, missions, readSource) {
+  if(value.version!=='1.0'||value.scope!=='PLANNING_OWNERSHIP_ONLY_RETAIN_INDEPENDENT_REQUIREMENTS'||!Array.isArray(value.sources)) throw new Error('Invalid historical ownership review');
+  const known = new Set(missions.map(item=>item.number)), paths = new Set();
+  for(const source of value.sources) {
+    if(!/^docs\/command-[123]\/[a-z/-]*requirements-ledger\.json$/.test(source.path)||paths.has(source.path)) throw new Error('Invalid historical source');
+    paths.add(source.path);
+    if(source.evidenceOnly!==undefined&&source.evidenceOnly!==true)throw new Error('Invalid historical evidence limitation');
+    if(source.contextSources!==undefined&&(!Array.isArray(source.contextSources)||source.contextSources.some(path=>!/^docs\/command-[123]\/[a-z/-]+\.md$/.test(path))))throw new Error('Invalid historical context source');
+    const original=readSource(source.path);
+    if(hash(original.text)!==source.sha256||!Array.isArray(original.document?.requirements)) throw new Error('Historical source hash or rows changed');
+    const expected=new Set(original.document.requirements.map(row=>row.id)), seen=new Set();
+    if(!Array.isArray(source.groups)) throw new Error('Missing historical groups');
+    for(const group of source.groups) {
+      if(!Array.isArray(group.rows)||!group.rows.length||!Array.isArray(group.supporting)||typeof group.reason!=='string'||group.reason.length<60
+        ||new Set([group.primary,...group.supporting]).size!==group.supporting.length+1||[group.primary,...group.supporting].some(number=>!Number.isInteger(number)||!known.has(number))) throw new Error('Historical ownership lacks mission evidence');
+      for(const row of group.rows) {if(!expected.has(row)||seen.has(row))throw new Error('Unknown or duplicate historical row');seen.add(row);}
+    }
+    for(const gap of source.unreviewed ?? []) {
+      if(!Array.isArray(gap.rows)||!gap.rows.length||typeof gap.reason!=='string'||gap.reason.length<60)throw new Error('Historical gap lacks evidence');
+      for(const row of gap.rows) {if(!expected.has(row)||seen.has(row))throw new Error('Unknown or duplicate historical gap');seen.add(row);}
+    }
+    if(seen.size!==expected.size)throw new Error('Historical reviewed source has unmapped rows');
+  }
+  return value;
 }
 
 export function renderOutputs({ ledger, sources, repositories, families }) {
