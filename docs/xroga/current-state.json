@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "319c22887981797f6f4eae2c081790779a40f8cd",
-    "sourceTimestampUtc": "2026-10-15T15:01:59+05:00",
-    "auditStartedUtc": "2026-10-15T10:18:35.936Z",
+    "sha": "6bd5f576c73d4d9ba22b776f2429fa0fa2e80c4f",
+    "sourceTimestampUtc": "2026-10-15T15:19:35+05:00",
+    "auditStartedUtc": "2026-10-15T10:37:09.824Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -15438,7 +15438,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "sha256": "d824127d2f17948c1f15b574822bd04c9213b74b3879b786bf0fd817cba38871",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -84105,12 +84105,13 @@
       "id": "surface:6d41f9a6f61b7c1b2c87",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/disposable-supabase.mjs",
-      "sha256": "b7a60b7d3e6a3a408884de8d84120cb370e6f2a8ab0cf522540331895100b501",
+      "sha256": "627f93dc7b6a03880fbbda9640cbecea2a6fb5990e01c7a28a42e7d1804ec421",
       "symbols": [
         "anonKey",
         "apiPublishable",
         "apiSecret",
         "assertDisposableConfiguration",
+        "assertDisposedStack",
         "bootstrap",
         "cli",
         "data",
@@ -84119,6 +84120,7 @@
         "generateLocalApiToken",
         "generateLocalSigningKey",
         "jwtSecret",
+        "lists",
         "log",
         "mask",
         "name",
@@ -84133,9 +84135,11 @@
         "signature",
         "signingKey",
         "status",
+        "suffix",
         "text",
         "value",
         "values",
+        "verifyTeardown",
         "workdir"
       ],
       "imports": [
@@ -84166,7 +84170,9 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "scripts/security/disposable-supabase.mjs#verifyTeardown"
+      ],
       "testCoverage": [
         "scripts/security/disposable-supabase.test.mjs"
       ],
@@ -94089,7 +94095,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "a59dc4599b2d4fd38f49b028ac1a42225ac83bf965b9248dd930bc4ad6e44497",
+      "sha256": "84621f33402a25a66609cbafb11fa2be94c35981020c619303e5bdbe7c78988d",
       "sourceEntrypoints": [
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
@@ -101475,7 +101481,7 @@
     {
       "id": "test-suite:c56c345b4412f384cbb4",
       "sourcePath": "backend/src/operations/operationsService.owner.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -103656,7 +103662,7 @@
     {
       "id": "test-suite:7ad4485dc12ff4206f8f",
       "sourcePath": "scripts/security/disposable-supabase.test.mjs",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },

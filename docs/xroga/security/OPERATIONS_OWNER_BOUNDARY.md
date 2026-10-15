@@ -11,6 +11,14 @@ Status: implemented, local focused tests/build pass; new real API/database cases
 
 ## Evidence and limitations
 
+### Real database failure and nullable-result correction
+
+Run38719473303 on feature6bd5f576 / integrated API-web e63d9a812fcd59468c561f940410061087162a4c passed42 security cases but failed the cross-project test and account cleanup. `queryOrThrow` defaulted a missing singleton to `[]`; this truthy value bypassed the missing-target branch and created an action before execution expired it with409. Singleton action/approval/resource/target/conflict lookups now explicitly preserve null. New unit cases reject missing targets BEFORE any action/audit write and return404 for missing actions. No negative assertion is relaxed.
+
+The failed cleanup exposed a separate existing policy conflict: `production_audit_log` has immutable UPDATE/DELETE triggers but user/project CASCADE and actor SET NULL foreign keys. Account/project deletion after audited work cannot succeed. This remains a release-blocking account-lifecycle design gap, not a passing deletion journey. The real test proves immutable audit denial and unchanged evidence, and retains only explicitly identified synthetic audit subjects until mandatory whole-cluster disposal. CI now verifies no run-specific containers or volumes remain after `supabase stop --no-backup`; it does not disable the audit trigger, grant access, erase production audit history or silently ignore cleanup errors.
+
+Nine singleton sites were corrected; the separate automation deduplication null-default issue is recorded but not changed here because enabling previously bypassed automation execution requires its own action/approval coverage. Original lease/revocation/authority gaps remain unresolved. Exact-source CI must certify this correction separately.
+
 `operationsService.owner.test.ts` exercises injected-client denial before downstream access and independent write predicates. Together with existing permission tests: 4 PASS, no skipped tests. Backend compatibility check + TypeScript build PASS.
 
 `tenantIsolation.local.integration.ts` adds real API denial of misbound receipts and cross-project job/webhook targets, verifies unchanged rows and absent actions, and retains a legitimate owner retry. The strengthened portfolio fixture makes both tenants legitimately visible, exposing the former cross-product defect. These are disposable Supabase fixtures, never production user records or provider calls. There are 43 defined security cases; their execution must be checked at the new commit.

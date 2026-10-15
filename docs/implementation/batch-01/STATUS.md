@@ -1,5 +1,9 @@
 # Xroga OS Batch 01 implementation tracker
 
+## Nullable-target correction checkpoint
+
+Feature6bd5f576 aggregate38719473284 PASS on feature and actual integrated e63d9a812fcd59468c561f940410061087162a4c (main parent3a208262010f6ddca7789a7a6a8bb0848700c983). Isolated38719473303 FAIL42 cases/one target-denial failure plus cleanup failure; browser3 and full70 fresh/representative upgrade passed. Root cause was missing singleton converted to truthy empty array. Corrected nine action-related nullable reads and added denial-before-write unit coverage. Existing immutable audit versus account cascade conflict remains BLOCKED; disposable teardown verification added, never an audit-policy bypass. Worker review adds eight classified sites, with provider health still REVIEWED_GAP. Full final-source CI required.007 IN_PROGRESS/NO-GO;008–010 NOT_STARTED. No production or cloud changes.
+
 ## Latest candidate — parser patches and real fixture correction
 
 Operations feature319c22887981797f6f4eae2c081790779a40f8cd passes aggregate38717352239, frozen Agent38717352159, Docker38717352121, frontend38717352228 and golden38717352120. Real isolated38717352049 FAILS42/43 security cases (zero skips) at integrated runtime1195de8c94afac16148670ab4add906cdab2b974: new project fixture incorrectly used disallowed status draft. Corrected to the actual schema default, without relaxing constraints or negative assertions; full real rerun required.

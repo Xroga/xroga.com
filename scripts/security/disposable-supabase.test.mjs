@@ -1,8 +1,16 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createPublicKey, verify } from 'node:crypto';
-import { assertDisposableConfiguration, redactLocalLog, generateLocalSigningKey, generateLocalApiToken } from './disposable-supabase.mjs';
+import { assertDisposableConfiguration, assertDisposedStack, redactLocalLog, generateLocalSigningKey, generateLocalApiToken } from './disposable-supabase.mjs';
 const safe = {CI:'true',XB01_DISPOSABLE_SUPABASE:'1',RUNNER_TEMP:'/tmp/xroga-fixture',GITHUB_ENV:'/tmp/fixture-env'};
+
+test('disposable teardown verifies stopped containers and retained volumes without touching another stack',()=>{
+  const env={...safe,GITHUB_RUN_ID:'123',GITHUB_RUN_ATTEMPT:'2'};
+  assert.doesNotThrow(()=>assertDisposedStack(env,[],[]));
+  assert.doesNotThrow(()=>assertDisposedStack(env,['supabase_db_xroga-ci-123-1'],['unrelated-volume']));
+  for(const [containers,volumes] of [[['supabase_db_xroga-ci-123-2'],[]],[[],['supabase_storage_xroga-ci-123-2']]])assert.throws(()=>assertDisposedStack(env,containers,volumes),/still has/);
+  for(const change of [{CI:'false'},{GITHUB_RUN_ID:''},{GITHUB_RUN_ATTEMPT:'*'}])assert.throws(()=>assertDisposedStack({...env,...change},[],[]),/CI run identity/);
+});
 test('local bootstrap requires explicit CI and refuses inherited production-capable configuration', () => {
   assert.ok(assertDisposableConfiguration(safe).endsWith('xroga-disposable-supabase'));
   for (const patch of [{CI:'false'},{XB01_DISPOSABLE_SUPABASE:'0'},{RUNNER_TEMP:''},{GITHUB_ENV:''},{SUPABASE_URL:'https://nzenxdfumxrnsmybazmo.supabase.co'},{SUPABASE_SERVICE_ROLE_KEY:'forbidden'},{SUPABASE_ACCESS_TOKEN:'forbidden'},{DATABASE_URL:'postgres://remote/db'},{LAUNCH_BILLING_API_URL:'https://billing.invalid'}]) {

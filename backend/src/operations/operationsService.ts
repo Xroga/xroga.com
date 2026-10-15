@@ -217,7 +217,7 @@ export class OperationsService {
     await this.currentTargetVersion(row);
     const { data, error } = await this.db.from('operations_actions').insert(row).select('*').single();
     if (error) {
-      const existing = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('user_id', access.ownerId).eq('project_id', request.projectId).eq('idempotency_key', request.idempotencyKey).maybeSingle(), 'Action conflict');
+      const existing = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('user_id', access.ownerId).eq('project_id', request.projectId).eq('idempotency_key', request.idempotencyKey).maybeSingle(), 'Action conflict', null);
       if (existing) return existing;
       throw new OperationsServiceError('conflict', 'Action could not be created', 409);
     }
@@ -236,12 +236,12 @@ export class OperationsService {
   }
 
   async approveAction(userId: string, actionId: string, decision: 'approved' | 'rejected', reason: string): Promise<DbRow> {
-    const action = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable');
+    const action = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable', null);
     if (!action) throw new OperationsServiceError('not_found', 'Action not found', 404);
     const access = await this.access(userId, action.project_id, 'view_product_operations');
     if (action.user_id !== access.ownerId) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
     if (action.requested_by === userId) throw new OperationsServiceError('forbidden', 'Requester cannot approve this action', 403);
-    const approval = await queryOrThrow<DbRow | null>(this.db.from('operations_action_approvals').select('*').eq('action_id', actionId).eq('user_id', access.ownerId).eq('decision', 'pending').maybeSingle(), 'Approval unavailable');
+    const approval = await queryOrThrow<DbRow | null>(this.db.from('operations_action_approvals').select('*').eq('action_id', actionId).eq('user_id', access.ownerId).eq('decision', 'pending').maybeSingle(), 'Approval unavailable', null);
     if (!approval) throw new OperationsServiceError('invalid_state', 'No pending approval exists', 409);
     if (access.role !== 'admin' && access.role !== approval.required_role) throw new OperationsServiceError('forbidden', `This action requires a ${approval.required_role}`, 403);
     if (new Date(approval.expires_at).getTime() <= Date.now()) {
@@ -256,7 +256,7 @@ export class OperationsService {
   }
 
   async confirmAction(userId: string, actionId: string): Promise<DbRow> {
-    const action = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable');
+    const action = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable', null);
     if (!action) throw new OperationsServiceError('not_found', 'Action not found', 404);
     if (action.requested_by !== userId) throw new OperationsServiceError('forbidden', 'Only the requester can confirm this action', 403);
     const definition = ACTION_DEFINITIONS[action.action_type];
@@ -289,13 +289,13 @@ export class OperationsService {
     };
     const lookup = lookups[action.target_type];
     if (!lookup) return action.target_type === 'release' ? 1 : null;
-    const row = await queryOrThrow<DbRow | null>(this.db.from(lookup.table).select(lookup.versionColumn).eq(lookup.idColumn, action.target_id).eq('project_id', action.project_id).eq(action.target_type === 'growth_campaign' ? 'tenant_id' : 'user_id', action.user_id).maybeSingle(), 'Target state unavailable');
+    const row = await queryOrThrow<DbRow | null>(this.db.from(lookup.table).select(lookup.versionColumn).eq(lookup.idColumn, action.target_id).eq('project_id', action.project_id).eq(action.target_type === 'growth_campaign' ? 'tenant_id' : 'user_id', action.user_id).maybeSingle(), 'Target state unavailable', null);
     if (!row) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
     return Number(row[lookup.versionColumn]);
   }
 
   async executeAction(userId: string, actionId: string): Promise<DbRow> {
-    const action = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable');
+    const action = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable', null);
     if (!action) throw new OperationsServiceError('not_found', 'Action not found', 404);
     const definition = ACTION_DEFINITIONS[action.action_type];
     if (!definition) throw new OperationsServiceError('invalid_state', 'Action is unavailable', 409);
@@ -310,14 +310,14 @@ export class OperationsService {
     }
     if (definition.confirmationRequired && action.confirmation_digest !== action.action_plan_digest) throw new OperationsServiceError('precondition_failed', 'Action confirmation is missing or stale', 409);
     if (definition.approvalRole) {
-      const approval = await queryOrThrow<DbRow | null>(this.db.from('operations_action_approvals').select('*').eq('action_id', actionId).eq('user_id', access.ownerId).maybeSingle(), 'Approval unavailable');
+      const approval = await queryOrThrow<DbRow | null>(this.db.from('operations_action_approvals').select('*').eq('action_id', actionId).eq('user_id', access.ownerId).maybeSingle(), 'Approval unavailable', null);
       if (!approval?.approver_id) throw new OperationsServiceError('approval_required', 'Action approval is required', 409);
       const validity = approvalIsValid({ requesterId: action.requested_by, approverId: approval.approver_id, decision: approval.decision, expiresAt: approval.expires_at, approvedTargetVersion: approval.target_version, currentTargetVersion: action.target_version, approvedPlanDigest: approval.action_plan_digest, currentPlanDigest: action.action_plan_digest });
       if (!validity.valid) throw new OperationsServiceError('invalid_state', validity.reason ?? 'Approval invalid', 409);
     }
     const claimed = await queryOrThrow<DbRow[]>(this.db.rpc('operations_claim_action', { p_action_id: actionId, p_lease_owner: `api:${userId}`, p_lease_seconds: 60 }), 'Action lock unavailable');
     if (!claimed.length) {
-      const current = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable');
+      const current = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable', null);
       if (current?.status === 'verified') return current;
       throw new OperationsServiceError('conflict', 'Action is already running or not executable', 409);
     }
@@ -333,7 +333,7 @@ export class OperationsService {
     } else {
       let input = { ...(action.execution_plan ?? {}), userId: access.ownerId, actorId: userId, projectId: action.project_id, environmentId: action.environment_id, targetType: action.target_type, targetId: action.target_id, targetVersion: action.target_version, actionId };
       if (adapter.id === 'http_verification') {
-        const resource = await queryOrThrow<DbRow | null>(this.db.from('operations_resources').select('*').eq('id', action.target_id).eq('project_id', action.project_id).eq('user_id', access.ownerId).maybeSingle(), 'Verification target unavailable');
+        const resource = await queryOrThrow<DbRow | null>(this.db.from('operations_resources').select('*').eq('id', action.target_id).eq('project_id', action.project_id).eq('user_id', access.ownerId).maybeSingle(), 'Verification target unavailable', null);
         if (!resource) result = { status: 'blocked', safeSummary: 'Verification target was not found', errorCategory: 'not_found' };
         else {
           try { result = await adapter.execute(definition.providerCapability, { ...input, url: resource.observed_state?.url ?? resource.desired_state?.url, expectedMarker: resource.desired_state?.expectedMarker }); }

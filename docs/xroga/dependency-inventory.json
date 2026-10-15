@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "319c22887981797f6f4eae2c081790779a40f8cd",
+  "source_sha": "6bd5f576c73d4d9ba22b776f2429fa0fa2e80c4f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11144,7 +11144,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "a59dc4599b2d4fd38f49b028ac1a42225ac83bf965b9248dd930bc4ad6e44497"
+      "sha256": "84621f33402a25a66609cbafb11fa2be94c35981020c619303e5bdbe7c78988d"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -12156,7 +12156,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4"
+      "sha256": "d824127d2f17948c1f15b574822bd04c9213b74b3879b786bf0fd817cba38871"
     },
     {
       "path": "backend/src/operations/permissions.ts",
@@ -12464,7 +12464,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "fb2c0c82d519a7b7509232ca5c93f4c45af25373b68a7df3883b8b3868eb3d74"
+      "sha256": "d2e71ef6897bcfe853204dde7814c90b1f34652d7c7dd721e8397b6c0f03c911"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -17921,21 +17921,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 136,
+      "line": 145,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 186,
+      "line": 195,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 267,
+      "line": 276,
       "credentialsInUrl": false
     },
     {
@@ -24032,7 +24032,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 616,
+      "line": 42,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 633,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

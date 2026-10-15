@@ -37,6 +37,9 @@ if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || 
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
 const admin=createClient(url,process.env.SUPABASE_SERVICE_ROLE_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});
 const users: Array<{id:string;token:string;context:TenantContext;project:string;file:string;run:string;provider:string;session:string;cost:string}>=[];
+// Immutable operational audit fixtures intentionally survive until the CI-owned
+// disposable cluster is destroyed. Never disable the audit trigger for cleanup.
+const auditRetainedUsers=new Set<string>();
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }
@@ -64,7 +67,13 @@ before(async()=>{
     fixture.cost=await insert('ai_usage_ledger',{user_id:id,model_id:'fixture-no-provider',pool_role:'test',cost_usd:0});
   }
 });
-after(async()=>{for(const user of users){const deleted=await admin.auth.admin.deleteUser(user.id);assert.equal(deleted.error,null,'temporary fixture cleanup failed');}});
+after(async()=>{for(const user of users){
+  if(auditRetainedUsers.has(user.id)){
+    const retained=await admin.auth.admin.getUserById(user.id);assert.equal(retained.error,null);assert.match(retained.data.user?.email??'',/^xb01-tenant-[a-f0-9-]+@example\.invalid$/);
+    const audit=await admin.from('production_audit_log').select('id').eq('user_id',user.id);assert.equal(audit.error,null);assert.ok(audit.data?.length,'Only proven immutable audit fixtures may defer row cleanup to whole-cluster disposal');
+    console.info('Immutable synthetic audit fixture retained for mandatory disposable-cluster teardown; production account lifecycle remains blocked');
+  }else{const deleted=await admin.auth.admin.deleteUser(user.id);assert.equal(deleted.error,null,'temporary fixture cleanup failed');}
+}});
 
 test('real owner helpers deny every foreign high-risk resource without enumerating data',async()=>{
   const [owner,other]=users;
@@ -530,6 +539,7 @@ test('project-limited operators cannot retry another project job or webhook owne
     for(const [actionType,targetType,targetId] of [['retry_job','job',job],['retry_webhook','webhook',webhook]]){
       const input={projectId:owner.project,actionType,targetType,targetId,targetVersion:0,idempotencyKey:randomUUID(),confirmed:true};
       const denied=await request('/api/operations/actions',member.token,'POST',input);assert.equal(denied.status,403);
+      assert.equal((await denied.json() as {code:string}).code,'forbidden');
       const absent=await admin.from('operations_actions').select('id').eq('user_id',owner.id).eq('idempotency_key',input.idempotencyKey);
       assert.equal(absent.error,null);assert.deepEqual(absent.data,[],'Denied foreign target must not create an executable action');
     }
@@ -540,12 +550,19 @@ test('project-limited operators cannot retry another project job or webhook owne
     const allowed=await request('/api/operations/actions',owner.token,'POST',{projectId:restrictedProject,actionType:'retry_job',targetType:'job',targetId:job,targetVersion:0,idempotencyKey:randomUUID(),confirmed:true});
     assert.equal(allowed.status,201);const result=await allowed.json() as {action:{id:string;status:string}};actionIds.push(result.action.id);assert.equal(result.action.status,'verified');
     const jobAfter=await admin.from('swarm_job_queue').select('status,attempt_count').eq('id',job).single();assert.deepEqual(jobAfter.data,{status:'queued',attempt_count:1});
+    const audit=await admin.from('production_audit_log').select('id,action').eq('user_id',owner.id).eq('project_id',restrictedProject).order('action');assert.equal(audit.error,null);assert.deepEqual(audit.data?.map(row=>row.action),['operations.action.completed','operations.action.requested']);
+    // Existing audit retention conflicts with account/project cascade deletion.
+    // Preserve and prove that protection; this is NOT a passing deletion journey.
+    const auditDelete=await admin.from('production_audit_log').delete().eq('id',audit.data![0].id);assert.equal(auditDelete.error?.code,'P0001');assert.equal(auditDelete.error?.message,'operational audit history is immutable');
+    const deletion=await admin.auth.admin.deleteUser(owner.id);assert.ok(deletion.error,'Audit history must not be silently removed through a user cascade');
+    const unchanged=await admin.from('production_audit_log').select('id,action').eq('user_id',owner.id).eq('project_id',restrictedProject).order('action');assert.equal(unchanged.error,null);assert.deepEqual(unchanged.data,audit.data);
+    auditRetainedUsers.add(owner.id);
   }finally{
     if(actionIds.length)assert.equal((await admin.from('operations_actions').delete().in('id',actionIds)).error,null);
     assert.equal((await admin.from('swarm_job_queue').delete().eq('id',job)).error,null);
     assert.equal((await admin.from('webhook_deliveries').delete().eq('provider','fixture-no-provider').eq('delivery_id',webhook)).error,null);
     assert.equal((await admin.from('operations_memberships').delete().eq('id',membership)).error,null);
-    assert.equal((await admin.from('projects').delete().eq('id',restrictedProject)).error,null);
+    if(!auditRetainedUsers.has(owner.id))assert.equal((await admin.from('projects').delete().eq('id',restrictedProject)).error,null);
   }
 });
 

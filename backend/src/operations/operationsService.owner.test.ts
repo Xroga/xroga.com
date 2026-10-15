@@ -3,6 +3,33 @@ import test from 'node:test';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { OperationsService } from './operationsService.js';
 
+test('missing authorized target is denied before any action or audit insert',async()=>{
+  for(const targetType of ['job','webhook','service']){
+    const reads:string[]=[];
+    const db={from(table:string){
+      reads.push(table);
+      const query={select(){return query;},eq(){return query;},async maybeSingle(){
+        if(table==='projects')return {data:{id:'project',user_id:'actor'},error:null};
+        if(table==='profiles')return {data:{role:'member'},error:null};
+        return {data:null,error:null};
+      },then(resolve:(value:unknown)=>unknown){return Promise.resolve(resolve({data:[],error:null}));},
+      insert(){throw new Error('Missing target must never produce an action or audit write');}};
+      return query;
+    }};
+    const service=new OperationsService(db as unknown as SupabaseClient);
+    await assert.rejects(service.createAction('actor',{projectId:'project',actionType:targetType==='job'?'retry_job':targetType==='webhook'?'retry_webhook':'refresh_health',targetType,targetId:'outside-project',targetVersion:0,idempotencyKey:'fixture',confirmed:true}),{code:'forbidden',statusCode:403});
+    assert.ok(!reads.includes('operations_actions'));assert.ok(!reads.includes('production_audit_log'));
+  }
+});
+
+test('missing action yields not found without querying an undefined project',async()=>{
+  const db={from(table:string){assert.equal(table,'operations_actions');const query={select(){return query;},eq(){return query;},async maybeSingle(){return {data:null,error:null};}};return query;}};
+  const service=new OperationsService(db as unknown as SupabaseClient);
+  await assert.rejects(service.confirmAction('actor','missing'),{statusCode:404});
+  await assert.rejects(service.approveAction('actor','missing','approved','fixture'),{statusCode:404});
+  await assert.rejects(service.executeAction('actor','missing'),{statusCode:404});
+});
+
 test('misbound operations actions cannot be confirmed approved or returned as verified',async()=>{
   for(const method of ['confirmAction','approveAction','executeAction'] as const){
     const reads:string[]=[];

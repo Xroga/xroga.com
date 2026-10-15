@@ -148,4 +148,5 @@ jobs:
           test -f backend.pid && kill "$(cat backend.pid)" || true
           if [ -n "${XB01_SUPABASE_WORKDIR:-}" ]; then
             npx --yes supabase@2.120.0 --workdir "$XB01_SUPABASE_WORKDIR" stop --no-backup > /dev/null 2>&1
+            node scripts/security/disposable-supabase.mjs --verify-teardown
           fi

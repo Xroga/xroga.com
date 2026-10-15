@@ -1,5 +1,11 @@
 # Command 007 acceptance checkpoint — not verified
 
+## Nullable target and audit lifecycle checkpoint
+
+Feature6bd5f576c73d4d9ba22b776f2429fa0fa2e80c4f aggregate38719473284 PASS twice on both feature and integrated e63d9a812fcd59468c561f940410061087162a4c. Real isolated38719473303 FAIL42 security cases/one target failure plus cleanup hook failure; full70 migrations and3 browser cases PASS. Missing singleton became a truthy array and created an action before409, rather than403 before any write. Current correction preserves null at nine action-related boundaries and adds two focused regressions; backend build PASS. Full rerun pending. Audit immutability versus account/project cascade is an explicit existing lifecycle BLOCKER; no trigger relaxation or production migration. CI fixture disposal now checks run-specific Docker containers/volumes are gone.
+
+198/670 candidates classified:28 scoped,6 narrow exceptions,13 non-persistence,151 reviewed gaps;472 unreviewed,623 unresolved. Original criteria2/10 FAIL; all remaining scope limits below still apply.008–010 NOT_STARTED; Batch1 NO-GO. Current high24 aggregate/17 backend/10 frontend,critical0; no audit waiver.
+
 ## Latest candidate and retained failure
 
 319c22887981797f6f4eae2c081790779a40f8cd aggregate38717352239 PASS. Isolated38717352049 FAIL42/43: new cross-project retry fixture inserted projects.status=draft against the real check constraint. Actual integrated runtime1195de8c94afac16148670ab4add906cdab2b974. Fixed fixture uses existing default, no schema/assertion relaxation. New parser locks and fixture require final-source CI. Caller review190/670:28 scoped,2 narrow exceptions,13 non-persistence,147 reviewed gaps;480 unreviewed/627 unresolved. Full criteria2/10 still FAIL. Remaining high advisories24 aggregate/17 backend/10 frontend,critical0; no release waiver. Full ten-criterion checklist below retains scope limits. NO-GO.

@@ -74,6 +74,7 @@
     "supabase/migrations/20261013221254_private_project_file_delivery.sql",
     "scripts/security/full-supabase-history.mjs",
     "scripts/security/disposable-supabase.mjs",
+    "scripts/security/disposable-supabase.test.mjs",
     "scripts/ci/ignore-vercel-build.mjs",
     "scripts/ci/ignore-vercel-build.test.mjs",
     "scripts/ci/postcss-resolution.test.mjs",
@@ -243,6 +244,7 @@
   "rollout": "PR/draft only; explicit release block. Migration remains unapplied in production",
   "rollback": "Revert scoped entry-point/code edits; approved isolated/staged SQL drops only new guards; preserve all user data and existing RLS",
   "knownGaps": [
+    "Immutable operational audit trigger conflicts with account/project cascade deletion; retain audit protection until an approved retention/lifecycle design is verified",
     "Final-source authenticated and full fresh/representative-upgrade tests must stay green; actual disposable Supabase replaces hosted configuration",
     "Real staged security remains blocked: no verified isolated staging resources/private R2 bucket and no creation/deployment approval",
     "All privileged caller/exception semantics and distributed owner persistence/races/membership revocation",
@@ -263,7 +265,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Command 007 incomplete caller review, remaining critical/high advisories, intermittent font-build CI failure and actual staged security gates"
+      "Command 007 incomplete caller/account review, remaining high advisories, exact-source CI acceptance and actual staged security gates; current locks critical0 and repeated font builds pass, not full release approval"
     ],
     "authenticatedE2e": "PASS",
     "stagedSecurity": "BLOCKED",

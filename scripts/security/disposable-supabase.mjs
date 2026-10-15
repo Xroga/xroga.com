@@ -131,4 +131,24 @@ verify_enabled = true
   }
   console.log('disposable_supabase_started=true; ephemeral_signing_and_api_keys=true; production_credentials=false');
 }
-if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) await bootstrap();
+export function assertDisposedStack(env, containers, volumes) {
+  if (env.CI !== 'true' || env.XB01_DISPOSABLE_SUPABASE !== '1'
+    || !/^\d+$/.test(env.GITHUB_RUN_ID ?? '') || !/^\d+$/.test(env.GITHUB_RUN_ATTEMPT ?? '')) throw new Error('Disposable teardown verification requires a CI run identity');
+  const suffix = `_xroga-ci-${env.GITHUB_RUN_ID}-${env.GITHUB_RUN_ATTEMPT}`;
+  if ([...containers, ...volumes].some(name => name.trim().endsWith(suffix))) throw new Error('Disposable stack still has containers or data volumes');
+}
+
+function verifyTeardown() {
+  const lists = [['ps','--all','--format','{{.Names}}'],['volume','ls','--format','{{.Name}}']].map(args => {
+    const result = spawnSync('docker', args, {encoding:'utf8',maxBuffer:1024*1024});
+    if (result.error || result.status !== 0) throw new Error('Cannot verify disposable Docker teardown');
+    return result.stdout.split(/\r?\n/).filter(Boolean);
+  });
+  assertDisposedStack(process.env, lists[0], lists[1]);
+  console.log('disposable_supabase_teardown_verified=true; retained_synthetic_audit_data_removed=true');
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) {
+  if (process.argv.includes('--verify-teardown')) verifyTeardown();
+  else await bootstrap();
+}

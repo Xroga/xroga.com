@@ -2,6 +2,48 @@
   "version": "1.0",
   "reviews": [
     {
+      "path": "backend/src/ai/runReconciler.ts",
+      "sourceSha256": "cfb0a5c3f8e3dff46ede12147dfd3155bb1d052ca829a4ed07a0e5db63b3ecb4",
+      "callIds": [
+        "dd0376eeca45f71ec6f1",
+        "bcf07881a45f30e33264",
+        "f992983e637455691c2a",
+        "13c06ef7ac5be117d423"
+      ],
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "Only discovered production consumers are index.ts startup and shutdown. Startup uses the registered stale_run_reconcile authority with a minimum five-minute stale-heartbeat predicate and running status; shutdown uses leased_worker_shutdown with current process active IDs, current worker lease and running status.",
+      "reason": "Fixed-table lifecycle maintenance intentionally spans tenants, never selects customer payloads or invokes providers. Real disposable PostgreSQL tests preserve fresh/terminal rows and reject another worker lease even when its ID is supplied. This exception certifies only these bounded maintenance updates, not all scheduler identity, staged restart or provider exactly-once behavior.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "registered stale-run maintenance preserves fresh and terminal runs across tenants"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "registered shutdown cannot alter an active ID owned by a different worker lease"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerHealthStore.ts",
+      "sourceSha256": "ec92f541a194e0c3c03ef5c12d9afc6e6052aadc7ca9d5e2b6ebf27d6c260b0d",
+      "callIds": [
+        "b7e87dfbceb281533b94",
+        "80f1202165fac508ccee",
+        "05bb5458554f43b160c1",
+        "fe7e6e4fe911ed9a75e1"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Fixed platform model_provider_health table and model_id conflict key hold aggregate counters and enumerated failure classifications, not user prompts or connected-account credentials. Inspected providerRuntime load/save, transition recording, failure normalization and provider health tests.",
+      "reason": "Persistence is best-effort and restoration casts database enum values without runtime validation. Full recording-caller/BYOK account isolation, real database restoration and staged restart coverage remain unverified. In-memory transition tests do not certify these boundaries.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/providerHealthStore.test.ts",
+          "marker": "the restored average latency is not redefined by the first call after a restart"
+        }
+      ]
+    },
+    {
       "path": "backend/src/routes/notifications.ts",
       "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
       "callIds": [
@@ -103,7 +145,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "sourceSha256": "d824127d2f17948c1f15b574822bd04c9213b74b3879b786bf0fd817cba38871",
       "callIds": [
         "c29f9838cc94ecd2c150",
         "c8324d4c80aa24f353c0",
@@ -125,7 +167,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "sourceSha256": "d824127d2f17948c1f15b574822bd04c9213b74b3879b786bf0fd817cba38871",
       "callIds": [
         "c623ba33a954faaa842f",
         "9cce62fe5b1fc0f11fc0",
@@ -152,11 +194,11 @@
         "e11c2862bb93a6eada9d",
         "9690e35f97c3f6ad4c83",
         "4bb8a56c588001094699",
-        "52ec9d66ae18dc20577a",
-        "0d1474ca8f36964d2c57",
-        "d959ae988994d116a843",
-        "751a99635181f8cbdf21",
-        "605260a00c0ace3e28a6"
+        "0ad2e0cd3b98c1acd4bb",
+        "205a4a83cd075791805f",
+        "782440781ac5e90f85ce",
+        "e1f427796d564a6ff7b0",
+        "6f364fb6fcca7439b25e"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
@@ -174,51 +216,51 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "sourceSha256": "d824127d2f17948c1f15b574822bd04c9213b74b3879b786bf0fd817cba38871",
       "callIds": [
         "c0af1c396fb6ca9e4597",
         "971fe2f6c3d58d2d76d6",
         "1f38c90fc54647b030c7",
         "2101b0235277c71aa65e",
-        "a286015573fc5940b0e8",
-        "88e4b9a851c6c26ca866",
-        "1d17c27d76287ece9bea",
-        "e12c16c0432f2664b61b",
-        "324db2edbc740d0b5729",
-        "8fc229bbbc25ee301835",
-        "7ff52f9228b270938222",
-        "c6810c51f53771a132e3",
-        "09d042a451810fdcd6d1",
-        "9b6a2fe8a939d5d33b1b",
-        "10257efce4b2256c4e90",
-        "f1563724f932ba5c202c",
-        "97d57aec8269ac156012",
-        "92b3e8b18fbc260fe564",
-        "1ecae25029f7cd39c8ad",
-        "8b1f056df082dfb33523",
-        "c4c6e35bf26c65cb43a2",
-        "c71af898f89753f8a1b0",
-        "0514ee19793e813b48f8",
-        "a66e71cb1bf84f05f74e",
-        "335b248130d14067bc7d",
-        "e7619825f0894bdabe8a",
-        "426ec98f79a66ebf84f8",
-        "a7a5cfe3282efc6fcef8",
-        "a2babe11ba91d1089f25",
-        "58826710a064894cb356",
-        "03582bca7ac45277d54a",
-        "1794ff8c3282ea3acadb",
-        "c5e33095b9471dae4f32",
-        "fca5dd1df829249fcfc8",
-        "6870bb7015c29b424a94",
-        "b30bcb751d0b1c6199b2",
-        "92aea1ba73976066eefa",
-        "9a93d3eaf9b07dd84ab7",
-        "26e111517c9acf6a2b19",
-        "08d07d1464080e07b5d0",
-        "a98b01e9a417a4513844",
-        "1881f1a3fa0153917a6e",
-        "ea97a401ecb1d2ad3c40"
+        "590c52bfda54194fe8eb",
+        "173b21bf9224b90f54dd",
+        "1d81b815c119932920f1",
+        "c4e4b1f86e09c4eec7d3",
+        "92f017990987783e0e7e",
+        "92a1a7a21d37b5e5012e",
+        "5dbea4d501dc9665f137",
+        "7bf25fd2dcd6b30e8408",
+        "09992d5651d8bc808041",
+        "5643c3e9d8ea85f5dc9d",
+        "b904c4ee6bda465a95e6",
+        "9fb0a0dda6cd9df68a57",
+        "ef301c4fa952e1c0c99f",
+        "e49d2c3a21001e7ab25a",
+        "92ebc665224a17edf874",
+        "6c3d51260a215ffcf932",
+        "f718f35065654f9a6419",
+        "5747cb0a0d0d30435a6c",
+        "d7917b985c531bfdf758",
+        "66c8dd14cd2400f3b213",
+        "7de50390c3ee6d7240d4",
+        "680f0fcfc7d71888096b",
+        "744d8867fb5347a73897",
+        "a8ee5347cb03b7e9ac4c",
+        "b97b773662feebf44ed4",
+        "e90c32be6f93520a41ae",
+        "782ff7b2034434bca914",
+        "7c8b4702d79ba6c021d8",
+        "5507dd0456e143bd0779",
+        "c6e32f4b225b1e433241",
+        "0a40e81066abc06ec8d8",
+        "9fa7ef3fa3fde5bed684",
+        "457a7a93a0e098eea0d8",
+        "81944a773a7a053160da",
+        "bbbe3e135616fd3e24f8",
+        "1d598aa8dbf3d863d578",
+        "baab63ec6b3ec3e8ba28",
+        "fc625e1a44efc0bea319",
+        "f97eeb920dd860dd57a9"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
