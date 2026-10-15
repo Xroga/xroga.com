@@ -80,7 +80,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:490 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:482 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -99,12 +99,12 @@
     "result": "PASS twice on both branch and integrated candidate"
   },
   "verifiedBaseline": {
-    "branch": "c659262feab9f7ad2a24a685ddefef516aa1df41",
-    "integrated": "3790f7ad820da8e1fe8b6e9e3bad49633734425b",
-    "aggregateCi": "38804181937",
-    "isolatedCi": "38804182317",
+    "branch": "88036057743aa3abbcee2ae85b80db18342e701f",
+    "integrated": "07b3d7527ab830d5c0488147f99a18085fe76bb3",
+    "aggregateCi": "38810704245",
+    "isolatedCi": "38810704207",
     "workflows": 11,
-    "securityTests": 64,
+    "securityTests": 69,
     "newSourceCertified": false
   },
   "counts": {
@@ -115,7 +115,7 @@
     "ownerPredicateCandidates": 167,
     "reviewRequired": 0,
     "reviewedCandidates": 677,
-    "unresolvedSafetyCandidates": 490,
+    "unresolvedSafetyCandidates": 482,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -141,6 +141,8 @@
     "isolatedResult": "FAIL SQLSTATE42601 before tests in migration003. CASE expression corrected at319ccde5, new source CI required."
   },
   "newWork": {
+    "adminReadFailures": "IN PROGRESS: strict bounded integer limits, fixed column projections, existing operations redactor and explicit503 failure responses. UI distinguishes log retrieval failure from empty success. Four focused HTTP/middleware tests and backend typecheck pass. No role expansion. Comprehensive arbitrary diagnostic secret handling and final-source regression remain open.",
+    "referralCallerReconciliation": "CALLERS RECONCILED: eight exact profile/link/owner-read/factory sites now SCOPED_BOUNDARY from source tracing and disposable run38810704207 at88036057743aa3abbcee2ae85b80db18342e701f:77 migrations,69 security/concurrency tests,3 authenticated browser tests,zero failures/skips. Two label-relation/summary factory sites remain REVIEWED_GAP. Not whole-service certification or reward qualification acceptance.",
     "groupedIntegration": "VERIFIED_SCOPE at468bd2f98cd41148664b0c8cc453d2c14f11ae3a, disposable run38809008023:69 security/concurrency tests,3 authenticated browser tests,zero failures/skips. Includes GitHub receipt correction, ambiguous chat confirmation denial, referral atomic rollback/race and growth parent relation negatives. Later issued referral-context and foreign summary canary extension still requires exact-source CI.",
     "growthRelations": "IN PROGRESS: segment scope at campaign creation/processing, experiment/assignment tenant consistency, scoped outcome event and event campaign/experiment references. Three focused tests pass. Actual misbound-row and foreign relation negatives plus valid outcome fixture pending disposable CI. Mutable-parent TOCTOU, recipient/approval/lease/idempotency and other parent links remain open.",
     "referrals": "IN PROGRESS: atomic pending referral/profile linking, existing unique referred_id constraint and owner row lock, exact receipt, concurrent profile creation recovery. Local receipt/outage matrix and backend typecheck pass. Two real tests cover concurrent authenticated requests, forged identity, browser RPC denial, no rewards and transaction rollback after profile failure. Fresh/upgrade/exact-source CI pending. No reward or financial account changes.",
@@ -428,7 +430,7 @@
       "existingImplementation": "Existing billing functions and provider reservations",
       "missingBehavior": "Remaining source-bound billing/budget replay, numeric and caller authority gaps",
       "acceptanceTest": "Concurrent replay, foreign account, failed reservation/settlement and compensation",
-      "pendingCandidates": 41,
+      "pendingCandidates": 33,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/providerBudget.ts": [
@@ -469,16 +471,8 @@
           "9ab1c2977596ae4e732a"
         ],
         "backend/src/services/referralService.ts": [
-          "5d597ec498081269f488",
-          "e2c73bf3424617a06286",
-          "70bdc84f64915c28b126",
-          "9c2259647165ca9d72c7",
           "585534b618b55038d21f",
-          "ccefc2a2294c47378b70",
-          "65bb2aff998578ed86e6",
-          "fb4d0a1caadc7d2d5dc2",
-          "66df501264869d6eb8e5",
-          "6fc393e62e052c967f89"
+          "fb4d0a1caadc7d2d5dc2"
         ]
       }
     },
@@ -778,10 +772,10 @@
           "c0648bd26f06aad1cad0"
         ],
         "backend/src/routes/admin.ts": [
-          "8ada21da4e11e8050227",
-          "8cd3a36193db061cb7b3",
-          "b798bb7e364d9e00d7b9",
-          "dd8d90c71a09075b1f17"
+          "900b714de6b6407ee20d",
+          "8f0a6deb321279d0013d",
+          "e433173f7cb36532848e",
+          "ad80bf6a15ca34880fe0"
         ],
         "backend/src/routes/dashboard.ts": [
           "2a2b04bfcdf9721a6f51",

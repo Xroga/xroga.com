@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "468bd2f98cd41148664b0c8cc453d2c14f11ae3a",
+  "source_sha": "88036057743aa3abbcee2ae85b80db18342e701f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12271,7 +12271,7 @@
     },
     {
       "path": "backend/src/routes/admin.ts",
-      "sha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba"
+      "sha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d"
     },
     {
       "path": "backend/src/routes/analytics.ts",
@@ -13079,7 +13079,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
-      "sha256": "64517bc2b247d154242b0d6c3d869b9469bde8f52ff3a9b38df65819b188029c"
+      "sha256": "84f38bc0ab62fc7ffa328f779e7b5641419423cdbbc8a53855060ec1b9b504ce"
     },
     {
       "path": "frontend/src/app/(shell)/admin/page.tsx",

@@ -14957,6 +14957,7 @@
       "callers": [
         "backend/src/index.ts:44",
         "backend/src/middleware/admin.test.ts:4",
+        "backend/src/routes/admin.test.ts:15",
         "backend/src/routes/operations.ts:8"
       ],
       "reachable": true,
@@ -14974,7 +14975,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/middleware/admin.test.ts"
+        "backend/src/middleware/admin.test.ts",
+        "backend/src/routes/admin.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -15050,6 +15052,7 @@
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/lib/authRoundTrips.test.ts",
         "backend/src/middleware/admin.test.ts",
+        "backend/src/routes/admin.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/github.settings.test.ts",
         "backend/src/routes/phase1BusinessPreflight.test.ts",
@@ -15459,7 +15462,8 @@
         "backend/src/hardening/launchHardening.test.ts:44",
         "backend/src/operations/benchmarkAdapter.test.ts:9",
         "backend/src/operations/operationsEngine.test.ts:3",
-        "backend/src/operations/operationsService.ts:4"
+        "backend/src/operations/operationsService.ts:4",
+        "backend/src/routes/admin.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -17543,9 +17547,10 @@
       "id": "surface:9cf56c86a002c17e3dd5",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/admin.ts",
-      "sha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba",
+      "sha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
       "symbols": [
         "api",
+        "boundedLimit",
         "limit",
         "query",
         "router",
@@ -17555,18 +17560,21 @@
       "imports": [
         "../lib/platformReady.js",
         "../middleware/auth.js",
+        "../operations/operationsEngine.js",
         "../security/serviceRoleGuard.js",
         "express"
       ],
       "runtimeImports": [
         "backend/src/lib/platformReady.ts",
+        "backend/src/operations/operationsEngine.ts",
         "backend/src/security/serviceRoleGuard.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:38"
+        "backend/src/index.ts:38",
+        "backend/src/routes/admin.test.ts:16"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -17583,7 +17591,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/routes/admin.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -20952,6 +20962,7 @@
         "backend/src/ai/runTrace.ts:7",
         "backend/src/middleware/admin.ts:3",
         "backend/src/middleware/auth.ts:4",
+        "backend/src/routes/admin.test.ts:5",
         "backend/src/routes/messageShares.ts:5",
         "backend/src/routes/notifications.ts:3",
         "backend/src/routes/profile.ts:4",
@@ -20999,6 +21010,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/buildOutcomeMemory.test.ts",
+        "backend/src/routes/admin.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/security/ownedRunPersistence.test.ts",
         "backend/src/security/ownedTerminalPersistence.test.ts",
@@ -32592,7 +32604,7 @@
       "id": "surface:5471abab40d8143293bc",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
-      "sha256": "64517bc2b247d154242b0d6c3d869b9469bde8f52ff3a9b38df65819b188029c",
+      "sha256": "84f38bc0ab62fc7ffa328f779e7b5641419423cdbbc8a53855060ec1b9b504ce",
       "symbols": [
         "AdminPageClient",
         "OperationsReadiness",
@@ -87260,9 +87272,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b10971f6e421c8731c7d",
+      "id": "registration:556f7fc572ddfede8620",
       "sourcePath": "backend/src/routes/admin.ts",
-      "line": 8,
+      "line": 16,
       "receiver": "router",
       "method": "get",
       "path": "/platform-ready",
@@ -87272,9 +87284,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c766e6f7ed0fd170e085",
+      "id": "registration:e78b6bca5c3e08c8e182",
       "sourcePath": "backend/src/routes/admin.ts",
-      "line": 12,
+      "line": 20,
       "receiver": "router",
       "method": "get",
       "path": "/errors",
@@ -87284,9 +87296,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:bf580d2617ed8e48a5f7",
+      "id": "registration:a60a2d103a0206eac8b5",
       "sourcePath": "backend/src/routes/admin.ts",
-      "line": 36,
+      "line": 48,
       "receiver": "router",
       "method": "get",
       "path": "/deployments",
@@ -91031,10 +91043,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:013e464269f0d39b9191",
-      "registrationId": "registration:b10971f6e421c8731c7d",
+      "id": "route:56f2d7babeedffe01563",
+      "registrationId": "registration:556f7fc572ddfede8620",
       "sourcePath": "backend/src/routes/admin.ts",
-      "line": 8,
+      "line": 16,
       "method": "GET",
       "path": "/api/admin/platform-ready",
       "mountChain": [
@@ -91050,10 +91062,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5e25b8f09931d528cf21",
-      "registrationId": "registration:c766e6f7ed0fd170e085",
+      "id": "route:948d8a4f8a3dd07be450",
+      "registrationId": "registration:e78b6bca5c3e08c8e182",
       "sourcePath": "backend/src/routes/admin.ts",
-      "line": 12,
+      "line": 20,
       "method": "GET",
       "path": "/api/admin/errors",
       "mountChain": [
@@ -91069,10 +91081,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0f0d84dfcddc9901a2aa",
-      "registrationId": "registration:bf580d2617ed8e48a5f7",
+      "id": "route:8fa03f75e53d8b538f2b",
+      "registrationId": "registration:a60a2d103a0206eac8b5",
       "sourcePath": "backend/src/routes/admin.ts",
-      "line": 36,
+      "line": 48,
       "method": "GET",
       "path": "/api/admin/deployments",
       "mountChain": [
@@ -95275,9 +95287,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:37b6385708f1160cdc3e",
+      "id": "finding:22f9ec9c23a2e962e08e",
       "sourcePath": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
-      "line": 101,
+      "line": 104,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -98348,16 +98360,16 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:b266f9723f56c16899de",
+      "id": "frontend-call:9220dd5ed0b2b77d2704",
       "sourcePath": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
-      "line": 44,
+      "line": 45,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:ef45d5d5164922fad44e",
+      "id": "frontend-call:976721dbaa7c4ade22d7",
       "sourcePath": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
-      "line": 45,
+      "line": 46,
       "callee": "fetch",
       "reachable": true
     },
@@ -101974,6 +101986,13 @@
       "id": "test-suite:08266c1d005e132f3a0e",
       "sourcePath": "backend/src/organicIntelligence/organicIntelligence.test.ts",
       "declaredTests": 27,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:0a8c18b42ddcbb9e471b",
+      "sourcePath": "backend/src/routes/admin.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

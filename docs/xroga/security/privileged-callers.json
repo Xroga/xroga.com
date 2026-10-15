@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "0ac365a6d5b54096bf96509525f2944bcdcafe57cff467b34fbe6042033d1981",
+  "reviewRegistrySha256": "92992473f2b0ea76ecea2e51074b23de51b448e8595dd86b2732e193ef76107c",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -12,16 +12,16 @@
     "ownerPredicateCandidates": 167,
     "reviewRequired": 0,
     "reviewedCandidates": 677,
-    "unresolvedSafetyCandidates": 490,
+    "unresolvedSafetyCandidates": 482,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 43,
+    "SCOPED_BOUNDARY": 51,
     "NARROW_EXCEPTION": 8,
     "NOT_PERSISTENCE": 136,
-    "REVIEWED_GAP": 490
+    "REVIEWED_GAP": 482
   },
   "callers": [
     {
@@ -6611,85 +6611,101 @@
       }
     },
     {
-      "id": "8ada21da4e11e8050227",
+      "id": "900b714de6b6407ee20d",
       "path": "backend/src/routes/admin.ts",
-      "line": 18,
+      "line": 30,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba",
+      "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
       "semanticReview": {
         "authority": "Index mounts this router behind authMiddleware and adminMiddleware. Fixed named global exceptions read system_errors and deployment_status, with no writes or client-selected table.",
-        "reason": "The read authorization is explicit, but unrestricted diagnostic/metadata columns, deployment secret redaction, malformed negative limits and false-empty success on database outage remain unresolved. Named exceptions do not resolve these gaps.",
+        "reason": "Fixed malformed/negative limits, raw metadata/wildcard projections and false-empty outage success. Existing operations redactor filters known secret formats in selected diagnostic strings. Four focused route/middleware tests and backend typecheck pass, including real HTTP ordinary-role denial, bounded query construction and sanitized503 errors. Final-source integration and comprehensive arbitrary free-text secret disclosure remain unresolved. Named exceptions and pattern redaction are not universal secrecy guarantees.",
         "evidence": [
           {
             "path": "backend/src/routes/admin.ts",
             "marker": "authorized_platform_errors"
+          },
+          {
+            "path": "backend/src/routes/admin.test.ts",
+            "marker": "admin diagnostics deny non-admins"
           }
         ]
       }
     },
     {
-      "id": "8cd3a36193db061cb7b3",
+      "id": "8f0a6deb321279d0013d",
       "path": "backend/src/routes/admin.ts",
-      "line": 19,
+      "line": 31,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "system_errors",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba",
+      "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
       "semanticReview": {
         "authority": "Index mounts this router behind authMiddleware and adminMiddleware. Fixed named global exceptions read system_errors and deployment_status, with no writes or client-selected table.",
-        "reason": "The read authorization is explicit, but unrestricted diagnostic/metadata columns, deployment secret redaction, malformed negative limits and false-empty success on database outage remain unresolved. Named exceptions do not resolve these gaps.",
+        "reason": "Fixed malformed/negative limits, raw metadata/wildcard projections and false-empty outage success. Existing operations redactor filters known secret formats in selected diagnostic strings. Four focused route/middleware tests and backend typecheck pass, including real HTTP ordinary-role denial, bounded query construction and sanitized503 errors. Final-source integration and comprehensive arbitrary free-text secret disclosure remain unresolved. Named exceptions and pattern redaction are not universal secrecy guarantees.",
         "evidence": [
           {
             "path": "backend/src/routes/admin.ts",
             "marker": "authorized_platform_errors"
+          },
+          {
+            "path": "backend/src/routes/admin.test.ts",
+            "marker": "admin diagnostics deny non-admins"
           }
         ]
       }
     },
     {
-      "id": "b798bb7e364d9e00d7b9",
+      "id": "e433173f7cb36532848e",
       "path": "backend/src/routes/admin.ts",
-      "line": 39,
+      "line": 52,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba",
+      "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
       "semanticReview": {
         "authority": "Index mounts this router behind authMiddleware and adminMiddleware. Fixed named global exceptions read system_errors and deployment_status, with no writes or client-selected table.",
-        "reason": "The read authorization is explicit, but unrestricted diagnostic/metadata columns, deployment secret redaction, malformed negative limits and false-empty success on database outage remain unresolved. Named exceptions do not resolve these gaps.",
+        "reason": "Fixed malformed/negative limits, raw metadata/wildcard projections and false-empty outage success. Existing operations redactor filters known secret formats in selected diagnostic strings. Four focused route/middleware tests and backend typecheck pass, including real HTTP ordinary-role denial, bounded query construction and sanitized503 errors. Final-source integration and comprehensive arbitrary free-text secret disclosure remain unresolved. Named exceptions and pattern redaction are not universal secrecy guarantees.",
         "evidence": [
           {
             "path": "backend/src/routes/admin.ts",
             "marker": "authorized_platform_errors"
+          },
+          {
+            "path": "backend/src/routes/admin.test.ts",
+            "marker": "admin diagnostics deny non-admins"
           }
         ]
       }
     },
     {
-      "id": "dd8d90c71a09075b1f17",
+      "id": "ad80bf6a15ca34880fe0",
       "path": "backend/src/routes/admin.ts",
-      "line": 40,
+      "line": 53,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "deployment_status",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba",
+      "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
       "semanticReview": {
         "authority": "Index mounts this router behind authMiddleware and adminMiddleware. Fixed named global exceptions read system_errors and deployment_status, with no writes or client-selected table.",
-        "reason": "The read authorization is explicit, but unrestricted diagnostic/metadata columns, deployment secret redaction, malformed negative limits and false-empty success on database outage remain unresolved. Named exceptions do not resolve these gaps.",
+        "reason": "Fixed malformed/negative limits, raw metadata/wildcard projections and false-empty outage success. Existing operations redactor filters known secret formats in selected diagnostic strings. Four focused route/middleware tests and backend typecheck pass, including real HTTP ordinary-role denial, bounded query construction and sanitized503 errors. Final-source integration and comprehensive arbitrary free-text secret disclosure remain unresolved. Named exceptions and pattern redaction are not universal secrecy guarantees.",
         "evidence": [
           {
             "path": "backend/src/routes/admin.ts",
             "marker": "authorized_platform_errors"
+          },
+          {
+            "path": "backend/src/routes/admin.test.ts",
+            "marker": "admin diagnostics deny non-admins"
           }
         ]
       }
@@ -12251,11 +12267,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
         "authority": "All three referral service factories require the existing issued TenantContext and derive owner from that immutable context. Only authenticated referrals routes call the exported helpers, and those routes require req.tenantContext. JSON objects, raw strings and cloned contexts fail before privileged client creation.",
-        "reason": "Focused forged-context and exact persistence receipt negatives pass. Source tracing finds only authMiddleware-mounted routes as production callers. Actual summary foreign reward canary and current-context concurrency integration remain pending. No broad Command007 or referral qualification certification.",
+        "reason": "Profile creation and referral application factories have source-traced authMiddleware-mounted callers, explicit owner predicates and server-derived RPC owner. Focused forged-context negatives pass before client creation. Disposable run38810704207 at88036057743aa3abbcee2ae85b80db18342e701f verifies current-context concurrent requests, foreign actor denial and transactional rollback. The summary factory remains unresolved separately because its display-label relation read needs independent evidence. No broad Command007 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/referrals.ts",
@@ -12276,15 +12292,19 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
-        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
+        "reason": "These four calls only create/read the issued actor profile or read actor-owned referrals/rewards. Verified at88036057743aa3abbcee2ae85b80db18342e701f by disposable run38810704207:69 security/concurrency tests and3 browser tests, zero failures/skips. Foreign query/body actor ignored, foreign reward canary excluded, competing profile creation recovered and foreign referrer unchanged. No reward grant occurs. Display-label relation trust remains a separate unresolved caller. This disposition is a narrow tenant persistence boundary, not complete reward qualification, abuse prevention or production schema certification.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
             "marker": "referral eligibility failure denies writes"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real referral linking serializes concurrent requests"
           }
         ]
       }
@@ -12297,15 +12317,19 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
-        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
+        "reason": "These four calls only create/read the issued actor profile or read actor-owned referrals/rewards. Verified at88036057743aa3abbcee2ae85b80db18342e701f by disposable run38810704207:69 security/concurrency tests and3 browser tests, zero failures/skips. Foreign query/body actor ignored, foreign reward canary excluded, competing profile creation recovered and foreign referrer unchanged. No reward grant occurs. Display-label relation trust remains a separate unresolved caller. This disposition is a narrow tenant persistence boundary, not complete reward qualification, abuse prevention or production schema certification.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
             "marker": "referral eligibility failure denies writes"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real referral linking serializes concurrent requests"
           }
         ]
       }
@@ -12318,11 +12342,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
         "authority": "Exact-owner profile re-read after a unique creation race and apply_referral_code_atomic RPC. Only routes/referrals.ts supplies the issued request context behind authMiddleware. The service-only function serializes the owner profile, denies existing/self links and commits pending referral evidence and profile linkage together without rewards.",
-        "reason": "Local receipt/outage tests pass. Real concurrency, role denial and post-insert profile-failure rollback cases are implemented but await CI. Entire referral qualification/abuse and observed production schema remain uncertified.",
+        "reason": "Verified at88036057743aa3abbcee2ae85b80db18342e701f, disposable run38810704207. Concurrent authenticated requests produce exactly one pending link, foreign actor input cannot redirect ownership, referrer and rewards remain unchanged, browser roles cannot invoke the function and forced post-insert failure rolls back linkage. Exact-owner profile reread recovers a competing create without accepting another owner. Focused unknown/error receipt tests deny success. No external action or reward grant. Production parity and business qualification remain separate unverified obligations.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
@@ -12331,6 +12355,10 @@
           {
             "path": "supabase/migrations/20261016000300_atomic_referral_link.sql",
             "marker": "apply_referral_code_atomic"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real referral transaction rolls back its insert"
           }
         ]
       }
@@ -12346,16 +12374,12 @@
       "review": "REVIEWED_GAP",
       "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
-        "authority": "All three referral service factories require the existing issued TenantContext and derive owner from that immutable context. Only authenticated referrals routes call the exported helpers, and those routes require req.tenantContext. JSON objects, raw strings and cloned contexts fail before privileged client creation.",
-        "reason": "Focused forged-context and exact persistence receipt negatives pass. Source tracing finds only authMiddleware-mounted routes as production callers. Actual summary foreign reward canary and current-context concurrency integration remain pending. No broad Command007 or referral qualification certification.",
+        "authority": "Issued authenticated context scopes the summary referrals and reward rows. The profiles display-label query derives IDs from those actor-owned referral rows, not request input.",
+        "reason": "Retained gap for corrupt or mismatched referral relation trust and display-label disclosure. Existing foreign reward and profile canaries do not independently prove this label read. No blanket referral-service certification.",
         "evidence": [
           {
-            "path": "backend/src/routes/referrals.ts",
-            "marker": "requireTenantContext(req.tenantContext)"
-          },
-          {
-            "path": "backend/src/services/referralService.failure.test.ts",
-            "marker": "TENANT_AUTH_REQUIRED"
+            "path": "backend/src/services/referralService.ts",
+            "marker": "select('id,display_name').in('id', ids)"
           }
         ]
       }
@@ -12368,15 +12392,19 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "referrals",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
-        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
+        "reason": "These four calls only create/read the issued actor profile or read actor-owned referrals/rewards. Verified at88036057743aa3abbcee2ae85b80db18342e701f by disposable run38810704207:69 security/concurrency tests and3 browser tests, zero failures/skips. Foreign query/body actor ignored, foreign reward canary excluded, competing profile creation recovered and foreign referrer unchanged. No reward grant occurs. Display-label relation trust remains a separate unresolved caller. This disposition is a narrow tenant persistence boundary, not complete reward qualification, abuse prevention or production schema certification.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
             "marker": "referral eligibility failure denies writes"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real referral linking serializes concurrent requests"
           }
         ]
       }
@@ -12389,15 +12417,19 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "referral_rewards",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
         "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
-        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
+        "reason": "These four calls only create/read the issued actor profile or read actor-owned referrals/rewards. Verified at88036057743aa3abbcee2ae85b80db18342e701f by disposable run38810704207:69 security/concurrency tests and3 browser tests, zero failures/skips. Foreign query/body actor ignored, foreign reward canary excluded, competing profile creation recovered and foreign referrer unchanged. No reward grant occurs. Display-label relation trust remains a separate unresolved caller. This disposition is a narrow tenant persistence boundary, not complete reward qualification, abuse prevention or production schema certification.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
             "marker": "referral eligibility failure denies writes"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real referral linking serializes concurrent requests"
           }
         ]
       }
@@ -12413,12 +12445,12 @@
       "review": "REVIEWED_GAP",
       "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
-        "authority": "Mounted /api/referrals requires authMiddleware and an issued req.tenantContext, never body/query identity. Both exported services and internal ensureProfile use getTenantSupabaseAdmin(context). Profile/reward reads constrain context.userId. Summary selects public display labels only for linked referred IDs. Code lookup intentionally resolves the public referrer code, denies self-referrals and links only the authenticated referred actor.",
-        "reason": "Referral/profile writes now use one service-only transaction with owner-row locking and the existing unique referred_id constraint. Profile creation recovers an exact-owner23505 winner. Exact atomic receipt required, unknown/error responses deny success. New real concurrency/rollback tests await CI. Code-lookup abuse, corrupt referral relation labels and complete reward qualification remain unresolved. Array.from false-positive retained separately.",
+        "authority": "Issued authenticated context scopes the summary referrals and reward rows. The profiles display-label query derives IDs from those actor-owned referral rows, not request input.",
+        "reason": "Retained gap for corrupt or mismatched referral relation trust and display-label disclosure. Existing foreign reward and profile canaries do not independently prove this label read. No blanket referral-service certification.",
         "evidence": [
           {
-            "path": "backend/src/services/referralService.failure.test.ts",
-            "marker": "referral eligibility failure denies writes"
+            "path": "backend/src/services/referralService.ts",
+            "marker": "select('id,display_name').in('id', ids)"
           }
         ]
       }
@@ -12431,11 +12463,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
         "authority": "All three referral service factories require the existing issued TenantContext and derive owner from that immutable context. Only authenticated referrals routes call the exported helpers, and those routes require req.tenantContext. JSON objects, raw strings and cloned contexts fail before privileged client creation.",
-        "reason": "Focused forged-context and exact persistence receipt negatives pass. Source tracing finds only authMiddleware-mounted routes as production callers. Actual summary foreign reward canary and current-context concurrency integration remain pending. No broad Command007 or referral qualification certification.",
+        "reason": "Profile creation and referral application factories have source-traced authMiddleware-mounted callers, explicit owner predicates and server-derived RPC owner. Focused forged-context negatives pass before client creation. Disposable run38810704207 at88036057743aa3abbcee2ae85b80db18342e701f verifies current-context concurrent requests, foreign actor denial and transactional rollback. The summary factory remains unresolved separately because its display-label relation read needs independent evidence. No broad Command007 certification.",
         "evidence": [
           {
             "path": "backend/src/routes/referrals.ts",
@@ -12456,11 +12488,11 @@
       "kind": "RPC_CANDIDATE",
       "target": "apply_referral_code_atomic",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8620787bc3b8c734e9ed8281836aab8d6b30725e28d0d4fbe4e422f38287e8fb",
       "semanticReview": {
         "authority": "Exact-owner profile re-read after a unique creation race and apply_referral_code_atomic RPC. Only routes/referrals.ts supplies the issued request context behind authMiddleware. The service-only function serializes the owner profile, denies existing/self links and commits pending referral evidence and profile linkage together without rewards.",
-        "reason": "Local receipt/outage tests pass. Real concurrency, role denial and post-insert profile-failure rollback cases are implemented but await CI. Entire referral qualification/abuse and observed production schema remain uncertified.",
+        "reason": "Verified at88036057743aa3abbcee2ae85b80db18342e701f, disposable run38810704207. Concurrent authenticated requests produce exactly one pending link, foreign actor input cannot redirect ownership, referrer and rewards remain unchanged, browser roles cannot invoke the function and forced post-insert failure rolls back linkage. Exact-owner profile reread recovers a competing create without accepting another owner. Focused unknown/error receipt tests deny success. No external action or reward grant. Production parity and business qualification remain separate unverified obligations.",
         "evidence": [
           {
             "path": "backend/src/services/referralService.failure.test.ts",
@@ -12469,6 +12501,10 @@
           {
             "path": "supabase/migrations/20261016000300_atomic_referral_link.sql",
             "marker": "apply_referral_code_atomic"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real referral transaction rolls back its insert"
           }
         ]
       }

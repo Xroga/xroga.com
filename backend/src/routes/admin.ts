@@ -2,23 +2,35 @@ import { Router } from 'express';
 import { getGlobalSupabaseAdmin } from '../security/serviceRoleGuard.js';
 import type { AuthRequest } from '../middleware/auth.js';
 import { computePlatformReady } from '../lib/platformReady.js';
+import { redactOperationsValue } from '../operations/operationsEngine.js';
 
 const router = Router();
+
+function boundedLimit(value: unknown, fallback: number, maximum: number): number | null {
+  if (value === undefined) return fallback;
+  if (typeof value !== 'string' || !/^[1-9]\d*$/.test(value)) return null;
+  const limit = Number(value);
+  return Number.isSafeInteger(limit) ? Math.min(limit, maximum) : null;
+}
 
 router.get('/platform-ready', (_req, res) => {
   res.json(computePlatformReady());
 });
 
 router.get('/errors', async (req: AuthRequest, res) => {
-  const limit = Math.min(Number(req.query.limit) || 100, 200);
-  const api = req.query.api ? String(req.query.api) : undefined;
-  const severity = req.query.severity ? String(req.query.severity) : undefined;
+  const limit = boundedLimit(req.query.limit, 100, 200);
+  const api = req.query.api;
+  const severity = req.query.severity;
+  if (limit === null || (api !== undefined && (typeof api !== 'string' || api.length > 100)) ||
+      (severity !== undefined && (typeof severity !== 'string' || !['info', 'warning', 'error', 'critical'].includes(severity)))) {
+    res.status(400).json({ error: 'Invalid log query' }); return;
+  }
 
   try {
     const supabase = getGlobalSupabaseAdmin('authorized_platform_errors');
     let query = supabase
       .from('system_errors')
-      .select('id, timestamp, api, error_message, fallback_used, severity, user_id, run_id, metadata')
+      .select('id, timestamp, api, error_message, fallback_used, severity')
       .order('timestamp', { ascending: false })
       .limit(limit);
 
@@ -27,24 +39,26 @@ router.get('/errors', async (req: AuthRequest, res) => {
 
     const { data, error } = await query;
     if (error) throw error;
-    res.json({ errors: data ?? [], count: data?.length ?? 0 });
+    res.json({ errors: redactOperationsValue(data ?? []), count: data?.length ?? 0 });
   } catch {
-    res.json({ errors: [], count: 0 });
+    res.status(503).json({ error: 'System error records unavailable' });
   }
 });
 
 router.get('/deployments', async (req: AuthRequest, res) => {
-  const limit = Math.min(Number(req.query.limit) || 50, 100);
+  const limit = boundedLimit(req.query.limit, 50, 100);
+  if (limit === null) { res.status(400).json({ error: 'Invalid deployment query' }); return; }
   try {
     const supabase = getGlobalSupabaseAdmin('authorized_deployment_history');
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('deployment_status')
-      .select('*')
+      .select('id, user_id, run_id, target, status, method, created_at, updated_at')
       .order('created_at', { ascending: false })
       .limit(limit);
-    res.json({ deployments: data ?? [] });
+    if (error) throw error;
+    res.json({ deployments: redactOperationsValue(data ?? []) });
   } catch {
-    res.json({ deployments: [] });
+    res.status(503).json({ error: 'Deployment records unavailable' });
   }
 });
 
