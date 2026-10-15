@@ -53,6 +53,7 @@
     "typescript": "5.9.3"
   },
   "overrides": {
+    "pptxgenjs": { "image-size": "2.0.4" },
     "next": {
       "postcss": "8.5.24",
       "sharp": "0.35.5"

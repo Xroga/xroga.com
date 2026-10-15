@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "observedAt": "2026-10-15T15:20:18.367Z",
+  "observedAt": "2026-10-15T17:18:22.294Z",
   "result": "ADVISORY_INVENTORY_NOT_RELEASE_APPROVAL",
   "graphs": [
     {
@@ -8,14 +8,14 @@
       "command": "npm audit --json",
       "cwd": ".",
       "exitCode": 1,
-      "lockSha256": "f68d221902be9bbc97c28bb3193961de07e6cc47fa411222a8e395f66cd2648b",
+      "lockSha256": "4f473689d806e6a9a3125ac78d2e2b0c8ad3d43f608c902f3ecd168a35e8407d",
       "counts": {
         "info": 0,
         "low": 6,
         "moderate": 17,
-        "high": 24,
+        "high": 22,
         "critical": 0,
-        "total": 47
+        "total": 45
       },
       "findings": [
         {
@@ -377,8 +377,10 @@
               "dependency": "@opentelemetry/sdk-logs"
             }
           ],
-          "effects": [],
-          "fixAvailable": true,
+          "effects": [
+            "@cline/core"
+          ],
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -441,10 +443,8 @@
               "dependency": "@opentelemetry/sdk-trace-base"
             }
           ],
-          "effects": [
-            "@cline/core"
-          ],
-          "fixAvailable": false,
+          "effects": [],
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -470,7 +470,7 @@
             "@opentelemetry/exporter-metrics-otlp-http",
             "@opentelemetry/exporter-trace-otlp-http"
           ],
-          "fixAvailable": false,
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -506,7 +506,7 @@
             "@opentelemetry/exporter-trace-otlp-http",
             "@opentelemetry/otlp-exporter-base"
           ],
-          "fixAvailable": false,
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -563,7 +563,7 @@
           "effects": [
             "@opentelemetry/otlp-transformer"
           ],
-          "fixAvailable": false,
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -593,7 +593,7 @@
             "@opentelemetry/exporter-metrics-otlp-http",
             "@opentelemetry/otlp-transformer"
           ],
-          "fixAvailable": false,
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -988,41 +988,6 @@
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
-          "name": "image-size",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "0.6.3 - 2.0.2",
-          "installed": [
-            {
-              "path": "node_modules/image-size",
-              "version": "1.2.1"
-            }
-          ],
-          "via": [
-            {
-              "title": "image-size: JXL and HEIF parsers allow denial of service through infinite loops",
-              "url": "https://github.com/advisories/GHSA-5p2g-fcmc-qvqq",
-              "severity": "high",
-              "range": ">=1.2.0 <=2.0.2"
-            },
-            {
-              "title": "image-size: ICNS parser allows denial of service through an infinite loop",
-              "url": "https://github.com/advisories/GHSA-w3rx-r6r6-pgpr",
-              "severity": "high",
-              "range": ">=0.6.3 <=2.0.2"
-            }
-          ],
-          "effects": [
-            "pptxgenjs"
-          ],
-          "fixAvailable": {
-            "name": "pptxgenjs",
-            "version": "4.0.0",
-            "isSemVerMajor": true
-          },
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
           "name": "jks-js",
           "severity": "high",
           "direct": false,
@@ -1193,30 +1158,6 @@
           "fixAvailable": {
             "name": "tailwindcss",
             "version": "4.3.3",
-            "isSemVerMajor": true
-          },
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
-          "name": "pptxgenjs",
-          "severity": "high",
-          "direct": true,
-          "affectedRange": ">=4.0.1-beta.0",
-          "installed": [
-            {
-              "path": "node_modules/pptxgenjs",
-              "version": "4.0.1"
-            }
-          ],
-          "via": [
-            {
-              "dependency": "image-size"
-            }
-          ],
-          "effects": [],
-          "fixAvailable": {
-            "name": "pptxgenjs",
-            "version": "4.0.0",
             "isSemVerMajor": true
           },
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
@@ -1393,14 +1334,14 @@
       "command": "npm audit --json --workspaces=false",
       "cwd": "frontend",
       "exitCode": 1,
-      "lockSha256": "425563a05c6d29ddf1db50cd9e7d1e948ca0cf845fcd11f90e7160b117a3ce09",
+      "lockSha256": "a40d55c1b6cdbab6cbee333734d57e275ef2e5d98a3de476d35aeef8a8274d44",
       "counts": {
         "info": 0,
         "low": 1,
         "moderate": 4,
-        "high": 9,
+        "high": 7,
         "critical": 0,
-        "total": 14
+        "total": 12
       },
       "findings": [
         {
@@ -1564,41 +1505,6 @@
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
-          "name": "image-size",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "0.6.3 - 2.0.2",
-          "installed": [
-            {
-              "path": "node_modules/image-size",
-              "version": "1.2.1"
-            }
-          ],
-          "via": [
-            {
-              "title": "image-size: JXL and HEIF parsers allow denial of service through infinite loops",
-              "url": "https://github.com/advisories/GHSA-5p2g-fcmc-qvqq",
-              "severity": "high",
-              "range": ">=1.2.0 <=2.0.2"
-            },
-            {
-              "title": "image-size: ICNS parser allows denial of service through an infinite loop",
-              "url": "https://github.com/advisories/GHSA-w3rx-r6r6-pgpr",
-              "severity": "high",
-              "range": ">=0.6.3 <=2.0.2"
-            }
-          ],
-          "effects": [
-            "pptxgenjs"
-          ],
-          "fixAvailable": {
-            "name": "pptxgenjs",
-            "version": "4.0.0",
-            "isSemVerMajor": true
-          },
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
           "name": "katex",
           "severity": "low",
           "direct": true,
@@ -1698,30 +1604,6 @@
           "fixAvailable": {
             "name": "tailwindcss",
             "version": "4.3.3",
-            "isSemVerMajor": true
-          },
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
-          "name": "pptxgenjs",
-          "severity": "high",
-          "direct": true,
-          "affectedRange": ">=4.0.1-beta.0",
-          "installed": [
-            {
-              "path": "node_modules/pptxgenjs",
-              "version": "4.0.1"
-            }
-          ],
-          "via": [
-            {
-              "dependency": "image-size"
-            }
-          ],
-          "effects": [],
-          "fixAvailable": {
-            "name": "pptxgenjs",
-            "version": "4.0.0",
             "isSemVerMajor": true
           },
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
@@ -2173,8 +2055,10 @@
               "dependency": "@opentelemetry/sdk-metrics"
             }
           ],
-          "effects": [],
-          "fixAvailable": true,
+          "effects": [
+            "@cline/core"
+          ],
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2205,10 +2089,8 @@
               "dependency": "@opentelemetry/sdk-trace-base"
             }
           ],
-          "effects": [
-            "@cline/core"
-          ],
-          "fixAvailable": false,
+          "effects": [],
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {

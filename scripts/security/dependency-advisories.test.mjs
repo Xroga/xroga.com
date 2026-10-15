@@ -7,6 +7,36 @@ import { readFileSync } from 'node:fs';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 
+test('PptxGenJS receiver uses patched image-size and rejects zero-length image records in bounded time', () => {
+  const pptx = createRequire(require.resolve('pptxgenjs'));
+  for (const file of ['../../package-lock.json', '../../frontend/package-lock.json']) {
+    const lock = JSON.parse(readFileSync(new URL(file, import.meta.url), 'utf8'));
+    const receivers = Object.entries(lock.packages).filter(([path]) => path.endsWith('node_modules/image-size'));
+    assert.ok(receivers.length > 0);
+    for (const [, pkg] of receivers) assert.equal(pkg.version, '2.0.4');
+  }
+  // PptxGenJS 4.0.1 declares this dependency but its shipped CJS/ESM code
+  // doesn't import it. Fail on new consumers until their ABI is reviewed.
+  const cjs = pptx.resolve('pptxgenjs');
+  for (const file of [cjs, cjs.replace('pptxgen.cjs.js', 'pptxgen.es.js')]) {
+    assert.doesNotMatch(readFileSync(file, 'utf8'), /(?:require\s*\(|from\s+|import\s*\()["']image-size/);
+  }
+  const result = spawnSync(process.execPath, ['-e', `
+    const assert = require('node:assert/strict');
+    const { imageSize } = require(process.argv[1]);
+    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aK1kAAAAASUVORK5CYII=', 'base64');
+    assert.equal(imageSize(png).width, 1);
+    const icns = Buffer.alloc(16); icns.write('icns'); icns.writeUInt32BE(16, 4); icns.write('ic07', 8);
+    assert.throws(() => imageSize(icns));
+    const heif = Buffer.alloc(24); heif.writeUInt32BE(16); heif.write('ftyp', 4); heif.write('heic', 8); heif.write('meta', 20);
+    assert.throws(() => imageSize(heif));
+    const jxl = Buffer.alloc(24); jxl.write('JXL ', 4); jxl.write('ftyp', 12); jxl.write('jxl ', 16);
+    assert.throws(() => imageSize(jxl));
+  `, pptx.resolve('image-size')], { encoding: 'utf8', timeout: 3000 });
+  assert.equal(result.error, undefined, 'Malformed image must not block the event loop');
+  assert.equal(result.status, 0, result.stderr);
+});
+
 test('advisory evidence keeps critical paths and unresolved fixes without marking them passing', () => {
   const result = summarizeAudit({auditReportVersion:2,metadata:{vulnerabilities:{critical:1}},vulnerabilities:{fixture:{severity:'critical',isDirect:false,range:'<2',nodes:['node_modules/fixture'],via:[{title:'Synthetic advisory',url:'https://example.invalid/advisory',severity:'critical',range:'<2'}],effects:['consumer'],fixAvailable:false}}}, {packages:{'node_modules/fixture':{version:'1.0.0'}}});
   assert.equal(result.findings[0].installed[0].version,'1.0.0');

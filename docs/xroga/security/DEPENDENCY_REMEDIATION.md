@@ -1,5 +1,13 @@
 # Dependency decisions — not release approval
 
+## PptxGenJS scoped receiver remediation after c08ac476
+
+Root and standalone frontend overrides now select image-size2.0.4 only beneath pptxgenjs. Actual pptxgenjs4.0.1 shipped CJS/ESM bundles do not import image-size. Its browser mapping disables that dependency. Xroga's inspected exportPresentationPptx creates text-only slides. This is a deliberately reviewed major transitive override, not a claim that the image-size1.x and2.x APIs are interchangeable. Version2 uses named exports and a separate file-reading entry point. An executable guard rejects future PptxGenJS runtime imports until compatibility is reviewed again.
+
+The actual resolved2.0.4 parser passes bounded valid-PNG and malformed ICNS/HEIF/JXL tests. All8 dependency advisory fixtures and4 actual DOCX/PDF/XLSX/PPTX export tests pass on Node22.21.1. MIT, Node>=18. Primary advisories: [ICNS zero-length entry](https://github.com/advisories/GHSA-w3rx-r6r6-pgpr), [JXL/HEIF zero-length boxes](https://github.com/advisories/GHSA-5p2g-fcmc-qvqq). Frozen-install and final-source integrated CI remain required.
+
+Fresh three-graph audits: aggregate45/high22/critical0, frontend12/high7/critical0, backend37/high17/critical0. Graph counts overlap. This removes two aggregate high package findings, not all dependency risk. Braces, node-forge and Dify/undici/busboy paths remain open with the earlier actual-tree evidence below. No advisory was waived or hidden. The earlier image-size table row is superseded by this tested candidate.
+
 ## Recheck after ad129eb6, 2026-10-15
 
 Agent dependency-lock run38756490791 failed attempt1 with ECONNRESET fetching playwright-core from registry.npmjs.org. Explicit failed-job rerun attempt2 passed on identical source/locks. This resolves that transient CI failure, not advisory findings. Fresh three-graph audit remains aggregate47/high24/critical0, frontend14/high9/critical0, backend37/high17/critical0. Counts overlap. Registry still reports node-forge1.4.0 and braces3.0.3 as latest, and no image-size1.x newer than1.2.1. Dify1.1.1 is already installed. Its provider-utils3.0.37 dependency introduces undici5; latest same-major3.0.41 still requires undici^5.29.0, so a routine patch update does not remove that vulnerable chain. No blind major override or downgrade was made. Thirty actual Git/Cline/MCP/transport/credential fixtures pass locally with the pinned toolchain, backend build passes, and full new-source CI remains required.
