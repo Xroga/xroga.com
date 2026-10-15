@@ -9,6 +9,7 @@ test('confirmation claims bind owner, reviewed digest and expiry and admit one c
   const digest = 'a'.repeat(64);
   // Deliberately invalid canonical digest stops the admitted fixture before any provider request.
   const row = { id, user_id: userId, status: 'pending', plan_digest: digest,
+    summary: 'fixture', toolkit: 'fixture', risk: 'write',
     expires_at: new Date(Date.now() + 60000).toISOString(),
     plan: { version: '1.0', sessionId: 'trs_fixture', useCase: 'fixture', toolkit: 'fixture',
       toolSlug: 'fixture', arguments: {}, risk: 'write', requiresConfirmation: true,
@@ -24,7 +25,7 @@ test('confirmation claims bind owner, reviewed digest and expiry and admit one c
     const chunks: Buffer[] = [];
     for await (const chunk of req) chunks.push(Buffer.from(chunk));
     const body = chunks.length ? JSON.parse(Buffer.concat(chunks).toString()) : null;
-    let result: unknown = row;
+    let result: unknown = mode === 'misleading-read' ? { ...row, summary: 'Read a harmless document' } : row;
     if (body?.status === 'executing') {
       claims++;
       assert.equal(url.searchParams.get('status'), 'eq.pending');
@@ -34,7 +35,7 @@ test('confirmation claims bind owner, reviewed digest and expiry and admit one c
       if (mode === 'changed' || mode === 'expired' || admitted) result = null;
       else {
         admitted = true;
-        result = { ...row, status: 'executing', ...(mode === 'bad-receipt' ? { plan_digest: 'b'.repeat(64) } : {}) };
+        result = { ...row, status: 'executing', ...(mode === 'bad-receipt' ? { plan_digest: 'b'.repeat(64) } : {}), ...(mode === 'misleading-claim' ? { summary: 'Read a harmless document' } : {}) };
       }
     }
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -47,17 +48,23 @@ test('confirmation claims bind owner, reviewed digest and expiry and admit one c
     assert.ok(address && typeof address !== 'string');
     process.env.SUPABASE_URL = `http://127.0.0.1:${address.port}`;
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-loopback-only';
+    mode = 'misleading-read';
+    await assert.rejects(confirmBusinessAction(userId, id), { code: 'BUSINESS_ACTION_CONFIRMATION_INVALID' });
+    assert.equal(claims, 0, 'Misleading display metadata must be refused before claiming');
     for (mode of ['changed', 'expired']) {
       await assert.rejects(confirmBusinessAction(userId, id), { code: 'BUSINESS_ACTION_CONFIRMATION_ALREADY_USED' });
     }
     mode = 'bad-receipt';
+    await assert.rejects(confirmBusinessAction(userId, id), { code: 'BUSINESS_ACTION_CONFIRMATION_INVALID' });
+    mode = 'misleading-claim';
+    admitted = false;
     await assert.rejects(confirmBusinessAction(userId, id), { code: 'BUSINESS_ACTION_CONFIRMATION_INVALID' });
     mode = 'concurrent';
     admitted = false;
     const outcomes = await Promise.allSettled([confirmBusinessAction(userId, id), confirmBusinessAction(userId, id)]);
     const codes = outcomes.map(outcome => outcome.status === 'rejected' ? outcome.reason.code : 'UNEXPECTED_SUCCESS').sort();
     assert.deepEqual(codes, ['BUSINESS_ACTION_CONFIRMATION_ALREADY_USED', 'BUSINESS_ACTION_PLAN_CHANGED']);
-    assert.equal(claims, 5);
+    assert.equal(claims, 6);
   } finally {
     if (previous.url === undefined) delete process.env.SUPABASE_URL; else process.env.SUPABASE_URL = previous.url;
     if (previous.key === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY; else process.env.SUPABASE_SERVICE_ROLE_KEY = previous.key;

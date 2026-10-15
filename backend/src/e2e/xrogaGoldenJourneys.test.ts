@@ -54,8 +54,8 @@ function canonical(value: unknown): unknown {
 }
 /** Fixture digest follows the existing wire contract; it is NOT a newly issued authority grant. */
 function preparedPlan(): BusinessActionPlan {
-  const unsigned = {version:'1.0' as const,sessionId:SESSION,useCase:'Delete the selected fixture Slack message',toolkit:'slack',toolSlug:TOOL,arguments:{message_id:'fixture-message'},risk:'destructive' as const,requiresConfirmation:true,requiredScopes:['fixture.message.delete'],scopeRequirements:null};
-  return {...unsigned,summary:'Delete fixture message',planDigest:createHash('sha256').update(JSON.stringify(canonical(unsigned))).digest('hex')};
+  const unsigned = {version:'1.0' as const,sessionId:SESSION,useCase:'Delete the selected fixture Slack message',toolkit:'slack',toolSlug:TOOL,arguments:{message_id:'fixture-message'},risk:'destructive' as const,requiresConfirmation:true,requiredScopes:['fixture.message.delete'],scopeRequirements:null,summary:'Delete fixture message'};
+  return {...unsigned,planDigest:createHash('sha256').update(JSON.stringify(canonical(unsigned))).digest('hex')};
 }
 const code = (expected:string)=>(error:unknown)=>Boolean(error&&typeof error==='object'&&(error as {code?:string}).code===expected);
 

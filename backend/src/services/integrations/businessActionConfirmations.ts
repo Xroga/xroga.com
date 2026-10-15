@@ -9,6 +9,7 @@ import {
 
 import {
   executePreparedBusinessAction,
+  verifyPlanDigest,
   type BusinessActionPlan,
   type BusinessActionExecutionOutcome,
 } from './businessAction.js';
@@ -280,6 +281,11 @@ export async function createBusinessActionConfirmation(
   userId: string,
   plan: BusinessActionPlan,
 ): Promise<SafeBusinessActionConfirmation> {
+  if (!isBusinessActionPlan(plan) || !verifyPlanDigest(plan)) {
+    throw new ComposioClientError('The prepared external action changed after planning.', {
+      status: 409, code: 'BUSINESS_ACTION_PLAN_CHANGED',
+    });
+  }
   if (
     !plan.requiresConfirmation
   ) {
@@ -625,7 +631,10 @@ export async function confirmBusinessAction(
       row.plan,
     ) ||
     row.plan.planDigest !==
-      row.plan_digest
+      row.plan_digest ||
+    row.summary !== row.plan.summary ||
+    row.toolkit !== row.plan.toolkit ||
+    row.risk !== row.plan.risk
   ) {
     throw new ComposioClientError(
       'Stored business-action confirmation is invalid.',
@@ -714,6 +723,9 @@ export async function confirmBusinessAction(
     claimedRow.plan.planDigest !==
       claimedRow.plan_digest ||
     claimedRow.plan_digest !== row.plan_digest ||
+    claimedRow.summary !== claimedRow.plan.summary ||
+    claimedRow.toolkit !== claimedRow.plan.toolkit ||
+    claimedRow.risk !== claimedRow.plan.risk ||
     claimedRow.user_id !== userId ||
     claimedRow.id !== id ||
     claimedRow.status !== 'executing'
