@@ -5,7 +5,6 @@
 
 import {
   getUserProviderKey,
-  saveUserProviderKey,
 } from '../integrations/userProviderKeys.js';
 import { resolveExpoProjectId } from './easPublish.js';
 
@@ -205,7 +204,8 @@ export async function syncGooglePlayCredentialsToExpo(opts: {
       );
     }
 
-    await saveUserProviderKey(opts.userId, 'google_play', googleJson).catch(() => undefined);
+    // The original credential was only read, not rotated. Writing it back after
+    // remote work could resurrect a key the user revoked while upload was pending.
 
     return {
       ok: true,

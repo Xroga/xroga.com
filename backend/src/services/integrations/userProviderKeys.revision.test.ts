@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import test from 'node:test';
-import { deleteUserProviderKey, saveUserProviderKey } from './userProviderKeys.js';
+import { deleteUserProviderKey, prepareUserProviderKeyWrite, saveUserProviderKey } from './userProviderKeys.js';
+import { oneClickConnectSupabase } from './supabaseProvision.js';
+import { ensureExpoProjectLinked } from '../publish/easPublish.js';
 
 test('BYOK save carries its admitted revision, rejects a concurrent revoke and permits a fresh reconnect',async()=>{
   let revision=randomUUID(),revoked=true,mode='race';
@@ -28,6 +30,12 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
         revision=randomUUID();revoked=true;res.end('true');
       } else if(path==='/storage/v1/bucket') {
         res.end(JSON.stringify([{id:'xroga-github-tokens',name:'xroga-github-tokens',public:false}]));
+      } else if(path.startsWith('/rest/v1/user_integrations?')) {
+        const provider=new URL(path,'http://fixture').searchParams.get('provider');
+        const row=provider==='eq.apikey_expo'
+          ?{access_token:'enc:'+Buffer.from('fixture:SYNTHETIC_EXPO_TOKEN').toString('base64'),metadata:{}}
+          :{access_token:'',metadata:{revoked:true}};
+        res.end(JSON.stringify([row]));
       } else if(path.startsWith('/storage/')) res.end('{}');
       else {res.statusCode=500;res.end(JSON.stringify({message:'unexpected fixture request'}));}
     });
@@ -59,6 +67,55 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
     assert.equal(revoked,false);assert.notEqual(revision,freshRevision);
     const latest=calls.filter(call=>call.path.endsWith('/save_provider_key_if_current')).at(-1)!;
     assert.equal(latest.body.p_revision,freshRevision);
+    const upstreamAdmission=await prepareUserProviderKeyWrite(user,'openai');
+    await deleteUserProviderKey(user,'openai');
+    const prepareCount=calls.filter(call=>call.path.endsWith('/prepare_provider_key_write')).length;
+    await assert.rejects(saveUserProviderKey(user,'openai','SYNTHETIC_DELAYED_KEY',{writeAdmission:upstreamAdmission}),{code:'CREDENTIAL_WRITE_CONFLICT'});
+    assert.equal(revoked,true);
+    assert.equal(calls.filter(call=>call.path.endsWith('/prepare_provider_key_write')).length,prepareCount,'Delayed work must not reacquire admission');
+    const saveCount=calls.filter(call=>call.path.endsWith('/save_provider_key_if_current')).length;
+    for(const [owner,provider,admission]of [
+      [user,'openai',{...upstreamAdmission}],
+      ['22222222-2222-4222-8222-222222222222','openai',upstreamAdmission],
+      [user,'anthropic',upstreamAdmission],
+    ] as const) {
+      await assert.rejects(saveUserProviderKey(owner,provider,'SYNTHETIC_UNBOUND_KEY',{writeAdmission:admission}),{code:'CREDENTIAL_WRITE_CONFLICT'});
+    }
+    assert.equal(calls.filter(call=>call.path.endsWith('/save_provider_key_if_current')).length,saveCount,'Forged and mismatched handles never reach persistence');
+    const originalFetch=globalThis.fetch;
+    let managementCalls=0;
+    globalThis.fetch=async(input,init)=>{
+      const url=String(input instanceof Request?input.url:input);
+      if(url.startsWith(process.env.SUPABASE_URL!))return originalFetch(input,init);
+      assert.equal(url,'https://api.supabase.com/v1/projects/fixtureproject/api-keys?reveal=true');
+      managementCalls++;
+      const admissions=calls.filter(call=>call.path.endsWith('/prepare_provider_key_write')).slice(-4);
+      assert.deepEqual(new Set(admissions.map(call=>call.body.p_provider)),new Set(['apikey_supabase_url','apikey_supabase_anon','apikey_supabase','apikey_supabase_pat']));
+      await deleteUserProviderKey(user,'supabase_url');
+      return new Response(JSON.stringify([{name:'anon',api_key:'SYNTHETIC_ANON_KEY'},{name:'service_role',api_key:'SYNTHETIC_SERVICE_KEY'}]),{status:200});
+    };
+    try {
+      await assert.rejects(oneClickConnectSupabase({userId:user,accessToken:'SYNTHETIC_PAT',projectRef:'fixtureproject'}),{code:'CREDENTIAL_WRITE_CONFLICT'});
+      assert.equal(managementCalls,1);
+      assert.equal(revoked,true,'Remote key lookup completion cannot undo revocation');
+    } finally {globalThis.fetch=originalFetch;}
+    let expoCalls=0;
+    globalThis.fetch=async(input,init)=>{
+      const url=String(input instanceof Request?input.url:input);
+      if(url.startsWith(process.env.SUPABASE_URL!))return originalFetch(input,init);
+      assert.equal(url,'https://api.expo.dev/graphql');
+      expoCalls++;
+      assert.equal(calls.filter(call=>call.path.endsWith('/prepare_provider_key_write')).at(-1)?.body.p_provider,'apikey_expo_project_id');
+      await deleteUserProviderKey(user,'expo_project_id');
+      return new Response(JSON.stringify({data:{me:{accounts:[{id:'account',name:'fixture',apps:[{id:'fixture-project-id',name:'fixture'}]}]}}}),{status:200});
+    };
+    try {
+      const result=await ensureExpoProjectLinked({userId:user});
+      assert.equal(result.projectId,null);
+      assert.equal(result.error,'ENSURE_FAILED');
+      assert.equal(expoCalls,1);
+      assert.equal(revoked,true,'Expo lookup completion cannot restore a revoked project link');
+    } finally {globalThis.fetch=originalFetch;}
     mode='unavailable';
     const count=calls.filter(call=>call.path.endsWith('/save_provider_key_if_current')).length;
     await assert.rejects(saveUserProviderKey(user,'openai','SYNTHETIC_UNSAVED_KEY'),{message:'Credential could not be saved. Retry shortly.'});

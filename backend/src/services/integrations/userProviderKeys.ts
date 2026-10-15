@@ -295,6 +295,35 @@ export interface UserProviderKeyStatus {
 export interface SaveKeyOptions {
   /** Required when provider is `custom`; optional override for others. */
   envVarName?: string;
+  /** Server-issued before upstream async work, never accepted from request JSON. */
+  writeAdmission?: ProviderKeyWriteAdmission;
+}
+
+export interface ProviderKeyWriteAdmission {
+  readonly userId: string;
+  readonly providerRow: string;
+  readonly envVar: string;
+}
+const issuedWriteAdmissions = new WeakMap<ProviderKeyWriteAdmission, string>();
+
+/** Carry the existing database CAS admission across this process's async work. */
+export async function prepareUserProviderKeyWrite(
+  userId: string,
+  provider: string,
+  opts?: { envVarName?: string },
+): Promise<ProviderKeyWriteAdmission> {
+  const p = normalizeProvider(provider);
+  if (!ALLOWED_SET.has(p)) throw new Error('Unsupported credential provider.');
+  if (p === 'custom' && !opts?.envVarName?.trim()) throw new Error('Custom keys require an env var name (e.g. MY_SERVICE_API_KEY)');
+  const envVar = envVarForProvider(p, opts?.envVarName);
+  const providerRow = `${PROVIDER_PREFIX}${p === 'custom' ? `custom_${envVar.toLowerCase()}` : p}`;
+  const prepared = await getSupabaseAdmin().rpc('prepare_provider_key_write', { p_owner_id: userId, p_provider: providerRow });
+  if (prepared.error || typeof prepared.data !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(prepared.data)) {
+    throw new Error('Credential could not be saved. Retry shortly.');
+  }
+  const admission = Object.freeze({ userId, providerRow, envVar });
+  issuedWriteAdmissions.set(admission, prepared.data);
+  return admission;
 }
 
 export function envVarForProvider(provider: string, override?: string): string {
@@ -353,9 +382,10 @@ export async function saveUserProviderKey(
   const providerRow = `${PROVIDER_PREFIX}${p === 'custom' ? `custom_${envVar.toLowerCase()}` : p}`;
   // Capture before asynchronous bootstrap or persistence. A concurrent revoke or
   // newer save invalidates this exact attempt, including an initially absent row.
-  const prepared = await supabase.rpc('prepare_provider_key_write', { p_owner_id:userId,p_provider:providerRow });
-  if (prepared.error || typeof prepared.data !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(prepared.data)) {
-    throw new Error('Credential could not be saved. Retry shortly.');
+  const admission = opts?.writeAdmission ?? await prepareUserProviderKeyWrite(userId, p, { envVarName: envVar });
+  const revision = issuedWriteAdmissions.get(admission);
+  if (!revision || admission.userId !== userId || admission.providerRow !== providerRow || admission.envVar !== envVar) {
+    throw Object.assign(new Error('Credential write admission does not match this request.'), { code: 'CREDENTIAL_WRITE_CONFLICT' });
   }
   const metadata = {
     type: PUBLISH_ONLY_PROVIDERS.has(p)
@@ -376,7 +406,7 @@ export async function saveUserProviderKey(
   }
 
   const { data:saved,error } = await supabase.rpc('save_provider_key_if_current', {
-    p_owner_id:userId,p_provider:providerRow,p_revision:prepared.data,p_access_token:encrypted,p_metadata:metadata,
+    p_owner_id:userId,p_provider:providerRow,p_revision:revision,p_access_token:encrypted,p_metadata:metadata,
   });
   if (error) throw new Error('Credential could not be saved. Retry shortly.');
   if (saved !== true) throw Object.assign(new Error('Credential changed while saving. Reconnect explicitly and retry.'), {code:'CREDENTIAL_WRITE_CONFLICT'});

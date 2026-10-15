@@ -10,6 +10,7 @@ import pg from 'pg';
 import {
   getUserProviderKey,
   getUserSupabaseStatus,
+  prepareUserProviderKeyWrite,
   saveUserProviderKey,
 } from './userProviderKeys.js';
 
@@ -482,11 +483,14 @@ export async function oneClickConnectSupabase(opts: {
   keysSaved: boolean;
 }> {
   const accessToken = opts.accessToken.trim();
+  const [urlWrite,anonWrite,serviceWrite,patWrite]=await Promise.all(
+    ['supabase_url','supabase_anon','supabase','supabase_pat'].map(provider=>prepareUserProviderKeyWrite(opts.userId,provider)),
+  );
   const keys = await fetchProjectApiKeys(accessToken, opts.projectRef);
-  await saveUserProviderKey(opts.userId, 'supabase_url', keys.url);
-  await saveUserProviderKey(opts.userId, 'supabase_anon', keys.anonKey);
-  await saveUserProviderKey(opts.userId, 'supabase', keys.serviceRoleKey);
-  await saveUserProviderKey(opts.userId, 'supabase_pat', accessToken);
+  await saveUserProviderKey(opts.userId, 'supabase_url', keys.url,{writeAdmission:urlWrite});
+  await saveUserProviderKey(opts.userId, 'supabase_anon', keys.anonKey,{writeAdmission:anonWrite});
+  await saveUserProviderKey(opts.userId, 'supabase', keys.serviceRoleKey,{writeAdmission:serviceWrite});
+  await saveUserProviderKey(opts.userId, 'supabase_pat', accessToken,{writeAdmission:patWrite});
 
   const provision = await provisionUserSupabase({
     projectUrl: keys.url,
