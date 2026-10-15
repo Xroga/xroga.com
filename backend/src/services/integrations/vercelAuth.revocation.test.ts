@@ -13,7 +13,7 @@ test('Vercel authority outages, revocation, public buckets and lost refresh leas
       const path = req.url ?? '';
       calls.push({ path, method: req.method ?? '', body });
       const storage = path.startsWith('/storage/');
-      const fail = mode === 'outage' || (mode === 'cleanup-failure' && storage);
+      const fail = mode === 'outage' || (mode === 'cleanup-failure' && storage && body.includes('vercel.json'));
       res.writeHead(fail ? 400 : 200, { 'Content-Type': 'application/json' });
       if (fail) res.end(JSON.stringify({ message: 'SYNTHETIC_PRIVATE_ERROR', code: '42P01' }));
       else if (path === '/storage/v1/bucket') res.end(JSON.stringify([{ id: 'xroga-github-tokens', public: mode === 'public' }]));

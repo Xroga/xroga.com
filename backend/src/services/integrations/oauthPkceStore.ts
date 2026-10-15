@@ -1,14 +1,19 @@
 /**
- * PKCE / OAuth session store with DB + Supabase Storage fallback.
- * Production often lacks public.user_integrations — OAuth must still complete.
+ * PKCE / OAuth store. The database is authoritative, including revocation.
+ * Legacy mirrors are readable only after a successful empty authority lookup.
  */
 
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
-import { isMissingTableError } from './githubTokenStore.js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 
 const BUCKET = 'xroga-github-tokens';
+
+function assertStorageIdentity(userId: string, provider: string): void {
+  if (!/^[a-zA-Z0-9_-]{1,180}$/.test(userId) || !/^[a-zA-Z0-9_-]{1,180}$/.test(provider)) {
+    throw new Error('Invalid OAuth storage identity');
+  }
+}
 
 export type PkceSession = {
   verifier: string;
@@ -53,12 +58,12 @@ async function uploadJson(path: string, data: unknown): Promise<boolean> {
       }));
     }
     if (error) {
-      console.warn('[oauthPkceStore] upload:', error.message);
+      console.warn('[oauthPkceStore] upload failed');
       return false;
     }
     return true;
   } catch (err) {
-    console.warn('[oauthPkceStore] upload failed:', (err as Error).message);
+    console.warn('[oauthPkceStore] upload failed');
     return false;
   }
 }
@@ -74,21 +79,23 @@ async function downloadJson<T>(path: string): Promise<T | null> {
   }
 }
 
-async function removePath(path: string): Promise<void> {
+async function removePath(path: string): Promise<boolean> {
   try {
     const supabase = getSupabaseAdmin();
-    await supabase.storage.from(BUCKET).remove([path]);
+    const { error } = await supabase.storage.from(BUCKET).remove([path]);
+    return !error;
   } catch {
-    /* ignore */
+    return false;
   }
 }
 
-/** Persist PKCE verifier for authorize → callback. Never blocks OAuth on missing table. */
+/** Persist PKCE verifier only with authoritative database success. */
 export async function storePkceSession(
   userId: string,
   provider: string,
   session: PkceSession,
 ): Promise<void> {
+  assertStorageIdentity(userId, provider);
   if (githubSchemaAutoBootstrapEnabled()) {
     await ensureGithubSchema();
   }
@@ -106,36 +113,12 @@ export async function storePkceSession(
     },
   };
 
-  let { error } = await supabase.from('user_integrations').upsert(row, {
+  const { error } = await supabase.from('user_integrations').upsert(row, {
     onConflict: 'user_id,provider',
   });
 
-  if (error && isMissingTableError(error.message)) {
-    await ensureGithubSchema();
-    await new Promise((r) => setTimeout(r, 400));
-    ({ error } = await supabase.from('user_integrations').upsert(row, {
-      onConflict: 'user_id,provider',
-    }));
-  }
-
-  if (!error) {
-    // Mirror to storage so callback still works if schema cache flakes
-    void uploadJson(pkcePath(userId, provider), session);
-    return;
-  }
-
-  if (isMissingTableError(error.message)) {
-    const ok = await uploadJson(pkcePath(userId, provider), session);
-    if (!ok) {
-      throw new Error(
-        `Could not store OAuth session for ${provider} — database table missing and storage fallback failed`,
-      );
-    }
-    console.warn(`[oauthPkceStore] ${provider} PKCE saved via storage fallback`);
-    return;
-  }
-
-  throw new Error(`Could not store OAuth session: ${error.message}`);
+  if (error) throw new Error('OAuth session could not be saved. Retry shortly.');
+  await uploadJson(pkcePath(userId, provider), session);
 }
 
 export async function loadPkceSession(
@@ -143,6 +126,7 @@ export async function loadPkceSession(
   provider: string,
   expectedState: string,
 ): Promise<PkceSession | null> {
+  assertStorageIdentity(userId, provider);
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('user_integrations')
@@ -182,21 +166,21 @@ export async function loadPkceSession(
 }
 
 export async function clearPkceSession(userId: string, provider: string): Promise<void> {
+  assertStorageIdentity(userId, provider);
   const supabase = getSupabaseAdmin();
-  try {
-    await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', provider);
-  } catch {
-    /* ignore */
-  }
-  await removePath(pkcePath(userId, provider));
+  const { error } = await supabase.from('user_integrations').upsert({ user_id: userId, provider,
+    access_token: '', refresh_token: null, metadata: { revoked: true } }, { onConflict: 'user_id,provider' });
+  if (error) throw new Error('OAuth session revocation could not be recorded. Retry shortly.');
+  if (!(await removePath(pkcePath(userId, provider)))) throw new Error('OAuth session revoked, but legacy cleanup is pending. Retry shortly.');
 }
 
-/** Save OAuth access tokens when user_integrations is unavailable. */
+/** Save OAuth access tokens only after authoritative database persistence. */
 export async function storeProviderToken(
   userId: string,
   provider: string,
   token: StoredProviderToken,
 ): Promise<void> {
+  assertStorageIdentity(userId, provider);
   if (githubSchemaAutoBootstrapEnabled()) {
     await ensureGithubSchema();
   }
@@ -210,47 +194,20 @@ export async function storeProviderToken(
     metadata: token.metadata ?? {},
   };
 
-  let { error } = await supabase.from('user_integrations').upsert(row, {
+  const { error } = await supabase.from('user_integrations').upsert(row, {
     onConflict: 'user_id,provider',
   });
 
-  if (error && isMissingTableError(error.message)) {
-    await ensureGithubSchema();
-    await new Promise((r) => setTimeout(r, 400));
-    ({ error } = await supabase.from('user_integrations').upsert(row, {
-      onConflict: 'user_id,provider',
-    }));
-  }
-
-  if (!error) {
-    void uploadJson(tokenPath(userId, provider), {
-      ...token,
-      updated_at: new Date().toISOString(),
-    });
-    return;
-  }
-
-  if (isMissingTableError(error.message)) {
-    const ok = await uploadJson(tokenPath(userId, provider), {
-      ...token,
-      updated_at: new Date().toISOString(),
-    });
-    if (!ok) {
-      throw new Error(
-        `Could not save ${provider} token — database table missing and storage fallback failed`,
-      );
-    }
-    console.warn(`[oauthPkceStore] ${provider} token saved via storage fallback`);
-    return;
-  }
-
-  throw new Error(error.message);
+  if (error) throw new Error('OAuth connection could not be saved. Retry shortly.');
+  await uploadJson(tokenPath(userId, provider), { ...token, updated_at: new Date().toISOString() });
 }
 
 export async function loadProviderToken(
   userId: string,
   provider: string,
+  options: { authoritativeOnly?: boolean } = {},
 ): Promise<StoredProviderToken | null> {
+  assertStorageIdentity(userId, provider);
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('user_integrations')
@@ -259,7 +216,11 @@ export async function loadProviderToken(
     .eq('provider', provider)
     .maybeSingle();
 
-  if (error || (data && (data.metadata?.revoked === true || !data.access_token?.trim()))) return null;
+  if (error && options.authoritativeOnly) throw new Error('OAuth authority unavailable');
+  if (error || (data && (data.metadata?.revoked === true || !data.access_token?.trim()))) {
+    if (data && options.authoritativeOnly) throw new Error('OAuth authority rejected the stored value');
+    return null;
+  }
   if (data?.access_token?.trim()) {
     return {
       access_token: data.access_token.trim(),
@@ -268,6 +229,7 @@ export async function loadProviderToken(
     };
   }
 
+  if (options.authoritativeOnly) return null;
   const stored = await downloadJson<StoredProviderToken & { updated_at?: string }>(
     tokenPath(userId, provider),
   );
@@ -280,11 +242,10 @@ export async function loadProviderToken(
 }
 
 export async function clearProviderToken(userId: string, provider: string): Promise<void> {
+  assertStorageIdentity(userId, provider);
   const supabase = getSupabaseAdmin();
-  try {
-    await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', provider);
-  } catch {
-    /* ignore */
-  }
-  await removePath(tokenPath(userId, provider));
+  const { error } = await supabase.from('user_integrations').upsert({ user_id: userId, provider,
+    access_token: '', refresh_token: null, metadata: { revoked: true } }, { onConflict: 'user_id,provider' });
+  if (error) throw new Error('OAuth connection revocation could not be recorded. Retry shortly.');
+  if (!(await removePath(tokenPath(userId, provider)))) throw new Error('OAuth connection revoked, but legacy cleanup is pending. Retry shortly.');
 }

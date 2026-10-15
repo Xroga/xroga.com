@@ -1,5 +1,7 @@
 # Xroga OS Batch 01 implementation tracker
 
+Current authoritative continuation is docs/xroga/IMPLEMENTATION_STATUS.md, section Active mission checkpoint, zero additional spending. Earlier sections below are historical evidence, not competing current caller totals or cloud-session findings. Paid staging is not approved. Use regenerated security/privileged-callers.json for exact current dispositions; reviewed gaps are not resolved findings.
+
 ## Avatar persistence continuation
 
 Seven additional frontend profile/role calls have scoped source reviews after tracing cookie-bound publishable clients and auth.uid()-derived role SQL. Eight combined avatar/founder focused tests pass. Current register:392/667 reviewed,275 unreviewed,222 reviewed gaps,497 unresolved safety candidates. No privileged caller is globally certified; full007 remains incomplete.

@@ -1,5 +1,9 @@
 # Revised staging options — proposal only, no infrastructure authorization
 
+## Superseding founder directive, 2026-10-15
+
+Additional infrastructure budget is USD 0. The historical USD 7 option A and USD 9 option B proposals below are NOT approved and must not be provisioned. No paid balance, model credits, plan upgrades or chargeable add-ons may be consumed. Use existing local tools and verified zero-charge CI only. Provider-specific acceptance remains blocked wherever account limits and billing controls cannot establish zero additional cost. Historical estimates remain context, not an active approval request. Do not replace mandatory live-provider proof with a local S3 mock or weaken security gates.
+
 Reviewed 2026-10-14. No resource, token, bucket, DNS record or deployment was created. Disposable Supabase GitHub CI remains the default for automated Auth/PG/Storage verification. This proposal is only for the separate staged rollout and actual private R2 application-delivery gates.
 
 ## Specifications and comparison

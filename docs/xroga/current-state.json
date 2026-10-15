@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "b8b8681cda50a351d0985b1a75bef65e1134b68d",
-    "sourceTimestampUtc": "2026-10-15T20:32:32+05:00",
-    "auditStartedUtc": "2026-10-15T15:34:23.602Z",
+    "sha": "fac82e859a671f789ff7b781e29a5754873d6944",
+    "sourceTimestampUtc": "2026-10-15T20:35:57+05:00",
+    "auditStartedUtc": "2026-10-15T16:39:30.412Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -5791,7 +5791,7 @@
         "backend/src/routes/billing.ts:5",
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:27",
-        "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/security/tenantIsolation.local.integration.ts:29",
         "backend/src/services/BillingService.ts:18",
         "backend/src/services/integrations/businessAction.ts:11",
         "backend/src/services/integrations/businessRead.ts:7"
@@ -21071,7 +21071,7 @@
         "backend/src/routes/billing.ts:3",
         "backend/src/routes/billingWebhook.test.ts:7",
         "backend/src/routes/billingWebhook.ts:3",
-        "backend/src/security/tenantIsolation.local.integration.ts:36",
+        "backend/src/security/tenantIsolation.local.integration.ts:37",
         "backend/src/services/BillingService.test.ts:4"
       ],
       "reachable": true,
@@ -21764,7 +21764,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts:25",
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
-        "backend/src/services/integrations/oauthPkceStore.ts:9",
+        "backend/src/services/integrations/oauthPkceStore.ts:8",
         "backend/src/services/integrations/userProviderKeys.ts:12",
         "backend/src/services/integrations/vercelAuth.ts:9"
       ],
@@ -22737,7 +22737,6 @@
       "callers": [
         "backend/src/security/tenantIsolation.local.integration.ts:24",
         "backend/src/services/integrations/githubAuth.ts:3",
-        "backend/src/services/integrations/oauthPkceStore.ts:8",
         "backend/src/services/integrations/userProviderKeys.ts:11"
       ],
       "reachable": true,
@@ -22820,11 +22819,12 @@
       "id": "surface:949ba325e98bab6b63c3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "625ac0477bf9a899bb82a9141a71c38295c864f143c48e35e3c9dcc75dcea850",
+      "sha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc",
       "symbols": [
         "BUCKET",
         "PkceSession",
         "StoredProviderToken",
+        "assertStorageIdentity",
         "body",
         "clearPkceSession",
         "clearProviderToken",
@@ -22834,7 +22834,6 @@
         "loadPkceSession",
         "loadProviderToken",
         "meta",
-        "ok",
         "pkcePath",
         "removePath",
         "row",
@@ -22848,19 +22847,19 @@
       "imports": [
         "../../config/supabase.js",
         "../../db/ensureGithubSchema.js",
-        "./credentialStorageBucket.js",
-        "./githubTokenStore.js"
+        "./credentialStorageBucket.js"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
         "backend/src/db/ensureGithubSchema.ts",
-        "backend/src/services/integrations/credentialStorageBucket.ts",
-        "backend/src/services/integrations/githubTokenStore.ts"
+        "backend/src/services/integrations/credentialStorageBucket.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.test.ts:6",
         "backend/src/services/integrations/pluginPermissionPolicy.ts:1",
         "backend/src/services/integrations/supabaseAuth.ts:8",
@@ -22873,18 +22872,19 @@
       ],
       "externalProviderDependencies": [],
       "authBoundary": [
+        "backend/src/services/integrations/oauthPkceStore.ts#assertStorageIdentity",
         "backend/src/services/integrations/oauthPkceStore.ts#ensurePrivateOAuthBucket"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/oauthPkceStore.ts:147 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:187 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:255 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:285 (user_id)"
+        "backend/src/services/integrations/oauthPkceStore.ts:131 (user_id)",
+        "backend/src/services/integrations/oauthPkceStore.ts:212 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
         "backend/src/services/integrations/oauthPkceStore.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -22898,7 +22898,7 @@
       "id": "surface:d4b465db7b751a6be58b",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/pluginPermissionPolicy.ts",
-      "sha256": "f75188778667f031d0e490d6aa33407ab9f16eb86cc8a744e60eedc4f9bf6367",
+      "sha256": "22213ba45802e3ff624887a314899739c2f2727b1ae9cc0fd40d8ee475bcd1e5",
       "symbols": [
         "DEFAULT_MODE",
         "PROVIDER",
@@ -22906,7 +22906,6 @@
         "clean",
         "cleanToolkit",
         "cleanToolkitPermissionKey",
-        "error",
         "getUserPluginPermissionMode",
         "isPluginPermissionMode",
         "loadMode",
@@ -22928,7 +22927,8 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/services/integrations/businessAction.ts:38"
+        "backend/src/services/integrations/businessAction.ts:38",
+        "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -22950,7 +22950,9 @@
       ],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/services/integrations/oauthPkceStore.revocation.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -23150,7 +23152,7 @@
         "backend/src/routes/integrations.ts:644",
         "backend/src/routes/integrations.ts:672",
         "backend/src/routes/supabaseOAuth.ts:20",
-        "backend/src/security/tenantIsolation.local.integration.ts:37",
+        "backend/src/security/tenantIsolation.local.integration.ts:38",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.ts:858",
         "backend/src/services/integrations/userProviderKeys.ts:867"
@@ -25213,7 +25215,7 @@
       "callers": [
         "backend/src/lib/r2.ts:3",
         "backend/src/routes/projects.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:31",
+        "backend/src/security/tenantIsolation.local.integration.ts:32",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.ts:6",
         "backend/src/services/storage/projectFiles.ts:6"
@@ -25325,7 +25327,7 @@
       ],
       "callers": [
         "backend/src/routes/projects.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:30",
+        "backend/src/security/tenantIsolation.local.integration.ts:31",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5"
       ],
       "reachable": true,
@@ -25392,7 +25394,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/security/tenantIsolation.integration.test.ts:14",
-        "backend/src/security/tenantIsolation.local.integration.ts:29",
+        "backend/src/security/tenantIsolation.local.integration.ts:30",
         "backend/src/services/memory/buildProjectStore.ts:8",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7"
       ],
@@ -27700,7 +27702,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:29",
-        "backend/src/security/tenantIsolation.local.integration.ts:32",
+        "backend/src/security/tenantIsolation.local.integration.ts:33",
         "backend/src/synthesis/livePreview/access.test.ts:5",
         "backend/src/synthesis/livePreview/store.ts:9"
       ],
@@ -28204,7 +28206,7 @@
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:26",
         "backend/src/routes/projectRuntime.ts:20",
-        "backend/src/security/tenantIsolation.local.integration.ts:35",
+        "backend/src/security/tenantIsolation.local.integration.ts:36",
         "backend/src/synthesis/livePreview/coordinator.ts:27",
         "backend/src/synthesis/livePreview/index.ts:3"
       ],
@@ -101790,7 +101792,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 50,
+      "declaredTests": 51,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101882,6 +101884,13 @@
       "id": "test-suite:7a343d86b87dae6efcdd",
       "sourcePath": "backend/src/services/integrations/managedVercelDeployment.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a1c7917267f1f28b69d7",
+      "sourcePath": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

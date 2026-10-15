@@ -1,5 +1,9 @@
 # Batch 01 staged-security readiness — blocked, no deployment authorization
 
+## Current budget restriction
+
+Founder mandates USD 0 additional infrastructure spending. Paid temporary staging is not approved. Finish independent source/tests and verify existing account limits read-only before any remote test/resource operation. No R2 writes, resource creation, production metadata queries, live key changes or deployments are authorized by this budget directive. The earlier paid proposal below is historical. Local compatibility tests cannot certify actual R2 or production launch readiness.
+
 ## Read-only dashboard observation, 2026-10-15
 
 Cloudflare account `f14d36fd540c59ad410272122edc1a7e` R2 overview lists `xroga-assets`, `xroga-chat-archive`, `xroga-images` and `xroga-websites`, with pagination disabled and displayed zero objects/bytes for each. No `xroga-security-staging` bucket is present in this observed account. Displayed usage is not independent proof of emptiness, isolation or private access. No bucket object, token value or settings were opened or changed. The earlier checkout-only metadata limitation below is superseded by this browser inventory, not by live R2 security acceptance.

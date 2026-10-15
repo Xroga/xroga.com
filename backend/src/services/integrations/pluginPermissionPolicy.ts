@@ -51,6 +51,7 @@ async function loadMode(
     const stored = await loadProviderToken(
       userId,
       provider,
+      { authoritativeOnly: true },
     );
 
     const metadataMode =
@@ -71,13 +72,10 @@ async function loadMode(
     ) {
       return stored.access_token;
     }
-  } catch (error) {
-    console.warn(
-      '[pluginPermissionPolicy] read:',
-      error instanceof Error
-        ? error.message
-        : 'unknown error',
-    );
+    if (stored) return 'always_ask';
+  } catch {
+    console.warn('[pluginPermissionPolicy] authoritative policy unavailable');
+    return 'always_ask';
   }
 
   return null;
@@ -124,7 +122,7 @@ export async function setUserPluginPermissionMode(
     {
       /*
        * This row stores a preference, not a credential. oauthPkceStore is reused
-       * because it already provides user-scoped DB + private Storage fallback.
+       * because it provides user-scoped persistence. Policy reads require DB authority.
        */
       access_token: mode,
       metadata: {

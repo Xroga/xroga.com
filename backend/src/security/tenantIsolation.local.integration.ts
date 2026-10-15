@@ -25,6 +25,7 @@ import { saveGitHubTokenToStorage,getGitHubTokenFromStorage } from '../services/
 import { ensurePrivateOAuthBucket } from '../services/integrations/credentialStorageBucket.js';
 import { clearGitHubConnection, getGitHubToken, saveGitHubConnection } from '../services/integrations/githubAuth.js';
 import { clearVercelConnection, getVercelToken, saveVercelConnection } from '../services/integrations/vercelAuth.js';
+import { clearPkceSession, clearProviderToken, loadPkceSession, loadProviderToken, storePkceSession, storeProviderToken } from '../services/integrations/oauthPkceStore.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
 import { storeProjectFile } from '../services/storage/projectFiles.js';
 import { ownedFile } from '../services/storage/privateFileDelivery.js';
@@ -516,6 +517,29 @@ test('real Vercel refresh persistence cannot overwrite a disconnect or another o
     for(const user of users) await clearVercelConnection(user.id);
     const removed=await admin.storage.from(bucket).remove(users.map(user=>`${user.id}/vercel.json`));
     assert.equal(removed.error,null,'Vercel synthetic mirror cleanup failed');
+  }
+});
+
+test('real shared OAuth revocation survives delayed mirrors and preserves another owner',async()=>{
+  const [owner,other]=users,bucket='xroga-github-tokens',provider='synthetic_oauth',pkce='synthetic_pkce';
+  const session={verifier:'SYNTHETIC_VERIFIER',state:'synthetic-state',redirect_uri:'http://127.0.0.1/callback',created_at:new Date().toISOString()};
+  try {
+    await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_OWNER'});
+    await storeProviderToken(other.id,provider,{access_token:'SYNTHETIC_OTHER'});
+    await storePkceSession(owner.id,pkce,session);
+    await clearProviderToken(owner.id,provider);
+    await clearPkceSession(owner.id,pkce);
+    for(const [path,payload] of [[`${owner.id}/oauth-${provider}.json`,{access_token:'SYNTHETIC_DELAYED'}],[`${owner.id}/pkce-${pkce}.json`,session]] as const){
+      const replay=await admin.storage.from(bucket).upload(path,JSON.stringify(payload),{upsert:true,contentType:'application/json'});assert.equal(replay.error,null);
+    }
+    assert.equal(await loadProviderToken(owner.id,provider),null);
+    assert.equal(await loadPkceSession(owner.id,pkce,session.state),null);
+    assert.equal((await loadProviderToken(other.id,provider))?.access_token,'SYNTHETIC_OTHER');
+    await assert.rejects(clearProviderToken(owner.id,`../${other.id}`),/Invalid OAuth storage identity/);
+    await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_RECONNECTED'});
+    assert.equal((await loadProviderToken(owner.id,provider))?.access_token,'SYNTHETIC_RECONNECTED');
+  } finally {
+    for(const user of users){await clearProviderToken(user.id,provider);await clearPkceSession(user.id,pkce);}
   }
 });
 

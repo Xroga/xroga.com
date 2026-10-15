@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b8b8681cda50a351d0985b1a75bef65e1134b68d",
+  "source_sha": "fac82e859a671f789ff7b781e29a5754873d6944",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12464,7 +12464,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "a30ce227152251f590f28e200317b81b12863d094a200ff96efa9e400537aa96"
+      "sha256": "e41b77dd013408a97c3b6988ea6cab4cebb89c8e9a33582c22e975389686a734"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12544,11 +12544,11 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "625ac0477bf9a899bb82a9141a71c38295c864f143c48e35e3c9dcc75dcea850"
+      "sha256": "e958782940f7f3a0cc19bb971dcff91a98dbc16f5eacacc61ed910e3683584cc"
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
-      "sha256": "f75188778667f031d0e490d6aa33407ab9f16eb86cc8a744e60eedc4f9bf6367"
+      "sha256": "22213ba45802e3ff624887a314899739c2f2727b1ae9cc0fd40d8ee475bcd1e5"
     },
     {
       "path": "backend/src/services/integrations/supabaseAuth.ts",
@@ -17911,35 +17911,42 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 39,
+      "line": 40,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 39,
+      "line": 40,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 243,
+      "line": 244,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 293,
+      "line": 294,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 374,
+      "line": 375,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 525,
       "credentialsInUrl": false
     },
     {
@@ -24036,7 +24043,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 780,
+      "line": 804,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
