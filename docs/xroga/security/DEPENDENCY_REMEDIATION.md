@@ -8,6 +8,8 @@ Every original modified file is SHA256-pinned, every replacement anchor has an e
 
 Local pinned Node22 evidence:18 combined dependency/Cline fixtures pass, including four new patch tests. These cover tamper/idempotency, bounded adversarial brace inputs and cyclic ASTs, real micromatch/fast-glob discovery, Tailwind watcher receiver resolution, RSA malformed nested DER rejection, valid signatures, X509 and jks-js PKCS12 roundtrip. The RSA fixture tests the malformed-DER invariant, not a complete low-exponent exploit. Frozen-install, Docker and final-source repeated branch/integrated CI remain required before marking remediation VERIFIED.
 
+Verification update:4f8c56acdf6b9c90a5ea1147dfd79151bffe6c46 passes frozen workspace/standalone run38806776199 and Docker38806776574. Run38806776471 passes all21 stages twice on that branch and twice on integrated7377b5a5ffc76d49c7dcb4094ddc9055c4062eeb, with sourceTreeMutated:false in all four manifests. The separate real Supabase run passed64 tests and failed the new GitHub fixture setup, recorded separately. This verifies the downstream patch scope, not whole-batch acceptance. Earlier31522451 aggregate was cancelled by the newer push and is not claimed as passing evidence.
+
 Package versions and npm audit reports remain unchanged. The latest version-based counts remain aggregate43/high20/critical0, backend35/high15/critical0 and frontend12/high7/critical0, with overlapping scopes. These20 findings are recorded, not waived. This section supersedes the earlier statement that no reproducible patch candidate exists, but does not declare audit-clean or release acceptance.
 
 ## Version-qualified Undici receiver correction after 3e2748cc, 2026-10-15

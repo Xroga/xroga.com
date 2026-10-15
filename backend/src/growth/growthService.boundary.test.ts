@@ -51,3 +51,46 @@ test('growth replay cannot return another project event and absent replay perfor
   const replay = await service.recordEvent('actor', input);
   assert.equal(replay.duplicate, true); assert.equal(replay.event.id, 'same-project-event'); assert.equal(inserts, 1);
 });
+
+test('growth parent relations reject foreign segments, tenants and events before writes', async () => {
+  const rows: Record<string, Array<Record<string, unknown>>> = {
+    projects: [{ id: 'project', user_id: 'actor' }], profiles: [{ id: 'actor', role: 'member' }],
+    growth_segments: [{ id: 'segment', tenant_id: 'other', project_id: 'other-project', status: 'active' }],
+    growth_campaigns: [{ id: 'campaign', tenant_id: 'actor', project_id: 'project', segment_id: 'segment', status: 'running', channel: 'in_app' }],
+    growth_experiments: [{ id: 'experiment', tenant_id: 'other', project_id: 'project' }],
+    growth_experiment_assignments: [{ id: 'assignment', experiment_id: 'experiment', tenant_id: 'actor', exposed_at: '2026-01-01', growth_experiments: { project_id: 'project', tenant_id: 'other' } }],
+    analytics_events: [{ id: 'event', tenant_id: 'other', project_id: 'other-project', experiment_id: 'experiment' }],
+  };
+  let mutations = 0;
+  const db = { from(table: string) {
+    const filters: Array<[string, unknown]> = []; let payload: unknown;
+    const q = {
+      select() { return q; }, eq(key: string, value: unknown) { filters.push([key, value]); return q; },
+      is() { return q; },
+      insert(value: unknown) { mutations++; payload = value; return q; },
+      upsert(value: unknown) { mutations++; payload = value; return q; },
+      update(value: unknown) { mutations++; payload = value; return q; },
+      async maybeSingle() { return { data: (rows[table] ?? []).find(row => filters.every(([key, value]) => row[key] === value)) ?? null, error: null }; },
+      then(resolve: (value: unknown) => unknown) { return Promise.resolve(resolve({ data: [{ id: 'saved', ...(payload as object) }], error: null })); },
+    }; return q;
+  } };
+  const service = new GrowthService(db as unknown as SupabaseClient);
+  const outcome = { experimentId: 'experiment', assignmentId: 'assignment', eventId: 'event', metricKey: 'fixture' };
+  const denied = { code: 'not_found', statusCode: 404 };
+  const eventInput = { projectId: 'project', name: 'identity.linked.v1', idempotencyKey: 'new-key', environment: 'test' as const, consentState: 'granted' as const, source: 'fixture', evidenceReference: 'fixture' };
+  await assert.rejects(service.recordEvent('actor', { ...eventInput, experimentId: 'experiment' }), denied);
+  await assert.rejects(service.recordEvent('actor', { ...eventInput, campaignId: 'foreign-campaign' }), denied);
+  await assert.rejects(service.createCampaign('actor', { projectId: 'project', segmentId: 'segment', name: 'fixture', channel: 'in_app', templateKey: 'fixture', idempotencyKey: 'fixture' }), denied);
+  await assert.rejects(service.processCampaign('actor', 'campaign'), denied);
+  for (const invoke of [() => service.assignExperiment('actor', 'experiment', 'subject'), () => service.experimentResult('actor', 'experiment'),
+    () => service.exposeExperiment('actor', 'assignment', 'fixture'), () => service.recordExperimentOutcome('actor', outcome)]) await assert.rejects(invoke(), denied);
+  assert.equal(mutations, 0);
+  rows.growth_experiments[0].tenant_id = 'actor';
+  await assert.rejects(service.recordExperimentOutcome('actor', outcome), denied);
+  rows.analytics_events[0] = { id: 'event', tenant_id: 'actor', project_id: 'project', experiment_id: 'different' };
+  await assert.rejects(service.recordExperimentOutcome('actor', outcome), denied);
+  assert.equal(mutations, 0);
+  rows.analytics_events[0].experiment_id = 'experiment';
+  assert.equal((await service.recordExperimentOutcome('actor', outcome)).id, 'saved');
+  assert.equal(mutations, 1);
+});

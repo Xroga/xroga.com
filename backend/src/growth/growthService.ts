@@ -58,6 +58,14 @@ export class GrowthService {
       if (existing.project_id !== input.projectId) throw new GrowthServiceError('idempotency_conflict', 'Event key cannot be reused for this project', 409);
       return { event: existing, duplicate: true };
     }
+    if (input.experimentId) {
+      const experiment = await query<Row | null>(this.db.from('growth_experiments').select('id').eq('id', input.experimentId).eq('tenant_id', tenantId).eq('project_id', input.projectId).maybeSingle(), 'Event experiment unavailable', null);
+      if (!experiment) throw new GrowthServiceError('not_found', 'Event experiment not found', 404);
+    }
+    if (input.campaignId) {
+      const campaign = await query<Row | null>(this.db.from('growth_campaigns').select('id').eq('id', input.campaignId).eq('tenant_id', tenantId).eq('project_id', input.projectId).maybeSingle(), 'Event campaign unavailable', null);
+      if (!campaign) throw new GrowthServiceError('not_found', 'Event campaign not found', 404);
+    }
     const version = Number(input.name.match(/\.v([0-9]+)$/)?.[1] ?? 0);
     const rows = await query<Row[]>(this.db.from('analytics_events').insert({ user_id: userId, tenant_id: tenantId, project_id: input.projectId, event_type: input.name, event_version: version, idempotency_key: input.idempotencyKey, environment: input.environment, anonymous_id: input.anonymousId ?? null, session_id: input.sessionId ?? null, release_id: input.releaseId ?? null, deployment_id: input.deploymentId ?? null, campaign_id: input.campaignId ?? null, referral_id: input.referralId ?? null, experiment_id: input.experimentId ?? null, consent_state: input.consentState, source: input.source.slice(0, 80), evidence_reference: input.evidenceReference.slice(0, 500), metadata: redactGrowthPayload(input.metadata ?? {}), occurred_at: input.occurredAt ?? new Date().toISOString() }).select('*'), 'Event could not be recorded');
     return { event: rows[0], duplicate: false };
@@ -136,6 +144,8 @@ export class GrowthService {
 
   async createCampaign(userId: string, input: { projectId: string; segmentId: string; name: string; channel: 'email'|'in_app'; templateKey: string; idempotencyKey: string }): Promise<{ campaign: Row; action: Row }> {
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
+    const segment = await query<Row | null>(this.db.from('growth_segments').select('id').eq('id', input.segmentId).eq('tenant_id', tenantId).eq('project_id', input.projectId).eq('status', 'active').maybeSingle(), 'Segment unavailable', null);
+    if (!segment) throw new GrowthServiceError('not_found', 'Segment not found', 404);
     if (input.channel === 'email' && !process.env.RESEND_API_KEY && !process.env.BREVO_API_KEY) throw new GrowthServiceError('external_setup_required', 'No email provider is configured', 409);
     const rows = await query<Row[]>(this.db.from('growth_campaigns').insert({ tenant_id: tenantId, project_id: input.projectId, segment_id: input.segmentId, name: input.name, channel: input.channel, status: 'approval_required', template_key: input.templateKey, consent_required: true }).select('*'), 'Campaign could not be stored');
     const campaign = rows[0];
@@ -145,12 +155,14 @@ export class GrowthService {
   }
 
   async processCampaign(userId: string, campaignId: string): Promise<{ queued: number; suppressed: number; duplicate: number }> {
-    const campaign = await query<Row | null>(this.db.from('growth_campaigns').select('*,growth_segments(definition)').eq('id', campaignId).maybeSingle(), 'Campaign unavailable', null);
+    const campaign = await query<Row | null>(this.db.from('growth_campaigns').select('*').eq('id', campaignId).maybeSingle(), 'Campaign unavailable', null);
     if (!campaign) throw new GrowthServiceError('not_found', 'Campaign not found', 404);
     const { tenantId } = await this.access(userId, campaign.project_id, 'manage');
     if (campaign.tenant_id !== tenantId || campaign.status !== 'running') throw new GrowthServiceError('approval_required', 'Campaign requires a verified operations approval', 409);
     if (campaign.channel !== 'in_app') throw new GrowthServiceError('external_setup_required', 'Configured email delivery adapter is required', 409);
-    const states = Array.isArray(campaign.growth_segments?.definition?.lifecycleStates) ? campaign.growth_segments.definition.lifecycleStates : [];
+    const segment = await query<Row | null>(this.db.from('growth_segments').select('definition').eq('id', campaign.segment_id).eq('tenant_id', tenantId).eq('project_id', campaign.project_id).eq('status', 'active').maybeSingle(), 'Segment unavailable', null);
+    if (!segment) throw new GrowthServiceError('not_found', 'Segment not found', 404);
+    const states = Array.isArray(segment.definition?.lifecycleStates) ? segment.definition.lifecycleStates : [];
     const recipients = await query<Row[]>(this.db.from('growth_lifecycle_state').select('subject_id').eq('tenant_id', tenantId).eq('project_id', campaign.project_id).eq('subject_type', 'user').in('lifecycle_state', states).limit(500), 'Segment evaluation failed');
     let queued = 0, suppressed = 0, duplicate = 0;
     for (const recipient of recipients) {
@@ -180,7 +192,8 @@ export class GrowthService {
     const experiment = await query<Row | null>(this.db.from('growth_experiments').select('*').eq('id', experimentId).maybeSingle(), 'Experiment unavailable', null);
     if (!experiment) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
     const { tenantId } = await this.access(userId, experiment.project_id);
-    const existing = await query<Row | null>(this.db.from('growth_experiment_assignments').select('*').eq('experiment_id', experimentId).eq('subject_key', subjectKey).maybeSingle(), 'Assignment unavailable', null);
+    if (experiment.tenant_id !== tenantId) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
+    const existing = await query<Row | null>(this.db.from('growth_experiment_assignments').select('*').eq('experiment_id', experimentId).eq('tenant_id', tenantId).eq('subject_key', subjectKey).maybeSingle(), 'Assignment unavailable', null);
     if (existing) return existing;
     const variant = deterministicVariant({ experimentId, subjectKey, seed: experiment.allocation_seed, variants: experiment.variants });
     const rows = await query<Row[]>(this.db.from('growth_experiment_assignments').insert({ experiment_id: experimentId, tenant_id: tenantId, subject_key: subjectKey, variant }).select('*'), 'Assignment failed');
@@ -188,20 +201,24 @@ export class GrowthService {
   }
 
   async exposeExperiment(userId: string, assignmentId: string, evidenceReference: string): Promise<Row> {
-    const assignment = await query<Row | null>(this.db.from('growth_experiment_assignments').select('*,growth_experiments(project_id)').eq('id', assignmentId).maybeSingle(), 'Assignment unavailable', null);
-    if (!assignment) throw new GrowthServiceError('not_found', 'Assignment not found', 404);
-    await this.access(userId, assignment.growth_experiments.project_id);
-    const rows = await query<Row[]>(this.db.from('growth_experiment_assignments').update({ exposed_at: new Date().toISOString(), evidence_reference: evidenceReference }).eq('id', assignmentId).is('exposed_at', null).select('*'), 'Exposure could not be recorded');
+    const assignment = await query<Row | null>(this.db.from('growth_experiment_assignments').select('*,growth_experiments(project_id,tenant_id)').eq('id', assignmentId).maybeSingle(), 'Assignment unavailable', null);
+    if (!assignment?.growth_experiments) throw new GrowthServiceError('not_found', 'Assignment not found', 404);
+    const { tenantId } = await this.access(userId, assignment.growth_experiments.project_id);
+    if (assignment.tenant_id !== tenantId || assignment.growth_experiments.tenant_id !== tenantId) throw new GrowthServiceError('not_found', 'Assignment not found', 404);
+    const rows = await query<Row[]>(this.db.from('growth_experiment_assignments').update({ exposed_at: new Date().toISOString(), evidence_reference: evidenceReference }).eq('id', assignmentId).eq('tenant_id', tenantId).eq('experiment_id', assignment.experiment_id).is('exposed_at', null).select('*'), 'Exposure could not be recorded');
     if (!rows.length) return assignment;
     return rows[0];
   }
 
   async recordExperimentOutcome(userId: string, input: { experimentId: string; assignmentId: string; eventId: string; metricKey: string }): Promise<Row> {
-    const experiment = await query<Row | null>(this.db.from('growth_experiments').select('project_id').eq('id', input.experimentId).maybeSingle(), 'Experiment unavailable', null);
+    const experiment = await query<Row | null>(this.db.from('growth_experiments').select('project_id,tenant_id').eq('id', input.experimentId).maybeSingle(), 'Experiment unavailable', null);
     if (!experiment) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
-    await this.access(userId, experiment.project_id);
-    const assignment = await query<Row | null>(this.db.from('growth_experiment_assignments').select('id,exposed_at').eq('id', input.assignmentId).eq('experiment_id', input.experimentId).maybeSingle(), 'Assignment unavailable', null);
+    const { tenantId } = await this.access(userId, experiment.project_id);
+    if (experiment.tenant_id !== tenantId) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
+    const assignment = await query<Row | null>(this.db.from('growth_experiment_assignments').select('id,exposed_at').eq('id', input.assignmentId).eq('experiment_id', input.experimentId).eq('tenant_id', tenantId).maybeSingle(), 'Assignment unavailable', null);
     if (!assignment?.exposed_at) throw new GrowthServiceError('invalid_state', 'Outcome requires recorded exposure', 409);
+    const event = await query<Row | null>(this.db.from('analytics_events').select('id').eq('id', input.eventId).eq('tenant_id', tenantId).eq('project_id', experiment.project_id).eq('experiment_id', input.experimentId).maybeSingle(), 'Outcome event unavailable', null);
+    if (!event) throw new GrowthServiceError('not_found', 'Outcome event not found', 404);
     const rows = await query<Row[]>(this.db.from('growth_experiment_outcomes').upsert({ experiment_id: input.experimentId, assignment_id: input.assignmentId, event_id: input.eventId, metric_key: input.metricKey }, { onConflict: 'assignment_id,event_id,metric_key' }).select('*'), 'Experiment outcome failed');
     return rows[0];
   }
@@ -209,9 +226,10 @@ export class GrowthService {
   async experimentResult(userId: string, experimentId: string): Promise<Record<string, unknown>> {
     const experiment = await query<Row | null>(this.db.from('growth_experiments').select('*').eq('id', experimentId).maybeSingle(), 'Experiment unavailable', null);
     if (!experiment) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
-    await this.access(userId, experiment.project_id);
+    const { tenantId } = await this.access(userId, experiment.project_id);
+    if (experiment.tenant_id !== tenantId) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
     const [assignments, outcomes] = await Promise.all([
-      query<Row[]>(this.db.from('growth_experiment_assignments').select('id,variant').eq('experiment_id', experimentId), 'Assignments unavailable'),
+      query<Row[]>(this.db.from('growth_experiment_assignments').select('id,variant').eq('experiment_id', experimentId).eq('tenant_id', tenantId), 'Assignments unavailable'),
       query<Row[]>(this.db.from('growth_experiment_outcomes').select('assignment_id').eq('experiment_id', experimentId), 'Outcomes unavailable'),
     ]);
     const assignmentById = new Map(assignments.map((item) => [item.id, item.variant]));

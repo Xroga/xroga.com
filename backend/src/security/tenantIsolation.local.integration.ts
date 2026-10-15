@@ -662,6 +662,35 @@ test('real growth event replay cannot disclose a different project event',async(
   assert.equal(rows.error,null);assert.deepEqual(rows.data,[{id:created.event.id,project_id:otherProject}]);
 });
 
+test('real growth relation checks reject foreign segments and misbound experiment evidence', async () => {
+  const [owner, foreign] = users, service = new GrowthService(admin);
+  const segment = await insert('growth_segments', { tenant_id: foreign.id, project_id: foreign.project, name: 'Foreign segment', definition: { lifecycleStates: ['activated'] }, status: 'active' });
+  const denied = { code: 'not_found', statusCode: 404 };
+  await assert.rejects(service.createCampaign(owner.id, { projectId: owner.project, segmentId: segment, name: 'Denied campaign', channel: 'in_app', templateKey: 'fixture', idempotencyKey: randomUUID() }), denied);
+  const campaign = await insert('growth_campaigns', { tenant_id: owner.id, project_id: owner.project, segment_id: segment, name: 'Misbound campaign', channel: 'in_app', template_key: 'fixture', status: 'running' });
+  await assert.rejects(service.processCampaign(owner.id, campaign), denied);
+  const messageRows = await admin.from('growth_messages').select('id').eq('campaign_id', campaign);
+  assert.equal(messageRows.error, null); assert.deepEqual(messageRows.data, []);
+  const experiment = await insert('growth_experiments', { tenant_id: foreign.id, project_id: owner.project, key: randomUUID(), variants: [{ key: 'a', weight: 1 }], allocation_seed: 'fixture', minimum_sample_size: 1 });
+  await assert.rejects(service.assignExperiment(owner.id, experiment, 'fixture'), denied);
+  await assert.rejects(service.experimentResult(owner.id, experiment), denied);
+  const assignment = await insert('growth_experiment_assignments', { experiment_id: experiment, tenant_id: owner.id, subject_key: 'fixture', variant: 'a', exposed_at: new Date().toISOString() });
+  await assert.rejects(service.exposeExperiment(owner.id, assignment, 'fixture'), denied);
+  const input = { experimentId: experiment, assignmentId: assignment, eventId: randomUUID(), metricKey: 'fixture' };
+  await assert.rejects(service.recordExperimentOutcome(owner.id, input), denied);
+  // Repair only this synthetic fixture's parent to exercise the next boundary.
+  assert.equal((await admin.from('growth_experiments').update({ tenant_id: owner.id }).eq('id', experiment)).error, null);
+  await assert.rejects(service.recordEvent(foreign.id, { projectId: foreign.project, name: 'identity.linked.v1', idempotencyKey: randomUUID(), environment: 'test', consentState: 'granted', source: 'fixture', evidenceReference: 'fixture', experimentId: experiment }), denied);
+  await assert.rejects(service.recordEvent(foreign.id, { projectId: foreign.project, name: 'identity.linked.v1', idempotencyKey: randomUUID(), environment: 'test', consentState: 'granted', source: 'fixture', evidenceReference: 'fixture', campaignId: campaign }), denied);
+  const event = await insert('analytics_events', { user_id: foreign.id, tenant_id: foreign.id, project_id: foreign.project, event_type: 'identity.linked.v1', idempotency_key: randomUUID(), environment: 'test', experiment_id: experiment });
+  await assert.rejects(service.recordExperimentOutcome(owner.id, { ...input, eventId: event }), denied);
+  const outcomes = await admin.from('growth_experiment_outcomes').select('id').eq('experiment_id', experiment);
+  assert.equal(outcomes.error, null); assert.deepEqual(outcomes.data, []);
+  const ownEvent = await service.recordEvent(owner.id, { projectId: owner.project, name: 'identity.linked.v1', idempotencyKey: randomUUID(), environment: 'test', consentState: 'granted', source: 'fixture', evidenceReference: 'fixture', experimentId: experiment });
+  const accepted = await service.recordExperimentOutcome(owner.id, { ...input, eventId: ownEvent.event.id });
+  assert.equal(accepted.event_id, ownEvent.event.id); assert.equal(accepted.assignment_id, assignment);
+});
+
 test('real durable creation cannot overwrite existing same-owner or foreign runs',async()=>{
   const [owner,other]=users;
   for(const existingOwner of [owner,other]) {

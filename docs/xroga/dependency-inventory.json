@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "704a402e22b77eea45adb05224bef7db4d47fc7e",
+  "source_sha": "06bb73194c93921e6279d65c95e7023f620761ee",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11915,7 +11915,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c"
+      "sha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915"
     },
     {
       "path": "backend/src/index.ts",
@@ -12491,7 +12491,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "8b293dfb1e10a58556bf22583684046d513f398458e35b38ba7a820a772d0a52"
+      "sha256": "4c24b21d0e8cb3a3c36b83ed20444e4d9fb97d38843e9eccc19d1eac9a21aa1c"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -23157,7 +23157,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "line": 217,
+      "line": 235,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24116,7 +24116,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 988,
+      "line": 1017,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -1,18 +1,18 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "3c3485f3f7ef0f1e4aa481003615db20c8d21c16eff3a059e7cef8a409ca3ddf",
+  "reviewRegistrySha256": "e71951c94c76ab996331a8c43325492a7a6990e2685207d9614cf1f5e666cf77",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 161,
-    "persistenceCandidates": 672,
+    "persistenceCandidates": 677,
     "ownerPredicateCandidates": 167,
     "reviewRequired": 0,
-    "reviewedCandidates": 672,
-    "unresolvedSafetyCandidates": 485,
+    "reviewedCandidates": 677,
+    "unresolvedSafetyCandidates": 490,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -21,7 +21,7 @@
     "SCOPED_BOUNDARY": 43,
     "NARROW_EXCEPTION": 8,
     "NOT_PERSISTENCE": 136,
-    "REVIEWED_GAP": 485
+    "REVIEWED_GAP": 490
   },
   "callers": [
     {
@@ -3025,10 +3025,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3050,10 +3050,10 @@
       "target": "projects",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3075,10 +3075,10 @@
       "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3100,10 +3100,10 @@
       "target": "growth_recommendations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3125,10 +3125,10 @@
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3150,10 +3150,10 @@
       "target": "growth_messages",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3175,10 +3175,10 @@
       "target": "growth_segments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3200,10 +3200,10 @@
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3225,10 +3225,10 @@
       "target": "growth_attribution_touches",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3250,10 +3250,10 @@
       "target": "analytics_events",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3275,10 +3275,10 @@
       "target": "analytics_events",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3292,18 +3292,68 @@
       }
     },
     {
-      "id": "82bf90ef0214bc149b2c",
+      "id": "eead04c6b1646a96b027",
       "path": "backend/src/growth/growthService.ts",
       "line": 62,
+      "enclosing": "recordEvent",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_experiments",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ed102395e261858f17ea",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 66,
+      "enclosing": "recordEvent",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_campaigns",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "9ff836ad513ac0524716",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 70,
       "enclosing": "recordEvent",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "analytics_events",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3317,18 +3367,18 @@
       }
     },
     {
-      "id": "2f9667800ce49593f7c8",
+      "id": "b0b3d1e181acc3b0a19d",
       "path": "backend/src/growth/growthService.ts",
-      "line": 68,
+      "line": 76,
       "enclosing": "linkIdentity",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_identity_links",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3342,18 +3392,18 @@
       }
     },
     {
-      "id": "893a36aad028d867a565",
+      "id": "4cd0b99d34d63dfce8b6",
       "path": "backend/src/growth/growthService.ts",
-      "line": 75,
+      "line": 83,
       "enclosing": "defineActivation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_activation_definitions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3367,18 +3417,18 @@
       }
     },
     {
-      "id": "2d91b4a2ba551ab03635",
+      "id": "dbb97e476ee2eca525e0",
       "path": "backend/src/growth/growthService.ts",
-      "line": 81,
+      "line": 89,
       "enclosing": "evaluateActivation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_activation_definitions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3392,18 +3442,18 @@
       }
     },
     {
-      "id": "68931cd3d8d9098ba238",
+      "id": "f67c4c7bcfa75a2a0915",
       "path": "backend/src/growth/growthService.ts",
-      "line": 84,
+      "line": 92,
       "enclosing": "evaluateActivation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "analytics_events",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3417,18 +3467,18 @@
       }
     },
     {
-      "id": "93a3341e6bf10e0eeebb",
+      "id": "f4394556e6e7dc62d3a7",
       "path": "backend/src/growth/growthService.ts",
-      "line": 85,
+      "line": 93,
       "enclosing": "evaluateActivation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "deployment_status",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3442,18 +3492,18 @@
       }
     },
     {
-      "id": "1108fa71abf5deaf031d",
+      "id": "0abaea0e6f58bb9d4e7d",
       "path": "backend/src/growth/growthService.ts",
-      "line": 91,
+      "line": 99,
       "enclosing": "evaluateActivation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3467,18 +3517,18 @@
       }
     },
     {
-      "id": "d76a2060b61b37513127",
+      "id": "49efd88f768ca1ffc493",
       "path": "backend/src/growth/growthService.ts",
-      "line": 98,
+      "line": 106,
       "enclosing": "recommend",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_incidents",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3492,18 +3542,18 @@
       }
     },
     {
-      "id": "9cf74f9963234e09bf78",
+      "id": "42054af9f5863412559a",
       "path": "backend/src/growth/growthService.ts",
-      "line": 99,
+      "line": 107,
       "enclosing": "recommend",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "deployment_status",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3517,18 +3567,18 @@
       }
     },
     {
-      "id": "7a82ff0953f829795a7e",
+      "id": "df4f1ef5e6ff45b43091",
       "path": "backend/src/growth/growthService.ts",
-      "line": 100,
+      "line": 108,
       "enclosing": "recommend",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3542,18 +3592,18 @@
       }
     },
     {
-      "id": "baab4f4b6be6ad099873",
+      "id": "b627f7ffd7b61b1967ff",
       "path": "backend/src/growth/growthService.ts",
-      "line": 101,
+      "line": 109,
       "enclosing": "recommend",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_suppressions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3567,18 +3617,18 @@
       }
     },
     {
-      "id": "a08f759902e6d2af3592",
+      "id": "3de2b24f2b692cae75d9",
       "path": "backend/src/growth/growthService.ts",
-      "line": 107,
+      "line": 115,
       "enclosing": "recommend",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_recommendations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3592,18 +3642,18 @@
       }
     },
     {
-      "id": "1fed30800aba3cd77fe3",
+      "id": "5eb212f45a8abc7651bb",
       "path": "backend/src/growth/growthService.ts",
-      "line": 113,
+      "line": 121,
       "enclosing": "transitionLifecycle",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3617,18 +3667,18 @@
       }
     },
     {
-      "id": "2c35f40b1fee66edc24e",
+      "id": "3e016a5c4feb53df63a4",
       "path": "backend/src/growth/growthService.ts",
-      "line": 114,
+      "line": 122,
       "enclosing": "transitionLifecycle",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3642,18 +3692,18 @@
       }
     },
     {
-      "id": "2a88fd3d9c767670265f",
+      "id": "5abf14e6032e20a36a4d",
       "path": "backend/src/growth/growthService.ts",
-      "line": 120,
+      "line": 128,
       "enclosing": "suppress",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_suppressions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3667,18 +3717,18 @@
       }
     },
     {
-      "id": "99d418832e7097a15764",
+      "id": "4cea8cc55be207a58aaf",
       "path": "backend/src/growth/growthService.ts",
-      "line": 126,
+      "line": 134,
       "enclosing": "recordAttribution",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_attribution_touches",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3692,18 +3742,18 @@
       }
     },
     {
-      "id": "c82a0da7365c4207a16b",
+      "id": "6ec454fe088a3f1fdb13",
       "path": "backend/src/growth/growthService.ts",
-      "line": 133,
+      "line": 141,
       "enclosing": "createSegment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_segments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3717,18 +3767,43 @@
       }
     },
     {
-      "id": "39083d3f5144b2d89263",
+      "id": "77d73b8529000a8c2c4b",
       "path": "backend/src/growth/growthService.ts",
-      "line": 140,
+      "line": 147,
+      "enclosing": "createCampaign",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_segments",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "9613b2fa7e108999d739",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 150,
       "enclosing": "createCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3742,18 +3817,18 @@
       }
     },
     {
-      "id": "3d3307bbcb595379a51f",
+      "id": "8714b62a4d3c122459bd",
       "path": "backend/src/growth/growthService.ts",
-      "line": 143,
+      "line": 153,
       "enclosing": "createCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3767,18 +3842,18 @@
       }
     },
     {
-      "id": "60edaf13880c89ff36ae",
+      "id": "d3af0ea1b5c0ee252ba0",
       "path": "backend/src/growth/growthService.ts",
-      "line": 148,
+      "line": 158,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3792,18 +3867,43 @@
       }
     },
     {
-      "id": "731f29fca4fb5be82d1d",
+      "id": "e00caaabcd1e6459b14a",
       "path": "backend/src/growth/growthService.ts",
-      "line": 154,
+      "line": 163,
+      "enclosing": "processCampaign",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_segments",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e7dad6967238f76b06be",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 166,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3817,18 +3917,18 @@
       }
     },
     {
-      "id": "ac62b63b58d2a4e7776f",
+      "id": "f5fc420170fad315c393",
       "path": "backend/src/growth/growthService.ts",
-      "line": 157,
+      "line": 169,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_messages",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3842,18 +3942,18 @@
       }
     },
     {
-      "id": "8e21c297024e0e9a12ec",
+      "id": "f201058b82d74d6e7974",
       "path": "backend/src/growth/growthService.ts",
-      "line": 159,
+      "line": 171,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "analytics_events",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3867,18 +3967,18 @@
       }
     },
     {
-      "id": "ab70121f0b866fabd8e7",
+      "id": "627e8cfdaced862bd295",
       "path": "backend/src/growth/growthService.ts",
-      "line": 160,
+      "line": 172,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_suppressions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3892,18 +3992,18 @@
       }
     },
     {
-      "id": "83399bb44734e27ddb69",
+      "id": "7668e2c9c98cb929b682",
       "path": "backend/src/growth/growthService.ts",
-      "line": 163,
+      "line": 175,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_messages",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3917,18 +4017,18 @@
       }
     },
     {
-      "id": "be2c47ce047d32ee4b80",
+      "id": "bb8cdea58c0f760360a0",
       "path": "backend/src/growth/growthService.ts",
-      "line": 164,
+      "line": 176,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3942,18 +4042,18 @@
       }
     },
     {
-      "id": "fdc5c112ff8f5a7e5048",
+      "id": "0f6d56aaa1b6d9cd03fa",
       "path": "backend/src/growth/growthService.ts",
-      "line": 165,
+      "line": 177,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_messages",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3967,18 +4067,18 @@
       }
     },
     {
-      "id": "a20acddb1ff22c4c759f",
+      "id": "ec212d3b41af98b8a3ae",
       "path": "backend/src/growth/growthService.ts",
-      "line": 168,
+      "line": 180,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -3992,18 +4092,18 @@
       }
     },
     {
-      "id": "8141fe01c9ce3d434dea",
+      "id": "7a327e2a4b68d0ed5be0",
       "path": "backend/src/growth/growthService.ts",
-      "line": 175,
+      "line": 187,
       "enclosing": "createExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -4017,18 +4117,18 @@
       }
     },
     {
-      "id": "c1012ab4d541c2b03896",
+      "id": "63fe508f456457a424c1",
       "path": "backend/src/growth/growthService.ts",
-      "line": 180,
+      "line": 192,
       "enclosing": "assignExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -4042,18 +4142,18 @@
       }
     },
     {
-      "id": "7646a6c43a5a71d69e43",
+      "id": "cb4a11ab99566987d1ff",
       "path": "backend/src/growth/growthService.ts",
-      "line": 183,
+      "line": 196,
       "enclosing": "assignExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_assignments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -4067,18 +4167,18 @@
       }
     },
     {
-      "id": "816dd5eedb6d042b46a7",
+      "id": "665ddb0f992e1647b4ee",
       "path": "backend/src/growth/growthService.ts",
-      "line": 186,
+      "line": 199,
       "enclosing": "assignExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_assignments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -4092,18 +4192,18 @@
       }
     },
     {
-      "id": "61c82eba3b4851d1cf61",
+      "id": "d14ff5ee0a1804f4124d",
       "path": "backend/src/growth/growthService.ts",
-      "line": 191,
+      "line": 204,
       "enclosing": "exposeExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_assignments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -4117,18 +4217,18 @@
       }
     },
     {
-      "id": "1ada7e531470770eda1d",
+      "id": "55f17f7a432f91dd59ea",
       "path": "backend/src/growth/growthService.ts",
-      "line": 194,
+      "line": 208,
       "enclosing": "exposeExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_assignments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -4142,118 +4242,18 @@
       }
     },
     {
-      "id": "e1522d052aadf33048df",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 200,
-      "enclosing": "recordExperimentOutcome",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_experiments",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
-      "semanticReview": {
-        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
-        "evidence": [
-          {
-            "path": "backend/src/growth/growthService.boundary.test.ts",
-            "marker": "growth replay cannot return another project event"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real growth event replay cannot disclose a different project event"
-          }
-        ]
-      }
-    },
-    {
-      "id": "fe3725158445c26bfa32",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 203,
-      "enclosing": "recordExperimentOutcome",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_experiment_assignments",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
-      "semanticReview": {
-        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
-        "evidence": [
-          {
-            "path": "backend/src/growth/growthService.boundary.test.ts",
-            "marker": "growth replay cannot return another project event"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real growth event replay cannot disclose a different project event"
-          }
-        ]
-      }
-    },
-    {
-      "id": "818dbe6b5a1f383a81fe",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 205,
-      "enclosing": "recordExperimentOutcome",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_experiment_outcomes",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
-      "semanticReview": {
-        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
-        "evidence": [
-          {
-            "path": "backend/src/growth/growthService.boundary.test.ts",
-            "marker": "growth replay cannot return another project event"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real growth event replay cannot disclose a different project event"
-          }
-        ]
-      }
-    },
-    {
-      "id": "ebb2b990e28650df73b0",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 210,
-      "enclosing": "experimentResult",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_experiments",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
-      "semanticReview": {
-        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
-        "evidence": [
-          {
-            "path": "backend/src/growth/growthService.boundary.test.ts",
-            "marker": "growth replay cannot return another project event"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real growth event replay cannot disclose a different project event"
-          }
-        ]
-      }
-    },
-    {
-      "id": "56124819a56b82bd877c",
+      "id": "1736c81cee15e258292b",
       "path": "backend/src/growth/growthService.ts",
       "line": 214,
-      "enclosing": "experimentResult",
+      "enclosing": "recordExperimentOutcome",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_experiment_assignments",
+      "target": "growth_experiments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -4267,18 +4267,143 @@
       }
     },
     {
-      "id": "5889ed83c7f0a84c2d4c",
+      "id": "32caf48e1ffe2c982617",
       "path": "backend/src/growth/growthService.ts",
-      "line": 215,
+      "line": 218,
+      "enclosing": "recordExperimentOutcome",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_experiment_assignments",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "27ed2ed3e2e9791569ce",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 220,
+      "enclosing": "recordExperimentOutcome",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "analytics_events",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "0e060bacf48e08f2bf1d",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 222,
+      "enclosing": "recordExperimentOutcome",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_experiment_outcomes",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "87232fed97dbdf36496c",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 227,
+      "enclosing": "experimentResult",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_experiments",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bae7b981c8398631af5c",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 232,
+      "enclosing": "experimentResult",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_experiment_assignments",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e3522aead40e8cbb3f11",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 233,
       "enclosing": "experimentResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_outcomes",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "sourceSha256": "38d06316bb39a3eea0efc7fe075ae728f986fb3ad2974027ec5069dacd878915",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
         "evidence": [
           {
             "path": "backend/src/growth/growthService.boundary.test.ts",
