@@ -2,6 +2,17 @@
   "version": "1.0",
   "status": "BATCH_1_BLOCKED",
   "additionalSpend": 0,
+  "interimIntegration": {
+    "source": "421a6b1061f430d3cd1a5b29e8eca2a63183f297",
+    "run": "38791937032",
+    "migrations": 73,
+    "browser": "PASS",
+    "realSecurityPassed": 61,
+    "realSecurityFailed": 1,
+    "skipped": 0,
+    "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
+  },
+  "strictAcceptance": "FAIL:495 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "verifiedBaseline": {
     "branch": "3e2748cc24b185de76fee315dfaf5f10fe079f3a",
     "integrated": "ce96ea1097eb9767a90a278fcbcd65b5cb24714d",

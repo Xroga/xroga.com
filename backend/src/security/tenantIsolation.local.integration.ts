@@ -167,7 +167,8 @@ test('real revision restore rejects mismatched snapshot identities before restor
   const projectId=`revision-binding-${randomUUID()}`,runId=randomUUID();
   // Only identity restoration is exercised; no fixture is executed or sent to a provider.
   const snapshot={projectId,runId,contract:{projectId,runId},workspace:{files:[]}};
-  const saved=await store.saveRevision(owner.id,snapshot as Parameters<typeof store.saveRevision>[1]);
+  // Deliberately partial identity fixture, not full software-project validation.
+  const saved=await store.saveRevision(owner.id,snapshot as unknown as Parameters<typeof store.saveRevision>[1]);
   const revisionId=saved.revisionId;
   assert.deepEqual(saved.project,snapshot);
   assert.equal(saved.userId,owner.id);assert.equal(saved.projectId,projectId);assert.equal(saved.runId,runId);

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import { test } from 'node:test';
+import { test, type TestContext } from 'node:test';
 import { createClient,type SupabaseClient } from '@supabase/supabase-js';
 
 type FixtureUser={id:string;token:string};
@@ -23,10 +23,19 @@ function save(db:SupabaseClient,owner:string,key:string,revision:string,extra:Re
 
 /** Register within the existing disposable suite so its users/cleanup remain canonical. */
 export function registerProviderKeyRevisionTests(admin:SupabaseClient,getUsers:()=>readonly FixtureUser[]):void {
-  for(const initiallyPresent of [false,true])test(`real two-client BYOK ${initiallyPresent?'existing':'absent'} save/revoke race retains revocation`,async()=>{
+  // Register before attempting each mutation, so failed assertions cannot leak
+  // generated credentials into later tests sharing these disposable owners.
+  function cleanup(t:TestContext,owner:string,key:string):string {
+    t.after(async()=>{
+      const result=await admin.from('user_integrations').delete().eq('user_id',owner).eq('provider',key);
+      assert.equal(result.error,null,`Could not clean up generated provider ${key}`);
+    });
+    return key;
+  }
+  for(const initiallyPresent of [false,true])test(`real two-client BYOK ${initiallyPresent?'existing':'absent'} save/revoke race retains revocation`,async(t)=>{
     const owner=getUsers()[0],writer=client(),revoker=client();
     for(let iteration=0;iteration<3;iteration++) {
-      const key=provider();
+      const key=cleanup(t,owner.id,provider());
       if(initiallyPresent) {
         const inserted=await admin.from('user_integrations').insert({user_id:owner.id,provider:key,access_token:'SYNTHETIC_PREEXISTING',metadata:metadata(key)});assert.equal(inserted.error,null);
       }
@@ -47,8 +56,9 @@ export function registerProviderKeyRevisionTests(admin:SupabaseClient,getUsers:(
     }
   });
 
-  test('real provider revision binds exact owner and provider, denies stale saves and rejects malformed metadata',async()=>{
+  test('real provider revision binds exact owner and provider, denies stale saves and rejects malformed metadata',async(t)=>{
     const [owner,other]=getUsers(),first=client(),second=client(),key=provider(),otherKey=provider();
+    cleanup(t,owner.id,key);cleanup(t,other.id,key);cleanup(t,owner.id,otherKey);
     const revision=await prepare(first,owner.id,key);await prepare(second,other.id,key);await prepare(second,owner.id,otherKey);
     for(const [actor,selected]of [[other.id,key],[owner.id,otherKey]]) {
       const denied=await save(second,actor,selected,revision);assert.equal(denied.error,null);assert.equal(denied.data,false);
@@ -66,8 +76,9 @@ export function registerProviderKeyRevisionTests(admin:SupabaseClient,getUsers:(
     }
   });
 
-  test('real browser identity cannot bypass BYOK RPC or direct-write revision guards',async()=>{
+  test('real browser identity cannot bypass BYOK RPC or direct-write revision guards',async(t)=>{
     const owner=getUsers()[0],key=provider();
+    cleanup(t,owner.id,key);
     const browser=createClient(process.env.SUPABASE_URL!,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${owner.token}`}},auth:{persistSession:false,autoRefreshToken:false}});
     for(const [name,args]of [
       ['prepare_provider_key_write',{p_owner_id:owner.id,p_provider:key}],
@@ -77,18 +88,18 @@ export function registerProviderKeyRevisionTests(admin:SupabaseClient,getUsers:(
     const absent=await admin.from('user_integrations').select('id').eq('user_id',owner.id).eq('provider',key);assert.equal(absent.error,null);assert.deepEqual(absent.data,[]);
     const revision=await prepare(admin,owner.id,key);assert.equal((await save(admin,owner.id,key,revision)).data,true);
     const before=await admin.from('user_integrations').select('*').eq('user_id',owner.id).eq('provider',key).single();assert.equal(before.error,null);
-    const browserInsert=await browser.from('user_integrations').insert({user_id:owner.id,provider:provider(),access_token:'FORBIDDEN_INSERT'});
+    const browserInsert=await browser.from('user_integrations').insert({user_id:owner.id,provider:cleanup(t,owner.id,provider()),access_token:'FORBIDDEN_INSERT'});
     assert.equal(browserInsert.error?.code,'42501');
-    for(const patch of [{access_token:'FORBIDDEN_REWRITE'},{credential_revision:randomUUID()},{provider:`non_byok_${randomUUID()}`}]) {
+    for(const patch of [{access_token:'FORBIDDEN_REWRITE'},{credential_revision:randomUUID()},{provider:cleanup(t,owner.id,`non_byok_${randomUUID()}`)}]) {
       const denied:{error:unknown;data:unknown}=await browser.from('user_integrations').update(patch).eq('id',before.data.id).select('id');
       assert.equal(denied.error,null);assert.deepEqual(denied.data,[]);
     }
     const deletion=await browser.from('user_integrations').delete().eq('id',before.data.id).select('id');assert.equal(deletion.error,null);assert.deepEqual(deletion.data,[]);
     const after=await admin.from('user_integrations').select('*').eq('id',before.data.id).single();assert.equal(after.error,null);assert.deepEqual(after.data,before.data);
     // Existing non-BYOK permissions are deliberately unchanged, not certified.
-    const ordinary=`fixture_non_byok_${randomUUID()}`;
+    const ordinary=cleanup(t,owner.id,`fixture_non_byok_${randomUUID()}`);
     const legacy=await browser.from('user_integrations').insert({user_id:owner.id,provider:ordinary,access_token:'SYNTHETIC_NON_BYOK'}).select('id').single();assert.equal(legacy.error,null);
-    const renamed=await browser.from('user_integrations').update({provider:provider()}).eq('id',legacy.data.id);
+    const renamed=await browser.from('user_integrations').update({provider:cleanup(t,owner.id,provider())}).eq('id',legacy.data.id);
     assert.equal(renamed.error?.code,'42501');
     const stillOrdinary=await admin.from('user_integrations').select('provider,access_token').eq('id',legacy.data.id).single();
     assert.equal(stillOrdinary.error,null);assert.deepEqual(stillOrdinary.data,{provider:ordinary,access_token:'SYNTHETIC_NON_BYOK'});

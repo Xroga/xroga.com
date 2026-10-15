@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0189836feac072692279e9b1d514715409015d4e",
+  "source_sha": "c97a03c1ddfa77954cd46a9637cffe508a8a7d77",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12475,7 +12475,7 @@
     },
     {
       "path": "backend/src/security/providerKeyRevision.local.integration.ts",
-      "sha256": "38b3f9aa78f7afb9b067febbc738ea637713243a28525ed2b06251a33ce5c62a"
+      "sha256": "db74a8217de1417fd476bbef6dcefe50b8e4a7b2559eba86bd601dacf55333d4"
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
@@ -12491,7 +12491,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "39c5d68bd69d152a2a53a652799fbd8e7b47da79e0948f5f3111426f9822df1e"
+      "sha256": "cfef2a4041a4e9e1a612d0fe24a27996e2d12f783afbd5d9a0e3f034c51b595f"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -17966,28 +17966,28 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 254,
+      "line": 255,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 304,
+      "line": 305,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 385,
+      "line": 386,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 537,
+      "line": 538,
       "credentialsInUrl": false
     },
     {
@@ -24091,7 +24091,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 958,
+      "line": 959,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
