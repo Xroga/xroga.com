@@ -64,14 +64,33 @@ export async function saveGitHubTokenToStorage(
   }
 }
 
+/** Null means authority denied/unavailable, empty string means legacy-only. */
+async function currentGitHubAuthority(userId: string): Promise<string | null> {
+  const supabase = getSupabaseAdmin();
+  const primary = await supabase.from('github_integrations').select('access_token').eq('user_id', userId).maybeSingle();
+  if (primary.error) return null;
+  if (primary.data) return typeof primary.data.access_token === 'string' ? primary.data.access_token.trim() || null : null;
+  const legacy = await supabase.from('user_integrations').select('access_token, metadata')
+    .eq('user_id', userId).eq('provider', 'github').maybeSingle();
+  if (legacy.error) return null;
+  if (legacy.data) return legacy.data.metadata?.revoked === true ? null
+    : typeof legacy.data.access_token === 'string' ? legacy.data.access_token.trim() || null : null;
+  return '';
+}
+
 export async function getGitHubTokenFromStorage(userId: string): Promise<StoredGitHubAuth | null> {
   try {
+    if (await currentGitHubAuthority(userId) === null) return null;
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase.storage.from(BUCKET).download(storagePath(userId));
     if (error || !data) return null;
     const text = await data.text();
     const parsed = JSON.parse(text) as StoredGitHubAuth;
-    if (!parsed?.access_token?.trim()) return null;
+    if (typeof parsed?.access_token !== 'string' || !parsed.access_token.trim()) return null;
+    // A delayed mirror cannot override a disconnect/rotation, including one
+    // committed while this download was in flight. Metadata is token-bound too.
+    const authority = await currentGitHubAuthority(userId);
+    if (authority === null || (authority !== '' && authority !== parsed.access_token.trim())) return null;
     return parsed;
   } catch {
     return null;

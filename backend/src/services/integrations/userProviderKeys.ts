@@ -57,7 +57,16 @@ async function loadKeyFromStorage(
       access_token?: string;
       metadata?: Record<string, unknown>;
     };
-    if (!parsed?.access_token) return null;
+    if (typeof parsed?.access_token !== 'string' || !parsed.access_token) return null;
+    // A revocation or rotation may commit while the legacy download is pending.
+    // Re-read authority after the bytes arrive, not only before the fallback.
+    const { data: current, error: authorityError } = await supabase.from('user_integrations')
+      .select('access_token, metadata').eq('user_id', userId).eq('provider', providerRow).maybeSingle();
+    if (authorityError) return null;
+    if (current) {
+      if (current.metadata?.revoked === true || typeof current.access_token !== 'string' || !current.access_token) return null;
+      return { access_token: current.access_token, metadata: current.metadata ?? {} };
+    }
     return { access_token: parsed.access_token, metadata: parsed.metadata ?? {} };
   } catch {
     return null;
