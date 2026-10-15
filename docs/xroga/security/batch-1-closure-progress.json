@@ -141,6 +141,7 @@
     "isolatedResult": "FAIL SQLSTATE42601 before tests in migration003. CASE expression corrected at319ccde5, new source CI required."
   },
   "newWork": {
+    "shipLoopSchemaAuthority": "IN PROGRESS: removed ensureShipLoopSchema runtime DDL/policy/grant helper and all seven persistence plus startup calls. Existing migrations030,031,20260801000000,20260802000000 already contain the definitions. Seven focused migration-boundary, run creation, resume and worker-authority tests pass. No schema migration changed or production operation performed. Exact-source integration pending. Other phase1/GitHub/terminal/share bootstraps remain separate ready work, as do worker provenance and side-effect receipts.",
     "adminReadFailures": "IN PROGRESS: strict bounded integer limits, fixed column projections, existing operations redactor and explicit503 failure responses. UI distinguishes log retrieval failure from empty success. Four focused HTTP/middleware tests and backend typecheck pass. No role expansion. Comprehensive arbitrary diagnostic secret handling and final-source regression remain open.",
     "referralCallerReconciliation": "CALLERS RECONCILED: eight exact profile/link/owner-read/factory sites now SCOPED_BOUNDARY from source tracing and disposable run38810704207 at88036057743aa3abbcee2ae85b80db18342e701f:77 migrations,69 security/concurrency tests,3 authenticated browser tests,zero failures/skips. Two label-relation/summary factory sites remain REVIEWED_GAP. Not whole-service certification or reward qualification acceptance.",
     "groupedIntegration": "VERIFIED_SCOPE at468bd2f98cd41148664b0c8cc453d2c14f11ae3a, disposable run38809008023:69 security/concurrency tests,3 authenticated browser tests,zero failures/skips. Includes GitHub receipt correction, ambiguous chat confirmation denial, referral atomic rollback/race and growth parent relation negatives. Later issued referral-context and foreign summary canary extension still requires exact-source CI.",
@@ -191,22 +192,22 @@
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/runStore.ts": [
-          "71ee15b6be25c62f87ee",
-          "0157dacc56fbbe42b689",
-          "8187f555a51523922a8c",
-          "358f396a40bcbe23021e",
-          "d5f98c8db3ae05d22a6d",
-          "63ca31b0c06dd8841424",
-          "a3548ef186fa8b428865",
-          "531b9a5c2bc7ab99f5f6",
-          "cacecec26d66f49efb75",
-          "7a68a211e8ae3c70dd1b",
-          "ba47bbf926c652911919",
-          "b6976d2654e7d13ff835",
-          "539d5c8afa9283247d91",
-          "88a6d9f1f2d6f28c6575",
-          "e6962fee1d6609a270ff",
-          "f57d6bf024f2d9f9e11c"
+          "6553f4da0cba8aa42483",
+          "7f875d23aca7e6d0076c",
+          "1d0f9138d7856b7597e9",
+          "4b9f704a1dbd4f4490ad",
+          "b337b52d79fafb0c2ca9",
+          "f54db66080705df359ac",
+          "bb5d073f739fd03e053a",
+          "59934bf8afd33680c8d2",
+          "2ae47f2e3356e61ddd99",
+          "67de24dafa1ffc333f24",
+          "b5e5c871ae7499766e2f",
+          "ac839d45e45270524ad0",
+          "84efec4fafe7043133a0",
+          "c34d5e31579715c11691",
+          "f711bb105d89ef517bf8",
+          "40e050471991e59545a9"
         ]
       }
     },
@@ -507,20 +508,20 @@
           "9dbcd01e8394478492cf"
         ],
         "backend/src/ai/projectMemory.ts": [
-          "c32965fff6598808b214",
-          "3da4920700bfa3a9ec80",
-          "2ca12dce241c43d18b5f",
-          "5f6d564abb336efdd2fb",
-          "91dd048ccce1966378f9",
-          "f7680656d9a9b0ab5281"
+          "b5dbf612dd5fc0118e85",
+          "b4e492c3955a9ea7abd1",
+          "3ebada96bc1e45f4e814",
+          "ce847c19be6d9cdcaa1b",
+          "2ccc3a19b73509cee5ef",
+          "bce8eb67c15a3b439b8f"
         ],
         "backend/src/ai/sessionMemory.ts": [
-          "f7905886591a736e1914",
-          "e837a99df841634ba026",
-          "98d766017045e8a5d3db",
-          "ce716e261403d059a8cd",
-          "168c6fa5091bfb16b8c3",
-          "34d65bae1c5a105fe1a5"
+          "e81da75f0bda665ae711",
+          "2fe0ec8c48b2ef03689c",
+          "32663803e4923b3e9404",
+          "395aa5983742162b1f39",
+          "0496884d5c7e89279db8",
+          "80233b774511a08d0346"
         ],
         "backend/src/routes/projects.ts": [
           "37d15cddc22473f02de4",
@@ -755,7 +756,7 @@
           "952ba0881d01437685bf"
         ],
         "backend/src/ai/runTrace.ts": [
-          "342b26a8975c7bea64e6"
+          "74e8790c9a3efbb27202"
         ],
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts": [
           "f667c1ea6d25d76cce95",

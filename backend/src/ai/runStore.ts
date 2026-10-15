@@ -11,7 +11,6 @@ import { getSupabaseAdmin } from '../config/supabase.js';
 import { createTenantContext } from '../security/tenantContext.js';
 import { persistOwnedRunAttempt } from '../security/ownedRunPersistence.js';
 import { isEngineeringArtifact } from './engineeringArtifact.js';
-import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
 import { redactOperationsValue } from '../operations/operationsEngine.js';
 import {
   recordTerminalBuildOutcomeFailOpen,
@@ -445,8 +444,6 @@ export async function resumeRunDurable(
    * error/cancelled -> running. Only one process can win.
    */
   if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    await ensureShipLoopSchema();
-
     const supabase = getSupabaseAdmin();
     let claim = supabase
       .from('swarm_runs')
@@ -1512,8 +1509,6 @@ async function persistToSupabase(
     if (process.env.NODE_ENV === 'production') throw new Error('Durable run storage is unavailable.');
     return;
   }
-
-  await ensureShipLoopSchema();
 
   const supabase =
     getSupabaseAdmin();

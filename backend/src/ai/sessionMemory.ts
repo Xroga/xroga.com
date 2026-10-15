@@ -4,7 +4,6 @@
  */
 
 import { getSupabaseAdmin } from '../config/supabase.js';
-import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
 import { getUserSupabaseAdmin } from '../services/integrations/supabaseProvision.js';
 
 export interface SessionMessage {
@@ -94,7 +93,6 @@ export async function loadSessionHistory(
 
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return [];
   try {
-    await ensureShipLoopSchema();
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from('session_memory')
@@ -130,7 +128,6 @@ export async function saveSessionHistory(
 
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
   try {
-    await ensureShipLoopSchema();
     const supabase = getSupabaseAdmin();
     const trimmed = messages
       .filter((m) => m.role === 'user' || m.role === 'assistant')

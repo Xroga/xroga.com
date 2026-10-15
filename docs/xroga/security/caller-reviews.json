@@ -275,13 +275,13 @@
     },
     {
       "path": "backend/src/ai/runTrace.ts",
-      "sourceSha256": "b61429b7f71e724d142672dfbbc8264cfef8c58d0b7ba07e62bfefa239d79780",
+      "sourceSha256": "771a4490226cc4a1fee924d1308f9997ed83704365d0ef925830dcad52084e9f",
       "callIds": [
-        "342b26a8975c7bea64e6"
+        "74e8790c9a3efbb27202"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Pipeline constructs RunTrace with runId and opts.userId. Persist embeds that identity and delegates to the global-key owner collision helper after schema bootstrap.",
-      "reason": "Helper prevents foreign overwrite, but parent run authorization, constructor provenance, stage/meta secret redaction, schema authority and swallowed persistence errors remain unresolved.",
+      "reason": "Helper prevents foreign overwrite. Runtime ship-loop DDL bootstrap is removed; checked-in migrations own this schema. Parent run authorization, constructor provenance, stage/meta secret redaction and swallowed persistence errors remain unresolved. Bootstrap removal still requires final-source integration.",
       "evidence": [
         {
           "path": "backend/src/ai/runTrace.ts",
@@ -637,28 +637,28 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f",
+      "sourceSha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9",
       "callIds": [
-        "71ee15b6be25c62f87ee",
-        "0157dacc56fbbe42b689",
-        "8187f555a51523922a8c",
-        "358f396a40bcbe23021e",
-        "d5f98c8db3ae05d22a6d",
-        "63ca31b0c06dd8841424",
-        "a3548ef186fa8b428865",
-        "531b9a5c2bc7ab99f5f6",
-        "cacecec26d66f49efb75",
-        "7a68a211e8ae3c70dd1b",
-        "ba47bbf926c652911919",
-        "b6976d2654e7d13ff835",
-        "539d5c8afa9283247d91",
-        "88a6d9f1f2d6f28c6575",
-        "e6962fee1d6609a270ff",
-        "f57d6bf024f2d9f9e11c"
+        "6553f4da0cba8aa42483",
+        "7f875d23aca7e6d0076c",
+        "1d0f9138d7856b7597e9",
+        "4b9f704a1dbd4f4490ad",
+        "b337b52d79fafb0c2ca9",
+        "f54db66080705df359ac",
+        "bb5d073f739fd03e053a",
+        "59934bf8afd33680c8d2",
+        "2ae47f2e3356e61ddd99",
+        "67de24dafa1ffc333f24",
+        "b5e5c871ae7499766e2f",
+        "ac839d45e45270524ad0",
+        "84efec4fafe7043133a0",
+        "c34d5e31579715c11691",
+        "f711bb105d89ef517bf8",
+        "40e050471991e59545a9"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-      "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections have focused tests; new real disposable row-lock/attempt races require final-source CI. Remaining full caller obligations include project lineage at admission, schema bootstrap authority, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+      "reason": "Worker stale-write, same-process callback, conversation overwrite and false cancellation-success corrections passed prior real disposable suites through88036057. Runtime ship-loop DDL/policy/grant bootstrap removed from creation, resume and persistence; existing migrations own this schema. Seven focused boundary/creation/resume/authority tests pass. Removal requires final-source integration. Remaining full caller obligations include project lineage at admission, fire-and-forget side-effect receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
       "evidence": [
         {
           "path": "backend/src/ai/runStore.authority.test.ts",
@@ -3372,14 +3372,14 @@
     },
     {
       "path": "backend/src/ai/sessionMemory.ts",
-      "sourceSha256": "823527b6cbfa02c0908895be7872b5d2923430fcda2ccaaf0b4ea19d929289f6",
+      "sourceSha256": "6c28215fb991987b4595c62fc0c70c77159794963c18a5b1e95a5eca2b05e2bf",
       "callIds": [
-        "f7905886591a736e1914",
-        "e837a99df841634ba026",
-        "98d766017045e8a5d3db",
-        "ce716e261403d059a8cd",
-        "168c6fa5091bfb16b8c3",
-        "34d65bae1c5a105fe1a5"
+        "e81da75f0bda665ae711",
+        "2fe0ec8c48b2ef03689c",
+        "32663803e4923b3e9404",
+        "395aa5983742162b1f39",
+        "0496884d5c7e89279db8",
+        "80233b774511a08d0346"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
@@ -3397,14 +3397,14 @@
     },
     {
       "path": "backend/src/ai/projectMemory.ts",
-      "sourceSha256": "ee3a3cde69ab30651cc9f7677c6798c3bdaa1b3149ab5240c2bf3e8aef4590eb",
+      "sourceSha256": "22021ccb33df8cde91e8cfc77395db54033e3976a0a66662dc9d1a029eb2152a",
       "callIds": [
-        "c32965fff6598808b214",
-        "3da4920700bfa3a9ec80",
-        "2ca12dce241c43d18b5f",
-        "5f6d564abb336efdd2fb",
-        "91dd048ccce1966378f9",
-        "f7680656d9a9b0ab5281"
+        "b5dbf612dd5fc0118e85",
+        "b4e492c3955a9ea7abd1",
+        "3ebada96bc1e45f4e814",
+        "ce847c19be6d9cdcaa1b",
+        "2ccc3a19b73509cee5ef",
+        "bce8eb67c15a3b439b8f"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",

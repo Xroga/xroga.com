@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "88036057743aa3abbcee2ae85b80db18342e701f",
+  "source_sha": "4472cc0e3fa94eb564abd903d7e3d071546adb25",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11475,7 +11475,7 @@
     },
     {
       "path": "backend/src/ai/projectMemory.ts",
-      "sha256": "ee3a3cde69ab30651cc9f7677c6798c3bdaa1b3149ab5240c2bf3e8aef4590eb"
+      "sha256": "22021ccb33df8cde91e8cfc77395db54033e3976a0a66662dc9d1a029eb2152a"
     },
     {
       "path": "backend/src/ai/prompts.ts",
@@ -11539,11 +11539,11 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sha256": "465f4529a7a1f4a71e3ee430fd56b883f86e7db790a569985791ab6360d2079f"
+      "sha256": "eed0fffd0dce71535e600c7de9db27bb470b45dbebf9745071a2fd35bac1d1e9"
     },
     {
       "path": "backend/src/ai/runTrace.ts",
-      "sha256": "b61429b7f71e724d142672dfbbc8264cfef8c58d0b7ba07e62bfefa239d79780"
+      "sha256": "771a4490226cc4a1fee924d1308f9997ed83704365d0ef925830dcad52084e9f"
     },
     {
       "path": "backend/src/ai/securityScan.ts",
@@ -11551,7 +11551,7 @@
     },
     {
       "path": "backend/src/ai/sessionMemory.ts",
-      "sha256": "823527b6cbfa02c0908895be7872b5d2923430fcda2ccaaf0b4ea19d929289f6"
+      "sha256": "6c28215fb991987b4595c62fc0c70c77159794963c18a5b1e95a5eca2b05e2bf"
     },
     {
       "path": "backend/src/ai/shipOutcome.ts",
@@ -11894,10 +11894,6 @@
       "sha256": "cabff2ba47e49dd80674b5e34def22772082c0e4a8e05f6cf4c2abbcf8c00cb9"
     },
     {
-      "path": "backend/src/db/ensureShipLoopSchema.ts",
-      "sha256": "5b4f820162dc84e417c0a93e60543d2cb9f87025482a4d926b6a3950fe0253ad"
-    },
-    {
       "path": "backend/src/db/ensureTerminalSessionsSchema.ts",
       "sha256": "926275c5e7833aa004c91024c9de5fa938e72b673f475ea0df34bd9a39c3eaf2"
     },
@@ -11919,7 +11915,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "0d1384a172ec05f1da40aca7cd3175d8129967efd4d6b8f315df643ff623cdea"
+      "sha256": "560cc1afbd6464c6aae0c7911e840e95bfe3fd412ea19ea738f042a9802ce2e3"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -17508,42 +17504,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 98,
+      "line": 97,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 99,
+      "line": 98,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 100,
+      "line": 99,
       "credentialsInUrl": false
     },
     {
       "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 101,
+      "line": 100,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga-api.fly.dev",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 102,
+      "line": 101,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 190,
+      "line": 189,
       "credentialsInUrl": false
     },
     {
@@ -22485,14 +22481,14 @@
     },
     {
       "path": "backend/src/ai/projectMemory.ts",
-      "line": 50,
+      "line": 49,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/projectMemory.ts",
-      "line": 312,
+      "line": 309,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -22660,6 +22656,13 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
+      "line": 42,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
       "line": 43,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
@@ -22667,7 +22670,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 44,
+      "line": 46,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -22681,28 +22684,21 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 48,
+      "line": 76,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 77,
+      "line": 79,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 80,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/runStore.ts",
-      "line": 1267,
+      "line": 1264,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

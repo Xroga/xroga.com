@@ -4,7 +4,6 @@
  */
 
 import { getSupabaseAdmin } from '../config/supabase.js';
-import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
 import { getUserSupabaseAdmin } from '../services/integrations/supabaseProvision.js';
 import type { ProjectFile } from './patches.js';
 
@@ -130,7 +129,6 @@ async function loadFromDb(
 
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
   try {
-    await ensureShipLoopSchema();
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from('project_memory')
@@ -176,7 +174,6 @@ async function saveToDb(mem: ProjectMemory): Promise<ProjectMemoryPersistence> {
 
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return 'memory_only';
 
-  await ensureShipLoopSchema();
   const supabase = getSupabaseAdmin();
   const { error } = await supabase.from('project_memory').upsert(
     {

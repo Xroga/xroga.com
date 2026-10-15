@@ -10,6 +10,7 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/db/shipLoopMigrationBoundary.test.ts",
     "backend/src/routes/admin.ts",
     "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
     "backend/src/routes/admin.test.ts",

@@ -51,7 +51,6 @@ import {
   currentRunWorkerId,
 } from './ai/runStore.js';
 import { failInFlightRuns, reconcileOrphanedRuns } from './ai/runReconciler.js';
-import { ensureShipLoopSchema } from './db/ensureShipLoopSchema.js';
 import { hydrateProviderHealth } from './ai/providerRuntime.js';
 import { modelKeyStatus, modelTransportStatus } from './ai/openaiCompat.js';
 import { publicHealthPayload } from './lib/safeHealth.js';
@@ -294,9 +293,6 @@ server.listen(port, '0.0.0.0', () => {
   });
   void ensureMessageSharesSchema().catch((err) => {
     console.warn('[messageSharesSchema] Startup ensure skipped:', (err as Error).message);
-  });
-  void ensureShipLoopSchema().catch((err) => {
-    console.warn('[shipLoopSchema] Startup ensure skipped:', (err as Error).message);
   });
   // Provider health survives this restart (§15). Without it a circuit opened against a
   // failing provider was forgotten on every deploy, and the model went straight back into

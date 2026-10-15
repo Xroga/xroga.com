@@ -3,7 +3,6 @@
  */
 
 import { getSupabaseAdmin } from '../config/supabase.js';
-import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
 import { createTenantContext } from '../security/tenantContext.js';
 import { persistOwnedRunTrace } from '../security/ownedRunPersistence.js';
 
@@ -53,7 +52,6 @@ export class RunTrace {
   async persist(): Promise<void> {
     if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
     try {
-      await ensureShipLoopSchema();
       const supabase = getSupabaseAdmin();
       await persistOwnedRunTrace(
         supabase,
