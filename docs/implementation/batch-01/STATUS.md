@@ -1,5 +1,11 @@
 # Xroga OS Batch 01 implementation tracker
 
+## Verified audit lifecycle and next credential candidate
+
+Feature `0ce29225ae2ce94033976365c7b32b50f550c870` passes isolated CI [38750509800](https://github.com/Xroga/xroga.com/actions/runs/38750509800), actual integrated web/API `44b4abd070822c0227fd6e66c8dcc5d65e1cdd29`: 46 real security tests,3 browser tests,71 fresh/representative-upgrade migrations, and unchanged pre-upgrade audit rows after deletion. Backend build and10 focused scanner/isolation tests pass on pinned toolchain. Aggregate branch/integrated CI [38750509802](https://github.com/Xroga/xroga.com/actions/runs/38750509802) PASSES, including the repeated integrated baseline without source mutation. This evidence does not certify subsequent credential changes.
+
+Next candidate binds named custom credentials exactly and persists revocation before mirror cleanup in the existing credential table. Readers/list/deploy resolution honor the marker, unavailable database state cannot bypass it through Storage, and cleanup failures are truthful. Eight focused tests and backend build pass;47 real security cases now defined, new-source CI required. No live credential migration. Reviewed384/668 callers,284 unreviewed and221 reviewed gaps (505 unresolved safety candidates); candidate count changed because duplicate delete paths were consolidated. Full007 and Batch1 remain NO-GO,008–010 and Batch1.5 remain gated.
+
 ## Audit lifecycle and receiver review continuation
 
 Continues actual PR803 head `9e26908fe366190cc04fdd6a5f5e736a1e2f1cde`, preserving the existing branch and draft PR. The new audit migration retains immutable historical attribution after account/project/environment deletion, validates live subjects on insertion and closes TRUNCATE mutation. Existing Auth cleanup now requires successful deletion with unchanged audit evidence. Fresh/upgrade and real database denial cases are added, pending exact-source CI. No production schema or account was changed.

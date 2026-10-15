@@ -2,6 +2,61 @@
   "version": "1.0",
   "reviews": [
     {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "callIds": [
+        "0e5e0a6c907b0012004f",
+        "6a8e36092dbe3dc13e92",
+        "ca380eb67c3d6e543fd1",
+        "cadef09de6d8f790fdf8"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
+      "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/userProviderKeys.ts",
+          "marker": "const decipher = createDecipheriv"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "callIds": [
+        "1820ca770e3eb79483c2",
+        "5430d13294eb1a13f663",
+        "07e0223d171d9a07c272",
+        "a70e41a64d0371e71b1f",
+        "823abc9d7cb71b54caa7",
+        "024328c35e2e473b15f6",
+        "17541737a8deed0dea86",
+        "4234b3c7dea4174c8ec4",
+        "d16a0b8bb0c85f9d738a",
+        "7addb4abf2851965688f",
+        "85bd224a1821c3260c15",
+        "6eb81f5722946ce9055b",
+        "9176f7450e0038ecfe95",
+        "76e45ad1222197a0b314",
+        "cbb56f7c9723f7ce0786",
+        "00d5747ecf446792e664",
+        "852656b30e571d27366f",
+        "bcdf1774aaeb2947aea7",
+        "732271f13ac74637c562",
+        "1d3a4468abc984e7f129",
+        "5972539630132aefe5af"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+      "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+          "marker": "unavailable credential authority never reads a legacy mirror"
+        }
+      ]
+    },
+    {
       "path": "backend/src/ai/attachments.ts",
       "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
       "callIds": [
@@ -430,70 +485,6 @@
         {
           "path": "backend/src/services/integrations/githubDeploy.ts",
           "marker": "  const bytes = Buffer.from(content, 'base64');\n  if (bytes.includes(0)) return null;\n  const text = bytes.toString('utf8');"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
-      "callIds": [
-        "1ab580a1921adff7526c"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-      "evidence": [
-        {
-          "path": "backend/src/services/integrations/userProviderKeys.ts",
-          "marker": "      const raw = Buffer.from(stored.replace(/^enc:/, ''), 'base64').toString('utf8');\n      const idx = raw.indexOf(':');\n      return idx >= 0 ? raw.slice(idx + 1) : raw;"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
-      "callIds": [
-        "b7470ac40219388d92dd"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-      "evidence": [
-        {
-          "path": "backend/src/services/integrations/userProviderKeys.ts",
-          "marker": "    const iv = Buffer.from(parts[1]!, 'base64');\n    const tag = Buffer.from(parts[2]!, 'base64');\n    const data = Buffer.from(parts.slice(3).join(':'), 'base64');"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
-      "callIds": [
-        "495340ca90ae34e87a94"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-      "evidence": [
-        {
-          "path": "backend/src/services/integrations/userProviderKeys.ts",
-          "marker": "    const tag = Buffer.from(parts[2]!, 'base64');\n    const data = Buffer.from(parts.slice(3).join(':'), 'base64');\n    const decipher = createDecipheriv('aes-256-gcm', encryptionKey(), iv);"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
-      "callIds": [
-        "d9270cfb5d690b469d0e"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-      "evidence": [
-        {
-          "path": "backend/src/services/integrations/userProviderKeys.ts",
-          "marker": "    const data = Buffer.from(parts.slice(3).join(':'), 'base64');\n    const decipher = createDecipheriv('aes-256-gcm', encryptionKey(), iv);\n    decipher.setAuthTag(tag);"
         }
       ]
     },

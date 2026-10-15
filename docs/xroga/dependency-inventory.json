@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9e26908fe366190cc04fdd6a5f5e736a1e2f1cde",
+  "source_sha": "0ce29225ae2ce94033976365c7b32b50f550c870",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12464,7 +12464,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "fe2cddc99118ed9183dfb16434434b70cbaf80d335b673ce3d3a685e523117fc"
+      "sha256": "1ade062530e9f1d92de23ebfa201cb78f46269454e3ebd134b6728d1132317cf"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12560,7 +12560,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "sha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -17921,21 +17921,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 191,
+      "line": 224,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 241,
+      "line": 274,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 322,
+      "line": 355,
       "credentialsInUrl": false
     },
     {
@@ -24032,7 +24032,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 679,
+      "line": 712,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24235,28 +24235,28 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 175,
+      "line": 176,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 190,
+      "line": 191,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 192,
+      "line": 193,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 788,
+      "line": 782,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

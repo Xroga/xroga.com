@@ -1,6 +1,6 @@
 # Environment/secret NAME inventory
 
-Source SHA: `9e26908fe366190cc04fdd6a5f5e736a1e2f1cde`. Values are prohibited, including public credential values. 209 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
+Source SHA: `0ce29225ae2ce94033976365c7b32b50f550c870`. Values are prohibited, including public credential values. 209 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
 
 | Name | Class | Requiredness | Consuming source | Validation status |
 | --- | --- | --- | --- | --- |

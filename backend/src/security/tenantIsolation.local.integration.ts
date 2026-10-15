@@ -6,7 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 import { createTenantContext, type TenantContext } from './tenantContext.js';
 import { requireOwnedResource, requireOwnedFile } from './ownership.js';
 import { persistOwnedRun, persistOwnedRuntimeSession, persistOwnedRunTrace } from './ownedRunPersistence.js';
-import { listUserProviderKeys,getUserProviderKey,deleteUserProviderKey } from '../services/integrations/userProviderKeys.js';
+import { listUserProviderKeys,getUserProviderKey,deleteUserProviderKey,resolveProviderEnvForDeploy } from '../services/integrations/userProviderKeys.js';
 import { reconcileOrphanedRuns,failInFlightRuns } from '../ai/runReconciler.js';
 import { getCachedResponse,setCachedResponse } from '../services/responseCache.js';
 import { notifyBuildFailed } from '../services/notificationService.js';
@@ -80,6 +80,39 @@ test('real owner helpers deny every foreign high-risk resource without enumerati
   }
   await requireOwnedFile(owner.context,owner.file,admin);
   await assert.rejects(requireOwnedFile(owner.context,other.file,admin),{status:404});
+});
+
+test('named custom credentials bind reads and deletion to the exact owner and provider',async()=>{
+  const [owner,other]=users;
+  assert.equal(await ensurePrivateOAuthBucket(),true);
+  const suffix=randomUUID().replaceAll('-','');
+  const first=`custom_first_${suffix}`,second=`custom_second_${suffix}`;
+  const encoded=(value:string)=>`enc:${Buffer.from(`fixture:${value}`).toString('base64')}`;
+  const rows=[
+    {user_id:owner.id,provider:`apikey_${first}`,access_token:encoded('SYNTHETIC_FIRST_KEY')},
+    {user_id:owner.id,provider:`apikey_${second}`,access_token:encoded('SYNTHETIC_SECOND_KEY')},
+    {user_id:other.id,provider:`apikey_${second}`,access_token:encoded('SYNTHETIC_FOREIGN_KEY')},
+  ];
+  const inserted=await admin.from('user_integrations').insert(rows);assert.equal(inserted.error,null);
+  try {
+    assert.equal(await getUserProviderKey(owner.id,first),'SYNTHETIC_FIRST_KEY');
+    assert.equal(await getUserProviderKey(owner.id,second),'SYNTHETIC_SECOND_KEY');
+    assert.equal(await getUserProviderKey(other.id,second),'SYNTHETIC_FOREIGN_KEY');
+    assert.equal(await getUserProviderKey(owner.id,`custom_absent_${suffix}`),null);
+    await deleteUserProviderKey(owner.id,second);
+    // Model a delayed legacy mirror write AFTER revocation. It must not restore
+    // credential access or deployment selection while the durable denial exists.
+    const mirror=`${owner.id}/vault-apikey_${second}.json`;
+    const delayed=await admin.storage.from('xroga-github-tokens').upload(mirror,JSON.stringify({access_token:encoded('SYNTHETIC_RESURRECTION_CANARY'),metadata:{provider:second,env_var:'REVOCATION_CANARY'}}),{upsert:true,contentType:'application/json'});assert.equal(delayed.error,null);
+    assert.equal(await getUserProviderKey(owner.id,second),null);
+    assert.ok(!(await listUserProviderKeys(owner.id)).some(key=>key.provider===second));
+    assert.equal((await resolveProviderEnvForDeploy(owner.id)).REVOCATION_CANARY,undefined);
+    assert.equal(await getUserProviderKey(owner.id,first),'SYNTHETIC_FIRST_KEY');
+    assert.equal(await getUserProviderKey(other.id,second),'SYNTHETIC_FOREIGN_KEY');
+  } finally {
+    const mirrorCleanup=await admin.storage.from('xroga-github-tokens').remove([`${owner.id}/vault-apikey_${second}.json`]);assert.equal(mirrorCleanup.error,null);
+    const cleanup=await admin.from('user_integrations').delete().in('user_id',[owner.id,other.id]).in('provider',[`apikey_${first}`,`apikey_${second}`]);assert.equal(cleanup.error,null);
+  }
 });
 
 test('real community API rejects cross-author mixed-field privilege escalation without partial writes',async()=>{

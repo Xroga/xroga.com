@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "9e26908fe366190cc04fdd6a5f5e736a1e2f1cde",
-    "sourceTimestampUtc": "2026-10-15T16:00:38+05:00",
-    "auditStartedUtc": "2026-10-15T14:17:12.937Z",
+    "sha": "0ce29225ae2ce94033976365c7b32b50f550c870",
+    "sourceTimestampUtc": "2026-10-15T19:20:18+05:00",
+    "auditStartedUtc": "2026-10-15T14:30:00.228Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -11519,7 +11519,7 @@
         "backend/src/services/integrations/githubDeploy.ts:1",
         "backend/src/services/integrations/githubTokenStore.ts:1",
         "backend/src/services/integrations/oauthPkceStore.ts:6",
-        "backend/src/services/integrations/userProviderKeys.ts:8",
+        "backend/src/services/integrations/userProviderKeys.ts:9",
         "backend/src/services/integrations/vercelAuth.ts:7",
         "backend/src/services/memory/buildMemory.ts:5",
         "backend/src/services/memory/buildPersistence.ts:5",
@@ -11685,7 +11685,7 @@
         "backend/src/index.ts:45",
         "backend/src/services/integrations/githubAuth.ts:2",
         "backend/src/services/integrations/oauthPkceStore.ts:7",
-        "backend/src/services/integrations/userProviderKeys.ts:9",
+        "backend/src/services/integrations/userProviderKeys.ts:10",
         "backend/src/services/integrations/vercelAuth.ts:8"
       ],
       "reachable": true,
@@ -21760,7 +21760,7 @@
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.ts:9",
-        "backend/src/services/integrations/userProviderKeys.ts:11"
+        "backend/src/services/integrations/userProviderKeys.ts:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -22732,7 +22732,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts:24",
         "backend/src/services/integrations/githubAuth.ts:3",
         "backend/src/services/integrations/oauthPkceStore.ts:8",
-        "backend/src/services/integrations/userProviderKeys.ts:10",
+        "backend/src/services/integrations/userProviderKeys.ts:11",
         "backend/src/services/integrations/vercelAuth.ts:9"
       ],
       "reachable": true,
@@ -23013,7 +23013,7 @@
         "backend/src/lib/platformReady.ts:8",
         "backend/src/routes/supabaseOAuth.ts:10",
         "backend/src/services/integrations/supabaseProvision.ts:526",
-        "backend/src/services/integrations/userProviderKeys.ts:801"
+        "backend/src/services/integrations/userProviderKeys.ts:795"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23146,8 +23146,8 @@
         "backend/src/routes/supabaseOAuth.ts:20",
         "backend/src/security/tenantIsolation.local.integration.ts:35",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
-        "backend/src/services/integrations/userProviderKeys.ts:864",
-        "backend/src/services/integrations/userProviderKeys.ts:873"
+        "backend/src/services/integrations/userProviderKeys.ts:858",
+        "backend/src/services/integrations/userProviderKeys.ts:867"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -23180,7 +23180,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "sha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -23244,7 +23244,6 @@
         "normalizeProvider",
         "now",
         "oauthConnected",
-        "ok",
         "out",
         "p",
         "parsed",
@@ -23260,6 +23259,8 @@
         "ready",
         "ref",
         "resolveProviderEnvForDeploy",
+        "result",
+        "revokeProviderRow",
         "row",
         "rows",
         "s",
@@ -23309,6 +23310,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts:9",
         "backend/src/services/integrations/githubDeploy.ts:58",
         "backend/src/services/integrations/supabaseProvision.ts:10",
+        "backend/src/services/integrations/userProviderKeys.revocation.test.ts:4",
         "backend/src/services/integrations/userProviderKeys.test.ts:3",
         "backend/src/services/publish/chromeWebStore.ts:12",
         "backend/src/services/publish/easCredentials.ts:6",
@@ -23328,19 +23330,18 @@
         "backend/src/services/integrations/userProviderKeys.ts#oauthConnected"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/userProviderKeys.ts:412 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:459 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:466 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:481 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:564 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:583 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:606 (user_id)"
+        "backend/src/services/integrations/userProviderKeys.ts:399 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:444 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:557 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:578 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:601 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
         "backend/src/services/integrations/userProviderKeys.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -101724,7 +101725,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 46,
+      "declaredTests": 47,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101830,6 +101831,13 @@
       "id": "test-suite:daadaf70bc883c8e260b",
       "sourcePath": "backend/src/services/integrations/universalRepositoryHydration.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:45f726e2bb311b278c0d",
+      "sourcePath": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -1,27 +1,27 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "dacfd3eb21d21d7e78352f25a7c07ddf003013599ea8f85b2f52cf6663f5d5a7",
+  "reviewRegistrySha256": "93ad1e6bab69834f1007d8fb578ca19e62824f446744b4f27084d51e54ce2614",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 160,
-    "persistenceCandidates": 670,
-    "ownerPredicateCandidates": 167,
-    "reviewRequired": 307,
-    "reviewedCandidates": 363,
-    "unresolvedSafetyCandidates": 507,
+    "privilegedFactorySites": 161,
+    "persistenceCandidates": 668,
+    "ownerPredicateCandidates": 165,
+    "reviewRequired": 284,
+    "reviewedCandidates": 384,
+    "unresolvedSafetyCandidates": 505,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 307,
+    "REVIEW_REQUIRED": 284,
     "SCOPED_BOUNDARY": 28,
     "NARROW_EXCEPTION": 6,
     "NOT_PERSISTENCE": 129,
-    "REVIEWED_GAP": 200
+    "REVIEWED_GAP": 221
   },
   "callers": [
     {
@@ -8101,115 +8101,154 @@
       }
     },
     {
-      "id": "001b46945b689cc1059d",
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 27,
-      "enclosing": "saveKeyToStorage",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
-    },
-    {
-      "id": "0af07a044805105e7ebe",
+      "id": "1820ca770e3eb79483c2",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "line": 28,
       "enclosing": "saveKeyToStorage",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
-    },
-    {
-      "id": "9ac199962b51afbb4a50",
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 50,
-      "enclosing": "loadKeyFromStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "d6457ce7d9a899ad47cb",
+      "id": "5430d13294eb1a13f663",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 29,
+      "enclosing": "saveKeyToStorage",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
+    },
+    {
+      "id": "07e0223d171d9a07c272",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "line": 51,
       "enclosing": "loadKeyFromStorage",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
+    },
+    {
+      "id": "a70e41a64d0371e71b1f",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 52,
+      "enclosing": "loadKeyFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "9e0d1f9ba1a4ad99e773",
+      "id": "823abc9d7cb71b54caa7",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 70,
+      "line": 71,
       "enclosing": "listKeysFromStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "33d36bc13afdb667b610",
+      "id": "024328c35e2e473b15f6",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 71,
+      "line": 72,
       "enclosing": "listKeysFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
-    },
-    {
-      "id": "1ab580a1921adff7526c",
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 243,
-      "enclosing": "decryptApiKey",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
       "semanticReview": {
-        "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
         "evidence": [
           {
-            "path": "backend/src/services/integrations/userProviderKeys.ts",
-            "marker": "      const raw = Buffer.from(stored.replace(/^enc:/, ''), 'base64').toString('utf8');\n      const idx = raw.indexOf(':');\n      return idx >= 0 ? raw.slice(idx + 1) : raw;"
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
           }
         ]
       }
     },
     {
-      "id": "b7470ac40219388d92dd",
+      "id": "0e5e0a6c907b0012004f",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 253,
+      "line": 244,
       "enclosing": "decryptApiKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
       "semanticReview": {
-        "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
+        "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.ts",
-            "marker": "    const iv = Buffer.from(parts[1]!, 'base64');\n    const tag = Buffer.from(parts[2]!, 'base64');\n    const data = Buffer.from(parts.slice(3).join(':'), 'base64');"
+            "marker": "const decipher = createDecipheriv"
           }
         ]
       }
     },
     {
-      "id": "495340ca90ae34e87a94",
+      "id": "6a8e36092dbe3dc13e92",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "line": 254,
       "enclosing": "decryptApiKey",
@@ -8217,20 +8256,20 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
       "semanticReview": {
-        "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
+        "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.ts",
-            "marker": "    const tag = Buffer.from(parts[2]!, 'base64');\n    const data = Buffer.from(parts.slice(3).join(':'), 'base64');\n    const decipher = createDecipheriv('aes-256-gcm', encryptionKey(), iv);"
+            "marker": "const decipher = createDecipheriv"
           }
         ]
       }
     },
     {
-      "id": "d9270cfb5d690b469d0e",
+      "id": "ca380eb67c3d6e543fd1",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "line": 255,
       "enclosing": "decryptApiKey",
@@ -8238,204 +8277,353 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
       "semanticReview": {
-        "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
+        "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.ts",
-            "marker": "    const data = Buffer.from(parts.slice(3).join(':'), 'base64');\n    const decipher = createDecipheriv('aes-256-gcm', encryptionKey(), iv);\n    decipher.setAuthTag(tag);"
+            "marker": "const decipher = createDecipheriv"
           }
         ]
       }
     },
     {
-      "id": "ce604db77e9736444e37",
+      "id": "cadef09de6d8f790fdf8",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 336,
+      "line": 256,
+      "enclosing": "decryptApiKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
+        "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.ts",
+            "marker": "const decipher = createDecipheriv"
+          }
+        ]
+      }
+    },
+    {
+      "id": "17541737a8deed0dea86",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 337,
       "enclosing": "saveUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "9b6b8f1a80f1dfac1376",
+      "id": "4234b3c7dea4174c8ec4",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 362,
+      "line": 363,
       "enclosing": "saveUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "07aa1839efcecbb61c6f",
+      "id": "d16a0b8bb0c85f9d738a",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 375,
+      "line": 376,
       "enclosing": "saveUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "05f59f99caa21d10f7a5",
+      "id": "7addb4abf2851965688f",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 411,
+      "line": 398,
       "enclosing": "listUserProviderKeys",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "38a00517434c88a51668",
+      "id": "85bd224a1821c3260c15",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 412,
+      "line": 399,
       "enclosing": "listUserProviderKeys",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "c8f6a4dc509c3846bfa2",
+      "id": "6eb81f5722946ce9055b",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 456,
+      "line": 440,
       "enclosing": "deleteUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "6906399650f2b0ce8c7d",
+      "id": "9176f7450e0038ecfe95",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 459,
+      "line": 444,
       "enclosing": "deleteUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "550f37f3178ce606adbe",
+      "id": "76e45ad1222197a0b314",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 466,
-      "enclosing": "deleteUserProviderKey",
+      "line": 471,
+      "enclosing": "revokeProviderRow",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cbb56f7c9723f7ce0786",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 472,
+      "enclosing": "revokeProviderRow",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "31689791680279202f34",
+      "id": "00d5747ecf446792e664",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 467,
-      "enclosing": "deleteUserProviderKey",
+      "line": 478,
+      "enclosing": "revokeProviderRow",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "b140f3a706c993397b91",
+      "id": "852656b30e571d27366f",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 475,
-      "enclosing": "deleteUserProviderKey",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
-    },
-    {
-      "id": "e7471878605908724d30",
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 481,
-      "enclosing": "deleteUserProviderKey",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
-    },
-    {
-      "id": "4b31a0883bd36c143c3f",
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 489,
-      "enclosing": "deleteUserProviderKey",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
-    },
-    {
-      "id": "964cce6119628ba06c01",
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 562,
+      "line": 555,
       "enclosing": "getUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "9d8ee5a58ab2ec92770d",
+      "id": "bcdf1774aaeb2947aea7",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 564,
+      "line": 557,
       "enclosing": "getUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "dd1cf4830e263d73acda",
+      "id": "732271f13ac74637c562",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 583,
+      "line": 578,
       "enclosing": "getUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "7326141ac006a7e2cad9",
+      "id": "1d3a4468abc984e7f129",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 605,
+      "line": 600,
       "enclosing": "resolveProviderEnvForDeploy",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
-      "id": "97a29e5b7baab8dcb11f",
+      "id": "5972539630132aefe5af",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 606,
+      "line": 601,
       "enclosing": "resolveProviderEnvForDeploy",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "34441c0c8b3fa97355c998b46480bae2c62d704fb0477bce8c6c0158c4c3977c",
+      "semanticReview": {
+        "authority": "Read full key store, authenticated integrations mount, deletion and disconnect callers. Owner and provider scope are explicit; named custom reads/deletes now select exact rows. Durable revocation markers precede mirror cleanup and block stale-mirror reads. Database errors fail closed.",
+        "reason": "Exact custom scope and stale-mirror resurrection have new tests, not final-source CI yet. All internal caller identities, legacy generic custom selection, cross-process save races, in-flight credentials, provider-side revocation, secret logging and production KMS remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+            "marker": "unavailable credential authority never reads a legacy mirror"
+          }
+        ]
+      }
     },
     {
       "id": "4a571253158f8281ee72",

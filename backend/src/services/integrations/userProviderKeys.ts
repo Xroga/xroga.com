@@ -1,7 +1,8 @@
 /**
  * User BYOK / product API keys — AES-256-GCM in user_integrations.
  * Secrets never go into GitHub; synced to the user's Vercel project env on deploy.
- * When user_integrations is missing, fall back to private Storage (same as OAuth PKCE).
+ * The database is authoritative for revocation. Legacy private Storage reads
+ * require a successful database lookup, never an unavailable authority store.
  */
 
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
@@ -383,21 +384,7 @@ export async function saveUserProviderKey(
     ));
   }
 
-  if (error && isMissingTableError(error.message)) {
-    const ok = await saveKeyToStorage(userId, providerRow, {
-      access_token: encrypted,
-      metadata,
-    });
-    if (!ok) {
-      throw new Error(
-        'Could not save credentials — user_integrations table missing and storage fallback failed. Apply migration 036 or set SUPABASE_DB_PASSWORD on Fly.',
-      );
-    }
-    console.warn('[userProviderKeys] saved via storage fallback:', providerRow);
-    return { provider: p, connected: true, masked: maskKey(trimmed), envVar, connectedAt: now };
-  }
-
-  if (error) throw new Error(error.message);
+  if (error) throw new Error('Credential could not be saved. Retry shortly.');
 
   void saveKeyToStorage(userId, providerRow, {
     access_token: encrypted,
@@ -423,17 +410,14 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
   };
   let rows: KeyRow[] = (data ?? []) as KeyRow[];
   if (error) {
-    if (!isMissingTableError(error.message)) {
-      throw new Error(error.message);
-    }
-    rows = await listKeysFromStorage(userId);
+    throw new Error('Credential lookup unavailable. Retry shortly.');
   } else if (!rows.length) {
     // Also merge storage fallback keys (table empty but vault files exist)
     const stored = await listKeysFromStorage(userId);
     if (stored.length) rows = stored;
   }
 
-  return rows.map((row) => {
+  return rows.filter((row) => row.metadata?.revoked !== true).map((row) => {
     const meta = (row.metadata ?? {}) as {
       provider?: string;
       masked?: string;
@@ -454,8 +438,9 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
 export async function deleteUserProviderKey(userId: string, provider: string): Promise<void> {
   const p = credentialProviderSelection(provider);
   const supabase = getSupabaseAdmin();
-  // custom_* rows: delete by prefix match when provider is custom_FOO
-  if (p.startsWith('custom_') || p === 'custom') {
+  // Only the legacy category-level request selects all custom keys. A named
+  // custom credential must take the exact provider-row path below.
+  if (p === 'custom') {
     const { data, error } = await supabase
       .from('user_integrations')
       .select('provider')
@@ -463,30 +448,38 @@ export async function deleteUserProviderKey(userId: string, provider: string): P
       .like('provider', `${PROVIDER_PREFIX}custom%`);
     if (!error) {
       for (const row of data ?? []) {
-        await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', row.provider);
-        await supabase.storage.from(KEY_BUCKET).remove([keyStoragePath(userId, row.provider)]).catch(() => undefined);
+        await revokeProviderRow(userId, row.provider);
       }
-    } else if (!isMissingTableError(error.message)) {
-      throw new Error(error.message);
-    }
+    } else throw new Error('Credential revocation could not be recorded. Retry shortly.');
     const stored = await listKeysFromStorage(userId);
     for (const row of stored) {
       if (String(row.provider).includes('custom')) {
-        await supabase.storage.from(KEY_BUCKET).remove([keyStoragePath(userId, row.provider)]).catch(() => undefined);
+        await revokeProviderRow(userId, row.provider);
       }
     }
     return;
   }
   const providerRow = `${PROVIDER_PREFIX}${p}`;
-  const { error } = await supabase
-    .from('user_integrations')
-    .delete()
-    .eq('user_id', userId)
-    .eq('provider', providerRow);
-  if (error && !isMissingTableError(error.message)) {
-    throw new Error(error.message);
+  await revokeProviderRow(userId, providerRow);
+}
+
+/** Keep an authoritative denial even when a legacy mirror cannot be removed.
+ * A missing database cannot safely certify revocation through Storage alone.
+ */
+async function revokeProviderRow(userId: string, providerRow: string): Promise<void> {
+  credentialProviderSelection(providerRow);
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase.from('user_integrations').upsert({
+    user_id: userId, provider: providerRow, access_token: '',
+    metadata: { revoked: true, revoked_at: new Date().toISOString() },
+  }, { onConflict: 'user_id,provider' });
+  if (error) throw new Error('Credential revocation could not be recorded. Retry shortly.');
+  try {
+    const result = await supabase.storage.from(KEY_BUCKET).remove([keyStoragePath(userId, providerRow)]);
+    if (result.error) throw new Error('cleanup failed');
+  } catch {
+    throw new Error('Credential revoked, but legacy copy cleanup is pending. Retry shortly.');
   }
-  await supabase.storage.from(KEY_BUCKET).remove([keyStoragePath(userId, providerRow)]).catch(() => undefined);
 }
 
 /** Placeholders only for GitHub — never plaintext secrets. */
@@ -560,16 +553,18 @@ ${
 export async function getUserProviderKey(userId: string, provider: string): Promise<string | null> {
   const p = credentialProviderSelection(provider);
   const supabase = getSupabaseAdmin();
-  if (p === 'custom' || p.startsWith('custom_')) {
+  if (p === 'custom') {
     const { data, error } = await supabase
       .from('user_integrations')
-      .select('access_token, provider')
+      .select('access_token, provider, metadata')
       .eq('user_id', userId)
       .like('provider', `${PROVIDER_PREFIX}custom%`);
     if (!error) {
-      const row = (data ?? [])[0];
-      if (row?.access_token) return decryptApiKey(row.access_token);
+      const row = (data ?? []).find((item) => item.metadata?.revoked !== true && item.access_token);
+      if (row) return decryptApiKey(row.access_token);
+      if (data?.length) return null;
     }
+    if (error) return null;
     const storedList = await listKeysFromStorage(userId);
     const custom = storedList.find((r) => String(r.provider).includes('custom'));
     if (custom) {
@@ -582,16 +577,16 @@ export async function getUserProviderKey(userId: string, provider: string): Prom
   const providerRow = `${PROVIDER_PREFIX}${p}`;
   const { data, error } = await supabase
     .from('user_integrations')
-    .select('access_token')
+    .select('access_token, metadata')
     .eq('user_id', userId)
     .eq('provider', providerRow)
     .maybeSingle();
 
-  if (!error && data?.access_token) {
-    return decryptApiKey(data.access_token);
+  if (!error && data) {
+    return data.metadata?.revoked === true || !data.access_token ? null : decryptApiKey(data.access_token);
   }
 
-  if (error && !isMissingTableError(error.message)) {
+  if (error) {
     return null;
   }
 
@@ -617,9 +612,7 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
   let rows: Row[] = (!error && data?.length ? data : []) as Row[];
 
   if (error || !rows.length) {
-    if (error && !isMissingTableError(error.message)) {
-      console.warn('[userProviderKeys] resolve for deploy:', error.message);
-    }
+    if (error) throw new Error('Credential lookup unavailable. Retry shortly.');
     const stored = await listKeysFromStorage(userId);
     rows = [];
     for (const s of stored) {
@@ -635,6 +628,7 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
 
   const out: Record<string, string> = {};
   for (const row of rows) {
+    if (row.metadata?.revoked === true) continue;
     const meta = (row.metadata ?? {}) as {
       env_var?: string;
       provider?: string;

@@ -10,6 +10,7 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
     "supabase/migrations/20261015000200_immutable_audit_lifecycle.sql",
     "backend/src/community/service.ts",
     "backend/src/community/community.test.ts",
@@ -202,7 +203,7 @@
     },
     "credentials": {
       "changed": true,
-      "description": "Dedicated server-only file-link signing key and private bucket metadata-read scope; per-run CI key only. No production keys read/rotated/cut over; existing vault deferred to 009"
+      "description": "Dedicated file-link key and private bucket checks; named custom credential scope and durable BYOK revocation markers now block legacy-mirror resurrection. Database-unavailable credential operations fail closed. No production keys read/rotated/cut over; full managed vault remains deferred to 009"
     },
     "egress": {
       "changed": true,
