@@ -10,6 +10,13 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/synthesis/projectRuntime/store.persistence.test.ts",
+    "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+    "backend/src/security/oauthSession.local.integration.ts",
+    "supabase/migrations/20261015000500_oauth_session_consumption.sql",
+    "backend/src/services/publish/chromeWebStore.ts",
+    "backend/src/services/publish/easPublish.ts",
+    "backend/src/services/publish/easCredentials.ts",
     "backend/src/ai/providerBudget.settlement.test.ts",
     "backend/src/security/providerKeyRevision.local.integration.ts",
     "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -224,6 +231,7 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
+      "supabase/migrations/20261015000500_oauth_session_consumption.sql",
       "supabase/migrations/20261015000400_provider_key_revision_fencing.sql",
       "supabase/migrations/20261015000300_swarm_run_attempt_fencing.sql",
       "supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql",

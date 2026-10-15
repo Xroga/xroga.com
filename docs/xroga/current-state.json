@@ -22135,7 +22135,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts:26",
         "backend/src/services/integrations/githubAuth.revocation.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:15",
-        "backend/src/services/publish/easPublish.ts:11",
+        "backend/src/services/publish/easPublish.ts:12",
         "backend/src/services/publish/electronSecrets.ts:6",
         "backend/src/services/publish/nonWebShip.ts:9",
         "backend/src/services/publish/userOwnedPublish.ts:6",
@@ -22975,7 +22975,7 @@
       "id": "surface:949ba325e98bab6b63c3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "symbols": [
         "BUCKET",
         "PkceSession",
@@ -22984,6 +22984,7 @@
         "body",
         "clearPkceSession",
         "clearProviderToken",
+        "consumePkceSession",
         "downloadJson",
         "err",
         "isBucketMissingError",
@@ -23015,6 +23016,7 @@
       ],
       "callers": [
         "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/services/integrations/oauthPkceStore.consume.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.test.ts:6",
         "backend/src/services/integrations/pluginPermissionPolicy.ts:1",
@@ -23033,14 +23035,15 @@
       ],
       "tenantBoundary": [
         "backend/src/services/integrations/oauthPkceStore.ts:131 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:201 (user_id)",
-        "backend/src/services/integrations/oauthPkceStore.ts:221 (user_id)"
+        "backend/src/services/integrations/oauthPkceStore.ts:218 (user_id)",
+        "backend/src/services/integrations/oauthPkceStore.ts:238 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
         "backend/src/services/integrations/oauthPkceStore.test.ts"
       ],
@@ -23121,7 +23124,7 @@
       "id": "surface:84d59728979a7f8187e6",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/supabaseAuth.ts",
-      "sha256": "c7a813b166a1c776c431249b5ca9ce85d6ea233a95f1b45de0cd8978c6d95d47",
+      "sha256": "40e07235c100c5132ac0abb3cf7832aa7b053c3ce987dac2daf2d7a63c16e321",
       "symbols": [
         "AUTHORIZE",
         "PKCE_PROVIDER",
@@ -23176,9 +23179,10 @@
       "callers": [
         "backend/src/lib/platformReady.ts:8",
         "backend/src/routes/supabaseOAuth.ts:10",
+        "backend/src/services/integrations/oauthPkceStore.consume.test.ts:6",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6",
-        "backend/src/services/integrations/supabaseProvision.ts:526",
-        "backend/src/services/integrations/userProviderKeys.ts:787"
+        "backend/src/services/integrations/supabaseProvision.ts:530",
+        "backend/src/services/integrations/userProviderKeys.ts:817"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23215,6 +23219,7 @@
         "backend/src/services/integrations/supabaseAuth.ts#verifier"
       ],
       "testCoverage": [
+        "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -23228,7 +23233,7 @@
       "id": "surface:20b164dcdac7e7fd299f",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/supabaseProvision.ts",
-      "sha256": "8b27bfece71d91990d5102b91b6842b3bbd763cbf43ce2d6d5e7e148f013f63e",
+      "sha256": "0be0483a7fada343a508b506889d70abcc914bd8290a947f5f07a8e4d2806870",
       "symbols": [
         "MGMT",
         "MgmtProject",
@@ -23313,8 +23318,9 @@
         "backend/src/routes/supabaseOAuth.ts:20",
         "backend/src/security/tenantIsolation.local.integration.ts:40",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
-        "backend/src/services/integrations/userProviderKeys.ts:850",
-        "backend/src/services/integrations/userProviderKeys.ts:859"
+        "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
+        "backend/src/services/integrations/userProviderKeys.ts:880",
+        "backend/src/services/integrations/userProviderKeys.ts:889"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -23334,7 +23340,8 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
-        "backend/src/services/integrations/supabaseProvision.test.ts"
+        "backend/src/services/integrations/supabaseProvision.test.ts",
+        "backend/src/services/integrations/userProviderKeys.revision.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -23347,7 +23354,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -23358,12 +23365,14 @@
         "KeyRow",
         "PROVIDER_PREFIX",
         "PUBLISH_ONLY_PROVIDERS",
+        "ProviderKeyWriteAdmission",
         "Row",
         "SUPABASE_SERVER_ONLY_PROVIDERS",
         "SaveKeyOptions",
         "UserProviderKeyStatus",
         "UserSupabaseStatus",
         "accessToken",
+        "admission",
         "anon",
         "buckets",
         "buildProviderEnvFiles",
@@ -23395,6 +23404,7 @@
         "hasServiceRole",
         "hasUrl",
         "idx",
+        "issuedWriteAdmissions",
         "iv",
         "k",
         "keyStoragePath",
@@ -23417,6 +23427,7 @@
         "parts",
         "pat",
         "plain",
+        "prepareUserProviderKeyWrite",
         "prepared",
         "provider",
         "providerCatalog",
@@ -23428,6 +23439,7 @@
         "ref",
         "resolveProviderEnvForDeploy",
         "result",
+        "revision",
         "revokeProviderRow",
         "row",
         "rows",
@@ -23501,11 +23513,11 @@
       ],
       "tenantBoundary": [
         "backend/src/services/integrations/userProviderKeys.ts:63 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:394 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:439 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:549 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:570 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:593 (user_id)"
+        "backend/src/services/integrations/userProviderKeys.ts:424 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:469 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:579 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:600 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:623 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -23528,7 +23540,7 @@
       "id": "surface:083de6ff7f0ffdcc0165",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "symbols": [
         "ALLOWED_CALLBACK_ORIGINS",
         "CALLBACK_PATH",
@@ -23655,6 +23667,7 @@
         "backend/src/routes/vercel.ts:4",
         "backend/src/security/tenantIsolation.local.integration.ts:27",
         "backend/src/services/integrations/githubDeploy.ts:16",
+        "backend/src/services/integrations/oauthPkceStore.consume.test.ts:5",
         "backend/src/services/integrations/vercelAuth.refresh.test.ts:3",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts:4",
         "backend/src/services/integrations/vercelAuth.scope.test.ts:3",
@@ -23692,10 +23705,10 @@
         "backend/src/services/integrations/vercelAuth.ts#verifyVercelTokenLive"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/vercelAuth.ts:458 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:482 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:500 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:749 (user_id)"
+        "backend/src/services/integrations/vercelAuth.ts:456 (user_id)",
+        "backend/src/services/integrations/vercelAuth.ts:480 (user_id)",
+        "backend/src/services/integrations/vercelAuth.ts:498 (user_id)",
+        "backend/src/services/integrations/vercelAuth.ts:747 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/vercelAuth.ts#buildVercelAuthorizeUrl"
@@ -23708,6 +23721,7 @@
       ],
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/vercelAuth.refresh.test.ts",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts",
         "backend/src/services/integrations/vercelAuth.scope.test.ts",
@@ -24037,7 +24051,7 @@
       "id": "surface:26a7a0e14f4a25338521",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/chromeWebStore.ts",
-      "sha256": "b675d14d5cd80985edfae2ba7397017098661fc62f77881065931c0f19ed6471",
+      "sha256": "8aba3a3543ea45a51f0dbee270452eec92e6d078a1f9de8bcee8ab2951be8692",
       "symbols": [
         "AUTH_URL",
         "CWS_CALLBACK_PATH",
@@ -24108,7 +24122,8 @@
         "backend/src/routes/publish.ts:210",
         "backend/src/routes/publish.ts:252",
         "backend/src/routes/publish.ts:289",
-        "backend/src/routes/publish.ts:305"
+        "backend/src/routes/publish.ts:305",
+        "backend/src/services/integrations/oauthPkceStore.consume.test.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -24132,7 +24147,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/services/integrations/oauthPkceStore.consume.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -24144,7 +24161,7 @@
       "id": "surface:d1c2140ad50607193caf",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/easCredentials.ts",
-      "sha256": "3160da4890576c9a76f7c4815909dd7c0deb743de773042505ede034882f933a",
+      "sha256": "a8e1c5edbff8a52da058327ea444d19733e3a6f804f3776d3a0ad70dfdff80a7",
       "symbols": [
         "AppCredsShape",
         "EXPO_API",
@@ -24247,7 +24264,7 @@
       "id": "surface:3b76593d10289f704a26",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/easPublish.ts",
-      "sha256": "172ced6aa7510ed84c21037361b4534c8002873ea11ef8d429c17fb2aff2ed8d",
+      "sha256": "39f3d39588b965933172f429ecd72ae00cf8ec3f64ceb1cd5f47eaa51af045aa",
       "symbols": [
         "EXPO_API",
         "MobilePlatform",
@@ -24288,7 +24305,8 @@
         "text",
         "token",
         "triggerEasPublish",
-        "wantSubmit"
+        "wantSubmit",
+        "writeAdmission"
       ],
       "imports": [
         "../integrations/githubAuth.js",
@@ -24306,7 +24324,8 @@
         "backend/src/ai/pipeline.ts:168",
         "backend/src/routes/publish.ts:61",
         "backend/src/routes/publish.ts:8",
-        "backend/src/services/publish/easCredentials.ts:10"
+        "backend/src/services/integrations/userProviderKeys.revision.test.ts:7",
+        "backend/src/services/publish/easCredentials.ts:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -24318,7 +24337,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/services/integrations/userProviderKeys.revision.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -29635,7 +29656,7 @@
       "id": "surface:52eacb67555cd24b2de9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "symbols": [
         "EncryptedProjectSecretRecord",
         "InMemoryProjectRuntimeStore",
@@ -29664,6 +29685,7 @@
         "revision",
         "session",
         "snapshot",
+        "snapshotRevision",
         "state",
         "store",
         "values"
@@ -29692,7 +29714,8 @@
         "backend/src/synthesis/projectRuntime/manager.ts:22",
         "backend/src/synthesis/projectRuntime/projectHistory.ts:10",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:48",
-        "backend/src/synthesis/projectRuntime/store.owner.test.ts:4"
+        "backend/src/synthesis/projectRuntime/store.owner.test.ts:4",
+        "backend/src/synthesis/projectRuntime/store.persistence.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -29708,10 +29731,10 @@
         "backend/src/synthesis/projectRuntime/store.ts#identity"
       ],
       "tenantBoundary": [
-        "backend/src/synthesis/projectRuntime/store.ts:706 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:797 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:980 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1063 (user_id)"
+        "backend/src/synthesis/projectRuntime/store.ts:727 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:818 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:1001 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:1084 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -29722,7 +29745,8 @@
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
-        "backend/src/synthesis/projectRuntime/store.owner.test.ts"
+        "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+        "backend/src/synthesis/projectRuntime/store.persistence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -31239,7 +31263,8 @@
         "backend/src/synthesis/canonicalFoundation.test.ts",
         "backend/src/synthesis/delivery/projectDelivery.test.ts",
         "backend/src/synthesis/livePreview/livePreview.test.ts",
-        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts"
+        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+        "backend/src/synthesis/projectRuntime/store.persistence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -94335,6 +94360,13 @@
       "version": "20261015000400",
       "order": 73,
       "sha256": "3b1c35d2bc2117b9ae04261bcccf89a03c4a98d0df9daed08a8609860901082b"
+    },
+    {
+      "id": "migration:04da117a4b2d8512c972",
+      "sourcePath": "supabase/migrations/20261015000500_oauth_session_consumption.sql",
+      "version": "20261015000500",
+      "order": 74,
+      "sha256": "4e863477a077696d6f9e7944e2183a906749861c30c27cd79934395d30f5664a"
     }
   ],
   "workflows": [
@@ -94812,9 +94844,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b430b2d5a42bcda891ab",
+      "id": "finding:f3a4e60c1fb1a38a31c5",
       "sourcePath": "backend/src/services/publish/easPublish.ts",
-      "line": 289,
+      "line": 291,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -101975,6 +102007,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:b392dbba0626fe9de839",
+      "sourcePath": "backend/src/security/oauthSession.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9e4fbec6266f2a8ae08d",
       "sourcePath": "backend/src/security/ownedRunPersistence.test.ts",
       "declaredTests": 3,
@@ -102153,6 +102192,13 @@
       "id": "test-suite:7a343d86b87dae6efcdd",
       "sourcePath": "backend/src/services/integrations/managedVercelDeployment.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:2a101b08d7f6df3e3060",
+      "sourcePath": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102552,6 +102598,13 @@
       "id": "test-suite:06ea418cf83423dcff7b",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e328f6084b7426d3916f",
+      "sourcePath": "backend/src/synthesis/projectRuntime/store.persistence.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

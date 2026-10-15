@@ -853,24 +853,24 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "callIds": [
-        "26fa4f9ec2b1c2b706eb",
-        "53492dad34fb85b82a84",
-        "25c7f8ef11b52299ef2d",
-        "64f625d38ac95267dfc4",
-        "f2bc36a25635940ff4bc",
-        "42b163c963d22440b772",
-        "e75144f479b27611799d",
-        "4d32a7e88bcbc575fe1e",
-        "e7d3dfffb00cabdb12e1",
-        "caf8c34f6a6ad470f2e7",
-        "cf317294ba08b3484a5f",
-        "21a631f71ad577a88ffd",
-        "008647681f5b1bf1d3b3",
-        "03881481406df41623c0",
-        "87da92bb2b293576e16d",
-        "473638d30e12be7d3b2d"
+        "de3eee657d8403ccf6e9",
+        "454726a571d14c60bbd5",
+        "3a096e057703d508dd26",
+        "ea92a7350c3295acbf59",
+        "ffcaf3e03fc8cb12c125",
+        "8372b7ecc3cdc392edd2",
+        "7595516c6d98b59ee517",
+        "1208226e3a88b86e9ff3",
+        "95bb65e4416e615f05e5",
+        "f19578ae3bd0614a9e79",
+        "7b31925a24719e238bdf",
+        "85d54b1caf21d8db9dec",
+        "18ee3812cc76b825d7f8",
+        "9b588ddc7b596ae516c4",
+        "7ff15828263a92dfb83e",
+        "ffb4f027b8979aefa983"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
@@ -1112,7 +1112,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "callIds": [
         "241716ea497721fe54e5",
         "b413c3ab1ace9d65accf",
@@ -1131,7 +1131,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "callIds": [
         "1820ca770e3eb79483c2",
         "5430d13294eb1a13f663",
@@ -1139,22 +1139,22 @@
         "a70e41a64d0371e71b1f",
         "67ccfcf6b0247b2d271d",
         "f68c7243e8023c812ac6",
-        "64cda88c40a2dea3b929",
-        "c277727569550e57ef91",
-        "5cb4a73659dee97d0b6e",
-        "0715ea0df7d94145ca55",
-        "06d1beceaf7785213d0a",
-        "5aeaef001b840fea33ba",
-        "ddbf968addc59fd8ee32",
-        "a3d50063b036971ec880",
-        "ba97216f0fc0cb59644a",
-        "5f7819a21fc0daa0d37e",
-        "42786f09181d109e2515",
-        "1f3d8c10c1191ee67781"
+        "e6d53a18c5ff714d362f",
+        "cc516741e4b6df265af9",
+        "02122e978e9048259ac3",
+        "cdd1df4a741a0e3fc476",
+        "1d3d06a72f6c0ba1eb72",
+        "927e50280d11063ea023",
+        "ef9f4b0b278dd8a33479",
+        "4f5e84a97f05988ce2d4",
+        "8820076f0b82ec258838",
+        "2533c12a0831f9464312",
+        "acc24170a63d37a4065d",
+        "22911c083667f355baf5"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-      "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+      "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -1600,9 +1600,9 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "callIds": [
-        "8bc24cfa8844d90866b4"
+        "a294f1e1adb1d7daf588"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in encodeVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1616,9 +1616,9 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "callIds": [
-        "331931c30f3362b4a021"
+        "98b850e6866f3a5d08f0"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in parseVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1632,9 +1632,9 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "callIds": [
-        "f3ca8658f8f880004de9"
+        "1f964408f31e51a99cd9"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in buildVercelAuthorizeUrl. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1648,9 +1648,9 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "callIds": [
-        "f5a75bb3f1c62654a46c"
+        "96be6dd16fa0d29508d8"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in parseVercelOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2992,27 +2992,27 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "callIds": [
-        "25095802651b5e4dce5f",
-        "fb111a342e49d30c3a9b",
-        "4e72541c1ae02e397acf",
-        "d9ad9a5d90bb4165dc7d",
-        "41edb400573bacaa555d",
-        "89d858807f97969b7dce",
-        "cb711330e00db90f12bb",
-        "281a3d3a7e272f923671",
-        "31c93d187197768b3b71",
-        "4645f852d77431f00664",
-        "c064132c2275b340e97a",
-        "7a4a7a0c551fe84cdb17",
-        "7fecfb4d81f547ff8e57",
-        "4af535a6c0e6f4a53b30",
-        "2df9f446963207e45a86"
+        "a1e0c5de49a4039c3fbc",
+        "62234077a1b82a769a8f",
+        "719073979bb57e6ab7fa",
+        "71e47e92d1e6267f7d5f",
+        "4d2251150857ad6a44fb",
+        "f4bcb7025b70f277c575",
+        "c1f54307cae02e4e714a",
+        "8cc558600b340a0a1530",
+        "34e7bc87d91c1e71efb0",
+        "8f0f396cfc7ab5833cc5",
+        "f05a957330dfe6e6e567",
+        "4a0f75719e92953b9a9b",
+        "e245c830749182e7a86b",
+        "125405c2888f89423dba",
+        "8199e0cb4af319b8668d"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-      "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+      "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -3326,11 +3326,11 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "sourceSha256": "c7a813b166a1c776c431249b5ca9ce85d6ea233a95f1b45de0cd8978c6d95d47",
+      "sourceSha256": "40e07235c100c5132ac0abb3cf7832aa7b053c3ce987dac2daf2d7a63c16e321",
       "callIds": [
-        "7207c97e58311f511e34",
-        "79b81f6d5bafe2a2bce3",
-        "7a3589c5283c3d4e539f"
+        "00e6d8cc9200a1b19e9d",
+        "222ac226342dba00be50",
+        "000f7e52bdcf510d56ce"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
@@ -3348,9 +3348,9 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "sourceSha256": "8b27bfece71d91990d5102b91b6842b3bbd763cbf43ce2d6d5e7e148f013f63e",
+      "sourceSha256": "0be0483a7fada343a508b506889d70abcc914bd8290a947f5f07a8e4d2806870",
       "callIds": [
-        "a903b91c390a73b943ee"
+        "891c0a5ab9c5f074a5e2"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
@@ -3512,7 +3512,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "callIds": [
         "0cf7d2200643c48eef05",
         "d1ca96a4d901dcee9262",
@@ -3527,37 +3527,27 @@
         "758e9631fe27aa08e158",
         "2a665e42804fda04c2e4",
         "04a8c4b310fa62f030e2",
-        "68c5b0cbc64559830941",
-        "f255c0c7448e4083224f",
-        "0c0166b452e9a4b93361",
-        "11ea4367141a4718c1bf",
-        "59477480fcc14475c3e1",
-        "7bb3b08c19b731b73baf",
-        "a95a2866407c96309fa7"
+        "5b49efbd2be7dfc31ae9",
+        "e0015d75f84bf9b76467",
+        "3d15c886b134531108da",
+        "c9200b797c4ca7e37fe9",
+        "b6d4cb3d19e67bf12225",
+        "59642a20b827b2b26241",
+        "a0adbd2f590a96a7d153",
+        "fe395dfad59ca2ef6b13",
+        "5442f511a1f4ffbdd09e"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-      "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+      "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+      "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
       "evidence": [
         {
-          "path": "backend/src/routes/supabaseOAuth.ts",
-          "marker": "stateInfo.userId !== req.userId"
+          "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+          "marker": "all OAuth callback entry points"
         },
         {
-          "path": "backend/src/index.ts",
-          "marker": "authMiddleware, supabaseOAuthRouter"
-        },
-        {
-          "path": "backend/src/services/integrations/oauthPkceStore.ts",
-          "marker": "if (stored?.verifier && stored.state === expectedState)"
-        },
-        {
-          "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-          "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-        },
-        {
-          "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-          "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+          "path": "backend/src/security/oauthSession.local.integration.ts",
+          "marker": "real two-client OAuth claims"
         }
       ]
     },
@@ -3760,13 +3750,13 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "callIds": [
         "e948275ac03420374cc6"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-      "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+      "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -3798,11 +3788,31 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "callIds": [
-        "bbd3d5ae788daaa73756",
-        "fe866cc3c765522289c0",
-        "76b0463f680baea80661"
+        "0309ab57d4a52e50411e",
+        "36aea3f2d39707a9781f"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
+      "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+          "marker": "rejects a concurrent revoke"
+        },
+        {
+          "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+          "marker": "real provider revision binds exact owner"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "callIds": [
+        "a4f3d85cadbd037c992f",
+        "d01a6c21f19b545cb3c2"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",

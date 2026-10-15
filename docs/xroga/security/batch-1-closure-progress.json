@@ -14,12 +14,12 @@
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 161,
-    "persistenceCandidates": 672,
+    "privilegedFactorySites": 163,
+    "persistenceCandidates": 675,
     "ownerPredicateCandidates": 169,
     "reviewRequired": 0,
-    "reviewedCandidates": 672,
-    "unresolvedSafetyCandidates": 492,
+    "reviewedCandidates": 675,
+    "unresolvedSafetyCandidates": 495,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -70,6 +70,11 @@
     "Commercial hosting eligibility remains separate launch issue"
   ],
   "nextTask": "Execute final-source disposable Supabase races and full branch/integrated baseline. Fix failures without weakening criteria, then close shared caller groups with semantic evidence and continue isolated 008-010 engineering.",
+  "additionalWork": {
+    "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
+    "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
+    "runtimeRevision": "Identity-bound immutable snapshot and exact durable receipt. Seventeen focused tests pass; existing real revision save/read test extended."
+  },
   "matrix": [
     {
       "rootCause": "worker-state",
@@ -109,7 +114,7 @@
       "existingImplementation": "Existing OAuth, BYOK and credential mirrors",
       "missingBehavior": "Atomic save/revoke ordering, one-use PKCE, encrypted vault migration and KMS boundary",
       "acceptanceTest": "Wrong owner, revocation during read/write, replay, rotation and tampering",
-      "pendingCandidates": 82,
+      "pendingCandidates": 85,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/services/integrations/credentialStorageBucket.ts": [
@@ -158,13 +163,15 @@
           "758e9631fe27aa08e158",
           "2a665e42804fda04c2e4",
           "04a8c4b310fa62f030e2",
-          "68c5b0cbc64559830941",
-          "f255c0c7448e4083224f",
-          "0c0166b452e9a4b93361",
-          "11ea4367141a4718c1bf",
-          "59477480fcc14475c3e1",
-          "7bb3b08c19b731b73baf",
-          "a95a2866407c96309fa7"
+          "5b49efbd2be7dfc31ae9",
+          "e0015d75f84bf9b76467",
+          "3d15c886b134531108da",
+          "c9200b797c4ca7e37fe9",
+          "b6d4cb3d19e67bf12225",
+          "59642a20b827b2b26241",
+          "a0adbd2f590a96a7d153",
+          "fe395dfad59ca2ef6b13",
+          "5442f511a1f4ffbdd09e"
         ],
         "backend/src/services/integrations/userProviderKeys.ts": [
           "1820ca770e3eb79483c2",
@@ -174,39 +181,40 @@
           "e948275ac03420374cc6",
           "67ccfcf6b0247b2d271d",
           "f68c7243e8023c812ac6",
-          "64cda88c40a2dea3b929",
-          "bbd3d5ae788daaa73756",
-          "fe866cc3c765522289c0",
-          "c277727569550e57ef91",
-          "5cb4a73659dee97d0b6e",
-          "0715ea0df7d94145ca55",
-          "06d1beceaf7785213d0a",
-          "5aeaef001b840fea33ba",
-          "76b0463f680baea80661",
-          "ddbf968addc59fd8ee32",
-          "a3d50063b036971ec880",
-          "ba97216f0fc0cb59644a",
-          "5f7819a21fc0daa0d37e",
-          "42786f09181d109e2515",
-          "1f3d8c10c1191ee67781"
+          "a4f3d85cadbd037c992f",
+          "d01a6c21f19b545cb3c2",
+          "e6d53a18c5ff714d362f",
+          "0309ab57d4a52e50411e",
+          "cc516741e4b6df265af9",
+          "02122e978e9048259ac3",
+          "cdd1df4a741a0e3fc476",
+          "1d3d06a72f6c0ba1eb72",
+          "927e50280d11063ea023",
+          "36aea3f2d39707a9781f",
+          "ef9f4b0b278dd8a33479",
+          "4f5e84a97f05988ce2d4",
+          "8820076f0b82ec258838",
+          "2533c12a0831f9464312",
+          "acc24170a63d37a4065d",
+          "22911c083667f355baf5"
         ],
         "backend/src/services/integrations/vercelAuth.ts": [
-          "26fa4f9ec2b1c2b706eb",
-          "53492dad34fb85b82a84",
-          "25c7f8ef11b52299ef2d",
-          "64f625d38ac95267dfc4",
-          "f2bc36a25635940ff4bc",
-          "42b163c963d22440b772",
-          "e75144f479b27611799d",
-          "4d32a7e88bcbc575fe1e",
-          "e7d3dfffb00cabdb12e1",
-          "caf8c34f6a6ad470f2e7",
-          "cf317294ba08b3484a5f",
-          "21a631f71ad577a88ffd",
-          "008647681f5b1bf1d3b3",
-          "03881481406df41623c0",
-          "87da92bb2b293576e16d",
-          "473638d30e12be7d3b2d"
+          "de3eee657d8403ccf6e9",
+          "454726a571d14c60bbd5",
+          "3a096e057703d508dd26",
+          "ea92a7350c3295acbf59",
+          "ffcaf3e03fc8cb12c125",
+          "8372b7ecc3cdc392edd2",
+          "7595516c6d98b59ee517",
+          "1208226e3a88b86e9ff3",
+          "95bb65e4416e615f05e5",
+          "f19578ae3bd0614a9e79",
+          "7b31925a24719e238bdf",
+          "85d54b1caf21d8db9dec",
+          "18ee3812cc76b825d7f8",
+          "9b588ddc7b596ae516c4",
+          "7ff15828263a92dfb83e",
+          "ffb4f027b8979aefa983"
         ]
       }
     },
@@ -487,21 +495,21 @@
           "73ab17f7a209cc26cc6b"
         ],
         "backend/src/synthesis/projectRuntime/store.ts": [
-          "25095802651b5e4dce5f",
-          "fb111a342e49d30c3a9b",
-          "4e72541c1ae02e397acf",
-          "d9ad9a5d90bb4165dc7d",
-          "41edb400573bacaa555d",
-          "89d858807f97969b7dce",
-          "cb711330e00db90f12bb",
-          "281a3d3a7e272f923671",
-          "31c93d187197768b3b71",
-          "4645f852d77431f00664",
-          "c064132c2275b340e97a",
-          "7a4a7a0c551fe84cdb17",
-          "7fecfb4d81f547ff8e57",
-          "4af535a6c0e6f4a53b30",
-          "2df9f446963207e45a86"
+          "a1e0c5de49a4039c3fbc",
+          "62234077a1b82a769a8f",
+          "719073979bb57e6ab7fa",
+          "71e47e92d1e6267f7d5f",
+          "4d2251150857ad6a44fb",
+          "f4bcb7025b70f277c575",
+          "c1f54307cae02e4e714a",
+          "8cc558600b340a0a1530",
+          "34e7bc87d91c1e71efb0",
+          "8f0f396cfc7ab5833cc5",
+          "f05a957330dfe6e6e567",
+          "4a0f75719e92953b9a9b",
+          "e245c830749182e7a86b",
+          "125405c2888f89423dba",
+          "8199e0cb4af319b8668d"
         ],
         "backend/src/synthesis/universalEntrypoint.ts": [
           "10b5e279dd241e2f40ec"
@@ -727,7 +735,7 @@
           "f2586952366ff60faf5e"
         ],
         "backend/src/services/integrations/supabaseProvision.ts": [
-          "a903b91c390a73b943ee"
+          "891c0a5ab9c5f074a5e2"
         ],
         "backend/src/services/notificationService.ts": [
           "75cd82142cc716ceb6ad",

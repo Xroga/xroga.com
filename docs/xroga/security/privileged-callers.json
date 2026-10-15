@@ -1,18 +1,18 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "2bb74ced2bf8c66ec7c04af59cc5d2fff8eed30f5213e92d005cdd01b9c5b1dd",
+  "reviewRegistrySha256": "c470500472948aa80d6206c50bd53d4651ab341708bb3e1ad0c0d2608ed04c46",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 161,
-    "persistenceCandidates": 672,
+    "privilegedFactorySites": 163,
+    "persistenceCandidates": 675,
     "ownerPredicateCandidates": 169,
     "reviewRequired": 0,
-    "reviewedCandidates": 672,
-    "unresolvedSafetyCandidates": 492,
+    "reviewedCandidates": 675,
+    "unresolvedSafetyCandidates": 495,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -21,7 +21,7 @@
     "SCOPED_BOUNDARY": 41,
     "NARROW_EXCEPTION": 8,
     "NOT_PERSISTENCE": 131,
-    "REVIEWED_GAP": 492
+    "REVIEWED_GAP": 495
   },
   "callers": [
     {
@@ -9942,30 +9942,18 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
@@ -9979,30 +9967,18 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
@@ -10016,30 +9992,18 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
@@ -10053,30 +10017,18 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
@@ -10090,30 +10042,18 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
@@ -10127,30 +10067,18 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
@@ -10164,30 +10092,18 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
@@ -10201,30 +10117,18 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
@@ -10238,30 +10142,18 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
@@ -10275,30 +10167,18 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
@@ -10312,30 +10192,18 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
@@ -10349,30 +10217,18 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
@@ -10386,295 +10242,249 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
     },
     {
-      "id": "68c5b0cbc64559830941",
+      "id": "5b49efbd2be7dfc31ae9",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 189,
-      "enclosing": "storeProviderToken",
+      "line": 182,
+      "enclosing": "consumePkceSession",
+      "kind": "RPC_CANDIDATE",
+      "target": "consume_oauth_session",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "semanticReview": {
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e0015d75f84bf9b76467",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 182,
+      "enclosing": "consumePkceSession",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
     },
     {
-      "id": "f255c0c7448e4083224f",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 201,
-      "enclosing": "storeProviderToken",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
-      "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
-        "evidence": [
-          {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
-          },
-          {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
-          }
-        ]
-      }
-    },
-    {
-      "id": "0c0166b452e9a4b93361",
+      "id": "3d15c886b134531108da",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
       "line": 206,
       "enclosing": "storeProviderToken",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
     },
     {
-      "id": "11ea4367141a4718c1bf",
+      "id": "c9200b797c4ca7e37fe9",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 220,
+      "line": 218,
+      "enclosing": "storeProviderToken",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "semanticReview": {
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b6d4cb3d19e67bf12225",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 223,
+      "enclosing": "storeProviderToken",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
+      "semanticReview": {
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "59642a20b827b2b26241",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 237,
       "enclosing": "loadProviderToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
     },
     {
-      "id": "59477480fcc14475c3e1",
+      "id": "a0adbd2f590a96a7d153",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 221,
+      "line": 238,
       "enclosing": "loadProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
     },
     {
-      "id": "7bb3b08c19b731b73baf",
+      "id": "fe395dfad59ca2ef6b13",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 255,
+      "line": 272,
       "enclosing": "clearProviderToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
     },
     {
-      "id": "a95a2866407c96309fa7",
+      "id": "5442f511a1f4ffbdd09e",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 256,
+      "line": 273,
       "enclosing": "clearProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "65b401076bdb8e68e2cab464a95f31897c80f656a02ade70d020ed74bbf09063",
+      "sourceSha256": "d72ed7e199ec4b0e4fd5a4f5b2acc485d3e11b2a32ae1088c7e370b53ddf8812",
       "semanticReview": {
-        "authority": "Full helper source and Supabase OAuth route were examined. The route mount requires authMiddleware; connect compares state.userId to req.userId and selects that server user for token access. The shared helper itself accepts primitive userId/provider arguments, not issued authority, and is also consumed by Vercel, publishing and plugin-permission code.",
-        "reason": "Full helper reinspection: saves require DB success, revocation persists an empty row before checked mirror cleanup, unsafe path identifiers fail before I/O, and reads deny stale fallback behind rejected authority. Permission reads require authoritative-only lookup. Refresh uses an owner/provider/observed-refresh-token conditional update, denying a lost predicate. Fourteen combined OAuth/Vercel local tests pass; expanded real delayed-mirror/other-owner/reconnect/refresh test awaits exact-source execution. Primitive actor provenance, one-use PKCE/expiry, overlapping refresh with reused tokens, initial callback-save races and plaintext mirrors remain unresolved. No complete credential or Command009 certification.",
+        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
+        "reason": "Sixteen focused regressions and115 local SQL assertions pass; actual concurrent Supabase test awaits CI. OAuth token save/disconnect ordering, plaintext mirrors, encryption/KMS, caller provenance and other provider lifecycle gaps remain. Existing legacy read helper is not callback admission.",
         "evidence": [
           {
-            "path": "backend/src/routes/supabaseOAuth.ts",
-            "marker": "stateInfo.userId !== req.userId"
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
           },
           {
-            "path": "backend/src/index.ts",
-            "marker": "authMiddleware, supabaseOAuthRouter"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.ts",
-            "marker": "if (stored?.verifier && stored.state === expectedState)"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
-            "marker": "OAuth authority failure or existing rejected state never reads a stale Storage mirror"
-          },
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-            "marker": "shared OAuth requires authority, persists revocation and rejects path traversal before I/O"
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
           }
         ]
       }
     },
     {
-      "id": "7207c97e58311f511e34",
+      "id": "00e6d8cc9200a1b19e9d",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
       "line": 64,
       "enclosing": "basicAuthHeader",
@@ -10682,7 +10492,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c7a813b166a1c776c431249b5ca9ce85d6ea233a95f1b45de0cd8978c6d95d47",
+      "sourceSha256": "40e07235c100c5132ac0abb3cf7832aa7b053c3ce987dac2daf2d7a63c16e321",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -10699,7 +10509,7 @@
       }
     },
     {
-      "id": "79b81f6d5bafe2a2bce3",
+      "id": "222ac226342dba00be50",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
       "line": 81,
       "enclosing": "buildSupabaseAuthorizeUrl",
@@ -10707,7 +10517,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c7a813b166a1c776c431249b5ca9ce85d6ea233a95f1b45de0cd8978c6d95d47",
+      "sourceSha256": "40e07235c100c5132ac0abb3cf7832aa7b053c3ce987dac2daf2d7a63c16e321",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -10724,15 +10534,15 @@
       }
     },
     {
-      "id": "7a3589c5283c3d4e539f",
+      "id": "000f7e52bdcf510d56ce",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 253,
+      "line": 251,
       "enclosing": "parseOAuthState",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c7a813b166a1c776c431249b5ca9ce85d6ea233a95f1b45de0cd8978c6d95d47",
+      "sourceSha256": "40e07235c100c5132ac0abb3cf7832aa7b053c3ce987dac2daf2d7a63c16e321",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -10749,15 +10559,15 @@
       }
     },
     {
-      "id": "a903b91c390a73b943ee",
+      "id": "891c0a5ab9c5f074a5e2",
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "line": 538,
+      "line": 542,
       "enclosing": "userSupabaseMemoryReady",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_session_memory",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8b27bfece71d91990d5102b91b6842b3bbd763cbf43ce2d6d5e7e148f013f63e",
+      "sourceSha256": "0be0483a7fada343a508b506889d70abcc914bd8290a947f5f07a8e4d2806870",
       "semanticReview": {
         "authority": "The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
         "reason": "Full helper examined, including Management API, direct SQL and Storage calls outside the scanner. Generated memory tables lacked browser-role isolation and existing public buckets were falsely accepted; both corrected with pending real CI. Full caller provenance, provider/project binding, legacy customer catalog review, direct-PG TLS validation and explicit consequential approval remain unresolved, not certified from owner syntax.",
@@ -10782,10 +10592,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -10807,10 +10617,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -10832,10 +10642,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -10857,10 +10667,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -10882,10 +10692,10 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -10907,10 +10717,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -10932,10 +10742,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -10957,7 +10767,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10978,7 +10788,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10999,7 +10809,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -11020,7 +10830,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -11033,18 +10843,60 @@
       }
     },
     {
-      "id": "64cda88c40a2dea3b929",
+      "id": "a4f3d85cadbd037c992f",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 346,
+      "line": 320,
+      "enclosing": "prepareUserProviderKeyWrite",
+      "kind": "RPC_CANDIDATE",
+      "target": "prepare_provider_key_write",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "semanticReview": {
+        "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
+        "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
+            "marker": "revocation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d01a6c21f19b545cb3c2",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 320,
+      "enclosing": "prepareUserProviderKeyWrite",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "semanticReview": {
+        "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
+        "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
+            "marker": "revocation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e6d53a18c5ff714d362f",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 375,
       "enclosing": "saveUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -11058,60 +10910,43 @@
       }
     },
     {
-      "id": "bbd3d5ae788daaa73756",
+      "id": "0309ab57d4a52e50411e",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 356,
-      "enclosing": "saveUserProviderKey",
-      "kind": "RPC_CANDIDATE",
-      "target": "prepare_provider_key_write",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
-      "semanticReview": {
-        "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
-        "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
-            "marker": "revocation"
-          }
-        ]
-      }
-    },
-    {
-      "id": "fe866cc3c765522289c0",
-      "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 378,
+      "line": 408,
       "enclosing": "saveUserProviderKey",
       "kind": "RPC_CANDIDATE",
       "target": "save_provider_key_if_current",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
-        "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
-        "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
+        "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
-            "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
-            "marker": "revocation"
+            "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+            "marker": "rejects a concurrent revoke"
+          },
+          {
+            "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+            "marker": "real provider revision binds exact owner"
           }
         ]
       }
     },
     {
-      "id": "c277727569550e57ef91",
+      "id": "cc516741e4b6df265af9",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 393,
+      "line": 423,
       "enclosing": "listUserProviderKeys",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -11125,18 +10960,18 @@
       }
     },
     {
-      "id": "5cb4a73659dee97d0b6e",
+      "id": "02122e978e9048259ac3",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 394,
+      "line": 424,
       "enclosing": "listUserProviderKeys",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -11150,18 +10985,18 @@
       }
     },
     {
-      "id": "0715ea0df7d94145ca55",
+      "id": "cdd1df4a741a0e3fc476",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 435,
+      "line": 465,
       "enclosing": "deleteUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -11175,18 +11010,18 @@
       }
     },
     {
-      "id": "06d1beceaf7785213d0a",
+      "id": "1d3d06a72f6c0ba1eb72",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 439,
+      "line": 469,
       "enclosing": "deleteUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -11200,18 +11035,18 @@
       }
     },
     {
-      "id": "5aeaef001b840fea33ba",
+      "id": "927e50280d11063ea023",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 466,
+      "line": 496,
       "enclosing": "revokeProviderRow",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -11225,39 +11060,43 @@
       }
     },
     {
-      "id": "76b0463f680baea80661",
+      "id": "36aea3f2d39707a9781f",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 467,
+      "line": 497,
       "enclosing": "revokeProviderRow",
       "kind": "RPC_CANDIDATE",
       "target": "revoke_provider_key",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
-        "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
-        "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
+        "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
-            "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
-            "marker": "revocation"
+            "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+            "marker": "rejects a concurrent revoke"
+          },
+          {
+            "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+            "marker": "real provider revision binds exact owner"
           }
         ]
       }
     },
     {
-      "id": "ddbf968addc59fd8ee32",
+      "id": "ef9f4b0b278dd8a33479",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 470,
+      "line": 500,
       "enclosing": "revokeProviderRow",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -11271,18 +11110,18 @@
       }
     },
     {
-      "id": "a3d50063b036971ec880",
+      "id": "4f5e84a97f05988ce2d4",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 547,
+      "line": 577,
       "enclosing": "getUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -11296,18 +11135,18 @@
       }
     },
     {
-      "id": "ba97216f0fc0cb59644a",
+      "id": "8820076f0b82ec258838",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 549,
+      "line": 579,
       "enclosing": "getUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -11321,18 +11160,18 @@
       }
     },
     {
-      "id": "5f7819a21fc0daa0d37e",
+      "id": "2533c12a0831f9464312",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 570,
+      "line": 600,
       "enclosing": "getUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -11346,18 +11185,18 @@
       }
     },
     {
-      "id": "42786f09181d109e2515",
+      "id": "acc24170a63d37a4065d",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 592,
+      "line": 622,
       "enclosing": "resolveProviderEnvForDeploy",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -11371,18 +11210,18 @@
       }
     },
     {
-      "id": "1f3d8c10c1191ee67781",
+      "id": "22911c083667f355baf5",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 593,
+      "line": 623,
       "enclosing": "resolveProviderEnvForDeploy",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b166f18d9de50e16c9d135d83689af07773f535541870d7900fca284db3937a3",
+      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Eleven focused tests and 45 local SQL probe assertions pass. Four real disposable cases await CI. Work starting upstream before helper admission, bulk custom enumeration versus new keys, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -11396,7 +11235,7 @@
       }
     },
     {
-      "id": "8bc24cfa8844d90866b4",
+      "id": "a294f1e1adb1d7daf588",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 42,
       "enclosing": "encodeVercelRefreshLease",
@@ -11404,7 +11243,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in encodeVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11417,7 +11256,7 @@
       }
     },
     {
-      "id": "331931c30f3362b4a021",
+      "id": "98b850e6866f3a5d08f0",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 49,
       "enclosing": "parseVercelRefreshLease",
@@ -11425,7 +11264,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in parseVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11438,7 +11277,7 @@
       }
     },
     {
-      "id": "26fa4f9ec2b1c2b706eb",
+      "id": "de3eee657d8403ccf6e9",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 101,
       "enclosing": "saveVercelTokenToStorage",
@@ -11446,7 +11285,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11459,7 +11298,7 @@
       }
     },
     {
-      "id": "53492dad34fb85b82a84",
+      "id": "454726a571d14c60bbd5",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 103,
       "enclosing": "saveVercelTokenToStorage",
@@ -11467,7 +11306,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11480,7 +11319,7 @@
       }
     },
     {
-      "id": "25c7f8ef11b52299ef2d",
+      "id": "3a096e057703d508dd26",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 120,
       "enclosing": "getVercelTokenFromStorage",
@@ -11488,7 +11327,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11501,7 +11340,7 @@
       }
     },
     {
-      "id": "64f625d38ac95267dfc4",
+      "id": "ea92a7350c3295acbf59",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 121,
       "enclosing": "getVercelTokenFromStorage",
@@ -11509,7 +11348,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11522,7 +11361,7 @@
       }
     },
     {
-      "id": "f2bc36a25635940ff4bc",
+      "id": "ffcaf3e03fc8cb12c125",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 133,
       "enclosing": "deleteVercelTokenFromStorage",
@@ -11530,7 +11369,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11543,7 +11382,7 @@
       }
     },
     {
-      "id": "42b163c963d22440b772",
+      "id": "8372b7ecc3cdc392edd2",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 134,
       "enclosing": "deleteVercelTokenFromStorage",
@@ -11551,7 +11390,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11564,7 +11403,7 @@
       }
     },
     {
-      "id": "f3ca8658f8f880004de9",
+      "id": "1f964408f31e51a99cd9",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 238,
       "enclosing": "buildVercelAuthorizeUrl",
@@ -11572,7 +11411,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in buildVercelAuthorizeUrl. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11585,15 +11424,15 @@
       }
     },
     {
-      "id": "f5a75bb3f1c62654a46c",
+      "id": "96be6dd16fa0d29508d8",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 331,
+      "line": 329,
       "enclosing": "parseVercelOAuthState",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in parseVercelOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11606,15 +11445,36 @@
       }
     },
     {
-      "id": "e75144f479b27611799d",
+      "id": "7595516c6d98b59ee517",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 454,
+      "enclosing": "refreshVercelOAuthTokenWithLease",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
+      "semanticReview": {
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1208226e3a88b86e9ff3",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 456,
       "enclosing": "refreshVercelOAuthTokenWithLease",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11627,15 +11487,15 @@
       }
     },
     {
-      "id": "4d32a7e88bcbc575fe1e",
+      "id": "95bb65e4416e615f05e5",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 458,
+      "line": 480,
       "enclosing": "refreshVercelOAuthTokenWithLease",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11648,36 +11508,15 @@
       }
     },
     {
-      "id": "e7d3dfffb00cabdb12e1",
+      "id": "f19578ae3bd0614a9e79",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 482,
-      "enclosing": "refreshVercelOAuthTokenWithLease",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
-      "semanticReview": {
-        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
-        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
-            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
-          }
-        ]
-      }
-    },
-    {
-      "id": "caf8c34f6a6ad470f2e7",
-      "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 499,
+      "line": 497,
       "enclosing": "loadVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11690,15 +11529,15 @@
       }
     },
     {
-      "id": "cf317294ba08b3484a5f",
+      "id": "7b31925a24719e238bdf",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 500,
+      "line": 498,
       "enclosing": "loadVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11711,15 +11550,15 @@
       }
     },
     {
-      "id": "21a631f71ad577a88ffd",
+      "id": "85d54b1caf21d8db9dec",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 729,
+      "line": 727,
       "enclosing": "saveVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11732,15 +11571,15 @@
       }
     },
     {
-      "id": "008647681f5b1bf1d3b3",
+      "id": "18ee3812cc76b825d7f8",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 749,
+      "line": 747,
       "enclosing": "saveVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11753,15 +11592,15 @@
       }
     },
     {
-      "id": "03881481406df41623c0",
+      "id": "9b588ddc7b596ae516c4",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 754,
+      "line": 752,
       "enclosing": "saveVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11774,15 +11613,15 @@
       }
     },
     {
-      "id": "87da92bb2b293576e16d",
+      "id": "7ff15828263a92dfb83e",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 764,
+      "line": 762,
       "enclosing": "clearVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11795,15 +11634,15 @@
       }
     },
     {
-      "id": "473638d30e12be7d3b2d",
+      "id": "ffb4f027b8979aefa983",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 765,
+      "line": 763,
       "enclosing": "clearVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "42b1c4d5e8aac28a4fadf2b2a507c2042651ab6415f05ba3befa484e2f2c0a7a",
+      "sourceSha256": "40a9f9e911f2c20510a1f70698397211a99480698ee668b604ba9f8d695ebd57",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -13639,18 +13478,18 @@
       }
     },
     {
-      "id": "25095802651b5e4dce5f",
+      "id": "a1e0c5de49a4039c3fbc",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 626,
+      "line": 639,
       "enclosing": "saveRevision",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_revisions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13664,18 +13503,18 @@
       }
     },
     {
-      "id": "fb111a342e49d30c3a9b",
+      "id": "62234077a1b82a769a8f",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 626,
+      "line": 639,
       "enclosing": "saveRevision",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13689,18 +13528,18 @@
       }
     },
     {
-      "id": "4e72541c1ae02e397acf",
+      "id": "719073979bb57e6ab7fa",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 706,
+      "line": 727,
       "enclosing": "loadLatestRevision",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_revisions",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13714,18 +13553,18 @@
       }
     },
     {
-      "id": "d9ad9a5d90bb4165dc7d",
+      "id": "71e47e92d1e6267f7d5f",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 706,
+      "line": 727,
       "enclosing": "loadLatestRevision",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13739,18 +13578,18 @@
       }
     },
     {
-      "id": "41edb400573bacaa555d",
+      "id": "4d2251150857ad6a44fb",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 753,
+      "line": 774,
       "enclosing": "saveSession",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13764,18 +13603,18 @@
       }
     },
     {
-      "id": "89d858807f97969b7dce",
+      "id": "f4bcb7025b70f277c575",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 797,
+      "line": 818,
       "enclosing": "loadSession",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13789,18 +13628,18 @@
       }
     },
     {
-      "id": "cb711330e00db90f12bb",
+      "id": "c1f54307cae02e4e714a",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 797,
+      "line": 818,
       "enclosing": "loadSession",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13814,18 +13653,18 @@
       }
     },
     {
-      "id": "281a3d3a7e272f923671",
+      "id": "8cc558600b340a0a1530",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 850,
+      "line": 871,
       "enclosing": "appendEvent",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_events",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13839,18 +13678,18 @@
       }
     },
     {
-      "id": "31c93d187197768b3b71",
+      "id": "34e7bc87d91c1e71efb0",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 850,
+      "line": 871,
       "enclosing": "appendEvent",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13864,18 +13703,18 @@
       }
     },
     {
-      "id": "4645f852d77431f00664",
+      "id": "8f0f396cfc7ab5833cc5",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 926,
+      "line": 947,
       "enclosing": "saveEncryptedSecret",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13889,18 +13728,18 @@
       }
     },
     {
-      "id": "c064132c2275b340e97a",
+      "id": "f05a957330dfe6e6e567",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 926,
+      "line": 947,
       "enclosing": "saveEncryptedSecret",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13914,18 +13753,18 @@
       }
     },
     {
-      "id": "7a4a7a0c551fe84cdb17",
+      "id": "4a0f75719e92953b9a9b",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 980,
+      "line": 1001,
       "enclosing": "loadEncryptedSecrets",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13939,18 +13778,18 @@
       }
     },
     {
-      "id": "7fecfb4d81f547ff8e57",
+      "id": "e245c830749182e7a86b",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 980,
+      "line": 1001,
       "enclosing": "loadEncryptedSecrets",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13964,18 +13803,18 @@
       }
     },
     {
-      "id": "4af535a6c0e6f4a53b30",
+      "id": "125405c2888f89423dba",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 1063,
+      "line": 1084,
       "enclosing": "deleteEncryptedSecret",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -13989,18 +13828,18 @@
       }
     },
     {
-      "id": "2df9f446963207e45a86",
+      "id": "8199e0cb4af319b8668d",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 1063,
+      "line": 1084,
       "enclosing": "deleteEncryptedSecret",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
+      "sourceSha256": "11ddb2e98df3731779c3bc137a0e4abcdaea987c1d44e5e5ee1bd711612b00d2",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
