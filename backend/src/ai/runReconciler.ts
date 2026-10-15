@@ -83,6 +83,7 @@ export async function reconcileOrphanedRuns(opts: { graceMs?: number } = {}): Pr
       output: reconcileOutput('worker_restarted'),
       completed_at: new Date().toISOString(),
       worker_id: null,
+      lease_generation: null,
       heartbeat_at: null,
     })
     .in('status', ACTIVE_RUN_STATUSES as unknown as string[])
@@ -132,6 +133,7 @@ export async function failInFlightRuns(
       output: reconcileOutput(reason),
       completed_at: new Date().toISOString(),
       worker_id: null,
+      lease_generation: null,
       heartbeat_at: null,
     })
     .in('id', [...runIds])

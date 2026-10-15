@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { createTenantContext, type TenantContext } from './tenantContext.js';
 import { requireOwnedResource, requireOwnedFile } from './ownership.js';
-import { persistOwnedRun, persistOwnedRuntimeSession, persistOwnedRunTrace } from './ownedRunPersistence.js';
+import { persistOwnedRun, persistOwnedRunAttempt, persistOwnedRuntimeSession, persistOwnedRunTrace } from './ownedRunPersistence.js';
 import { listUserProviderKeys,getUserProviderKey,deleteUserProviderKey,resolveProviderEnvForDeploy } from '../services/integrations/userProviderKeys.js';
 import { reconcileOrphanedRuns,failInFlightRuns } from '../ai/runReconciler.js';
 import { getCachedResponse,setCachedResponse } from '../services/responseCache.js';
@@ -27,7 +27,7 @@ import { clearGitHubConnection, getGitHubToken, saveGitHubConnection } from '../
 import { clearVercelConnection, getVercelToken, saveVercelConnection } from '../services/integrations/vercelAuth.js';
 import { clearPkceSession, clearProviderToken, loadPkceSession, loadProviderToken, storePkceSession, storeProviderToken } from '../services/integrations/oauthPkceStore.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
-import { createRunDurable, getRun, activeRunIds } from '../ai/runStore.js';
+import { createRunDurable, getRun, activeRunIds, resumeRunDurable, withRunAttempt, appendRunEvent, persistRunState } from '../ai/runStore.js';
 import { GrowthService } from '../growth/growthService.js';
 import { storeProjectFile } from '../services/storage/projectFiles.js';
 import { ownedFile } from '../services/storage/privateFileDelivery.js';
@@ -665,6 +665,111 @@ test('real durable creation cannot overwrite existing same-owner or foreign runs
   assert.equal(attempts.filter(result=>result.status==='fulfilled').length,1);
   const stored=await admin.from('swarm_runs').select('user_id,prompt').eq('id',id).single();assert.equal(stored.error,null);
   assert.equal(stored.data?.user_id,owner.id);assert.equal(stored.data?.prompt,'first');
+});
+
+function independentRunClient() {
+  return createClient(url,process.env.SUPABASE_SERVICE_ROLE_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});
+}
+test('actual run store uses fresh authority and competing resumes retain the admitted winner',async()=>{
+  const owner=users[0],id=randomUUID(),remote=independentRunClient();
+  const original=await withRunAttempt(()=>createRunDurable(owner.id,'Actual run store fixture',id));
+  assert.equal(original.status,'running');
+  const cancelled=await remote.from('swarm_runs').update({status:'cancelled',completed_at:new Date().toISOString(),worker_id:null,heartbeat_at:null,lease_generation:null})
+    .eq('id',id).eq('user_id',owner.id).eq('status','running').select('id');
+  assert.equal(cancelled.error,null);assert.equal(cancelled.data?.length,1);
+  const results=await Promise.allSettled([0,1].map(()=>withRunAttempt(async()=>{
+    const resumed=await resumeRunDurable(owner.id,'Continue',id);
+    assert.ok(appendRunEvent(id,'progress',{message:'Current admitted worker'}));
+    await persistRunState(id);
+    return resumed;
+  })));
+  assert.equal(results.filter(result=>result.status==='fulfilled').length,1);
+  assert.equal(results.filter(result=>result.status==='rejected').length,1);
+  assert.equal(getRun(id)?.status,'running');
+  const row=await remote.from('swarm_runs').select('status,last_sequence,lease_generation').eq('id',id).single();
+  assert.equal(row.error,null);assert.equal(row.data.status,'running');assert.equal(row.data.last_sequence,1);assert.ok(row.data.lease_generation);
+});
+function attemptState(status:'running'|'complete'='running',sequence=1) {
+  return {prompt:'Attempt fencing fixture',status,output:status==='complete'?{result:'verified synthetic fixture'}:null,
+    feature_category:null,token_usage:null,completed_at:status==='complete'?new Date().toISOString():null,
+    iteration_count:status==='complete'?1:0,events:[],last_sequence:sequence};
+}
+async function seedAttempt(ownerId:string,workerId:string,generation:string) {
+  return insert('swarm_runs',{user_id:ownerId,...attemptState('running',0),worker_id:workerId,
+    lease_generation:generation,heartbeat_at:new Date().toISOString(),messages:[{role:'user',content:'ORIGINAL_CONVERSATION_CANARY'}]});
+}
+
+test('real two-client completion and cancellation race cannot resurrect a run or overwrite conversations',async()=>{
+  const owner=users[0],worker=independentRunClient(),canceller=independentRunClient();
+  for(let iteration=0;iteration<4;iteration++) {
+    const generation=randomUUID(),workerId=`fixture-worker-${randomUUID()}`;
+    const id=await seedAttempt(owner.id,workerId,generation),complete=attemptState('complete');
+    const messages=[{role:'user',content:`CONCURRENT_CONVERSATION_CANARY_${iteration}`}];
+    const [completion,cancellation,conversation]=await Promise.all([
+      worker.rpc('persist_swarm_run_attempt',{p_run_id:id,p_owner_id:owner.id,p_worker_id:workerId,p_generation:generation,p_state:complete}),
+      canceller.from('swarm_runs').update({status:'cancelled',completed_at:new Date().toISOString(),worker_id:null,heartbeat_at:null,lease_generation:null})
+        .eq('id',id).eq('user_id',owner.id).eq('status','running').select('id'),
+      canceller.from('swarm_runs').update({messages}).eq('id',id).eq('user_id',owner.id),
+    ]);
+    assert.equal(completion.error,null);assert.equal(cancellation.error,null);assert.equal(conversation.error,null);
+    const final=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.equal(final.error,null);
+    assert.deepEqual(final.data.messages,messages);assert.equal(final.data.worker_id,null);
+    if(cancellation.data!.length===1) {assert.equal(completion.data,false);assert.equal(final.data.status,'cancelled');assert.equal(final.data.lease_generation,null);}
+    else {assert.equal(cancellation.data!.length,0);assert.equal(completion.data,true);assert.equal(final.data.status,'complete');}
+    await assert.rejects(persistOwnedRunAttempt(worker,owner.context,id,workerId,generation,attemptState('running',2)),{code:'RUN_STATE_CONFLICT'});
+    const retained=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.equal(retained.error,null);assert.deepEqual(retained.data,final.data);
+  }
+});
+
+test('real same-worker resumed generation and transferred worker reject stale attempt writes',async()=>{
+  const owner=users[0],oldClient=independentRunClient(),newClient=independentRunClient();
+  const workerId=`fixture-worker-${randomUUID()}`,oldGeneration=randomUUID(),newGeneration=randomUUID();
+  const id=await seedAttempt(owner.id,workerId,oldGeneration);
+  // Model the durable resume CAS after cancellation. No worker/provider executes.
+  assert.equal((await newClient.from('swarm_runs').update({status:'cancelled',completed_at:new Date().toISOString(),worker_id:null,lease_generation:null})
+    .eq('id',id).eq('user_id',owner.id).eq('status','running')).error,null);
+  const resumed=await newClient.from('swarm_runs').update({...attemptState('running',0),worker_id:workerId,lease_generation:newGeneration})
+    .eq('id',id).eq('user_id',owner.id).eq('status','cancelled').is('worker_id',null).is('lease_generation',null).select('id');
+  assert.equal(resumed.error,null);assert.equal(resumed.data?.length,1);
+  const resumedRow=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.equal(resumedRow.error,null);
+  await assert.rejects(persistOwnedRunAttempt(oldClient,owner.context,id,workerId,oldGeneration,attemptState('complete')),{code:'RUN_STATE_CONFLICT'});
+  const unchanged=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.deepEqual(unchanged.data,resumedRow.data);
+  await persistOwnedRunAttempt(newClient,owner.context,id,workerId,newGeneration,attemptState('running',1));
+  const nextWorker=`fixture-worker-${randomUUID()}`;
+  assert.equal((await newClient.from('swarm_runs').update({worker_id:nextWorker}).eq('id',id).eq('user_id',owner.id).eq('worker_id',workerId)).error,null);
+  const transferred=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.equal(transferred.error,null);
+  await assert.rejects(persistOwnedRunAttempt(oldClient,owner.context,id,workerId,newGeneration,attemptState('complete',2)),{code:'RUN_STATE_CONFLICT'});
+  const stillTransferred=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.deepEqual(stillTransferred.data,transferred.data);
+  await persistOwnedRunAttempt(newClient,owner.context,id,nextWorker,newGeneration,attemptState('running',2));
+});
+
+test('real attempt RPC rejects foreign owner and missing rows and is unavailable to browser identities',async()=>{
+  const [owner,other]=users,first=independentRunClient(),second=independentRunClient();
+  const generation=randomUUID(),workerId=`fixture-worker-${randomUUID()}`,id=await seedAttempt(owner.id,workerId,generation);
+  const before=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.equal(before.error,null);
+  await assert.rejects(persistOwnedRunAttempt(second,other.context,id,workerId,generation,attemptState()),{code:'RUN_STATE_CONFLICT'});
+  const absent=randomUUID();
+  await assert.rejects(persistOwnedRunAttempt(first,owner.context,absent,workerId,generation,attemptState()),{code:'RUN_STATE_CONFLICT'});
+  const missing=await admin.from('swarm_runs').select('id').eq('id',absent);assert.equal(missing.error,null);assert.deepEqual(missing.data,[]);
+  const browser=createClient(url,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${owner.token}`}},auth:{persistSession:false,autoRefreshToken:false}});
+  const denied=await browser.rpc('persist_swarm_run_attempt',{p_run_id:id,p_owner_id:owner.id,p_worker_id:workerId,p_generation:generation,p_state:attemptState()});
+  assert.equal(denied.error?.code,'42501');
+  const after=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.equal(after.error,null);assert.deepEqual(after.data,before.data);
+});
+
+test('real exact terminal repeat succeeds but changed completed state and conversation injection fail',async()=>{
+  const owner=users[0],first=independentRunClient(),second=independentRunClient();
+  const generation=randomUUID(),workerId=`fixture-worker-${randomUUID()}`,id=await seedAttempt(owner.id,workerId,generation);
+  const complete=attemptState('complete');
+  await persistOwnedRunAttempt(first,owner.context,id,workerId,generation,complete);
+  const before=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.equal(before.error,null);
+  await persistOwnedRunAttempt(second,owner.context,id,workerId,generation,complete);
+  for(const changed of [{...complete,output:{result:'FORBIDDEN_REWRITE'}},{...complete,last_sequence:2},
+    {...complete,messages:[{role:'user',content:'FORBIDDEN_CONVERSATION_REWRITE'}]}]) {
+    await assert.rejects(persistOwnedRunAttempt(second,owner.context,id,workerId,generation,changed),{code:'RUN_STATE_CONFLICT'});
+  }
+  const after=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.equal(after.error,null);assert.deepEqual(after.data,before.data);
+  assert.deepEqual(after.data.messages,[{role:'user',content:'ORIGINAL_CONVERSATION_CANARY'}]);
 });
 
 test('foreign durable business confirmations cannot be read approved or cancelled by changing IDs',async()=>{

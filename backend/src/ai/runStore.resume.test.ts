@@ -14,7 +14,48 @@ import {
   failRun,
   getRun,
   resumeRunDurable,
+  withRunAttempt,
+  completeRun,
+  appendRunEvent,
+  persistRunState,
 } from './runStore.js';
+
+it('old asynchronous callbacks cannot borrow a resumed attempt or mutate a run before admission', async () => {
+  const previous = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+  try {
+    const runId = randomUUID();
+    const owner = randomUUID();
+    let release!: () => void;
+    let ready!: () => void;
+    const admitted = new Promise<void>(resolve => { ready = resolve; });
+    const blocked = new Promise<void>(resolve => { release = resolve; });
+    const oldAttempt = withRunAttempt(async () => {
+      await createRunDurable(owner, 'original', runId);
+      failRun(runId, 'interrupted');
+      ready();
+      await blocked;
+      assert.equal(appendRunEvent(runId, 'progress', { message: 'stale' }), null);
+      assert.equal(completeRun(runId, { output: { stale: true } }), null);
+      assert.equal(failRun(runId, 'stale failure'), null);
+      await assert.rejects(persistRunState(runId), /unknown swarm run/);
+    });
+    await admitted;
+    await withRunAttempt(async () => {
+      assert.equal(appendRunEvent(runId, 'progress', { message: 'not admitted' }), null);
+      assert.equal(failRun(runId, 'not admitted'), null);
+      const resumed = await resumeRunDurable(owner, 'continue', runId);
+      release();
+      await oldAttempt;
+      assert.equal(resumed.status, 'running');
+      assert.equal(resumed.events.length, 0);
+      assert.equal(completeRun(runId, { output: { fresh: true } })?.status, 'complete');
+    });
+  } finally {
+    if (previous === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    else process.env.SUPABASE_SERVICE_ROLE_KEY = previous;
+  }
+});
 
 describe(
   'durable swarm run resume',

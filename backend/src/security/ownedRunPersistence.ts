@@ -2,6 +2,18 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { requireTenantContext, type TenantContext } from './tenantContext.js';
 import { TenantAccessError } from './tenantErrors.js';
 
+/** Update an existing execution attempt under a database row lock, never upsert. */
+export async function persistOwnedRunAttempt(client: SupabaseClient, context: TenantContext,
+  runId: string, workerId: string, generation: string, state: Record<string, unknown>): Promise<void> {
+  const scope = requireTenantContext(context);
+  const { data, error } = await client.rpc('persist_swarm_run_attempt', {
+    p_run_id: runId, p_owner_id: scope.userId, p_worker_id: workerId,
+    p_generation: generation, p_state: state,
+  });
+  if (error) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
+  if (data !== true) throw Object.assign(new Error('The execution attempt is no longer authoritative.'), { code: 'RUN_STATE_CONFLICT' });
+}
+
 /** Extend the existing run store's writer: insert-ignore, then an owner-bound update. */
 export async function persistOwnedRun(client: SupabaseClient, context: TenantContext, row: {id:string;user_id:string;[column:string]:unknown}): Promise<void> {
   return persistOwnerBoundRecord(client,context,'swarm_runs','id',row);

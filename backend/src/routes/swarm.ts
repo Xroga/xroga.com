@@ -23,6 +23,8 @@ import {
   persistConversationOnly,
   requestRunCancellation,
   isRunCancellationRequested,
+  withRunAttempt,
+  hasAdmittedRunAttempt,
 } from '../ai/runStore.js';
 
 const router = Router();
@@ -32,7 +34,7 @@ const activeBuildControllers = new Map<string, AbortController>();
  * POST /api/swarm/execute
  * SSE: start → progress → preview (code ready) → complete
  */
-router.post('/execute', async (req: AuthRequest, res) => {
+router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
   const userId = req.userId;
   if (!userId) {
     return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
@@ -68,6 +70,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
         clientMeta,
         attachments,
       });
+      await persistRunState(result.runId);
       const { route: _internalRoute, ...publicResult } = result;
       return res.json(publicAiPayload(publicResult));
     } catch (err) {
@@ -120,12 +123,17 @@ router.post('/execute', async (req: AuthRequest, res) => {
   const ac = new AbortController();
   activeBuildControllers.set(runId, ac);
   let cancellationCheckActive = false;
+  let cancellationAuthorityFailed = false;
   const cancellationWatch = setInterval(() => {
-    if (ac.signal.aborted || cancellationCheckActive) return;
+    if (ac.signal.aborted || cancellationCheckActive || !hasAdmittedRunAttempt(runId)) return;
     cancellationCheckActive = true;
-    void isRunCancellationRequested(runId)
+    void isRunCancellationRequested(runId, userId)
       .then((cancelled) => {
         if (cancelled && !ac.signal.aborted) ac.abort();
+      })
+      .catch(() => {
+        cancellationAuthorityFailed = true;
+        ac.abort();
       })
       .finally(() => {
         cancellationCheckActive = false;
@@ -230,6 +238,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
         }).catch(() => {});
       }
     }
+    if (cancellationAuthorityFailed) throw new Error('Run authority is unavailable. Retry after service recovery.');
     await persistRunState(runId);
     if (streamConnected && !res.writableEnded) {
       sendSSE(res, {
@@ -246,8 +255,11 @@ router.post('/execute', async (req: AuthRequest, res) => {
       endSSE(res);
     }
   } catch (err) {
-    const e = err as Error & { code?: string; nextUnlockAt?: string | null };
+    const e = (cancellationAuthorityFailed
+      ? new Error('Run authority is unavailable. Retry after service recovery.')
+      : err) as Error & { code?: string; nextUnlockAt?: string | null };
     const code =
+      e.code === 'RUN_ALREADY_EXISTS' ? 'RUN_ALREADY_EXISTS' :
       e.code === 'OUT_OF_TOKENS'
         ? 'OUT_OF_ACTIONS'
         : e.code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE'
@@ -267,6 +279,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
                     : 'BUILD_FAILED';
 
     const resumeControlError = [
+      'RUN_ALREADY_EXISTS',
       'RUN_ALREADY_ACTIVE',
       'RUN_ALREADY_COMPLETE',
       'RUN_NOT_FOUND',
@@ -314,7 +327,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
     detachDisconnectHandlers();
     activeBuildControllers.delete(runId);
   }
-});
+}));
 
 router.get('/history', async (req: AuthRequest, res) => {
   const userId = req.userId;
@@ -377,16 +390,21 @@ router.post('/runs/:runId/cancel', async (req: AuthRequest, res) => {
   if (!req.userId || run.userId !== req.userId) {
     return res.status(403).json({ error: 'Forbidden' });
   }
-  if (run.status !== 'running') {
+  if (run.status !== 'running' && !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return res.json({ cancelled: false, status: run.status });
   }
 
-  const cancelled = await requestRunCancellation(runId, req.userId);
+  let cancelled: boolean;
+  try {
+    cancelled = await requestRunCancellation(runId, req.userId);
+  } catch {
+    return res.status(503).json({ cancelled: false, error: 'Cancellation could not be saved. Retry after service recovery.' });
+  }
   const controller = activeBuildControllers.get(runId);
-  controller?.abort();
+  if (cancelled) controller?.abort();
   res.json({
-    cancelled: cancelled || Boolean(controller),
-    status: cancelled || controller ? 'cancelled' : run.status,
+    cancelled,
+    status: cancelled ? 'cancelled' : run.status,
   });
 });
 
@@ -407,8 +425,8 @@ async function saveConversationHandler(req: AuthRequest, res: import('express').
       if (error instanceof TenantAccessError) return res.status(error.status).json({ error: error.message, code: error.code });
       throw error;
     }
-    const saved = saveConversation(runId, messages);
-    return res.json({ saved: true, persisted: saved });
+    const saved = await saveConversation(runId, messages);
+    return res.status(saved ? 200 : 503).json({ saved, persisted: saved });
   }
 
   // Not in memory. The run map is per-process and production runs more than one
@@ -418,7 +436,7 @@ async function saveConversationHandler(req: AuthRequest, res: import('express').
   // empty chat marked complete. Write only the messages column instead.
   if (!req.userId) return res.status(401).json({ error: 'unauthorized' });
   const persisted = await persistConversationOnly(runId, req.userId, messages);
-  return res.json({ saved: true, persisted });
+  return res.status(persisted ? 200 : 503).json({ saved: persisted, persisted });
 }
 
 router.post('/runs/:runId/conversation', saveConversationHandler);
