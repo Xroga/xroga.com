@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "d585901a2656a3b7ba33dd18973a31ecd0a0d2195873d9db304ccb299c92a44e",
+  "reviewRegistrySha256": "267cea2400f2e28281624b9dd29ce5e7e83a213941afe33bdf6535384df20528",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 163,
-    "persistenceCandidates": 675,
+    "persistenceCandidates": 680,
     "ownerPredicateCandidates": 169,
     "reviewRequired": 0,
-    "reviewedCandidates": 675,
+    "reviewedCandidates": 680,
     "unresolvedSafetyCandidates": 493,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 0,
     "SCOPED_BOUNDARY": 43,
     "NARROW_EXCEPTION": 8,
-    "NOT_PERSISTENCE": 131,
+    "NOT_PERSISTENCE": 136,
     "REVIEWED_GAP": 493
   },
   "callers": [
@@ -9337,6 +9337,131 @@
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
             "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
+    },
+    {
+      "id": "840920438b3c862c0e91",
+      "path": "backend/src/services/integrations/credentialEnvelope.ts",
+      "line": 17,
+      "enclosing": "keyBytes",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "semanticReview": {
+        "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
+        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialEnvelope.ts",
+            "marker": "Command 009 preparation only"
+          },
+          {
+            "path": "backend/src/services/integrations/credentialEnvelope.test.ts",
+            "marker": "v2 authenticates exact owner"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f197672e0af42c7398f3",
+      "path": "backend/src/services/integrations/credentialEnvelope.ts",
+      "line": 43,
+      "enclosing": "aad",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "semanticReview": {
+        "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
+        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialEnvelope.ts",
+            "marker": "Command 009 preparation only"
+          },
+          {
+            "path": "backend/src/services/integrations/credentialEnvelope.test.ts",
+            "marker": "v2 authenticates exact owner"
+          }
+        ]
+      }
+    },
+    {
+      "id": "04afb9d897d4070340c6",
+      "path": "backend/src/services/integrations/credentialEnvelope.ts",
+      "line": 48,
+      "enclosing": "decode",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "semanticReview": {
+        "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
+        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialEnvelope.ts",
+            "marker": "Command 009 preparation only"
+          },
+          {
+            "path": "backend/src/services/integrations/credentialEnvelope.test.ts",
+            "marker": "v2 authenticates exact owner"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8ff7dfb0a06ace7ee7e5",
+      "path": "backend/src/services/integrations/credentialEnvelope.ts",
+      "line": 56,
+      "enclosing": "sealCredentialEnvelope",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "semanticReview": {
+        "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
+        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialEnvelope.ts",
+            "marker": "Command 009 preparation only"
+          },
+          {
+            "path": "backend/src/services/integrations/credentialEnvelope.test.ts",
+            "marker": "v2 authenticates exact owner"
+          }
+        ]
+      }
+    },
+    {
+      "id": "06f3e17ef612ff0deb74",
+      "path": "backend/src/services/integrations/credentialEnvelope.ts",
+      "line": 78,
+      "enclosing": "openCredentialEnvelope",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "semanticReview": {
+        "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
+        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialEnvelope.ts",
+            "marker": "Command 009 preparation only"
+          },
+          {
+            "path": "backend/src/services/integrations/credentialEnvelope.test.ts",
+            "marker": "v2 authenticates exact owner"
           }
         ]
       }

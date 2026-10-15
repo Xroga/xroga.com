@@ -10,6 +10,8 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/services/integrations/credentialEnvelope.ts",
+    "backend/src/services/integrations/credentialEnvelope.test.ts",
     "backend/src/routes/supabaseOAuth.ts",
     "backend/src/routes/supabaseOAuth.disconnect.test.ts",
     "backend/src/synthesis/projectRuntime/store.persistence.test.ts",

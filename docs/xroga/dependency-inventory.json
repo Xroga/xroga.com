@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e477bf106f085552ebfffb84ae927bb051ccfc43",
+  "source_sha": "470666cf3e427ef9d60d8b6c264304019253e761",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12520,6 +12520,10 @@
     {
       "path": "backend/src/services/integrations/composioClient.ts",
       "sha256": "d242e3b59c7e0c96ab639b6c93836631ce1ca4302ed190ebc74d4a9d4029efff"
+    },
+    {
+      "path": "backend/src/services/integrations/credentialEnvelope.ts",
+      "sha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770"
     },
     {
       "path": "backend/src/services/integrations/credentialStorageBucket.ts",

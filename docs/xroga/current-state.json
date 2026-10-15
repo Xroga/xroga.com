@@ -21886,6 +21886,65 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:e6eb1b0c8a7abee79716",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/credentialEnvelope.ts",
+      "sha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "symbols": [
+        "CredentialEnvelopeContext",
+        "MAX_BYTES",
+        "MAX_ENVELOPE",
+        "aad",
+        "associated",
+        "bytes",
+        "cipher",
+        "ciphertext",
+        "decipher",
+        "decode",
+        "fail",
+        "field",
+        "iv",
+        "keyBytes",
+        "keyId",
+        "material",
+        "openCredentialEnvelope",
+        "parts",
+        "plain",
+        "sealCredentialEnvelope",
+        "tag",
+        "text",
+        "values"
+      ],
+      "imports": [
+        "../../synthesis/projectRuntime/types.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/services/integrations/credentialEnvelope.test.ts:3"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/credentialEnvelope.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:8554dadffc6cd0a3fbde",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/credentialStorageBucket.ts",
@@ -94372,7 +94431,7 @@
       "sourcePath": "supabase/migrations/20261015000500_oauth_session_consumption.sql",
       "version": "20261015000500",
       "order": 74,
-      "sha256": "4e863477a077696d6f9e7944e2183a906749861c30c27cd79934395d30f5664a"
+      "sha256": "34a1cb46063fb4680176d0d58725d39d247e72f779588a167cb60e9082a965ad"
     }
   ],
   "workflows": [
@@ -102107,6 +102166,13 @@
       "id": "test-suite:1a61ae170e2b268d87b4",
       "sourcePath": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:97a9b85fedf3850e58bd",
+      "sourcePath": "backend/src/services/integrations/credentialEnvelope.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

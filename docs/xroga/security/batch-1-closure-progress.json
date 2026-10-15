@@ -2,6 +2,23 @@
   "version": "1.0",
   "status": "BATCH_1_BLOCKED",
   "additionalSpend": 0,
+  "replayCorrection": {
+    "source": "470666cf",
+    "failedSource": "96a7b5d3265bbda4c3d31ccaccf11b5c5462fed8",
+    "failedRun": "38794388848",
+    "failure": "SQLSTATE42710 duplicate OAuth policies on upgrade-reapply",
+    "fix": "Idempotent recreation with unchanged restrictive predicates",
+    "localSqlAssertions": 120,
+    "finalSupabase": "PENDING"
+  },
+  "credentialCodec": {
+    "source": "d2c6cb53",
+    "status": "INACTIVE_SYNTHETIC_PREPARATION",
+    "tests": 4,
+    "productionImports": 0,
+    "migrationWrites": 0,
+    "remaining": "Dedicated key custody, explicit legacy dispatch/migration CAS, runtime concurrency, managed KMS and complete009 acceptance remain gated."
+  },
   "interimIntegration": {
     "source": "421a6b1061f430d3cd1a5b29e8eca2a63183f297",
     "run": "38791937032",
@@ -43,10 +60,10 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 163,
-    "persistenceCandidates": 675,
+    "persistenceCandidates": 680,
     "ownerPredicateCandidates": 169,
     "reviewRequired": 0,
-    "reviewedCandidates": 675,
+    "reviewedCandidates": 680,
     "unresolvedSafetyCandidates": 493,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9

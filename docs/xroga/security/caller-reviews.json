@@ -2,6 +2,15 @@
   "version": "1.0",
   "reviews": [
     {
+      "path": "backend/src/services/integrations/credentialEnvelope.ts",
+      "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "callIds": ["840920438b3c862c0e91", "f197672e0af42c7398f3", "04afb9d897d4070340c6", "8ff7dfb0a06ace7ee7e5", "06f3e17ef612ff0deb74"],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
+      "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated.",
+      "evidence": [{"path": "backend/src/services/integrations/credentialEnvelope.ts", "marker": "Command 009 preparation only"}, {"path": "backend/src/services/integrations/credentialEnvelope.test.ts", "marker": "v2 authenticates exact owner"}]
+    },
+    {
       "path": "backend/src/security/boundedPublicGet.ts",
       "sourceSha256": "4e65815a53307b4e4941e305bd84ab9eac9ea0720e71a84b4f5b7b2278dad76c",
       "callIds": [
