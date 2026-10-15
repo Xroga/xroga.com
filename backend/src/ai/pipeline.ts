@@ -137,7 +137,7 @@ import {
   createSoftwareProject,
 } from '../synthesis/softwareProject.js';
 import {
-  persistSoftwareProjectRevision,
+  persistWorkerSoftwareProjectRevision,
   SupabaseProjectRuntimeStore,
 } from '../synthesis/projectRuntime/store.js';
 import {
@@ -1942,7 +1942,7 @@ publicationReason:
     
         const projectRevision =
       softwareProject
-        ? await persistSoftwareProjectRevision(
+        ? await persistWorkerSoftwareProjectRevision(
             opts.userId,
             softwareProject,
           )
@@ -1950,7 +1950,7 @@ publicationReason:
 
     if (
   softwareProject &&
-  projectRevision
+  projectRevision?.saved
 ) {
   const delivery =
     deliveryStateForProject(
@@ -3773,13 +3773,10 @@ publicationReason:
 
   // Auto-provision user's Supabase (schema + AI memory + storage) when connected
   try {
-    const { getUserProviderKey } = await import('../services/integrations/userProviderKeys.js');
+    const { readUserSupabaseBundle } = await import('../services/integrations/userProviderKeys.js');
     const { provisionUserSupabase } = await import('../services/integrations/supabaseProvision.js');
-    const [sbUrl, sbService, sbDb] = await Promise.all([
-      getUserProviderKey(opts.userId, 'supabase_url'),
-      getUserProviderKey(opts.userId, 'supabase'),
-      getUserProviderKey(opts.userId, 'supabase_db_password'),
-    ]);
+    const bundle = await readUserSupabaseBundle(opts.userId);
+    const sbUrl = bundle?.projectUrl, sbService = bundle?.serviceRoleKey, sbDb = bundle?.dbPassword;
     const { getUserSupabaseManagementToken } = await import(
       '../services/integrations/supabaseProvision.js'
     );

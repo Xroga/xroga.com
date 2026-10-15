@@ -31,6 +31,7 @@
 import type { BenchmarkResult } from './modelBenchmarks.js';
 import { buildLedger, type LedgerEntry } from './benchmarkLedger.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { assertBenchmarkResult } from './benchmarkRunner.js';
 
 /** How long a loaded ledger is reused before the next load. */
 export const EVIDENCE_CACHE_MS = 10 * 60 * 1000;
@@ -78,22 +79,22 @@ export async function supabaseBenchmarkResults(): Promise<readonly BenchmarkResu
   if (error) throw error;
 
   return (data ?? []).map((row: Record<string, unknown>) => ({
-    schemaVersion: String(row.schema_version ?? '1.0.0'),
-    benchmarkId: String(row.benchmark_id),
-    modelId: String(row.model_id),
-    succeeded: Boolean(row.succeeded),
-    buildPassed: row.build_passed === null ? null : Boolean(row.build_passed),
-    testsPassed: row.tests_passed === null ? null : Boolean(row.tests_passed),
-    patchApplied: row.patch_applied === null ? null : Boolean(row.patch_applied),
-    regressionCount: Number(row.regression_count ?? 0),
-    securityFindings: Number(row.security_findings ?? 0),
-    repairAttempts: Number(row.repair_attempts ?? 0),
-    latencyMs: Number(row.latency_ms ?? 0),
-    inputTokens: Number(row.input_tokens ?? 0),
-    outputTokens: Number(row.output_tokens ?? 0),
-    estimatedCostUsd: Number(row.estimated_cost_usd ?? 0),
-    at: String(row.ran_at ?? new Date().toISOString()),
-  })) as readonly BenchmarkResult[];
+    schemaVersion: row.schema_version,
+    benchmarkId: row.benchmark_id,
+    modelId: row.model_id,
+    succeeded: row.succeeded,
+    buildPassed: row.build_passed,
+    testsPassed: row.tests_passed,
+    patchApplied: row.patch_applied,
+    regressionCount: row.regression_count,
+    securityFindings: row.security_findings,
+    repairAttempts: row.repair_attempts,
+    latencyMs: row.latency_ms,
+    inputTokens: row.input_tokens,
+    outputTokens: row.output_tokens,
+    estimatedCostUsd: row.estimated_cost_usd,
+    at: row.ran_at,
+  })).map((result: unknown) => { assertBenchmarkResult(result); return result; });
 }
 
 /**
@@ -128,6 +129,7 @@ export async function loadMeasuredEvidence(input?: {
 
   try {
     const results = await loader();
+    for (const result of results) assertBenchmarkResult(result);
     // `buildLedger` owns the aggregation rules — per model and per role, failures in the
     // denominator, research/coding isolation. Re-deriving any of that here would create a
     // second definition of what a measurement means.
@@ -144,7 +146,7 @@ export async function loadMeasuredEvidence(input?: {
     const value: MeasuredEvidence = {
       ...EMPTY,
       loadedAt: new Date(now).toISOString(),
-      reason: `benchmark evidence could not be loaded: ${(error as Error).message}`,
+      reason: 'benchmark evidence could not be loaded or validated',
     };
     cache = { at: now, value };
     return value;

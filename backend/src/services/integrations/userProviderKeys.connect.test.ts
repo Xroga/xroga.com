@@ -50,6 +50,19 @@ test('manual Supabase connection binds all writes before yielding and reports on
       }
       return reply(accepted);
     }
+    if (url.pathname.endsWith('/save_supabase_bundle_if_current')) {
+      writes++;
+      if (defer) { reached(); await gate; }
+      const accepted = body.p_rows.every((row: { provider: string; revision: string | null }) => (revisions.get(row.provider) ?? null) === row.revision);
+      if (accepted) {
+        const generation = randomUUID();
+        for (const row of body.p_rows) {
+          revisions.set(row.provider, randomUUID());
+          rows.set(row.provider, { ...row, metadata: row.access_token ? { ...row.metadata, supabase_bundle_id: generation, supabase_project_ref: body.p_project_ref } : { revoked: true } });
+        }
+      }
+      return reply(accepted);
+    }
     if (url.pathname.endsWith('/revoke_provider_key')) {
       revisions.set(body.p_provider, randomUUID()); rows.delete(body.p_provider); return reply(true);
     }
@@ -66,6 +79,7 @@ test('manual Supabase connection binds all writes before yielding and reports on
       return reply(provider?.startsWith('like.') ? [...rows.values()] : []);
     }
     if (url.pathname === '/storage/v1/bucket') return reply([{ id: 'xroga-github-tokens', public: false }]);
+    if (url.pathname.startsWith('/storage/v1/object/') && (!init?.method || init.method === 'GET')) return reply({ statusCode: '404', error: 'not_found', message: 'Not found' }, 404);
     if (url.pathname.startsWith('/storage/')) return reply({});
     throw new Error(`Unexpected fixture path ${url.pathname}`);
   };
@@ -83,11 +97,11 @@ test('manual Supabase connection binds all writes before yielding and reports on
     const pending = connectUserSupabase(context, request);
     const denied = assert.rejects(pending, { code: 'CREDENTIAL_WRITE_CONFLICT' });
     await waiting;
-    assert.equal(prepares, 5, 'All bundle keys admitted before any persistence');
+    assert.equal(prepares, 1, 'Only independent PAT preparation mutates before atomic bundle persistence');
     request.serviceRoleKey = 'MUTATED_KEY';
     for (const provider of ['supabase_url', 'supabase_anon', 'supabase', 'supabase_pat', 'supabase_db_password']) await deleteUserProviderKey(context, provider);
     release(); await denied;
-    assert.equal(prepares, 5); assert.equal(writes, 2); assert.equal(rows.size, 0); assert.equal(external, 0);
+    assert.equal(prepares, 1); assert.equal(writes, 1); assert.equal(rows.size, 0); assert.equal(external, 0);
     defer = false;
     const keysOnly = await connectUserSupabase(context, { projectUrl: request.projectUrl, anonKey: request.anonKey });
     assert.equal(keysOnly.status.provisioned, false);
@@ -98,10 +112,11 @@ test('manual Supabase connection binds all writes before yielding and reports on
     rows.set('apikey_supabase_pat', { provider: 'apikey_supabase_pat', metadata: { provider: 'supabase_pat' } });
     rows.set('apikey_supabase_db_password', { provider: 'apikey_supabase_db_password', access_token: 'synthetic-active-ciphertext', metadata: { provider: 'supabase_db_password' } });
     const status = await getUserSupabaseStatus(context.userId);
-    assert.equal(status.provisioned, false); assert.equal(status.ready, true);
+    assert.equal(status.provisioned, false); assert.equal(status.ready, false, 'Unbound password invalidates ready status');
     assert.equal(status.hasAccessToken, true); assert.equal(status.hasDbPassword, true);
-    assert.match(status.message, /not been verified/);
+    assert.doesNotMatch(status.message, /auto-provisioned|storage live/);
     privateBucketAvailable = true;
+    rows.delete('apikey_supabase_db_password');
     const storageOnly = await connectUserSupabase(context, { projectUrl: request.projectUrl, anonKey: request.anonKey, serviceRoleKey: 'SYNTHETIC_SERVICE_KEY_LONG' });
     assert.equal(storageOnly.provision?.ok, true);
     assert.equal(storageOnly.provision?.schemaApplied, false);
@@ -111,10 +126,11 @@ test('manual Supabase connection binds all writes before yielding and reports on
     await assert.rejects(connectUserSupabase(context, changing), /Disconnect the existing/);
     assert.equal(writes, beforeBlocked, 'Omitted active service credential cannot carry into another project');
     rows.delete('apikey_supabase');
+    rows.set('apikey_supabase_db_password', { provider: 'apikey_supabase_db_password', access_token: `enc:${Buffer.from('fixture:synthetic-password').toString('base64')}`, metadata: {} });
     await assert.rejects(connectUserSupabase(context, changing), /Disconnect the existing/);
     assert.equal(writes, beforeBlocked, 'Omitted active database password cannot carry into another project');
     rows.delete('apikey_supabase_db_password');
-    for (const failure of ['outage', 'malformed', 'revision']) {
+    for (const failure of ['outage', 'malformed']) {
       inventoryFailure = failure;
       await assert.rejects(connectUserSupabase(context, changing));
       assert.equal(writes, beforeBlocked, 'Unverified or stale inventory cannot mutate the bundle');

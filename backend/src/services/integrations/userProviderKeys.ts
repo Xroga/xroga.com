@@ -632,6 +632,11 @@ ${
 
 export async function getUserProviderKey(userId: string, provider: string): Promise<string | null> {
   const p = credentialProviderSelection(provider);
+  if (SUPABASE_BUNDLE_PROVIDERS.includes(p as BundleProvider)) {
+    const bundle = await readUserSupabaseBundle(userId);
+    const field = { supabase_url: 'projectUrl', supabase_anon: 'anonKey', supabase: 'serviceRoleKey', supabase_db_password: 'dbPassword' } as const;
+    return bundle?.[field[p as BundleProvider]] ?? null;
+  }
   const supabase = getSupabaseAdmin();
   if (p === 'custom') {
     const { data, error } = await supabase
@@ -725,6 +730,19 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
   // overrides. Generated server clients send the retained service key here.
   if (out.NEXT_PUBLIC_SUPABASE_URL && !projectRefFromUrl(out.NEXT_PUBLIC_SUPABASE_URL)) {
     throw new Error('Supabase deploy URL is not a verified hosted project origin. Reconnect before syncing credentials.');
+  }
+  if (out.NEXT_PUBLIC_SUPABASE_URL || out.NEXT_PUBLIC_SUPABASE_ANON_KEY || out.SUPABASE_SERVICE_ROLE_KEY) {
+    const projectRows = new Map<BundleProvider, BundleRow>();
+    for (const provider of SUPABASE_BUNDLE_PROVIDERS) {
+      const row = rows.find(item => item.provider === `apikey_${provider}`);
+      projectRows.set(provider, { provider: `apikey_${provider}`, access_token: row?.access_token ?? '', metadata: row?.metadata ?? { revoked: true }, credential_revision: null });
+    }
+    const values = bundleValues(projectRows);
+    if (!boundBundle(projectRows) || out.NEXT_PUBLIC_SUPABASE_URL !== values.projectUrl
+      || out.NEXT_PUBLIC_SUPABASE_ANON_KEY !== values.anonKey
+      || (out.SUPABASE_SERVICE_ROLE_KEY ?? null) !== values.serviceRoleKey) {
+      throw new Error('Supabase credentials are not associated with one project. Reconnect before syncing credentials.');
+    }
   }
   return out;
 }
@@ -882,7 +900,9 @@ export async function getUserSupabaseStatus(userId: string): Promise<UserSupabas
   } catch {
     /* ignore */
   }
-  const ready = hasUrl && hasAnonKey && hasServiceRole;
+  let associated = false;
+  try { associated = Boolean((await readUserSupabaseBundle(userId))?.serviceRoleKey); } catch { /* fail closed */ }
+  const ready = hasUrl && hasAnonKey && hasServiceRole && associated;
   // Credential presence is not evidence that schema or storage was provisioned.
   const provisioned = false;
   return {
@@ -910,6 +930,148 @@ export interface ConnectUserSupabaseInput {
   accessToken?: string;
   dbPassword?: string;
   projectName?: string;
+}
+
+const SUPABASE_BUNDLE_PROVIDERS = ['supabase', 'supabase_anon', 'supabase_db_password', 'supabase_url'] as const;
+type BundleProvider = typeof SUPABASE_BUNDLE_PROVIDERS[number];
+type BundleRow = { provider: string; access_token: string; metadata: Record<string, unknown>; credential_revision: string | null };
+export type SupabaseBundleAdmission = Readonly<{ userId: string }>;
+const bundleAdmissions = new WeakMap<SupabaseBundleAdmission, Map<BundleProvider, BundleRow>>();
+const bundleConflict = () => Object.assign(new Error('Supabase connection changed. Reconnect explicitly.'), { code: 'CREDENTIAL_WRITE_CONFLICT' });
+
+async function snapshotSupabaseRows(userId: string): Promise<Map<BundleProvider, BundleRow>> {
+  const db = getSupabaseAdmin();
+  const query = () => db.from('user_integrations').select('user_id,provider,access_token,metadata,credential_revision')
+    .eq('user_id', userId).in('provider', SUPABASE_BUNDLE_PROVIDERS.map(p => `apikey_${p}`));
+  const first = await query();
+  const validate = (result: typeof first) => {
+    if (result.error || !Array.isArray(result.data) || result.data.some(row => !row || row.user_id !== userId
+      || !SUPABASE_BUNDLE_PROVIDERS.some(p => row.provider === `apikey_${p}`)
+      || typeof row.access_token !== 'string' || typeof row.credential_revision !== 'string'
+      || !row.metadata || typeof row.metadata !== 'object' || Array.isArray(row.metadata))
+      || new Set(result.data.map(row => row.provider)).size !== result.data.length) {
+      throw new Error('Supabase credential authority is unavailable. Retry before reconnecting.');
+    }
+    return result.data;
+  };
+  const rows = validate(first);
+  const result = new Map<BundleProvider, BundleRow>();
+  for (const provider of SUPABASE_BUNDLE_PROVIDERS) {
+    const row = rows.find(r => r.provider === `apikey_${provider}`);
+    if (row) { result.set(provider, row as BundleRow); continue; }
+    // Preserve legacy records, but distinguish absence from an unavailable mirror.
+    const downloaded = await db.storage.from(KEY_BUCKET).download(keyStoragePath(userId, `apikey_${provider}`));
+    if (downloaded.error) {
+      // Pinned storage-js maps body.statusCode, then body.code, into statusCode.
+      // Storage may return HTTP 400 with a precise missing-object/bucket code.
+      if (!['404', 'NoSuchKey', 'NoSuchBucket'].includes(String(downloaded.error.statusCode))) {
+        throw new Error('Legacy Supabase credentials could not be checked. Retry before reconnecting.');
+      }
+      result.set(provider, { provider: `apikey_${provider}`, access_token: '', metadata: { revoked: true }, credential_revision: null });
+    } else {
+      let legacy: { access_token?: unknown; metadata?: unknown };
+      try { legacy = JSON.parse(await downloaded.data.text()); } catch { throw new Error('Legacy Supabase credentials require explicit reconnection.'); }
+      if (typeof legacy.access_token !== 'string' || !legacy.metadata || typeof legacy.metadata !== 'object' || Array.isArray(legacy.metadata)) {
+        throw new Error('Legacy Supabase credentials require explicit reconnection.');
+      }
+      // A mirror cannot assert an authoritative bundle generation.
+      const metadata = { ...legacy.metadata } as Record<string, unknown>;
+      delete metadata.supabase_bundle_id; delete metadata.supabase_project_ref;
+      result.set(provider, { provider: `apikey_${provider}`, access_token: legacy.access_token, metadata, credential_revision: null });
+    }
+  }
+  if (rows.length !== SUPABASE_BUNDLE_PROVIDERS.length) {
+    const second = validate(await query());
+    const fingerprint = (items: typeof rows) => JSON.stringify(items.map(r => [r.provider, r.credential_revision]).sort());
+    if (fingerprint(rows) !== fingerprint(second)) throw bundleConflict();
+  }
+  return result;
+}
+
+export async function prepareSupabaseBundleWrite(userId: string): Promise<SupabaseBundleAdmission> {
+  const rows = await snapshotSupabaseRows(userId);
+  const admission = Object.freeze({ userId });
+  bundleAdmissions.set(admission, rows);
+  return admission;
+}
+
+function legacyJwtMatches(key: string, ref: string, role: string): boolean {
+  try {
+    const parts = key.split('.');
+    if (parts.length !== 3) return false;
+    const payload = JSON.parse(Buffer.from(parts[1]!, 'base64url').toString('utf8'));
+    return payload.ref === ref && payload.role === role;
+  } catch { return false; }
+}
+
+function bundleValues(rows: Map<BundleProvider, BundleRow>) {
+  const value = (provider: BundleProvider) => {
+    const row = rows.get(provider);
+    return row?.metadata.revoked === true || !row?.access_token ? null : decryptApiKey(row.access_token);
+  };
+  return { projectUrl: value('supabase_url'), anonKey: value('supabase_anon'), serviceRoleKey: value('supabase'), dbPassword: value('supabase_db_password') };
+}
+
+function boundBundle(rows: Map<BundleProvider, BundleRow>): boolean {
+  const values = bundleValues(rows), ref = projectRefFromUrl(values.projectUrl ?? '');
+  if (!ref || !values.anonKey) return false;
+  const active = [...rows.values()].filter(row => row.access_token && row.metadata.revoked !== true);
+  const generation = rows.get('supabase_url')?.metadata.supabase_bundle_id;
+  if (generation) return typeof generation === 'string' && active.every(row => row.metadata.supabase_bundle_id === generation && row.metadata.supabase_project_ref === ref);
+  if (active.some(row => row.metadata.supabase_bundle_id) || values.dbPassword) return false;
+  return legacyJwtMatches(values.anonKey, ref, 'anon') && (!values.serviceRoleKey || legacyJwtMatches(values.serviceRoleKey, ref, 'service_role'));
+}
+
+/** One authority snapshot. Legacy JWT consistency is not provider verification. */
+export async function readUserSupabaseBundle(userId: string) {
+  const rows = await snapshotSupabaseRows(userId);
+  if (!boundBundle(rows)) return null;
+  return bundleValues(rows);
+}
+
+export async function saveSupabaseBundle(admission: SupabaseBundleAdmission, input: ConnectUserSupabaseInput): Promise<UserProviderKeyStatus[]> {
+  const rows = bundleAdmissions.get(admission);
+  if (!rows) throw bundleConflict();
+  const ref = projectRefFromUrl(input.projectUrl);
+  if (!ref) throw new Error('Invalid Supabase project URL.');
+  const previous = bundleValues(rows);
+  const values = { projectUrl: input.projectUrl.trim(), anonKey: input.anonKey.trim(), serviceRoleKey: input.serviceRoleKey?.trim(), dbPassword: input.dbPassword?.trim() };
+  for (const [key, role] of [[values.anonKey, 'anon'], [values.serviceRoleKey, 'service_role']] as const) {
+    if (!key || key.split('.').length !== 3) continue;
+    let claim: Record<string, unknown>;
+    try { claim = JSON.parse(Buffer.from(key.split('.')[1]!, 'base64url').toString('utf8')); } catch { continue; }
+    if (claim && typeof claim === 'object' && (('ref' in claim && claim.ref !== ref) || ('role' in claim && claim.role !== role))) {
+      throw new Error('Supabase credential project or role does not match the supplied bundle.');
+    }
+  }
+  if (!values.anonKey || values.anonKey.length < 8 || (values.serviceRoleKey && values.serviceRoleKey.length < 8)
+    || (values.dbPassword && values.dbPassword.length < 4) || Object.values(values).some(v => v && v.length > 48000)) throw new Error('Invalid Supabase credentials.');
+  // Omitted active credentials may only survive an already-consistent same-project bundle.
+  for (const key of ['serviceRoleKey', 'dbPassword'] as const) {
+    if (!values[key] && previous[key]) {
+      if (!boundBundle(rows) || projectRefFromUrl(previous.projectUrl ?? '') !== ref) {
+        throw new Error('Disconnect the existing Supabase project before reconnecting with omitted service credentials or database password.');
+      }
+      values[key] = previous[key];
+    }
+  }
+  const keys: Record<BundleProvider, string | undefined> = { supabase_url: values.projectUrl, supabase_anon: values.anonKey, supabase: values.serviceRoleKey, supabase_db_password: values.dbPassword };
+  const now = new Date().toISOString();
+  const statuses: UserProviderKeyStatus[] = [];
+  const payload = SUPABASE_BUNDLE_PROVIDERS.map(provider => {
+    const value = keys[provider], envVar = envVarForProvider(provider);
+    if (value) statuses.push({ provider, connected: true, masked: maskKey(value), envVar, connectedAt: now });
+    return { provider: `apikey_${provider}`, revision: rows.get(provider)!.credential_revision,
+      access_token: value ? encryptApiKey(value) : '', metadata: value ? {
+        type: SUPABASE_SERVER_ONLY_PROVIDERS.has(provider) ? 'supabase_provision' : 'user_api_key', provider, env_var: envVar,
+        sync_target: SUPABASE_SERVER_ONLY_PROVIDERS.has(provider) ? 'xroga_server' : 'vercel', connected_at: now, masked: maskKey(value),
+      } : { revoked: true } };
+  });
+  const saved = await getSupabaseAdmin().rpc('save_supabase_bundle_if_current', { p_owner_id: admission.userId, p_project_ref: ref, p_rows: payload });
+  if (saved.error) throw new Error('Supabase bundle could not be saved. Retry shortly.');
+  if (saved.data !== true) throw bundleConflict();
+  bundleAdmissions.delete(admission);
+  return statuses;
 }
 
 /** Save URL + anon (+ optional service role) and auto-provision when possible. */
@@ -942,45 +1104,12 @@ export async function connectUserSupabase(
       throw new Error('Supabase credential project does not match the supplied URL.');
     }
   }
-  const entries: Array<[string, string]> = [
-    ['supabase_url', input.projectUrl], ['supabase_anon', input.anonKey],
-  ];
-  if (input.serviceRoleKey) entries.push(['supabase', input.serviceRoleKey]);
-  if (input.accessToken) entries.push(['supabase_pat', input.accessToken]);
-  if (input.dbPassword) entries.push(['supabase_db_password', input.dbPassword]);
-  const admissions = await Promise.all(entries.map(([provider]) => prepareUserProviderKeyWrite(userId, provider)));
-  const omitted = [!input.serviceRoleKey && 'apikey_supabase', !input.dbPassword && 'apikey_supabase_db_password']
-    .filter((provider): provider is string => Boolean(provider));
-  if (omitted.length) {
-    const providers = ['apikey_supabase_url', ...omitted];
-    const { data, error } = await getTenantSupabaseAdmin(context).from('user_integrations')
-      .select('user_id,provider,access_token,metadata,credential_revision')
-      .eq('user_id', userId).in('provider', providers);
-    if (error || !Array.isArray(data) || data.some(row => !row || row.user_id !== userId
-      || !providers.includes(row.provider) || typeof row.access_token !== 'string'
-      || typeof row.credential_revision !== 'string')
-      || new Set(data.map(row => row.provider)).size !== data.length) {
-      throw new Error('Existing Supabase connection could not be verified. Retry before changing projects.');
-    }
-    const prior = data.find(row => row.provider === 'apikey_supabase_url');
-    if (!prior || prior.credential_revision !== issuedWriteAdmissions.get(admissions[0]!)?.revision) {
-      throw Object.assign(new Error('Supabase connection changed. Retry explicitly.'), { code: 'CREDENTIAL_WRITE_CONFLICT' });
-    }
-    const priorUrl = prior.metadata?.revoked === true || !prior.access_token ? null : decryptApiKey(prior.access_token);
-    if (prior.access_token && prior.metadata?.revoked !== true && !priorUrl) {
-      throw new Error('Existing Supabase connection could not be verified. Retry before changing projects.');
-    }
-    if (projectRefFromUrl(priorUrl ?? '') !== projectRef
-      && data.some(row => omitted.includes(row.provider) && row.access_token && row.metadata?.revoked !== true)) {
-      throw new Error('Disconnect the existing Supabase project before reconnecting with omitted service credentials or database password.');
-    }
-    // This guard covers authoritative active rows, not absent-row legacy mirrors
-    // or concurrent changes across independently versioned credential rows.
-  }
-  const saved: UserProviderKeyStatus[] = [];
-  for (const [index, [provider, value]] of entries.entries()) {
-    saved.push(await saveUserProviderKey(userId, provider, value, { writeAdmission: admissions[index] }));
-  }
+  const [admission, patAdmission] = await Promise.all([
+    prepareSupabaseBundleWrite(userId),
+    input.accessToken ? prepareUserProviderKeyWrite(userId, 'supabase_pat') : Promise.resolve(undefined),
+  ]);
+  const saved = await saveSupabaseBundle(admission, input);
+  if (input.accessToken) saved.push(await saveUserProviderKey(userId, 'supabase_pat', input.accessToken, { writeAdmission: patAdmission }));
   const service = input.serviceRoleKey?.trim();
   const accessToken = input.accessToken?.trim();
   const dbPassword = input.dbPassword?.trim();

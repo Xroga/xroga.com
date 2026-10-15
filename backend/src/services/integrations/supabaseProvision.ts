@@ -13,6 +13,7 @@ import {
   prepareUserProviderKeyWrite,
   saveUserProviderKey,
   type ProviderKeyWriteAdmission,
+  prepareSupabaseBundleWrite, saveSupabaseBundle, readUserSupabaseBundle, type SupabaseBundleAdmission,
 } from './userProviderKeys.js';
 
 const MGMT = 'https://api.supabase.com/v1';
@@ -476,6 +477,11 @@ export async function prepareSupabaseWriteAdmissions(userId: string): Promise<Su
   return Object.freeze({ url: url!, anon: anon!, service: service!, pat: pat! });
 }
 
+export async function prepareSupabaseConnectionWrite(userId: string) {
+  const [bundle, pat] = await Promise.all([prepareSupabaseBundleWrite(userId), prepareUserProviderKeyWrite(userId, 'supabase_pat')]);
+  return Object.freeze({ bundle, pat });
+}
+
 /** One-click: PAT + project ref → save keys + provision everything. */
 export async function oneClickConnectSupabase(opts: {
   userId: string;
@@ -483,7 +489,7 @@ export async function oneClickConnectSupabase(opts: {
   projectRef: string;
   vercelProject?: string;
   projectName?: string;
-  writeAdmissions?: SupabaseWriteAdmissions;
+  writeAdmissions?: { bundle: SupabaseBundleAdmission; pat: ProviderKeyWriteAdmission };
 }): Promise<{
   status: Awaited<ReturnType<typeof getUserSupabaseStatus>>;
   provision: ProvisionResult;
@@ -491,11 +497,9 @@ export async function oneClickConnectSupabase(opts: {
 }> {
   const { userId, projectRef, projectName, writeAdmissions } = opts;
   const accessToken = opts.accessToken.trim();
-  const {url, anon, service, pat} = writeAdmissions ?? await prepareSupabaseWriteAdmissions(userId);
+  const {bundle, pat} = writeAdmissions ?? await prepareSupabaseConnectionWrite(userId);
   const keys = await fetchProjectApiKeys(accessToken, projectRef);
-  await saveUserProviderKey(userId, 'supabase_url', keys.url,{writeAdmission:url});
-  await saveUserProviderKey(userId, 'supabase_anon', keys.anonKey,{writeAdmission:anon});
-  await saveUserProviderKey(userId, 'supabase', keys.serviceRoleKey,{writeAdmission:service});
+  await saveSupabaseBundle(bundle, { projectUrl: keys.url, anonKey: keys.anonKey, serviceRoleKey: keys.serviceRoleKey });
   await saveUserProviderKey(userId, 'supabase_pat', accessToken,{writeAdmission:pat});
 
   const provision = await provisionUserSupabase({
@@ -512,6 +516,7 @@ export async function oneClickConnectSupabase(opts: {
       ...status,
       message: provision.message,
       ready: status.ready && provision.ok,
+      provisioned: provision.ok && provision.schemaApplied && provision.memoryTablesReady,
     },
     provision,
     keysSaved: true,
@@ -520,10 +525,8 @@ export async function oneClickConnectSupabase(opts: {
 
 /** Client for the user's project (service role) — for AI memory/storage. */
 export async function getUserSupabaseAdmin(userId: string): Promise<SupabaseClient | null> {
-  const [url, service] = await Promise.all([
-    getUserProviderKey(userId, 'supabase_url'),
-    getUserProviderKey(userId, 'supabase'),
-  ]);
+  const bundle = await readUserSupabaseBundle(userId);
+  const url = bundle?.projectUrl, service = bundle?.serviceRoleKey;
   if (!url || !service || !projectRefFromUrl(url)) return null;
   return createClient(url, service, {
     auth: { autoRefreshToken: false, persistSession: false },

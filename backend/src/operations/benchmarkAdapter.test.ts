@@ -140,6 +140,8 @@ test('a run with no durable store says so instead of implying the results were k
   const adapter = createBenchmarkAdapter({ executor: passingCase, models });
   const result = await adapter.execute('run_model_benchmark', { parameters: { maximumCases: 1 } });
   assert.equal((result.observedState as { persisted: boolean }).persisted, false);
+  assert.equal(result.status, 'failed');
+  assert.equal(result.errorCategory, 'benchmark_persistence_unverified');
   assert.match(result.safeSummary, /not persisted/);
 });
 

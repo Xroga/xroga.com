@@ -3,8 +3,31 @@ import { randomUUID } from 'node:crypto';
 import { test } from 'node:test';
 import pg from 'pg';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { recordCompletedProviderUsage } from '../ai/postCompletionAccounting.js';
 
 export function registerUsageAccountingTests(admin: SupabaseClient): void {
+  test('completed provider consumer writes one atomic ledger receipt and fails truthfully when accounting owner disappears', async t => {
+    assert.equal(process.env.XB01_DISPOSABLE_SUPABASE, '1'); assert.equal(process.env.SUPABASE_URL, 'http://127.0.0.1:54321');
+    const created = await admin.auth.admin.createUser({ email: `completed-accounting-${randomUUID()}@example.invalid`, email_confirm: true });
+    assert.equal(created.error, null); assert.ok(created.data.user); const owner = created.data.user.id;
+    t.after(async () => { assert.equal((await admin.auth.admin.deleteUser(owner)).error, null); });
+    const period = `${new Date().toISOString().slice(0, 7)}-01`;
+    assert.equal((await admin.from('user_token_usage').upsert({ user_id: owner, input_tokens: 0, output_tokens: 0,
+      model_usage: {}, spent_usd: 0, rollover_usd: 0, plan_tier: 'free', plan_budget_usd: 1.65, quota_period_start: period })).error, null);
+    const first = await recordCompletedProviderUsage(owner, 'kimi_k3', 3, 2);
+    assert.equal(first.inputTokensUsed, 3); assert.equal(first.outputTokensUsed, 2);
+    const second = await recordCompletedProviderUsage(owner, 'kimi_k3', 3, 2);
+    assert.equal(second.inputTokensUsed, 6); assert.equal(second.outputTokensUsed, 4);
+    const before = await admin.from('ai_usage_ledger').select('*').eq('user_id', owner).order('id');
+    assert.equal(before.error, null); assert.equal(before.data!.length, 2);
+    assert.equal(new Set(before.data!.map(row => row.accounting_receipt_id)).size, 2);
+    assert.equal((await admin.from('user_token_usage').delete().eq('user_id', owner)).error, null);
+    await assert.rejects(recordCompletedProviderUsage(owner, 'kimi_k3', 3, 2), {
+      code: 'POST_COMPLETION_ACCOUNTING_UNCERTAIN', providerCompleted: true, accountingUncertain: true, retryable: false,
+    });
+    const after = await admin.from('ai_usage_ledger').select('*').eq('user_id', owner).order('id');
+    assert.equal(after.error, null); assert.deepEqual(after.data, before.data);
+  });
   test('prepared atomic accounting serializes receipts and rolls back all component writes', async t => {
     assert.equal(process.env.CI, 'true'); assert.equal(process.env.XB01_DISPOSABLE_SUPABASE, '1');
     assert.equal(process.env.SUPABASE_URL, 'http://127.0.0.1:54321');

@@ -8,6 +8,7 @@ import {
 } from '../../config/supabase.js';
 import { createTenantContext } from '../../security/tenantContext.js';
 import { persistOwnedRuntimeSession } from '../../security/ownedRunPersistence.js';
+import { captureAdmittedRunAttempt, requireAdmittedRunAttempt, type AdmittedRunAttempt } from '../../ai/runStore.js';
 
 import type {
   SoftwareProject,
@@ -619,6 +620,10 @@ export class InMemoryProjectRuntimeStore
 export class SupabaseProjectRuntimeStore
   implements
     ProjectRuntimeStore {
+  private readonly attempt?: AdmittedRunAttempt;
+  constructor(attempt?: AdmittedRunAttempt) {
+    this.attempt = attempt ? requireAdmittedRunAttempt(attempt) : undefined;
+  }
   async saveRevision(
     userId:
       string,
@@ -636,7 +641,9 @@ export class SupabaseProjectRuntimeStore
       data,
       error,
     } =
-      await getSupabaseAdmin()
+      this.attempt
+        ? await this.saveWorkerRevision(userId, project, fingerprint)
+        : await getSupabaseAdmin()
         .from(
           'project_runtime_revisions',
         )
@@ -711,6 +718,22 @@ export class SupabaseProjectRuntimeStore
           data.created_at,
         ),
     };
+  }
+
+  private async saveWorkerRevision(userId: string, project: SoftwareProject, fingerprint: string) {
+    const attempt = requireAdmittedRunAttempt(this.attempt!);
+    if (attempt.userId !== userId || attempt.runId !== project.runId) {
+      throw Object.assign(new Error('Project revision authority is invalid.'), { code: 'RUN_STATE_CONFLICT' });
+    }
+    const result = await getSupabaseAdmin().rpc('persist_worker_project_revision', {
+      p_owner_id: userId, p_run_id: attempt.runId, p_worker_id: attempt.workerId,
+      p_generation: attempt.generation, p_project: project, p_fingerprint: fingerprint,
+    });
+    if (result.error) throw Object.assign(new Error('Project revision was not persisted.'), { code: 'RESOURCE_ACCESS_UNAVAILABLE' });
+    if (!result.error && result.data === null) {
+      throw Object.assign(new Error('Project revision attempt is no longer authoritative.'), { code: 'RUN_STATE_CONFLICT' });
+    }
+    return result;
   }
 
   async loadLatestRevision(
@@ -1208,4 +1231,11 @@ export async function persistSoftwareProjectRevision(
             ),
     };
   }
+}
+
+/** Worker-only path. Failed persistence must stop completion and delivery claims. */
+export async function persistWorkerSoftwareProjectRevision(userId: string, project: SoftwareProject): Promise<ProjectRevisionPersistenceResult> {
+  const attempt = captureAdmittedRunAttempt(project.runId, userId);
+  const revision = await new SupabaseProjectRuntimeStore(attempt).saveRevision(userId, project);
+  return { saved: true, revisionId: revision.revisionId, revisionNumber: revision.revisionNumber, reason: null };
 }

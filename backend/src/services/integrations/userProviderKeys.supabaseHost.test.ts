@@ -43,9 +43,11 @@ test('Supabase vault saves and final deployment maps reject non-project origins 
       await assert.rejects(resolveProviderEnvForDeploy(owner), /not a verified hosted project origin/);
     }
     rows = [row('apikey_supabase_url', 'NEXT_PUBLIC_SUPABASE_URL', 'https://project.supabase.co'),
-      row('apikey_supabase', 'SUPABASE_SERVICE_ROLE_KEY', 'SYNTHETIC_RETAINED_SERVICE')];
+      row('apikey_supabase', 'SUPABASE_SERVICE_ROLE_KEY', 'SYNTHETIC_RETAINED_SERVICE'),
+      row('apikey_supabase_anon', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'SYNTHETIC_ANON')].map(item=>({ ...item, metadata: { ...item.metadata, supabase_bundle_id: 'fixture-generation', supabase_project_ref: 'project' } }));
     assert.deepEqual(await resolveProviderEnvForDeploy(owner), {
       NEXT_PUBLIC_SUPABASE_URL: 'https://project.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'SYNTHETIC_RETAINED_SERVICE',
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: 'SYNTHETIC_ANON',
     });
   } finally {
     globalThis.fetch = originalFetch;

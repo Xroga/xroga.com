@@ -32,7 +32,7 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
         if(!revisions.has(body.p_provider))revisions.set(body.p_provider,randomUUID());
         reply(revisions.get(body.p_provider));
       } else if(url.pathname.endsWith('/consume_oauth_session')) {
-        assert.equal(prepares,4,'All derived-key admissions precede exchange');
+        assert.equal(prepares,1,'Independent PAT admission precedes exchange, bundle snapshot does not mutate');
         reply({state,verifier:'synthetic-verifier',redirect_uri:'http://localhost:3000/dashboard/integrations/supabase/callback',
           created_at:new Date().toISOString(),authorization_revision:randomUUID()});
       } else if(url.pathname.endsWith('/save_oauth_connection')) {
@@ -43,13 +43,19 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
         const accepted=body.p_revision===revisions.get(body.p_provider);
         if(accepted){saved.push(body.p_provider);revisions.set(body.p_provider,randomUUID());}
         reply(accepted);
+      } else if(url.pathname.endsWith('/save_supabase_bundle_if_current')) {
+        attempted.push('bundle');
+        const accepted=body.p_rows.every((row:{provider:string;revision:string|null})=>(revisions.get(row.provider)??null)===row.revision);
+        if(accepted)saved.push('bundle');reply(accepted);
       } else if(url.pathname.endsWith('/revoke_provider_key')) {
         revisions.set(body.p_provider,randomUUID());reply(true);
       } else if(url.pathname==='/rest/v1/user_integrations') {
         if(req.method==='POST'){oauthToken='';reply([]);}
         else if(url.searchParams.get('provider')==='eq.supabase_oauth')reply(oauthToken?[{access_token:oauthToken,metadata:{}}]:[]);
+        else if(url.searchParams.get('provider')?.startsWith('in.'))reply([...revisions].filter(([p])=>['apikey_supabase_url','apikey_supabase_anon','apikey_supabase','apikey_supabase_db_password'].includes(p)).map(([p,r])=>({user_id:owner,provider:p,access_token:'',metadata:{revoked:true},credential_revision:r})));
         else reply([]);
       } else if(url.pathname==='/storage/v1/bucket')reply([{id:'xroga-github-tokens',public:false}]);
+      else if(url.pathname.startsWith('/storage/')&&req.method==='GET'){res.statusCode=404;reply({statusCode:'404',message:'Not found'});}
       else if(url.pathname.startsWith('/storage/'))reply([]);
       else {res.statusCode=500;reply({message:'Unexpected fixture request'});}
     });
@@ -86,7 +92,7 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
       if(url.pathname==='/v1/oauth/token')return Response.json({access_token:'SYNTHETIC_OAUTH_TOKEN'});
       if(url.pathname==='/v1/projects') {
         if(init?.method==='POST') {
-          assert.equal(prepares,5,'All five derived-key admissions precede project creation');
+          assert.equal(prepares,1,'Bundle snapshot and PAT admission precede project creation');
           createdProjects++;
           assert.equal((await originalFetch(`${origin}/disconnect`,{method:'DELETE'})).status,200);
           return Response.json({id:'fixtureproject0'});
@@ -103,23 +109,23 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
         body:JSON.stringify({code:'synthetic-code',state,userId:'22222222-2222-4222-8222-222222222222'})});
       assert.ok([400,409].includes(response.status),`project count ${projectCount}`);
       assert.deepEqual(saved,[],'Disconnected callback cannot restore any derived credential');
-      assert.equal(prepares,4,'No post-disconnect re-admission');
+      assert.equal(prepares,1,'No post-disconnect re-admission');
       assert.equal(oauthToken,'');
     }
     disconnect=false;projectCount=2;revisions.clear();saved.length=0;prepares=0;
     const success=await originalFetch(`${origin}/connect`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:'synthetic-code',state})});
-    assert.equal(success.status,200);assert.deepEqual(saved,['apikey_supabase_pat']);assert.equal(prepares,4);
+    assert.equal(success.status,200);assert.deepEqual(saved,['apikey_supabase_pat']);assert.equal(prepares,1);
     revisions.clear();saved.length=0;prepares=0;selectRace=true;
     const selected=await originalFetch(`${origin}/select-project`,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({projectRef:'fixtureproject0'})});
     assert.equal(selected.status,400);assert.equal(selectRace,false);
-    assert.deepEqual(saved,[]);assert.equal(prepares,4);assert.equal(oauthToken,'');
+    assert.deepEqual(saved,[]);assert.equal(prepares,1);assert.equal(oauthToken,'');
     revisions.clear();saved.length=0;attempted.length=0;prepares=0;oauthToken='SYNTHETIC_CURRENT_TOKEN';
     const created=await originalFetch(`${origin}/create-project`,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name:'Fixture',organizationId:'synthetic-org',userId:'22222222-2222-4222-8222-222222222222'})});
     assert.equal(created.status,400);assert.equal(createdProjects,1);
-    assert.deepEqual(attempted,['apikey_supabase_db_password']);
-    assert.deepEqual(saved,[]);assert.equal(prepares,5);assert.equal(oauthToken,'');
+    assert.deepEqual(attempted,['bundle']);
+    assert.deepEqual(saved,[]);assert.equal(prepares,1);assert.equal(oauthToken,'');
     await new Promise<void>(resolve=>setTimeout(resolve,50));
   } finally {
     globalThis.fetch=originalFetch;

@@ -13,8 +13,9 @@ import {
 } from '../../ai/providerBudget.js';
 
 import {
-  recordUsage,
-} from '../../ai/quota.js';
+  recordCompletedProviderUsage as recordUsage,
+  isPostCompletionAccountingError,
+} from '../../ai/postCompletionAccounting.js';
 
 import {
   generateStructured,
@@ -852,7 +853,8 @@ async function selectActionToolAndArguments(
       ) {
         return structured.value;
       }
-    } catch {
+    } catch (error) {
+      if (isPostCompletionAccountingError(error)) throw error;
       /*
        * Try the bounded fallback route.
        */

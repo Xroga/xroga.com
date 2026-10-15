@@ -54,15 +54,15 @@
   ],
   "additionalSpend": 0,
   "latestDisposable": {
-    "source": "5fa74cd4244b61736cccb076d073fcfdda469b1a",
-    "run": "38820218030",
+    "source": "01bd07160817927799a043bbfb46d2c433ab85a8",
+    "run": "38822065088",
     "result": "VERIFIED",
-    "migrations": 82,
-    "securityTests": 83,
+    "migrations": 84,
+    "securityTests": 89,
     "browserTests": 3,
     "failures": 0,
     "skips": 0,
-    "aggregate": "PASS38820217998: branch5fa74cd4244b61736cccb076d073fcfdda469b1a and integratedab3884db29ad9458eddcdf6bc51b964c9e6fedab each passed21 stages twice, sourceTreeMutated=false. Previous f4b7acf4 aggregate38817558285 and golden38817558129 failed generated-contract drift, corrected at917e53ed without weakening12 blocked journeys."
+    "aggregate": "PASS38822065115: branch01bd07160817927799a043bbfb46d2c433ab85a8 and integrateddd7114245570ab554ee6075511d2710389e1f332 each pass21 stages twice, sourceTreeMutated=false. All11 workflows pass. Historical f4b7acf4 aggregate38817558285 and golden38817558129 failed generated-contract drift, corrected at917e53ed without weakening12 blocked journeys."
   },
   "overnightEngineering": {
     "status": "IN PROGRESS",
@@ -82,12 +82,17 @@
     "integration": "5fa74cd4 disposable38820218030 PASS82 migrations/83 security/3 browser/zero failures or skips, all11 workflows pass. This verifies the preceding creation, cancellation, account-deletion, enumeration, manual-connect, resume-lineage and growth-referral changes described above as READY FOR CI. It does not certify their explicitly remaining limitations. Repeated branch/integrated38820217998 passes21 stages twice on each source with no mutation.",
     "nextSource": {
       "status": "IN PROGRESS",
-      "canonicalCheckpoint": "Issued attempt identity, serialized immutable saves and service-only parent-row-locked RPC bind canonical state to worker generation and immutable lineage. Database project identity is captured before first foundation checkpoint. Focused tests and18 local SQL assertions pass. Actual two-session disposable tests await this source's CI. Software-agent checkpoint and project-runtime writers remain separate open paths.",
-      "quota": "Missing, mismatched or malformed durable quota evidence fails503 instead of inventing a paid-plan allowance. Explicit zero budget remains zero. One owner snapshot supplies plan and usage.44 focused tests pass, dedicated real owner/foreign/missing-row fixtures prepared.",
-      "terminalIdentity": "Insert-only terminal identity cannot be changed by losing same-ID save. Exact returned ID and requested metadata validated.17 focused tests pass. Actual same-owner race/foreign-owner test prepared.",
-      "credentialDestination": "Strict existing Supabase project URL validation now applies at save and final deployment environment assembly, including historic/custom overrides. Manual project changes cannot retain omitted active database-backed service key or password.15 focused tests pass. Legacy Storage and concurrent multi-key bundle binding remain unresolved.",
-      "atomicUsagePreparation": "UNWIRED: receipt-deduplicated transaction reuses existing usage increment, role merge and ledger functions. Issued-context helper validates receipt. Focused helper tests pass, real concurrency/replay/role/rollover/four-stage rollback tests prepared. Provider consumers and uncertain-outcome retry handling remain unchanged, no Command008 acceptance claimed.",
-      "localVerification": "Backend suite before final manual-connect guard and unwired accounting additions:2923 tests,2905 pass,0 fail,18 policy-registered skips. Skip governance passes with0 focused tests. Later additions have focused tests.84 migrations parse. Final-source disposable and complete CI remain mandatory."
+      "canonicalCheckpoint": "VERIFIED at01bd0716 disposable38822065088. Issued attempt identity, serialized immutable saves and service-only parent-row-locked RPC bind canonical state to worker generation and immutable lineage. Database project identity precedes first foundation save. Actual two-session stale-resume/cancel, owner/lineage/role negatives pass. Two exact write candidates now SCOPED_BOUNDARY, no full worker certification.",
+      "quota": "VERIFIED at01bd0716 disposable38822065088: missing/mismatched/malformed quota evidence fails503, explicit zero remains zero, exact owner rows yield different balances and missing row cannot invent paid fallback. Two exact read candidates now SCOPED_BOUNDARY, not concurrent spending acceptance.",
+      "terminalIdentity": "VERIFIED at01bd0716 disposable38822065088: simultaneous same-ID saves retain winning repository/number/creation identity, foreign attempt leaves unchanged row, exact ID/projection negatives pass. Content revision CAS and lifecycle remain open.",
+      "credentialDestination": "Next source: four-key Supabase bundle uses issued immutable admission, sorted row locks, revision CAS and transactional rollback. Reads require one bound project/generation, including final deployment overrides. Missing legacy objects are recognized narrowly without mutating read state.22 focused tests and local SQL probe pass; three real role, concurrent writer, revoke and rollback tests prepared. PAT is separate and already-issued provider effects, legacy opaque-key reconnect and production KMS remain open.",
+      "atomicUsagePreparation": "Primitive VERIFIED at01bd0716 disposable38822065088: concurrent same/distinct receipts, payload conflicts, role denial, rollover and four-stage rollback pass. Next source wires only three reviewed post-completion business/planner consumers, preserves accounting for malformed outputs, and prevents fallback/repair on uncertain accounting. Six focused wrapper/consumer tests pass, final-source real consumer test pending. Other legacy recordUsage callers, output recovery, cross-request provider deduplication and Command008 remain open.",
+      "softwareCheckpoint": "Next source: issued attempt and parent-row-locked write, immutable serialized queue, typed conflict/outage abort at Service and Executor even if tool catches the error. Central load validates row/embedded identity; shared immutable recovery binding reaches service and preview. Focused13 tests plus earlier34,18 local SQL assertions/replay pass. Three updated real tests await final-source CI.",
+      "workerRevision": "Next source: worker-specific project revision RPC locks same admitted parent, requires canonical project lineage, denies stale generation. Failed revision now throws before pipeline delivery-ready/completion instead of returning a truthy failure object. Legitimate post-build authenticated restore/delivery retain separate paths. Eleven focused tests and15 local SQL assertions/replay pass, three real role/lineage/lock-race tests prepared. Preview provider side effects remain independent.",
+      "diagnosticsAndCache": "Next source: platform logger stores fixed categories/known labels only, discards arbitrary metadata and unverified attribution, registers exact global scope. Three focused tests and actual persistence test prepared. Inactive tenant cache now validates bounded payload, exact digest/expiry and acknowledged writes, three focused tests pass. Cache project/context variation and lifecycle remain open.",
+      "benchmarkEvidence": "Next source: strict finite numeric/boolean/time evidence validation before aggregate routing/storage, safe errors and truthful partial persistence count. Missing storage acknowledgement returns failed/benchmark_persistence_unverified because operationsService otherwise stamps verified durable action evidence.55 focused tests pass after correction. No paid benchmarks executed, actual producer provenance/budget/replay and real DB acceptance remain open.",
+      "previewDrain": "Next source: adapter closes and drains its existing preview queue before final revision/completion. Typed authority loss and timeout fail closed; subsequent events cannot save or emit. Sixteen focused tests pass. Already-started physical provider work is not undone or certified.",
+      "localVerification": "Full local backend suite:2952 tests,2934 pass,0 fail,18 registered skips. Subsequent benchmark durable-status correction passes all55 focused benchmark tests. Final-source disposable and complete CI remain mandatory."
     }
   },
   "replayCorrection": {
@@ -117,7 +122,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:469 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:470 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -136,25 +141,25 @@
     "result": "PASS twice on both branch and integrated candidate"
   },
   "verifiedBaseline": {
-    "branch": "5fa74cd4244b61736cccb076d073fcfdda469b1a",
-    "integrated": "ab3884db29ad9458eddcdf6bc51b964c9e6fedab",
-    "aggregateCi": "38820217998",
-    "isolatedCi": "38820218030",
+    "branch": "01bd07160817927799a043bbfb46d2c433ab85a8",
+    "integrated": "dd7114245570ab554ee6075511d2710389e1f332",
+    "aggregateCi": "38822065115",
+    "isolatedCi": "38822065088",
     "workflows": 11,
-    "securityTests": 83,
+    "securityTests": 89,
     "newSourceCertified": false
   },
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 162,
-    "persistenceCandidates": 676,
-    "ownerPredicateCandidates": 165,
+    "privilegedFactorySites": 164,
+    "persistenceCandidates": 683,
+    "ownerPredicateCandidates": 164,
     "reviewRequired": 0,
-    "reviewedCandidates": 676,
-    "unresolvedSafetyCandidates": 469,
+    "reviewedCandidates": 683,
+    "unresolvedSafetyCandidates": 470,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 9
+    "registeredNarrowGlobalExceptions": 10
   },
   "dependency": {
     "downstreamPatchStatus": "VERIFIED_SCOPE at4f8c56acdf6b9c90a5ea1147dfd79151bffe6c46: four targeted fixtures and18 combined dependency/Cline tests, frozen workspace/standalone38806776199, Docker38806776574 and repeated branch/integrated21-stage baseline38806776471 pass. Integrated7377b5a5ffc76d49c7dcb4094ddc9055c4062eeb. Versions/audit findings retained, no waiver. Current later-source CI still required.",
@@ -258,7 +263,7 @@
       "existingImplementation": "Existing OAuth, BYOK and credential mirrors",
       "missingBehavior": "Atomic save/revoke ordering, one-use PKCE, encrypted vault migration and KMS boundary",
       "acceptanceTest": "Wrong owner, revocation during read/write, replay, rotation and tampering",
-      "pendingCandidates": 84,
+      "pendingCandidates": 87,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/services/integrations/credentialStorageBucket.ts": [
@@ -336,13 +341,16 @@
           "21c2281b6499e3e36fcf",
           "bc9849a362989fd1be0f",
           "a48719fc054d143422f5",
-          "c62406a2035c6f39b956",
-          "c7fb8eb6a9b01efcb56f",
-          "16e64917713c6190c707",
-          "6cc6ec56f502c38555cd",
-          "458c8f074a88f2ed9bef",
-          "789ab1a9efb91682ba59",
-          "a7b846b42a97d24c68a1"
+          "95d87dd7ac52fa10ee14",
+          "0b1183cf5c845cd1fc45",
+          "f95eaefde397af0a21ce",
+          "916ef5939653721cb266",
+          "dc05d3c9b9748af70292",
+          "8b3db9fd3c0615adce60",
+          "e6814e00bbc26ab039a6",
+          "3bf67c4f409fba1e1f47",
+          "a909af6c6faf1c53e2ab",
+          "d903f4681e412103f14d"
         ],
         "backend/src/services/integrations/vercelAuth.ts": [
           "c47cd353f14ba5046be8",
@@ -543,9 +551,7 @@
         ],
         "backend/src/ai/executionRuntime.ts": [
           "6cb302dec6a7d693df42",
-          "09b6dc142ebd7f16df10",
-          "4dc631d51c7697b2c46b",
-          "1ddfe4538b453a2ccc62"
+          "09b6dc142ebd7f16df10"
         ],
         "backend/src/ai/projectMemory.ts": [
           "b5dbf612dd5fc0118e85",
@@ -616,21 +622,23 @@
           "73ab17f7a209cc26cc6b"
         ],
         "backend/src/synthesis/projectRuntime/store.ts": [
-          "a1e0c5de49a4039c3fbc",
-          "62234077a1b82a769a8f",
-          "719073979bb57e6ab7fa",
-          "71e47e92d1e6267f7d5f",
-          "4d2251150857ad6a44fb",
-          "f4bcb7025b70f277c575",
-          "c1f54307cae02e4e714a",
-          "8cc558600b340a0a1530",
-          "34e7bc87d91c1e71efb0",
-          "8f0f396cfc7ab5833cc5",
-          "f05a957330dfe6e6e567",
-          "4a0f75719e92953b9a9b",
-          "e245c830749182e7a86b",
-          "125405c2888f89423dba",
-          "8199e0cb4af319b8668d"
+          "421b94ca1075087615f5",
+          "7086728a7c89adc0502d",
+          "c9afd6ed22518cb0384e",
+          "0d8354b1ed869537bcbf",
+          "834759dbc70ff1dc4120",
+          "957d16e078b482bb7469",
+          "5a268504246e433000e9",
+          "a89c0cba7d37e33fe019",
+          "a427b15038385af30b88",
+          "bcbdf1ee1179a0d33461",
+          "71cec50d8a666751f13b",
+          "42bae6a5d460cdfffd71",
+          "3514e1b9c951601de6fe",
+          "55b37f4355a44baf6c2e",
+          "3124ca850ae2f9db9a10",
+          "a352a9b289c81f5fff87",
+          "c09903d7b50bf74883bc"
         ],
         "backend/src/synthesis/universalEntrypoint.ts": [
           "10b5e279dd241e2f40ec"
@@ -753,15 +761,15 @@
       "existingImplementation": "Existing services and source-bound register",
       "missingBehavior": "Inspect the exact remaining reason for each listed caller, grouping shared helpers",
       "acceptanceTest": "Per-caller negative verification proportional to risk",
-      "pendingCandidates": 77,
+      "pendingCandidates": 75,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/benchmarkRunner.ts": [
-          "00a5b868be3a0bee43fa"
+          "9506c72ea0f341c2a492"
         ],
         "backend/src/ai/measuredEvidence.ts": [
-          "4c8aad696d1feea1377b",
-          "2d1c3b5480a89552ab1e"
+          "c663e216c5611944484e",
+          "5a64876f70c81d99e294"
         ],
         "backend/src/ai/providerHealthStore.ts": [
           "b7e87dfbceb281533b94",
@@ -770,8 +778,6 @@
           "fe7e6e4fe911ed9a75e1"
         ],
         "backend/src/ai/quota.ts": [
-          "52edc4559577671284c2",
-          "39d17e6c2a9120f50030",
           "9c24629d02c4cc6ff46e",
           "4e15e83fa030b0549a15",
           "b6dc5487deaef7059310",
@@ -789,10 +795,10 @@
           "74e8790c9a3efbb27202"
         ],
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts": [
-          "f667c1ea6d25d76cce95",
-          "4a0e14dc44e602b5dd0b",
-          "6670d6131fd79e76cc99",
-          "a52351b1c608251b6bd5"
+          "b5df26e09290b7336e88",
+          "cf3bf4daeb128ba98911",
+          "12408de2931ae75f0107",
+          "d1853a0190149ebf0ef1"
         ],
         "backend/src/ai/usageAccounting.ts": [
           "8c7615ae94f3ecbfe8ed",
@@ -842,7 +848,7 @@
         ],
         "backend/src/security/serviceRoleGuard.ts": [
           "d84df34ff692e4fb31c1",
-          "f3727b33de49fb153851"
+          "bda2ddc16c7864ef18d8"
         ],
         "backend/src/services/ensureUserRecords.ts": [
           "3ce965d2442eccc9a99a",
@@ -852,21 +858,21 @@
           "f2586952366ff60faf5e"
         ],
         "backend/src/services/integrations/supabaseProvision.ts": [
-          "48d9c36879473bfb6ecf"
+          "b1d69d6354dd94af3c3e"
         ],
         "backend/src/services/notificationService.ts": [
           "75cd82142cc716ceb6ad",
           "c3188b628c66ba5bc9ea"
         ],
         "backend/src/services/responseCache.ts": [
-          "b44e1d18b04b2cee303f",
-          "9bf475bebd6a5eb2cb5e",
-          "e8f4d68d2e00c2e072ff",
-          "49d16a15661312988489"
+          "7c567b2757768a6b3070",
+          "eae08a12333a1ad49fc8",
+          "2f640cfaedce8074a9e5",
+          "f67653e309c9b2076efa"
         ],
         "backend/src/services/systemErrorLog.ts": [
-          "4d90e9df28a674e3e539",
-          "be601fe5c3220a2b1659"
+          "b545d4f1fc2c4f2a929c",
+          "e834052407eece22d5e4"
         ],
         "backend/src/synthesis/livePreview/store.ts": [
           "610553bef3df77a2b464",

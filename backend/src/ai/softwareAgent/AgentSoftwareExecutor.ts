@@ -345,8 +345,11 @@ export class AgentSoftwareExecutor {
           )
         : createAgentEvidence();
 
+    let checkpointAuthorityFailure: unknown;
+    let abortForCheckpointFailure: (() => void) | undefined;
     const checkpointSafely =
       async () => {
+        if (checkpointAuthorityFailure) throw checkpointAuthorityFailure;
         if (
           !input.checkpoint
         ) {
@@ -362,6 +365,11 @@ export class AgentSoftwareExecutor {
         } catch (
           error
         ) {
+          if (['RUN_STATE_CONFLICT','RESOURCE_ACCESS_UNAVAILABLE'].includes((error as {code?:string})?.code ?? '')) {
+            checkpointAuthorityFailure = error;
+            abortForCheckpointFailure?.();
+            throw error;
+          }
           console.warn(
             '[software_agent_checkpoint_write_failed]',
             error instanceof
@@ -491,6 +499,7 @@ export class AgentSoftwareExecutor {
       input.signal
         ?.aborted ===
       true;
+    abortForCheckpointFailure = () => { try { agent.abort('Software checkpoint authority was lost.'); } catch { /* The original authority error remains fatal. */ } };
 
     const abortFromCaller =
       () => {
@@ -693,6 +702,7 @@ restoredCompletion
       outputText =
         result.outputText ??
         '';
+      if (checkpointAuthorityFailure) throw checkpointAuthorityFailure;
 
       totalIterations +=
         result.iterations ??
@@ -787,6 +797,7 @@ restoredCompletion
         outputText =
           result.outputText ??
           outputText;
+        if (checkpointAuthorityFailure) throw checkpointAuthorityFailure;
 
         totalIterations +=
           result.iterations ??
@@ -963,6 +974,8 @@ restoredCompletion
     } catch (
       error
     ) {
+      if (checkpointAuthorityFailure) throw checkpointAuthorityFailure;
+      if (['RUN_STATE_CONFLICT','RESOURCE_ACCESS_UNAVAILABLE'].includes((error as {code?:string})?.code ?? '')) throw error;
       const currentCompletion =
         completion();
 

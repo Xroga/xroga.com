@@ -22,14 +22,14 @@ import {
   fetchProjectApiKeys,
   listSupabaseProjects,
   oneClickConnectSupabase,
-  prepareSupabaseWriteAdmissions,
+  prepareSupabaseConnectionWrite,
   provisionUserSupabase,
 } from '../services/integrations/supabaseProvision.js';
 import {
   deleteUserProviderKey,
   getUserProviderKey,
   getUserSupabaseStatus,
-  prepareUserProviderKeyWrite,
+  saveSupabaseBundle,
   saveUserProviderKey,
 } from '../services/integrations/userProviderKeys.js';
 import {
@@ -143,7 +143,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
     requireResourceOwner(context, req.userId);
     // This callback may never acquire fresh authority after a disconnect while
     // exchanging the code or listing projects. Carry the original CAS receipts.
-    const writeAdmissions = await prepareSupabaseWriteAdmissions(req.userId!);
+    const writeAdmissions = await prepareSupabaseConnectionWrite(req.userId!);
     await exchangeSupabaseOAuthCode({
       tenantContext: context,
       code: parsed.data.code,
@@ -265,7 +265,7 @@ router.post('/select-project', async (req: AuthRequest, res) => {
   }
 
   try {
-    const writeAdmissions = await prepareSupabaseWriteAdmissions(req.userId!);
+    const writeAdmissions = await prepareSupabaseConnectionWrite(req.userId!);
     let accessToken = await getSupabaseOAuthAccessToken(req.userId!);
     if (!accessToken) {
       accessToken = await getUserProviderKey(req.userId!, 'supabase_pat');
@@ -319,9 +319,7 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     const context = requireTenantContext(req.tenantContext);
     requireResourceOwner(context, req.userId);
     const { userId } = context;
-    const [writeAdmissions, passwordAdmission] = await Promise.all([
-      prepareSupabaseWriteAdmissions(userId), prepareUserProviderKeyWrite(userId, 'supabase_db_password'),
-    ]);
+    const writeAdmissions = await prepareSupabaseConnectionWrite(userId);
     const accessToken = await getSupabaseOAuthAccessToken(userId);
     if (!accessToken) {
       res.status(403).json({ error: 'Authorize Supabase first' });
@@ -359,9 +357,6 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     // Wait briefly for project to become active before keys/SQL
     await new Promise((r) => setTimeout(r, 4000));
 
-    await saveUserProviderKey(userId, 'supabase_db_password', dbPass, { writeAdmission: passwordAdmission });
-    await saveUserProviderKey(userId, 'supabase_pat', accessToken, { writeAdmission: writeAdmissions.pat });
-
     // Retry key fetch — new projects may need a moment
     let keys: { url: string; anonKey: string; serviceRoleKey: string } | null = null;
     for (let i = 0; i < 8; i++) {
@@ -374,9 +369,8 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     }
     if (!keys) throw new Error('Project created but API keys not ready yet — click the project in a minute');
 
-    await saveUserProviderKey(userId, 'supabase_url', keys.url, { writeAdmission: writeAdmissions.url });
-    await saveUserProviderKey(userId, 'supabase_anon', keys.anonKey, { writeAdmission: writeAdmissions.anon });
-    await saveUserProviderKey(userId, 'supabase', keys.serviceRoleKey, { writeAdmission: writeAdmissions.service });
+    await saveSupabaseBundle(writeAdmissions.bundle, { projectUrl: keys.url, anonKey: keys.anonKey, serviceRoleKey: keys.serviceRoleKey, dbPassword: dbPass });
+    await saveUserProviderKey(userId, 'supabase_pat', accessToken, { writeAdmission: writeAdmissions.pat });
 
     const provision = await provisionUserSupabase({
       projectUrl: keys.url,
@@ -396,7 +390,7 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     res.json({
       ok: true,
       projectRef: ref,
-      status: { ...status, provisioned: provision.schemaApplied || status.provisioned },
+      status: { ...status, provisioned: provision.ok && provision.schemaApplied && provision.memoryTablesReady },
       provision,
       envSync,
       message: provision.message || `Created and provisioned ${parsed.data.name}`,

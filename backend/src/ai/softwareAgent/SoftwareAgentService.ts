@@ -477,6 +477,7 @@ const effectiveWorkingFiles =
         } catch (
           error
         ) {
+          if (['RUN_STATE_CONFLICT','RESOURCE_ACCESS_UNAVAILABLE'].includes((error as {code?:string})?.code ?? '')) throw error;
           console.warn(
             '[software_agent_checkpoint_save_failed]',
             error instanceof

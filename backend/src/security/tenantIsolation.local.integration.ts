@@ -50,6 +50,10 @@ import { registerTerminalIdentityTests } from './terminalIdentity.local.integrat
 import { registerExecutionCheckpointAttemptTests } from './executionCheckpointAttempt.local.integration.js';
 import { registerQuotaEvidenceTests } from './quotaEvidence.local.integration.js';
 import { registerUsageAccountingTests } from './usageAccounting.local.integration.js';
+import { registerSystemErrorLogTests } from './systemErrorLog.local.integration.js';
+import { registerWorkerRevisionTests } from './workerRevision.local.integration.js';
+import { registerSoftwareCheckpointAttemptTests } from './softwareCheckpointAttempt.local.integration.js';
+import { registerSupabaseBundleTests } from './supabaseBundle.local.integration.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -65,6 +69,10 @@ registerTerminalIdentityTests(admin, () => users);
 registerExecutionCheckpointAttemptTests(admin, () => users);
 registerQuotaEvidenceTests(admin);
 registerUsageAccountingTests(admin);
+registerSystemErrorLogTests(admin);
+registerWorkerRevisionTests(admin, () => users);
+registerSoftwareCheckpointAttemptTests(admin, () => users);
+registerSupabaseBundleTests(admin, () => users);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }
@@ -1035,11 +1043,11 @@ test('owner opt-in public share is readable without auth but revocation is immed
 
 test('identical prompts cannot retrieve another tenant response through the privileged cache',async()=>{
   const [owner,other]=users,prompt=`Same fixture prompt ${randomUUID()}`;
-  await setCachedResponse(prompt,'OWNER_CACHE_CANARY','fixture',owner.context);
+  assert.equal(await setCachedResponse(prompt,'OWNER_CACHE_CANARY','fixture',owner.context),true);
   assert.equal(await getCachedResponse(prompt,owner.context),'OWNER_CACHE_CANARY');
   assert.equal(await getCachedResponse(prompt,other.context),null);
   assert.equal(await getCachedResponse(prompt),null);
-  await setCachedResponse(prompt,'OTHER_CACHE_CANARY','fixture',other.context);
+  assert.equal(await setCachedResponse(prompt,'OTHER_CACHE_CANARY','fixture',other.context),true);
   assert.equal(await getCachedResponse(prompt,owner.context),'OWNER_CACHE_CANARY');
   assert.equal(await getCachedResponse(prompt,other.context),'OTHER_CACHE_CANARY');
 });
