@@ -939,10 +939,10 @@
     },
     {
       "path": "backend/src/security/ownedTerminalPersistence.ts",
-      "sourceSha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e",
+      "sourceSha256": "32c010ffa61272f6f164cb9d9c2ec58148a297b6bf2086f55f48584aa446fe92",
       "callIds": [
-        "3a5a6b3c3e6bd70ae047",
-        "ebb34f79cfe457bd9e41"
+        "23ebc46b462130d9105d",
+        "bcda9359b20948e1a38c"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Inspected full helper and terminal router caller. Issued context must match row.user_id, insert ignores primary-key collisions, subsequent update binds both id and user_id, and dynamic return projection accepts only an explicit metadata allowlist. Missing owner-bound result fails closed.",
@@ -1112,7 +1112,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "callIds": [
         "241716ea497721fe54e5",
         "b413c3ab1ace9d65accf",
@@ -1131,7 +1131,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "callIds": [
         "1820ca770e3eb79483c2",
         "5430d13294eb1a13f663",
@@ -1142,15 +1142,15 @@
         "e6d53a18c5ff714d362f",
         "cc516741e4b6df265af9",
         "02122e978e9048259ac3",
-        "cdd1df4a741a0e3fc476",
-        "1d3d06a72f6c0ba1eb72",
-        "927e50280d11063ea023",
-        "ef9f4b0b278dd8a33479",
-        "4f5e84a97f05988ce2d4",
-        "8820076f0b82ec258838",
-        "2533c12a0831f9464312",
-        "acc24170a63d37a4065d",
-        "22911c083667f355baf5"
+        "d8b46cdc480a438d7262",
+        "ef1b02af7bf9bf23df2e",
+        "083027e3b0f54f1be515",
+        "5d0abed488ffb2ba8d31",
+        "99a8ee25c2b88ab72e65",
+        "f4a1ec8e6f49b6f03427",
+        "a02fbe582a0b9e386b39",
+        "6dd726c7ef1eb06aece3",
+        "eece34389c51a3ba79d3"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -3326,11 +3326,11 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "sourceSha256": "40e07235c100c5132ac0abb3cf7832aa7b053c3ce987dac2daf2d7a63c16e321",
+      "sourceSha256": "57adf32873294a87c026e5796528aa7e5578bb2c74383e0b0198b0440caad9be",
       "callIds": [
         "00e6d8cc9200a1b19e9d",
         "222ac226342dba00be50",
-        "000f7e52bdcf510d56ce"
+        "6d7d073ed2cbbf4222f7"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
@@ -3618,11 +3618,11 @@
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "sourceSha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
+      "sourceSha256": "b09577794bfb788ac25877addb0ceb758dd7682729fe628bd361fcdc16b9b917",
       "callIds": [
-        "f8202ba092cd45df58a9",
-        "6b9d0a89325ea2f3ac48",
-        "819538c35037e0ed79a2"
+        "017d368d4424af12091a",
+        "b336e84428d499d0c013",
+        "205409245abcca322256"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
@@ -3734,13 +3734,13 @@
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "sourceSha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
+      "sourceSha256": "b09577794bfb788ac25877addb0ceb758dd7682729fe628bd361fcdc16b9b917",
       "callIds": [
         "e03585d107361a9dfe3d"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "New fixed RPC requires issued TenantContext, owner, worker and attempt generation; database row lock validates owner, generation, status and sequence before updating only execution columns.",
-      "reason": "Real disposable two-client race tests are implemented but not yet executed on this source. Parent project and full caller admission remain separately unresolved. No full Command 007 acceptance is inferred.",
+      "reason": "Narrow fixed-RPC transition boundary only. Real421a6b10 run38791937032 passed completion/cancellation, same-worker/new-generation, transferred-worker, wrong-owner/missing/browser and terminal-replay cases. Its sole unrelated failure was BYOK fixture leakage. RPC/SQL behavior is unchanged on this source, while the separate generic writer now snapshots mutable input. Parent project and full caller admission remain separately unresolved. No full Command007 or scheduler certification.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -3750,7 +3750,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "callIds": [
         "e948275ac03420374cc6"
       ],
@@ -3788,10 +3788,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "callIds": [
-        "0309ab57d4a52e50411e",
-        "36aea3f2d39707a9781f"
+        "0309ab57d4a52e50411e"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -3809,18 +3808,46 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "callIds": [
         "a4f3d85cadbd037c992f",
         "d01a6c21f19b545cb3c2"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
-      "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
+      "authority": "prepareUserProviderKeyWrite captures the exact owner/provider revision through service-only prepare_provider_key_write and issues an opaque process-local owner/provider/env handle. This is write admission, not a post-download authority query.",
+      "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
       "evidence": [
         {
-          "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
-          "marker": "revocation"
+          "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+          "marker": "rejects a concurrent revoke"
+        },
+        {
+          "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+          "marker": "real provider revision binds exact owner"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
+      "callIds": [
+        "6c923e3312df36d37c2a"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Exact-row revocation RPC only. Authenticated integration and Supabase disconnect routes supply req.userId. Private helper admits validated provider or exact delete-only legacy alias, calls service-only revoke_provider_key and requires true receipt. SQL binds owner/provider, clears credentials, retains revoked tombstone and rotates revision atomically.",
+      "reason": "Real421a6b10 disposable38791937032 passed four BYOK cases for existing/absent save-revoke ordering, exact owner/provider binding, stale-save denial and browser mutation/RPC denial. SQL is unchanged. Current legacy alias and disconnect failure semantics have focused tests. Scope excludes bulk-custom completeness, mirror cleanup success, upstream reconnect admission, already-issued credentials and provider-side revocation. Those remain separately unresolved.",
+      "evidence": [
+        {
+          "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+          "marker": "save/revoke race retains revocation"
+        },
+        {
+          "path": "supabase/migrations/20261015000400_provider_key_revision_fencing.sql",
+          "marker": "CREATE OR REPLACE FUNCTION public.revoke_provider_key"
+        },
+        {
+          "path": "backend/src/routes/supabaseOAuth.disconnect.test.ts",
+          "marker": "Supabase disconnect reports incomplete revocation safely"
         }
       ]
     }

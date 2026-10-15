@@ -12,7 +12,24 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:495 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:493 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "scopedClosure": {
+    "count": 2,
+    "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
+    "evidence": "Real421 disposable tests and unchanged SQL semantics, plus final-source focused tests. No full caller or command certification."
+  },
+  "latestCorrections": {
+    "source": "e477bf10",
+    "snapshot": "Owner/key/nested content immutable across awaits in existing generic and terminal writers",
+    "disconnect": "All six BYOK and both OAuth revocation attempts proceed independently; safe503 on failure, delete-only exact legacy alias",
+    "focusedTests": 11
+  },
+  "intermediateBaseline": {
+    "branch": "421a6b1061f430d3cd1a5b29e8eca2a63183f297",
+    "integrated": "62544db6ff5f4ad01104861dfae0993759038b43",
+    "run": "38791936939",
+    "result": "PASS twice on both branch and integrated candidate"
+  },
   "verifiedBaseline": {
     "branch": "3e2748cc24b185de76fee315dfaf5f10fe079f3a",
     "integrated": "ce96ea1097eb9767a90a278fcbcd65b5cb24714d",
@@ -30,7 +47,7 @@
     "ownerPredicateCandidates": 169,
     "reviewRequired": 0,
     "reviewedCandidates": 675,
-    "unresolvedSafetyCandidates": 495,
+    "unresolvedSafetyCandidates": 493,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -93,7 +110,7 @@
       "existingImplementation": "Existing run store, worker leases and owner persistence",
       "missingBehavior": "Project lineage and full callback/side-effect lifecycle; execute new DB races",
       "acceptanceTest": "Run row-lock races, same-process delayed callbacks, resume/cancel/outage negatives",
-      "pendingCandidates": 17,
+      "pendingCandidates": 16,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/runStore.ts": [
@@ -113,9 +130,6 @@
           "88a6d9f1f2d6f28c6575",
           "e6962fee1d6609a270ff",
           "f57d6bf024f2d9f9e11c"
-        ],
-        "backend/src/security/ownedRunPersistence.ts": [
-          "e03585d107361a9dfe3d"
         ]
       }
     },
@@ -125,7 +139,7 @@
       "existingImplementation": "Existing OAuth, BYOK and credential mirrors",
       "missingBehavior": "Atomic save/revoke ordering, one-use PKCE, encrypted vault migration and KMS boundary",
       "acceptanceTest": "Wrong owner, revocation during read/write, replay, rotation and tampering",
-      "pendingCandidates": 85,
+      "pendingCandidates": 84,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/services/integrations/credentialStorageBucket.ts": [
@@ -198,16 +212,15 @@
           "0309ab57d4a52e50411e",
           "cc516741e4b6df265af9",
           "02122e978e9048259ac3",
-          "cdd1df4a741a0e3fc476",
-          "1d3d06a72f6c0ba1eb72",
-          "927e50280d11063ea023",
-          "36aea3f2d39707a9781f",
-          "ef9f4b0b278dd8a33479",
-          "4f5e84a97f05988ce2d4",
-          "8820076f0b82ec258838",
-          "2533c12a0831f9464312",
-          "acc24170a63d37a4065d",
-          "22911c083667f355baf5"
+          "d8b46cdc480a438d7262",
+          "ef1b02af7bf9bf23df2e",
+          "083027e3b0f54f1be515",
+          "5d0abed488ffb2ba8d31",
+          "99a8ee25c2b88ab72e65",
+          "f4a1ec8e6f49b6f03427",
+          "a02fbe582a0b9e386b39",
+          "6dd726c7ef1eb06aece3",
+          "eece34389c51a3ba79d3"
         ],
         "backend/src/services/integrations/vercelAuth.ts": [
           "de3eee657d8403ccf6e9",
@@ -731,8 +744,8 @@
           "82b1da8a220ec366dfe1"
         ],
         "backend/src/security/ownedTerminalPersistence.ts": [
-          "3a5a6b3c3e6bd70ae047",
-          "ebb34f79cfe457bd9e41"
+          "23ebc46b462130d9105d",
+          "bcda9359b20948e1a38c"
         ],
         "backend/src/security/serviceRoleGuard.ts": [
           "d84df34ff692e4fb31c1",

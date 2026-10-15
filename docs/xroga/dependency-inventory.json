@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c97a03c1ddfa77954cd46a9637cffe508a8a7d77",
+  "source_sha": "e477bf106f085552ebfffb84ae927bb051ccfc43",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12391,7 +12391,7 @@
     },
     {
       "path": "backend/src/routes/supabaseOAuth.ts",
-      "sha256": "ded07adeba53659dbcede314ce9e1ceff240cf259711395cb66f798e9fca485a"
+      "sha256": "67ae763c4d343f9eb42daf99426f5d8b0c0c6bf0466aa934c75f4b0b54a56594"
     },
     {
       "path": "backend/src/routes/swarm.ts",
@@ -12463,11 +12463,11 @@
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "sha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f"
+      "sha256": "b09577794bfb788ac25877addb0ceb758dd7682729fe628bd361fcdc16b9b917"
     },
     {
       "path": "backend/src/security/ownedTerminalPersistence.ts",
-      "sha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e"
+      "sha256": "32c010ffa61272f6f164cb9d9c2ec58148a297b6bf2086f55f48584aa446fe92"
     },
     {
       "path": "backend/src/security/ownership.ts",
@@ -12579,7 +12579,7 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "sha256": "40e07235c100c5132ac0abb3cf7832aa7b053c3ce987dac2daf2d7a63c16e321"
+      "sha256": "57adf32873294a87c026e5796528aa7e5578bb2c74383e0b0198b0440caad9be"
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
@@ -12587,7 +12587,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1"
+      "sha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -24315,7 +24315,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 804,
+      "line": 809,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

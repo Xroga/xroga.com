@@ -15041,6 +15041,7 @@
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/lib/authRoundTrips.test.ts",
         "backend/src/middleware/admin.test.ts",
+        "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/security/accountRoutes.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts"
@@ -19505,7 +19506,7 @@
       "id": "surface:02d224e67cfed441bb6e",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "sha256": "ded07adeba53659dbcede314ce9e1ceff240cf259711395cb66f798e9fca485a",
+      "sha256": "67ae763c4d343f9eb42daf99426f5d8b0c0c6bf0466aa934c75f4b0b54a56594",
       "symbols": [
         "accessToken",
         "autoSelected",
@@ -19516,6 +19517,7 @@
         "dbPass",
         "envSync",
         "err",
+        "failed",
         "i",
         "keys",
         "maybeSyncVaultToVercel",
@@ -19560,7 +19562,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:20"
+        "backend/src/index.ts:20",
+        "backend/src/routes/supabaseOAuth.disconnect.test.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -19587,7 +19590,9 @@
       ],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/routes/supabaseOAuth.disconnect.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -20682,7 +20687,7 @@
       "id": "surface:9f90d9fb1a702b164831",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/ownedRunPersistence.ts",
-      "sha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
+      "sha256": "b09577794bfb788ac25877addb0ceb758dd7682729fe628bd361fcdc16b9b917",
       "symbols": [
         "OwnedUniversalRecordKind",
         "inserted",
@@ -20728,7 +20733,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/security/ownedRunPersistence.ts:62 (user_id)"
+        "backend/src/security/ownedRunPersistence.ts:64 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -20749,7 +20754,7 @@
       "id": "surface:0dddf537042ea36631e9",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/ownedTerminalPersistence.ts",
-      "sha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e",
+      "sha256": "32c010ffa61272f6f164cb9d9c2ec58148a297b6bf2086f55f48584aa446fe92",
       "symbols": [
         "allowedMetadata",
         "insertion",
@@ -20781,7 +20786,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/security/ownedTerminalPersistence.ts:13 (user_id)"
+        "backend/src/security/ownedTerminalPersistence.ts:15 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -23124,7 +23129,7 @@
       "id": "surface:84d59728979a7f8187e6",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/supabaseAuth.ts",
-      "sha256": "40e07235c100c5132ac0abb3cf7832aa7b053c3ce987dac2daf2d7a63c16e321",
+      "sha256": "57adf32873294a87c026e5796528aa7e5578bb2c74383e0b0198b0440caad9be",
       "symbols": [
         "AUTHORIZE",
         "PKCE_PROVIDER",
@@ -23161,6 +23166,7 @@
         "refreshSupabaseOAuthToken",
         "refreshed",
         "res",
+        "results",
         "state",
         "supabaseOAuthConfigured",
         "u",
@@ -23182,7 +23188,7 @@
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:6",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6",
         "backend/src/services/integrations/supabaseProvision.ts:530",
-        "backend/src/services/integrations/userProviderKeys.ts:817"
+        "backend/src/services/integrations/userProviderKeys.ts:822"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23319,8 +23325,8 @@
         "backend/src/security/tenantIsolation.local.integration.ts:40",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
-        "backend/src/services/integrations/userProviderKeys.ts:880",
-        "backend/src/services/integrations/userProviderKeys.ts:889"
+        "backend/src/services/integrations/userProviderKeys.ts:885",
+        "backend/src/services/integrations/userProviderKeys.ts:894"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -23354,7 +23360,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -23514,10 +23520,10 @@
       "tenantBoundary": [
         "backend/src/services/integrations/userProviderKeys.ts:63 (user_id)",
         "backend/src/services/integrations/userProviderKeys.ts:424 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:469 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:579 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:600 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:623 (user_id)"
+        "backend/src/services/integrations/userProviderKeys.ts:474 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:584 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:605 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:628 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -89527,7 +89533,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:21ef0d7a5e03ad56497c",
+      "id": "registration:ac0608a97765650c386c",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 409,
       "receiver": "router",
@@ -93067,8 +93073,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b7ecef5e78cd3dc486a9",
-      "registrationId": "registration:21ef0d7a5e03ad56497c",
+      "id": "route:73115587a204bb696b4d",
+      "registrationId": "registration:ac0608a97765650c386c",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 409,
       "method": "DELETE",
@@ -101923,6 +101929,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:412d64a0e0b0b771339d",
+      "sourcePath": "backend/src/routes/supabaseOAuth.disconnect.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:c81abed57687556894fb",
       "sourcePath": "backend/src/routes/swarmRunId.test.ts",
       "declaredTests": 1,
@@ -102016,14 +102029,14 @@
     {
       "id": "test-suite:9e4fbec6266f2a8ae08d",
       "sourcePath": "backend/src/security/ownedRunPersistence.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
     {
       "id": "test-suite:8724e58d19769f71c1bb",
       "sourcePath": "backend/src/security/ownedTerminalPersistence.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

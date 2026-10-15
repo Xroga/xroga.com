@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "c470500472948aa80d6206c50bd53d4651ab341708bb3e1ad0c0d2608ed04c46",
+  "reviewRegistrySha256": "d585901a2656a3b7ba33dd18973a31ecd0a0d2195873d9db304ccb299c92a44e",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -12,16 +12,16 @@
     "ownerPredicateCandidates": 169,
     "reviewRequired": 0,
     "reviewedCandidates": 675,
-    "unresolvedSafetyCandidates": 495,
+    "unresolvedSafetyCandidates": 493,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 41,
+    "SCOPED_BOUNDARY": 43,
     "NARROW_EXCEPTION": 8,
     "NOT_PERSISTENCE": 131,
-    "REVIEWED_GAP": 495
+    "REVIEWED_GAP": 493
   },
   "callers": [
     {
@@ -8240,11 +8240,11 @@
       "kind": "RPC_CANDIDATE",
       "target": "persist_swarm_run_attempt",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b09577794bfb788ac25877addb0ceb758dd7682729fe628bd361fcdc16b9b917",
       "semanticReview": {
         "authority": "New fixed RPC requires issued TenantContext, owner, worker and attempt generation; database row lock validates owner, generation, status and sequence before updating only execution columns.",
-        "reason": "Real disposable two-client race tests are implemented but not yet executed on this source. Parent project and full caller admission remain separately unresolved. No full Command 007 acceptance is inferred.",
+        "reason": "Narrow fixed-RPC transition boundary only. Real421a6b10 run38791937032 passed completion/cancellation, same-worker/new-generation, transferred-worker, wrong-owner/missing/browser and terminal-replay cases. Its sole unrelated failure was BYOK fixture leakage. RPC/SQL behavior is unchanged on this source, while the separate generic writer now snapshots mutable input. Parent project and full caller admission remain separately unresolved. No full Command007 or scheduler certification.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -8254,32 +8254,7 @@
       }
     },
     {
-      "id": "f8202ba092cd45df58a9",
-      "path": "backend/src/security/ownedRunPersistence.ts",
-      "line": 59,
-      "enclosing": "persistOwnerBoundRecord",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
-      "semanticReview": {
-        "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
-        "reason": "Insert-ignore prevents transferring a globally keyed row; subsequent update or append-only verification constrains both key and actor and requires exactly one row. Mutation verification also binds run/project. Parent authority and provenance at wrapper callers remain separate review obligations, not inferred from these helper predicates.",
-        "evidence": [
-          {
-            "path": "backend/src/security/ownedRunPersistence.test.ts",
-            "marker": "trace collision cannot merge another owner"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real run persistence concurrent collision never transfers"
-          }
-        ]
-      }
-    },
-    {
-      "id": "6b9d0a89325ea2f3ac48",
+      "id": "017d368d4424af12091a",
       "path": "backend/src/security/ownedRunPersistence.ts",
       "line": 61,
       "enclosing": "persistOwnerBoundRecord",
@@ -8287,7 +8262,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
+      "sourceSha256": "b09577794bfb788ac25877addb0ceb758dd7682729fe628bd361fcdc16b9b917",
       "semanticReview": {
         "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
         "reason": "Insert-ignore prevents transferring a globally keyed row; subsequent update or append-only verification constrains both key and actor and requires exactly one row. Mutation verification also binds run/project. Parent authority and provenance at wrapper callers remain separate review obligations, not inferred from these helper predicates.",
@@ -8304,15 +8279,15 @@
       }
     },
     {
-      "id": "819538c35037e0ed79a2",
+      "id": "b336e84428d499d0c013",
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "line": 61,
+      "line": 63,
       "enclosing": "persistOwnerBoundRecord",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "2bed3c6d9e9cbbf831409c38ef6624f35ebaa27f8002e595d2071ad0fc4e760f",
+      "sourceSha256": "b09577794bfb788ac25877addb0ceb758dd7682729fe628bd361fcdc16b9b917",
       "semanticReview": {
         "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
         "reason": "Insert-ignore prevents transferring a globally keyed row; subsequent update or append-only verification constrains both key and actor and requires exactly one row. Mutation verification also binds run/project. Parent authority and provenance at wrapper callers remain separate review obligations, not inferred from these helper predicates.",
@@ -8329,15 +8304,40 @@
       }
     },
     {
-      "id": "3a5a6b3c3e6bd70ae047",
+      "id": "205409245abcca322256",
+      "path": "backend/src/security/ownedRunPersistence.ts",
+      "line": 63,
+      "enclosing": "persistOwnerBoundRecord",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b09577794bfb788ac25877addb0ceb758dd7682729fe628bd361fcdc16b9b917",
+      "semanticReview": {
+        "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
+        "reason": "Insert-ignore prevents transferring a globally keyed row; subsequent update or append-only verification constrains both key and actor and requires exactly one row. Mutation verification also binds run/project. Parent authority and provenance at wrapper callers remain separate review obligations, not inferred from these helper predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/security/ownedRunPersistence.test.ts",
+            "marker": "trace collision cannot merge another owner"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real run persistence concurrent collision never transfers"
+          }
+        ]
+      }
+    },
+    {
+      "id": "23ebc46b462130d9105d",
       "path": "backend/src/security/ownedTerminalPersistence.ts",
-      "line": 11,
+      "line": 13,
       "enclosing": "persistOwnedTerminal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e",
+      "sourceSha256": "32c010ffa61272f6f164cb9d9c2ec58148a297b6bf2086f55f48584aa446fe92",
       "semanticReview": {
         "authority": "Inspected full helper and terminal router caller. Issued context must match row.user_id, insert ignores primary-key collisions, subsequent update binds both id and user_id, and dynamic return projection accepts only an explicit metadata allowlist. Missing owner-bound result fails closed.",
         "reason": "Collision and projection unit tests plus existing disposable foreign-owner tests support the narrow boundary. Insert and update are separate statements, same-owner stale/concurrent writes are not serialized, and the internal row accepts arbitrary fields. Upstream lifecycle and staging proof remain unresolved, so this is not a globally certified privileged caller.",
@@ -8350,15 +8350,15 @@
       }
     },
     {
-      "id": "ebb34f79cfe457bd9e41",
+      "id": "bcda9359b20948e1a38c",
       "path": "backend/src/security/ownedTerminalPersistence.ts",
-      "line": 13,
+      "line": 15,
       "enclosing": "persistOwnedTerminal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e",
+      "sourceSha256": "32c010ffa61272f6f164cb9d9c2ec58148a297b6bf2086f55f48584aa446fe92",
       "semanticReview": {
         "authority": "Inspected full helper and terminal router caller. Issued context must match row.user_id, insert ignores primary-key collisions, subsequent update binds both id and user_id, and dynamic return projection accepts only an explicit metadata allowlist. Missing owner-bound result fails closed.",
         "reason": "Collision and projection unit tests plus existing disposable foreign-owner tests support the narrow boundary. Insert and update are separate statements, same-owner stale/concurrent writes are not serialized, and the internal row accepts arbitrary fields. Upstream lifecycle and staging proof remain unresolved, so this is not a globally certified privileged caller.",
@@ -10492,7 +10492,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "40e07235c100c5132ac0abb3cf7832aa7b053c3ce987dac2daf2d7a63c16e321",
+      "sourceSha256": "57adf32873294a87c026e5796528aa7e5578bb2c74383e0b0198b0440caad9be",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -10517,7 +10517,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "40e07235c100c5132ac0abb3cf7832aa7b053c3ce987dac2daf2d7a63c16e321",
+      "sourceSha256": "57adf32873294a87c026e5796528aa7e5578bb2c74383e0b0198b0440caad9be",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -10534,15 +10534,15 @@
       }
     },
     {
-      "id": "000f7e52bdcf510d56ce",
+      "id": "6d7d073ed2cbbf4222f7",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 251,
+      "line": 255,
       "enclosing": "parseOAuthState",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "40e07235c100c5132ac0abb3cf7832aa7b053c3ce987dac2daf2d7a63c16e321",
+      "sourceSha256": "57adf32873294a87c026e5796528aa7e5578bb2c74383e0b0198b0440caad9be",
       "semanticReview": {
         "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
         "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
@@ -10592,7 +10592,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10617,7 +10617,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10642,7 +10642,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10667,7 +10667,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10692,7 +10692,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10717,7 +10717,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10742,7 +10742,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10767,7 +10767,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10788,7 +10788,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10809,7 +10809,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10830,7 +10830,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10851,14 +10851,18 @@
       "target": "prepare_provider_key_write",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
-        "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
-        "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
+        "authority": "prepareUserProviderKeyWrite captures the exact owner/provider revision through service-only prepare_provider_key_write and issues an opaque process-local owner/provider/env handle. This is write admission, not a post-download authority query.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
-            "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
-            "marker": "revocation"
+            "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+            "marker": "rejects a concurrent revoke"
+          },
+          {
+            "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+            "marker": "real provider revision binds exact owner"
           }
         ]
       }
@@ -10872,14 +10876,18 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
-        "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
-        "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved.",
+        "authority": "prepareUserProviderKeyWrite captures the exact owner/provider revision through service-only prepare_provider_key_write and issues an opaque process-local owner/provider/env handle. This is write admission, not a post-download authority query.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
         "evidence": [
           {
-            "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
-            "marker": "revocation"
+            "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+            "marker": "rejects a concurrent revoke"
+          },
+          {
+            "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+            "marker": "real provider revision binds exact owner"
           }
         ]
       }
@@ -10893,7 +10901,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10918,7 +10926,7 @@
       "target": "save_provider_key_if_current",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10943,7 +10951,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10968,7 +10976,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -10985,15 +10993,15 @@
       }
     },
     {
-      "id": "cdd1df4a741a0e3fc476",
+      "id": "d8b46cdc480a438d7262",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 465,
+      "line": 470,
       "enclosing": "deleteUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11010,15 +11018,15 @@
       }
     },
     {
-      "id": "1d3d06a72f6c0ba1eb72",
+      "id": "ef1b02af7bf9bf23df2e",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 469,
+      "line": 474,
       "enclosing": "deleteUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11035,15 +11043,15 @@
       }
     },
     {
-      "id": "927e50280d11063ea023",
+      "id": "083027e3b0f54f1be515",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 496,
+      "line": 501,
       "enclosing": "revokeProviderRow",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11060,40 +11068,44 @@
       }
     },
     {
-      "id": "36aea3f2d39707a9781f",
+      "id": "6c923e3312df36d37c2a",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 497,
+      "line": 502,
       "enclosing": "revokeProviderRow",
       "kind": "RPC_CANDIDATE",
       "target": "revoke_provider_key",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
-        "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
+        "authority": "Exact-row revocation RPC only. Authenticated integration and Supabase disconnect routes supply req.userId. Private helper admits validated provider or exact delete-only legacy alias, calls service-only revoke_provider_key and requires true receipt. SQL binds owner/provider, clears credentials, retains revoked tombstone and rotates revision atomically.",
+        "reason": "Real421a6b10 disposable38791937032 passed four BYOK cases for existing/absent save-revoke ordering, exact owner/provider binding, stale-save denial and browser mutation/RPC denial. SQL is unchanged. Current legacy alias and disconnect failure semantics have focused tests. Scope excludes bulk-custom completeness, mirror cleanup success, upstream reconnect admission, already-issued credentials and provider-side revocation. Those remain separately unresolved.",
         "evidence": [
           {
-            "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
-            "marker": "rejects a concurrent revoke"
+            "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+            "marker": "save/revoke race retains revocation"
           },
           {
-            "path": "backend/src/security/providerKeyRevision.local.integration.ts",
-            "marker": "real provider revision binds exact owner"
+            "path": "supabase/migrations/20261015000400_provider_key_revision_fencing.sql",
+            "marker": "CREATE OR REPLACE FUNCTION public.revoke_provider_key"
+          },
+          {
+            "path": "backend/src/routes/supabaseOAuth.disconnect.test.ts",
+            "marker": "Supabase disconnect reports incomplete revocation safely"
           }
         ]
       }
     },
     {
-      "id": "ef9f4b0b278dd8a33479",
+      "id": "5d0abed488ffb2ba8d31",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 500,
+      "line": 505,
       "enclosing": "revokeProviderRow",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11110,15 +11122,15 @@
       }
     },
     {
-      "id": "4f5e84a97f05988ce2d4",
+      "id": "99a8ee25c2b88ab72e65",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 577,
+      "line": 582,
       "enclosing": "getUserProviderKey",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11135,15 +11147,15 @@
       }
     },
     {
-      "id": "8820076f0b82ec258838",
+      "id": "f4a1ec8e6f49b6f03427",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 579,
+      "line": 584,
       "enclosing": "getUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11160,15 +11172,15 @@
       }
     },
     {
-      "id": "2533c12a0831f9464312",
+      "id": "a02fbe582a0b9e386b39",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 600,
+      "line": 605,
       "enclosing": "getUserProviderKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11185,15 +11197,15 @@
       }
     },
     {
-      "id": "acc24170a63d37a4065d",
+      "id": "6dd726c7ef1eb06aece3",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 622,
+      "line": 627,
       "enclosing": "resolveProviderEnvForDeploy",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
@@ -11210,15 +11222,15 @@
       }
     },
     {
-      "id": "22911c083667f355baf5",
+      "id": "eece34389c51a3ba79d3",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 623,
+      "line": 628,
       "enclosing": "resolveProviderEnvForDeploy",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "803272c098e99f0851c833762b86d553477af3a44a6c360da6fd08fe24f36be1",
+      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
