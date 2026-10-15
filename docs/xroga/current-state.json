@@ -3,13 +3,13 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "4c335dc2681e4a86738c440f18dea523322aee76",
-    "sourceTimestampUtc": "2026-10-15T15:56:53+05:00",
-    "auditStartedUtc": "2026-10-15T11:00:12.438Z",
+    "sha": "9e26908fe366190cc04fdd6a5f5e736a1e2f1cde",
+    "sourceTimestampUtc": "2026-10-15T16:00:38+05:00",
+    "auditStartedUtc": "2026-10-15T14:17:12.937Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
-    "node": "v22.21.1",
-    "npm": "10.9.4",
+    "node": "v24.18.0",
+    "npm": "11.16.0",
     "lockfiles": [
       "backend/package-lock.json",
       "frontend/package-lock.json",
@@ -84203,11 +84203,12 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "6eee0b35380d9fc1633d3110050f969ee03a5e4263566ccfcf5576f092205d8a",
+      "sha256": "b2dfcf97b88ea6ecb3ae85f2a164d9671468abb3cc4d6ef92a173665c53e56f3",
       "symbols": [
         "actual",
         "afterPolicies",
         "apply",
+        "auditBefore",
         "before",
         "bootstrapSource",
         "connect",
@@ -94081,6 +94082,13 @@
       "version": "20261015000100",
       "order": 70,
       "sha256": "331716a142c80d4b8d94cb2428dd5030c6a362dc0d072f1826362d256f336447"
+    },
+    {
+      "id": "migration:62e60962b7979db26aa0",
+      "sourcePath": "supabase/migrations/20261015000200_immutable_audit_lifecycle.sql",
+      "version": "20261015000200",
+      "order": 71,
+      "sha256": "24b6daf37e48402ee970d85e528ae99465989b16848a311f7738c179a3d927e8"
     }
   ],
   "workflows": [
@@ -101716,7 +101724,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 45,
+      "declaredTests": 46,
       "skipLocations": [],
       "focusLocations": []
     },

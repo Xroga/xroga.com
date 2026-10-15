@@ -1,5 +1,13 @@
 # Xroga OS Batch 01 implementation tracker
 
+## Audit lifecycle and receiver review continuation
+
+Continues actual PR803 head `9e26908fe366190cc04fdd6a5f5e736a1e2f1cde`, preserving the existing branch and draft PR. The new audit migration retains immutable historical attribution after account/project/environment deletion, validates live subjects on insertion and closes TRUNCATE mutation. Existing Auth cleanup now requires successful deletion with unchanged audit evidence. Fresh/upgrade and real database denial cases are added, pending exact-source CI. No production schema or account was changed.
+
+Manually inspected 114 additional Array/Buffer/Uint8Array receiver candidates and recorded source-bound NOT_PERSISTENCE dispositions. These exclusions apply only to the specific in-memory conversion, never to adjacent transport, uploads, credential handling or authorization. Remaining real callers and reviewed gaps are not certified. Canonical register regeneration provides exact totals.
+
+Clean frozen installation completed on pinned Node22.21.1/npm10.9.4. Local scanner fixtures4/4, SQL syntax/order71 migrations, structured mission policy, runtime configuration and requirements integrity pass. Those first static checks ran under host Node24.18.0 and are supplemental, not canonical baseline evidence. Backend build and full CI are still pending. Full Command007 acceptance deliberately fails on unresolved caller/staging gates. Commands008–010 and dependent Batch1.5 remain blocked, Batch1 NO-GO. No merge, deployment, provisioning, DNS change or paid cloud operation.
+
 ## Community authorization correction — candidate, not verified
 
 Semantic review found a confirmed mixed-field permission escalation: a post owner could submit an accepted-answer flag together with changes to another author's comment body or staff-only hidden state. The service now authorizes each field independently;11 community tests and backend build PASS. A45th real security case checks denial leaves the complete row unchanged and preserves legitimate answer acceptance/author editing. Final-source CI is required; this is not a production fix until an authorized release.

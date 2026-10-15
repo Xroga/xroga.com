@@ -38,9 +38,6 @@ if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || 
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
 const admin=createClient(url,process.env.SUPABASE_SERVICE_ROLE_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});
 const users: Array<{id:string;token:string;context:TenantContext;project:string;file:string;run:string;provider:string;session:string;cost:string}>=[];
-// Immutable operational audit fixtures intentionally survive until the CI-owned
-// disposable cluster is destroyed. Never disable the audit trigger for cleanup.
-const auditRetainedUsers=new Set<string>();
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }
@@ -69,11 +66,10 @@ before(async()=>{
   }
 });
 after(async()=>{for(const user of users){
-  if(auditRetainedUsers.has(user.id)){
-    const retained=await admin.auth.admin.getUserById(user.id);assert.equal(retained.error,null);assert.match(retained.data.user?.email??'',/^xb01-tenant-[a-f0-9-]+@example\.invalid$/);
-    const audit=await admin.from('production_audit_log').select('id').eq('user_id',user.id);assert.equal(audit.error,null);assert.ok(audit.data?.length,'Only proven immutable audit fixtures may defer row cleanup to whole-cluster disposal');
-    console.info('Immutable synthetic audit fixture retained for mandatory disposable-cluster teardown; production account lifecycle remains blocked');
-  }else{const deleted=await admin.auth.admin.deleteUser(user.id);assert.equal(deleted.error,null,'temporary fixture cleanup failed');}
+  const before=await admin.from('production_audit_log').select('*').eq('user_id',user.id).order('id');assert.equal(before.error,null);
+  const deleted=await admin.auth.admin.deleteUser(user.id);assert.equal(deleted.error,null,'temporary fixture cleanup failed');
+  const retained=await admin.from('production_audit_log').select('*').eq('user_id',user.id).order('id');assert.equal(retained.error,null);
+  assert.deepEqual(retained.data,before.data,'Account deletion must preserve audit evidence unchanged');
 }});
 
 test('real owner helpers deny every foreign high-risk resource without enumerating data',async()=>{
@@ -601,18 +597,18 @@ test('project-limited operators cannot retry another project job or webhook owne
     assert.equal(allowed.status,201);const result=await allowed.json() as {action:{id:string;status:string}};actionIds.push(result.action.id);assert.equal(result.action.status,'verified');
     const jobAfter=await admin.from('swarm_job_queue').select('status,attempt_count').eq('id',job).single();assert.deepEqual(jobAfter.data,{status:'queued',attempt_count:1});
     const audit=await admin.from('production_audit_log').select('id,action').eq('user_id',owner.id).eq('project_id',restrictedProject).order('action');assert.equal(audit.error,null);assert.deepEqual(audit.data?.map(row=>row.action),['operations.action.completed','operations.action.requested']);
-    // Existing audit retention conflicts with account/project cascade deletion.
-    // Preserve and prove that protection; this is NOT a passing deletion journey.
+    // Direct mutation still fails. Parent deletion preserves the same history.
     const auditDelete=await admin.from('production_audit_log').delete().eq('id',audit.data![0].id);assert.equal(auditDelete.error?.code,'P0001');assert.equal(auditDelete.error?.message,'operational audit history is immutable');
-    const deletion=await admin.auth.admin.deleteUser(owner.id);assert.ok(deletion.error,'Audit history must not be silently removed through a user cascade');
     const unchanged=await admin.from('production_audit_log').select('id,action').eq('user_id',owner.id).eq('project_id',restrictedProject).order('action');assert.equal(unchanged.error,null);assert.deepEqual(unchanged.data,audit.data);
-    auditRetainedUsers.add(owner.id);
   }finally{
     if(actionIds.length)assert.equal((await admin.from('operations_actions').delete().in('id',actionIds)).error,null);
     assert.equal((await admin.from('swarm_job_queue').delete().eq('id',job)).error,null);
     assert.equal((await admin.from('webhook_deliveries').delete().eq('provider','fixture-no-provider').eq('delivery_id',webhook)).error,null);
     assert.equal((await admin.from('operations_memberships').delete().eq('id',membership)).error,null);
-    if(!auditRetainedUsers.has(owner.id))assert.equal((await admin.from('projects').delete().eq('id',restrictedProject)).error,null);
+    const before=await admin.from('production_audit_log').select('*').eq('project_id',restrictedProject).order('id');assert.equal(before.error,null);
+    assert.equal((await admin.from('projects').delete().eq('id',restrictedProject)).error,null);
+    const retained=await admin.from('production_audit_log').select('*').eq('project_id',restrictedProject).order('id');assert.equal(retained.error,null);
+    assert.deepEqual(retained.data,before.data);
   }
 });
 
@@ -692,6 +688,55 @@ test('real reservation concurrency and foreign settlement cannot transfer budget
   await settleProviderBudget({userId:owner.id,modelId:input.modelId,reservation:replay[0],result:{inputTokens:10,outputTokens:10}});
   const after=await read();assert.equal(after?.find(r=>r.id===replay[0].id)?.status,'settled');assert.equal(after?.find(r=>r.id===foreign.id)?.status,'reserved');
   const count=await admin.from('xroga_provider_reservations').select('id',{count:'exact',head:true}).eq('user_id',owner.id).eq('idempotency_key',key);assert.equal(count.error,null);assert.equal(count.count,1);
+});
+
+test('audit history survives subject deletion and denies mutation, truncate and invalid new subjects',async()=>{
+  const database=new URL(process.env.XB01_LOCAL_DATABASE_URL!);
+  assert.equal(database.hostname,'127.0.0.1');assert.equal(database.port,'54322');assert.equal(database.pathname,'/postgres');
+  const db=new pg.Client({connectionString:database.href,ssl:false});await db.connect();
+  try {
+    await db.query('begin');
+    const owner=randomUUID(),project=randomUUID(),environment=randomUUID();
+    await db.query("insert into auth.users(id,email,raw_user_meta_data) values($1,$2,'{}')",[owner,`audit-${owner}@example.invalid`]);
+    await db.query("insert into public.projects(id,user_id,name,type) values($1,$2,'Audit lifecycle fixture','app')",[project,owner]);
+    await db.query("insert into public.operations_environments(id,user_id,project_id,environment_key,environment_type) values($1,$2,$3,'audit-fixture','test')",[environment,owner,project]);
+    await db.query('set local role service_role');
+    const inserted=await db.query("insert into public.production_audit_log(actor_id,user_id,project_id,environment_id,action,target_type,outcome,metadata) values($1,$1,$2,$3,'fixture.audit','fixture','verified','{\"synthetic\":true}') returning *",[owner,project,environment]);
+    const auditId=inserted.rows[0].id;
+    for(const statement of ["update public.production_audit_log set outcome='forged' where id=$1",'delete from public.production_audit_log where id=$1']) {
+      await db.query('savepoint denied_mutation');
+      await assert.rejects(db.query(statement,[auditId]),{code:'P0001',message:'operational audit history is immutable'});
+      await db.query('rollback to savepoint denied_mutation');
+    }
+    await db.query('savepoint denied_truncate');
+    await assert.rejects(db.query('truncate public.production_audit_log'),{code:'42501'});
+    await db.query('rollback to savepoint denied_truncate');
+    for(const column of ['actor_id','user_id','project_id','environment_id']) {
+      await db.query('savepoint invalid_subject');
+      await assert.rejects(db.query(`insert into public.production_audit_log(${column},action,target_type,outcome) values($1,'fixture','fixture','denied')`,[randomUUID()]),{code:'23503'});
+      await db.query('rollback to savepoint invalid_subject');
+    }
+    await db.query('reset role');
+    await db.query('savepoint owner_truncate');
+    await assert.rejects(db.query('truncate public.production_audit_log'),{code:'P0001',message:'operational audit history is immutable'});
+    await db.query('rollback to savepoint owner_truncate');
+    await db.query('delete from public.operations_environments where id=$1',[environment]);
+    await db.query('delete from public.projects where id=$1',[project]);
+    await db.query('delete from auth.users where id=$1',[owner]);
+    assert.deepEqual((await db.query('select * from public.production_audit_log where id=$1',[auditId])).rows,inserted.rows);
+    await db.query('set local role service_role');
+    await db.query('savepoint deleted_subject');
+    await assert.rejects(db.query("insert into public.production_audit_log(user_id,action,target_type,outcome) values($1,'fixture','fixture','denied')",[owner]),{code:'23503'});
+    await db.query('rollback to savepoint deleted_subject');
+    await db.query('reset role');
+    for(const role of ['anon','authenticated']) {
+      await db.query(`set local role ${role}`);
+      await db.query('savepoint private_history');
+      await assert.rejects(db.query('select * from public.production_audit_log where id=$1',[auditId]),{code:'42501'});
+      await db.query('rollback to savepoint private_history');
+      await db.query('reset role');
+    }
+  } finally {await db.query('rollback');await db.end();}
 });
 
 test('real catalog and RPC denial prevent browser roles mutating own or foreign billing authority',async()=>{

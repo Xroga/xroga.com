@@ -1,5 +1,15 @@
 # Command 007 acceptance checkpoint — not verified
 
+## Audit lifecycle continuation from 9e26908f
+
+Candidate migration `20261015000200_immutable_audit_lifecycle.sql` removes the four cascading/nulling audit subject foreign keys while retaining their UUID values and the existing unconditional UPDATE/DELETE rejection. A BEFORE INSERT trigger validates and locks each non-null subject, preserving admission against missing/deleted subjects. Historical subject identifiers are evidence, never authorization. No row is rewritten or deleted. A separate TRUNCATE trigger and service-role privilege revocation close the statement-level mutation path.
+
+Verification added: pre-upgrade audit rows must survive migration, reapplication and account deletion unchanged; real database tests exercise environment/project/account deletion, invalid/deleted subject admission, direct UPDATE/DELETE, service-role and table-owner TRUNCATE denial, and browser read denial. Existing test cleanup now requires actual Auth account deletion and byte-equivalent retained audit rows, replacing the earlier special-case retained-user workaround. Tests are pending execution at this checkpoint.
+
+Rollout remains draft-only. Production application needs staged schema/admission compatibility and approval. Roll back application code independently while retaining this audit schema. Do not automatically restore the old cascading foreign keys after subjects have been deleted: retained historical UUIDs intentionally no longer reference live rows. Any later FK restoration requires an orphan inventory and an independently reviewed non-destructive plan. Audit retention duration, access to deleted-account history and any privacy-driven purge require a separate approved policy; this change does not authorize deleting evidence or promise complete credential revocation/account erasure.
+
+Batch 1 remains NO-GO. This candidate does not certify the remaining caller review, dependency advisories, staged R2, Commands 008–010 or Batch 1.5.
+
 ## Nullable target and audit lifecycle checkpoint
 
 Feature6bd5f576c73d4d9ba22b776f2429fa0fa2e80c4f aggregate38719473284 PASS twice on both feature and integrated e63d9a812fcd59468c561f940410061087162a4c. Real isolated38719473303 FAIL42 security cases/one target failure plus cleanup hook failure; full70 migrations and3 browser cases PASS. Missing singleton became a truthy array and created an action before409, rather than403 before any write. Current correction preserves null at nine action-related boundaries and adds two focused regressions; backend build PASS. Full rerun pending. Audit immutability versus account/project cascade is an explicit existing lifecycle BLOCKER; no trigger relaxation or production migration. CI fixture disposal now checks run-specific Docker containers/volumes are gone.

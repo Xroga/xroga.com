@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "bc3f9123ce8d5f36e04db262dbc7f379453197121f37a1f4d6eff49429176560",
+  "reviewRegistrySha256": "dacfd3eb21d21d7e78352f25a7c07ddf003013599ea8f85b2f52cf6663f5d5a7",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -10,17 +10,17 @@
     "privilegedFactorySites": 160,
     "persistenceCandidates": 670,
     "ownerPredicateCandidates": 167,
-    "reviewRequired": 421,
-    "reviewedCandidates": 249,
-    "unresolvedSafetyCandidates": 621,
+    "reviewRequired": 307,
+    "reviewedCandidates": 363,
+    "unresolvedSafetyCandidates": 507,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 421,
+    "REVIEW_REQUIRED": 307,
     "SCOPED_BOUNDARY": 28,
     "NARROW_EXCEPTION": 6,
-    "NOT_PERSISTENCE": 15,
+    "NOT_PERSISTENCE": 129,
     "REVIEWED_GAP": 200
   },
   "callers": [
@@ -32,8 +32,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/attachments.ts",
+            "marker": "    if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');\n    return Buffer.from(decodeURIComponent(data), 'utf8');\n  }"
+          }
+        ]
+      }
     },
     {
       "id": "e21e7f85f2e0a5a7982f",
@@ -43,8 +53,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/attachments.ts",
+            "marker": "    return Buffer.from(decodeURIComponent(data), 'utf8');\n  }\n  assertSafeAttachmentUrl(url);"
+          }
+        ]
+      }
     },
     {
       "id": "5584ba3ed9e6d2fa054a",
@@ -54,8 +74,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/attachments.ts",
+            "marker": "  return Buffer.from(ab);\n}\n"
+          }
+        ]
+      }
     },
     {
       "id": "a60c96422aaa959a471d",
@@ -65,8 +95,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in extractDocxText. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/attachments.ts",
+            "marker": "      if (method === 0) xml = Buffer.from(data);\n      else if (method === 8) xml = inflateRawSync(data);\n      else continue;"
+          }
+        ]
+      }
     },
     {
       "id": "00a5b868be3a0bee43fa",
@@ -87,8 +127,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9f9ada19f7bde6ab337df723c8093ff7614703736319e364e7c595b7e50acd4c"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "9f9ada19f7bde6ab337df723c8093ff7614703736319e364e7c595b7e50acd4c",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in truncate. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/black-hole/toolRegistry.ts",
+            "marker": "  const encoded = Buffer.from(output, 'utf8');\n  if (encoded.byteLength <= maxBytes) return { output, truncated: false };\n  return {"
+          }
+        ]
+      }
     },
     {
       "id": "cf1ee4207ba21ac496ac",
@@ -241,8 +291,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "de7404eb12e26a985ad7d82623f9993e116775b06c90099060fd5f8752b8050e"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "de7404eb12e26a985ad7d82623f9993e116775b06c90099060fd5f8752b8050e",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in gitBlobSha. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/patchWorkspace.ts",
+            "marker": "  const body = Buffer.from(content, 'utf8');\n  return createHash('sha1')\n    .update(`blob ${body.length}\\0`)"
+          }
+        ]
+      }
     },
     {
       "id": "f4dfbc1f6a1dbf30f2af",
@@ -252,8 +312,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a897403b760f71ade9547777a53418ae81ebcc6e3db2143f7b64d3d300225733"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a897403b760f71ade9547777a53418ae81ebcc6e3db2143f7b64d3d300225733",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+          }
+        ]
+      }
     },
     {
       "id": "bd014fdc1d117ff3e105",
@@ -263,8 +333,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a897403b760f71ade9547777a53418ae81ebcc6e3db2143f7b64d3d300225733"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a897403b760f71ade9547777a53418ae81ebcc6e3db2143f7b64d3d300225733",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+          }
+        ]
+      }
     },
     {
       "id": "c32965fff6598808b214",
@@ -794,8 +874,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "8f137084324489d481b726815146e38a9793bde5e416bbf02c587893e48816e7"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "8f137084324489d481b726815146e38a9793bde5e416bbf02c587893e48816e7",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in blob. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/repositoryTools.ts",
+            "marker": "        ? Buffer.from(payload.content, 'base64').toString('utf8')\n        : payload.content;\n    if (looksBinary(text)) {"
+          }
+        ]
+      }
     },
     {
       "id": "8c57a0debf51a7a340f8",
@@ -1319,8 +1409,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d0c38ae1b0dd28ecd5011d419453e89de18c92db74468750b0fd97285283319b"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "d0c38ae1b0dd28ecd5011d419453e89de18c92db74468750b0fd97285283319b",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in selectRepositoryChatEvidence. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/universal/repositoryChatEvidence.ts",
+            "marker": "      ? `${Buffer.from(redacted, 'utf8').subarray(0, PER_FILE_MAX_BYTES).toString('utf8')}\\n[truncated by repository evidence budget]`\n      : redacted;\n    const bytes = Buffer.byteLength(file.path, 'utf8') + Buffer.byteLength(content, 'utf8');"
+          }
+        ]
+      }
     },
     {
       "id": "6d55007bf3ddd2edc540",
@@ -2666,8 +2766,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "8f0a64e27a5c0b1b44013eddbd32c2cf751375cbc4028a5d51afb60cb56228bb"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "8f0a64e27a5c0b1b44013eddbd32c2cf751375cbc4028a5d51afb60cb56228bb",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in simulateJobListings. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/lib/apify.ts",
+            "marker": "  return Array.from({ length: count }, (_, i) => ({\n    title: `${query} Specialist ${i + 1}`,\n    company: `Company ${i + 1}`,"
+          }
+        ]
+      }
     },
     {
       "id": "8131275dbd120683f01c",
@@ -2677,8 +2787,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "599386bea90c1f3f27c32e7fafc79f44b406f5132f1c87dd48b2b7dccad43cd8"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "599386bea90c1f3f27c32e7fafc79f44b406f5132f1c87dd48b2b7dccad43cd8",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in generateElevenLabsVoiceover. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/lib/audioProviders.ts",
+            "marker": "  const buffer = Buffer.from(await response.arrayBuffer());\n  return {\n    type: 'voiceover',"
+          }
+        ]
+      }
     },
     {
       "id": "ea16dba512cfa1aa852d",
@@ -2688,8 +2808,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "599386bea90c1f3f27c32e7fafc79f44b406f5132f1c87dd48b2b7dccad43cd8"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "599386bea90c1f3f27c32e7fafc79f44b406f5132f1c87dd48b2b7dccad43cd8",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in generateCartesiaVoiceover. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/lib/audioProviders.ts",
+            "marker": "  const buffer = Buffer.from(await response.arrayBuffer());\n  return {\n    type: 'voiceover',"
+          }
+        ]
+      }
     },
     {
       "id": "22622f63378841972b60",
@@ -2699,8 +2829,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "599386bea90c1f3f27c32e7fafc79f44b406f5132f1c87dd48b2b7dccad43cd8"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "599386bea90c1f3f27c32e7fafc79f44b406f5132f1c87dd48b2b7dccad43cd8",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in generateFishAudioTts. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/lib/audioProviders.ts",
+            "marker": "  const buffer = Buffer.from(await response.arrayBuffer());\n  return {\n    type: 'voiceover',"
+          }
+        ]
+      }
     },
     {
       "id": "9cbc8d9437a55784abb1",
@@ -2721,8 +2861,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3b005e580f8f03bf3cd0022cdbdec1ce554b18e5f8905d132e54270e5bcdcea7"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "3b005e580f8f03bf3cd0022cdbdec1ce554b18e5f8905d132e54270e5bcdcea7",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in createOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/lib/oauthState.ts",
+            "marker": "  const payload = Buffer.from(JSON.stringify({\n    sub: userId,\n    exp: now + 10 * 60_000,"
+          }
+        ]
+      }
     },
     {
       "id": "446c900e51734ddf8f19",
@@ -2732,8 +2882,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3b005e580f8f03bf3cd0022cdbdec1ce554b18e5f8905d132e54270e5bcdcea7"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "3b005e580f8f03bf3cd0022cdbdec1ce554b18e5f8905d132e54270e5bcdcea7",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in verifyOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/lib/oauthState.ts",
+            "marker": "    const received = Buffer.from(encodedSignature, 'base64url');\n    const expected = signature(payload, secret);\n    if (received.length !== expected.length || !timingSafeEqual(received, expected)) return false;"
+          }
+        ]
+      }
     },
     {
       "id": "c16f570a3709cba73e10",
@@ -2743,8 +2903,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3b005e580f8f03bf3cd0022cdbdec1ce554b18e5f8905d132e54270e5bcdcea7"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "3b005e580f8f03bf3cd0022cdbdec1ce554b18e5f8905d132e54270e5bcdcea7",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in verifyOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/lib/oauthState.ts",
+            "marker": "    const parsed = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as Partial<OAuthStatePayload>;\n    return parsed.sub === expectedUserId\n      && typeof parsed.exp === 'number'"
+          }
+        ]
+      }
     },
     {
       "id": "3d584a251b20379d303d",
@@ -2754,8 +2924,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c65d535118345eeee50f209cbb25849134854d70356e3c066fe458f98c9415ce"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c65d535118345eeee50f209cbb25849134854d70356e3c066fe458f98c9415ce",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in uploadToR2. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/lib/r2.ts",
+            "marker": "  assertOwnedR2Key(key,userId);const bytes=Buffer.isBuffer(body)?body:Buffer.from(body);\n  if(bytes.length>MAX_PRIVATE_FILE_BYTES)throw new FileDeliveryError(400,'FILE_TOO_LARGE');\n  const config=privateR2Configuration();await verifyPrivateR2Bucket(config);const s3=client(config);"
+          }
+        ]
+      }
     },
     {
       "id": "dccbda64a754c57e70ca",
@@ -2765,8 +2945,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c65d535118345eeee50f209cbb25849134854d70356e3c066fe458f98c9415ce"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c65d535118345eeee50f209cbb25849134854d70356e3c066fe458f98c9415ce",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in downloadFromR2. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/lib/r2.ts",
+            "marker": "    for await(const chunk of response.Body as AsyncIterable<Uint8Array>) {size+=chunk.length;if(size>MAX_PRIVATE_FILE_BYTES)throw new Error('bounded file required');chunks.push(Buffer.from(chunk));}\n    return {buffer:Buffer.concat(chunks),contentType:response.ContentType??'application/octet-stream'};\n  } catch {throw new FileDeliveryError(503,'PRIVATE_STORAGE_READ_UNAVAILABLE');} finally {s3.destroy();}"
+          }
+        ]
+      }
     },
     {
       "id": "c0648bd26f06aad1cad0",
@@ -2819,8 +3009,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in attachRuntimePreviewWebSocketGateway. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "                        : Buffer.from(\n                            data as\n                              ArrayBuffer,"
+          }
+        ]
+      }
     },
     {
       "id": "c623ba33a954faaa842f",
@@ -5299,8 +5499,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c92debf25ae1ca9634658bee52b5eafc0b69501cc6f9dc927b0de4493ebc2102"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c92debf25ae1ca9634658bee52b5eafc0b69501cc6f9dc927b0de4493ebc2102",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/phase1.ts",
+            "marker": "    Buffer\n      .from(\n        JSON.stringify("
+          }
+        ]
+      }
     },
     {
       "id": "a4bd236f9d86c07f2ffc",
@@ -5820,8 +6030,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "da9b3a927a71f2ff448a95855ffd270a11f42f9392d96de012468a765ae23c22"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "da9b3a927a71f2ff448a95855ffd270a11f42f9392d96de012468a765ae23c22",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in <module>. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/voice.ts",
+            "marker": "      const models = Array.from(\n        new Set(\n          ["
+          }
+        ]
+      }
     },
     {
       "id": "0d4114d4eca28b97f4cf",
@@ -5831,8 +6051,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in buildMachineConfig. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/sandbox/flyMachineSandbox.ts",
+            "marker": "          raw_value: Buffer.from(file.content, 'utf8').toString('base64'),\n        })),\n      },"
+          }
+        ]
+      }
     },
     {
       "id": "e96cbab02a43d476a1b1",
@@ -6795,8 +7025,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "92f28e3f1ed5f557590a17d61ccf13a98a849b6c08f6a7cba1d5f7ea48dabfb0"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "92f28e3f1ed5f557590a17d61ccf13a98a849b6c08f6a7cba1d5f7ea48dabfb0",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in initializeEmptyRepository. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAtomicTransport.ts",
+            "marker": "          content: Buffer.from(input.content, 'utf8').toString('base64'),\n          branch: input.branch,\n          ...(identity"
+          }
+        ]
+      }
     },
     {
       "id": "2a24d09993972e551d3a",
@@ -6806,8 +7046,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "92f28e3f1ed5f557590a17d61ccf13a98a849b6c08f6a7cba1d5f7ea48dabfb0"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "92f28e3f1ed5f557590a17d61ccf13a98a849b6c08f6a7cba1d5f7ea48dabfb0",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in createBlob. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAtomicTransport.ts",
+            "marker": "          content: Buffer.from(content, 'utf8').toString('base64'),\n          encoding: 'base64',\n        }),"
+          }
+        ]
+      }
     },
     {
       "id": "1caeb040e9e4de397126",
@@ -6960,8 +7210,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in fetchRepoTextFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubDeploy.ts",
+            "marker": "  return Buffer.from(data.content, 'base64').toString('utf8');\n}\n"
+          }
+        ]
+      }
     },
     {
       "id": "e7faca25c9f03c61ec56",
@@ -6971,8 +7231,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in decodeRepositoryTextBlob. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubDeploy.ts",
+            "marker": "  const bytes = Buffer.from(content, 'base64');\n  if (bytes.includes(0)) return null;\n  const text = bytes.toString('utf8');"
+          }
+        ]
+      }
     },
     {
       "id": "3606e6e2a2c84f5d37fd",
@@ -7904,8 +8174,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.ts",
+            "marker": "      const raw = Buffer.from(stored.replace(/^enc:/, ''), 'base64').toString('utf8');\n      const idx = raw.indexOf(':');\n      return idx >= 0 ? raw.slice(idx + 1) : raw;"
+          }
+        ]
+      }
     },
     {
       "id": "b7470ac40219388d92dd",
@@ -7915,8 +8195,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.ts",
+            "marker": "    const iv = Buffer.from(parts[1]!, 'base64');\n    const tag = Buffer.from(parts[2]!, 'base64');\n    const data = Buffer.from(parts.slice(3).join(':'), 'base64');"
+          }
+        ]
+      }
     },
     {
       "id": "495340ca90ae34e87a94",
@@ -7926,8 +8216,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.ts",
+            "marker": "    const tag = Buffer.from(parts[2]!, 'base64');\n    const data = Buffer.from(parts.slice(3).join(':'), 'base64');\n    const decipher = createDecipheriv('aes-256-gcm', encryptionKey(), iv);"
+          }
+        ]
+      }
     },
     {
       "id": "d9270cfb5d690b469d0e",
@@ -7937,8 +8237,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.ts",
+            "marker": "    const data = Buffer.from(parts.slice(3).join(':'), 'base64');\n    const decipher = createDecipheriv('aes-256-gcm', encryptionKey(), iv);\n    decipher.setAuthTag(tag);"
+          }
+        ]
+      }
     },
     {
       "id": "ce604db77e9736444e37",
@@ -8135,8 +8445,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in encodeVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.ts",
+            "marker": "  return `${REFRESH_LEASE_PREFIX}${Buffer.from(JSON.stringify(lease), 'utf8').toString('base64url')}`;\n}\n"
+          }
+        ]
+      }
     },
     {
       "id": "faa932c66557f902c14a",
@@ -8146,8 +8466,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in parseVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.ts",
+            "marker": "      Buffer.from(value.slice(REFRESH_LEASE_PREFIX.length), 'base64url').toString('utf8'),\n    ) as Partial<VercelRefreshLease>;\n    if ("
+          }
+        ]
+      }
     },
     {
       "id": "a9e993daa4e15d3c1087",
@@ -8234,8 +8564,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in buildVercelAuthorizeUrl. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.ts",
+            "marker": "  const state = Buffer.from(\n    JSON.stringify({ userId, t: Date.now(), n: randomBytes(8).toString('hex') }),\n  ).toString('base64url');"
+          }
+        ]
+      }
     },
     {
       "id": "6fbf3baa24bb4deb5d7d",
@@ -8245,8 +8585,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in parseVercelOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.ts",
+            "marker": "    const parsed = JSON.parse(Buffer.from(state, 'base64url').toString('utf8')) as {\n      userId?: string;\n      t?: number;"
+          }
+        ]
+      }
     },
     {
       "id": "f7ac5feedbd553bc790c",
@@ -8584,8 +8934,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f7ffd5851707e0073bfaf5acf22e9eeb26712cddddb01bfc6da672b9d0cf835c"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "f7ffd5851707e0073bfaf5acf22e9eeb26712cddddb01bfc6da672b9d0cf835c",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in putRepoSecret. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/electronSecrets.ts",
+            "marker": "    const messageBytes = Buffer.from(opts.value);\n    const encryptedBytes = sodium.crypto_box_seal(messageBytes, binKey);\n    const encrypted = sodium.to_base64(encryptedBytes, sodium.base64_variants.ORIGINAL);"
+          }
+        ]
+      }
     },
     {
       "id": "292ace218bb5d6be2824",
@@ -8595,8 +8955,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in code. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.ts",
+            "marker": "function code(): string { return `XROGA-${Array.from({ length: 6 }, () => CHARS[randomInt(0, CHARS.length)]).join('')}`; }\nfunction site(): string { return (process.env.FRONTEND_URL ?? 'https://xroga.com').replace(/\\/$/, ''); }\n"
+          }
+        ]
+      }
     },
     {
       "id": "bdca37051b92167cd4e6",
@@ -8898,8 +9268,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9e44d1d4e4d4971a8fab595e42307bd6ef9a65ff8c7299e1b3d3b3ebc9e8d7ef"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "9e44d1d4e4d4971a8fab595e42307bd6ef9a65ff8c7299e1b3d3b3ebc9e8d7ef",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in ensureScaffoldIntegrity. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/scaffolds/scaffoldIntegrity.ts",
+            "marker": "  return { files: Array.from(byPath.values()), restored };\n}\n"
+          }
+        ]
+      }
     },
     {
       "id": "8716f40a420d9e72fd19",
@@ -8909,8 +9289,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "dfe469edc29361a90fa9dd67e7352740cc81df699621c08fba9316422fe22e49"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "dfe469edc29361a90fa9dd67e7352740cc81df699621c08fba9316422fe22e49",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in commitFiles. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/showcase/templateExport.ts",
+            "marker": "      body: JSON.stringify({ content: Buffer.from(file.content, 'utf8').toString('base64'), encoding: 'base64' }),\n    });\n    if (!res.ok) {"
+          }
+        ]
+      }
     },
     {
       "id": "ad1deb57ab7601502bb2",
@@ -8920,8 +9310,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e0e2de4b71ca8d0083a836fa290afa83a1e224ae419de3aa3268b69c29c36408"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "e0e2de4b71ca8d0083a836fa290afa83a1e224ae419de3aa3268b69c29c36408",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in signingKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/storage/fileDeliveryPolicy.ts",
+            "marker": "  const key = Buffer.from(encoded,'base64');\n  if (key.length !== 32 || key.toString('base64') !== encoded) throw new FileDeliveryError(503,'FILE_LINK_SIGNING_UNAVAILABLE');\n  return key;"
+          }
+        ]
+      }
     },
     {
       "id": "1592c394d8f566b6b5c6",
@@ -9073,8 +9473,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in storeProjectFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/storage/projectFiles.ts",
+            "marker": "  const id=randomUUID(),bytes=Buffer.isBuffer(content)?content:Buffer.from(content);\n  if(!filename.trim() || filename.length>200 || bytes.length>MAX_PRIVATE_FILE_BYTES || !['code','video','image','audio','pdf','other'].includes(fileType) || !storageMetadataSchema.safeParse({provider:'database',ownerId:userId,size:bytes.length,sha256:digestBytes(bytes),contentType}).success)throw new FileDeliveryError(400,'INVALID_FILE');\n  let metadata:PrivateStorageMetadata;"
+          }
+        ]
+      }
     },
     {
       "id": "ca360ce30bbca9f581ce",
@@ -9150,8 +9560,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7fe90fe06ae21ceecf4f0ce92c1e71bc06999a7b73f2b9d5451e93286079967b"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "7fe90fe06ae21ceecf4f0ce92c1e71bc06999a7b73f2b9d5451e93286079967b",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in secureEqual. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/integrations/paymentRuntime.ts",
+            "marker": "  const left = Buffer.from(expected, 'utf8'); const right = Buffer.from(actual, 'utf8');\n  return left.length === right.length && timingSafeEqual(left, right);\n}"
+          }
+        ]
+      }
     },
     {
       "id": "cab0cccd98c50c900a81",
@@ -9161,8 +9581,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7fe90fe06ae21ceecf4f0ce92c1e71bc06999a7b73f2b9d5451e93286079967b"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "7fe90fe06ae21ceecf4f0ce92c1e71bc06999a7b73f2b9d5451e93286079967b",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in secureEqual. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/integrations/paymentRuntime.ts",
+            "marker": "  const left = Buffer.from(expected, 'utf8'); const right = Buffer.from(actual, 'utf8');\n  return left.length === right.length && timingSafeEqual(left, right);\n}"
+          }
+        ]
+      }
     },
     {
       "id": "14edda1756440a64e770",
@@ -9172,8 +9602,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7fe90fe06ae21ceecf4f0ce92c1e71bc06999a7b73f2b9d5451e93286079967b"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "7fe90fe06ae21ceecf4f0ce92c1e71bc06999a7b73f2b9d5451e93286079967b",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in token. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/integrations/paymentRuntime.ts",
+            "marker": "    const response = await this.request(`${this.base}/v1/oauth2/token`, { method: 'POST', headers: { Authorization: `Basic ${Buffer.from(`${this.credentials.clientId}:${this.credentials.clientSecret}`).toString('base64')}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'grant_type=client_credentials', signal: AbortSignal.timeout(10_000) });\n    const data = await jsonResponse(response); const token = String(data.access_token ?? ''); if (!token) throw new Error('PayPal token exchange returned no access token'); return token;\n  }"
+          }
+        ]
+      }
     },
     {
       "id": "fe7f31cd086bdc19c02d",
@@ -9183,8 +9623,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in verifyLivePreviewSignature. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/signing.ts",
+            "marker": "    Buffer.from(\n      expected,\n      'utf8',"
+          }
+        ]
+      }
     },
     {
       "id": "de255983f758d3faeee7",
@@ -9194,8 +9644,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in verifyLivePreviewSignature. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/signing.ts",
+            "marker": "    Buffer.from(\n      signature,\n      'utf8',"
+          }
+        ]
+      }
     },
     {
       "id": "610553bef3df77a2b464",
@@ -9293,8 +9753,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in create. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
+            "marker": "                Buffer.from(\n                  file.content,\n                  'utf8',"
+          }
+        ]
+      }
     },
     {
       "id": "acef6a31673efc4a2d67",
@@ -9304,8 +9774,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in writeFiles. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
+            "marker": "        Buffer.from(\n          file.content,\n          'utf8',"
+          }
+        ]
+      }
     },
     {
       "id": "66a3271a5b10c1e3951b",
@@ -9315,8 +9795,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in readFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
+            "marker": "      return Buffer.from(\n        result.stdout.replace(\n          /\\s+/g,"
+          }
+        ]
+      }
     },
     {
       "id": "949efba83cbbfbfc99ca",
@@ -9476,8 +9966,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in decrypt. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+            "marker": "      Buffer.from(\n        parts[1]!,\n        'base64',"
+          }
+        ]
+      }
     },
     {
       "id": "ad66138cae3124677264",
@@ -9487,8 +9987,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in decrypt. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+            "marker": "    Buffer.from(\n      parts[2]!,\n      'base64',"
+          }
+        ]
+      }
     },
     {
       "id": "fb4acb09ded05c973821",
@@ -9498,8 +10008,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in decrypt. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+            "marker": "      Buffer.from(\n        parts[3]!,\n        'base64',"
+          }
+        ]
+      }
     },
     {
       "id": "25095802651b5e4dce5f",
@@ -9884,8 +10404,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a379cdb7ce38477a9a3af886778fe8b2a8d214b424f77c6ced769040f714af00"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a379cdb7ce38477a9a3af886778fe8b2a8d214b424f77c6ced769040f714af00",
+      "semanticReview": {
+        "authority": "Inspected the receiver and surrounding expression in gitBlobSha. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/repositoryIndex.ts",
+            "marker": "  const bytes = Buffer.from(content, 'utf8');\n  return createHash('sha1').update(`blob ${bytes.length}\\0`).update(bytes).digest('hex');\n}"
+          }
+        ]
+      }
     },
     {
       "id": "10b5e279dd241e2f40ec",
@@ -10005,8 +10535,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "81539326e197aa01731cbec24ef215a5ccd804a2f30ea2cfe4ec821c67245a38"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "81539326e197aa01731cbec24ef215a5ccd804a2f30ea2cfe4ec821c67245a38",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in IntegrationsPage, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/(shell)/dashboard/integrations/page.tsx",
+            "marker": "{Array.from({ length: 6 }).map((_, index) => ("
+          }
+        ]
+      }
     },
     {
       "id": "9297f8f20c4be94c3742",
@@ -10049,8 +10589,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "203327cd15585e63c043071fd5b8bdebf3a6c7aeb8178649bde583799e2b4ff3"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "203327cd15585e63c043071fd5b8bdebf3a6c7aeb8178649bde583799e2b4ff3",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in GlowButton, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/crypto/page.tsx",
+            "marker": "{Array.from({ length: 10 }, (_, index) => ("
+          }
+        ]
+      }
     },
     {
       "id": "24d58e652e861695a6df",
@@ -10060,8 +10610,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "51e96e2bcf3b53d7da9d8b772c28496a72316826c776b493972deff47672495b"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "51e96e2bcf3b53d7da9d8b772c28496a72316826c776b493972deff47672495b",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CybersecurityLanding, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
+            "marker": "Array.from({ length: 192 }, (_, index) => {"
+          }
+        ]
+      }
     },
     {
       "id": "199da662cd61a2e66ce3",
@@ -10071,8 +10631,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "51e96e2bcf3b53d7da9d8b772c28496a72316826c776b493972deff47672495b"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "51e96e2bcf3b53d7da9d8b772c28496a72316826c776b493972deff47672495b",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CybersecurityLanding, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
+            "marker": "const particles = Array.from({ length: 44 }, (_, index) => ({"
+          }
+        ]
+      }
     },
     {
       "id": "64f497fcad34a4e4f270",
@@ -10082,8 +10652,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "51e96e2bcf3b53d7da9d8b772c28496a72316826c776b493972deff47672495b"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "51e96e2bcf3b53d7da9d8b772c28496a72316826c776b493972deff47672495b",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CybersecurityLanding, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
+            "marker": "const nodes = Array.from("
+          }
+        ]
+      }
     },
     {
       "id": "4e796f9c87acb51a5f6b",
@@ -10104,8 +10684,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "dddc9f648b54af54e531862b8394cf079b3e437dd1bba96a71fada6e89f157f7"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "dddc9f648b54af54e531862b8394cf079b3e437dd1bba96a71fada6e89f157f7",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in <module>, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/showcase/black-hole-vinfinity-crypto/route.ts",
+            "marker": "const SOURCE_HTML = gunzipSync(Buffer.from(SOURCE_GZIP_BASE64, 'base64')).toString('utf8');"
+          }
+        ]
+      }
     },
     {
       "id": "6039f7c8566aaabb0d20",
@@ -10115,8 +10705,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e6e34812007bfa0aefdbfc8c86bfd26d6073494b6d3f3c838120f4aae762a24e"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "e6e34812007bfa0aefdbfc8c86bfd26d6073494b6d3f3c838120f4aae762a24e",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ShowcaseLoading, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/showcase/loading.tsx",
+            "marker": "{Array.from({ length: 6 }).map((_, index) => ("
+          }
+        ]
+      }
     },
     {
       "id": "d03b49f96c5be30002b6",
@@ -10126,8 +10726,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a2d6622e22afec9dadbf8cde280916676356563c286aa325c017d672348eb05b"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a2d6622e22afec9dadbf8cde280916676356563c286aa325c017d672348eb05b",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ShowcasePage, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/showcase/page.tsx",
+            "marker": "const categories = Array.from(new Set(SHOWCASE_TEMPLATES.map((template) => template.category)));"
+          }
+        ]
+      }
     },
     {
       "id": "97646ee69b3d1bf3e714",
@@ -10137,8 +10747,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "340da469e095b75463af4aa38f6a4746c3842fafdc7529015a2d0301d004f199"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "340da469e095b75463af4aa38f6a4746c3842fafdc7529015a2d0301d004f199",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in BillingSuccessExperience, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/billing/BillingSuccessExperience.tsx",
+            "marker": "{Array.from({ length: 18 }, (_, index) => <i key={index} className=\"absolute h-2 w-2 animate-pulse rounded-full bg-[var(--accent)]\" style={{ left: `${5 + ((index * 37) % 90)}%`, top: `${8 + ((index * 23) % 80)}%`, animationDelay: `${index * 80}ms` }} />)}"
+          }
+        ]
+      }
     },
     {
       "id": "229f69845215b3f79181",
@@ -10148,8 +10768,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2e4465a70ed9f9e9c20ccc287cc2329ede24a937948b5a684bc2ace878590672"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "2e4465a70ed9f9e9c20ccc287cc2329ede24a937948b5a684bc2ace878590672",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CommunityFeed, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/community/CommunityFeed.tsx",
+            "marker": "{loading && Array.from({ length: 4 }, (_, index) => <div key={index} className=\"h-36 animate-pulse rounded-2xl bg-slate-100 dark:bg-white/[.05]\" />)}"
+          }
+        ]
+      }
     },
     {
       "id": "980c6d902163b0cdbe7d",
@@ -10159,8 +10789,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4355eb72f89a70f77f63c4bc57c45f6e44595647dc4a41ec84cf4d33e4508d7"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "d4355eb72f89a70f77f63c4bc57c45f6e44595647dc4a41ec84cf4d33e4508d7",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in <module>, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/crypto-builder/VoxelBackdrop.tsx",
+            "marker": "const STARS = Array.from({ length: 50 }, (_, index) => ({"
+          }
+        ]
+      }
     },
     {
       "id": "2d4d81311795a71a335c",
@@ -10170,8 +10810,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4355eb72f89a70f77f63c4bc57c45f6e44595647dc4a41ec84cf4d33e4508d7"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "d4355eb72f89a70f77f63c4bc57c45f6e44595647dc4a41ec84cf4d33e4508d7",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in <module>, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/crypto-builder/VoxelBackdrop.tsx",
+            "marker": "const SPARKS = Array.from({ length: 40 }, (_, index) => ({"
+          }
+        ]
+      }
     },
     {
       "id": "5ded2f089437045b87de",
@@ -10181,8 +10831,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e31104b5a7b70139ebf297d9d99f57fa535afd8755c9dae688b428a0346cb64d"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "e31104b5a7b70139ebf297d9d99f57fa535afd8755c9dae688b428a0346cb64d",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in groupByPrompt, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/dashboard/MediaPageClient.tsx",
+            "marker": "return Array.from(map.entries()).map(([key, group]) => ({"
+          }
+        ]
+      }
     },
     {
       "id": "fcf3d090c5b895913192",
@@ -10192,8 +10852,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e31104b5a7b70139ebf297d9d99f57fa535afd8755c9dae688b428a0346cb64d"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "e31104b5a7b70139ebf297d9d99f57fa535afd8755c9dae688b428a0346cb64d",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in handleUpload, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/dashboard/MediaPageClient.tsx",
+            "marker": "Array.from(files).forEach((file) => {"
+          }
+        ]
+      }
     },
     {
       "id": "7ba841a4861cda6a519e",
@@ -10203,8 +10873,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "05ccb9cf08e276f9fcd9d71eae4b9a5541c7e05513572020d524597fc25ab3c1"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "05ccb9cf08e276f9fcd9d71eae4b9a5541c7e05513572020d524597fc25ab3c1",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in GamePreview, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/game-builder/GamePreview.tsx",
+            "marker": "{Array.from({ length: 22 }, (_, i) => ("
+          }
+        ]
+      }
     },
     {
       "id": "766cf010cccc61e4da6d",
@@ -10214,8 +10894,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "05ccb9cf08e276f9fcd9d71eae4b9a5541c7e05513572020d524597fc25ab3c1"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "05ccb9cf08e276f9fcd9d71eae4b9a5541c7e05513572020d524597fc25ab3c1",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in GamePreview, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/game-builder/GamePreview.tsx",
+            "marker": "{Array.from({ length: 8 }, (_, i) => ("
+          }
+        ]
+      }
     },
     {
       "id": "57f2eeefad7fedb468ee",
@@ -10225,8 +10915,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9bf59a1d622fa603b77fd53aff0042f872ee347aa223d1623f105653dff2684f"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "9bf59a1d622fa603b77fd53aff0042f872ee347aa223d1623f105653dff2684f",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in DeckPattern, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/homepage-next/s01/CapabilityCard.tsx",
+            "marker": "const ticks = Array.from({ length: 48 }, (_, i) => {"
+          }
+        ]
+      }
     },
     {
       "id": "b8961f2debe196ab5f4b",
@@ -10236,8 +10936,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9bf59a1d622fa603b77fd53aff0042f872ee347aa223d1623f105653dff2684f"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "9bf59a1d622fa603b77fd53aff0042f872ee347aa223d1623f105653dff2684f",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in DeckPattern, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/homepage-next/s01/CapabilityCard.tsx",
+            "marker": "{Array.from({ length: 7 }, (_, i) => ("
+          }
+        ]
+      }
     },
     {
       "id": "249a16f328cc128aeaa2",
@@ -10247,8 +10957,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9bb270d8d5b7689493700bfebf5027318e8e710e5b6f124fad23417c3294c1b6"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "9bb270d8d5b7689493700bfebf5027318e8e710e5b6f124fad23417c3294c1b6",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in OutSite, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/homepage-next/s02/Missions.tsx",
+            "marker": "{Array.from({ length: one ? 7 : 5 }, (_, i) => ("
+          }
+        ]
+      }
     },
     {
       "id": "30e8bede07f09dacbdd1",
@@ -10258,8 +10978,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c194b09d5396bf172d8082ae1247aec815f3559cbe17a9ea2635d81bfc95ca3b"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c194b09d5396bf172d8082ae1247aec815f3559cbe17a9ea2635d81bfc95ca3b",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in LatticeStatus, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/homepage/HomepagePowerStories.tsx",
+            "marker": "<i aria-hidden=\"true\">{Array.from({ length: 9 }, (_, index) => <b key={index} />)}</i>"
+          }
+        ]
+      }
     },
     {
       "id": "93248a29168d66788b2c",
@@ -10269,8 +10999,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c194b09d5396bf172d8082ae1247aec815f3559cbe17a9ea2635d81bfc95ca3b"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c194b09d5396bf172d8082ae1247aec815f3559cbe17a9ea2635d81bfc95ca3b",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ProgressDots, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/homepage/HomepagePowerStories.tsx",
+            "marker": "{Array.from({ length: count }, (_, index) => ("
+          }
+        ]
+      }
     },
     {
       "id": "13dde7e62f67e5a8b69d",
@@ -10280,8 +11020,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c194b09d5396bf172d8082ae1247aec815f3559cbe17a9ea2635d81bfc95ca3b"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c194b09d5396bf172d8082ae1247aec815f3559cbe17a9ea2635d81bfc95ca3b",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in HomepagePowerStories, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/homepage/HomepagePowerStories.tsx",
+            "marker": "const stories = Array.from(suite.querySelectorAll<HTMLElement>('.xps-story'));"
+          }
+        ]
+      }
     },
     {
       "id": "c589673e80a28dbfbe27",
@@ -10291,8 +11041,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "99a008812490b651afd81e548666646f6f8de92bec7f1cd2ab7e3da31a0a7bef"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "99a008812490b651afd81e548666646f6f8de92bec7f1cd2ab7e3da31a0a7bef",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in WorkspaceSidebar, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/homepage/HomepageWorkspaceTour.tsx",
+            "marker": "{repoExpanded ? <div>{Array.from({ length: 6 }, (_, index) => <button type=\"button\" key={index}><span>#{index + 1} terminal</span><GitBranch /><small>{index === 0 ? 'now' : '8d'}</small></button>)}</div> : null}"
+          }
+        ]
+      }
     },
     {
       "id": "792e791fe2e018b9e06f",
@@ -10302,8 +11062,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "980c88b65d893f321751c48816bea6fa14e56bc72ad26fd55527e930dbb45ba2"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "980c88b65d893f321751c48816bea6fa14e56bc72ad26fd55527e930dbb45ba2",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in <module>, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/homepage/integrations/LogoLoop.jsx",
+            "marker": "Array.from({ length: copyCount }, (_, copyIndex) => ("
+          }
+        ]
+      }
     },
     {
       "id": "2d98522349041018aafe",
@@ -10313,8 +11083,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in PublicMarketingHeader, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
+            "marker": "{Array.from({ length: 10 }, (_, index) => <i key={index} />)}"
+          }
+        ]
+      }
     },
     {
       "id": "0481d4c53113a3184a8b",
@@ -10324,8 +11104,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in PublicMarketingHeader, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
+            "marker": "{Array.from({ length: 10 }, (_, index) => <i key={index} />)}"
+          }
+        ]
+      }
     },
     {
       "id": "3095a3a2c1da8e735ac5",
@@ -10335,8 +11125,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "630ba11b6c231c10e4e7aa507a0cec0a235fb1f27fa47d762cc61168e2d8f7f2"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "630ba11b6c231c10e4e7aa507a0cec0a235fb1f27fa47d762cc61168e2d8f7f2",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+            "marker": "let foldersList = Array.from(map.entries())"
+          }
+        ]
+      }
     },
     {
       "id": "af91e03153d803870e5e",
@@ -10346,8 +11146,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "630ba11b6c231c10e4e7aa507a0cec0a235fb1f27fa47d762cc61168e2d8f7f2"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "630ba11b6c231c10e4e7aa507a0cec0a235fb1f27fa47d762cc61168e2d8f7f2",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+            "marker": "return Array.from(map.values()).sort((a, b) => (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0));"
+          }
+        ]
+      }
     },
     {
       "id": "92e2f9e84b8b9d7515b1",
@@ -10357,8 +11167,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "042975e978bf4346745fec084c6f462213d29de81d524377827a582745aefc76"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "042975e978bf4346745fec084c6f462213d29de81d524377827a582745aefc76",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in AiWebsiteBuilderAtmosphere, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/marketing/AiWebsiteBuilderAtmosphere.tsx",
+            "marker": "const particles: Particle[] = Array.from({ length: 180 }, () => ({"
+          }
+        ]
+      }
     },
     {
       "id": "9c507f51fed2378e2bf5",
@@ -10368,8 +11188,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "042975e978bf4346745fec084c6f462213d29de81d524377827a582745aefc76"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "042975e978bf4346745fec084c6f462213d29de81d524377827a582745aefc76",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in AiWebsiteBuilderAtmosphere, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/marketing/AiWebsiteBuilderAtmosphere.tsx",
+            "marker": "const beams = Array.from({ length: 15 }, (_, index) => ({"
+          }
+        ]
+      }
     },
     {
       "id": "a5188cf19ad57cd05861",
@@ -10379,8 +11209,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2f011d4c98ae3a12b59a81f588660f13470ad6ffd1cf501f86e4cb33298f40df"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "2f011d4c98ae3a12b59a81f588660f13470ad6ffd1cf501f86e4cb33298f40df",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in Genome, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/os-preview/Command2Sections.tsx",
+            "marker": "return <><div className=\"os-split\"><section className=\"os-panel\"><div className=\"os-field\"><label htmlFor=\"os-genome-search\">Search demo assets</label><input id=\"os-genome-search\" value={query} onChange={(e) => setQuery(e.target.value)}/></div><div className=\"os-field\"><label htmlFor=\"os-genome-category\">Category</label><select id=\"os-genome-category\" value={category} onChange={(e) => setCategory(e.target.value)}><option value=\"all\">All categories</option>{Array.from(new Set(DEMO_ASSETS.map((a) => a.category))).map((c) => <option key={c}>{c}</option>)}</select></div><div className=\"os-catalog-grid\">{filtered.map((a) => <button key={a.id} className={`os-catalog-item ${selected === a.id ? 'is-current' : ''}`} onClick={() => setSelected(a.id)}><strong>{a.name}</strong><small>{a.category} · {a.trust.replaceAll('-',' ')}</small></button>)}</div></section><section className=\"os-panel\"><span className=\"os-eyebrow\">Provenance and trust</span><h2>{asset.name}</h2><p>{asset.detail}</p><ul className=\"os-list\"><li><strong>License</strong><small>{asset.license}</small></li><li><strong>Compatibility</strong><small>{asset.trust === 'approved-demo' ? 'Original fixture compatible with this preview.' : 'Not approved for composition.'}</small></li><li><strong>Certification evidence</strong><small>{asset.trust === 'approved-demo' ? 'Demo review only; no production certification.' : 'Rejected in this example.'}</small></li></ul><div className=\"os-field\"><label htmlFor=\"os-genome-approach\">Proposed approach</label><select id=\"os-genome-approach\" value={approach} onChange={(e) => setApproach(e.target.value)}>{['Reuse','Adapt','Compose','Generate'].map((a) => <option key={a}>{a}</option>)}</select></div><p role=\"status\">{asset.trust === 'approved-demo' ? `${approach} is available as a local design example. No code is imported.` : 'Composition blocked by the documented trust or dependency issue.'}</p></section></div><StoryTrail story=\"clinic\"/></>;"
+          }
+        ]
+      }
     },
     {
       "id": "905295f8bffbe3eb3456",
@@ -10390,8 +11230,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3141a8208eed9b6103ecd681fe7b31143a62122a5ba3acbda73f1a0912431399"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "3141a8208eed9b6103ecd681fe7b31143a62122a5ba3acbda73f1a0912431399",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in FounderScenarioLab, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/os-preview/FounderScenarioLab.tsx",
+            "marker": "<div className=\"os-field\"><label htmlFor=\"lab-module\">Module</label><select id=\"lab-module\" value={module} onChange={(event) => chooseModule(event.target.value as LabModule | 'All')}><option>All</option>{Array.from(new Set(LAB_SCENARIOS.map((item) => item.module))).map((item) => <option key={item}>{item}</option>)}</select></div>"
+          }
+        ]
+      }
     },
     {
       "id": "e75e25572d006aea3011",
@@ -10401,8 +11251,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CtaParticles, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/pricing/PricingPageClient.tsx",
+            "marker": "{Array.from({ length: 10 }, (_, index) => ("
+          }
+        ]
+      }
     },
     {
       "id": "807be0d1f4f1a26f656a",
@@ -10412,8 +11272,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "679b6bf94407763cc5c8bcd592604059696b121e1f66760628a79f39078308c3"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "679b6bf94407763cc5c8bcd592604059696b121e1f66760628a79f39078308c3",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in onKeyDown, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/profile/AvatarPickerModal.tsx",
+            "marker": "const nodes = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));"
+          }
+        ]
+      }
     },
     {
       "id": "3c0be64130ae4ee7e0a5",
@@ -10423,8 +11293,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "13891853a46d43e17370db253e284b4acdfd9ad8eed658c5954d5bf8d0e249ed"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "13891853a46d43e17370db253e284b4acdfd9ad8eed658c5954d5bf8d0e249ed",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ProjectDetailView, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/projects/ProjectDetailView.tsx",
+            "marker": "? Array.from(new Set(project.project_files.map((f) => f.version))).sort((a, b) => b - a)"
+          }
+        ]
+      }
     },
     {
       "id": "834dfeacf2127b255bdd",
@@ -10434,8 +11314,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "0a1a0b1c71c9f19a3c8416f5bfc1a562118192c2edbdae015efc470969af0df3"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "0a1a0b1c71c9f19a3c8416f5bfc1a562118192c2edbdae015efc470969af0df3",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ShowcaseBrowser, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/showcase/ShowcaseBrowser.tsx",
+            "marker": "() => ['All', ...Array.from(new Set(templates.map((template) => template.category))).sort()],"
+          }
+        ]
+      }
     },
     {
       "id": "fcdbd433e4177b08d774",
@@ -10445,8 +11335,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "0a1a0b1c71c9f19a3c8416f5bfc1a562118192c2edbdae015efc470969af0df3"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "0a1a0b1c71c9f19a3c8416f5bfc1a562118192c2edbdae015efc470969af0df3",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ShowcaseBrowser, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/showcase/ShowcaseBrowser.tsx",
+            "marker": "() => ['All', ...Array.from(new Set(templates.flatMap((template) => template.technologies))).sort()],"
+          }
+        ]
+      }
     },
     {
       "id": "23dddcc17100d923043a",
@@ -10456,8 +11356,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a3ea92be503ec73538b24919bb4e1be21d076f4a9f532af5fa1387b27b82f334"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a3ea92be503ec73538b24919bb4e1be21d076f4a9f532af5fa1387b27b82f334",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in makeLevel, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/showcase/products/WebGame.tsx",
+            "marker": "const cores: Core[] = Array.from({ length: config.cores }, (_, i) => ({"
+          }
+        ]
+      }
     },
     {
       "id": "1df05691eaf107beb1e6",
@@ -10467,8 +11377,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a3ea92be503ec73538b24919bb4e1be21d076f4a9f532af5fa1387b27b82f334"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a3ea92be503ec73538b24919bb4e1be21d076f4a9f532af5fa1387b27b82f334",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in makeLevel, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/showcase/products/WebGame.tsx",
+            "marker": "const enemies: Enemy[] = Array.from({ length: config.enemies }, (_, i) => ({"
+          }
+        ]
+      }
     },
     {
       "id": "acf47bba6c309386ce2f",
@@ -10478,8 +11398,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ab00bc2e66a63b1028f4c404dfa14170aae7cb5e26fee88bf4a7d86f841061fb"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "ab00bc2e66a63b1028f4c404dfa14170aae7cb5e26fee88bf4a7d86f841061fb",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ImageGeneratingAnimation, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/terminal/ImageStudioCard.tsx",
+            "marker": "const slots = Array.from({ length: VARIANT_SLOTS }, (_, i) => liveAttempts[i] ?? null);"
+          }
+        ]
+      }
     },
     {
       "id": "ec56e3c528ebf6bc672d",
@@ -10489,8 +11419,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c58fb061c167cabb652546b7bfacaf496fc3c81f9aca6b27a957217ef7e0ceee"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c58fb061c167cabb652546b7bfacaf496fc3c81f9aca6b27a957217ef7e0ceee",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+            "marker": "const incoming = Array.from(list).filter("
+          }
+        ]
+      }
     },
     {
       "id": "8bee3dafa232d3071008",
@@ -10500,8 +11440,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "50d499b0b3f231805056051c5651995f849ac0864010857db8857e52700e7664"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "50d499b0b3f231805056051c5651995f849ac0864010857db8857e52700e7664",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ComparisonRenderer, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
+            "marker": "const metricKeys = useMemo(() => Array.from(new Set(block.options.flatMap((option) => Object.keys(option.metrics)))), [block.options]);"
+          }
+        ]
+      }
     },
     {
       "id": "6520ef22b7832bcb902c",
@@ -10511,8 +11461,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "fe997b93bc62ba921569d3e31394aa2417ce679b50e22f3503a52351a1b3bc29"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "fe997b93bc62ba921569d3e31394aa2417ce679b50e22f3503a52351a1b3bc29",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
+            "marker": "{Array.from({ length: bars }, (_, index) => {"
+          }
+        ]
+      }
     },
     {
       "id": "8fda0b83c38d623afb8e",
@@ -10522,8 +11482,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f2cf456ab782b67fb82186fa3685b1a1312c21f5f1b72e754d5d6612e179adcb"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "f2cf456ab782b67fb82186fa3685b1a1312c21f5f1b72e754d5d6612e179adcb",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in onKeyDown, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/ui/Dialog.tsx",
+            "marker": "const nodes = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));"
+          }
+        ]
+      }
     },
     {
       "id": "5115131bdb754adff1e7",
@@ -10533,8 +11503,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d7d44528970d6e001a783a5417647925fa11f4b58cd0886b41c4495b151b4e83"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "d7d44528970d6e001a783a5417647925fa11f4b58cd0886b41c4495b151b4e83",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ResearchPagesLoader, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/ui/ResearchPagesLoader.tsx",
+            "marker": "{Array.from({ length: 6 }, (_, i) => ("
+          }
+        ]
+      }
     },
     {
       "id": "3ba4cff30016aad61480",
@@ -10544,8 +11524,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f19b5760605fe13621a3ca9f1801975e201468dc1d89f66b3628c6eb1d2c1dab"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "f19b5760605fe13621a3ca9f1801975e201468dc1d89f66b3628c6eb1d2c1dab",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in UpgradeActionButton, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/ui/UpgradeActionButton.tsx",
+            "marker": "{Array.from({ length: 10 }, (_, index) => <i key={index} />)}"
+          }
+        ]
+      }
     },
     {
       "id": "efbc9f54bb731d2b254f",
@@ -10577,8 +11567,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "df7512d55b315cde2fac46e270baac4adb12b2437bfe72b1f692111cc7b2b54e"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "df7512d55b315cde2fac46e270baac4adb12b2437bfe72b1f692111cc7b2b54e",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in markShown, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/hooks/useBuildCompletionAlerts.ts",
+            "marker": "sessionStorage.setItem(SHOWN_KEY, JSON.stringify(Array.from(shown).slice(-40)));"
+          }
+        ]
+      }
     },
     {
       "id": "a428381cd3d08363ea1c",
@@ -10588,8 +11588,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "dd554892df303c32e0e1a18116d28010bc71336fa5c551d5c591650baf8bb78b"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "dd554892df303c32e0e1a18116d28010bc71336fa5c551d5c591650baf8bb78b",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in isTemporaryEmail, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/emailValidation.ts",
+            "marker": "return Array.from(TEMP_EMAIL_DOMAINS).some((d) => domain.endsWith(`.${d}`));"
+          }
+        ]
+      }
     },
     {
       "id": "c7d109715d2f37cc95b2",
@@ -10599,8 +11609,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "dd9715b63eeca3a39f7b82cb45d6520ed8aedecadc5b7d069f2ba73fc5fba8ac"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "dd9715b63eeca3a39f7b82cb45d6520ed8aedecadc5b7d069f2ba73fc5fba8ac",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/formatAiMarkdown.tsx",
+            "marker": "Uint8Array.from("
+          }
+        ]
+      }
     },
     {
       "id": "252c1e3eea32c88fbad9",
@@ -10610,8 +11630,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "209317a1d41675aea4d93e5e8a8e8481906892f05951edb4669e5ad927ade600"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "209317a1d41675aea4d93e5e8a8e8481906892f05951edb4669e5ad927ade600",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in deriveLandingOutcome, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/landingOutcome.ts",
+            "marker": "const blockers = Array.from("
+          }
+        ]
+      }
     },
     {
       "id": "55fba5912dca6ea0285d",
@@ -10621,8 +11651,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7399dcf1bce69e8334e9ddbd664d4d2fd23e90670dabdbde93b2e959cd19476e"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "7399dcf1bce69e8334e9ddbd664d4d2fd23e90670dabdbde93b2e959cd19476e",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in getVariantUrls, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/mediaHelpers.ts",
+            "marker": "return Array.from(seen);"
+          }
+        ]
+      }
     },
     {
       "id": "ac31cb8da73866188428",
@@ -10632,8 +11672,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7399dcf1bce69e8334e9ddbd664d4d2fd23e90670dabdbde93b2e959cd19476e"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "7399dcf1bce69e8334e9ddbd664d4d2fd23e90670dabdbde93b2e959cd19476e",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in groupImageGenerations, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/mediaHelpers.ts",
+            "marker": "existing.variants = Array.from(merged);"
+          }
+        ]
+      }
     },
     {
       "id": "89ba95e55a818a833d42",
@@ -10643,8 +11693,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7399dcf1bce69e8334e9ddbd664d4d2fd23e90670dabdbde93b2e959cd19476e"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "7399dcf1bce69e8334e9ddbd664d4d2fd23e90670dabdbde93b2e959cd19476e",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in groupImageGenerations, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/mediaHelpers.ts",
+            "marker": "return Array.from(map.values()).sort("
+          }
+        ]
+      }
     },
     {
       "id": "0673d98832351452ffe0",
@@ -10654,8 +11714,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7399dcf1bce69e8334e9ddbd664d4d2fd23e90670dabdbde93b2e959cd19476e"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "7399dcf1bce69e8334e9ddbd664d4d2fd23e90670dabdbde93b2e959cd19476e",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in collectVariantUrlsFromOutput, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/mediaHelpers.ts",
+            "marker": "return Array.from(seen);"
+          }
+        ]
+      }
     },
     {
       "id": "8bc946c8f4eba6d55cde",
@@ -10665,8 +11735,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "33c854daf959d8d288a0ca88851db8f2da83acb7d12b6f149df4bb6ba3707748"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "33c854daf959d8d288a0ca88851db8f2da83acb7d12b6f149df4bb6ba3707748",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in slimVariantUrls, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/mediaStorage.ts",
+            "marker": "return out.length ? Array.from(new Set(out)) : undefined;"
+          }
+        ]
+      }
     },
     {
       "id": "5aca617b7c728856e53e",
@@ -10676,8 +11756,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "091454b08438c56178e108761558f043a09b47ca1eb32ccd4a70c9a153c31b15"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "091454b08438c56178e108761558f043a09b47ca1eb32ccd4a70c9a153c31b15",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in validateDemoWorkflow, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/osCommand2.ts",
+            "marker": "if (!Array.from(seen).some((id) => nodes.find((node) => node.id === id)?.kind === 'output')) errors.push('Connect the trigger to an output.');"
+          }
+        ]
+      }
     },
     {
       "id": "bfeda945d744cc0f05de",
@@ -10687,8 +11777,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "091454b08438c56178e108761558f043a09b47ca1eb32ccd4a70c9a153c31b15"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "091454b08438c56178e108761558f043a09b47ca1eb32ccd4a70c9a153c31b15",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in validateDemoWorkflow, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/osCommand2.ts",
+            "marker": "return Array.from(new Set(errors));"
+          }
+        ]
+      }
     },
     {
       "id": "664f0e94c6fd847fb7d1",
@@ -10709,8 +11809,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e753abbfe0795b9e2362d5ac28e1d3974500091b4515e2f42cee80e5d22f951a"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "e753abbfe0795b9e2362d5ac28e1d3974500091b4515e2f42cee80e5d22f951a",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in hashTagsFromSubject, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/socialSharePack.ts",
+            "marker": "const tags = Array.from("
+          }
+        ]
+      }
     },
     {
       "id": "3f35d7a99738940921d7",
@@ -10720,8 +11830,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e753abbfe0795b9e2362d5ac28e1d3974500091b4515e2f42cee80e5d22f951a"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "e753abbfe0795b9e2362d5ac28e1d3974500091b4515e2f42cee80e5d22f951a",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in tagList, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/socialSharePack.ts",
+            "marker": "return Array.from(new Set([...words, 'ai art', 'xroga', 'digital art', 'creative']));"
+          }
+        ]
+      }
     },
     {
       "id": "5c64aa680a603f460991",
@@ -10742,8 +11862,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in acceptMicStream, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/terminal/voiceConversation.ts",
+            "marker": "Array.from(tracks).forEach((track) => track.stop());"
+          }
+        ]
+      }
     },
     {
       "id": "53953a7522a9f4a6ec38",
@@ -10753,8 +11883,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "771f7f75bff7d39c9b05c230ae37cd6bb3fc287bcd09a187acb37e8337a89807"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "771f7f75bff7d39c9b05c230ae37cd6bb3fc287bcd09a187acb37e8337a89807",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in exportDocumentPdf, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/xrogaFileExports.ts",
+            "marker": "return { filename: `${fileStem(block.title, 'document')}.pdf`, blob: new Blob([Uint8Array.from(bytes)], { type: 'application/pdf' }) };"
+          }
+        ]
+      }
     }
   ]
 }

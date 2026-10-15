@@ -2,6 +2,1830 @@
   "version": "1.0",
   "reviews": [
     {
+      "path": "backend/src/ai/attachments.ts",
+      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "callIds": [
+        "cd2b486a9d7f060cd3bc"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/attachments.ts",
+          "marker": "    if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');\n    return Buffer.from(decodeURIComponent(data), 'utf8');\n  }"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/attachments.ts",
+      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "callIds": [
+        "e21e7f85f2e0a5a7982f"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/attachments.ts",
+          "marker": "    return Buffer.from(decodeURIComponent(data), 'utf8');\n  }\n  assertSafeAttachmentUrl(url);"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/attachments.ts",
+      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "callIds": [
+        "5584ba3ed9e6d2fa054a"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/attachments.ts",
+          "marker": "  return Buffer.from(ab);\n}\n"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/attachments.ts",
+      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "callIds": [
+        "a60c96422aaa959a471d"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in extractDocxText. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/attachments.ts",
+          "marker": "      if (method === 0) xml = Buffer.from(data);\n      else if (method === 8) xml = inflateRawSync(data);\n      else continue;"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/black-hole/toolRegistry.ts",
+      "sourceSha256": "9f9ada19f7bde6ab337df723c8093ff7614703736319e364e7c595b7e50acd4c",
+      "callIds": [
+        "c7adb57133fe6d4372c3"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in truncate. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/black-hole/toolRegistry.ts",
+          "marker": "  const encoded = Buffer.from(output, 'utf8');\n  if (encoded.byteLength <= maxBytes) return { output, truncated: false };\n  return {"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/patchWorkspace.ts",
+      "sourceSha256": "de7404eb12e26a985ad7d82623f9993e116775b06c90099060fd5f8752b8050e",
+      "callIds": [
+        "77ae5ca6237b9db28401"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in gitBlobSha. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/patchWorkspace.ts",
+          "marker": "  const body = Buffer.from(content, 'utf8');\n  return createHash('sha1')\n    .update(`blob ${body.length}\\0`)"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sourceSha256": "a897403b760f71ade9547777a53418ae81ebcc6e3db2143f7b64d3d300225733",
+      "callIds": [
+        "f4dfbc1f6a1dbf30f2af"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/pipeline.ts",
+          "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sourceSha256": "a897403b760f71ade9547777a53418ae81ebcc6e3db2143f7b64d3d300225733",
+      "callIds": [
+        "bd014fdc1d117ff3e105"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/pipeline.ts",
+          "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/repositoryTools.ts",
+      "sourceSha256": "8f137084324489d481b726815146e38a9793bde5e416bbf02c587893e48816e7",
+      "callIds": [
+        "fe86ec4f53190788350f"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in blob. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/repositoryTools.ts",
+          "marker": "        ? Buffer.from(payload.content, 'base64').toString('utf8')\n        : payload.content;\n    if (looksBinary(text)) {"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/universal/repositoryChatEvidence.ts",
+      "sourceSha256": "d0c38ae1b0dd28ecd5011d419453e89de18c92db74468750b0fd97285283319b",
+      "callIds": [
+        "3fba7dbe0551574fe56b"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in selectRepositoryChatEvidence. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/universal/repositoryChatEvidence.ts",
+          "marker": "      ? `${Buffer.from(redacted, 'utf8').subarray(0, PER_FILE_MAX_BYTES).toString('utf8')}\\n[truncated by repository evidence budget]`\n      : redacted;\n    const bytes = Buffer.byteLength(file.path, 'utf8') + Buffer.byteLength(content, 'utf8');"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/apify.ts",
+      "sourceSha256": "8f0a64e27a5c0b1b44013eddbd32c2cf751375cbc4028a5d51afb60cb56228bb",
+      "callIds": [
+        "00ba921c100e822d0045"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in simulateJobListings. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/lib/apify.ts",
+          "marker": "  return Array.from({ length: count }, (_, i) => ({\n    title: `${query} Specialist ${i + 1}`,\n    company: `Company ${i + 1}`,"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/audioProviders.ts",
+      "sourceSha256": "599386bea90c1f3f27c32e7fafc79f44b406f5132f1c87dd48b2b7dccad43cd8",
+      "callIds": [
+        "8131275dbd120683f01c"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in generateElevenLabsVoiceover. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/lib/audioProviders.ts",
+          "marker": "  const buffer = Buffer.from(await response.arrayBuffer());\n  return {\n    type: 'voiceover',"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/audioProviders.ts",
+      "sourceSha256": "599386bea90c1f3f27c32e7fafc79f44b406f5132f1c87dd48b2b7dccad43cd8",
+      "callIds": [
+        "ea16dba512cfa1aa852d"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in generateCartesiaVoiceover. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/lib/audioProviders.ts",
+          "marker": "  const buffer = Buffer.from(await response.arrayBuffer());\n  return {\n    type: 'voiceover',"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/audioProviders.ts",
+      "sourceSha256": "599386bea90c1f3f27c32e7fafc79f44b406f5132f1c87dd48b2b7dccad43cd8",
+      "callIds": [
+        "22622f63378841972b60"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in generateFishAudioTts. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/lib/audioProviders.ts",
+          "marker": "  const buffer = Buffer.from(await response.arrayBuffer());\n  return {\n    type: 'voiceover',"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/oauthState.ts",
+      "sourceSha256": "3b005e580f8f03bf3cd0022cdbdec1ce554b18e5f8905d132e54270e5bcdcea7",
+      "callIds": [
+        "e30cf157b28358ab0753"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in createOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/lib/oauthState.ts",
+          "marker": "  const payload = Buffer.from(JSON.stringify({\n    sub: userId,\n    exp: now + 10 * 60_000,"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/oauthState.ts",
+      "sourceSha256": "3b005e580f8f03bf3cd0022cdbdec1ce554b18e5f8905d132e54270e5bcdcea7",
+      "callIds": [
+        "446c900e51734ddf8f19"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in verifyOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/lib/oauthState.ts",
+          "marker": "    const received = Buffer.from(encodedSignature, 'base64url');\n    const expected = signature(payload, secret);\n    if (received.length !== expected.length || !timingSafeEqual(received, expected)) return false;"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/oauthState.ts",
+      "sourceSha256": "3b005e580f8f03bf3cd0022cdbdec1ce554b18e5f8905d132e54270e5bcdcea7",
+      "callIds": [
+        "c16f570a3709cba73e10"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in verifyOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/lib/oauthState.ts",
+          "marker": "    const parsed = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as Partial<OAuthStatePayload>;\n    return parsed.sub === expectedUserId\n      && typeof parsed.exp === 'number'"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/r2.ts",
+      "sourceSha256": "c65d535118345eeee50f209cbb25849134854d70356e3c066fe458f98c9415ce",
+      "callIds": [
+        "3d584a251b20379d303d"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in uploadToR2. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/lib/r2.ts",
+          "marker": "  assertOwnedR2Key(key,userId);const bytes=Buffer.isBuffer(body)?body:Buffer.from(body);\n  if(bytes.length>MAX_PRIVATE_FILE_BYTES)throw new FileDeliveryError(400,'FILE_TOO_LARGE');\n  const config=privateR2Configuration();await verifyPrivateR2Bucket(config);const s3=client(config);"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/r2.ts",
+      "sourceSha256": "c65d535118345eeee50f209cbb25849134854d70356e3c066fe458f98c9415ce",
+      "callIds": [
+        "dccbda64a754c57e70ca"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in downloadFromR2. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/lib/r2.ts",
+          "marker": "    for await(const chunk of response.Body as AsyncIterable<Uint8Array>) {size+=chunk.length;if(size>MAX_PRIVATE_FILE_BYTES)throw new Error('bounded file required');chunks.push(Buffer.from(chunk));}\n    return {buffer:Buffer.concat(chunks),contentType:response.ContentType??'application/octet-stream'};\n  } catch {throw new FileDeliveryError(503,'PRIVATE_STORAGE_READ_UNAVAILABLE');} finally {s3.destroy();}"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.ts",
+      "sourceSha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383",
+      "callIds": [
+        "37aeba5e7ba598d930da"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in attachRuntimePreviewWebSocketGateway. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/middleware/runtimePreviewGateway.ts",
+          "marker": "                        : Buffer.from(\n                            data as\n                              ArrayBuffer,"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "sourceSha256": "c92debf25ae1ca9634658bee52b5eafc0b69501cc6f9dc927b0de4493ebc2102",
+      "callIds": [
+        "74229d60e093f2e44542"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/phase1.ts",
+          "marker": "    Buffer\n      .from(\n        JSON.stringify("
+        }
+      ]
+    },
+    {
+      "path": "backend/src/routes/voice.ts",
+      "sourceSha256": "da9b3a927a71f2ff448a95855ffd270a11f42f9392d96de012468a765ae23c22",
+      "callIds": [
+        "ae7e9656a12e6ead3f39"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in <module>. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/voice.ts",
+          "marker": "      const models = Array.from(\n        new Set(\n          ["
+        }
+      ]
+    },
+    {
+      "path": "backend/src/sandbox/flyMachineSandbox.ts",
+      "sourceSha256": "3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6",
+      "callIds": [
+        "0d4114d4eca28b97f4cf"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in buildMachineConfig. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/sandbox/flyMachineSandbox.ts",
+          "marker": "          raw_value: Buffer.from(file.content, 'utf8').toString('base64'),\n        })),\n      },"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubAtomicTransport.ts",
+      "sourceSha256": "92f28e3f1ed5f557590a17d61ccf13a98a849b6c08f6a7cba1d5f7ea48dabfb0",
+      "callIds": [
+        "61043cdc80b90c8d957b"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in initializeEmptyRepository. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/githubAtomicTransport.ts",
+          "marker": "          content: Buffer.from(input.content, 'utf8').toString('base64'),\n          branch: input.branch,\n          ...(identity"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubAtomicTransport.ts",
+      "sourceSha256": "92f28e3f1ed5f557590a17d61ccf13a98a849b6c08f6a7cba1d5f7ea48dabfb0",
+      "callIds": [
+        "2a24d09993972e551d3a"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in createBlob. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/githubAtomicTransport.ts",
+          "marker": "          content: Buffer.from(content, 'utf8').toString('base64'),\n          encoding: 'base64',\n        }),"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "callIds": [
+        "408b490907b38a2277f0"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in fetchRepoTextFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/githubDeploy.ts",
+          "marker": "  return Buffer.from(data.content, 'base64').toString('utf8');\n}\n"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "callIds": [
+        "e7faca25c9f03c61ec56"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in decodeRepositoryTextBlob. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/githubDeploy.ts",
+          "marker": "  const bytes = Buffer.from(content, 'base64');\n  if (bytes.includes(0)) return null;\n  const text = bytes.toString('utf8');"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "callIds": [
+        "1ab580a1921adff7526c"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/userProviderKeys.ts",
+          "marker": "      const raw = Buffer.from(stored.replace(/^enc:/, ''), 'base64').toString('utf8');\n      const idx = raw.indexOf(':');\n      return idx >= 0 ? raw.slice(idx + 1) : raw;"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "callIds": [
+        "b7470ac40219388d92dd"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/userProviderKeys.ts",
+          "marker": "    const iv = Buffer.from(parts[1]!, 'base64');\n    const tag = Buffer.from(parts[2]!, 'base64');\n    const data = Buffer.from(parts.slice(3).join(':'), 'base64');"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "callIds": [
+        "495340ca90ae34e87a94"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/userProviderKeys.ts",
+          "marker": "    const tag = Buffer.from(parts[2]!, 'base64');\n    const data = Buffer.from(parts.slice(3).join(':'), 'base64');\n    const decipher = createDecipheriv('aes-256-gcm', encryptionKey(), iv);"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "c584560773fc3e999175325b781a2eabb9b671f23669103c82d1fbf2d7bfc9e8",
+      "callIds": [
+        "d9270cfb5d690b469d0e"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in decryptApiKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/userProviderKeys.ts",
+          "marker": "    const data = Buffer.from(parts.slice(3).join(':'), 'base64');\n    const decipher = createDecipheriv('aes-256-gcm', encryptionKey(), iv);\n    decipher.setAuthTag(tag);"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "callIds": [
+        "4a571253158f8281ee72"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in encodeVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/vercelAuth.ts",
+          "marker": "  return `${REFRESH_LEASE_PREFIX}${Buffer.from(JSON.stringify(lease), 'utf8').toString('base64url')}`;\n}\n"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "callIds": [
+        "faa932c66557f902c14a"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in parseVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/vercelAuth.ts",
+          "marker": "      Buffer.from(value.slice(REFRESH_LEASE_PREFIX.length), 'base64url').toString('utf8'),\n    ) as Partial<VercelRefreshLease>;\n    if ("
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "callIds": [
+        "e868579d52de58ae0e4c"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in buildVercelAuthorizeUrl. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/vercelAuth.ts",
+          "marker": "  const state = Buffer.from(\n    JSON.stringify({ userId, t: Date.now(), n: randomBytes(8).toString('hex') }),\n  ).toString('base64url');"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "sourceSha256": "943c3a9cee625ed79ef81b17487657ac8d8b3783ac4b6ec7b4905967108dfffa",
+      "callIds": [
+        "6fbf3baa24bb4deb5d7d"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in parseVercelOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/vercelAuth.ts",
+          "marker": "    const parsed = JSON.parse(Buffer.from(state, 'base64url').toString('utf8')) as {\n      userId?: string;\n      t?: number;"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/publish/electronSecrets.ts",
+      "sourceSha256": "f7ffd5851707e0073bfaf5acf22e9eeb26712cddddb01bfc6da672b9d0cf835c",
+      "callIds": [
+        "ec2c28eeabd8277f2beb"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in putRepoSecret. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/publish/electronSecrets.ts",
+          "marker": "    const messageBytes = Buffer.from(opts.value);\n    const encryptedBytes = sodium.crypto_box_seal(messageBytes, binKey);\n    const encrypted = sodium.to_base64(encryptedBytes, sodium.base64_variants.ORIGINAL);"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/referralService.ts",
+      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae",
+      "callIds": [
+        "292ace218bb5d6be2824"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in code. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/referralService.ts",
+          "marker": "function code(): string { return `XROGA-${Array.from({ length: 6 }, () => CHARS[randomInt(0, CHARS.length)]).join('')}`; }\nfunction site(): string { return (process.env.FRONTEND_URL ?? 'https://xroga.com').replace(/\\/$/, ''); }\n"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/scaffolds/scaffoldIntegrity.ts",
+      "sourceSha256": "9e44d1d4e4d4971a8fab595e42307bd6ef9a65ff8c7299e1b3d3b3ebc9e8d7ef",
+      "callIds": [
+        "f94ccf7ed821853ce5ef"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in ensureScaffoldIntegrity. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/scaffolds/scaffoldIntegrity.ts",
+          "marker": "  return { files: Array.from(byPath.values()), restored };\n}\n"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/showcase/templateExport.ts",
+      "sourceSha256": "dfe469edc29361a90fa9dd67e7352740cc81df699621c08fba9316422fe22e49",
+      "callIds": [
+        "8716f40a420d9e72fd19"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in commitFiles. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/showcase/templateExport.ts",
+          "marker": "      body: JSON.stringify({ content: Buffer.from(file.content, 'utf8').toString('base64'), encoding: 'base64' }),\n    });\n    if (!res.ok) {"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/storage/fileDeliveryPolicy.ts",
+      "sourceSha256": "e0e2de4b71ca8d0083a836fa290afa83a1e224ae419de3aa3268b69c29c36408",
+      "callIds": [
+        "ad1deb57ab7601502bb2"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in signingKey. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/storage/fileDeliveryPolicy.ts",
+          "marker": "  const key = Buffer.from(encoded,'base64');\n  if (key.length !== 32 || key.toString('base64') !== encoded) throw new FileDeliveryError(503,'FILE_LINK_SIGNING_UNAVAILABLE');\n  return key;"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/storage/projectFiles.ts",
+      "sourceSha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168",
+      "callIds": [
+        "5412ca439707c9e344a2"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in storeProjectFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/services/storage/projectFiles.ts",
+          "marker": "  const id=randomUUID(),bytes=Buffer.isBuffer(content)?content:Buffer.from(content);\n  if(!filename.trim() || filename.length>200 || bytes.length>MAX_PRIVATE_FILE_BYTES || !['code','video','image','audio','pdf','other'].includes(fileType) || !storageMetadataSchema.safeParse({provider:'database',ownerId:userId,size:bytes.length,sha256:digestBytes(bytes),contentType}).success)throw new FileDeliveryError(400,'INVALID_FILE');\n  let metadata:PrivateStorageMetadata;"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/integrations/paymentRuntime.ts",
+      "sourceSha256": "7fe90fe06ae21ceecf4f0ce92c1e71bc06999a7b73f2b9d5451e93286079967b",
+      "callIds": [
+        "cfa02537722c186eaf48"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in secureEqual. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/integrations/paymentRuntime.ts",
+          "marker": "  const left = Buffer.from(expected, 'utf8'); const right = Buffer.from(actual, 'utf8');\n  return left.length === right.length && timingSafeEqual(left, right);\n}"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/integrations/paymentRuntime.ts",
+      "sourceSha256": "7fe90fe06ae21ceecf4f0ce92c1e71bc06999a7b73f2b9d5451e93286079967b",
+      "callIds": [
+        "cab0cccd98c50c900a81"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in secureEqual. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/integrations/paymentRuntime.ts",
+          "marker": "  const left = Buffer.from(expected, 'utf8'); const right = Buffer.from(actual, 'utf8');\n  return left.length === right.length && timingSafeEqual(left, right);\n}"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/integrations/paymentRuntime.ts",
+      "sourceSha256": "7fe90fe06ae21ceecf4f0ce92c1e71bc06999a7b73f2b9d5451e93286079967b",
+      "callIds": [
+        "14edda1756440a64e770"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in token. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/integrations/paymentRuntime.ts",
+          "marker": "    const response = await this.request(`${this.base}/v1/oauth2/token`, { method: 'POST', headers: { Authorization: `Basic ${Buffer.from(`${this.credentials.clientId}:${this.credentials.clientSecret}`).toString('base64')}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'grant_type=client_credentials', signal: AbortSignal.timeout(10_000) });\n    const data = await jsonResponse(response); const token = String(data.access_token ?? ''); if (!token) throw new Error('PayPal token exchange returned no access token'); return token;\n  }"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/livePreview/signing.ts",
+      "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+      "callIds": [
+        "fe7f31cd086bdc19c02d"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in verifyLivePreviewSignature. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/livePreview/signing.ts",
+          "marker": "    Buffer.from(\n      expected,\n      'utf8',"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/livePreview/signing.ts",
+      "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+      "callIds": [
+        "de255983f758d3faeee7"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in verifyLivePreviewSignature. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/livePreview/signing.ts",
+          "marker": "    Buffer.from(\n      signature,\n      'utf8',"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
+      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2",
+      "callIds": [
+        "1036a72174c51d074c91"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in create. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
+          "marker": "                Buffer.from(\n                  file.content,\n                  'utf8',"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
+      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2",
+      "callIds": [
+        "acef6a31673efc4a2d67"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in writeFiles. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
+          "marker": "        Buffer.from(\n          file.content,\n          'utf8',"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
+      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2",
+      "callIds": [
+        "66a3271a5b10c1e3951b"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in readFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
+          "marker": "      return Buffer.from(\n        result.stdout.replace(\n          /\\s+/g,"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+      "sourceSha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898",
+      "callIds": [
+        "8fa3e05253b5cb321d2f"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in decrypt. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+          "marker": "      Buffer.from(\n        parts[1]!,\n        'base64',"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+      "sourceSha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898",
+      "callIds": [
+        "ad66138cae3124677264"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in decrypt. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+          "marker": "    Buffer.from(\n      parts[2]!,\n      'base64',"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+      "sourceSha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898",
+      "callIds": [
+        "fb4acb09ded05c973821"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in decrypt. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+          "marker": "      Buffer.from(\n        parts[3]!,\n        'base64',"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/repositoryIndex.ts",
+      "sourceSha256": "a379cdb7ce38477a9a3af886778fe8b2a8d214b424f77c6ced769040f714af00",
+      "callIds": [
+        "5e80030d0b83a9339b90"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the receiver and surrounding expression in gitBlobSha. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/repositoryIndex.ts",
+          "marker": "  const bytes = Buffer.from(content, 'utf8');\n  return createHash('sha1').update(`blob ${bytes.length}\\0`).update(bytes).digest('hex');\n}"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/(shell)/dashboard/integrations/page.tsx",
+      "sourceSha256": "81539326e197aa01731cbec24ef215a5ccd804a2f30ea2cfe4ec821c67245a38",
+      "callIds": [
+        "ab9766ff796e233669d2"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in IntegrationsPage, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/app/(shell)/dashboard/integrations/page.tsx",
+          "marker": "{Array.from({ length: 6 }).map((_, index) => ("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/crypto/page.tsx",
+      "sourceSha256": "203327cd15585e63c043071fd5b8bdebf3a6c7aeb8178649bde583799e2b4ff3",
+      "callIds": [
+        "1cf0586f7cd93a578782"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in GlowButton, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/app/crypto/page.tsx",
+          "marker": "{Array.from({ length: 10 }, (_, index) => ("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
+      "sourceSha256": "51e96e2bcf3b53d7da9d8b772c28496a72316826c776b493972deff47672495b",
+      "callIds": [
+        "24d58e652e861695a6df"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CybersecurityLanding, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
+          "marker": "Array.from({ length: 192 }, (_, index) => {"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
+      "sourceSha256": "51e96e2bcf3b53d7da9d8b772c28496a72316826c776b493972deff47672495b",
+      "callIds": [
+        "199da662cd61a2e66ce3"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CybersecurityLanding, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
+          "marker": "const particles = Array.from({ length: 44 }, (_, index) => ({"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
+      "sourceSha256": "51e96e2bcf3b53d7da9d8b772c28496a72316826c776b493972deff47672495b",
+      "callIds": [
+        "64f497fcad34a4e4f270"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CybersecurityLanding, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
+          "marker": "const nodes = Array.from("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/showcase/black-hole-vinfinity-crypto/route.ts",
+      "sourceSha256": "dddc9f648b54af54e531862b8394cf079b3e437dd1bba96a71fada6e89f157f7",
+      "callIds": [
+        "19620b924bbcbab333b0"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in <module>, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/app/showcase/black-hole-vinfinity-crypto/route.ts",
+          "marker": "const SOURCE_HTML = gunzipSync(Buffer.from(SOURCE_GZIP_BASE64, 'base64')).toString('utf8');"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/showcase/loading.tsx",
+      "sourceSha256": "e6e34812007bfa0aefdbfc8c86bfd26d6073494b6d3f3c838120f4aae762a24e",
+      "callIds": [
+        "6039f7c8566aaabb0d20"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ShowcaseLoading, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/app/showcase/loading.tsx",
+          "marker": "{Array.from({ length: 6 }).map((_, index) => ("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/showcase/page.tsx",
+      "sourceSha256": "a2d6622e22afec9dadbf8cde280916676356563c286aa325c017d672348eb05b",
+      "callIds": [
+        "d03b49f96c5be30002b6"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ShowcasePage, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/app/showcase/page.tsx",
+          "marker": "const categories = Array.from(new Set(SHOWCASE_TEMPLATES.map((template) => template.category)));"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/billing/BillingSuccessExperience.tsx",
+      "sourceSha256": "340da469e095b75463af4aa38f6a4746c3842fafdc7529015a2d0301d004f199",
+      "callIds": [
+        "97646ee69b3d1bf3e714"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in BillingSuccessExperience, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/billing/BillingSuccessExperience.tsx",
+          "marker": "{Array.from({ length: 18 }, (_, index) => <i key={index} className=\"absolute h-2 w-2 animate-pulse rounded-full bg-[var(--accent)]\" style={{ left: `${5 + ((index * 37) % 90)}%`, top: `${8 + ((index * 23) % 80)}%`, animationDelay: `${index * 80}ms` }} />)}"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/community/CommunityFeed.tsx",
+      "sourceSha256": "2e4465a70ed9f9e9c20ccc287cc2329ede24a937948b5a684bc2ace878590672",
+      "callIds": [
+        "229f69845215b3f79181"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CommunityFeed, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/community/CommunityFeed.tsx",
+          "marker": "{loading && Array.from({ length: 4 }, (_, index) => <div key={index} className=\"h-36 animate-pulse rounded-2xl bg-slate-100 dark:bg-white/[.05]\" />)}"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/crypto-builder/VoxelBackdrop.tsx",
+      "sourceSha256": "d4355eb72f89a70f77f63c4bc57c45f6e44595647dc4a41ec84cf4d33e4508d7",
+      "callIds": [
+        "980c6d902163b0cdbe7d"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in <module>, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/crypto-builder/VoxelBackdrop.tsx",
+          "marker": "const STARS = Array.from({ length: 50 }, (_, index) => ({"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/crypto-builder/VoxelBackdrop.tsx",
+      "sourceSha256": "d4355eb72f89a70f77f63c4bc57c45f6e44595647dc4a41ec84cf4d33e4508d7",
+      "callIds": [
+        "2d4d81311795a71a335c"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in <module>, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/crypto-builder/VoxelBackdrop.tsx",
+          "marker": "const SPARKS = Array.from({ length: 40 }, (_, index) => ({"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/dashboard/MediaPageClient.tsx",
+      "sourceSha256": "e31104b5a7b70139ebf297d9d99f57fa535afd8755c9dae688b428a0346cb64d",
+      "callIds": [
+        "5ded2f089437045b87de"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in groupByPrompt, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/dashboard/MediaPageClient.tsx",
+          "marker": "return Array.from(map.entries()).map(([key, group]) => ({"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/dashboard/MediaPageClient.tsx",
+      "sourceSha256": "e31104b5a7b70139ebf297d9d99f57fa535afd8755c9dae688b428a0346cb64d",
+      "callIds": [
+        "fcf3d090c5b895913192"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in handleUpload, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/dashboard/MediaPageClient.tsx",
+          "marker": "Array.from(files).forEach((file) => {"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/game-builder/GamePreview.tsx",
+      "sourceSha256": "05ccb9cf08e276f9fcd9d71eae4b9a5541c7e05513572020d524597fc25ab3c1",
+      "callIds": [
+        "7ba841a4861cda6a519e"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in GamePreview, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/game-builder/GamePreview.tsx",
+          "marker": "{Array.from({ length: 22 }, (_, i) => ("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/game-builder/GamePreview.tsx",
+      "sourceSha256": "05ccb9cf08e276f9fcd9d71eae4b9a5541c7e05513572020d524597fc25ab3c1",
+      "callIds": [
+        "766cf010cccc61e4da6d"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in GamePreview, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/game-builder/GamePreview.tsx",
+          "marker": "{Array.from({ length: 8 }, (_, i) => ("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s01/CapabilityCard.tsx",
+      "sourceSha256": "9bf59a1d622fa603b77fd53aff0042f872ee347aa223d1623f105653dff2684f",
+      "callIds": [
+        "57f2eeefad7fedb468ee"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in DeckPattern, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/homepage-next/s01/CapabilityCard.tsx",
+          "marker": "const ticks = Array.from({ length: 48 }, (_, i) => {"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s01/CapabilityCard.tsx",
+      "sourceSha256": "9bf59a1d622fa603b77fd53aff0042f872ee347aa223d1623f105653dff2684f",
+      "callIds": [
+        "b8961f2debe196ab5f4b"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in DeckPattern, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/homepage-next/s01/CapabilityCard.tsx",
+          "marker": "{Array.from({ length: 7 }, (_, i) => ("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/Missions.tsx",
+      "sourceSha256": "9bb270d8d5b7689493700bfebf5027318e8e710e5b6f124fad23417c3294c1b6",
+      "callIds": [
+        "249a16f328cc128aeaa2"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in OutSite, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/homepage-next/s02/Missions.tsx",
+          "marker": "{Array.from({ length: one ? 7 : 5 }, (_, i) => ("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/homepage/HomepagePowerStories.tsx",
+      "sourceSha256": "c194b09d5396bf172d8082ae1247aec815f3559cbe17a9ea2635d81bfc95ca3b",
+      "callIds": [
+        "30e8bede07f09dacbdd1"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in LatticeStatus, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/homepage/HomepagePowerStories.tsx",
+          "marker": "<i aria-hidden=\"true\">{Array.from({ length: 9 }, (_, index) => <b key={index} />)}</i>"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/homepage/HomepagePowerStories.tsx",
+      "sourceSha256": "c194b09d5396bf172d8082ae1247aec815f3559cbe17a9ea2635d81bfc95ca3b",
+      "callIds": [
+        "93248a29168d66788b2c"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ProgressDots, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/homepage/HomepagePowerStories.tsx",
+          "marker": "{Array.from({ length: count }, (_, index) => ("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/homepage/HomepagePowerStories.tsx",
+      "sourceSha256": "c194b09d5396bf172d8082ae1247aec815f3559cbe17a9ea2635d81bfc95ca3b",
+      "callIds": [
+        "13dde7e62f67e5a8b69d"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in HomepagePowerStories, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/homepage/HomepagePowerStories.tsx",
+          "marker": "const stories = Array.from(suite.querySelectorAll<HTMLElement>('.xps-story'));"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/homepage/HomepageWorkspaceTour.tsx",
+      "sourceSha256": "99a008812490b651afd81e548666646f6f8de92bec7f1cd2ab7e3da31a0a7bef",
+      "callIds": [
+        "c589673e80a28dbfbe27"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in WorkspaceSidebar, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/homepage/HomepageWorkspaceTour.tsx",
+          "marker": "{repoExpanded ? <div>{Array.from({ length: 6 }, (_, index) => <button type=\"button\" key={index}><span>#{index + 1} terminal</span><GitBranch /><small>{index === 0 ? 'now' : '8d'}</small></button>)}</div> : null}"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/homepage/integrations/LogoLoop.jsx",
+      "sourceSha256": "980c88b65d893f321751c48816bea6fa14e56bc72ad26fd55527e930dbb45ba2",
+      "callIds": [
+        "792e791fe2e018b9e06f"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in <module>, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/homepage/integrations/LogoLoop.jsx",
+          "marker": "Array.from({ length: copyCount }, (_, copyIndex) => ("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
+      "sourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df",
+      "callIds": [
+        "2d98522349041018aafe"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in PublicMarketingHeader, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
+          "marker": "{Array.from({ length: 10 }, (_, index) => <i key={index} />)}"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
+      "sourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df",
+      "callIds": [
+        "0481d4c53113a3184a8b"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in PublicMarketingHeader, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
+          "marker": "{Array.from({ length: 10 }, (_, index) => <i key={index} />)}"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "sourceSha256": "630ba11b6c231c10e4e7aa507a0cec0a235fb1f27fa47d762cc61168e2d8f7f2",
+      "callIds": [
+        "3095a3a2c1da8e735ac5"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+          "marker": "let foldersList = Array.from(map.entries())"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "sourceSha256": "630ba11b6c231c10e4e7aa507a0cec0a235fb1f27fa47d762cc61168e2d8f7f2",
+      "callIds": [
+        "af91e03153d803870e5e"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+          "marker": "return Array.from(map.values()).sort((a, b) => (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0));"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/marketing/AiWebsiteBuilderAtmosphere.tsx",
+      "sourceSha256": "042975e978bf4346745fec084c6f462213d29de81d524377827a582745aefc76",
+      "callIds": [
+        "92e2f9e84b8b9d7515b1"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in AiWebsiteBuilderAtmosphere, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/marketing/AiWebsiteBuilderAtmosphere.tsx",
+          "marker": "const particles: Particle[] = Array.from({ length: 180 }, () => ({"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/marketing/AiWebsiteBuilderAtmosphere.tsx",
+      "sourceSha256": "042975e978bf4346745fec084c6f462213d29de81d524377827a582745aefc76",
+      "callIds": [
+        "9c507f51fed2378e2bf5"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in AiWebsiteBuilderAtmosphere, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/marketing/AiWebsiteBuilderAtmosphere.tsx",
+          "marker": "const beams = Array.from({ length: 15 }, (_, index) => ({"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/os-preview/Command2Sections.tsx",
+      "sourceSha256": "2f011d4c98ae3a12b59a81f588660f13470ad6ffd1cf501f86e4cb33298f40df",
+      "callIds": [
+        "a5188cf19ad57cd05861"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in Genome, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/os-preview/Command2Sections.tsx",
+          "marker": "return <><div className=\"os-split\"><section className=\"os-panel\"><div className=\"os-field\"><label htmlFor=\"os-genome-search\">Search demo assets</label><input id=\"os-genome-search\" value={query} onChange={(e) => setQuery(e.target.value)}/></div><div className=\"os-field\"><label htmlFor=\"os-genome-category\">Category</label><select id=\"os-genome-category\" value={category} onChange={(e) => setCategory(e.target.value)}><option value=\"all\">All categories</option>{Array.from(new Set(DEMO_ASSETS.map((a) => a.category))).map((c) => <option key={c}>{c}</option>)}</select></div><div className=\"os-catalog-grid\">{filtered.map((a) => <button key={a.id} className={`os-catalog-item ${selected === a.id ? 'is-current' : ''}`} onClick={() => setSelected(a.id)}><strong>{a.name}</strong><small>{a.category} · {a.trust.replaceAll('-',' ')}</small></button>)}</div></section><section className=\"os-panel\"><span className=\"os-eyebrow\">Provenance and trust</span><h2>{asset.name}</h2><p>{asset.detail}</p><ul className=\"os-list\"><li><strong>License</strong><small>{asset.license}</small></li><li><strong>Compatibility</strong><small>{asset.trust === 'approved-demo' ? 'Original fixture compatible with this preview.' : 'Not approved for composition.'}</small></li><li><strong>Certification evidence</strong><small>{asset.trust === 'approved-demo' ? 'Demo review only; no production certification.' : 'Rejected in this example.'}</small></li></ul><div className=\"os-field\"><label htmlFor=\"os-genome-approach\">Proposed approach</label><select id=\"os-genome-approach\" value={approach} onChange={(e) => setApproach(e.target.value)}>{['Reuse','Adapt','Compose','Generate'].map((a) => <option key={a}>{a}</option>)}</select></div><p role=\"status\">{asset.trust === 'approved-demo' ? `${approach} is available as a local design example. No code is imported.` : 'Composition blocked by the documented trust or dependency issue.'}</p></section></div><StoryTrail story=\"clinic\"/></>;"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/os-preview/FounderScenarioLab.tsx",
+      "sourceSha256": "3141a8208eed9b6103ecd681fe7b31143a62122a5ba3acbda73f1a0912431399",
+      "callIds": [
+        "905295f8bffbe3eb3456"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in FounderScenarioLab, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/os-preview/FounderScenarioLab.tsx",
+          "marker": "<div className=\"os-field\"><label htmlFor=\"lab-module\">Module</label><select id=\"lab-module\" value={module} onChange={(event) => chooseModule(event.target.value as LabModule | 'All')}><option>All</option>{Array.from(new Set(LAB_SCENARIOS.map((item) => item.module))).map((item) => <option key={item}>{item}</option>)}</select></div>"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/pricing/PricingPageClient.tsx",
+      "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
+      "callIds": [
+        "e75e25572d006aea3011"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CtaParticles, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/pricing/PricingPageClient.tsx",
+          "marker": "{Array.from({ length: 10 }, (_, index) => ("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/profile/AvatarPickerModal.tsx",
+      "sourceSha256": "679b6bf94407763cc5c8bcd592604059696b121e1f66760628a79f39078308c3",
+      "callIds": [
+        "807be0d1f4f1a26f656a"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in onKeyDown, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/profile/AvatarPickerModal.tsx",
+          "marker": "const nodes = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/projects/ProjectDetailView.tsx",
+      "sourceSha256": "13891853a46d43e17370db253e284b4acdfd9ad8eed658c5954d5bf8d0e249ed",
+      "callIds": [
+        "3c0be64130ae4ee7e0a5"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ProjectDetailView, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/projects/ProjectDetailView.tsx",
+          "marker": "? Array.from(new Set(project.project_files.map((f) => f.version))).sort((a, b) => b - a)"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/showcase/ShowcaseBrowser.tsx",
+      "sourceSha256": "0a1a0b1c71c9f19a3c8416f5bfc1a562118192c2edbdae015efc470969af0df3",
+      "callIds": [
+        "834dfeacf2127b255bdd"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ShowcaseBrowser, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/showcase/ShowcaseBrowser.tsx",
+          "marker": "() => ['All', ...Array.from(new Set(templates.map((template) => template.category))).sort()],"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/showcase/ShowcaseBrowser.tsx",
+      "sourceSha256": "0a1a0b1c71c9f19a3c8416f5bfc1a562118192c2edbdae015efc470969af0df3",
+      "callIds": [
+        "fcdbd433e4177b08d774"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ShowcaseBrowser, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/showcase/ShowcaseBrowser.tsx",
+          "marker": "() => ['All', ...Array.from(new Set(templates.flatMap((template) => template.technologies))).sort()],"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/showcase/products/WebGame.tsx",
+      "sourceSha256": "a3ea92be503ec73538b24919bb4e1be21d076f4a9f532af5fa1387b27b82f334",
+      "callIds": [
+        "23dddcc17100d923043a"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in makeLevel, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/showcase/products/WebGame.tsx",
+          "marker": "const cores: Core[] = Array.from({ length: config.cores }, (_, i) => ({"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/showcase/products/WebGame.tsx",
+      "sourceSha256": "a3ea92be503ec73538b24919bb4e1be21d076f4a9f532af5fa1387b27b82f334",
+      "callIds": [
+        "1df05691eaf107beb1e6"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in makeLevel, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/showcase/products/WebGame.tsx",
+          "marker": "const enemies: Enemy[] = Array.from({ length: config.enemies }, (_, i) => ({"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/terminal/ImageStudioCard.tsx",
+      "sourceSha256": "ab00bc2e66a63b1028f4c404dfa14170aae7cb5e26fee88bf4a7d86f841061fb",
+      "callIds": [
+        "acf47bba6c309386ce2f"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ImageGeneratingAnimation, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/terminal/ImageStudioCard.tsx",
+          "marker": "const slots = Array.from({ length: VARIANT_SLOTS }, (_, i) => liveAttempts[i] ?? null);"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+      "sourceSha256": "c58fb061c167cabb652546b7bfacaf496fc3c81f9aca6b27a957217ef7e0ceee",
+      "callIds": [
+        "ec56e3c528ebf6bc672d"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+          "marker": "const incoming = Array.from(list).filter("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
+      "sourceSha256": "50d499b0b3f231805056051c5651995f849ac0864010857db8857e52700e7664",
+      "callIds": [
+        "8bee3dafa232d3071008"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ComparisonRenderer, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
+          "marker": "const metricKeys = useMemo(() => Array.from(new Set(block.options.flatMap((option) => Object.keys(option.metrics)))), [block.options]);"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
+      "sourceSha256": "fe997b93bc62ba921569d3e31394aa2417ce679b50e22f3503a52351a1b3bc29",
+      "callIds": [
+        "6520ef22b7832bcb902c"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
+          "marker": "{Array.from({ length: bars }, (_, index) => {"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/ui/Dialog.tsx",
+      "sourceSha256": "f2cf456ab782b67fb82186fa3685b1a1312c21f5f1b72e754d5d6612e179adcb",
+      "callIds": [
+        "8fda0b83c38d623afb8e"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in onKeyDown, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/ui/Dialog.tsx",
+          "marker": "const nodes = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/ui/ResearchPagesLoader.tsx",
+      "sourceSha256": "d7d44528970d6e001a783a5417647925fa11f4b58cd0886b41c4495b151b4e83",
+      "callIds": [
+        "5115131bdb754adff1e7"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ResearchPagesLoader, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/ui/ResearchPagesLoader.tsx",
+          "marker": "{Array.from({ length: 6 }, (_, i) => ("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/ui/UpgradeActionButton.tsx",
+      "sourceSha256": "f19b5760605fe13621a3ca9f1801975e201468dc1d89f66b3628c6eb1d2c1dab",
+      "callIds": [
+        "3ba4cff30016aad61480"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in UpgradeActionButton, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/ui/UpgradeActionButton.tsx",
+          "marker": "{Array.from({ length: 10 }, (_, index) => <i key={index} />)}"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/hooks/useBuildCompletionAlerts.ts",
+      "sourceSha256": "df7512d55b315cde2fac46e270baac4adb12b2437bfe72b1f692111cc7b2b54e",
+      "callIds": [
+        "4608e26b4675284b9c95"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in markShown, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/hooks/useBuildCompletionAlerts.ts",
+          "marker": "sessionStorage.setItem(SHOWN_KEY, JSON.stringify(Array.from(shown).slice(-40)));"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/emailValidation.ts",
+      "sourceSha256": "dd554892df303c32e0e1a18116d28010bc71336fa5c551d5c591650baf8bb78b",
+      "callIds": [
+        "a428381cd3d08363ea1c"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in isTemporaryEmail, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/emailValidation.ts",
+          "marker": "return Array.from(TEMP_EMAIL_DOMAINS).some((d) => domain.endsWith(`.${d}`));"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/formatAiMarkdown.tsx",
+      "sourceSha256": "dd9715b63eeca3a39f7b82cb45d6520ed8aedecadc5b7d069f2ba73fc5fba8ac",
+      "callIds": [
+        "c7d109715d2f37cc95b2"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/formatAiMarkdown.tsx",
+          "marker": "Uint8Array.from("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/landingOutcome.ts",
+      "sourceSha256": "209317a1d41675aea4d93e5e8a8e8481906892f05951edb4669e5ad927ade600",
+      "callIds": [
+        "252c1e3eea32c88fbad9"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in deriveLandingOutcome, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/landingOutcome.ts",
+          "marker": "const blockers = Array.from("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/mediaHelpers.ts",
+      "sourceSha256": "7399dcf1bce69e8334e9ddbd664d4d2fd23e90670dabdbde93b2e959cd19476e",
+      "callIds": [
+        "55fba5912dca6ea0285d"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in getVariantUrls, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/mediaHelpers.ts",
+          "marker": "return Array.from(seen);"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/mediaHelpers.ts",
+      "sourceSha256": "7399dcf1bce69e8334e9ddbd664d4d2fd23e90670dabdbde93b2e959cd19476e",
+      "callIds": [
+        "ac31cb8da73866188428"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in groupImageGenerations, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/mediaHelpers.ts",
+          "marker": "existing.variants = Array.from(merged);"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/mediaHelpers.ts",
+      "sourceSha256": "7399dcf1bce69e8334e9ddbd664d4d2fd23e90670dabdbde93b2e959cd19476e",
+      "callIds": [
+        "89ba95e55a818a833d42"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in groupImageGenerations, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/mediaHelpers.ts",
+          "marker": "return Array.from(map.values()).sort("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/mediaHelpers.ts",
+      "sourceSha256": "7399dcf1bce69e8334e9ddbd664d4d2fd23e90670dabdbde93b2e959cd19476e",
+      "callIds": [
+        "0673d98832351452ffe0"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in collectVariantUrlsFromOutput, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/mediaHelpers.ts",
+          "marker": "return Array.from(seen);"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/mediaStorage.ts",
+      "sourceSha256": "33c854daf959d8d288a0ca88851db8f2da83acb7d12b6f149df4bb6ba3707748",
+      "callIds": [
+        "8bc946c8f4eba6d55cde"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in slimVariantUrls, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/mediaStorage.ts",
+          "marker": "return out.length ? Array.from(new Set(out)) : undefined;"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/osCommand2.ts",
+      "sourceSha256": "091454b08438c56178e108761558f043a09b47ca1eb32ccd4a70c9a153c31b15",
+      "callIds": [
+        "5aca617b7c728856e53e"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in validateDemoWorkflow, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/osCommand2.ts",
+          "marker": "if (!Array.from(seen).some((id) => nodes.find((node) => node.id === id)?.kind === 'output')) errors.push('Connect the trigger to an output.');"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/osCommand2.ts",
+      "sourceSha256": "091454b08438c56178e108761558f043a09b47ca1eb32ccd4a70c9a153c31b15",
+      "callIds": [
+        "bfeda945d744cc0f05de"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in validateDemoWorkflow, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/osCommand2.ts",
+          "marker": "return Array.from(new Set(errors));"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/socialSharePack.ts",
+      "sourceSha256": "e753abbfe0795b9e2362d5ac28e1d3974500091b4515e2f42cee80e5d22f951a",
+      "callIds": [
+        "66603d4f9153d6ce36e1"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in hashTagsFromSubject, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/socialSharePack.ts",
+          "marker": "const tags = Array.from("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/socialSharePack.ts",
+      "sourceSha256": "e753abbfe0795b9e2362d5ac28e1d3974500091b4515e2f42cee80e5d22f951a",
+      "callIds": [
+        "3f35d7a99738940921d7"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in tagList, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/socialSharePack.ts",
+          "marker": "return Array.from(new Set([...words, 'ai art', 'xroga', 'digital art', 'creative']));"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/terminal/voiceConversation.ts",
+      "sourceSha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278",
+      "callIds": [
+        "f69fd1fcf672d0451697"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in acceptMicStream, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/terminal/voiceConversation.ts",
+          "marker": "Array.from(tracks).forEach((track) => track.stop());"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/xrogaFileExports.ts",
+      "sourceSha256": "771f7f75bff7d39c9b05c230ae37cd6bb3fc287bcd09a187acb37e8337a89807",
+      "callIds": [
+        "53953a7522a9f4a6ec38"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in exportDocumentPdf, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/xrogaFileExports.ts",
+          "marker": "return { filename: `${fileStem(block.title, 'document')}.pdf`, blob: new Blob([Uint8Array.from(bytes)], { type: 'application/pdf' }) };"
+        }
+      ]
+    },
+    {
       "path": "backend/src/community/service.ts",
       "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
       "callIds": ["78935998c35b555e2aae", "6a416d1dca693768c1db"],

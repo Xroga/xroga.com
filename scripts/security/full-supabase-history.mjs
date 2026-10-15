@@ -44,7 +44,9 @@ try {
   const before = await db.query("select id,user_id,name from public.projects order by id");
   const policies = await db.query("select schemaname,tablename,policyname from pg_policies where schemaname='public' order by tablename,policyname");
   const filesBefore=(await db.query('select id,project_id,file_name,content,file_url from public.project_files order by id')).rows;
+  const auditBefore=(await db.query("insert into public.production_audit_log(actor_id,user_id,project_id,action,target_type,outcome,metadata) values($1,$1,$2,'fixture.pre-upgrade','fixture','verified','{\"synthetic\":true}') returning *",[owner,project])).rows;
   await apply(db,upgradeFiles,'upgrade');
+  assert.deepEqual((await db.query('select * from public.production_audit_log where id=$1',[auditBefore[0].id])).rows,auditBefore);
   assert.deepEqual((await db.query('select id,project_id,file_name,content,file_url from public.project_files order by id')).rows,filesBefore);
   const fileEpochs=(await db.query('select delivery_version,storage_metadata from public.project_files')).rows;
   assert.ok(fileEpochs.every(row=>String(row.delivery_version)==='1'&&row.storage_metadata===null));
@@ -63,6 +65,13 @@ try {
     assert.equal((await db.query('select id from public.project_files')).rowCount,1);
   } finally { await db.query('rollback'); }
   await apply(db,upgradeFiles,'upgrade-reapply');
+  assert.deepEqual((await db.query('select * from public.production_audit_log where id=$1',[auditBefore[0].id])).rows,auditBefore);
+  await db.query('begin');
+  try {
+    await db.query('delete from auth.users where id=$1',[owner]);
+    assert.deepEqual((await db.query('select * from public.production_audit_log where id=$1',[auditBefore[0].id])).rows,auditBefore);
+  } finally {await db.query('rollback');}
+  evidence.preUpgradeAuditRowsPreservedAfterDeletion=true;
   evidence.upgrade='PASS'; save();
 } finally { await db.end(); }
 // Explicit LOCAL reset only; isolated workdir has no linked project or seed files.

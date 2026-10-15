@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4c335dc2681e4a86738c440f18dea523322aee76",
+  "source_sha": "9e26908fe366190cc04fdd6a5f5e736a1e2f1cde",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12464,7 +12464,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "02a0dbb8528c272fe2f21348b05b3d7d228e93653b7f5b077fc6ac8d686c9054"
+      "sha256": "fe2cddc99118ed9183dfb16434434b70cbaf80d335b673ce3d3a685e523117fc"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -17921,21 +17921,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 195,
+      "line": 191,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 245,
+      "line": 241,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 326,
+      "line": 322,
       "credentialsInUrl": false
     },
     {
@@ -24032,14 +24032,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 43,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 683,
+      "line": 679,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
