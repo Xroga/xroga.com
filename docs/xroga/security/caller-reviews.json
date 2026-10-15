@@ -161,23 +161,6 @@
       ]
     },
     {
-      "path": "backend/src/routes/phase1BusinessPreflight.ts",
-      "sourceSha256": "1c7b647b97510721b182a2bf054052ae25ffb2d9c8223ac778788bd1dbd4153b",
-      "callIds": [
-        "a4bd236f9d86c07f2ffc",
-        "cce0ff1b94d71f3be8f0"
-      ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Mounted after phase1AuthMiddleware. latestPendingConfirmation reads current-user pending metadata and selects an unexpired recent row; execution delegates to the claim service.",
-      "reason": "Latest intent selection instead of a displayed exact ID risks confirming a different action across concurrent conversations. Store errors appear as no pending action. Outcome/account authority remains open.",
-      "evidence": [
-        {
-          "path": "backend/src/routes/phase1BusinessPreflight.ts",
-          "marker": "latestPendingConfirmation"
-        }
-      ]
-    },
-    {
       "path": "backend/src/services/integrations/githubDeploy.ts",
       "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
       "callIds": [

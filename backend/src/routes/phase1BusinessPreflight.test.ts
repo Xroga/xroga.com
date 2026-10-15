@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import express from 'express';
+import type { AuthRequest } from '../middleware/auth.js';
 
-import { explicitConfirmationIntent } from './phase1BusinessPreflight.js';
+import router, { explicitConfirmationIntent } from './phase1BusinessPreflight.js';
 
 test('only explicit pending-action follow-ups bypass semantic planning', () => {
   assert.equal(explicitConfirmationIntent('Confirm it'), 'confirm');
@@ -18,5 +20,49 @@ test('new software and connected-app requests remain semantic-planner inputs', (
 
   for (const request of requests) {
     assert.equal(explicitConfirmationIntent(request), null);
+  }
+});
+
+test('ambiguous confirmation messages never select or execute a latest action across conversations', async () => {
+  const keys = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
+  const prior = keys.map(key => process.env[key]);
+  process.env.SUPABASE_URL = 'http://127.0.0.1:49193';
+  process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-only';
+  const original = globalThis.fetch;
+  const calls: string[] = [];
+  const app = express(); app.use(express.json());
+  app.use((req, _res, next) => { (req as AuthRequest).userId = '11111111-1111-4111-8111-111111111111'; next(); });
+  app.use(router); app.use((_req, res) => res.status(418).json({ semanticPlanner: true }));
+  const server = app.listen(0, '127.0.0.1'); await new Promise<void>(r => server.once('listening', r));
+  const address = server.address(); assert.ok(address && typeof address !== 'string');
+  const base = `http://127.0.0.1:${address.port}`;
+  globalThis.fetch = async (input, init) => {
+    const url = new URL(String(input instanceof Request ? input.url : input));
+    if (url.origin === base) return original(input, init);
+    calls.push(`${init?.method ?? 'GET'} ${url.origin}${url.pathname}`);
+    assert.equal(url.origin, process.env.SUPABASE_URL, 'No provider/paid model calls');
+    assert.equal(init?.method ?? 'GET', 'GET', 'No state changes');
+    assert.ok(!url.pathname.includes('business_action_confirmations'), 'No latest-row selection');
+    return Response.json([]);
+  };
+  const plan = (message: string, conversationId: string) => fetch(`${base}/plan`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, conversationId, confirmationId: 'untrusted-body-id' }),
+  });
+  try {
+    const replies = await Promise.all(['Confirm it', 'No, cancel that action', 'Proceed', 'Execute it'].map((message, i) => plan(message, `thread-${i}`)));
+    for (const reply of replies) {
+      assert.equal(reply.status, 200);
+      const body = await reply.json() as { directResponse: string; dispatch: string };
+      assert.equal(body.dispatch, 'chat'); assert.match(body.directResponse, /specific connected-app action/);
+      assert.doesNotMatch(body.directResponse, /Done|completed|already cancelled/);
+    }
+    assert.equal((await plan('Build a scheduling interface', 'ordinary')).status, 418);
+    assert.ok(calls.every(call => !call.includes('business_action_confirmations')));
+    assert.ok(calls.every(call => call.startsWith(`GET ${process.env.SUPABASE_URL}/rest/v1/`)));
+  } finally {
+    globalThis.fetch = original;
+    keys.forEach((key, i) => { if (prior[i] === undefined) delete process.env[key]; else process.env[key] = prior[i]; });
+    await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   }
 });

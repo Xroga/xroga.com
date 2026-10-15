@@ -1,18 +1,18 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "e8754368ab6f23c44996ff31b614e837f2c5f4495e6191d94c3403675aefe089",
+  "reviewRegistrySha256": "b7c312cd7426ba3a42a87a33cc719613bd249baacb14b2fc4294d330b59afe6e",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 162,
-    "persistenceCandidates": 677,
-    "ownerPredicateCandidates": 168,
+    "privilegedFactorySites": 161,
+    "persistenceCandidates": 675,
+    "ownerPredicateCandidates": 167,
     "reviewRequired": 0,
-    "reviewedCandidates": 677,
-    "unresolvedSafetyCandidates": 490,
+    "reviewedCandidates": 675,
+    "unresolvedSafetyCandidates": 488,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -21,7 +21,7 @@
     "SCOPED_BOUNDARY": 43,
     "NARROW_EXCEPTION": 8,
     "NOT_PERSISTENCE": 136,
-    "REVIEWED_GAP": 490
+    "REVIEWED_GAP": 488
   },
   "callers": [
     {
@@ -7243,48 +7243,6 @@
           {
             "path": "backend/src/routes/phase1.ts",
             "marker": "    Buffer\n      .from(\n        JSON.stringify("
-          }
-        ]
-      }
-    },
-    {
-      "id": "a4bd236f9d86c07f2ffc",
-      "path": "backend/src/routes/phase1BusinessPreflight.ts",
-      "line": 122,
-      "enclosing": "latestPendingConfirmation",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "1c7b647b97510721b182a2bf054052ae25ffb2d9c8223ac778788bd1dbd4153b",
-      "semanticReview": {
-        "authority": "Mounted after phase1AuthMiddleware. latestPendingConfirmation reads current-user pending metadata and selects an unexpired recent row; execution delegates to the claim service.",
-        "reason": "Latest intent selection instead of a displayed exact ID risks confirming a different action across concurrent conversations. Store errors appear as no pending action. Outcome/account authority remains open.",
-        "evidence": [
-          {
-            "path": "backend/src/routes/phase1BusinessPreflight.ts",
-            "marker": "latestPendingConfirmation"
-          }
-        ]
-      }
-    },
-    {
-      "id": "cce0ff1b94d71f3be8f0",
-      "path": "backend/src/routes/phase1BusinessPreflight.ts",
-      "line": 128,
-      "enclosing": "latestPendingConfirmation",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "business_action_confirmations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "1c7b647b97510721b182a2bf054052ae25ffb2d9c8223ac778788bd1dbd4153b",
-      "semanticReview": {
-        "authority": "Mounted after phase1AuthMiddleware. latestPendingConfirmation reads current-user pending metadata and selects an unexpired recent row; execution delegates to the claim service.",
-        "reason": "Latest intent selection instead of a displayed exact ID risks confirming a different action across concurrent conversations. Store errors appear as no pending action. Outcome/account authority remains open.",
-        "evidence": [
-          {
-            "path": "backend/src/routes/phase1BusinessPreflight.ts",
-            "marker": "latestPendingConfirmation"
           }
         ]
       }

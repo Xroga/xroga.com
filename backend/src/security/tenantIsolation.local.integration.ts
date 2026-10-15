@@ -796,6 +796,31 @@ test('foreign durable business confirmations cannot be read approved or cancelle
   const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${owner.token}`}},auth:{persistSession:false,autoRefreshToken:false}});
   assert.equal((await client.from('business_action_confirmations').select('*').eq('id',id)).error?.code,'42501');
 });
+test('real concurrent chat confirmation phrases leave all pending action identities unchanged', async(t) => {
+  const owner = users[0], ids: string[] = [];
+  t.after(async () => { if (ids.length) assert.equal((await admin.from('business_action_confirmations').delete().in('id', ids)).error, null); });
+  for (const conversation of ['first', 'second']) {
+    ids.push(await insert('business_action_confirmations', {
+      user_id: owner.id, status: 'pending', plan: { fixture: 'no executable action', conversation },
+      plan_digest: 'a'.repeat(64), summary: `REVIEW_${conversation}`, toolkit: 'fixture', risk: 'write',
+      expires_at: new Date(Date.now() + 600000).toISOString(),
+    }));
+  }
+  const snapshot = async () => {
+    const rows = await admin.from('business_action_confirmations').select('*').in('id', ids).order('id');
+    assert.equal(rows.error, null); return rows.data;
+  };
+  const before = await snapshot();
+  const replies = await Promise.all(['Confirm it', 'Cancel that action'].map((message, index) =>
+    request('/api/phase1/plan', owner.token, 'POST', { message, conversationId: `thread-${index}`, confirmationId: ids[index] })));
+  for (const reply of replies) {
+    assert.equal(reply.status, 200);
+    const body = await reply.json() as { directResponse: string };
+    assert.match(body.directResponse, /specific connected-app action/);
+  }
+  assert.deepEqual(await snapshot(), before);
+});
+
 test('real profile column grants reject self-promotion and auth metadata cannot supply admin authority',async()=>{
   const owner=users[0];
   const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${owner.token}`}},auth:{persistSession:false,autoRefreshToken:false}});

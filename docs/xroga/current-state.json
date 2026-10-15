@@ -6343,7 +6343,7 @@
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:19",
         "backend/src/ai/universal/semanticRequestPlanner.ts:23",
         "backend/src/routes/phase1.ts:17",
-        "backend/src/routes/phase1BusinessPreflight.ts:9",
+        "backend/src/routes/phase1BusinessPreflight.ts:3",
         "backend/src/services/BillingService.ts:9",
         "backend/src/services/integrations/businessAction.ts:15",
         "backend/src/services/integrations/businessRead.ts:11"
@@ -9648,7 +9648,7 @@
         "backend/src/ai/universal/universalContracts.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
         "backend/src/routes/phase1.ts:37",
-        "backend/src/routes/phase1BusinessPreflight.ts:14",
+        "backend/src/routes/phase1BusinessPreflight.ts:4",
         "backend/src/synthesis/canonicalFoundation.test.ts:4",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:8",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:8",
@@ -11539,7 +11539,6 @@
         "backend/src/routes/billingWebhook.ts:4",
         "backend/src/routes/dashboard.ts:3",
         "backend/src/routes/github.ts:3",
-        "backend/src/routes/phase1BusinessPreflight.ts:18",
         "backend/src/routes/terminalSessions.ts:13",
         "backend/src/security/serviceRoleGuard.ts:1",
         "backend/src/services/BillingService.ts:5",
@@ -15042,6 +15041,7 @@
         "backend/src/middleware/admin.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/github.settings.test.ts",
+        "backend/src/routes/phase1BusinessPreflight.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/security/accountRoutes.test.ts",
@@ -18947,72 +18947,44 @@
       "id": "surface:5bfcb6484e4868156948",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1BusinessPreflight.ts",
-      "sha256": "1c7b647b97510721b182a2bf054052ae25ffb2d9c8223ac778788bd1dbd4153b",
+      "sha256": "3ac11c05bfc000b8231e5638780c7a178bc18ad3b07bb230f13d11a155a0e8ee",
       "symbols": [
-        "PendingConfirmationRow",
-        "cancelled",
-        "confirmationIntent",
-        "confirmed",
-        "db",
-        "displayToolkitName",
-        "error",
         "explicitConfirmationIntent",
         "goalContract",
-        "latestPendingConfirmation",
-        "makeBusinessPlan",
+        "intent",
         "message",
-        "messageText",
         "normalized",
-        "now",
-        "pending",
-        "requireUserId",
         "router",
-        "rows",
-        "usage",
         "userId"
       ],
       "imports": [
         "../ai/quota.js",
         "../ai/universal/goalContract.js",
-        "../config/supabase.js",
         "../middleware/auth.js",
-        "../services/integrations/businessActionConfirmations.js",
         "express"
       ],
       "runtimeImports": [
         "backend/src/ai/quota.ts",
-        "backend/src/ai/universal/goalContract.ts",
-        "backend/src/config/supabase.ts",
-        "backend/src/services/integrations/businessActionConfirmations.ts"
+        "backend/src/ai/universal/goalContract.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/index.ts:29",
-        "backend/src/routes/phase1BusinessPreflight.test.ts:4"
+        "backend/src/routes/phase1BusinessPreflight.test.ts:6"
       ],
       "reachable": true,
-      "persistenceDependencies": [
-        "business_action_confirmations"
-      ],
+      "persistenceDependencies": [],
       "externalProviderDependencies": [
         "express"
       ],
       "authBoundary": [
         "backend/src/routes/phase1BusinessPreflight.ts#AuthRequest"
       ],
-      "tenantBoundary": [
-        "backend/src/routes/phase1BusinessPreflight.ts:128 (user_id)"
-      ],
+      "tenantBoundary": [],
       "approvalBoundary": [
-        "backend/src/routes/phase1BusinessPreflight.ts#PendingConfirmationRow",
-        "backend/src/routes/phase1BusinessPreflight.ts#cancelBusinessActionConfirmation",
-        "backend/src/routes/phase1BusinessPreflight.ts#confirmBusinessAction",
-        "backend/src/routes/phase1BusinessPreflight.ts#confirmationIntent",
-        "backend/src/routes/phase1BusinessPreflight.ts#confirmed",
-        "backend/src/routes/phase1BusinessPreflight.ts#explicitConfirmationIntent",
-        "backend/src/routes/phase1BusinessPreflight.ts#latestPendingConfirmation"
+        "backend/src/routes/phase1BusinessPreflight.ts#explicitConfirmationIntent"
       ],
       "costBoundary": [],
       "evidenceBoundary": [],
@@ -21504,7 +21476,6 @@
       ],
       "callers": [
         "backend/src/routes/phase1.ts:74",
-        "backend/src/routes/phase1BusinessPreflight.ts:22",
         "backend/src/services/integrations/businessAction.digest.test.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:4"
       ],
@@ -89077,9 +89048,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:144189a3d73335d58632",
+      "id": "registration:9974c7e8377c7eeb19fc",
       "sourcePath": "backend/src/routes/phase1BusinessPreflight.ts",
-      "line": 318,
+      "line": 20,
       "receiver": "router",
       "method": "post",
       "path": "/plan",
@@ -90315,10 +90286,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:939e5a708fa74773e1f5",
-      "registrationId": "registration:144189a3d73335d58632",
+      "id": "route:dfa205cc9dc94043deaf",
+      "registrationId": "registration:9974c7e8377c7eeb19fc",
       "sourcePath": "backend/src/routes/phase1BusinessPreflight.ts",
-      "line": 318,
+      "line": 20,
       "method": "POST",
       "path": "/api/phase1/plan",
       "mountChain": [
@@ -102016,7 +101987,7 @@
     {
       "id": "test-suite:bb1a3a635e9b70d6b649",
       "sourcePath": "backend/src/routes/phase1BusinessPreflight.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102198,7 +102169,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 59,
+      "declaredTests": 60,
       "skipLocations": [],
       "focusLocations": []
     },
