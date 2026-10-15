@@ -4,15 +4,15 @@
   "acceptanceStatus": "BLOCKED",
   "oauthEpoch": {
     "status": "IN PROGRESS",
-    "lifecycle": "NEGATIVE TEST PASSED",
+    "lifecycle": "INTEGRATION VERIFIED",
     "baseline": "b4d1b817027878358a94147c2e2315a87ee6fc9d",
     "scope": "Supabase, Vercel, CWS and GitHub authorization start through consumed state and conditional callback save, plus revision-bound Supabase/Vercel refresh",
     "rootCause": "Unconditional callback upsert could resurrect a disconnected credential after provider exchange. Refresh-token equality alone did not distinguish reused provider token values.",
     "fix": "Reuse credential_revision, serialize start/consume/save on the token row, require unexpired consumed receipt for callback saves, rotate revision on disconnect and every successful save. No absent-authority mirror fallback for these providers.",
     "focusedTests": 19,
     "localSqlAssertions": 89,
-    "integration": "PENDING exact-source two-client disposable Supabase",
-    "remaining": "Current CWS/GitHub extension requires exact-source disposable and full CI. Complete caller provenance, issued external credentials and production vault/KMS remain open. No full caller or command certified.",
+    "integration": "VERIFIED c659262feab9f7ad2a24a685ddefef516aa1df41, run38804182317 attempt2:76 migrations,64 security tests,3 browser tests,zero failures/skips. Attempt1 failed before migration/tests because the optional Linux CLI binary was missing.",
+    "remaining": "Complete caller provenance, issued external credentials and production vault/KMS remain open. No full caller or command certified.",
     "precedingIntegration": {
       "source": "f33a4e9f9cdbff619c030f1ea514aedf6dfc6b4f",
       "run": "38802283477",
@@ -27,15 +27,15 @@
   "workQueue": [
     {
       "item": "Supabase/Vercel epoch integration",
-      "status": "IN PROGRESS"
+      "status": "VERIFIED"
     },
     {
       "item": "CWS epoch and BYOK admission",
-      "status": "IN PROGRESS"
+      "status": "VERIFIED"
     },
     {
       "item": "GitHub authorization and connection persistence",
-      "status": "IN PROGRESS"
+      "status": "VERIFIED"
     },
     {
       "item": "Remaining caller root-cause groups",
@@ -99,10 +99,10 @@
     "result": "PASS twice on both branch and integrated candidate"
   },
   "verifiedBaseline": {
-    "branch": "f33a4e9f9cdbff619c030f1ea514aedf6dfc6b4f",
-    "integrated": "8322eb0d5fff8aa562a4244c17c43a3fc7b8a800",
-    "aggregateCi": "38802283726",
-    "isolatedCi": "38802283477",
+    "branch": "c659262feab9f7ad2a24a685ddefef516aa1df41",
+    "integrated": "3790f7ad820da8e1fe8b6e9e3bad49633734425b",
+    "aggregateCi": "38804181937",
+    "isolatedCi": "38804182317",
     "workflows": 11,
     "securityTests": 64,
     "newSourceCertified": false
@@ -120,6 +120,7 @@
     "registeredNarrowGlobalExceptions": 9
   },
   "dependency": {
+    "downstreamPatchStatus": "IN PROGRESS, four targeted fixtures and18 combined dependency/Cline tests pass locally. Hash-pinned braces depth and node-forge nested DER candidates require frozen-install/Docker/final-source CI. No npm waiver.",
     "aggregateHigh": 20,
     "backendHigh": 15,
     "frontendHigh": 7,
@@ -165,7 +166,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Verify current four-provider OAuth epoch source in disposable Supabase and repeated branch/integrated CI. Continue remaining dependency parser remediation and caller groups independently, then reconcile only semantically proven boundaries. Strict007 remains mandatory.",
+  "nextTask": "Verify downstream dependency patches and explicit Linux CLI binary installation in fresh CI. Continue remaining caller root groups, including GitHub metadata persistence receipts and stale token mirrors. Strict007 remains mandatory.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",

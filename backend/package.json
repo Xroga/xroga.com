@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "postinstall": "node scripts/cline-git-compat.mjs --apply",
-    "dev": "tsx watch src/index.ts",
-    "build": "node scripts/cline-git-compat.mjs --check && tsc",
-    "start": "node dist/index.js",
+    "postinstall": "node scripts/cline-git-compat.mjs --apply && node scripts/security-dependency-patches.mjs --apply",
+    "dev": "node scripts/security-dependency-patches.mjs --check && tsx watch src/index.ts",
+    "build": "node scripts/cline-git-compat.mjs --check && node scripts/security-dependency-patches.mjs --check && tsc",
+    "start": "node scripts/security-dependency-patches.mjs --check && node dist/index.js",
     "test": "npm run capabilities:check && tsx --test \"src/**/*.test.ts\"",
     "capabilities:generate": "node scripts/generate-capability-index.mjs",
     "capabilities:check": "node scripts/generate-capability-index.mjs --check"

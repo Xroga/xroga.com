@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postinstall": "node ../scripts/enforce-next-postcss.mjs",
-    "dev": "next dev",
-    "build": "next build",
+    "postinstall": "node ../scripts/enforce-next-postcss.mjs && node ../backend/scripts/security-dependency-patches.mjs --apply",
+    "dev": "node ../backend/scripts/security-dependency-patches.mjs --check && next dev",
+    "build": "node ../backend/scripts/security-dependency-patches.mjs --check && next build",
     "test": "cd .. && tsx --tsconfig frontend/tsconfig.json --test \"frontend/src/**/*.test.ts\"",
     "start": "next start",
     "lint": "next lint"

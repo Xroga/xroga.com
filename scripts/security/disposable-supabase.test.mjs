@@ -1,8 +1,12 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createPublicKey, verify } from 'node:crypto';
-import { assertDisposableConfiguration, assertDisposedStack, redactLocalLog, generateLocalSigningKey, generateLocalApiToken } from './disposable-supabase.mjs';
+import { assertDisposableConfiguration, assertDisposedStack, redactLocalLog, generateLocalSigningKey, generateLocalApiToken, disposableCliPackages } from './disposable-supabase.mjs';
 const safe = {CI:'true',XB01_DISPOSABLE_SUPABASE:'1',RUNNER_TEMP:'/tmp/xroga-fixture',GITHUB_ENV:'/tmp/fixture-env'};
+
+test('disposable CLI explicitly requires the matching pinned Linux binary instead of optional-install success',()=>{
+  assert.deepEqual(disposableCliPackages,['--package=supabase@2.120.0','--package=@supabase/cli-linux-x64@2.120.0']);
+});
 
 test('disposable teardown verifies stopped containers and retained volumes without touching another stack',()=>{
   const env={...safe,GITHUB_RUN_ID:'123',GITHUB_RUN_ATTEMPT:'2'};

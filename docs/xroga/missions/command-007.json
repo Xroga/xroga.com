@@ -83,6 +83,8 @@
     "scripts/xroga/check-runtime-config.mjs",
     "scripts/xroga/runtime-config.test.mjs",
     "backend/scripts/cline-git-compat.mjs",
+    "backend/scripts/security-dependency-patches.mjs",
+    "scripts/security/dependency-patches.test.mjs",
     "backend/vendor/cline/LICENSE",
     "backend/vendor/cline/NOTICE.txt",
     "scripts/ci/cline-compat.test.mjs",

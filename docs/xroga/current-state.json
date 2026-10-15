@@ -83303,7 +83303,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "ea37c4a3e13688ecffdcf5ba6ad72b12915ca224d8180e714d4252ca113d3305",
+      "sha256": "e88fdb10193a8350106da79670c69cc0f3b3f3c5df1c269e7fb2dbd5556b4e4c",
       "symbols": [
         "after",
         "append",
@@ -84462,7 +84462,7 @@
       "id": "surface:6d41f9a6f61b7c1b2c87",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/disposable-supabase.mjs",
-      "sha256": "627f93dc7b6a03880fbbda9640cbecea2a6fb5990e01c7a28a42e7d1804ec421",
+      "sha256": "be78ddf04b097513f4e4acd7e58486391d35ce538c8534d82242b20e122d4e6f",
       "symbols": [
         "anonKey",
         "apiPublishable",
@@ -84473,6 +84473,7 @@
         "cli",
         "data",
         "db",
+        "disposableCliPackages",
         "encode",
         "generateLocalApiToken",
         "generateLocalSigningKey",
@@ -85007,7 +85008,7 @@
       "id": "surface:40d79d4afb30fa60cebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/check-runtime-config.mjs",
-      "sha256": "89105660bb05aa72a4398bb33f8dae6279ac0915c12d3141b4f39bce8be1c1f6",
+      "sha256": "f25ef98759df02695500426b04419e74714a6f5e8c6f078c3646b74410c36017",
       "symbols": [
         "actualManifests",
         "api",
@@ -94471,9 +94472,10 @@
     {
       "id": "workflow:ca8597762ef09a8667e8",
       "sourcePath": ".github/workflows/agent-v2-dependency-lock.yml",
-      "sha256": "ca3090048c9b2d1c765e6c4d9927311a19eb0949c72e6f36a463b8e0bf2f7c8d",
+      "sha256": "1941e6f8d6779364be3a240b436c94e4ecd10decc14e009cd8e96e92619c275d",
       "sourceEntrypoints": [
         "backend/scripts/cline-git-compat.mjs",
+        "backend/scripts/security-dependency-patches.mjs",
         "scripts/ci/check-lockfile-integrity.mjs"
       ],
       "hasSchedule": false
@@ -94495,7 +94497,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "84621f33402a25a66609cbafb11fa2be94c35981020c619303e5bdbe7c78988d",
+      "sha256": "a1d7333dad855d2f2a3b3afb821d24e8035852420eea5d08c447fc57a9402daa",
       "sourceEntrypoints": [
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
@@ -104256,9 +104258,16 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:a40a69ab30eb31a81027",
+      "sourcePath": "scripts/security/dependency-patches.test.mjs",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:7ad4485dc12ff4206f8f",
       "sourcePath": "scripts/security/disposable-supabase.test.mjs",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

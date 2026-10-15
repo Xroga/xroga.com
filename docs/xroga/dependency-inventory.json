@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f33a4e9f9cdbff619c030f1ea514aedf6dfc6b4f",
+  "source_sha": "c659262feab9f7ad2a24a685ddefef516aa1df41",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11147,7 +11147,7 @@
   "source_hashes": [
     {
       "path": ".github/workflows/agent-v2-dependency-lock.yml",
-      "sha256": "ca3090048c9b2d1c765e6c4d9927311a19eb0949c72e6f36a463b8e0bf2f7c8d"
+      "sha256": "1941e6f8d6779364be3a240b436c94e4ecd10decc14e009cd8e96e92619c275d"
     },
     {
       "path": ".github/workflows/api-build-check.yml",
@@ -11159,7 +11159,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "84621f33402a25a66609cbafb11fa2be94c35981020c619303e5bdbe7c78988d"
+      "sha256": "a1d7333dad855d2f2a3b3afb821d24e8035852420eea5d08c447fc57a9402daa"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -11215,7 +11215,7 @@
     },
     {
       "path": "Dockerfile.api",
-      "sha256": "45653d0835aa7fdde5e6cca54967ef98fa1620148e29ff5839bce7c19c2d9cec"
+      "sha256": "96da18d0f7f7c68ad7774f9a848ba0f0501e295ef8fb4caf868787227879b500"
     },
     {
       "path": "backend/src/ai/architect.ts",
@@ -16559,7 +16559,7 @@
     },
     {
       "path": "scripts/xroga/check-runtime-config.mjs",
-      "sha256": "89105660bb05aa72a4398bb33f8dae6279ac0915c12d3141b4f39bce8be1c1f6"
+      "sha256": "f25ef98759df02695500426b04419e74714a6f5e8c6f078c3646b74410c36017"
     },
     {
       "path": "scripts/xroga/runtime-discovery.mjs",

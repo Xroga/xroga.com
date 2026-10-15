@@ -26,6 +26,9 @@ export function generateLocalApiToken(signingKey, role, now = Math.floor(Date.no
 }
 
 const privateValues = [];
+// Declare the Linux binary as required to npm exec. Otherwise a failed optional
+// package download can leave a runnable JS wrapper with no executable behind it.
+export const disposableCliPackages = ['--package=supabase@2.120.0','--package=@supabase/cli-linux-x64@2.120.0'];
 export function redactLocalLog(value, secrets = privateValues) {
   let text = String(value ?? '');
   for (const secret of [...secrets].filter(Boolean).sort((a,b)=>b.length-a.length)) text = text.replaceAll(secret,'[REDACTED]');
@@ -35,7 +38,8 @@ export function redactLocalLog(value, secrets = privateValues) {
     .replace(/("(?:d|password|jwt_secret|secret_key|service_role_key)"\s*:\s*")[^"]+/gi,'$1[REDACTED]');
 }
 function cli(workdir, args) {
-  const result = spawnSync('npx', ['--yes','supabase@2.120.0','--workdir',workdir,...args], {encoding:'utf8',maxBuffer:32*1024*1024});
+  if(process.platform!=='linux'||process.arch!=='x64')throw new Error('Disposable Supabase requires the pinned Linux x64 CI runner');
+  const result = spawnSync('npx', ['--yes',...disposableCliPackages,'supabase','--workdir',workdir,...args], {encoding:'utf8',maxBuffer:32*1024*1024});
   // CLI start/status print credentials. Capture, never relay those streams to logs/artifacts.
   if (result.status !== 0 || result.error) {
     const output = resolve(import.meta.dirname,'../../artifacts/batch-01-local-security');

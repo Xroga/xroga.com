@@ -17,6 +17,7 @@ RUN apt-get update -qq && \
 
 COPY package.json package-lock.json ./
 COPY scripts/cline-git-compat.mjs ./scripts/cline-git-compat.mjs
+COPY scripts/security-dependency-patches.mjs ./scripts/security-dependency-patches.mjs
 COPY vendor/cline ./vendor/cline
 
 RUN npm ci --include=dev

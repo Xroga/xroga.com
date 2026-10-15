@@ -15,6 +15,8 @@ test('canonical API build preserves compiled output and requires the pinned Git 
   }
   assert.throws(()=>validateApiBuildContract(docker,fly,{...backend,scripts:{...backend.scripts,postinstall:'echo done'}}),/Unsupported/);
   assert.throws(()=>validateApiBuildContract(docker.replace('RUN node scripts/cline-git-compat.mjs --apply',''),fly,backend),/Unsupported/);
+  assert.throws(()=>validateApiBuildContract(docker.replace('RUN node scripts/security-dependency-patches.mjs --apply',''),fly,backend),/Unsupported/);
+  assert.throws(()=>validateApiBuildContract(docker,fly,{...backend,scripts:{...backend.scripts,build:'node scripts/cline-git-compat.mjs --check && tsc'}}),/Unsupported/);
   assert.throws(()=>validateApiBuildContract(docker.replace('test -f dist/index.js','true'),fly,backend),/Unsupported/);
 });
 

@@ -1,5 +1,15 @@
 # Dependency decisions — not release approval
 
+## Pinned downstream parser candidates, 2026-10-16
+
+The two remaining high-advisory primitive families now have narrow downstream patch candidates in backend/scripts/security-dependency-patches.mjs. Braces3.0.3 rejects parser nesting beyond128 and bounds compile/expand/stringify traversal, including directly supplied cyclic/deep ASTs. Node-forge1.4.0 requires the exact nested DigestAlgorithm element count while retaining valid optional NULL parameters. Primary advisories still report no published fixed release: [braces](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) and [node-forge](https://github.com/advisories/GHSA-86w9-cpqp-85rv).
+
+Every original modified file is SHA256-pinned, every replacement anchor has an exact occurrence count, and unknown source/version fails closed. Existing lock graphs identify installed root, standalone and nested receivers. Original MIT/BSD-3-Clause licenses and copyright notices are preserved with an explicit downstream modification notice. No new runtime dependency or version concealment. Lifecycle hooks apply the same transforms, runtime/build hooks verify them, and ignore-scripts/Docker paths apply them explicitly. Future dependency updates must review the original hashes, regenerate the patch and pass regression tests. Removing a patch restores known vulnerable behavior and is not an approved release rollback.
+
+Local pinned Node22 evidence:18 combined dependency/Cline fixtures pass, including four new patch tests. These cover tamper/idempotency, bounded adversarial brace inputs and cyclic ASTs, real micromatch/fast-glob discovery, Tailwind watcher receiver resolution, RSA malformed nested DER rejection, valid signatures, X509 and jks-js PKCS12 roundtrip. The RSA fixture tests the malformed-DER invariant, not a complete low-exponent exploit. Frozen-install, Docker and final-source repeated branch/integrated CI remain required before marking remediation VERIFIED.
+
+Package versions and npm audit reports remain unchanged. The latest version-based counts remain aggregate43/high20/critical0, backend35/high15/critical0 and frontend12/high7/critical0, with overlapping scopes. These20 findings are recorded, not waived. This section supersedes the earlier statement that no reproducible patch candidate exists, but does not declare audit-clean or release acceptance.
+
 ## Version-qualified Undici receiver correction after 3e2748cc, 2026-10-15
 
 The previously withdrawn parent-scoped override is not reused. A separate minimal installation first proved that the version-qualified override `undici@^5.29.0: 6.28.1` selects only the old Dify/provider-utils3 receiver and preserves provider-utils5's required7.x receiver. Root and standalone backend manifests now use that selector. Their lock changes replace only Dify's5.29.0 with6.28.1 and remove its obsolete busboy2.1.1 dependency. Incidental resolver updates to other6.x/7.x copies were explicitly restored to the previously verified6.28.1/7.29.1 versions. No Cline, MCP, Git, frontend or browser package version changed.

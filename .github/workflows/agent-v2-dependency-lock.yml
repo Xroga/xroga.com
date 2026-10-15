@@ -8,6 +8,8 @@ on:
       - 'package.json'
       - 'backend/package.json'
       - 'backend/scripts/cline-git-compat.mjs'
+      - 'backend/scripts/security-dependency-patches.mjs'
+      - 'scripts/security/dependency-patches.test.mjs'
       - 'backend/vendor/cline/**'
       - 'backend/src/security/clineGitDependency.test.ts'
       - '.github/workflows/agent-v2-dependency-lock.yml'
@@ -19,6 +21,8 @@ on:
       - 'backend/package.json'
       - 'backend/package-lock.json'
       - 'backend/scripts/cline-git-compat.mjs'
+      - 'backend/scripts/security-dependency-patches.mjs'
+      - 'scripts/security/dependency-patches.test.mjs'
       - 'backend/vendor/cline/**'
       - 'backend/src/security/clineGitDependency.test.ts'
       - 'frontend/package-lock.json'
@@ -164,6 +168,8 @@ jobs:
 
           npm ci --ignore-scripts
           node backend/scripts/cline-git-compat.mjs --apply
+          node backend/scripts/security-dependency-patches.mjs --apply
+          node backend/scripts/security-dependency-patches.mjs --check
 
           cd backend
 
@@ -340,6 +346,9 @@ jobs:
             --prefix backend
 
           node backend/scripts/cline-git-compat.mjs --apply
+
+          node backend/scripts/security-dependency-patches.mjs --apply
+          node backend/scripts/security-dependency-patches.mjs --check
 
           cd backend
 

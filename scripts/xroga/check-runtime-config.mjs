@@ -50,9 +50,10 @@ export function validateRuntimeInventory(value, expectedNames = []) {
 }
 export function validateApiBuildContract(docker, fly, backend) {
   if (!docker.includes('test -f dist/index.js') || !docker.includes('"dist/index.js"') || !fly.includes('node dist/index.js')
-    || backend.scripts.build !== 'node scripts/cline-git-compat.mjs --check && tsc'
-    || backend.scripts.postinstall !== 'node scripts/cline-git-compat.mjs --apply'
-    || !docker.includes('RUN node scripts/cline-git-compat.mjs --apply')) {
+    || backend.scripts.build !== 'node scripts/cline-git-compat.mjs --check && node scripts/security-dependency-patches.mjs --check && tsc'
+    || backend.scripts.postinstall !== 'node scripts/cline-git-compat.mjs --apply && node scripts/security-dependency-patches.mjs --apply'
+    || !docker.includes('RUN node scripts/cline-git-compat.mjs --apply')
+    || !docker.includes('RUN node scripts/security-dependency-patches.mjs --apply')) {
     throw new Error('Unsupported/inconsistent API deployment build output or missing Git compatibility gate');
   }
 }
@@ -71,7 +72,7 @@ export function main() {
   const docker = read('Dockerfile.api'), fly = read('fly.api.toml'), vercel = JSON.parse(read('vercel.json'));
   const backend = JSON.parse(read('backend/package.json')), frontend = JSON.parse(read('frontend/package.json'));
   validateApiBuildContract(docker, fly, backend);
-  if (!vercel.buildCommand.includes('build') || !vercel.buildCommand.includes('frontend') || frontend.scripts.build !== 'next build') throw new Error('Unsupported frontend deployment build target');
+  if (!vercel.buildCommand.includes('build') || !vercel.buildCommand.includes('frontend') || frontend.scripts.build !== 'node ../backend/scripts/security-dependency-patches.mjs --check && next build') throw new Error('Unsupported frontend deployment build target');
   const actualManifests = ['Dockerfile.api', 'fly.api.toml', 'vercel.json'];
   for (const path of actualManifests) if (!inventory.manifests.some(row => row.path === path && row.presence === 'PRESENT')) throw new Error('Active deployment manifest is missing from inventory');
   for (const [path, content] of renderRuntimeOutputs(inventory)) if (!existsSync(join(root, path)) || read(path) !== content) throw new Error(`Runtime topology/docs drift: ${path}`);
