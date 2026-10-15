@@ -11,7 +11,37 @@ import {
   unlockedEntitlementMicroUsd,
   settleProviderBudget,
   finishFailedProviderReservation,
+  withProviderReservation,
 } from './providerBudget.js';
+
+test('invalid accounting values cannot authorize execution or poison local balances', async () => {
+  for (const invalid of [NaN, Infinity, -Infinity, -1, 1.5, Number.MAX_SAFE_INTEGER + 1]) {
+    assert.throws(() => estimateProviderReservationMicroUsd({ modelId: 'kimi_k3', estimatedInputTokens: invalid, maximumOutputTokens: 10 }));
+    assert.throws(() => actualProviderCostMicroUsd({ modelId: 'kimi_k3', inputTokens: 10, outputTokens: invalid }));
+    let executed = false;
+    await assert.rejects(withProviderReservation({ userId: 'invalid-amount', modelId: 'kimi_k3', estimatedInputTokens: invalid, maximumOutputTokens: 10,
+      execute: async () => { executed = true; return { inputTokens: 1, outputTokens: 1 }; } }));
+    assert.equal(executed, false);
+  }
+  assert.throws(() => estimateProviderReservationMicroUsd({ modelId: 'kimi_k3', estimatedInputTokens: 10, maximumOutputTokens: 10, billingTolerance: NaN }));
+});
+
+test('production cannot authorize provider execution using process-memory accounting', async () => {
+  const previous = process.env.NODE_ENV;
+  const previousKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  try {
+    process.env.NODE_ENV = 'production';
+    delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    let executed = false;
+    await assert.rejects(withProviderReservation({ userId: 'missing-store', modelId: 'kimi_k3', estimatedInputTokens: 10, maximumOutputTokens: 10,
+      execute: async () => { executed = true; return { inputTokens: 1, outputTokens: 1 }; } }), /Durable provider accounting is unavailable/);
+    assert.equal(executed, false);
+    await assert.rejects(getProviderEntitlementStatus('missing-store'), /Durable provider accounting is unavailable/);
+  } finally {
+    if (previous === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = previous;
+    if (previousKey === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY; else process.env.SUPABASE_SERVICE_ROLE_KEY = previousKey;
+  }
+});
 
 test('uses integer micro-USD and reserves more than the maximum estimated cost', () => {
   const actual = actualProviderCostMicroUsd({

@@ -53,7 +53,12 @@ const memoryCycles = new Map<string, MemoryCycle>();
 const memoryReservations = new Map<string, { userId: string; idempotencyKey: string; amount: number; status: string }>();
 
 function asSafeInteger(value: number): number {
+  if (!Number.isFinite(value) || value < 0 || value > Number.MAX_SAFE_INTEGER) throw new Error('Invalid provider accounting amount');
   return Math.max(0, Math.min(Number.MAX_SAFE_INTEGER, Math.round(value)));
+}
+
+function requireUsageCounts(...values: number[]): void {
+  if (values.some(value => !Number.isSafeInteger(value) || value < 0)) throw new Error('Invalid provider usage count');
 }
 
 export function estimateProviderReservationMicroUsd(input: {
@@ -62,6 +67,8 @@ export function estimateProviderReservationMicroUsd(input: {
   maximumOutputTokens: number;
   billingTolerance?: number;
 }): number {
+  requireUsageCounts(input.estimatedInputTokens, input.maximumOutputTokens);
+  if (input.billingTolerance !== undefined && (!Number.isFinite(input.billingTolerance) || input.billingTolerance < 1)) throw new Error('Invalid provider billing tolerance');
   const price = requirePricing(input.modelId);
   const inputCost = (Math.max(0, input.estimatedInputTokens) * price.inputUsdPer1M);
   const outputCost = (Math.max(0, input.maximumOutputTokens) * price.outputUsdPer1M);
@@ -77,6 +84,7 @@ export function actualProviderCostMicroUsd(input: {
   outputTokens: number;
   reasoningTokens?: number;
 }): number {
+  requireUsageCounts(input.inputTokens, input.outputTokens, input.cachedInputTokens ?? 0, input.reasoningTokens ?? 0);
   const price = requirePricing(input.modelId);
   const cachedInput = Math.min(Math.max(0, input.cachedInputTokens ?? 0), Math.max(0, input.inputTokens));
   const billableInput = Math.max(0, input.inputTokens - cachedInput);
@@ -123,7 +131,9 @@ function boundedPercent(numerator: number, denominator: number): number | null {
 }
 
 function hasDurableStore(): boolean {
-  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+  const configured = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+  if (!configured && process.env.NODE_ENV === 'production') throw new Error('Durable provider accounting is unavailable');
+  return configured;
 }
 
 export async function activatePaidCycle(input: {
@@ -134,7 +144,7 @@ export async function activatePaidCycle(input: {
 }): Promise<EntitlementStatus> {
   if (!input.providerReference.trim()) throw new Error('Paid cycle evidence reference is required');
   const duration = input.endsAt.getTime() - input.startsAt.getTime();
-  if (duration <= 0 || duration > 31 * 86_400_000) throw new Error('Invalid paid cycle period');
+  if (!Number.isFinite(duration) || duration <= 0 || duration > 31 * 86_400_000) throw new Error('Invalid paid cycle period');
   if (hasDurableStore()) {
     const { error } = await getSupabaseAdmin().rpc('activate_xroga_paid_cycle', {
       p_user_id: input.userId,
@@ -314,7 +324,10 @@ export async function reserveProviderBudget(input: {
       const atCapacity = status?.availableNowPercent != null && status.availableNowPercent <= 0;
       throw capacityUnavailableError(atCapacity, status?.nextUnlockAt ?? null);
     }
-    const row = result.data as unknown as { id: string; reserved_micro_usd: number; price_version: string };
+    const row = result.data as unknown as { id: string; reserved_micro_usd: number; price_version: string } | null;
+    if (!row || typeof row.id !== 'string' || !row.id.trim() ||
+      !Number.isSafeInteger(Number(row.reserved_micro_usd)) || Number(row.reserved_micro_usd) < amount ||
+      row.price_version !== PROVIDER_PRICE_VERSION) throw new Error('Provider reservation evidence is invalid');
     return { id: row.id, reservedMicroUsd: Number(row.reserved_micro_usd), priceVersion: row.price_version };
   }
 
@@ -365,6 +378,8 @@ export async function settleProviderBudget(input: {
   reservation: ProviderReservation;
   result: ProviderUsageResult;
 }): Promise<void> {
+  requireUsageCounts(input.result.toolCalls ?? 0, input.result.searchCalls ?? 0);
+  if (!Number.isSafeInteger(input.reservation.reservedMicroUsd) || input.reservation.reservedMicroUsd < 0) throw new Error('Provider reservation evidence is invalid');
   const actual = actualProviderCostMicroUsd({ modelId: input.modelId, ...input.result });
   if (actual > input.reservation.reservedMicroUsd) {
     throw new Error('Provider cost exceeded the conservative reservation');

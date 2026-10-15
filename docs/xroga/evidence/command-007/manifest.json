@@ -1,6 +1,28 @@
 {
   "command": "007",
   "status": "IN_PROGRESS_RELEASE_BLOCKED",
+  "continuationAfterC08": {
+    "verifiedFeatureSha": "c08ac476f0b15c04c80863541119195bfddb3f95",
+    "verifiedIntegratedSha": "295dafd65a9412398a7d01952ce707b13f300fbe",
+    "aggregateCi": "https://github.com/Xroga/xroga.com/actions/runs/38771971494",
+    "isolatedCi": "https://github.com/Xroga/xroga.com/actions/runs/38771972389",
+    "allElevenWorkflows": "PASS_INDEPENDENTLY_QUERIED",
+    "baselineEachTree": { "repeats": 2, "stages": 21, "backend": 2844, "frontendBranch": 1043, "frontendIntegrated": 1063, "validationFixtures": 103, "fail": 0, "skipped": 0 },
+    "candidateLocalBackend": { "tests": 2850, "pass": 2832, "fail": 0, "skipped": 18, "platform": "Windows", "build": "PASS", "canonicalZeroSkipGate": "NOT_SATISFIED_LOCALLY" },
+    "candidateFocused": { "runCreationResumeReplay": 7, "confirmationClaim": 1, "providerBudget": 12, "buildIdentityAndPersistence": 4, "dependencyAndAuditFixtures": 12, "actualDocumentExports": 4 },
+    "callerRegister": { "total": 666, "reviewed": 552, "unreviewed": 114, "reviewedGaps": 382, "unresolved": 496 },
+    "laterReferralAndRouteTests": { "pass": 13, "fail": 0, "skipped": 0, "priorFullBackendResultCoversTheseChanges": false },
+    "dependencyCommit": "8a7bdd90",
+    "aggregateHigh": 22,
+    "critical": 0,
+    "realDurableCreationCase": "ADDED_PENDING_NEW_SOURCE_DISPOSABLE_CI",
+    "newSourceCi": "PENDING",
+    "full007": "BLOCKED",
+    "commands008Through010": "GATED_IMPLEMENTATION_NOT_STARTED_SOURCE_PREPARATION_ONLY",
+    "realR2": "NOT_EXECUTED",
+    "productionParity": "NOT_CERTIFIED",
+    "additionalSpend": 0
+  },
   "scopedProof20261015": {
     "featureSha":"c41a5ac71827263ab542adc2b474544caa76027b",
     "integratedRuntimeSha":"5fc967fb9d5f6017a12d1e4e1e836d676726e633",

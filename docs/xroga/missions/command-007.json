@@ -10,6 +10,14 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/services/referralService.ts",
+    "backend/src/services/referralService.failure.test.ts",
+    "backend/src/ai/providerBudget.evidence.test.ts",
+    "backend/src/ai/runStore.creation.test.ts",
+    "backend/src/services/integrations/businessActionConfirmations.ts",
+    "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+    "backend/src/services/memory/buildProjectStore.ts",
+    "backend/src/services/memory/buildProjectStore.failure.test.ts",
     "backend/src/services/integrations/supabaseAuth.ts",
     "backend/src/services/integrations/pluginPermissionPolicy.ts",
     "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
@@ -235,6 +243,12 @@
     }
   },
   "tests": [
+    {
+      "command": "node --import tsx --test backend/src/ai/runStore.creation.test.ts backend/src/services/integrations/businessActionConfirmations.claim.test.ts backend/src/ai/providerBudget.evidence.test.ts backend/src/services/memory/buildProjectStore.failure.test.ts",
+      "scope": "Loopback persistence failure, claim predicates, malformed reservation receipts and local concurrent creation. Not real PostgreSQL or provider acceptance",
+      "negative": true,
+      "reference": "backend/src/ai/runStore.creation.test.ts"
+    },
     {
       "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/security/*.test.ts",
       "scope": "Issued context, direct and inherited owner predicates, real loopback route denial, cached/durable run ownership",

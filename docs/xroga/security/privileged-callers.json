@@ -1,27 +1,27 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ae1992f24a1d45fa34df0b3e59011b30ab296eb3fc45d3f9c845c6bc554e37ee",
+  "reviewRegistrySha256": "f3da1e9fe0f16b7cb4d4d1aa1fb9955537fc6c1bbca4ce3cda3a680a47dc8178",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 160,
-    "persistenceCandidates": 665,
+    "persistenceCandidates": 666,
     "ownerPredicateCandidates": 162,
-    "reviewRequired": 235,
-    "reviewedCandidates": 430,
-    "unresolvedSafetyCandidates": 495,
+    "reviewRequired": 114,
+    "reviewedCandidates": 552,
+    "unresolvedSafetyCandidates": 496,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 235,
+    "REVIEW_REQUIRED": 114,
     "SCOPED_BOUNDARY": 35,
     "NARROW_EXCEPTION": 6,
     "NOT_PERSISTENCE": 129,
-    "REVIEWED_GAP": 260
+    "REVIEWED_GAP": 382
   },
   "callers": [
     {
@@ -236,8 +236,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "execution_runs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2e6a037be5df43ef9be03d97a49f57ea7282250650b9490be4b210746dd5fb73"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "2e6a037be5df43ef9be03d97a49f57ea7282250650b9490be4b210746dd5fb73",
+      "semanticReview": {
+        "authority": "SupabaseExecutionStateStore builds issued tenant context from its constructor userId. Load filters owner/run and restoreOwnerBoundExecutionState checks stored owner/run/project against embedded state. Save delegates owner-bound global-key persistence to the existing helper.",
+        "reason": "Owner-bound row persistence and embedded consistency do not establish parent project/run authorization. Full constructor caller provenance, same-owner concurrency and lifecycle transition control remain unresolved. This record covers the persistence sites, not certification of the entire execution runtime.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/executionRuntime.ts",
+            "marker": "restoreOwnerBoundExecutionState"
+          }
+        ]
+      }
     },
     {
       "id": "bc91cc4f5de374d45df9",
@@ -247,8 +257,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2e6a037be5df43ef9be03d97a49f57ea7282250650b9490be4b210746dd5fb73"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "2e6a037be5df43ef9be03d97a49f57ea7282250650b9490be4b210746dd5fb73",
+      "semanticReview": {
+        "authority": "SupabaseExecutionStateStore builds issued tenant context from its constructor userId. Load filters owner/run and restoreOwnerBoundExecutionState checks stored owner/run/project against embedded state. Save delegates owner-bound global-key persistence to the existing helper.",
+        "reason": "Owner-bound row persistence and embedded consistency do not establish parent project/run authorization. Full constructor caller provenance, same-owner concurrency and lifecycle transition control remain unresolved. This record covers the persistence sites, not certification of the entire execution runtime.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/executionRuntime.ts",
+            "marker": "restoreOwnerBoundExecutionState"
+          }
+        ]
+      }
     },
     {
       "id": "9dbcd01e8394478492cf",
@@ -258,8 +278,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2e6a037be5df43ef9be03d97a49f57ea7282250650b9490be4b210746dd5fb73"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "2e6a037be5df43ef9be03d97a49f57ea7282250650b9490be4b210746dd5fb73",
+      "semanticReview": {
+        "authority": "SupabaseExecutionStateStore builds issued tenant context from its constructor userId. Load filters owner/run and restoreOwnerBoundExecutionState checks stored owner/run/project against embedded state. Save delegates owner-bound global-key persistence to the existing helper.",
+        "reason": "Owner-bound row persistence and embedded consistency do not establish parent project/run authorization. Full constructor caller provenance, same-owner concurrency and lifecycle transition control remain unresolved. This record covers the persistence sites, not certification of the entire execution runtime.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/executionRuntime.ts",
+            "marker": "restoreOwnerBoundExecutionState"
+          }
+        ]
+      }
     },
     {
       "id": "4c8aad696d1feea1377b",
@@ -497,180 +527,404 @@
       }
     },
     {
-      "id": "94160c03d0a2d95aed12",
+      "id": "69399cbc53adb1e48cd1",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 139,
+      "line": 149,
       "enclosing": "activatePaidCycle",
       "kind": "RPC_CANDIDATE",
       "target": "activate_xroga_paid_cycle",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "0fb7f6a04c16cffb79a9",
+      "id": "cebac520523e7750af6b",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 139,
+      "line": 149,
       "enclosing": "activatePaidCycle",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "9e0ce1c7c2dd82eeff66",
+      "id": "755cc9be6ebd49fdf53c",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 171,
+      "line": 181,
       "enclosing": "getProviderEntitlementStatus",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "750590340b111a64c3e2",
+      "id": "124208d0016fcbc7cbc5",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 171,
+      "line": 181,
       "enclosing": "getProviderEntitlementStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "897e84416dc1a9ecc959",
+      "id": "db5693de45b7d0dbc591",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 173,
+      "line": 183,
       "enclosing": "getProviderEntitlementStatus",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_billing_cycles",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "1a82f2721cfbdd97ff2f",
+      "id": "0073e6aa55133b15867b",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 173,
+      "line": 183,
       "enclosing": "getProviderEntitlementStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "5ceead64f69de3d0787e",
+      "id": "51256378255c76165a51",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 266,
+      "line": 276,
       "enclosing": "setUsagePacing",
       "kind": "RPC_CANDIDATE",
       "target": "set_xroga_usage_pacing",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "98d7bcb35ff0a71a93aa",
+      "id": "1702cdfcf0d67914f993",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 266,
+      "line": 276,
       "enclosing": "setUsagePacing",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "23685ffd6574040365b3",
+      "id": "e2d3167330a9a2fe2aa9",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 294,
+      "line": 304,
       "enclosing": "reserveProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "reserve_xroga_provider_budget",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "c3819cc2eefccb4b8ae4",
+      "id": "15d9c684147f39fda493",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 294,
+      "line": 304,
       "enclosing": "reserveProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "a044239cc184346943d1",
+      "id": "d5949983383a7a3ad482",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 306,
+      "line": 316,
       "enclosing": "reserveProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "bfce0d32663619ea4339",
+      "id": "c911f50140ca10cfe04f",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 306,
+      "line": 316,
       "enclosing": "reserveProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "ebfea21089c357735193",
+      "id": "dde861aeacaa1d1c163c",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 373,
+      "line": 388,
       "enclosing": "settleProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "settle_xroga_provider_budget",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "59a0ec210a9cc3b71c0e",
+      "id": "e2e3c8e4432a8fb9d311",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 373,
+      "line": 388,
       "enclosing": "settleProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "e21ba4af8298771d3be4",
+      "id": "b2034fc33172ee23f655",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 404,
+      "line": 419,
       "enclosing": "finishFailedProviderReservation",
       "kind": "RPC_CANDIDATE",
       "target": "release_xroga_provider_budget",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
-      "id": "430772c5e7385a770bf6",
+      "id": "7c0f2e006d135063a654",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 404,
+      "line": 419,
       "enclosing": "finishFailedProviderReservation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a",
+      "semanticReview": {
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Production missing-store execution now denies instead of using process memory. Invalid numeric input and insufficient/malformed reservation receipts deny before provider execution. Owner mismatch tests protect memory settlement/release. Remaining gaps: full upstream identity/payment-event provenance, SQL RPC semantics across every lifecycle, same-key changed-intent replay, expired memory cycles outside production, all provider route coverage and durable reconciliation. This is not full authority or cost acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ]
+      }
     },
     {
       "id": "b7e87dfbceb281533b94",
@@ -764,8 +1018,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "semanticReview": {
+        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
+        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/quota.ts",
+            "marker": "export async function recordUsage"
+          }
+        ]
+      }
     },
     {
       "id": "ef9bc4249b1f1a1ea138",
@@ -775,8 +1039,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_token_usage",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "semanticReview": {
+        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
+        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/quota.ts",
+            "marker": "export async function recordUsage"
+          }
+        ]
+      }
     },
     {
       "id": "3f7ebc2452934b91569a",
@@ -786,8 +1060,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "semanticReview": {
+        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
+        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/quota.ts",
+            "marker": "export async function recordUsage"
+          }
+        ]
+      }
     },
     {
       "id": "08dbd05001850f04fcab",
@@ -797,8 +1081,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_token_usage",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "semanticReview": {
+        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
+        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/quota.ts",
+            "marker": "export async function recordUsage"
+          }
+        ]
+      }
     },
     {
       "id": "4553b62b15acf23253a8",
@@ -808,8 +1102,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "semanticReview": {
+        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
+        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/quota.ts",
+            "marker": "export async function recordUsage"
+          }
+        ]
+      }
     },
     {
       "id": "1c0cb41d1b21e60ac90a",
@@ -819,8 +1123,18 @@
       "kind": "RPC_CANDIDATE",
       "target": "set_user_ai_plan_budget",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "semanticReview": {
+        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
+        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/quota.ts",
+            "marker": "export async function recordUsage"
+          }
+        ]
+      }
     },
     {
       "id": "7d4f5462b76808bef4ac",
@@ -830,8 +1144,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "semanticReview": {
+        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
+        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/quota.ts",
+            "marker": "export async function recordUsage"
+          }
+        ]
+      }
     },
     {
       "id": "c6d8629deea7c5578ce7",
@@ -841,8 +1165,18 @@
       "kind": "RPC_CANDIDATE",
       "target": "increment_user_token_usage",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "semanticReview": {
+        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
+        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/quota.ts",
+            "marker": "export async function recordUsage"
+          }
+        ]
+      }
     },
     {
       "id": "60f2bbea0da7d23af686",
@@ -852,8 +1186,18 @@
       "kind": "RPC_CANDIDATE",
       "target": "merge_user_model_usage",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "semanticReview": {
+        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
+        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/quota.ts",
+            "marker": "export async function recordUsage"
+          }
+        ]
+      }
     },
     {
       "id": "deaf2c316f526f91086e",
@@ -863,8 +1207,18 @@
       "kind": "RPC_CANDIDATE",
       "target": "insert_ai_usage_ledger",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "91dc74be7b5f533056d223d6c888055fc67c3972972b04f930b6f0c8d5b7fcac",
+      "semanticReview": {
+        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
+        "reason": "Database read errors can be interpreted as fresh/default usage, RPC result errors are not consistently checked and local counters precede durable accounting. Caller identity, payment admission, numeric validation, RPC implementation and concurrent spending require full resolution. No credit or tenant acceptance is granted.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/quota.ts",
+            "marker": "export async function recordUsage"
+          }
+        ]
+      }
     },
     {
       "id": "fe86ec4f53190788350f",
@@ -1032,169 +1386,340 @@
       }
     },
     {
-      "id": "843acd6527ef6f58c950",
+      "id": "d75d47cbae8757b9d745",
       "path": "backend/src/ai/runStore.ts",
-      "line": 87,
+      "line": 88,
       "enclosing": "persistRunHeartbeat",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "1049e48f8bfd5de73ec4",
+      "id": "6badd6b375699a87a01a",
       "path": "backend/src/ai/runStore.ts",
-      "line": 87,
+      "line": 88,
       "enclosing": "persistRunHeartbeat",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "8fd0091d8f9827fd98a5",
+      "id": "a0d334b99e8deedce707",
       "path": "backend/src/ai/runStore.ts",
-      "line": 409,
+      "line": 419,
       "enclosing": "resumeRunDurable",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "e4a4006c6fa47a4b21ee",
+      "id": "7d6affd9e4bb77158024",
       "path": "backend/src/ai/runStore.ts",
-      "line": 410,
+      "line": 420,
       "enclosing": "resumeRunDurable",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "913f44c4e2edd38785d8",
+      "id": "2a41e647ff4992cac220",
       "path": "backend/src/ai/runStore.ts",
-      "line": 719,
+      "line": 729,
       "enclosing": "persistConversationOnly",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "c37983227df4fb767155",
+      "id": "9a34ed3891e556cd65b7",
       "path": "backend/src/ai/runStore.ts",
-      "line": 725,
+      "line": 735,
       "enclosing": "persistConversationOnly",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "ab67c4e1248870a8d860",
+      "id": "dc0dca83399b66b35c4c",
       "path": "backend/src/ai/runStore.ts",
-      "line": 836,
+      "line": 846,
       "enclosing": "getRunAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "e73d11959e156c0cb3b9",
+      "id": "8e289a03ce0b59c8191c",
       "path": "backend/src/ai/runStore.ts",
-      "line": 838,
+      "line": 848,
       "enclosing": "getRunAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "1bfda3c833b2ab88f526",
+      "id": "6dd08527dab2b9397123",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1000,
+      "line": 1010,
       "enclosing": "requestRunCancellation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "f0462b64ef6e1debf288",
+      "id": "309bfa83ba22ea76bf2d",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1006,
+      "line": 1016,
       "enclosing": "requestRunCancellation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "0f28bf25d5dfdb69f0d8",
+      "id": "e100d9ab10d976396c74",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1128,
+      "line": 1138,
       "enclosing": "isRunCancellationRequested",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "72fff468126754645b5b",
+      "id": "9e4818b801310d7892c8",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1134,
+      "line": 1144,
       "enclosing": "isRunCancellationRequested",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "ff99b4b4713a498ae5a3",
+      "id": "b1aaa9bf42efe40fb96d",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1270,
+      "line": 1280,
       "enclosing": "listRunsForUserAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "47d7b2615497b408423b",
+      "id": "c44bd4daa5f6b697282e",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1276,
+      "line": 1286,
       "enclosing": "listRunsForUserAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
-      "id": "ccba02796f085a30050a",
+      "id": "fa89747b9718a8adda41",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1460,
+      "line": 1472,
       "enclosing": "persistToSupabase",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
+    },
+    {
+      "id": "33e320e736ad4345a69b",
+      "path": "backend/src/ai/runStore.ts",
+      "line": 1544,
+      "enclosing": "persistToSupabase",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "swarm_runs",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67",
+      "semanticReview": {
+        "authority": "Run creation accepts a server userId and embeds it. Conversation, cancellation, resume and history writes/reads have owner predicates; heartbeat uses a local lease and worker_id. getRunAsync permits an omitted owner and cancellation polling is ID-only. Global collision updates are delegated to persistOwnedRun.",
+        "reason": "Creation now uses an insert-only unique-key arbitration and discards failed local state/leases, with production missing-store denial and local concurrency tests. Remaining gaps: upstream identity for every exported caller, stale same-owner worker updates versus cancellation/lease transfer, unscoped read consumers, fail-open cancellation polling, schema bootstrap authority and fire-and-forget write failures.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runStore.creation.test.ts",
+            "marker": "durable creation is insert-only"
+          }
+        ]
+      }
     },
     {
       "id": "342b26a8975c7bea64e6",
@@ -1365,8 +1890,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "software_agent_checkpoints",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c081041e8ef9abcf4af81abd2eaf4e15738bba5288b800f7f7ab4ebb4cf47a3c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "c081041e8ef9abcf4af81abd2eaf4e15738bba5288b800f7f7ab4ebb4cf47a3c",
+      "semanticReview": {
+        "authority": "Supabase checkpoint load filters run_id and user_id. Save uses composite conflict key run_id,user_id, so this is not a global-key cross-owner overwrite. The inspected migration has no parent run/project FK; checkpointMatchesExecution separately compares run/project/repo/base hash on restoration.",
+        "reason": "Untrusted parent run/project references, full upstream user provenance, persisted embedded identity verification and concurrent stale checkpoint writes remain unresolved. Composite owner scoping alone does not authorize the parent resources or prove all restore paths invoke matching validation.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts",
+            "marker": "checkpointMatchesExecution"
+          }
+        ]
+      }
     },
     {
       "id": "4a0e14dc44e602b5dd0b",
@@ -1376,8 +1911,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c081041e8ef9abcf4af81abd2eaf4e15738bba5288b800f7f7ab4ebb4cf47a3c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "c081041e8ef9abcf4af81abd2eaf4e15738bba5288b800f7f7ab4ebb4cf47a3c",
+      "semanticReview": {
+        "authority": "Supabase checkpoint load filters run_id and user_id. Save uses composite conflict key run_id,user_id, so this is not a global-key cross-owner overwrite. The inspected migration has no parent run/project FK; checkpointMatchesExecution separately compares run/project/repo/base hash on restoration.",
+        "reason": "Untrusted parent run/project references, full upstream user provenance, persisted embedded identity verification and concurrent stale checkpoint writes remain unresolved. Composite owner scoping alone does not authorize the parent resources or prove all restore paths invoke matching validation.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts",
+            "marker": "checkpointMatchesExecution"
+          }
+        ]
+      }
     },
     {
       "id": "6670d6131fd79e76cc99",
@@ -1387,8 +1932,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "software_agent_checkpoints",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c081041e8ef9abcf4af81abd2eaf4e15738bba5288b800f7f7ab4ebb4cf47a3c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "c081041e8ef9abcf4af81abd2eaf4e15738bba5288b800f7f7ab4ebb4cf47a3c",
+      "semanticReview": {
+        "authority": "Supabase checkpoint load filters run_id and user_id. Save uses composite conflict key run_id,user_id, so this is not a global-key cross-owner overwrite. The inspected migration has no parent run/project FK; checkpointMatchesExecution separately compares run/project/repo/base hash on restoration.",
+        "reason": "Untrusted parent run/project references, full upstream user provenance, persisted embedded identity verification and concurrent stale checkpoint writes remain unresolved. Composite owner scoping alone does not authorize the parent resources or prove all restore paths invoke matching validation.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts",
+            "marker": "checkpointMatchesExecution"
+          }
+        ]
+      }
     },
     {
       "id": "a52351b1c608251b6bd5",
@@ -1398,8 +1953,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c081041e8ef9abcf4af81abd2eaf4e15738bba5288b800f7f7ab4ebb4cf47a3c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "c081041e8ef9abcf4af81abd2eaf4e15738bba5288b800f7f7ab4ebb4cf47a3c",
+      "semanticReview": {
+        "authority": "Supabase checkpoint load filters run_id and user_id. Save uses composite conflict key run_id,user_id, so this is not a global-key cross-owner overwrite. The inspected migration has no parent run/project FK; checkpointMatchesExecution separately compares run/project/repo/base hash on restoration.",
+        "reason": "Untrusted parent run/project references, full upstream user provenance, persisted embedded identity verification and concurrent stale checkpoint writes remain unresolved. Composite owner scoping alone does not authorize the parent resources or prove all restore paths invoke matching validation.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts",
+            "marker": "checkpointMatchesExecution"
+          }
+        ]
+      }
     },
     {
       "id": "3fba7dbe0551574fe56b",
@@ -1430,8 +1995,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d",
+      "semanticReview": {
+        "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
+        "reason": "No hard-limit acceptance: missing store skips accounting, lookup errors can produce a null cycle, and failures are logged. Full caller ownership, provider reservation coverage, numeric validation and reconciliation after partial writes remain open. Do not use this telemetry as proof of zero spend.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/webBudget.ts",
+            "marker": "recordWebSpend"
+          }
+        ]
+      }
     },
     {
       "id": "d97bbed18063d9cc41d7",
@@ -1441,8 +2016,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_billing_cycles",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d",
+      "semanticReview": {
+        "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
+        "reason": "No hard-limit acceptance: missing store skips accounting, lookup errors can produce a null cycle, and failures are logged. Full caller ownership, provider reservation coverage, numeric validation and reconciliation after partial writes remain open. Do not use this telemetry as proof of zero spend.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/webBudget.ts",
+            "marker": "recordWebSpend"
+          }
+        ]
+      }
     },
     {
       "id": "5a8e3957447bad08faa1",
@@ -1452,8 +2037,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_web_usage",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d",
+      "semanticReview": {
+        "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
+        "reason": "No hard-limit acceptance: missing store skips accounting, lookup errors can produce a null cycle, and failures are logged. Full caller ownership, provider reservation coverage, numeric validation and reconciliation after partial writes remain open. Do not use this telemetry as proof of zero spend.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/webBudget.ts",
+            "marker": "recordWebSpend"
+          }
+        ]
+      }
     },
     {
       "id": "78935998c35b555e2aae",
@@ -5689,8 +6284,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
       "id": "8c9a6fa70d1467503ea2",
@@ -5700,8 +6305,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
       "id": "a63bc49679d81e61bd35",
@@ -5711,206 +6326,396 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "1c8b152062181a289397",
+      "id": "94f2bc6da435fa9c5411",
       "path": "backend/src/routes/projects.ts",
       "line": 82,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "e246fcccb307487bdcde",
+      "id": "0e4bbb18c5f00f20b933",
       "path": "backend/src/routes/projects.ts",
-      "line": 90,
+      "line": 95,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "bb35e9fb40ced7867e52",
+      "id": "1422b0b099d01cf9ba40",
       "path": "backend/src/routes/projects.ts",
-      "line": 109,
+      "line": 114,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_messages",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "0f8c83ce6ebc5bec0c31",
+      "id": "bc2311ad312a18225a72",
       "path": "backend/src/routes/projects.ts",
-      "line": 126,
+      "line": 131,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "36c02b2dfb939adb212b",
+      "id": "1df6e4d57140487a8ba4",
       "path": "backend/src/routes/projects.ts",
-      "line": 145,
+      "line": 150,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_messages",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "06f1b90d7110ef55901f",
+      "id": "9c62c80cb10ba4a0c86a",
       "path": "backend/src/routes/projects.ts",
-      "line": 158,
+      "line": 163,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "activity_logs",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "9018ac4293c860a0cdca",
+      "id": "d22154356fec4d5ba308",
       "path": "backend/src/routes/projects.ts",
-      "line": 169,
+      "line": 174,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "9e0ddf3c99666d531ed2",
+      "id": "3a12a9b907efc6e5c3d0",
       "path": "backend/src/routes/projects.ts",
-      "line": 172,
+      "line": 177,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "b766ec9365675a488168",
+      "id": "6738a2bf76f90f62b9ad",
       "path": "backend/src/routes/projects.ts",
-      "line": 184,
+      "line": 189,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "1544f26f183906bf30e2",
+      "id": "a9490857d396005b2b72",
       "path": "backend/src/routes/projects.ts",
-      "line": 191,
+      "line": 196,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "activity_logs",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "f040a57dea532b93d061",
+      "id": "e136cea3e988babfbb75",
       "path": "backend/src/routes/projects.ts",
-      "line": 202,
+      "line": 207,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "5be0e75686360ff85125",
+      "id": "88cf1d1b2242fc2fdfce",
       "path": "backend/src/routes/projects.ts",
-      "line": 205,
+      "line": 210,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "720f9b2c93f88a628476",
+      "id": "19a122cb9c88b3de9372",
       "path": "backend/src/routes/projects.ts",
-      "line": 217,
+      "line": 222,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_files",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "a2c1cd6b8aa4345b199c",
+      "id": "118297b8e25bd8471d96",
       "path": "backend/src/routes/projects.ts",
-      "line": 232,
+      "line": 237,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "75147026158e188f7967",
+      "id": "33bc105bd1743b727beb",
       "path": "backend/src/routes/projects.ts",
-      "line": 235,
+      "line": 240,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "e1ad8d1654b739c5d89e",
+      "id": "b69fed9cecfaf168e6bb",
       "path": "backend/src/routes/projects.ts",
-      "line": 247,
+      "line": 252,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_files",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "e05f725d6f08a1bb2cb3",
+      "id": "3848102dad8df73efa78",
       "path": "backend/src/routes/projects.ts",
-      "line": 263,
+      "line": 268,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
-      "id": "d4baf3e1415f62d434f4",
+      "id": "823b3029d8de168c8696",
       "path": "backend/src/routes/projects.ts",
-      "line": 264,
+      "line": 269,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074",
+      "semanticReview": {
+        "authority": "Router requires issued tenantContext and overwrites req.userId with that identity. Direct project queries bind user_id, child file reads follow owner project lookup, and create binds server user_id. Private delivery uses existing canonical helpers. Messages and activity writes derive their project from selected/created owner rows.",
+        "reason": "Repository identity lookup errors now return a safe503 before mutation, verified through actual Express/auth/Supabase-client loopback. Remaining gaps: unchecked message/activity persistence, partial-create retries and repository deduplication races, separate owner-check versus child-query atomicity, deletion versus audit insertion, DB failure versus not-found semantics and live file/provider acceptance. No whole-router security certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.integration.test.ts",
+            "marker": "project creation denies unavailable repository identity before any mutation"
+          }
+        ]
+      }
     },
     {
       "id": "676c6d166f859de70ed7",
@@ -7006,8 +7811,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "e74c47ff08725fc400be",
@@ -7017,8 +7832,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "1819e6d9f1ef9643530d",
@@ -7028,8 +7853,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "bf51c138cafd8afd0783",
@@ -7039,8 +7874,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "2613c2d2dba6835555d0",
@@ -7050,8 +7895,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "d47e3277b8dabd3c3bde",
@@ -7061,8 +7916,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "92dbff4fed69e6b29a38",
@@ -7072,8 +7937,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "460ec409f3f861f72ede",
@@ -7083,8 +7958,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "b1039c41ed0fe1452744",
@@ -7094,8 +7979,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "809571aba827da676341",
@@ -7105,8 +8000,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "fbb11a3fa1dc2ba19a25",
@@ -7116,41 +8021,81 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
-      "id": "de41105776ecab66afef",
+      "id": "ff5fcd4428ea2b9f6d5c",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 715,
+      "line": 721,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
-      "id": "316ca56de14aee46d6b0",
+      "id": "95863147dbe50ed4ca98",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 792,
+      "line": 798,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
-      "id": "49196f07826d1f24427c",
+      "id": "f853c09d25e5d82e74a9",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 864,
+      "line": 870,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e",
+      "semanticReview": {
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "36f74cf393d92fc17a74",
@@ -9491,136 +10436,256 @@
       "sourceSha256": "4a1e79b7861d6bcbba48176e4fc0d00922a3a67a6d2064782a8927e803e114b2"
     },
     {
-      "id": "53c01a3fdae14da3423b",
+      "id": "d0f7e4c9e9f483e973f0",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 40,
-      "enclosing": "findProjectIdByRepo",
+      "line": 48,
+      "enclosing": "lookupProjectIdByRepo",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "semanticReview": {
+        "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+        "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
+            "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+          }
+        ]
+      }
     },
     {
-      "id": "f47165a072602533df68",
+      "id": "0ba83f6f12ac6b4dffe6",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 40,
-      "enclosing": "findProjectIdByRepo",
+      "line": 48,
+      "enclosing": "lookupProjectIdByRepo",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "semanticReview": {
+        "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+        "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
+            "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+          }
+        ]
+      }
     },
     {
-      "id": "b4bfd24f94cb84bc67c0",
+      "id": "8e3c3aafa8aeeed846ba",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 98,
+      "line": 106,
       "enclosing": "ensureProjectIdByRepo",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "semanticReview": {
+        "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+        "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
+            "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+          }
+        ]
+      }
     },
     {
-      "id": "ef5da7d6314cf4de50bf",
+      "id": "9aff76584a5e0ce88eef",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 99,
+      "line": 107,
       "enclosing": "ensureProjectIdByRepo",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "semanticReview": {
+        "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+        "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
+            "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+          }
+        ]
+      }
     },
     {
-      "id": "5024a1f8741b5bdf99b6",
+      "id": "f326cca61907d3f01ee9",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 117,
+      "line": 125,
       "enclosing": "ensureProjectIdByRepo",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "semanticReview": {
+        "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+        "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
+            "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+          }
+        ]
+      }
     },
     {
-      "id": "39968a4b9699aba517fc",
+      "id": "c266d3b0a7a00ace084f",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 157,
+      "line": 165,
       "enclosing": "upsertBuildProject",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "semanticReview": {
+        "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+        "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
+            "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+          }
+        ]
+      }
     },
     {
-      "id": "5bee27feac43fbca798f",
+      "id": "cd0c0aee663b63ebee17",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 163,
+      "line": 171,
       "enclosing": "upsertBuildProject",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "semanticReview": {
+        "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+        "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
+            "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+          }
+        ]
+      }
     },
     {
-      "id": "860ad7ae73bb4aa8b67b",
+      "id": "0b2a636096961bea8143",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 182,
+      "line": 191,
       "enclosing": "upsertBuildProject",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "semanticReview": {
+        "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+        "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
+            "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+          }
+        ]
+      }
     },
     {
-      "id": "f342f74944512c039f53",
+      "id": "de3a9a65186f844a2b18",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 188,
+      "line": 197,
       "enclosing": "upsertBuildProject",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "semanticReview": {
+        "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+        "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
+            "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+          }
+        ]
+      }
     },
     {
-      "id": "3de1b023bf5dcf32a2e3",
+      "id": "c7ff68ea4f453fc9fb53",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 234,
+      "line": 243,
       "enclosing": "upsertBuildProject",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_messages",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "semanticReview": {
+        "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+        "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
+            "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+          }
+        ]
+      }
     },
     {
-      "id": "db3e925b243e6156e68a",
+      "id": "d67588ea57cd59e03c7d",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 247,
+      "line": 256,
       "enclosing": "upsertBuildProject",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_messages",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "semanticReview": {
+        "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+        "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
+            "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+          }
+        ]
+      }
     },
     {
-      "id": "50cda61538d3ce84a6c6",
+      "id": "730680f90d1443f560f2",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 258,
+      "line": 267,
       "enclosing": "upsertBuildProject",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "semanticReview": {
+        "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+        "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
+            "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+          }
+        ]
+      }
     },
     {
       "id": "75cd82142cc716ceb6ad",
@@ -9694,7 +10759,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in code. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -9714,8 +10779,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
       "id": "7701520407b3756d81bd",
@@ -9725,8 +10800,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
       "id": "bf78844540ca5a919d7c",
@@ -9736,8 +10821,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
       "id": "efa3981ba3565074ce95",
@@ -9747,8 +10842,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
       "id": "3d4eb0116c2715da8f7b",
@@ -9758,8 +10863,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "referrals",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
       "id": "a233ad4db9bd5cf25fdc",
@@ -9769,8 +10884,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "referral_rewards",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
       "id": "a6fd9b3299841886e86a",
@@ -9780,8 +10905,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
       "id": "551a54ecdec2fd29e830",
@@ -9791,8 +10926,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
       "id": "826cdaee7588c5a9ba41",
@@ -9802,52 +10947,102 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
-      "id": "c2393fc1cb73bdd5c764",
+      "id": "9916bb115e31c14ee9e0",
       "path": "backend/src/services/referralService.ts",
       "line": 51,
       "enclosing": "applyReferralCode",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "referrals",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
-      "id": "be5c0c6a83724bad5ce5",
+      "id": "b2cc8c681e9df7277ed8",
       "path": "backend/src/services/referralService.ts",
-      "line": 54,
+      "line": 55,
       "enclosing": "applyReferralCode",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "referrals",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
-      "id": "21453fd015211713530e",
+      "id": "6d51b4f95c009d8d0ddc",
       "path": "backend/src/services/referralService.ts",
-      "line": 56,
+      "line": 57,
       "enclosing": "applyReferralCode",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_referral_profiles",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
-      "id": "b31afe57da90544f1854",
+      "id": "421fba537f26adf1792b",
       "path": "backend/src/services/referralService.ts",
-      "line": 58,
+      "line": 59,
       "enclosing": "applyReferralCode",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "referrals",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822",
+      "semanticReview": {
+        "authority": "Mounted /api/referrals requires authMiddleware and passes req.userId, never body identity. Profile and reward reads constrain that identity. Referral summary selects display labels only for linked referred IDs. Code lookup is intentionally cross-user by referral code; self-referral is denied. Application writes pair referrer and authenticated referred identity.",
+        "reason": "Eligibility query errors now stop insertion, and a lost conditional profile update cannot return success. Compensation constrains created referral ID and both actors, and cleanup failures are reported. Remaining gaps: atomic referral/profile transaction and unique referred-user concurrency across processes, code-lookup abuse, corrupt referral relation labels, reward qualification and deletion/retry recovery. The existing Array.from false-positive was rechecked and retained separately.",
+        "evidence": [
+          {
+            "path": "backend/src/services/referralService.failure.test.ts",
+            "marker": "referral eligibility failure denies writes"
+          }
+        ]
+      }
     },
     {
       "id": "b44e1d18b04b2cee303f",
@@ -10232,8 +11427,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_files",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168",
+      "semanticReview": {
+        "authority": "storeProjectFile creates an internal context from supplied userId, checks the owned project before R2 or database persistence, embeds owner-bound private storage metadata and returns an application-private URL. Retired unscoped helpers throw. Current source references are the build helper and security fixtures.",
+        "reason": "The real disposable test proves owner-only database file delivery and foreign project denial precedes upload in transport tests. Remaining gaps: caller identity provenance, transaction separation between parent lookup and privileged insert, post-upload orphan cleanup/retry, live R2 privacy and application-backed provider verification. The already classified Buffer.from expression is excluded from this record.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real durable database file delivery is owner-only"
+          },
+          {
+            "path": "backend/src/services/storage/projectFiles.ts",
+            "marker": "await requireOwnedProject(context,projectId)"
+          }
+        ]
+      }
     },
     {
       "id": "87afe3452e6cb04201a6",
@@ -10243,8 +11452,22 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168",
+      "semanticReview": {
+        "authority": "storeProjectFile creates an internal context from supplied userId, checks the owned project before R2 or database persistence, embeds owner-bound private storage metadata and returns an application-private URL. Retired unscoped helpers throw. Current source references are the build helper and security fixtures.",
+        "reason": "The real disposable test proves owner-only database file delivery and foreign project denial precedes upload in transport tests. Remaining gaps: caller identity provenance, transaction separation between parent lookup and privileged insert, post-upload orphan cleanup/retry, live R2 privacy and application-backed provider verification. The already classified Buffer.from expression is excluded from this record.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real durable database file delivery is owner-only"
+          },
+          {
+            "path": "backend/src/services/storage/projectFiles.ts",
+            "marker": "await requireOwnedProject(context,projectId)"
+          }
+        ]
+      }
     },
     {
       "id": "4d90e9df28a674e3e539",
@@ -10403,8 +11626,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc",
+      "semanticReview": {
+        "authority": "Create loads the supplied owner's runtime session and validates matching owner/project/session, state, expiry and declared port before grant insertion. Latest/revoke filter user and project, optionally session. The global ID resolver uses the named signed_runtime_preview_resolution exception; gateway verifies signature and reloads the session before deriving an internal target.",
+        "reason": "Real disposable tests reject foreign-owner/project grants and foreign revocation. Remaining gaps: complete coordinator/request provenance and persisted run binding, parent-session validation versus grant-write race, signing-key custody and live proxy/socket revocation semantics. The global lookup is not public authorization merely because its query succeeds. No whole-preview certification is assigned.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/access.ts",
+            "marker": "session.userId !== grant.userId"
+          },
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "const target = authorizedPreviewTarget(grant, session);"
+          }
+        ]
+      }
     },
     {
       "id": "a0319ec25ccf91fd45de",
@@ -10414,8 +11651,22 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc",
+      "semanticReview": {
+        "authority": "Create loads the supplied owner's runtime session and validates matching owner/project/session, state, expiry and declared port before grant insertion. Latest/revoke filter user and project, optionally session. The global ID resolver uses the named signed_runtime_preview_resolution exception; gateway verifies signature and reloads the session before deriving an internal target.",
+        "reason": "Real disposable tests reject foreign-owner/project grants and foreign revocation. Remaining gaps: complete coordinator/request provenance and persisted run binding, parent-session validation versus grant-write race, signing-key custody and live proxy/socket revocation semantics. The global lookup is not public authorization merely because its query succeeds. No whole-preview certification is assigned.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/access.ts",
+            "marker": "session.userId !== grant.userId"
+          },
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "const target = authorizedPreviewTarget(grant, session);"
+          }
+        ]
+      }
     },
     {
       "id": "0916cab9d5ede773407d",
@@ -10425,8 +11676,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc",
+      "semanticReview": {
+        "authority": "Create loads the supplied owner's runtime session and validates matching owner/project/session, state, expiry and declared port before grant insertion. Latest/revoke filter user and project, optionally session. The global ID resolver uses the named signed_runtime_preview_resolution exception; gateway verifies signature and reloads the session before deriving an internal target.",
+        "reason": "Real disposable tests reject foreign-owner/project grants and foreign revocation. Remaining gaps: complete coordinator/request provenance and persisted run binding, parent-session validation versus grant-write race, signing-key custody and live proxy/socket revocation semantics. The global lookup is not public authorization merely because its query succeeds. No whole-preview certification is assigned.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/access.ts",
+            "marker": "session.userId !== grant.userId"
+          },
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "const target = authorizedPreviewTarget(grant, session);"
+          }
+        ]
+      }
     },
     {
       "id": "ed34254260ea85f46bfd",
@@ -10436,8 +11701,22 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc",
+      "semanticReview": {
+        "authority": "Create loads the supplied owner's runtime session and validates matching owner/project/session, state, expiry and declared port before grant insertion. Latest/revoke filter user and project, optionally session. The global ID resolver uses the named signed_runtime_preview_resolution exception; gateway verifies signature and reloads the session before deriving an internal target.",
+        "reason": "Real disposable tests reject foreign-owner/project grants and foreign revocation. Remaining gaps: complete coordinator/request provenance and persisted run binding, parent-session validation versus grant-write race, signing-key custody and live proxy/socket revocation semantics. The global lookup is not public authorization merely because its query succeeds. No whole-preview certification is assigned.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/access.ts",
+            "marker": "session.userId !== grant.userId"
+          },
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "const target = authorizedPreviewTarget(grant, session);"
+          }
+        ]
+      }
     },
     {
       "id": "a536c7931f40a8a285c1",
@@ -10447,8 +11726,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc",
+      "semanticReview": {
+        "authority": "Create loads the supplied owner's runtime session and validates matching owner/project/session, state, expiry and declared port before grant insertion. Latest/revoke filter user and project, optionally session. The global ID resolver uses the named signed_runtime_preview_resolution exception; gateway verifies signature and reloads the session before deriving an internal target.",
+        "reason": "Real disposable tests reject foreign-owner/project grants and foreign revocation. Remaining gaps: complete coordinator/request provenance and persisted run binding, parent-session validation versus grant-write race, signing-key custody and live proxy/socket revocation semantics. The global lookup is not public authorization merely because its query succeeds. No whole-preview certification is assigned.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/access.ts",
+            "marker": "session.userId !== grant.userId"
+          },
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "const target = authorizedPreviewTarget(grant, session);"
+          }
+        ]
+      }
     },
     {
       "id": "22480beb8bed5b2e6942",
@@ -10458,8 +11751,22 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc",
+      "semanticReview": {
+        "authority": "Create loads the supplied owner's runtime session and validates matching owner/project/session, state, expiry and declared port before grant insertion. Latest/revoke filter user and project, optionally session. The global ID resolver uses the named signed_runtime_preview_resolution exception; gateway verifies signature and reloads the session before deriving an internal target.",
+        "reason": "Real disposable tests reject foreign-owner/project grants and foreign revocation. Remaining gaps: complete coordinator/request provenance and persisted run binding, parent-session validation versus grant-write race, signing-key custody and live proxy/socket revocation semantics. The global lookup is not public authorization merely because its query succeeds. No whole-preview certification is assigned.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/access.ts",
+            "marker": "session.userId !== grant.userId"
+          },
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "const target = authorizedPreviewTarget(grant, session);"
+          }
+        ]
+      }
     },
     {
       "id": "da67044df80932a8d0d1",
@@ -10469,8 +11776,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc",
+      "semanticReview": {
+        "authority": "Create loads the supplied owner's runtime session and validates matching owner/project/session, state, expiry and declared port before grant insertion. Latest/revoke filter user and project, optionally session. The global ID resolver uses the named signed_runtime_preview_resolution exception; gateway verifies signature and reloads the session before deriving an internal target.",
+        "reason": "Real disposable tests reject foreign-owner/project grants and foreign revocation. Remaining gaps: complete coordinator/request provenance and persisted run binding, parent-session validation versus grant-write race, signing-key custody and live proxy/socket revocation semantics. The global lookup is not public authorization merely because its query succeeds. No whole-preview certification is assigned.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/access.ts",
+            "marker": "session.userId !== grant.userId"
+          },
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "const target = authorizedPreviewTarget(grant, session);"
+          }
+        ]
+      }
     },
     {
       "id": "6866cee4a6a6cf41dcd0",
@@ -10480,8 +11801,22 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc",
+      "semanticReview": {
+        "authority": "Create loads the supplied owner's runtime session and validates matching owner/project/session, state, expiry and declared port before grant insertion. Latest/revoke filter user and project, optionally session. The global ID resolver uses the named signed_runtime_preview_resolution exception; gateway verifies signature and reloads the session before deriving an internal target.",
+        "reason": "Real disposable tests reject foreign-owner/project grants and foreign revocation. Remaining gaps: complete coordinator/request provenance and persisted run binding, parent-session validation versus grant-write race, signing-key custody and live proxy/socket revocation semantics. The global lookup is not public authorization merely because its query succeeds. No whole-preview certification is assigned.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/access.ts",
+            "marker": "session.userId !== grant.userId"
+          },
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "const target = authorizedPreviewTarget(grant, session);"
+          }
+        ]
+      }
     },
     {
       "id": "1036a72174c51d074c91",

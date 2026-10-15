@@ -44,6 +44,7 @@ const userIndex = new Map<string, string[]>();
 const MAX_PER_USER = 40;
 const MAX_EVENTS_PER_RUN = 1000;
 const persistTimers = new Map<string, ReturnType<typeof setTimeout>>();
+const pendingCreations = new Set<string>();
 
 const RUN_WORKER_ID =
   randomUUID();
@@ -325,18 +326,27 @@ export async function createRunDurable(
   prompt: string,
   runId: string,
 ): Promise<SwarmRunRecord> {
-  if (await getRunAsync(runId)) {
+  if (pendingCreations.has(runId) || runs.has(runId)) {
     throw Object.assign(new Error('This run cannot be created again. Reconnect or use its recovery action.'), { code: 'RUN_ALREADY_EXISTS' });
   }
-  const rec = createRunHot(
-    userId,
-    prompt,
-    runId,
-  );
-
-  await persistToSupabase(rec);
-
-  return rec;
+  pendingCreations.add(runId);
+  let rec: SwarmRunRecord | undefined;
+  try {
+    rec = createRunHot(userId, prompt, runId);
+    // Creation must never use the update-capable persistence path. The unique
+    // database key, not a preceding read, arbitrates competing API processes.
+    await persistToSupabase(rec, true);
+    return rec;
+  } catch (error) {
+    if (rec && runs.get(runId) === rec) {
+      releaseLocalRun(runId);
+      runs.delete(runId);
+      userIndex.set(userId, (userIndex.get(userId) ?? []).filter(id => id !== runId));
+    }
+    throw error;
+  } finally {
+    pendingCreations.delete(runId);
+  }
 }
 
 /**
@@ -1447,10 +1457,12 @@ export async function persistRunState(
 
 async function persistToSupabase(
   rec: SwarmRunRecord,
+  createOnly = false,
 ): Promise<void> {
   if (
     !process.env.SUPABASE_SERVICE_ROLE_KEY
   ) {
+    if (process.env.NODE_ENV === 'production') throw new Error('Durable run storage is unavailable.');
     return;
   }
 
@@ -1528,5 +1540,13 @@ async function persistToSupabase(
                 : {}
           ),
         };
-  await persistOwnedRun(supabase, context, row);
+  if (createOnly) {
+    const { error } = await supabase.from('swarm_runs').insert(row);
+    if (error) {
+      if (error.code === '23505') throw Object.assign(new Error('This run already exists.'), { code: 'RUN_ALREADY_EXISTS' });
+      throw new Error('Durable run creation failed.');
+    }
+  } else {
+    await persistOwnedRun(supabase, context, row);
+  }
 }

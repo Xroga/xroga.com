@@ -79,12 +79,17 @@ router.post('/', async (req: AuthRequest, res) => {
   const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
 
   if (parsed.data.github_repo_name) {
-    const { data: existing } = await supabase
+    const { data: existing, error: lookupError } = await supabase
       .from('projects')
       .select('id')
       .eq('user_id', req.userId!)
       .eq('github_repo_name', parsed.data.github_repo_name)
       .maybeSingle();
+
+    if (lookupError) {
+      res.status(503).json({ error: 'Project identity could not be checked. Retry shortly.' });
+      return;
+    }
 
     if (existing) {
       const { data, error } = await supabase

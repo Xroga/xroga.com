@@ -670,6 +670,8 @@ export async function confirmBusinessAction(
         'status',
         'pending',
       )
+      .eq('plan_digest', row.plan_digest)
+      .gt('expires_at', claimedAt)
       .select(
         'id,user_id,status,plan,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code',
       )
@@ -710,7 +712,11 @@ export async function confirmBusinessAction(
       claimedRow.plan,
     ) ||
     claimedRow.plan.planDigest !==
-      claimedRow.plan_digest
+      claimedRow.plan_digest ||
+    claimedRow.plan_digest !== row.plan_digest ||
+    claimedRow.user_id !== userId ||
+    claimedRow.id !== id ||
+    claimedRow.status !== 'executing'
   ) {
     await db
       .from(

@@ -53,6 +53,9 @@ before(async () => {
         res.end(JSON.stringify(single?null:[]));return;
       }
       if (url.pathname.endsWith('/projects')) {
+        if (url.searchParams.get('github_repo_name') === 'eq.lookup-failure') {
+          res.statusCode=400;res.end(JSON.stringify({code:'XX000',message:'PRIVATE_LOOKUP_DIAGNOSTIC'}));return;
+        }
         if (req.method==='POST') {res.end(JSON.stringify({id:OWN_PROJECT,...body}));return;}
         const id = url.searchParams.get('id');
         const allowed = url.searchParams.get('user_id') === `eq.${OWNER}` && id !== `eq.${OTHER_PROJECT}`;
@@ -96,6 +99,13 @@ test('project creation ignores malicious owner fields and binds server identity'
   assert.equal(response.status,201);
   const insertion=calls.filter(call=>call.path.endsWith('/projects')&&call.method==='POST').at(-1);assert.equal(insertion?.body.user_id,OWNER);
 });
+test('project creation denies unavailable repository identity before any mutation', async () => {
+  const before=calls.filter(call=>call.method!=='GET').length;
+  const response=await fetch(`${apiUrl}/api/projects`,{method:'POST',headers:headers(),body:JSON.stringify({name:'Fixture',type:'app',github_repo_name:'lookup-failure',user_prompt:'must not persist'})});
+  assert.equal(response.status,503);assert.ok(!(await response.text()).includes('PRIVATE_LOOKUP_DIAGNOSTIC'));
+  assert.equal(calls.filter(call=>call.method!=='GET').length,before);
+});
+
 test('foreign cached conversation cannot mutate run history; unknown and foreign read the same safe state', async () => {
   const before=JSON.stringify(getRun(runId));
   const denied=await fetch(`${apiUrl}/api/swarm/runs/${runId}/conversation`,{method:'POST',headers:headers(),body:JSON.stringify({messages:[{role:'user',content:'Unauthorized overwrite'}]})});

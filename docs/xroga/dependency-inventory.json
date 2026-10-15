@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "71b16011bf30bf428685bf87a05ff42eb6cf4b58",
+  "source_sha": "8a7bdd901a4a1bf180c54ae1da81b2b98ca2054a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -8822,6 +8822,8 @@
     {
       "name": "NODE_ENV",
       "consuming_sources": [
+        "backend/src/ai/providerBudget.ts",
+        "backend/src/ai/runStore.ts",
         "backend/src/index.ts",
         "backend/src/routes/github.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
@@ -11468,7 +11470,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
+      "sha256": "af9128e6e50684c1a06b7175f21982ef60b2cd2f643edea197ad8a7017a62d9a"
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",
@@ -11524,7 +11526,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
+      "sha256": "84ae69659f1d1eb1db2e3a97c6960f25d4880a38e2d1bba63ab5ebd2716c6c67"
     },
     {
       "path": "backend/src/ai/runTrace.ts",
@@ -12352,7 +12354,7 @@
     },
     {
       "path": "backend/src/routes/projects.ts",
-      "sha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
+      "sha256": "6bca14c410d55a48b994d282ef65413310498f90644fed98895aee1ddb420074"
     },
     {
       "path": "backend/src/routes/publish.ts",
@@ -12464,7 +12466,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "f24d12c219458138ff577fc93b97a76a17f2b61dfd8faa2ff2fcf77bc0f98eb0"
+      "sha256": "f8012c64d4ca3c54ac4806aa5a5b3f0dae0a6e7f224b3d32b3e825b658ee8d9d"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12484,7 +12486,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "d4b92ac6e6cc9d5519446214b348bb9c2218a4efa6bf9076c052237a705f522d"
+      "sha256": "b96b830b4644c41a208e5c82b446d4120fe68679d6d7ebb71079d39bfaef5d1e"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
@@ -12576,7 +12578,7 @@
     },
     {
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "sha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+      "sha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c"
     },
     {
       "path": "backend/src/services/notificationService.ts",
@@ -12612,7 +12614,7 @@
     },
     {
       "path": "backend/src/services/referralService.ts",
-      "sha256": "ddeeb79fc684ed0dd25242ad0e0c40ef2ec58631071c7c08a9cdaf332f8db3ae"
+      "sha256": "ae16213a9620b403ec25e9f0f08c40816909a1480c6a7ec64bd9ceee9833e822"
     },
     {
       "path": "backend/src/services/responseCache.ts",
@@ -17911,42 +17913,42 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 40,
+      "line": 41,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 40,
+      "line": 41,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 244,
+      "line": 245,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 294,
+      "line": 295,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 375,
+      "line": 376,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 525,
+      "line": 526,
       "credentialsInUrl": false
     },
     {
@@ -18191,14 +18193,14 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 107,
+      "line": 115,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 176,
+      "line": 185,
       "credentialsInUrl": false
     },
     {
@@ -22615,21 +22617,28 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 55,
+      "line": 47,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 58,
+      "line": 56,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 1213,
+      "line": 59,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "line": 1223,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24043,7 +24052,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 809,
+      "line": 828,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24295,7 +24304,7 @@
     },
     {
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 147,
+      "line": 155,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

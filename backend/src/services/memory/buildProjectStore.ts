@@ -37,17 +37,23 @@ export async function findProjectIdByRepo(
   const repoName = githubRepoName ? normalizeRepoIdentity(githubRepoName) : null;
   if (!repoName || !userId) return null;
   try {
+    return await lookupProjectIdByRepo(userId, repoName);
+  } catch {
+    return null;
+  }
+}
+
+/** Mutation callers must distinguish an absent row from unavailable authority. */
+async function lookupProjectIdByRepo(userId: string, repoName: string): Promise<string | null> {
     const { data, error } = await getSupabaseAdmin()
       .from('projects')
       .select('id')
       .eq('user_id', userId)
-      .ilike('github_repo_name', repoName)
+      .ilike('github_repo_name', repoName.replace(/[\\%_]/g, '\\$&'))
       .maybeSingle();
-    if (error || !data) return null;
+    if (error) throw new Error('Project identity lookup unavailable');
+    if (!data) return null;
     return typeof data.id === 'string' ? data.id : null;
-  } catch {
-    return null;
-  }
 }
 
 function normalizeRepoIdentity(value: string): string | null {
@@ -88,7 +94,9 @@ export async function ensureProjectIdByRepo(
   const repoName = githubRepoName ? normalizeRepoIdentity(githubRepoName) : null;
   if (!repoName || !userId.trim()) return null;
 
-  const existing = await findProjectIdByRepo(userId, repoName);
+  let existing: string | null;
+  try { existing = await lookupProjectIdByRepo(userId, repoName); }
+  catch { return null; }
   if (existing) return existing;
 
   const id = projectIdentityId(userId, repoName);
@@ -121,10 +129,10 @@ export async function ensureProjectIdByRepo(
       .eq('user_id', userId)
       .maybeSingle();
     if (!readError && typeof persisted?.id === 'string') return persisted.id;
-    console.warn('[buildProjectStore] ensure project identity:', error?.message ?? readError?.message ?? 'row unavailable');
+    console.warn('[buildProjectStore] project identity unavailable');
     return null;
-  } catch (error) {
-    console.warn('[buildProjectStore] ensure project identity:', error instanceof Error ? error.message : 'unknown error');
+  } catch {
+    console.warn('[buildProjectStore] project identity unavailable');
     return null;
   }
 }
@@ -160,12 +168,13 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
   let projectId: string | null = null;
 
   if (repoName) {
-    const { data: existing } = await supabase
+    const { data: existing, error: lookupError } = await supabase
       .from('projects')
       .select('id')
       .eq('user_id', input.userId)
       .eq('github_repo_name', repoName)
       .maybeSingle();
+    if (lookupError) return null;
     projectId = existing?.id ?? null;
   }
 
@@ -179,9 +188,9 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
   };
 
   if (projectId) {
-    const { error } = await supabase.from('projects').update(row).eq('id', projectId).eq('user_id', input.userId);
-    if (error) {
-      console.warn('[buildProjectStore] update:', error.message);
+    const { data, error } = await supabase.from('projects').update(row).eq('id', projectId).eq('user_id', input.userId).select('id').maybeSingle();
+    if (error || !data) {
+      console.warn('[buildProjectStore] project update unavailable');
       return null;
     }
   } else {
@@ -191,7 +200,7 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
       .select('id')
       .single();
     if (error || !data) {
-      console.warn('[buildProjectStore] insert:', error?.message);
+      console.warn('[buildProjectStore] project insert unavailable');
       return null;
     }
     projectId = data.id;

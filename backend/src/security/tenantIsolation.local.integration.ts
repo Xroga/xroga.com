@@ -27,6 +27,7 @@ import { clearGitHubConnection, getGitHubToken, saveGitHubConnection } from '../
 import { clearVercelConnection, getVercelToken, saveVercelConnection } from '../services/integrations/vercelAuth.js';
 import { clearPkceSession, clearProviderToken, loadPkceSession, loadProviderToken, storePkceSession, storeProviderToken } from '../services/integrations/oauthPkceStore.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
+import { createRunDurable, getRun, activeRunIds } from '../ai/runStore.js';
 import { storeProjectFile } from '../services/storage/projectFiles.js';
 import { ownedFile } from '../services/storage/privateFileDelivery.js';
 import { signFileLink } from '../services/storage/fileDeliveryPolicy.js';
@@ -629,6 +630,24 @@ test('actual member identity cannot fetch privileged operational endpoints',asyn
   const foreign=await request(`/api/operations/products/${users[1].project}`,users[0].token);
   assert.equal(absent.status,403);assert.equal(foreign.status,403);
   const safe=await absent.json() as {error:string;code:string};assert.equal(safe.code,'forbidden');assert.equal(safe.error,'Operation is not permitted');
+});
+
+test('real durable creation cannot overwrite existing same-owner or foreign runs',async()=>{
+  const [owner,other]=users;
+  for(const existingOwner of [owner,other]) {
+    const id=`creation-collision-${randomUUID()}`;
+    await insert('swarm_runs',{id,user_id:existingOwner.id,prompt:'RETAINED_RUN_CANARY',status:'cancelled'});
+    const before=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.equal(before.error,null);
+    await assert.rejects(createRunDurable(owner.id,'must not overwrite',id),{code:'RUN_ALREADY_EXISTS'});
+    const after=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.equal(after.error,null);
+    assert.deepEqual(after.data,before.data);
+    assert.equal(getRun(id),null);assert.equal(activeRunIds().includes(id),false);
+  }
+  const id=`creation-concurrent-${randomUUID()}`;
+  const attempts=await Promise.allSettled([createRunDurable(owner.id,'first',id),createRunDurable(owner.id,'second',id)]);
+  assert.equal(attempts.filter(result=>result.status==='fulfilled').length,1);
+  const stored=await admin.from('swarm_runs').select('user_id,prompt').eq('id',id).single();assert.equal(stored.error,null);
+  assert.equal(stored.data?.user_id,owner.id);assert.equal(stored.data?.prompt,'first');
 });
 
 test('foreign durable business confirmations cannot be read approved or cancelled by changing IDs',async()=>{

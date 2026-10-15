@@ -48,14 +48,16 @@ export async function applyReferralCode(referredUserId: string, raw: string): Pr
   if (error) throw new Error('Referral lookup failed');
   if (!referrer) return { success: false, message: 'Referral code not found.' };
   if (referrer.user_id === referredUserId) return { success: false, message: 'Self-referrals are not allowed.' };
-  const { data: existing } = await db.from('referrals').select('id').eq('referred_id', referredUserId).maybeSingle();
+  const { data: existing, error: existingError } = await db.from('referrals').select('id').eq('referred_id', referredUserId).maybeSingle();
+  if (existingError) throw new Error('Referral eligibility unavailable');
   if (existing) return { success: false, message: 'A referral is already linked to this account.' };
   const evidence = `referral-application:${randomUUID()}`;
   const { data: referral, error: insertError } = await db.from('referrals').insert({ referrer_id: referrer.user_id, referred_id: referredUserId, code: normalized, qualification_status: 'pending', qualification_evidence: evidence }).select('id').single();
   if (insertError || !referral) throw new Error('Referral could not be recorded');
-  const { error: profileError } = await db.from('user_referral_profiles').update({ referred_by_user_id: referrer.user_id, referred_by_code: normalized, updated_at: new Date().toISOString() }).eq('user_id', referredUserId).is('referred_by_user_id', null);
-  if (profileError) {
-    await db.from('referrals').delete().eq('id', referral.id);
+  const { data: linked, error: profileError } = await db.from('user_referral_profiles').update({ referred_by_user_id: referrer.user_id, referred_by_code: normalized, updated_at: new Date().toISOString() }).eq('user_id', referredUserId).is('referred_by_user_id', null).select('user_id').maybeSingle();
+  if (profileError || !linked) {
+    const cleanup = await db.from('referrals').delete().eq('id', referral.id).eq('referred_id', referredUserId).eq('referrer_id', referrer.user_id);
+    if (cleanup.error) throw new Error('Referral link recovery is incomplete');
     throw new Error('Referral link could not be completed');
   }
   return { success: true, message: 'Referral recorded. Rewards remain pending until qualification evidence is verified.' };
