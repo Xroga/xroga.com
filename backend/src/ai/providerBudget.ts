@@ -385,7 +385,7 @@ export async function settleProviderBudget(input: {
     throw new Error('Provider cost exceeded the conservative reservation');
   }
   if (hasDurableStore()) {
-    const { error } = await getSupabaseAdmin().rpc('settle_xroga_provider_budget', {
+    const { data, error } = await getSupabaseAdmin().rpc('settle_xroga_provider_budget', {
       p_user_id: input.userId,
       p_reservation_id: input.reservation.id,
       p_actual_micro_usd: actual,
@@ -398,6 +398,24 @@ export async function settleProviderBudget(input: {
       p_search_calls: input.result.searchCalls ?? 0,
     });
     if (error) throw new Error('Provider reservation settlement failed');
+    const row = data as Record<string, unknown> | null;
+    const exactCount = (value: unknown, expected: number): boolean =>
+      (typeof value === 'number' || (typeof value === 'string' && /^\d+$/.test(value))) &&
+      Number.isSafeInteger(Number(value)) && Number(value) === expected;
+    if (!row || Array.isArray(row) ||
+      row.id !== input.reservation.id || row.user_id !== input.userId || row.status !== 'settled' ||
+      row.internal_route !== input.modelId || row.price_version !== input.reservation.priceVersion ||
+      !exactCount(row.reserved_micro_usd, input.reservation.reservedMicroUsd) ||
+      !exactCount(row.settled_micro_usd, actual) ||
+      row.provider_request_id !== (input.result.providerRequestId?.trim() || null) ||
+      !exactCount(row.actual_input_tokens, input.result.inputTokens) ||
+      !exactCount(row.cached_input_tokens, input.result.cachedInputTokens ?? 0) ||
+      !exactCount(row.output_tokens, input.result.outputTokens) ||
+      !exactCount(row.reasoning_tokens, input.result.reasoningTokens ?? 0) ||
+      !exactCount(row.tool_calls, input.result.toolCalls ?? 0) ||
+      !exactCount(row.search_calls, input.result.searchCalls ?? 0)) {
+      throw new Error('Provider settlement evidence is inconsistent or unavailable');
+    }
     return;
   }
   const row = memoryReservations.get(input.reservation.id);
@@ -445,12 +463,17 @@ export async function withProviderReservation<T extends ProviderUsageResult>(inp
   execute: () => Promise<T>;
 }): Promise<T> {
   const reservation = await reserveProviderBudget(input);
+  let providerCompleted = false;
   try {
     const result = await input.execute();
+    providerCompleted = true;
     await settleProviderBudget({ userId: input.userId, modelId: input.modelId, reservation, result });
     return result;
   } catch (error) {
-    await finishFailedProviderReservation({ userId: input.userId, reservation, error });
+    // A completed provider request may already have incurred cost. Accounting
+    // validation/storage failure must retain the hold, regardless of error text.
+    await finishFailedProviderReservation({ userId: input.userId, reservation,
+      error: providerCompleted ? new Error('Provider accounting outcome requires reconciliation') : error });
     throw error;
   }
 }
