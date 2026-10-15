@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c659262feab9f7ad2a24a685ddefef516aa1df41",
+  "source_sha": "315224514367ad897f14b7ab9b35419009fe80a4",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12311,7 +12311,7 @@
     },
     {
       "path": "backend/src/routes/github.ts",
-      "sha256": "891ac1fd7807cd7590acd120c8b6968454aea436c67e3d83c39c2924218ae57e"
+      "sha256": "ba7c0fd1389a061f1574770c25a00e53e67a3f66a7abacc41dcf6f6dc03af98f"
     },
     {
       "path": "backend/src/routes/growth.ts",
@@ -12491,7 +12491,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "04e67fdb2f7bd61026adbb223fb34fb5aa8d4567eb4502f24087744bcfc744fd"
+      "sha256": "5b42034332a0bd1a6c012490e8e0841899ec1298bff8e788f4212b601b046aea"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12539,7 +12539,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "sha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf"
+      "sha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84"
     },
     {
       "path": "backend/src/services/integrations/githubBranchAuthorization.ts",
@@ -17795,70 +17795,70 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 20,
+      "line": 21,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 21,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "localhost",
-      "protocol": "http:",
-      "path": "backend/src/routes/github.ts",
       "line": 22,
       "credentialsInUrl": false
     },
     {
-      "hostname": "127.0.0.1",
+      "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/routes/github.ts",
       "line": 23,
       "credentialsInUrl": false
     },
     {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/routes/github.ts",
+      "line": 24,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 31,
+      "line": 32,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/routes/github.ts",
-      "line": 46,
+      "line": 47,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 69,
+      "line": 70,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 91,
+      "line": 92,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 166,
+      "line": 167,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 188,
+      "line": 189,
       "credentialsInUrl": false
     },
     {

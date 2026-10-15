@@ -12,6 +12,7 @@
   "changedFiles": [
     "supabase/migrations/20261016000200_github_oauth_atomic_connection.sql",
     "backend/src/routes/github.oauth.test.ts",
+    "backend/src/routes/github.settings.test.ts",
     "supabase/migrations/20261016000100_oauth_authorization_epoch.sql",
     "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
     "backend/src/services/integrations/credentialEnvelope.ts",

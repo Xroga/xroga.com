@@ -1,18 +1,18 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "2295b44fffb3414af1810b4765b8d9af4fe283f32e6de5daff79328b6ef64961",
+  "reviewRegistrySha256": "e8754368ab6f23c44996ff31b614e837f2c5f4495e6191d94c3403675aefe089",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 163,
-    "persistenceCandidates": 679,
+    "privilegedFactorySites": 162,
+    "persistenceCandidates": 677,
     "ownerPredicateCandidates": 168,
     "reviewRequired": 0,
-    "reviewedCandidates": 679,
-    "unresolvedSafetyCandidates": 492,
+    "reviewedCandidates": 677,
+    "unresolvedSafetyCandidates": 490,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -21,7 +21,7 @@
     "SCOPED_BOUNDARY": 43,
     "NARROW_EXCEPTION": 8,
     "NOT_PERSISTENCE": 136,
-    "REVIEWED_GAP": 492
+    "REVIEWED_GAP": 490
   },
   "callers": [
     {
@@ -6762,18 +6762,18 @@
       }
     },
     {
-      "id": "12747a6fb6ec4eaa73a1",
+      "id": "740ef7f182fb3ff9c197",
       "path": "backend/src/routes/github.ts",
-      "line": 223,
+      "line": 224,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "891ac1fd7807cd7590acd120c8b6968454aea436c67e3d83c39c2924218ae57e",
+      "sourceSha256": "ba7c0fd1389a061f1574770c25a00e53e67a3f66a7abacc41dcf6f6dc03af98f",
       "semanticReview": {
-        "authority": "Authenticated status/settings use req.userId for github_integrations and user_integrations. Status resolves the canonical token then legacy metadata. Settings updates only that user's legacy row.",
-        "reason": "Settings can report success for zero rows and expose raw errors; metadata versus reconnect races remain. Full callback, repository target and external write authority are not certified.",
+        "authority": "Authenticated status/settings use req.userId. Settings now delegates to metadata-only saveGitHubSettings, requires a single exact active-owner receipt, returns409 for missing/revoked rows and safe503 for persistence errors. Status resolves the canonical token then legacy metadata.",
+        "reason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
         "evidence": [
           {
             "path": "backend/src/routes/github.ts",
@@ -6783,18 +6783,18 @@
       }
     },
     {
-      "id": "d165083d045dbcc9134c",
+      "id": "b9d1d3b6afe914fded86",
       "path": "backend/src/routes/github.ts",
-      "line": 225,
+      "line": 226,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "891ac1fd7807cd7590acd120c8b6968454aea436c67e3d83c39c2924218ae57e",
+      "sourceSha256": "ba7c0fd1389a061f1574770c25a00e53e67a3f66a7abacc41dcf6f6dc03af98f",
       "semanticReview": {
-        "authority": "Authenticated status/settings use req.userId for github_integrations and user_integrations. Status resolves the canonical token then legacy metadata. Settings updates only that user's legacy row.",
-        "reason": "Settings can report success for zero rows and expose raw errors; metadata versus reconnect races remain. Full callback, repository target and external write authority are not certified.",
+        "authority": "Authenticated status/settings use req.userId. Settings now delegates to metadata-only saveGitHubSettings, requires a single exact active-owner receipt, returns409 for missing/revoked rows and safe503 for persistence errors. Status resolves the canonical token then legacy metadata.",
+        "reason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
         "evidence": [
           {
             "path": "backend/src/routes/github.ts",
@@ -6804,60 +6804,18 @@
       }
     },
     {
-      "id": "86c762c54422d5080814",
+      "id": "997f802a20a9374530ba",
       "path": "backend/src/routes/github.ts",
-      "line": 235,
+      "line": 236,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "891ac1fd7807cd7590acd120c8b6968454aea436c67e3d83c39c2924218ae57e",
+      "sourceSha256": "ba7c0fd1389a061f1574770c25a00e53e67a3f66a7abacc41dcf6f6dc03af98f",
       "semanticReview": {
-        "authority": "Authenticated status/settings use req.userId for github_integrations and user_integrations. Status resolves the canonical token then legacy metadata. Settings updates only that user's legacy row.",
-        "reason": "Settings can report success for zero rows and expose raw errors; metadata versus reconnect races remain. Full callback, repository target and external write authority are not certified.",
-        "evidence": [
-          {
-            "path": "backend/src/routes/github.ts",
-            "marker": "repo_strategy"
-          }
-        ]
-      }
-    },
-    {
-      "id": "8b37fa4bae437ab9a2c7",
-      "path": "backend/src/routes/github.ts",
-      "line": 331,
-      "enclosing": "<module>",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "891ac1fd7807cd7590acd120c8b6968454aea436c67e3d83c39c2924218ae57e",
-      "semanticReview": {
-        "authority": "Authenticated status/settings use req.userId for github_integrations and user_integrations. Status resolves the canonical token then legacy metadata. Settings updates only that user's legacy row.",
-        "reason": "Settings can report success for zero rows and expose raw errors; metadata versus reconnect races remain. Full callback, repository target and external write authority are not certified.",
-        "evidence": [
-          {
-            "path": "backend/src/routes/github.ts",
-            "marker": "repo_strategy"
-          }
-        ]
-      }
-    },
-    {
-      "id": "0ae20826442f3e92f239",
-      "path": "backend/src/routes/github.ts",
-      "line": 332,
-      "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "github_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "891ac1fd7807cd7590acd120c8b6968454aea436c67e3d83c39c2924218ae57e",
-      "semanticReview": {
-        "authority": "Authenticated status/settings use req.userId for github_integrations and user_integrations. Status resolves the canonical token then legacy metadata. Settings updates only that user's legacy row.",
-        "reason": "Settings can report success for zero rows and expose raw errors; metadata versus reconnect races remain. Full callback, repository target and external write authority are not certified.",
+        "authority": "Authenticated status/settings use req.userId. Settings now delegates to metadata-only saveGitHubSettings, requires a single exact active-owner receipt, returns409 for missing/revoked rows and safe503 for persistence errors. Status resolves the canonical token then legacy metadata.",
+        "reason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
         "evidence": [
           {
             "path": "backend/src/routes/github.ts",
@@ -9534,18 +9492,18 @@
       }
     },
     {
-      "id": "b70ee379276adab760e6",
+      "id": "d5146ca43cf901817c09",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 13,
+      "line": 11,
       "enclosing": "getGitHubToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf",
+      "sourceSha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
       "semanticReview": {
         "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
-        "reason": "GitHub callback now requires a consumed durable authorization revision. Service-only RPC atomically updates primary and legacy authority, while revoke serializes on the same epoch and invalidates pending sessions. Route replay/late-save regressions and local SQL rollback assertions pass. New real two-client integration is pending. Primitive userId provenance, repository settings/target races, already-issued tokens, legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
+        "reason": "Durable authorization epoch, atomic callback save/revoke and real two-client integration verified atc659262f. Settings/default-repo now change only metadata, require an exact active-owner receipt and never rewrite plaintext token mirrors. Three focused GitHub tests pass; new actual settings owner/race integration pending. Primitive userId provenance, metadata versus reconnect/target races, already-issued tokens, existing legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
@@ -9555,18 +9513,18 @@
       }
     },
     {
-      "id": "9e57c6ce291da4a475fc",
+      "id": "8bbc1aefc2e270847934",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 15,
+      "line": 13,
       "enclosing": "getGitHubToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf",
+      "sourceSha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
       "semanticReview": {
         "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
-        "reason": "GitHub callback now requires a consumed durable authorization revision. Service-only RPC atomically updates primary and legacy authority, while revoke serializes on the same epoch and invalidates pending sessions. Route replay/late-save regressions and local SQL rollback assertions pass. New real two-client integration is pending. Primitive userId provenance, repository settings/target races, already-issued tokens, legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
+        "reason": "Durable authorization epoch, atomic callback save/revoke and real two-client integration verified atc659262f. Settings/default-repo now change only metadata, require an exact active-owner receipt and never rewrite plaintext token mirrors. Three focused GitHub tests pass; new actual settings owner/race integration pending. Primitive userId provenance, metadata versus reconnect/target races, already-issued tokens, existing legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
@@ -9576,18 +9534,18 @@
       }
     },
     {
-      "id": "80d4aa9a3397bd3252df",
+      "id": "ff751d80f168344fe806",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 24,
+      "line": 22,
       "enclosing": "getGitHubToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf",
+      "sourceSha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
       "semanticReview": {
         "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
-        "reason": "GitHub callback now requires a consumed durable authorization revision. Service-only RPC atomically updates primary and legacy authority, while revoke serializes on the same epoch and invalidates pending sessions. Route replay/late-save regressions and local SQL rollback assertions pass. New real two-client integration is pending. Primitive userId provenance, repository settings/target races, already-issued tokens, legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
+        "reason": "Durable authorization epoch, atomic callback save/revoke and real two-client integration verified atc659262f. Settings/default-repo now change only metadata, require an exact active-owner receipt and never rewrite plaintext token mirrors. Three focused GitHub tests pass; new actual settings owner/race integration pending. Primitive userId provenance, metadata versus reconnect/target races, already-issued tokens, existing legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
@@ -9597,18 +9555,18 @@
       }
     },
     {
-      "id": "19f880a066ae90d323b8",
+      "id": "7f998fefa7c4a4af4629",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 82,
+      "line": 80,
       "enclosing": "saveGitHubConnection",
       "kind": "RPC_CANDIDATE",
       "target": "save_github_oauth_connection",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf",
+      "sourceSha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
       "semanticReview": {
         "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
-        "reason": "GitHub callback now requires a consumed durable authorization revision. Service-only RPC atomically updates primary and legacy authority, while revoke serializes on the same epoch and invalidates pending sessions. Route replay/late-save regressions and local SQL rollback assertions pass. New real two-client integration is pending. Primitive userId provenance, repository settings/target races, already-issued tokens, legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
+        "reason": "Durable authorization epoch, atomic callback save/revoke and real two-client integration verified atc659262f. Settings/default-repo now change only metadata, require an exact active-owner receipt and never rewrite plaintext token mirrors. Three focused GitHub tests pass; new actual settings owner/race integration pending. Primitive userId provenance, metadata versus reconnect/target races, already-issued tokens, existing legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
@@ -9618,18 +9576,18 @@
       }
     },
     {
-      "id": "fe9e64d47a236dfa8cc8",
+      "id": "4e72ed7e46664a864fcd",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 82,
+      "line": 80,
       "enclosing": "saveGitHubConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf",
+      "sourceSha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
       "semanticReview": {
         "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
-        "reason": "GitHub callback now requires a consumed durable authorization revision. Service-only RPC atomically updates primary and legacy authority, while revoke serializes on the same epoch and invalidates pending sessions. Route replay/late-save regressions and local SQL rollback assertions pass. New real two-client integration is pending. Primitive userId provenance, repository settings/target races, already-issued tokens, legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
+        "reason": "Durable authorization epoch, atomic callback save/revoke and real two-client integration verified atc659262f. Settings/default-repo now change only metadata, require an exact active-owner receipt and never rewrite plaintext token mirrors. Three focused GitHub tests pass; new actual settings owner/race integration pending. Primitive userId provenance, metadata versus reconnect/target races, already-issued tokens, existing legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
@@ -9639,18 +9597,18 @@
       }
     },
     {
-      "id": "1d4403776376ef52007e",
+      "id": "d8c7d0bde0dddf656d0c",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 94,
+      "line": 92,
       "enclosing": "clearGitHubConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf",
+      "sourceSha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
       "semanticReview": {
         "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
-        "reason": "GitHub callback now requires a consumed durable authorization revision. Service-only RPC atomically updates primary and legacy authority, while revoke serializes on the same epoch and invalidates pending sessions. Route replay/late-save regressions and local SQL rollback assertions pass. New real two-client integration is pending. Primitive userId provenance, repository settings/target races, already-issued tokens, legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
+        "reason": "Durable authorization epoch, atomic callback save/revoke and real two-client integration verified atc659262f. Settings/default-repo now change only metadata, require an exact active-owner receipt and never rewrite plaintext token mirrors. Three focused GitHub tests pass; new actual settings owner/race integration pending. Primitive userId provenance, metadata versus reconnect/target races, already-issued tokens, existing legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
@@ -9660,18 +9618,18 @@
       }
     },
     {
-      "id": "33102ec273c5d27f3bef",
+      "id": "8a200819c73b59f40fe6",
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 96,
+      "line": 94,
       "enclosing": "clearGitHubConnection",
       "kind": "RPC_CANDIDATE",
       "target": "revoke_github_oauth_connection",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf",
+      "sourceSha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
       "semanticReview": {
         "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
-        "reason": "GitHub callback now requires a consumed durable authorization revision. Service-only RPC atomically updates primary and legacy authority, while revoke serializes on the same epoch and invalidates pending sessions. Route replay/late-save regressions and local SQL rollback assertions pass. New real two-client integration is pending. Primitive userId provenance, repository settings/target races, already-issued tokens, legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
+        "reason": "Durable authorization epoch, atomic callback save/revoke and real two-client integration verified atc659262f. Settings/default-repo now change only metadata, require an exact active-owner receipt and never rewrite plaintext token mirrors. Three focused GitHub tests pass; new actual settings owner/race integration pending. Primitive userId provenance, metadata versus reconnect/target races, already-issued tokens, existing legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
@@ -9681,39 +9639,39 @@
       }
     },
     {
-      "id": "cbd51a32daf85609f9c2",
-      "path": "backend/src/services/integrations/githubAuth.ts",
-      "line": 107,
-      "enclosing": "setGithubDefaultRepo",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf",
-      "semanticReview": {
-        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
-        "reason": "GitHub callback now requires a consumed durable authorization revision. Service-only RPC atomically updates primary and legacy authority, while revoke serializes on the same epoch and invalidates pending sessions. Route replay/late-save regressions and local SQL rollback assertions pass. New real two-client integration is pending. Primitive userId provenance, repository settings/target races, already-issued tokens, legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
-            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
-          }
-        ]
-      }
-    },
-    {
-      "id": "6f6e8123506c884fea1b",
+      "id": "9cfcc5a519e6e0cda19a",
       "path": "backend/src/services/integrations/githubAuth.ts",
       "line": 108,
-      "enclosing": "setGithubDefaultRepo",
+      "enclosing": "saveGitHubSettings",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf",
+      "sourceSha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
       "semanticReview": {
         "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
-        "reason": "GitHub callback now requires a consumed durable authorization revision. Service-only RPC atomically updates primary and legacy authority, while revoke serializes on the same epoch and invalidates pending sessions. Route replay/late-save regressions and local SQL rollback assertions pass. New real two-client integration is pending. Primitive userId provenance, repository settings/target races, already-issued tokens, legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
+        "reason": "Durable authorization epoch, atomic callback save/revoke and real two-client integration verified atc659262f. Settings/default-repo now change only metadata, require an exact active-owner receipt and never rewrite plaintext token mirrors. Three focused GitHub tests pass; new actual settings owner/race integration pending. Primitive userId provenance, metadata versus reconnect/target races, already-issued tokens, existing legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
+            "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2c1e9775b28e4419ca8c",
+      "path": "backend/src/services/integrations/githubAuth.ts",
+      "line": 108,
+      "enclosing": "saveGitHubSettings",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
+      "semanticReview": {
+        "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+        "reason": "Durable authorization epoch, atomic callback save/revoke and real two-client integration verified atc659262f. Settings/default-repo now change only metadata, require an exact active-owner receipt and never rewrite plaintext token mirrors. Three focused GitHub tests pass; new actual settings owner/race integration pending. Primitive userId provenance, metadata versus reconnect/target races, already-issued tokens, existing legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",

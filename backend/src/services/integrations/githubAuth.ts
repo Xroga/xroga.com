@@ -1,8 +1,6 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import {
   getGitHubTokenFromStorage,
-  isMissingTableError,
-  saveGitHubTokenToStorage,
   deleteGitHubTokenFromStorage,
 } from './githubTokenStore.js';
 
@@ -99,31 +97,27 @@ export async function clearGitHubConnection(userId: string): Promise<void> {
   if (!removed) throw new Error('GitHub disconnected, but legacy copy cleanup is pending. Retry shortly.');
 }
 
+/** Metadata-only write. Never refresh or recreate a credential or its legacy mirror. */
+export async function saveGitHubSettings(
+  userId: string, repoStrategy: GitHubRepoStrategy, defaultRepo: string | null,
+): Promise<boolean> {
+  if (!userId || !['auto', 'monorepo', 'manual'].includes(repoStrategy)
+    || (defaultRepo !== null && !/^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9_.-]{1,100}$/.test(defaultRepo))) {
+    throw new Error('Invalid GitHub repository settings');
+  }
+  const { data, error } = await getSupabaseAdmin()
+    .from('github_integrations')
+    .update({ default_repo: defaultRepo, repo_strategy: repoStrategy })
+    .eq('user_id', userId)
+    .neq('access_token', '')
+    .select('user_id');
+  if (error) throw new Error('GitHub settings could not be saved. Retry shortly.');
+  return Array.isArray(data) && data.length === 1 && data[0]?.user_id === userId;
+}
+
 /** Persist the live ship target so later updates auto-bind without re-picking. */
 export async function setGithubDefaultRepo(userId: string, repoFullName: string): Promise<void> {
-  const repo = repoFullName.trim();
-  if (!repo.includes('/')) return;
-
-  const supabase = getSupabaseAdmin();
-  const { error } = await supabase
-    .from('github_integrations')
-    .update({ default_repo: repo, repo_strategy: 'manual' })
-    .eq('user_id', userId);
-
-  if (error && !isMissingTableError(error.message)) {
-    console.warn('[githubAuth] default repository save failed');
-  }
-
-  const token = await getGitHubToken(userId);
-  const stored = await getGitHubTokenFromStorage(userId);
-  if (token) {
-    await saveGitHubTokenToStorage(userId, {
-      access_token: token,
-      username: stored?.username ?? 'github-user',
-      provider_user_id: stored?.provider_user_id ?? '',
-      repo_strategy: 'manual',
-      default_repo: repo,
-      updated_at: new Date().toISOString(),
-    }).catch(() => undefined);
+  if (!(await saveGitHubSettings(userId, 'manual', repoFullName.trim()))) {
+    throw new Error('GitHub connection is unavailable. Connect again before saving settings.');
   }
 }

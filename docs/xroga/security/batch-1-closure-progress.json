@@ -80,7 +80,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:492 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:490 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -110,12 +110,12 @@
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 163,
-    "persistenceCandidates": 679,
+    "privilegedFactorySites": 162,
+    "persistenceCandidates": 677,
     "ownerPredicateCandidates": 168,
     "reviewRequired": 0,
-    "reviewedCandidates": 679,
-    "unresolvedSafetyCandidates": 492,
+    "reviewedCandidates": 677,
+    "unresolvedSafetyCandidates": 490,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -141,6 +141,7 @@
     "isolatedResult": "FAIL SQLSTATE42601 before tests in migration003. CASE expression corrected at319ccde5, new source CI required."
   },
   "newWork": {
+    "githubSettings": "IN PROGRESS: metadata-only owner updates require exact single-row receipt and active token, no credential mirror rewrite. Three focused GitHub tests and backend typecheck pass. Added real foreign-owner and concurrent disconnect case, pending final-source CI. Reconnect target-selection lifecycle remains open.",
     "worker": "Implemented; five actual DB cases await corrected-source disposable CI. Ten local SQL assertions pass, not Supabase acceptance.",
     "credentialMirrors": "Ten loopback negative tests pass; full lifecycle remains open",
     "byokRevision": "Eleven focused tests and45 local SQL assertions pass; four real cases pending. Upstream admission and bulk enumeration gaps remain.",
@@ -166,7 +167,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Verify downstream dependency patches and explicit Linux CLI binary installation in fresh CI. Continue remaining caller root groups, including GitHub metadata persistence receipts and stale token mirrors. Strict007 remains mandatory.",
+  "nextTask": "Verify downstream dependency patches and GitHub metadata persistence in final-source CI. Continue remaining caller root groups and reconcile only semantically proven boundaries. Strict007 remains mandatory.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
@@ -215,15 +216,15 @@
           "36f74cf393d92fc17a74"
         ],
         "backend/src/services/integrations/githubAuth.ts": [
-          "b70ee379276adab760e6",
-          "9e57c6ce291da4a475fc",
-          "80d4aa9a3397bd3252df",
-          "19f880a066ae90d323b8",
-          "fe9e64d47a236dfa8cc8",
-          "1d4403776376ef52007e",
-          "33102ec273c5d27f3bef",
-          "cbd51a32daf85609f9c2",
-          "6f6e8123506c884fea1b"
+          "d5146ca43cf901817c09",
+          "8bbc1aefc2e270847934",
+          "ff751d80f168344fe806",
+          "7f998fefa7c4a4af4629",
+          "4e72ed7e46664a864fcd",
+          "d8c7d0bde0dddf656d0c",
+          "8a200819c73b59f40fe6",
+          "9cfcc5a519e6e0cda19a",
+          "2c1e9775b28e4419ca8c"
         ],
         "backend/src/services/integrations/githubDeploy.ts": [
           "b4b2b91f3280a140691a",
@@ -718,7 +719,7 @@
       "existingImplementation": "Existing services and source-bound register",
       "missingBehavior": "Inspect the exact remaining reason for each listed caller, grouping shared helpers",
       "acceptanceTest": "Per-caller negative verification proportional to risk",
-      "pendingCandidates": 87,
+      "pendingCandidates": 85,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/benchmarkRunner.ts": [
@@ -780,11 +781,9 @@
           "2c2f746e6c99a355ea8c"
         ],
         "backend/src/routes/github.ts": [
-          "12747a6fb6ec4eaa73a1",
-          "d165083d045dbcc9134c",
-          "86c762c54422d5080814",
-          "8b37fa4bae437ab9a2c7",
-          "0ae20826442f3e92f239"
+          "740ef7f182fb3ff9c197",
+          "b9d1d3b6afe914fded86",
+          "997f802a20a9374530ba"
         ],
         "backend/src/routes/phase1BusinessPreflight.ts": [
           "a4bd236f9d86c07f2ffc",

@@ -23,7 +23,7 @@ import type { PlanMutation } from '../synthesis/dynamicPlanning.js';
 import { BUILD_OUTCOME_RETENTION_MS } from '../ai/learningPolicy.js';
 import { saveGitHubTokenToStorage,getGitHubTokenFromStorage } from '../services/integrations/githubTokenStore.js';
 import { ensurePrivateOAuthBucket } from '../services/integrations/credentialStorageBucket.js';
-import { clearGitHubConnection, getGitHubToken, saveGitHubConnection } from '../services/integrations/githubAuth.js';
+import { clearGitHubConnection, getGitHubToken, saveGitHubConnection, saveGitHubSettings } from '../services/integrations/githubAuth.js';
 import { clearVercelConnection, getVercelToken, saveVercelConnection } from '../services/integrations/vercelAuth.js';
 import { clearPkceSession, clearProviderToken, consumePkceSession, loadPkceSession, loadProviderToken, storePkceSession, storeProviderToken } from '../services/integrations/oauthPkceStore.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
@@ -1121,6 +1121,38 @@ test('real membership callbacks preserve existing ownership and reject competing
   assert.equal(results.filter(r=>r.status==='fulfilled').length,1);
   const denied=results.find(r=>r.status==='rejected');assert.ok(denied?.status==='rejected');assert.match(String(denied.reason),/membership_owner_mismatch/);
   const winner=results.findIndex(r=>r.status==='fulfilled');assert.equal((await read(race))?.user_id,users[winner].id);
+});
+
+test('real GitHub metadata receipt isolates owners and cannot resurrect a concurrent disconnect', async(t) => {
+  const [owner, foreign] = users;
+  t.after(async () => {
+    assert.equal((await admin.from('github_integrations').delete().in('user_id', [owner.id, foreign.id])).error, null);
+    assert.equal((await admin.from('user_integrations').delete().eq('user_id', owner.id).eq('provider', 'github')).error, null);
+  });
+  for (const user of [owner, foreign]) {
+    assert.equal((await admin.from('github_integrations').upsert({ user_id: user.id, access_token: `synthetic-${user.id}`, default_repo: 'fixture/original' })).error, null);
+  }
+  const foreignBefore = await admin.from('github_integrations').select('*').eq('user_id', foreign.id).single();
+  assert.equal(foreignBefore.error, null);
+  const response = await request('/api/github/settings', owner.token, 'PATCH', {
+    repoStrategy: 'manual', defaultRepo: 'fixture/selected', userId: foreign.id,
+  });
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { success: true });
+  assert.deepEqual((await admin.from('github_integrations').select('*').eq('user_id', foreign.id).single()).data, foreignBefore.data);
+  const peer = createClient(url, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false, autoRefreshToken: false } });
+  const [, revoked] = await Promise.all([
+    saveGitHubSettings(owner.id, 'manual', 'fixture/racing'),
+    peer.rpc('revoke_github_oauth_connection', { p_owner_id: owner.id }),
+  ]);
+  assert.equal(revoked.error, null); assert.equal(revoked.data, true);
+  const afterRace = await admin.from('github_integrations').select('access_token').eq('user_id', owner.id).single();
+  assert.equal(afterRace.error, null); assert.equal(afterRace.data?.access_token, '');
+  assert.equal(await saveGitHubSettings(owner.id, 'manual', 'fixture/late'), false);
+  assert.equal((await request('/api/github/settings', owner.token, 'PATCH', { repoStrategy: 'auto' })).status, 409);
+  assert.equal((await admin.from('github_integrations').delete().eq('user_id', owner.id)).error, null);
+  assert.equal(await saveGitHubSettings(owner.id, 'auto', null), false);
+  assert.deepEqual((await admin.from('github_integrations').select('*').eq('user_id', foreign.id).single()).data, foreignBefore.data);
 });
 
 test('real Whop fulfillment rolls back foreign membership collisions and binds concurrent payment replay',async()=>{

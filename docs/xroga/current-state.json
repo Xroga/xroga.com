@@ -15041,6 +15041,7 @@
         "backend/src/lib/authRoundTrips.test.ts",
         "backend/src/middleware/admin.test.ts",
         "backend/src/routes/github.oauth.test.ts",
+        "backend/src/routes/github.settings.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/security/accountRoutes.test.ts",
@@ -18071,7 +18072,7 @@
       "id": "surface:e037639d29105e028e8a",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/github.ts",
-      "sha256": "891ac1fd7807cd7590acd120c8b6968454aea436c67e3d83c39c2924218ae57e",
+      "sha256": "ba7c0fd1389a061f1574770c25a00e53e67a3f66a7abacc41dcf6f6dc03af98f",
       "symbols": [
         "ALLOWED_CALLBACK_ORIGINS",
         "CALLBACK_PATH",
@@ -18117,6 +18118,7 @@
         "rolled",
         "router",
         "saveErr",
+        "saved",
         "schema",
         "session",
         "slug",
@@ -18156,7 +18158,8 @@
       ],
       "callers": [
         "backend/src/index.ts:17",
-        "backend/src/routes/github.oauth.test.ts:15"
+        "backend/src/routes/github.oauth.test.ts:15",
+        "backend/src/routes/github.settings.test.ts:16"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -18181,9 +18184,8 @@
         "backend/src/routes/github.ts#verifyOAuthState"
       ],
       "tenantBoundary": [
-        "backend/src/routes/github.ts:225 (user_id)",
-        "backend/src/routes/github.ts:235 (user_id)",
-        "backend/src/routes/github.ts:332 (user_id)"
+        "backend/src/routes/github.ts:226 (user_id)",
+        "backend/src/routes/github.ts:236 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/routes/github.ts#buildGitHubAuthorizeUrl"
@@ -18194,7 +18196,8 @@
         "backend/src/routes/github.ts#verifyOAuthState"
       ],
       "testCoverage": [
-        "backend/src/routes/github.oauth.test.ts"
+        "backend/src/routes/github.oauth.test.ts",
+        "backend/src/routes/github.settings.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -22165,7 +22168,7 @@
       "id": "surface:62368ba355b56a1c4f93",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubAuth.ts",
-      "sha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf",
+      "sha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
       "symbols": [
         "GitHubRepoStrategy",
         "attempt",
@@ -22174,8 +22177,8 @@
         "getGitHubToken",
         "isGitHubConnected",
         "removed",
-        "repo",
         "saveGitHubConnection",
+        "saveGitHubSettings",
         "setGithubDefaultRepo",
         "stored",
         "supabase",
@@ -22196,6 +22199,7 @@
         "backend/src/ai/pipeline.ts:156",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.ts:58",
+        "backend/src/routes/github.settings.test.ts:17",
         "backend/src/routes/github.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:26",
         "backend/src/services/integrations/githubAuth.revocation.test.ts:4",
@@ -22214,14 +22218,15 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/services/integrations/githubAuth.ts:15 (user_id)",
-        "backend/src/services/integrations/githubAuth.ts:24 (user_id)",
+        "backend/src/services/integrations/githubAuth.ts:13 (user_id)",
+        "backend/src/services/integrations/githubAuth.ts:22 (user_id)",
         "backend/src/services/integrations/githubAuth.ts:108 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/routes/github.settings.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/githubAuth.revocation.test.ts"
       ],
@@ -22630,12 +22635,12 @@
         "backend/src/ai/pipeline.ts:101",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:17",
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts:1",
-        "backend/src/routes/github.ts:371",
-        "backend/src/routes/github.ts:418",
-        "backend/src/routes/github.ts:441",
-        "backend/src/routes/github.ts:474",
-        "backend/src/routes/github.ts:559",
-        "backend/src/routes/github.ts:627",
+        "backend/src/routes/github.ts:367",
+        "backend/src/routes/github.ts:414",
+        "backend/src/routes/github.ts:437",
+        "backend/src/routes/github.ts:470",
+        "backend/src/routes/github.ts:555",
+        "backend/src/routes/github.ts:623",
         "backend/src/routes/integrations.ts:36",
         "backend/src/routes/phase1.ts:41",
         "backend/src/routes/supabaseOAuth.ts:36",
@@ -24104,7 +24109,7 @@
       "callers": [
         "backend/src/ai/builderScaffoldFallback.test.ts:3",
         "backend/src/ai/pipeline.ts:118",
-        "backend/src/routes/github.ts:560",
+        "backend/src/routes/github.ts:556",
         "backend/src/routes/swarm.ts:10",
         "backend/src/routes/vercel.ts:20",
         "backend/src/services/scaffolds/scaffolds.test.ts:9"
@@ -87840,9 +87845,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a20aa758f12964232073",
+      "id": "registration:3bab2abeb77368bdbe2a",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 94,
+      "line": 95,
       "receiver": "router",
       "method": "get",
       "path": "/oauth",
@@ -87852,9 +87857,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0f054f4af193df1b3d3f",
+      "id": "registration:4c2c0d26c7fe4963276d",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 108,
+      "line": 109,
       "receiver": "router",
       "method": "get",
       "path": "/oauth-config",
@@ -87864,9 +87869,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f8863c63e58568cd523e",
+      "id": "registration:f0fa2b4647c341f27518",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 121,
+      "line": 122,
       "receiver": "router",
       "method": "get",
       "path": "/redirect",
@@ -87876,9 +87881,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:de1e1d65105070851d79",
+      "id": "registration:2852075609ab796df9a2",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 134,
+      "line": 135,
       "receiver": "router",
       "method": "post",
       "path": "/connect",
@@ -87888,9 +87893,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5e19aafb8c0151b64e7a",
+      "id": "registration:7306b90e2f6a45641c97",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 216,
+      "line": 217,
       "receiver": "router",
       "method": "get",
       "path": "/status",
@@ -87900,9 +87905,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:cbfca164675d5488b7d3",
+      "id": "registration:96006ef911159898a18e",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 265,
+      "line": 266,
       "receiver": "router",
       "method": "get",
       "path": "/repos",
@@ -87912,9 +87917,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:369b0e1bb4e51a5933c3",
+      "id": "registration:3e87ac8ac850ae178d05",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 291,
+      "line": 292,
       "receiver": "router",
       "method": "get",
       "path": "/repos/:owner/:repo/branches",
@@ -87924,9 +87929,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:20a53d9d4bc422748d09",
+      "id": "registration:9724e4a2cf4eef44b73a",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 319,
+      "line": 320,
       "receiver": "router",
       "method": "patch",
       "path": "/settings",
@@ -87936,9 +87941,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7fb5efff1acdd9029200",
+      "id": "registration:b06ad6484c9cd2f16836",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 348,
+      "line": 344,
       "receiver": "router",
       "method": "delete",
       "path": "/disconnect",
@@ -87948,9 +87953,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b0da71f8300c9f6511c7",
+      "id": "registration:082cd185b56a0a7aa492",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 358,
+      "line": 354,
       "receiver": "router",
       "method": "get",
       "path": "/analyze",
@@ -87960,9 +87965,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:aa9512a4b8c3001e0cbc",
+      "id": "registration:4ec295e819885c7bdde6",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 401,
+      "line": 397,
       "receiver": "router",
       "method": "get",
       "path": "/repo-state",
@@ -87972,9 +87977,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:76b452afff58d1aa2373",
+      "id": "registration:a08e14fd07dc3dfc171a",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 433,
+      "line": 429,
       "receiver": "router",
       "method": "get",
       "path": "/build-files",
@@ -87984,9 +87989,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:206463246edfe5412efc",
+      "id": "registration:915d81fcf74b321c992b",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 453,
+      "line": 449,
       "receiver": "router",
       "method": "post",
       "path": "/redeploy-preview",
@@ -87996,9 +88001,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:029dd6ff1933df83f179",
+      "id": "registration:c6218345e07bf22e93b2",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 528,
+      "line": 524,
       "receiver": "router",
       "method": "post",
       "path": "/push-build",
@@ -88008,9 +88013,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0822f4fba80cf2fb7274",
+      "id": "registration:a49858c59af5ee152c5c",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 614,
+      "line": 610,
       "receiver": "router",
       "method": "post",
       "path": "/rollback",
@@ -92108,10 +92113,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:264cd1db2d08000775f3",
-      "registrationId": "registration:a20aa758f12964232073",
+      "id": "route:96c286314fc995367cb7",
+      "registrationId": "registration:3bab2abeb77368bdbe2a",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 94,
+      "line": 95,
       "method": "GET",
       "path": "/api/github/oauth",
       "mountChain": [
@@ -92125,10 +92130,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:62011d52ddb10f9f6946",
-      "registrationId": "registration:0f054f4af193df1b3d3f",
+      "id": "route:c1dd89420b7514fa445e",
+      "registrationId": "registration:4c2c0d26c7fe4963276d",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 108,
+      "line": 109,
       "method": "GET",
       "path": "/api/github/oauth-config",
       "mountChain": [
@@ -92142,10 +92147,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5661a209d37cbd043027",
-      "registrationId": "registration:f8863c63e58568cd523e",
+      "id": "route:65d09a71979141945e44",
+      "registrationId": "registration:f0fa2b4647c341f27518",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 121,
+      "line": 122,
       "method": "GET",
       "path": "/api/github/redirect",
       "mountChain": [
@@ -92159,10 +92164,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:619bf41a6479fdd40bb9",
-      "registrationId": "registration:de1e1d65105070851d79",
+      "id": "route:6f6a1f545e73d890abdb",
+      "registrationId": "registration:2852075609ab796df9a2",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 134,
+      "line": 135,
       "method": "POST",
       "path": "/api/github/connect",
       "mountChain": [
@@ -92176,10 +92181,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4d8f1d94b3575bb9729d",
-      "registrationId": "registration:5e19aafb8c0151b64e7a",
+      "id": "route:7b790d907f9a64b1bb6b",
+      "registrationId": "registration:7306b90e2f6a45641c97",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 216,
+      "line": 217,
       "method": "GET",
       "path": "/api/github/status",
       "mountChain": [
@@ -92193,10 +92198,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f75738cc34f8772cc813",
-      "registrationId": "registration:cbfca164675d5488b7d3",
+      "id": "route:95f3898cb43aa230b4fe",
+      "registrationId": "registration:96006ef911159898a18e",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 265,
+      "line": 266,
       "method": "GET",
       "path": "/api/github/repos",
       "mountChain": [
@@ -92210,10 +92215,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:fd518c446689ba29f65f",
-      "registrationId": "registration:369b0e1bb4e51a5933c3",
+      "id": "route:2f5309cb803845b4e290",
+      "registrationId": "registration:3e87ac8ac850ae178d05",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 291,
+      "line": 292,
       "method": "GET",
       "path": "/api/github/repos/:owner/:repo/branches",
       "mountChain": [
@@ -92227,10 +92232,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9bd7fb73d47e984214cc",
-      "registrationId": "registration:20a53d9d4bc422748d09",
+      "id": "route:85a5f386815cd6066393",
+      "registrationId": "registration:9724e4a2cf4eef44b73a",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 319,
+      "line": 320,
       "method": "PATCH",
       "path": "/api/github/settings",
       "mountChain": [
@@ -92244,10 +92249,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b787abb22c369301c43a",
-      "registrationId": "registration:7fb5efff1acdd9029200",
+      "id": "route:dffc1bfb9af6fc3a117f",
+      "registrationId": "registration:b06ad6484c9cd2f16836",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 348,
+      "line": 344,
       "method": "DELETE",
       "path": "/api/github/disconnect",
       "mountChain": [
@@ -92261,10 +92266,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5aed5c76734b3196c7d7",
-      "registrationId": "registration:b0da71f8300c9f6511c7",
+      "id": "route:96f16c537bcb19278f4d",
+      "registrationId": "registration:082cd185b56a0a7aa492",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 358,
+      "line": 354,
       "method": "GET",
       "path": "/api/github/analyze",
       "mountChain": [
@@ -92278,10 +92283,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e9e0d96c80d511426afa",
-      "registrationId": "registration:aa9512a4b8c3001e0cbc",
+      "id": "route:bc4292881aa80ed9b127",
+      "registrationId": "registration:4ec295e819885c7bdde6",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 401,
+      "line": 397,
       "method": "GET",
       "path": "/api/github/repo-state",
       "mountChain": [
@@ -92295,10 +92300,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3ae9de5a35b2d573010d",
-      "registrationId": "registration:76b452afff58d1aa2373",
+      "id": "route:ecb835c2774b9c02e477",
+      "registrationId": "registration:a08e14fd07dc3dfc171a",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 433,
+      "line": 429,
       "method": "GET",
       "path": "/api/github/build-files",
       "mountChain": [
@@ -92312,10 +92317,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:85165c958f863bd25196",
-      "registrationId": "registration:206463246edfe5412efc",
+      "id": "route:d8af5aa42874f9698161",
+      "registrationId": "registration:915d81fcf74b321c992b",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 453,
+      "line": 449,
       "method": "POST",
       "path": "/api/github/redeploy-preview",
       "mountChain": [
@@ -92329,10 +92334,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:506c6c4b4df94667656e",
-      "registrationId": "registration:029dd6ff1933df83f179",
+      "id": "route:f4a503357f949eba418c",
+      "registrationId": "registration:c6218345e07bf22e93b2",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 528,
+      "line": 524,
       "method": "POST",
       "path": "/api/github/push-build",
       "mountChain": [
@@ -92346,10 +92351,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f4ff9b6bb9c9f0234102",
-      "registrationId": "registration:0822f4fba80cf2fb7274",
+      "id": "route:fa166bada7d8224db742",
+      "registrationId": "registration:a49858c59af5ee152c5c",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 614,
+      "line": 610,
       "method": "POST",
       "path": "/api/github/rollback",
       "mountChain": [
@@ -101988,6 +101993,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:a83f2974ac9cdfdce159",
+      "sourcePath": "backend/src/routes/github.settings.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:34d84e09fcecbb621069",
       "sourcePath": "backend/src/routes/guestChat.test.ts",
       "declaredTests": 5,
@@ -102186,7 +102198,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 58,
+      "declaredTests": 59,
       "skipLocations": [],
       "focusLocations": []
     },

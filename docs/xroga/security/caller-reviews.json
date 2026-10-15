@@ -144,17 +144,15 @@
     },
     {
       "path": "backend/src/routes/github.ts",
-      "sourceSha256": "891ac1fd7807cd7590acd120c8b6968454aea436c67e3d83c39c2924218ae57e",
+      "sourceSha256": "ba7c0fd1389a061f1574770c25a00e53e67a3f66a7abacc41dcf6f6dc03af98f",
       "callIds": [
-        "12747a6fb6ec4eaa73a1",
-        "d165083d045dbcc9134c",
-        "86c762c54422d5080814",
-        "8b37fa4bae437ab9a2c7",
-        "0ae20826442f3e92f239"
+        "740ef7f182fb3ff9c197",
+        "b9d1d3b6afe914fded86",
+        "997f802a20a9374530ba"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Authenticated status/settings use req.userId for github_integrations and user_integrations. Status resolves the canonical token then legacy metadata. Settings updates only that user's legacy row.",
-      "reason": "Settings can report success for zero rows and expose raw errors; metadata versus reconnect races remain. Full callback, repository target and external write authority are not certified.",
+      "authority": "Authenticated status/settings use req.userId. Settings now delegates to metadata-only saveGitHubSettings, requires a single exact active-owner receipt, returns409 for missing/revoked rows and safe503 for persistence errors. Status resolves the canonical token then legacy metadata.",
+      "reason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
       "evidence": [
         {
           "path": "backend/src/routes/github.ts",
@@ -905,21 +903,21 @@
     },
     {
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "sourceSha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf",
+      "sourceSha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
       "callIds": [
-        "b70ee379276adab760e6",
-        "9e57c6ce291da4a475fc",
-        "80d4aa9a3397bd3252df",
-        "19f880a066ae90d323b8",
-        "fe9e64d47a236dfa8cc8",
-        "1d4403776376ef52007e",
-        "33102ec273c5d27f3bef",
-        "cbd51a32daf85609f9c2",
-        "6f6e8123506c884fea1b"
+        "d5146ca43cf901817c09",
+        "8bbc1aefc2e270847934",
+        "ff751d80f168344fe806",
+        "7f998fefa7c4a4af4629",
+        "4e72ed7e46664a864fcd",
+        "d8c7d0bde0dddf656d0c",
+        "8a200819c73b59f40fe6",
+        "9cfcc5a519e6e0cda19a",
+        "2c1e9775b28e4419ca8c"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
-    "reason": "GitHub callback now requires a consumed durable authorization revision. Service-only RPC atomically updates primary and legacy authority, while revoke serializes on the same epoch and invalidates pending sessions. Route replay/late-save regressions and local SQL rollback assertions pass. New real two-client integration is pending. Primitive userId provenance, repository settings/target races, already-issued tokens, legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
+      "reason": "Durable authorization epoch, atomic callback save/revoke and real two-client integration verified atc659262f. Settings/default-repo now change only metadata, require an exact active-owner receipt and never rewrite plaintext token mirrors. Three focused GitHub tests pass; new actual settings owner/race integration pending. Primitive userId provenance, metadata versus reconnect/target races, already-issued tokens, existing legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
@@ -3561,7 +3559,7 @@
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-    "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+      "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -3880,12 +3878,12 @@
         "9a63fce8138064a5b0c6"
       ],
       "disposition": "REVIEWED_GAP",
-    "authority": "CWS callback consumes the exact owner/state before provider I/O and obtains an issued BYOK admission only when the current revision matches the consumed epoch. save_cws_oauth_key_if_current locks that owner/key, checks the unexpired consumed receipt, then delegates encrypted metadata validation and revision CAS to the existing BYOK RPC.",
-    "reason": "Focused CWS tests deny changes before exchange and before encrypted persistence. Local SQL checks cover lost revision, duplicate save, revoke, reconnect and receipt expiry. Actual two-client CI is pending. Complete caller admission, legacy cryptography and external provider revocation remain open.",
+      "authority": "CWS callback consumes the exact owner/state before provider I/O and obtains an issued BYOK admission only when the current revision matches the consumed epoch. save_cws_oauth_key_if_current locks that owner/key, checks the unexpired consumed receipt, then delegates encrypted metadata validation and revision CAS to the existing BYOK RPC.",
+      "reason": "Focused CWS tests deny changes before exchange and before encrypted persistence. Local SQL checks cover lost revision, duplicate save, revoke, reconnect and receipt expiry. Actual two-client CI is pending. Complete caller admission, legacy cryptography and external provider revocation remain open.",
       "evidence": [
         {
-        "path": "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
-        "marker": "CWS carries the consumed epoch"
+          "path": "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
+          "marker": "CWS carries the consumed epoch"
         }
       ]
     }

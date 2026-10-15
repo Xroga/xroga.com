@@ -9,6 +9,7 @@ import {
   saveGitHubConnection,
   clearGitHubConnection,
   getGitHubStorageMeta,
+  saveGitHubSettings,
 } from '../services/integrations/githubAuth.js';
 
 const router = Router();
@@ -319,7 +320,7 @@ router.get('/repos/:owner/:repo/branches', async (req: AuthRequest, res) => {
 router.patch('/settings', async (req: AuthRequest, res) => {
   const schema = z.object({
     repoStrategy: z.enum(['auto', 'monorepo', 'manual']),
-    defaultRepo: z.string().optional(),
+    defaultRepo: z.string().trim().regex(/^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9_.-]{1,100}$/).or(z.literal('')).optional(),
   });
 
   const parsed = schema.safeParse(req.body);
@@ -328,21 +329,16 @@ router.patch('/settings', async (req: AuthRequest, res) => {
     return;
   }
 
-  const supabase = getSupabaseAdmin();
-  const { error } = await supabase
-    .from('github_integrations')
-    .update({
-      repo_strategy: parsed.data.repoStrategy,
-      default_repo: parsed.data.defaultRepo ?? null,
-    })
-    .eq('user_id', req.userId!);
-
-  if (error) {
-    res.status(500).json({ error: error.message });
-    return;
+  try {
+    const saved = await saveGitHubSettings(req.userId!, parsed.data.repoStrategy, parsed.data.defaultRepo || null);
+    if (!saved) {
+      res.status(409).json({ error: 'GitHub connection is unavailable. Connect again before saving settings.' });
+      return;
+    }
+    res.json({ success: true });
+  } catch {
+    res.status(503).json({ error: 'GitHub settings could not be saved. Retry shortly.' });
   }
-
-  res.json({ success: true });
 });
 
 router.delete('/disconnect', async (req: AuthRequest, res) => {
