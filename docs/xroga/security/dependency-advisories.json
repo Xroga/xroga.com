@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "observedAt": "2026-10-15T17:18:22.294Z",
+  "observedAt": "2026-10-15T18:36:51.015Z",
   "result": "ADVISORY_INVENTORY_NOT_RELEASE_APPROVAL",
   "graphs": [
     {
@@ -8,14 +8,14 @@
       "command": "npm audit --json",
       "cwd": ".",
       "exitCode": 1,
-      "lockSha256": "4f473689d806e6a9a3125ac78d2e2b0c8ad3d43f608c902f3ecd168a35e8407d",
+      "lockSha256": "e58dacd8b9d6fc91b6052f48ea5c1441153c9849f1fbef48efd54e2da65cbf93",
       "counts": {
         "info": 0,
-        "low": 6,
-        "moderate": 17,
-        "high": 22,
+        "low": 7,
+        "moderate": 16,
+        "high": 20,
         "critical": 0,
-        "total": 45
+        "total": 43
       },
       "findings": [
         {
@@ -62,17 +62,13 @@
         },
         {
           "name": "@ai-sdk/provider-utils",
-          "severity": "moderate",
+          "severity": "low",
           "direct": false,
-          "affectedRange": "3.0.31 - 3.0.41 || 4.0.41 - 4.0.45 || 5.0.0-beta.0 - 5.0.0",
+          "affectedRange": "5.0.0-beta.0 - 5.0.0",
           "installed": [
             {
               "path": "node_modules/@cline/llms/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/provider-utils",
               "version": "5.0.0"
-            },
-            {
-              "path": "node_modules/dify-ai-provider/node_modules/@ai-sdk/provider-utils",
-              "version": "3.0.37"
             }
           ],
           "via": [
@@ -81,9 +77,6 @@
               "url": "https://github.com/advisories/GHSA-866g-f22w-33x8",
               "severity": "low",
               "range": ">=5.0.0-beta.0 <5.0.1"
-            },
-            {
-              "dependency": "undici"
             }
           ],
           "effects": [
@@ -193,37 +186,6 @@
           ],
           "effects": [],
           "fixAvailable": false,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
-          "name": "@fastify/busboy",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "<=3.2.1",
-          "installed": [
-            {
-              "path": "node_modules/@fastify/busboy",
-              "version": "2.1.1"
-            }
-          ],
-          "via": [
-            {
-              "title": "@fastify/busboy vulnerable to Denial of Service via prototype-named multipart part header",
-              "url": "https://github.com/advisories/GHSA-x8mw-p69m-v3mx",
-              "severity": "high",
-              "range": ">=1.0.0 <3.2.1"
-            },
-            {
-              "title": "@fastify/busboy vulnerable to CRLF injection via multipart Content-Disposition filename and name",
-              "url": "https://github.com/advisories/GHSA-gxm5-99cw-xjw9",
-              "severity": "moderate",
-              "range": "<3.2.2"
-            }
-          ],
-          "effects": [
-            "undici"
-          ],
-          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -377,10 +339,8 @@
               "dependency": "@opentelemetry/sdk-logs"
             }
           ],
-          "effects": [
-            "@cline/core"
-          ],
-          "fixAvailable": false,
+          "effects": [],
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -443,8 +403,10 @@
               "dependency": "@opentelemetry/sdk-trace-base"
             }
           ],
-          "effects": [],
-          "fixAvailable": true,
+          "effects": [
+            "@cline/core"
+          ],
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -470,7 +432,7 @@
             "@opentelemetry/exporter-metrics-otlp-http",
             "@opentelemetry/exporter-trace-otlp-http"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -506,7 +468,7 @@
             "@opentelemetry/exporter-trace-otlp-http",
             "@opentelemetry/otlp-exporter-base"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -563,7 +525,7 @@
           "effects": [
             "@opentelemetry/otlp-transformer"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -593,7 +555,7 @@
             "@opentelemetry/exporter-metrics-otlp-http",
             "@opentelemetry/otlp-transformer"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -642,7 +604,9 @@
               "dependency": "@sap-cloud-sdk/connectivity"
             }
           ],
-          "effects": [],
+          "effects": [
+            "@sap-ai-sdk/orchestration"
+          ],
           "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
@@ -669,7 +633,6 @@
             }
           ],
           "effects": [
-            "@sap-ai-sdk/orchestration",
             "@sap-ai-sdk/prompt-registry"
           ],
           "fixAvailable": true,
@@ -1199,106 +1162,6 @@
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
-          "name": "undici",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "<=6.28.0",
-          "installed": [
-            {
-              "path": "node_modules/dify-ai-provider/node_modules/undici",
-              "version": "5.29.0"
-            }
-          ],
-          "via": [
-            {
-              "dependency": "@fastify/busboy"
-            },
-            {
-              "title": "Undici has an unbounded decompression chain in HTTP responses on Node.js Fetch API via Content-Encoding leads to resource exhaustion",
-              "url": "https://github.com/advisories/GHSA-g9mf-h72j-4rw9",
-              "severity": "moderate",
-              "range": "<6.23.0"
-            },
-            {
-              "title": "Undici has an HTTP Request/Response Smuggling issue",
-              "url": "https://github.com/advisories/GHSA-2mjp-6q6p-2qxm",
-              "severity": "moderate",
-              "range": "<6.24.0"
-            },
-            {
-              "title": "Undici has Unbounded Memory Consumption in WebSocket permessage-deflate Decompression",
-              "url": "https://github.com/advisories/GHSA-vrm6-8vpv-qv8q",
-              "severity": "high",
-              "range": "<6.24.0"
-            },
-            {
-              "title": "Undici has Unhandled Exception in WebSocket Client Due to Invalid server_max_window_bits Validation",
-              "url": "https://github.com/advisories/GHSA-v9p9-hfj2-hcw8",
-              "severity": "high",
-              "range": "<6.24.0"
-            },
-            {
-              "title": "Undici has CRLF Injection in undici via `upgrade` option",
-              "url": "https://github.com/advisories/GHSA-4992-7rv2-5pvq",
-              "severity": "moderate",
-              "range": "<6.24.0"
-            },
-            {
-              "title": "undici vulnerable to HTTP header injection via Set-Cookie percent-decoding",
-              "url": "https://github.com/advisories/GHSA-p88m-4jfj-68fv",
-              "severity": "moderate",
-              "range": "<6.27.0"
-            },
-            {
-              "title": "undici WebSocket client vulnerable to denial of service via fragment count bypass",
-              "url": "https://github.com/advisories/GHSA-vxpw-j846-p89q",
-              "severity": "high",
-              "range": "<6.27.0"
-            },
-            {
-              "title": "undici vulnerable to Set-Cookie SameSite attribute downgrade via permissive substring matching",
-              "url": "https://github.com/advisories/GHSA-g8m3-5g58-fq7m",
-              "severity": "low",
-              "range": "<6.27.0"
-            },
-            {
-              "title": "undici vulnerable to downstream response desynchronization via retry interceptor",
-              "url": "https://github.com/advisories/GHSA-8xcm-r25x-g524",
-              "severity": "moderate",
-              "range": "<6.28.0"
-            },
-            {
-              "title": "undici vulnerable to CRLF Injection via blob-like body 'type' property",
-              "url": "https://github.com/advisories/GHSA-m8rv-5g2x-5cg5",
-              "severity": "moderate",
-              "range": "<6.28.0"
-            },
-            {
-              "title": "undici vulnerable to cookie attribute injection via unsanitized domain and unparsed setCookie fields",
-              "url": "https://github.com/advisories/GHSA-v3r7-h72x-cjcm",
-              "severity": "moderate",
-              "range": "<6.28.0"
-            },
-            {
-              "title": "undici vulnerable to HTTP response queue poisoning via keep-alive socket reuse",
-              "url": "https://github.com/advisories/GHSA-35p6-xmwp-9g52",
-              "severity": "low",
-              "range": "<6.27.0"
-            },
-            {
-              "title": "undici vulnerable to downstream response splitting via retry interceptor",
-              "url": "https://github.com/advisories/GHSA-r53p-7pc4-xj5r",
-              "severity": "low",
-              "range": "<6.28.1"
-            }
-          ],
-          "effects": [
-            "@ai-sdk/provider-utils"
-          ],
-          "fixAvailable": true,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
           "name": "uuid",
           "severity": "moderate",
           "direct": false,
@@ -1680,14 +1543,14 @@
       "command": "npm audit --json --workspaces=false",
       "cwd": "backend",
       "exitCode": 1,
-      "lockSha256": "cd39eba163ef9ed0063d8bc3c37d5d88c962e17565410256372822aa8b5e0496",
+      "lockSha256": "d1fdbe9fdb4feec48b702dd6975e09b89a92c06ec6c05e3d6919e1fd4aeea2b8",
       "counts": {
         "info": 0,
-        "low": 5,
-        "moderate": 15,
-        "high": 17,
+        "low": 6,
+        "moderate": 14,
+        "high": 15,
         "critical": 0,
-        "total": 37
+        "total": 35
       },
       "findings": [
         {
@@ -1742,9 +1605,9 @@
         },
         {
           "name": "@ai-sdk/provider-utils",
-          "severity": "moderate",
+          "severity": "low",
           "direct": false,
-          "affectedRange": "3.0.31 - 3.0.41 || 4.0.41 - 4.0.45 || 5.0.0-beta.0 - 5.0.0",
+          "affectedRange": "5.0.0-beta.0 - 5.0.0",
           "installed": [
             {
               "path": "node_modules/@cline/agents/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/provider-utils",
@@ -1753,10 +1616,6 @@
             {
               "path": "node_modules/@cline/core/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/provider-utils",
               "version": "5.0.0"
-            },
-            {
-              "path": "node_modules/dify-ai-provider/node_modules/@ai-sdk/provider-utils",
-              "version": "3.0.37"
             }
           ],
           "via": [
@@ -1765,9 +1624,6 @@
               "url": "https://github.com/advisories/GHSA-866g-f22w-33x8",
               "severity": "low",
               "range": ">=5.0.0-beta.0 <5.0.1"
-            },
-            {
-              "dependency": "undici"
             }
           ],
           "effects": [
@@ -1881,37 +1737,6 @@
           ],
           "effects": [],
           "fixAvailable": false,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
-          "name": "@fastify/busboy",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "<=3.2.1",
-          "installed": [
-            {
-              "path": "node_modules/@fastify/busboy",
-              "version": "2.1.1"
-            }
-          ],
-          "via": [
-            {
-              "title": "@fastify/busboy vulnerable to Denial of Service via prototype-named multipart part header",
-              "url": "https://github.com/advisories/GHSA-x8mw-p69m-v3mx",
-              "severity": "high",
-              "range": ">=1.0.0 <3.2.1"
-            },
-            {
-              "title": "@fastify/busboy vulnerable to CRLF injection via multipart Content-Disposition filename and name",
-              "url": "https://github.com/advisories/GHSA-gxm5-99cw-xjw9",
-              "severity": "moderate",
-              "range": "<3.2.2"
-            }
-          ],
-          "effects": [
-            "undici"
-          ],
-          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2055,10 +1880,8 @@
               "dependency": "@opentelemetry/sdk-metrics"
             }
           ],
-          "effects": [
-            "@cline/core"
-          ],
-          "fixAvailable": false,
+          "effects": [],
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2089,8 +1912,10 @@
               "dependency": "@opentelemetry/sdk-trace-base"
             }
           ],
-          "effects": [],
-          "fixAvailable": true,
+          "effects": [
+            "@cline/core"
+          ],
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2671,106 +2496,6 @@
           ],
           "effects": [
             "body-parser"
-          ],
-          "fixAvailable": true,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
-          "name": "undici",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "<=6.28.0",
-          "installed": [
-            {
-              "path": "node_modules/dify-ai-provider/node_modules/undici",
-              "version": "5.29.0"
-            }
-          ],
-          "via": [
-            {
-              "dependency": "@fastify/busboy"
-            },
-            {
-              "title": "Undici has an unbounded decompression chain in HTTP responses on Node.js Fetch API via Content-Encoding leads to resource exhaustion",
-              "url": "https://github.com/advisories/GHSA-g9mf-h72j-4rw9",
-              "severity": "moderate",
-              "range": "<6.23.0"
-            },
-            {
-              "title": "Undici has an HTTP Request/Response Smuggling issue",
-              "url": "https://github.com/advisories/GHSA-2mjp-6q6p-2qxm",
-              "severity": "moderate",
-              "range": "<6.24.0"
-            },
-            {
-              "title": "Undici has Unbounded Memory Consumption in WebSocket permessage-deflate Decompression",
-              "url": "https://github.com/advisories/GHSA-vrm6-8vpv-qv8q",
-              "severity": "high",
-              "range": "<6.24.0"
-            },
-            {
-              "title": "Undici has Unhandled Exception in WebSocket Client Due to Invalid server_max_window_bits Validation",
-              "url": "https://github.com/advisories/GHSA-v9p9-hfj2-hcw8",
-              "severity": "high",
-              "range": "<6.24.0"
-            },
-            {
-              "title": "Undici has CRLF Injection in undici via `upgrade` option",
-              "url": "https://github.com/advisories/GHSA-4992-7rv2-5pvq",
-              "severity": "moderate",
-              "range": "<6.24.0"
-            },
-            {
-              "title": "undici vulnerable to HTTP header injection via Set-Cookie percent-decoding",
-              "url": "https://github.com/advisories/GHSA-p88m-4jfj-68fv",
-              "severity": "moderate",
-              "range": "<6.27.0"
-            },
-            {
-              "title": "undici WebSocket client vulnerable to denial of service via fragment count bypass",
-              "url": "https://github.com/advisories/GHSA-vxpw-j846-p89q",
-              "severity": "high",
-              "range": "<6.27.0"
-            },
-            {
-              "title": "undici vulnerable to Set-Cookie SameSite attribute downgrade via permissive substring matching",
-              "url": "https://github.com/advisories/GHSA-g8m3-5g58-fq7m",
-              "severity": "low",
-              "range": "<6.27.0"
-            },
-            {
-              "title": "undici vulnerable to downstream response desynchronization via retry interceptor",
-              "url": "https://github.com/advisories/GHSA-8xcm-r25x-g524",
-              "severity": "moderate",
-              "range": "<6.28.0"
-            },
-            {
-              "title": "undici vulnerable to CRLF Injection via blob-like body 'type' property",
-              "url": "https://github.com/advisories/GHSA-m8rv-5g2x-5cg5",
-              "severity": "moderate",
-              "range": "<6.28.0"
-            },
-            {
-              "title": "undici vulnerable to cookie attribute injection via unsanitized domain and unparsed setCookie fields",
-              "url": "https://github.com/advisories/GHSA-v3r7-h72x-cjcm",
-              "severity": "moderate",
-              "range": "<6.28.0"
-            },
-            {
-              "title": "undici vulnerable to HTTP response queue poisoning via keep-alive socket reuse",
-              "url": "https://github.com/advisories/GHSA-35p6-xmwp-9g52",
-              "severity": "low",
-              "range": "<6.27.0"
-            },
-            {
-              "title": "undici vulnerable to downstream response splitting via retry interceptor",
-              "url": "https://github.com/advisories/GHSA-r53p-7pc4-xj5r",
-              "severity": "low",
-              "range": "<6.28.1"
-            }
-          ],
-          "effects": [
-            "@ai-sdk/provider-utils"
           ],
           "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"

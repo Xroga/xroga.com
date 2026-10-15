@@ -64,6 +64,7 @@
     "test:growth:authority": "tsx --test \"backend/src/organicIntelligence/authority/**/*.test.ts\""
   },
   "overrides": {
+    "undici@^5.29.0": "6.28.1",
     "pptxgenjs": { "image-size": "2.0.4" },
     "simple-git": "4.0.2",
     "postcss": "8.5.24",

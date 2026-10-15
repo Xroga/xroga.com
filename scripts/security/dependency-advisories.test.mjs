@@ -4,8 +4,96 @@ import { summarizeAudit } from './dependency-advisories.mjs';
 import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { createServer } from 'node:http';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
+
+test('version-qualified Undici replacement preserves every non-v5 receiver in both lock graphs', () => {
+  for (const file of ['../../package-lock.json', '../../backend/package-lock.json']) {
+    const lock = JSON.parse(readFileSync(new URL(file, import.meta.url), 'utf8'));
+    assert.equal(lock.packages['node_modules/dify-ai-provider/node_modules/undici'].version, '6.28.1');
+    assert.equal(lock.packages['node_modules/undici'].version, '7.29.1');
+    assert.equal(lock.packages['node_modules/@fastify/busboy'], undefined);
+    for (const [path, pkg] of Object.entries(lock.packages)) {
+      if (path.endsWith('node_modules/undici')) assert.ok(['6.28.1', '7.29.1'].includes(pkg.version));
+    }
+  }
+  const dify = createRequire(require.resolve('dify-ai-provider'));
+  const utils = createRequire(dify.resolve('@ai-sdk/provider-utils'));
+  assert.equal(utils('undici/package.json').version, '6.28.1');
+  const modern = createRequire(require.resolve('@ai-sdk/provider-utils'));
+  assert.equal(modern('undici/package.json').version, '7.29.1');
+});
+
+test('actual Dify Undici receiver preserves custom DNS, manual redirects, abort and multipart parsing', async () => {
+  const dify = createRequire(require.resolve('dify-ai-provider'));
+  const utils = createRequire(dify.resolve('@ai-sdk/provider-utils'));
+  const { Agent, fetch, Response } = utils('undici');
+  let lookups = 0;
+  let requests = 0;
+  const server = createServer((req, res) => {
+    requests++;
+    if (req.url === '/redirect') { res.writeHead(302, { location: '/ok' }); res.end(); }
+    else { res.writeHead(200, { 'content-type': 'application/json' }); res.end('{"ok":true}'); }
+  });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const agent = new Agent({ connect: { lookup: (_host, options, callback) => {
+    lookups++;
+    if (options.all) callback(null, [{ address: '127.0.0.1', family: 4 }]);
+    else callback(null, '127.0.0.1', 4);
+  } } });
+  try {
+    const url = `http://receiver.example.invalid:${server.address().port}`;
+    assert.deepEqual(await (await fetch(`${url}/ok`, { dispatcher: agent })).json(), { ok: true });
+    const redirect = await fetch(`${url}/redirect`, { dispatcher: agent, redirect: 'manual' });
+    assert.equal(redirect.status, 302); await redirect.body.cancel();
+    await assert.rejects(fetch(url, { dispatcher: agent, signal: AbortSignal.abort() }), /abort/i);
+    assert.ok(lookups > 0);
+    const beforeDeniedLookup = requests;
+    const deniedAgent = new Agent({ connect: { lookup: (_host, _options, callback) => callback(new Error('Synthetic address-policy denial')) } });
+    try {
+      await assert.rejects(fetch(url, { dispatcher: deniedAgent }), error => /Synthetic address-policy denial/.test(error.cause?.message ?? ''));
+      assert.equal(requests, beforeDeniedLookup, 'A failed DNS policy must prevent the HTTP request');
+    } finally { await deniedAgent.close(); }
+    const body = '--boundary\r\nContent-Disposition: form-data; name="field"\r\n\r\nvalue\r\n--boundary--\r\n';
+    assert.equal((await new Response(body, { headers: { 'content-type': 'multipart/form-data; boundary=boundary' } }).formData()).get('field'), 'value');
+  } finally {
+    await agent.close(); server.closeAllConnections();
+    await new Promise(resolve => server.close(resolve));
+  }
+});
+
+test('actual Dify provider preserves local JSON success and rejects malformed responses after receiver upgrade', async () => {
+  const { createDifyProvider } = require('dify-ai-provider');
+  const requests = [];
+  let malformed = false;
+  const server = createServer(async (req, res) => {
+    let body = ''; for await (const chunk of req) body += chunk;
+    requests.push({ path: req.url, body: JSON.parse(body), authorization: req.headers.authorization });
+    res.writeHead(200, { 'content-type': 'application/json' });
+    res.end(JSON.stringify(malformed ? { answer: 42 } : {
+      id: 'fixture', answer: 'Local compatibility result', task_id: 'task', conversation_id: 'conversation', message_id: 'message',
+      metadata: { usage: { completion_tokens: 2, prompt_tokens: 3, total_tokens: 5 } },
+    }));
+  });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const model = createDifyProvider({ baseURL: `http://127.0.0.1:${server.address().port}` })('fixture', { apiKey: 'SYNTHETIC_LOCAL_ONLY' });
+    const options = { prompt: [{ role: 'user', content: [{ type: 'text', text: 'fixture input' }] }], headers: { 'user-id': 'fixture-user' } };
+    const result = await model.doGenerate(options);
+    assert.equal(result.content[0].text, 'Local compatibility result');
+    assert.equal(result.usage.totalTokens, 5);
+    assert.equal(requests[0].path, '/chat-messages');
+    assert.equal(requests[0].body.response_mode, 'blocking');
+    assert.equal(requests[0].body.user, 'fixture-user');
+    assert.equal(requests[0].authorization, 'Bearer SYNTHETIC_LOCAL_ONLY');
+    malformed = true;
+    await assert.rejects(model.doGenerate(options));
+    assert.equal(requests.length, 2);
+  } finally {
+    server.closeAllConnections(); await new Promise(resolve => server.close(resolve));
+  }
+});
 
 test('PptxGenJS receiver uses patched image-size and rejects zero-length image records in bounded time', () => {
   const pptx = createRequire(require.resolve('pptxgenjs'));
