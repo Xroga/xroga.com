@@ -1,12 +1,12 @@
-/* S03 — Search & Growth. One black-titanium section with two chapters that keep their own personality:
+/* S03 — Search & Growth. One softly lit midnight-blue section with two selectable modes that keep their own personality:
    A · a precision-lit authority atlas (petrol ink, cool mint and cyan relationships, periwinkle AI citations, gold
    local signals) and B · a warm creative atelier (graphite set, warm product objects, apricot campaign accents).
    Xroga blue is used only for focus and the one route into the product. Local tokens only. */
 .section {
-  --ink: #070a0f;
-  --graphite: #10151d;
-  --raise: #17202b;
-  --raise2: #1d2733;
+  --ink: #142236;
+  --graphite: #172432;
+  --raise: #202f3e;
+  --raise2: #2a394b;
   --text: #f5f6f8;
   --sub: #aab4c2;
   --mute: #8592a3;
@@ -32,8 +32,10 @@
   scroll-margin-top: 88px;
   padding: clamp(96px, 8vw, 128px) 0 clamp(72px, 7vw, 104px);
   background:
-    radial-gradient(60% 30% at 30% 34%, rgba(24, 48, 58, 0.45), transparent 75%), radial-gradient(60% 30% at 70% 78%, rgba(60, 38, 28, 0.38), transparent 75%),
-    var(--ink);
+    radial-gradient(90% 60% at -8% 6%, rgba(69, 154, 173, 0.26), transparent 72%),
+    radial-gradient(70% 52% at 105% 16%, rgba(120, 101, 172, 0.24), transparent 74%),
+    radial-gradient(78% 58% at 70% 90%, rgba(196, 118, 90, 0.17), transparent 72%),
+    linear-gradient(145deg, #142639 0%, #182b3d 37%, #23283b 73%, #282735 100%);
   color: var(--text);
   font-family: var(--font-inter), system-ui, sans-serif;
 }
@@ -95,7 +97,7 @@
   z-index: 30;
   height: 92px;
   margin-bottom: -92px;
-  background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 62%, rgba(7, 10, 15, 0));
+  background: linear-gradient(180deg, rgba(20, 38, 57, 0.98) 0%, rgba(20, 38, 57, 0.96) 62%, rgba(20, 38, 57, 0));
   pointer-events: none;
   opacity: 0;
   transition: opacity 160ms linear;
@@ -137,6 +139,22 @@
   font-weight: 620;
   color: var(--text) !important;
   text-wrap: balance;
+  background: linear-gradient(112deg, #ffffff 0%, #d6f6ef 53%, #e4dcfa 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* A restrained, stationary accent gives the first screen a visual hook without
+   creating movement near interactive controls or causing layout shifts. */
+.title.title::after {
+  content: '';
+  display: block;
+  width: clamp(76px, 10vw, 132px);
+  height: 3px;
+  margin-top: clamp(12px, 1.2vw, 18px);
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--mint), var(--cyan), var(--apricot));
+  box-shadow: 0 0 20px rgba(109, 187, 208, 0.28);
 }
 .lede.lede {
   grid-area: lede;
