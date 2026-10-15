@@ -10,8 +10,8 @@ import { generateWorkspaceInfoWithDiagnostics } from '@cline/core';
 import { Agent } from '@cline/sdk';
 import { z } from 'zod';
 
-// Resolve the dependency used by the real, unchanged Cline SDK, not an unrelated
-// top-level patched copy. No model calls, credentials or remote Git operations.
+// Resolve the real Cline receiver, with only its reviewed factory-import patch.
+// No model calls, credentials or remote Git operations.
 const requireCore = createRequire(import.meta.resolve('@cline/core'));
 const gitPath = requireCore.resolve('simple-git');
 const requireGit = createRequire(gitPath);
@@ -30,8 +30,8 @@ function resolvedVersion(entry: string, name: string): string {
   throw new Error('Resolved dependency metadata unavailable');
 }
 
-test('Cline keeps its compatible Git API while resolving the patched safety parser', () => {
-  assert.equal(resolvedVersion(gitPath, 'simple-git'), '3.36.0');
+test('Cline resolves the fixed Git release and patched safety parser', () => {
+  assert.equal(resolvedVersion(gitPath, 'simple-git'), '4.0.2');
   // Parser package subpath exports are restrictive; inspect only its resolved
   // installed package metadata, not a different top-level package.
   assert.equal(resolvedVersion(requireGit.resolve('@simple-git/argv-parser'), '@simple-git/argv-parser'), '2.0.1');
@@ -57,6 +57,21 @@ test('real Cline workspace discovery preserves repository metadata without netwo
     // Only this exact freshly created temporary fixture directory is removed.
     await rm(directory, { recursive: true, force: true });
   }
+});
+
+test('fixed Git keeps local status diff and commit inspection compatible',async()=>{
+  const directory=await mkdtemp(join(tmpdir(),'xroga-git-api-'));
+  try {
+    const git=simpleGit({baseDir:directory});
+    await git.init();
+    await git.addConfig('user.name','Synthetic Test');await git.addConfig('user.email','test@example.invalid');
+    await writeFile(join(directory,'example.txt'),'before\n');await git.add('example.txt');
+    await git.raw(['-c','commit.gpgsign=false','commit','-m','fixture']);
+    const log=await git.log({maxCount:1});assert.equal(log.latest?.message,'fixture');
+    await writeFile(join(directory,'example.txt'),'after\n');
+    assert.ok((await git.status()).modified.includes('example.txt'));
+    const diff=await git.diff(['--','example.txt']);assert.ok(diff.includes('-before'));assert.ok(diff.includes('+after'));
+  }finally{await rm(directory,{recursive:true,force:true});}
 });
 
 for (const key of ['VISUAL', 'visual', 'Visual']) {

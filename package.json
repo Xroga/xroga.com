@@ -64,6 +64,7 @@
     "test:growth:authority": "tsx --test \"backend/src/organicIntelligence/authority/**/*.test.ts\""
   },
   "overrides": {
+    "simple-git": "4.0.2",
     "postcss": "8.5.24",
     "sharp": "0.35.5",
     "@modelcontextprotocol/sdk": "1.32.1",

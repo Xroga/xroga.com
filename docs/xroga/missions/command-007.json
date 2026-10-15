@@ -10,6 +10,13 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/scripts/cline-git-compat.mjs",
+    "backend/vendor/cline/LICENSE",
+    "backend/vendor/cline/NOTICE.txt",
+    "scripts/ci/cline-compat.test.mjs",
+    ".github/workflows/agent-v2-dependency-lock.yml",
+    "Dockerfile.api",
+    "backend/Dockerfile",
     "backend/src/services/BillingService.ts",
     "backend/src/services/BillingService.test.ts",
     "backend/src/routes/billingWebhook.ts",

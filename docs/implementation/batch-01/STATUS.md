@@ -1,5 +1,13 @@
 # Xroga OS Batch 01 implementation tracker
 
+## 2026-10-15 continuation — pinned Git compatibility remediation
+
+Billing feature `0db09bbb3b4824b8b897f74dc510e7a2f36c34e3` passed aggregate [38710704650](https://github.com/Xroga/xroga.com/actions/runs/38710704650) on both feature and virtual-merge trees, and disposable Supabase [38710704504](https://github.com/Xroga/xroga.com/actions/runs/38710704504):40 real security tests,3 browser cases,70 full fresh/representative-upgrade migrations. Actual integrated API/web revision is `f9ad81d48e2023bbb2eb3171be7eadb99ec5de2d`, not the feature SHA. Golden38710704449 and frontend38710704550 also PASS. These results certify those scoped tests, not all Command007 criteria or subsequent dependency edits.
+
+New Git4.0.2 candidate uses exact SHA-pinned Cline0.0.82 import compatibility transforms, retained Apache license/modification notices, explicit frozen-install/Docker application and a build-time integrity gate.14 real SDK/Git/MCP tests and3 patch-integrity tests PASS locally; backend build PASS. Actual audit exits1: aggregate50/high27/critical0, backend38/high18/critical0, frontend18/high13/critical0. Full clean-install and PR CI for this new source are pending; high findings remain unwaived. See DEPENDENCY_REMEDIATION.md for paths, rights and rollback obligations.
+
+Command007 remains IN_PROGRESS:73/669 conservative callers classified,596 unreviewed,46 reviewed gaps,642 unresolved total. Original ten-criterion acceptance, historical transcript/243 alias reconciliation and external staged/R2/production-compatibility gates remain incomplete. Commands008–010 NOT_STARTED by prerequisite; PR803 remains draft/MERGEABLE as inspected. Batch1 NO-GO. No merge, deployment, provisioning, production SQL/configuration or paid resource operation performed.
+
 ## 2026-10-15 continuation — billing ownership candidate
 
 Verified prior candidate: feature `c41a5ac71827263ab542adc2b474544caa76027b`, actual integrated API/web `5fc967fb9d5f6017a12d1e4e1e836d676726e633`, main parent `caba3dc7a4d2798bcdadade9ced814cf79960a4c`. Aggregate38632740211 PASS on BOTH source trees, each two complete21-stage runs. Feature backend2823/frontend1038; integrated backend2823/frontend1046; each guards20/combined73, no failed/skipped tests or source mutation. Real Supabase38632740228 PASS38 security cases/3 browsers/all69 fresh+representative-upgrade migrations; golden38632740206 PASS including actual local font bytes. Font/aggregate reliability correction has passing evidence for these exact trees. This does not certify the following new edits.

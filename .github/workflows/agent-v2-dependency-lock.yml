@@ -7,6 +7,9 @@ on:
     paths:
       - 'package.json'
       - 'backend/package.json'
+      - 'backend/scripts/cline-git-compat.mjs'
+      - 'backend/vendor/cline/**'
+      - 'backend/src/security/clineGitDependency.test.ts'
       - '.github/workflows/agent-v2-dependency-lock.yml'
   workflow_dispatch:
   pull_request:
@@ -15,6 +18,9 @@ on:
       - 'package-lock.json'
       - 'backend/package.json'
       - 'backend/package-lock.json'
+      - 'backend/scripts/cline-git-compat.mjs'
+      - 'backend/vendor/cline/**'
+      - 'backend/src/security/clineGitDependency.test.ts'
       - 'frontend/package-lock.json'
       - 'scripts/ci/**'
       - '.github/workflows/agent-v2-dependency-lock.yml'
@@ -157,8 +163,11 @@ jobs:
             frontend/node_modules
 
           npm ci --ignore-scripts
+          node backend/scripts/cline-git-compat.mjs --apply
 
           cd backend
+
+          node --import tsx --test src/security/clineGitDependency.test.ts src/security/mcpDependency.test.ts
 
           node <<'NODE'
           const fs = require('node:fs');
@@ -330,7 +339,11 @@ jobs:
             --workspaces=false \
             --prefix backend
 
+          node backend/scripts/cline-git-compat.mjs --apply
+
           cd backend
+
+          node --import tsx --test src/security/clineGitDependency.test.ts src/security/mcpDependency.test.ts
 
           node <<'NODE'
           const fs = require('node:fs');

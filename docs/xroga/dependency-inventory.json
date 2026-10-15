@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c41a5ac71827263ab542adc2b474544caa76027b",
+  "source_sha": "0db09bbb3b4824b8b897f74dc510e7a2f36c34e3",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11132,7 +11132,7 @@
   "source_hashes": [
     {
       "path": ".github/workflows/agent-v2-dependency-lock.yml",
-      "sha256": "014ca25b2e20149be51286b4eb6dbf021e36928d937f01609a2fd81c139724a0"
+      "sha256": "ca3090048c9b2d1c765e6c4d9927311a19eb0949c72e6f36a463b8e0bf2f7c8d"
     },
     {
       "path": ".github/workflows/api-build-check.yml",
@@ -11200,7 +11200,7 @@
     },
     {
       "path": "Dockerfile.api",
-      "sha256": "b931364ed53aa6e74917b27a2e0f17a372ceaaefd37a4e948d2f1a4076f8ce4d"
+      "sha256": "45653d0835aa7fdde5e6cca54967ef98fa1620148e29ff5839bce7c19c2d9cec"
     },
     {
       "path": "backend/src/ai/architect.ts",

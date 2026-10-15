@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "c41a5ac71827263ab542adc2b474544caa76027b",
-    "sourceTimestampUtc": "2026-10-15T01:30:54+05:00",
-    "auditStartedUtc": "2026-10-15T09:06:54.453Z",
+    "sha": "0db09bbb3b4824b8b897f74dc510e7a2f36c34e3",
+    "sourceTimestampUtc": "2026-10-15T14:07:56+05:00",
+    "auditStartedUtc": "2026-10-15T09:25:07.859Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -82936,7 +82936,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "f3b1ed468efd77685e117d24d649b7bf1ce183f775872559ea8a992389979d3d",
+      "sha256": "ea37c4a3e13688ecffdcf5ba6ad72b12915ca224d8180e714d4252ca113d3305",
       "symbols": [
         "after",
         "append",
@@ -94052,8 +94052,9 @@
     {
       "id": "workflow:ca8597762ef09a8667e8",
       "sourcePath": ".github/workflows/agent-v2-dependency-lock.yml",
-      "sha256": "014ca25b2e20149be51286b4eb6dbf021e36928d937f01609a2fd81c139724a0",
+      "sha256": "ca3090048c9b2d1c765e6c4d9927311a19eb0949c72e6f36a463b8e0bf2f7c8d",
       "sourceEntrypoints": [
+        "backend/scripts/cline-git-compat.mjs",
         "scripts/ci/check-lockfile-integrity.mjs"
       ],
       "hasSchedule": false
@@ -101610,7 +101611,7 @@
     {
       "id": "test-suite:9584a8c447a0cf53aa0d",
       "sourcePath": "backend/src/security/clineGitDependency.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -103573,6 +103574,13 @@
       "id": "test-suite:5a20cade29e90a03909b",
       "sourcePath": "scripts/ci/baseline.test.mjs",
       "declaredTests": 13,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:b9b6bb1420d9e988928d",
+      "sourcePath": "scripts/ci/cline-compat.test.mjs",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

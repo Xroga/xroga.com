@@ -15,9 +15,12 @@ ENV npm_config_loglevel=warn
 FROM base AS build
 
 COPY backend/package.json backend/package-lock.json ./
+COPY backend/scripts/cline-git-compat.mjs ./scripts/cline-git-compat.mjs
+COPY backend/vendor/cline ./vendor/cline
 
 # package-lock.json must include every dependency in package.json (npm ci fails otherwise)
 RUN npm ci --include=dev --ignore-scripts
+RUN node scripts/cline-git-compat.mjs --apply
 
 COPY backend/tsconfig.json tsconfig.json
 COPY backend/src ./src

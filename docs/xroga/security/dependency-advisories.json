@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "observedAt": "2026-10-14T19:20:02.520Z",
+  "observedAt": "2026-10-15T09:15:51.021Z",
   "result": "ADVISORY_INVENTORY_NOT_RELEASE_APPROVAL",
   "graphs": [
     {
@@ -8,14 +8,14 @@
       "command": "npm audit --json",
       "cwd": ".",
       "exitCode": 1,
-      "lockSha256": "25f0fa56ddb1d9619c6fb5b475784bab60ca50a6fa03059ccadef80288ab9498",
+      "lockSha256": "22de169b30e8d80cca7b9b3446f63698235395e4013c9b147ff7326ed31d7588",
       "counts": {
         "info": 0,
         "low": 6,
-        "moderate": 15,
-        "high": 29,
-        "critical": 1,
-        "total": 51
+        "moderate": 17,
+        "high": 27,
+        "critical": 0,
+        "total": 50
       },
       "findings": [
         {
@@ -115,7 +115,7 @@
         },
         {
           "name": "@cline/core",
-          "severity": "high",
+          "severity": "moderate",
           "direct": false,
           "affectedRange": "*",
           "installed": [
@@ -142,9 +142,6 @@
             },
             {
               "dependency": "@opentelemetry/sdk-logs"
-            },
-            {
-              "dependency": "simple-git"
             }
           ],
           "effects": [
@@ -180,7 +177,7 @@
         },
         {
           "name": "@cline/sdk",
-          "severity": "high",
+          "severity": "moderate",
           "direct": true,
           "affectedRange": "*",
           "installed": [
@@ -352,7 +349,7 @@
             "@opentelemetry/sdk-metrics",
             "@opentelemetry/sdk-trace-base"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -412,8 +409,10 @@
               "dependency": "@opentelemetry/sdk-metrics"
             }
           ],
-          "effects": [],
-          "fixAvailable": true,
+          "effects": [
+            "@cline/core"
+          ],
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -471,7 +470,7 @@
             "@opentelemetry/exporter-metrics-otlp-http",
             "@opentelemetry/exporter-trace-otlp-http"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -507,7 +506,7 @@
             "@opentelemetry/exporter-trace-otlp-http",
             "@opentelemetry/otlp-exporter-base"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -564,7 +563,7 @@
           "effects": [
             "@opentelemetry/otlp-transformer"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -594,7 +593,7 @@
             "@opentelemetry/exporter-metrics-otlp-http",
             "@opentelemetry/otlp-transformer"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -1336,43 +1335,6 @@
             "version": "4.0.0",
             "isSemVerMajor": true
           },
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
-          "name": "simple-git",
-          "severity": "critical",
-          "direct": false,
-          "affectedRange": "<=4.0.0",
-          "installed": [
-            {
-              "path": "node_modules/@cline/core/node_modules/simple-git",
-              "version": "3.36.0"
-            }
-          ],
-          "via": [
-            {
-              "title": "simple-git unsafe-operation guard does not block trailer command configuration",
-              "url": "https://github.com/advisories/GHSA-x6jw-m9v5-85vh",
-              "severity": "critical",
-              "range": ">=3.15.0 <4.0.1"
-            },
-            {
-              "title": "simple-git allows command execution through unblocked Git configuration includes",
-              "url": "https://github.com/advisories/GHSA-g4wm-2vf7-vfgr",
-              "severity": "high",
-              "range": "<=3.36.0"
-            },
-            {
-              "title": "simple-git: unsafe-operations plugin bypass via git long-option abbreviation (--receive-p/--exe) -> command execution (residual of CVE-2026-28291)",
-              "url": "https://github.com/advisories/GHSA-858h-whjf-mvg5",
-              "severity": "high",
-              "range": "<=3.36.0"
-            }
-          ],
-          "effects": [
-            "@cline/core"
-          ],
-          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2149,14 +2111,14 @@
       "command": "npm audit --json --workspaces=false",
       "cwd": "backend",
       "exitCode": 1,
-      "lockSha256": "99b8bd9dc13db5c84f68baa876f1393ee2632a64f5112a988d3812a305eebf69",
+      "lockSha256": "771f023f8b2b183284d1a99729257e3b9663fe8c900157724826b05f43630fe1",
       "counts": {
         "info": 0,
         "low": 5,
-        "moderate": 13,
-        "high": 20,
-        "critical": 1,
-        "total": 39
+        "moderate": 15,
+        "high": 18,
+        "critical": 0,
+        "total": 38
       },
       "findings": [
         {
@@ -2268,7 +2230,7 @@
         },
         {
           "name": "@cline/core",
-          "severity": "high",
+          "severity": "moderate",
           "direct": false,
           "affectedRange": "*",
           "installed": [
@@ -2295,9 +2257,6 @@
             },
             {
               "dependency": "@opentelemetry/sdk-logs"
-            },
-            {
-              "dependency": "simple-git"
             }
           ],
           "effects": [
@@ -2337,7 +2296,7 @@
         },
         {
           "name": "@cline/sdk",
-          "severity": "high",
+          "severity": "moderate",
           "direct": true,
           "affectedRange": "*",
           "installed": [
@@ -2467,7 +2426,7 @@
             "@opentelemetry/sdk-metrics",
             "@opentelemetry/sdk-trace-base"
           ],
-          "fixAvailable": true,
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2495,8 +2454,10 @@
               "dependency": "@opentelemetry/sdk-logs"
             }
           ],
-          "effects": [],
-          "fixAvailable": true,
+          "effects": [
+            "@cline/core"
+          ],
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -3190,43 +3151,6 @@
             "body-parser"
           ],
           "fixAvailable": true,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
-          "name": "simple-git",
-          "severity": "critical",
-          "direct": false,
-          "affectedRange": "<=4.0.0",
-          "installed": [
-            {
-              "path": "node_modules/@cline/core/node_modules/simple-git",
-              "version": "3.36.0"
-            }
-          ],
-          "via": [
-            {
-              "title": "simple-git unsafe-operation guard does not block trailer command configuration",
-              "url": "https://github.com/advisories/GHSA-x6jw-m9v5-85vh",
-              "severity": "critical",
-              "range": ">=3.15.0 <4.0.1"
-            },
-            {
-              "title": "simple-git allows command execution through unblocked Git configuration includes",
-              "url": "https://github.com/advisories/GHSA-g4wm-2vf7-vfgr",
-              "severity": "high",
-              "range": "<=3.36.0"
-            },
-            {
-              "title": "simple-git: unsafe-operations plugin bypass via git long-option abbreviation (--receive-p/--exe) -> command execution (residual of CVE-2026-28291)",
-              "url": "https://github.com/advisories/GHSA-858h-whjf-mvg5",
-              "severity": "high",
-              "range": "<=3.36.0"
-            }
-          ],
-          "effects": [
-            "@cline/core"
-          ],
-          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
