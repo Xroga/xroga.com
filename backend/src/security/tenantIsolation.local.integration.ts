@@ -492,6 +492,9 @@ test('browser cannot mint operations membership, and even a misbound service row
 
 test('portfolio does not disclose a misbound foreign resource while keeping legitimate owner evidence',async()=>{
   const [owner,other]=users;
+  // Both owner IDs and both project IDs are now legitimately in the portfolio.
+  // Independent IN predicates must not admit a cross-paired corrupt record.
+  const membership=await insert('operations_memberships',{user_id:other.id,project_id:other.project,member_user_id:owner.id,role:'viewer',created_by:other.id});
   const legitimate=await insert('operations_resources',{user_id:owner.id,project_id:owner.project,kind:'service',name:'Owner fixture',source:'fixture',evidence_reference:'OWN_RESOURCE_EVIDENCE_CANARY'});
   const foreign=await insert('operations_resources',{user_id:other.id,project_id:owner.project,kind:'service',name:'FOREIGN_RESOURCE_CANARY',source:'fixture',status:'failed',evidence_reference:'FOREIGN_RESOURCE_EVIDENCE_CANARY'});
   try {
@@ -499,7 +502,51 @@ test('portfolio does not disclose a misbound foreign resource while keeping legi
       const response=await request(path,owner.token);assert.equal(response.status,200);
       const text=await response.text();assert.ok(text.includes('OWN_RESOURCE_EVIDENCE_CANARY'));assert.ok(!text.includes('FOREIGN_RESOURCE'));
     }
-  } finally {assert.equal((await admin.from('operations_resources').delete().in('id',[legitimate,foreign])).error,null);}
+    const portfolio=await request('/api/operations/portfolio',owner.token);assert.ok((await portfolio.text()).includes(other.project),'Legitimate membership must remain visible');
+  } finally {assert.equal((await admin.from('operations_resources').delete().in('id',[legitimate,foreign])).error,null);assert.equal((await admin.from('operations_memberships').delete().eq('id',membership)).error,null);}
+});
+
+test('misbound persisted operations actions cannot leak a receipt or grant confirmation or approval',async()=>{
+  const [owner,other]=users;
+  const id=await insert('operations_actions',{user_id:other.id,project_id:owner.project,requested_by:owner.id,action_type:'retry_job',target_type:'job',target_id:randomUUID(),permission_required:'retry_jobs',risk_level:'low',status:'verified',idempotency_key:randomUUID(),target_version:0,action_plan_digest:'a'.repeat(64),status_reason:'FOREIGN_ACTION_RECEIPT_CANARY'});
+  try{
+    for(const suffix of ['execute','confirm','approve']){
+      const response=await request(`/api/operations/actions/${id}/${suffix}`,owner.token,'POST',suffix==='approve'?{decision:'approved',reason:'fixture approval'}:{});
+      assert.equal(response.status,403);assert.ok(!(await response.text()).includes('CANARY'));
+    }
+    const actual=await admin.from('operations_actions').select('user_id,project_id,status').eq('id',id).single();
+    assert.equal(actual.error,null);assert.deepEqual(actual.data,{user_id:other.id,project_id:owner.project,status:'verified'});
+  }finally{assert.equal((await admin.from('operations_actions').delete().eq('id',id)).error,null);}
+});
+
+test('project-limited operators cannot retry another project job or webhook owned by the same tenant',async()=>{
+  const [owner,member]=users;
+  const restrictedProject=await insert('projects',{user_id:owner.id,name:'Owner separate private project',type:'website',status:'draft'});
+  const membership=await insert('operations_memberships',{user_id:owner.id,project_id:owner.project,member_user_id:member.id,role:'operator',created_by:owner.id});
+  const job=await insert('swarm_job_queue',{user_id:owner.id,project_id:restrictedProject,run_id:randomUUID(),prompt:'synthetic fixture only',status:'failed',attempt_count:0});
+  const webhook=await insert('webhook_deliveries',{provider:'fixture-no-provider',delivery_id:randomUUID(),payload_digest:'a'.repeat(64),user_id:owner.id,project_id:restrictedProject,status:'failed',attempt_count:0},'delivery_id');
+  const actionIds:string[]=[];
+  try{
+    for(const [actionType,targetType,targetId] of [['retry_job','job',job],['retry_webhook','webhook',webhook]]){
+      const input={projectId:owner.project,actionType,targetType,targetId,targetVersion:0,idempotencyKey:randomUUID(),confirmed:true};
+      const denied=await request('/api/operations/actions',member.token,'POST',input);assert.equal(denied.status,403);
+      const absent=await admin.from('operations_actions').select('id').eq('user_id',owner.id).eq('idempotency_key',input.idempotencyKey);
+      assert.equal(absent.error,null);assert.deepEqual(absent.data,[],'Denied foreign target must not create an executable action');
+    }
+    const jobBefore=await admin.from('swarm_job_queue').select('status,attempt_count').eq('id',job).single();
+    const webhookBefore=await admin.from('webhook_deliveries').select('status,attempt_count').eq('provider','fixture-no-provider').eq('delivery_id',webhook).single();
+    assert.deepEqual(jobBefore.data,{status:'failed',attempt_count:0});assert.deepEqual(webhookBefore.data,{status:'failed',attempt_count:0});
+    // The legitimate owner/project path still performs only the bounded DB transition.
+    const allowed=await request('/api/operations/actions',owner.token,'POST',{projectId:restrictedProject,actionType:'retry_job',targetType:'job',targetId:job,targetVersion:0,idempotencyKey:randomUUID(),confirmed:true});
+    assert.equal(allowed.status,201);const result=await allowed.json() as {action:{id:string;status:string}};actionIds.push(result.action.id);assert.equal(result.action.status,'verified');
+    const jobAfter=await admin.from('swarm_job_queue').select('status,attempt_count').eq('id',job).single();assert.deepEqual(jobAfter.data,{status:'queued',attempt_count:1});
+  }finally{
+    if(actionIds.length)assert.equal((await admin.from('operations_actions').delete().in('id',actionIds)).error,null);
+    assert.equal((await admin.from('swarm_job_queue').delete().eq('id',job)).error,null);
+    assert.equal((await admin.from('webhook_deliveries').delete().eq('provider','fixture-no-provider').eq('delivery_id',webhook)).error,null);
+    assert.equal((await admin.from('operations_memberships').delete().eq('id',membership)).error,null);
+    assert.equal((await admin.from('projects').delete().eq('id',restrictedProject)).error,null);
+  }
 });
 
 test('registered stale-run maintenance preserves fresh and terminal runs across tenants',async()=>{

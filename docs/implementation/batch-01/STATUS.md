@@ -1,5 +1,11 @@
 # Xroga OS Batch 01 implementation tracker
 
+## 2026-10-15 continuation — Operations owner/project boundaries
+
+Feature63bfd812e4704e0f2ae4d7e177461abb8021b21e now passes aggregate [38715245278](https://github.com/Xroga/xroga.com/actions/runs/38715245278), both feature and virtual-merge trees with repeated full baseline. Real isolated Supabase [38715245296](https://github.com/Xroga/xroga.com/actions/runs/38715245296) passes41 security/3 browser cases and70 fresh/representative-upgrade migrations. Actual tested web/API revision is fd4f848df1bf0bacffaabbc168ec848576497733, not the feature SHA. The strict build-contract correction passes; previous150d failure remains recorded below. Frozen Cline, Docker, frontend and golden workflows also pass at63bfd.
+
+New Operations candidate fixes portfolio owner/project cross-pair leaks, mismatched persisted action receipts and same-tenant cross-project retry authority. Four focused local tests and backend build PASS;43 real security cases now defined, new-source CI pending. Source-bound review covers76 Operations candidates without certifying unresolved atomicity/redaction/approval gaps. See OPERATIONS_OWNER_BOUNDARY.md. Full007 remains incomplete,008–010 NOT_STARTED, PR803 draft, NO-GO. No production action or owner credentials required now.
+
 ## 2026-10-15 continuation — connected-project isolation and build-contract correction
 
 Git compatibility source150d365dfa47bde5801cf4cc5d6de06d384c4058 passes actual frozen workspace/standalone SDK tests [38712879437](https://github.com/Xroga/xroga.com/actions/runs/38712879437), Docker38712879465, frontend38712879455 and golden38712879498. Real disposable Supabase [38712879653](https://github.com/Xroga/xroga.com/actions/runs/38712879653) passes40 security/3 browser/70 full fresh+upgrade migration cases on actual web/API079f4bfaf3504e0b5220ef6151dd478577156deb. Aggregate38712879661 fails because the contract checker still requires bare tsc after the new compatibility precheck; new exact contract and negative tests correct it without removing output/startup validation. This failure remains recorded.

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "150d365dfa47bde5801cf4cc5d6de06d384c4058",
+  "source_sha": "63bfd812e4704e0f2ae4d7e177461abb8021b21e",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -2919,9 +2919,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "abc7ae023f171bee9a37c099f08c3ad8a6eedbfb37c28b377355c1c82804618c",
-      "byte_size": 3784168,
-      "modified_timestamp": "2026-10-15T09:44:11.419Z",
+      "sha256": "6bfc0d83d5d0c691ef2b0e58856a639ba5e84ab7ec9f74367026b4c35dd763a6",
+      "byte_size": 3784752,
+      "modified_timestamp": "2026-10-15T10:00:00.995Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -6065,9 +6065,9 @@
       "source_id": "SRC-76cea854f8de0332",
       "filename": "operationsService.ts",
       "path_or_url": "backend/src/operations/operationsService.ts",
-      "sha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d",
-      "byte_size": 50192,
-      "modified_timestamp": "2026-10-13T18:43:32.536Z",
+      "sha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "byte_size": 52333,
+      "modified_timestamp": "2026-10-15T09:52:17.062Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

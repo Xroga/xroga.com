@@ -111,35 +111,38 @@ export class OperationsService {
     const [environments, resources, incidents, alerts, approvals, deployments] = await Promise.all([
       queryOrThrow(this.db.from('operations_environments').select('*').in('project_id', ids).in('user_id', ownerIds).order('updated_at', { ascending: false }), 'Environment state unavailable'),
       queryOrThrow(this.db.from('operations_resources').select('*').in('project_id', ids).in('user_id', ownerIds), 'Operational resources unavailable'),
-      queryOrThrow(this.db.from('production_incidents').select('id,project_id,status').in('project_id', ids).in('user_id', ownerIds).not('status', 'in', '(resolved,closed,cancelled)'), 'Incident state unavailable'),
-      queryOrThrow(this.db.from('operations_alerts').select('id,project_id,status').in('project_id', ids).in('user_id', ownerIds).in('status', ['active','acknowledged']), 'Alert state unavailable'),
+      queryOrThrow(this.db.from('production_incidents').select('id,user_id,project_id,status').in('project_id', ids).in('user_id', ownerIds).not('status', 'in', '(resolved,closed,cancelled)'), 'Incident state unavailable'),
+      queryOrThrow(this.db.from('operations_alerts').select('id,user_id,project_id,status').in('project_id', ids).in('user_id', ownerIds).in('status', ['active','acknowledged']), 'Alert state unavailable'),
       queryOrThrow(
         this.db
           .from('operations_action_approvals')
-          .select('id,action_id,decision,operations_actions!inner(project_id)')
+          .select('id,user_id,action_id,decision,operations_actions!inner(project_id,user_id)')
           .eq('decision', 'pending')
           .in('user_id', ownerIds)
           .in('operations_actions.project_id', ids),
         'Approval state unavailable',
       ),
-      queryOrThrow(this.db.from('deployment_status').select('id,project_id,verification_state,status,created_at').in('project_id', ids).in('user_id', ownerIds).order('created_at', { ascending: false }), 'Deployment state unavailable'),
+      queryOrThrow(this.db.from('deployment_status').select('id,user_id,project_id,verification_state,status,created_at').in('project_id', ids).in('user_id', ownerIds).order('created_at', { ascending: false }), 'Deployment state unavailable'),
     ]);
 
     const products = projectRows.map((project) => {
-      const projectResources = (resources as DbRow[]).filter((item) => item.project_id === project.id).map(mapResource);
-      const environmentRow = (environments as DbRow[]).find((item) => item.project_id === project.id && item.environment_type === 'production')
-        ?? (environments as DbRow[]).find((item) => item.project_id === project.id);
+      // Independent IN(owner IDs)/IN(project IDs) is only a broad fetch bound.
+      // Each row must also match the authoritative project/owner pair.
+      const belongs = (item: DbRow) => item.project_id === project.id && item.user_id === project.user_id;
+      const projectResources = (resources as DbRow[]).filter(belongs).map(mapResource);
+      const environmentRow = (environments as DbRow[]).find((item) => belongs(item) && item.environment_type === 'production')
+        ?? (environments as DbRow[]).find(belongs);
       const environment = environmentRow
         ? { environment_key: String(environmentRow.environment_key), observed_release_id: environmentRow.observed_release_id, observed_commit_sha: environmentRow.observed_commit_sha }
         : undefined;
-      const deployment = (deployments as DbRow[]).find((item) => item.project_id === project.id);
+      const deployment = (deployments as DbRow[]).find(belongs);
       return aggregatePortfolioProduct({
         project,
         resources: projectResources,
         environment,
-        incidentCount: (incidents as DbRow[]).filter((item) => item.project_id === project.id).length,
-        alertCount: (alerts as DbRow[]).filter((item) => item.project_id === project.id).length,
-        pendingApprovals: (approvals as DbRow[]).filter((item) => item.operations_actions?.project_id === project.id).length,
+        incidentCount: (incidents as DbRow[]).filter(belongs).length,
+        alertCount: (alerts as DbRow[]).filter(belongs).length,
+        pendingApprovals: (approvals as DbRow[]).filter((item) => item.user_id === project.user_id && item.operations_actions && belongs(item.operations_actions)).length,
         deploymentState: deployment?.verification_state ?? deployment?.status ?? null,
       });
     }).filter((product) => !options.status || product.status === options.status);
@@ -149,7 +152,7 @@ export class OperationsService {
   async product(userId: string, projectId: string): Promise<Record<string, unknown>> {
     const access = await this.access(userId, projectId, 'view_product_operations');
     const [project, environments, resources, releases, deployments, incidents, alerts, actions, approvals, jobs, webhooks, maintenance] = await Promise.all([
-      queryOrThrow<DbRow | null>(this.db.from('projects').select('id,name,type,status,github_repo_url,github_repo_name,created_at,updated_at').eq('id', projectId).maybeSingle(), 'Product unavailable', null),
+      queryOrThrow<DbRow | null>(this.db.from('projects').select('id,name,type,status,github_repo_url,github_repo_name,created_at,updated_at').eq('id', projectId).eq('user_id', access.ownerId).maybeSingle(), 'Product unavailable', null),
       queryOrThrow(this.db.from('operations_environments').select('*').eq('project_id', projectId).eq('user_id', access.ownerId).order('updated_at', { ascending: false }), 'Environments unavailable'),
       queryOrThrow(this.db.from('operations_resources').select('*').eq('project_id', projectId).eq('user_id', access.ownerId).order('updated_at', { ascending: false }), 'Resources unavailable'),
       queryOrThrow(this.db.from('production_releases').select('id,commit_sha,artifact_digest,environment,state,branch,build_id,verified_at,stale_after,created_at').eq('project_id', projectId).eq('user_id', access.ownerId).order('created_at', { ascending: false }).limit(50), 'Releases unavailable'),
@@ -157,7 +160,7 @@ export class OperationsService {
       queryOrThrow(this.db.from('production_incidents').select('*').eq('project_id', projectId).eq('user_id', access.ownerId).order('opened_at', { ascending: false }).limit(50), 'Incidents unavailable'),
       queryOrThrow(this.db.from('operations_alerts').select('*').eq('project_id', projectId).eq('user_id', access.ownerId).order('last_observed_at', { ascending: false }).limit(100), 'Alerts unavailable'),
       queryOrThrow(this.db.from('operations_actions').select('id,action_type,target_type,target_id,risk_level,status,status_reason,evidence_reference,created_at,updated_at').eq('project_id', projectId).eq('user_id', access.ownerId).order('created_at', { ascending: false }).limit(100), 'Actions unavailable'),
-      queryOrThrow(this.db.from('operations_action_approvals').select('id,action_id,required_role,decision,expires_at,created_at,operations_actions!inner(project_id)').eq('operations_actions.project_id', projectId).eq('user_id', access.ownerId).order('created_at', { ascending: false }).limit(100), 'Approvals unavailable'),
+      queryOrThrow(this.db.from('operations_action_approvals').select('id,action_id,required_role,decision,expires_at,created_at,operations_actions!inner(project_id)').eq('operations_actions.project_id', projectId).eq('operations_actions.user_id', access.ownerId).eq('user_id', access.ownerId).order('created_at', { ascending: false }).limit(100), 'Approvals unavailable'),
       queryOrThrow(this.db.from('swarm_job_queue').select('id,run_id,feature_category,status,attempt_count,max_attempts,error_category,safe_error,created_at,updated_at,completed_at').eq('project_id', projectId).eq('user_id', access.ownerId).order('created_at', { ascending: false }).limit(100), 'Jobs unavailable'),
       queryOrThrow(this.db.from('webhook_deliveries').select('delivery_id,provider,event_type,status,signature_verified,attempt_count,response_status,related_object,evidence_reference,received_at,completed_at,updated_at').eq('project_id', projectId).eq('user_id', access.ownerId).order('received_at', { ascending: false }).limit(100), 'Webhooks unavailable'),
       queryOrThrow(this.db.from('operations_maintenance_windows').select('*').eq('project_id', projectId).eq('user_id', access.ownerId).order('starts_at', { ascending: false }).limit(100), 'Maintenance windows unavailable'),
@@ -191,6 +194,10 @@ export class OperationsService {
     const definition = ACTION_DEFINITIONS[request.actionType];
     if (!definition || !definition.supportedTargetTypes.includes(request.targetType)) throw new OperationsServiceError('precondition_failed', 'Unsupported action or target', 400);
     const access = await this.access(userId, request.projectId, definition.permission);
+    if (request.environmentId) {
+      const environment = await queryOrThrow<DbRow | null>(this.db.from('operations_environments').select('id').eq('id', request.environmentId).eq('project_id', request.projectId).eq('user_id', access.ownerId).maybeSingle(), 'Environment unavailable', null);
+      if (!environment) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
+    }
     const windows = await queryOrThrow<DbRow[]>(this.db.from('operations_maintenance_windows').select('starts_at,ends_at,allowed_actions,blocked_actions').eq('project_id', request.projectId).eq('user_id', access.ownerId), 'Maintenance state unavailable');
     if (maintenanceBlocksAction({ actionType: request.actionType, now: new Date(), windows: windows.map((item) => ({ startsAt: item.starts_at, endsAt: item.ends_at, allowedActions: item.allowed_actions, blockedActions: item.blocked_actions })) })) {
       throw new OperationsServiceError('precondition_failed', 'Action is blocked by an active maintenance window', 409);
@@ -206,9 +213,11 @@ export class OperationsService {
       rollback_plan: {}, verification_plan: { required: true }, max_attempts: definition.maxAttempts,
       confirmation_digest: request.confirmed ? digest : null,
     };
+    // Do not create an action/approval for a target outside this project boundary.
+    await this.currentTargetVersion(row);
     const { data, error } = await this.db.from('operations_actions').insert(row).select('*').single();
     if (error) {
-      const existing = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('user_id', access.ownerId).eq('idempotency_key', request.idempotencyKey).maybeSingle(), 'Action conflict');
+      const existing = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('user_id', access.ownerId).eq('project_id', request.projectId).eq('idempotency_key', request.idempotencyKey).maybeSingle(), 'Action conflict');
       if (existing) return existing;
       throw new OperationsServiceError('conflict', 'Action could not be created', 409);
     }
@@ -230,8 +239,9 @@ export class OperationsService {
     const action = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable');
     if (!action) throw new OperationsServiceError('not_found', 'Action not found', 404);
     const access = await this.access(userId, action.project_id, 'view_product_operations');
+    if (action.user_id !== access.ownerId) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
     if (action.requested_by === userId) throw new OperationsServiceError('forbidden', 'Requester cannot approve this action', 403);
-    const approval = await queryOrThrow<DbRow | null>(this.db.from('operations_action_approvals').select('*').eq('action_id', actionId).eq('decision', 'pending').maybeSingle(), 'Approval unavailable');
+    const approval = await queryOrThrow<DbRow | null>(this.db.from('operations_action_approvals').select('*').eq('action_id', actionId).eq('user_id', access.ownerId).eq('decision', 'pending').maybeSingle(), 'Approval unavailable');
     if (!approval) throw new OperationsServiceError('invalid_state', 'No pending approval exists', 409);
     if (access.role !== 'admin' && access.role !== approval.required_role) throw new OperationsServiceError('forbidden', `This action requires a ${approval.required_role}`, 403);
     if (new Date(approval.expires_at).getTime() <= Date.now()) {
@@ -250,7 +260,9 @@ export class OperationsService {
     if (!action) throw new OperationsServiceError('not_found', 'Action not found', 404);
     if (action.requested_by !== userId) throw new OperationsServiceError('forbidden', 'Only the requester can confirm this action', 403);
     const definition = ACTION_DEFINITIONS[action.action_type];
-    await this.access(userId, action.project_id, definition.permission);
+    if (!definition) throw new OperationsServiceError('invalid_state', 'Action is unavailable', 409);
+    const access = await this.access(userId, action.project_id, definition.permission);
+    if (action.user_id !== access.ownerId) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
     if (action.status !== 'confirmation_required') throw new OperationsServiceError('invalid_state', 'Action is not waiting for confirmation', 409);
     const status = definition.approvalRole ? 'approval_required' : 'queued';
     const updated = await queryOrThrow<DbRow[]>(this.db.from('operations_actions').update({ confirmation_digest: action.action_plan_digest, status, updated_at: new Date().toISOString() }).eq('id', actionId).eq('status', 'confirmation_required').select('*'), 'Action confirmation failed');
@@ -263,6 +275,9 @@ export class OperationsService {
   }
 
   private async currentTargetVersion(action: DbRow): Promise<number | null> {
+    // These existing controls deliberately address every rule in the authorized project.
+    if (action.target_type === 'automation' && action.target_id === action.project_id
+      && ['emergency_stop','resume_automation'].includes(action.action_type)) return Number(action.target_version);
     const lookups: Record<string, { table: string; idColumn: string; versionColumn: string }> = {
       service: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' }, health_check: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' },
       workflow_check: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' }, domain: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' },
@@ -274,15 +289,18 @@ export class OperationsService {
     };
     const lookup = lookups[action.target_type];
     if (!lookup) return action.target_type === 'release' ? 1 : null;
-    const row = await queryOrThrow<DbRow | null>(this.db.from(lookup.table).select(lookup.versionColumn).eq(lookup.idColumn, action.target_id).eq('user_id', action.user_id).maybeSingle(), 'Target state unavailable');
-    return row ? Number(row[lookup.versionColumn]) : null;
+    const row = await queryOrThrow<DbRow | null>(this.db.from(lookup.table).select(lookup.versionColumn).eq(lookup.idColumn, action.target_id).eq('project_id', action.project_id).eq(action.target_type === 'growth_campaign' ? 'tenant_id' : 'user_id', action.user_id).maybeSingle(), 'Target state unavailable');
+    if (!row) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
+    return Number(row[lookup.versionColumn]);
   }
 
   async executeAction(userId: string, actionId: string): Promise<DbRow> {
     const action = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable');
     if (!action) throw new OperationsServiceError('not_found', 'Action not found', 404);
     const definition = ACTION_DEFINITIONS[action.action_type];
+    if (!definition) throw new OperationsServiceError('invalid_state', 'Action is unavailable', 409);
     const access = await this.access(userId, action.project_id, definition.permission);
+    if (action.user_id !== access.ownerId) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
     if (action.status === 'verified') return action;
     const currentVersion = await this.currentTargetVersion(action);
     if (currentVersion !== null && currentVersion !== Number(action.target_version)) {
@@ -292,7 +310,7 @@ export class OperationsService {
     }
     if (definition.confirmationRequired && action.confirmation_digest !== action.action_plan_digest) throw new OperationsServiceError('precondition_failed', 'Action confirmation is missing or stale', 409);
     if (definition.approvalRole) {
-      const approval = await queryOrThrow<DbRow | null>(this.db.from('operations_action_approvals').select('*').eq('action_id', actionId).maybeSingle(), 'Approval unavailable');
+      const approval = await queryOrThrow<DbRow | null>(this.db.from('operations_action_approvals').select('*').eq('action_id', actionId).eq('user_id', access.ownerId).maybeSingle(), 'Approval unavailable');
       if (!approval?.approver_id) throw new OperationsServiceError('approval_required', 'Action approval is required', 409);
       const validity = approvalIsValid({ requesterId: action.requested_by, approverId: approval.approver_id, decision: approval.decision, expiresAt: approval.expires_at, approvedTargetVersion: approval.target_version, currentTargetVersion: action.target_version, approvedPlanDigest: approval.action_plan_digest, currentPlanDigest: action.action_plan_digest });
       if (!validity.valid) throw new OperationsServiceError('invalid_state', validity.reason ?? 'Approval invalid', 409);
@@ -349,11 +367,11 @@ export class OperationsService {
       return rows.length ? { status: 'verified', safeSummary: 'Incident resolution persisted with recovery evidence' } : { status: 'blocked', safeSummary: 'Incident state does not permit resolution', errorCategory: 'invalid_state' };
     }
     if (capability === 'retry_job') {
-      const rows = await queryOrThrow<DbRow[]>(this.db.from('swarm_job_queue').update({ status: 'queued', attempt_count: Number(input.targetVersion) + 1, updated_at: now, safe_error: null }).eq('id', targetId).eq('user_id', userId).eq('status', 'failed').lt('attempt_count', 3).select('id,status,attempt_count'), 'Job retry failed');
+      const rows = await queryOrThrow<DbRow[]>(this.db.from('swarm_job_queue').update({ status: 'queued', attempt_count: Number(input.targetVersion) + 1, updated_at: now, safe_error: null }).eq('id', targetId).eq('project_id', projectId).eq('user_id', userId).eq('status', 'failed').eq('attempt_count', Number(input.targetVersion)).lt('attempt_count', 3).select('id,status,attempt_count'), 'Job retry failed');
       return rows.length ? { status: 'verified', safeSummary: 'Job retry was queued exactly once' } : { status: 'blocked', safeSummary: 'Job is not retryable or retry limit was reached', errorCategory: 'invalid_state' };
     }
     if (capability === 'retry_webhook') {
-      const rows = await queryOrThrow<DbRow[]>(this.db.from('webhook_deliveries').update({ status: 'processing', attempt_count: Number(input.targetVersion) + 1, updated_at: now, safe_error: null }).eq('delivery_id', targetId).eq('user_id', userId).eq('status', 'failed').select('delivery_id,status,attempt_count'), 'Webhook retry failed');
+      const rows = await queryOrThrow<DbRow[]>(this.db.from('webhook_deliveries').update({ status: 'processing', attempt_count: Number(input.targetVersion) + 1, updated_at: now, safe_error: null }).eq('delivery_id', targetId).eq('project_id', projectId).eq('user_id', userId).eq('status', 'failed').eq('attempt_count', Number(input.targetVersion)).select('delivery_id,status,attempt_count'), 'Webhook retry failed');
       return rows.length ? { status: 'verified', safeSummary: 'Webhook reprocessing was queued without duplicating receipt evidence' } : { status: 'blocked', safeSummary: 'Webhook is not eligible for retry', errorCategory: 'invalid_state' };
     }
     if (capability === 'emergency_stop' || capability === 'resume_automation') {
@@ -409,7 +427,7 @@ export class OperationsService {
     const access = await this.access(userId, projectId, 'view_product_operations');
     const [rules, runs] = await Promise.all([
       queryOrThrow<DbRow[]>(this.db.from('operations_automation_rules').select('*').eq('user_id', access.ownerId).eq('project_id', projectId).order('updated_at', { ascending: false }), 'Automation rules unavailable'),
-      queryOrThrow<DbRow[]>(this.db.from('operations_automation_runs').select('*,operations_automation_rules!inner(project_id)').eq('user_id', access.ownerId).eq('operations_automation_rules.project_id', projectId).order('started_at', { ascending: false }).limit(100), 'Automation history unavailable'),
+      queryOrThrow<DbRow[]>(this.db.from('operations_automation_runs').select('*,operations_automation_rules!inner(project_id)').eq('user_id', access.ownerId).eq('operations_automation_rules.project_id', projectId).eq('operations_automation_rules.user_id', access.ownerId).order('started_at', { ascending: false }).limit(100), 'Automation history unavailable'),
     ]);
     return { rules, runs };
   }

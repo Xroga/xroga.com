@@ -1,5 +1,11 @@
 # Command 007 acceptance checkpoint — not verified
 
+## Current assessment — Operations ownership continuation
+
+Feature63bfd812e4704e0f2ae4d7e177461abb8021b21e: aggregate38715245278 PASS on both repeated feature/integrated baselines; isolated38715245296 PASS41 security/3 browser/70 fresh+representative-upgrade migrations. Actual API/web fd4f848df1bf0bacffaabbc168ec848576497733. Frontend, golden, Docker and frozen Cline compatibility also PASS. These results resolve the previous build-contract failure, not all Command007 criteria.
+
+New Operations fixes and43 defined real cases await their own exact-SHA CI. Four focused tests/backend build PASS. Full criteria2/10 remain incomplete despite additional source-bound review. Criteria1/3/4/5/6/9 remain only partly verified;7/8 have scoped real isolated proof but do not replace staging/catalog/R2 compatibility. Git critical is remediated by tested pinned compatibility;27 aggregate high findings remain unwaived. Historical transcript/243-alias semantics remain incomplete.008–010 NOT_STARTED, NO-GO. Earlier sections are retained chronological evidence, not current certification.
+
 ## Current assessment — 2026-10-15 connected-project candidate
 
 Latest feature `150d365dfa47bde5801cf4cc5d6de06d384c4058`: actual Git4/Cline frozen workspace and standalone tests38712879437 PASS, API Docker38712879465 PASS, frontend38712879455 and golden38712879498 PASS. Disposable Supabase38712879653 PASS40 real security/3 browser cases/all70 fresh+representative-upgrade files; actual API/web revision `079f4bfaf3504e0b5220ef6151dd478577156deb`. Aggregate38712879661 FAILED on both trees after successful builds/types/lint/backend2826/frontend1038(feature) or1053(integrated): the runtime-contract checker still required bare `tsc`. Candidate fixes that exact contract to REQUIRE compatibility-check AND tsc, preserving artifact-path/startup assertions and adding removal-negative tests. Full rerun pending; no failed run relabeled PASS.

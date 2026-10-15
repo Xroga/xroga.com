@@ -1,27 +1,27 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "c6df4bd09474b29a0f0cb8e88020cbe41c36a6c91277f2ce40b2ac1ccd04347f",
+  "reviewRegistrySha256": "ce21ba438314bc07039751a70d869669a26a320a47e29f5aeed1fde40881d8d0",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 160,
-    "persistenceCandidates": 669,
-    "ownerPredicateCandidates": 164,
-    "reviewRequired": 580,
-    "reviewedCandidates": 89,
-    "unresolvedSafetyCandidates": 639,
+    "persistenceCandidates": 670,
+    "ownerPredicateCandidates": 167,
+    "reviewRequired": 505,
+    "reviewedCandidates": 165,
+    "unresolvedSafetyCandidates": 637,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 580,
-    "SCOPED_BOUNDARY": 15,
+    "REVIEW_REQUIRED": 505,
+    "SCOPED_BOUNDARY": 18,
     "NARROW_EXCEPTION": 2,
     "NOT_PERSISTENCE": 13,
-    "REVIEWED_GAP": 59
+    "REVIEWED_GAP": 132
   },
   "callers": [
     {
@@ -2312,8 +2312,22 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
       "id": "c29f9838cc94ecd2c150",
@@ -2323,8 +2337,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Inspected authenticated route mounting, project access resolution and the persisted profiles role. Project identity is fetched by exact ID; a non-owner/non-admin must have membership matching both the current parent owner and authenticated member. Injected clients do not supply request actor identity.",
+        "reason": "This certifies only these three lookup boundaries, not the entire service or concurrent revocation. Existing platform admin access remains deliberately broader than founder access. The real API membership/revocation and forged-parent tests exercise this distinction.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real operations membership allows its reviewed relation then denies immediately after revocation"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "browser cannot mint operations membership"
+          }
+        ]
+      }
     },
     {
       "id": "c8324d4c80aa24f353c0",
@@ -2334,8 +2362,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Inspected authenticated route mounting, project access resolution and the persisted profiles role. Project identity is fetched by exact ID; a non-owner/non-admin must have membership matching both the current parent owner and authenticated member. Injected clients do not supply request actor identity.",
+        "reason": "This certifies only these three lookup boundaries, not the entire service or concurrent revocation. Existing platform admin access remains deliberately broader than founder access. The real API membership/revocation and forged-parent tests exercise this distinction.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real operations membership allows its reviewed relation then denies immediately after revocation"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "browser cannot mint operations membership"
+          }
+        ]
+      }
     },
     {
       "id": "26273af39994a64751c4",
@@ -2345,8 +2387,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_memberships",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Inspected authenticated route mounting, project access resolution and the persisted profiles role. Project identity is fetched by exact ID; a non-owner/non-admin must have membership matching both the current parent owner and authenticated member. Injected clients do not supply request actor identity.",
+        "reason": "This certifies only these three lookup boundaries, not the entire service or concurrent revocation. Existing platform admin access remains deliberately broader than founder access. The real API membership/revocation and forged-parent tests exercise this distinction.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real operations membership allows its reviewed relation then denies immediately after revocation"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "browser cannot mint operations membership"
+          }
+        ]
+      }
     },
     {
       "id": "9cce62fe5b1fc0f11fc0",
@@ -2356,8 +2412,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
       "id": "23d14aac5562a1e63833",
@@ -2367,8 +2437,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_memberships",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
       "id": "295d37e36147c447ff5b",
@@ -2378,8 +2462,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
       "id": "e9fa47e9e2696cd0e03d",
@@ -2389,8 +2487,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_environments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
       "id": "b7360d921d58bb288276",
@@ -2400,8 +2512,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_resources",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
       "id": "2c1d584f346095bda3c9",
@@ -2411,723 +2537,1672 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_incidents",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "3a9e4e71ff9510c32e6b",
+      "id": "bbda1d2e8b618a423bb9",
       "path": "backend/src/operations/operationsService.ts",
       "line": 115,
       "enclosing": "portfolio",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_alerts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "38b97c88cc4fe60a1730",
+      "id": "a006d8ed978fe44087c2",
       "path": "backend/src/operations/operationsService.ts",
       "line": 117,
       "enclosing": "portfolio",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "d25e5350a711ba337cc2",
+      "id": "3ce3df6e4ecf879a3b47",
       "path": "backend/src/operations/operationsService.ts",
       "line": 125,
       "enclosing": "portfolio",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "deployment_status",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "0707f90fce5fe0e21565",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 152,
-      "enclosing": "product",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "projects",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "9797e9f9e8ee305c26cd",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 153,
-      "enclosing": "product",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_environments",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "eea92c5a04cb2979e012",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 154,
-      "enclosing": "product",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_resources",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "a8ae38861d0bc0ac851d",
+      "id": "f2ddb0e2b62cc8d690cf",
       "path": "backend/src/operations/operationsService.ts",
       "line": 155,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "production_releases",
+      "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "0da8780d42d5cd9d4109",
+      "id": "3772a2f80f16958a8264",
       "path": "backend/src/operations/operationsService.ts",
       "line": 156,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "deployment_status",
+      "target": "operations_environments",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "801eaa8b5df136ec5620",
+      "id": "6a2b9f6df7a8d1de24a8",
       "path": "backend/src/operations/operationsService.ts",
       "line": 157,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "production_incidents",
+      "target": "operations_resources",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "e6d55f35a6ea5756b490",
+      "id": "685ce668dd49d3391693",
       "path": "backend/src/operations/operationsService.ts",
       "line": 158,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_alerts",
+      "target": "production_releases",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "3eed34a8684c26c1d6df",
+      "id": "1c15b79f5e8a7e3407a9",
       "path": "backend/src/operations/operationsService.ts",
       "line": 159,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_actions",
+      "target": "deployment_status",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "285cfc3bdcd6161299cd",
+      "id": "4f0dde64301943ca70f1",
       "path": "backend/src/operations/operationsService.ts",
       "line": 160,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_action_approvals",
+      "target": "production_incidents",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "7af905354cf7d2f61996",
+      "id": "1f7d555572a909730ef2",
       "path": "backend/src/operations/operationsService.ts",
       "line": 161,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "swarm_job_queue",
+      "target": "operations_alerts",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "cc5b53205df68bbe0b24",
+      "id": "e9c24212b5e79a95acab",
       "path": "backend/src/operations/operationsService.ts",
       "line": 162,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "webhook_deliveries",
+      "target": "operations_actions",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "a2a5b69ff65c456bb283",
+      "id": "0a67e246ef6e1fa2004d",
       "path": "backend/src/operations/operationsService.ts",
       "line": 163,
       "enclosing": "product",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_maintenance_windows",
+      "target": "operations_action_approvals",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "981a0e7b65dd9599c89f",
+      "id": "82fad98cfd9ad45bf68b",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 171,
+      "line": 164,
+      "enclosing": "product",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "swarm_job_queue",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4e939866230a3fff0189",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 165,
+      "enclosing": "product",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "webhook_deliveries",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f260b0766f45dd0c5b53",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 166,
+      "enclosing": "product",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_maintenance_windows",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e11c2862bb93a6eada9d",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 174,
       "enclosing": "resources",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_resources",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "e31b6acf4aa1d465137c",
+      "id": "9690e35f97c3f6ad4c83",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 180,
+      "line": 183,
       "enclosing": "configuration",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_config_checks",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "65f4a14500ad84f8f2fd",
+      "id": "4bb8a56c588001094699",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 187,
+      "line": 190,
       "enclosing": "slo",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_slo_snapshots",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "2ce97f18d29fa67d117b",
+      "id": "c0af1c396fb6ca9e4597",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 194,
+      "line": 198,
+      "enclosing": "createAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_environments",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "971fe2f6c3d58d2d76d6",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 201,
       "enclosing": "createAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "5b280ef23e663faf17cf",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 209,
-      "enclosing": "createAction",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_actions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "675e600f2050ff529783",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 211,
-      "enclosing": "createAction",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_actions",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "e94ac59e52413c878fff",
+      "id": "1f38c90fc54647b030c7",
       "path": "backend/src/operations/operationsService.ts",
       "line": 218,
       "enclosing": "createAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "fa98151517aa73a501b2",
+      "id": "2101b0235277c71aa65e",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 222,
+      "line": 220,
+      "enclosing": "createAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_actions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "a286015573fc5940b0e8",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 227,
+      "enclosing": "createAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_actions",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "88e4b9a851c6c26ca866",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 231,
       "enclosing": "createAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "ae401aa1915bbada6967",
+      "id": "1d17c27d76287ece9bea",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 230,
+      "line": 239,
       "enclosing": "approveAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "13dddf9cddab9bc499ae",
+      "id": "e12c16c0432f2664b61b",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 234,
+      "line": 244,
+      "enclosing": "approveAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_action_approvals",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "324db2edbc740d0b5729",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 248,
       "enclosing": "approveAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "98963c6d90c68834fb68",
+      "id": "8fc229bbbc25ee301835",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 238,
+      "line": 252,
       "enclosing": "approveAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "7ef7702bfbcc769e5338",
+      "id": "7ff52f9228b270938222",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 242,
+      "line": 253,
       "enclosing": "approveAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_action_approvals",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "2fc99a9af9a7453e7eba",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 243,
-      "enclosing": "approveAction",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "cd33c0adbdf77479c0df",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 249,
-      "enclosing": "confirmAction",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_actions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "32f59f7c3e58f6d47283",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 256,
-      "enclosing": "confirmAction",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_actions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "f1a0315cb6b05f88b26d",
+      "id": "c6810c51f53771a132e3",
       "path": "backend/src/operations/operationsService.ts",
       "line": 259,
       "enclosing": "confirmAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_action_approvals",
+      "target": "operations_actions",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "f69d87f9ceceb4a747f5",
+      "id": "09d042a451810fdcd6d1",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 277,
+      "line": 268,
+      "enclosing": "confirmAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_actions",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "9b6a2fe8a939d5d33b1b",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 271,
+      "enclosing": "confirmAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_action_approvals",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "10257efce4b2256c4e90",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 292,
       "enclosing": "currentTargetVersion",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f1563724f932ba5c202c",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 298,
+      "enclosing": "executeAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_actions",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "97d57aec8269ac156012",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 307,
+      "enclosing": "executeAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_action_approvals",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "92b3e8b18fbc260fe564",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 308,
+      "enclosing": "executeAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_actions",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1ecae25029f7cd39c8ad",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 313,
+      "enclosing": "executeAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_action_approvals",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "7c3f60ebbd61b28dc0d7",
+      "id": "8b1f056df082dfb33523",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 282,
-      "enclosing": "executeAction",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_actions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "5b0a281c940e5e12ca8b",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 289,
-      "enclosing": "executeAction",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_action_approvals",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "4fa276d71b6140f7877b",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 290,
-      "enclosing": "executeAction",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_actions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "d9a1cc3e59f3503daebe",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 295,
-      "enclosing": "executeAction",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_action_approvals",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "a7a92c42c24678c762e2",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 300,
+      "line": 318,
       "enclosing": "executeAction",
       "kind": "RPC_CANDIDATE",
       "target": "operations_claim_action",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "be6891ecab04f7757439",
+      "id": "c4c6e35bf26c65cb43a2",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 302,
+      "line": 320,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "aa95d00ca3679e117003",
+      "id": "c71af898f89753f8a1b0",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 318,
+      "line": 336,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_resources",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "3e331dfcedc172f81341",
+      "id": "0514ee19793e813b48f8",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 330,
+      "line": 348,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_evidence",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "a36cf991cbec37364974",
+      "id": "a66e71cb1bf84f05f74e",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 332,
+      "line": 350,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_action_runs",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "c86e23921037314fb866",
+      "id": "335b248130d14067bc7d",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 333,
+      "line": 351,
       "enclosing": "executeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "0d6aca7e25e01ebc3b46",
+      "id": "e7619825f0894bdabe8a",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 342,
+      "line": 360,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_incidents",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "c766230ea4dcc73e71fc",
+      "id": "426ec98f79a66ebf84f8",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 348,
+      "line": 366,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_incidents",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "7cd9d6b08bf908a70e12",
+      "id": "a7a5cfe3282efc6fcef8",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 352,
+      "line": 370,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_job_queue",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "9399b5cca6e176fd13e9",
+      "id": "a2babe11ba91d1089f25",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 356,
+      "line": 374,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "2d3911de5862adae71de",
+      "id": "58826710a064894cb356",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 361,
+      "line": 379,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "fcd3833807e59964e4df",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 368,
-      "enclosing": "executeInternal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_automation_rules",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "911771a3a5eb5afad6d2",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 378,
-      "enclosing": "executeInternal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_maintenance_windows",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "df42d380926317ad284d",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 382,
-      "enclosing": "executeInternal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_maintenance_windows",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "2a2ecbf67b9eeb38c331",
+      "id": "03582bca7ac45277d54a",
       "path": "backend/src/operations/operationsService.ts",
       "line": 386,
       "enclosing": "executeInternal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_campaigns",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "target": "operations_automation_rules",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "3b7ccccc1de041b39911",
+      "id": "1794ff8c3282ea3acadb",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 395,
+      "line": 396,
+      "enclosing": "executeInternal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_maintenance_windows",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c5e33095b9471dae4f32",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 400,
+      "enclosing": "executeInternal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_maintenance_windows",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fca5dd1df829249fcfc8",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 404,
+      "enclosing": "executeInternal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_campaigns",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "52ec9d66ae18dc20577a",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 413,
       "enclosing": "listActions",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "e102feca33db49b90b82",
+      "id": "0d1474ca8f36964d2c57",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 400,
+      "line": 418,
       "enclosing": "listAudit",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_audit_log",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "08cd335e22ddaafb831e",
+      "id": "d959ae988994d116a843",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 405,
+      "line": 423,
       "enclosing": "listEvidence",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_evidence",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "6f17a5d334842e02c4b8",
+      "id": "751a99635181f8cbdf21",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 411,
+      "line": 429,
       "enclosing": "automation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "e6badb766eb8315cc8fc",
+      "id": "605260a00c0ace3e28a6",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 412,
+      "line": 430,
       "enclosing": "automation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ]
+      }
     },
     {
-      "id": "9c639a21e2364b9cce7c",
+      "id": "6870bb7015c29b424a94",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 425,
+      "line": 443,
       "enclosing": "createAutomationRule",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "75a13d3892577821c16e",
+      "id": "b30bcb751d0b1c6199b2",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 435,
+      "line": 453,
       "enclosing": "evaluateAutomationSignal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "6b2513c171df66f4a446",
+      "id": "92aea1ba73976066eefa",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 436,
+      "line": 454,
       "enclosing": "evaluateAutomationSignal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "820cea4a23500c0c8964",
+      "id": "9a93d3eaf9b07dd84ab7",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 440,
+      "line": 458,
       "enclosing": "evaluateAutomationSignal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "fb09aa1e1326e797cc3a",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 442,
-      "enclosing": "evaluateAutomationSignal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_automation_runs",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "a345bde2a8952c375d12",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 450,
-      "enclosing": "evaluateAutomationSignal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_automation_runs",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "d8319c033f6ea308b9bb",
-      "path": "backend/src/operations/operationsService.ts",
-      "line": 456,
-      "enclosing": "evaluateAutomationSignal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_automation_runs",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
-    },
-    {
-      "id": "5ada5fa0a914a13b9c5c",
+      "id": "26e111517c9acf6a2b19",
       "path": "backend/src/operations/operationsService.ts",
       "line": 460,
       "enclosing": "evaluateAutomationSignal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
-      "id": "6d2c558904ba9f9f8502",
+      "id": "08d07d1464080e07b5d0",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 473,
+      "line": 468,
+      "enclosing": "evaluateAutomationSignal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_automation_runs",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "a98b01e9a417a4513844",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 474,
+      "enclosing": "evaluateAutomationSignal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_automation_runs",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1881f1a3fa0153917a6e",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 478,
+      "enclosing": "evaluateAutomationSignal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "operations_automation_runs",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ea97a401ecb1d2ad3c40",
+      "path": "backend/src/operations/operationsService.ts",
+      "line": 491,
       "enclosing": "audit",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_audit_log",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b13da14aed72bfac4fe96f02440a74e2f0a80b645d10de23a1bc668d30e9921d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
+      "semanticReview": {
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Lease completion atomicity, approval revocation freshness, account-bound external capabilities, complete evidence validation and unsupported target types remain unresolved. Project-wide automation controls preserve their existing explicit scope. New tests prove selected owner boundaries, not Command008 authority completion or live worker execution.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      }
     },
     {
       "id": "8ada21da4e11e8050227",
