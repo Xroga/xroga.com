@@ -3,8 +3,9 @@
 /**
  * S03 — Search & Growth. One section, two modes on one shared stage: Search & Visibility (website, search, AI answers,
  * authority, local) and Launch & Marketing (launch, search ads, social ads, conversions). When the stage is first seen,
- * a short guided demonstration drives the real components so a first-time visitor sees Xroga do the work; any input
- * hands control over at once. Everything is a local, interactive preview: no account is linked and nothing is published or spent.
+ * a short guided demonstration drives the real components once, so a first-time visitor sees Xroga do the work; any
+ * input hands control over at once, and there is nothing to replay. Everything is a local walkthrough with fictional
+ * examples: no account is linked and nothing is published or spent.
  */
 import Link from 'next/link';
 import { useReducedMotion } from 'motion/react';
@@ -12,8 +13,9 @@ import { useEffect, useReducer, useRef, useState, type KeyboardEvent as ReactKey
 import { COPY } from './data';
 import { GrowthStudio } from './GrowthStudio';
 import { SearchStudio } from './SearchStudio';
-import { initialState, isDefault, reducer, type Chapter } from './state';
-import { TourBar, useTour } from './Tour';
+import { initialState, reducer, type Chapter } from './state';
+import { StageHead, useTour } from './Tour';
+import { BEATS, MOBILE_BEATS, type Beat } from './tourBeats';
 import s from './S03.module.css';
 
 const MODES: Chapter[] = ['search', 'growth'];
@@ -24,10 +26,10 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
   const [st, dispatch] = useReducer(reducer, undefined, initialState);
   const reduced = !!useReducedMotion();
   const [under, setUnder] = useState(false);
-  // phones and reduced motion never autoplay; the tour is one tap away
-  const [wide, setWide] = useState(false);
-  useEffect(() => setWide(window.matchMedia('(min-width: 701px)').matches), []);
-  const tour = useTour(root, stage, dispatch, wide && !reduced);
+  // the full story on wider screens, a shorter one on phones, none at all under reduced motion
+  const [beats, setBeats] = useState<Beat[] | null>(null);
+  useEffect(() => setBeats(reduced ? null : window.matchMedia('(min-width: 701px)').matches ? BEATS : MOBILE_BEATS), [reduced]);
+  const tour = useTour(root, stage, dispatch, beats);
 
   useEffect(() => {
     const el = root.current;
@@ -112,17 +114,13 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
           ))}
         </div>
 
-        <TourBar tour={tour} view={st.view} />
-
         <div ref={stage} id="s03-stage" role="tabpanel" aria-labelledby={`s03-mode-${st.view}`} className={s.shared} data-view={st.view}>
-          <div className={s.scenario}>
-            <span>{COPY[st.view].scenario}</span>
-            {!isDefault(st, st.view) && tour.status !== 'playing' && (
-              <button type="button" className={s.linkBtn} data-quiet="" onClick={() => dispatch({ type: 'reset', chapter: st.view })}>
-                Start over
-              </button>
-            )}
-          </div>
+          <StageHead tour={tour} view={st.view} about={st.about} onAbout={() => dispatch({ type: 'set', patch: { about: !st.about } })} />
+          {st.about && (
+            <p id="s03-about" className={s.aboutNote} role="note">
+              {COPY.about}
+            </p>
+          )}
           <div key={st.view} className={s.modePanel}>
             {st.view === 'search' ? <SearchStudio st={st} dispatch={dispatch} /> : <GrowthStudio st={st} dispatch={dispatch} />}
           </div>
@@ -135,21 +133,6 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
               <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" />
             </svg>
           </Link>
-          <button
-            type="button"
-            className={s.preview}
-            aria-expanded={st.about}
-            aria-controls="s03-about"
-            onClick={() => dispatch({ type: 'set', patch: { about: !st.about } })}
-          >
-            <i aria-hidden="true" />
-            {COPY.disclosure}
-          </button>
-          {st.about && (
-            <p id="s03-about" className={s.aboutNote} role="note">
-              {COPY.about}
-            </p>
-          )}
         </div>
       </div>
     </section>

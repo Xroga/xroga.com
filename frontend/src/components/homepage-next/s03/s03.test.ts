@@ -3,6 +3,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
 import {
   AD_GROUPS,
+  AVAILABILITY_LABEL,
+  INTENTS,
   AI_COPY,
   AI_QUESTIONS,
   BRIEF,
@@ -28,7 +30,7 @@ import {
 } from './data';
 import { hasMark } from './marks';
 import { initialState, isDefault, reducer, visibleIn, type Action, type State } from './state';
-import { BEATS, TOUR_MS } from './tourBeats';
+import { BEATS, MOBILE_BEATS, MOBILE_TOUR_MS, TOUR_MS } from './tourBeats';
 
 const dir = new URL('./', import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, dir), 'utf8');
@@ -91,9 +93,15 @@ test('AI answers are named for real questions, never sample numbers', () => {
   }
 });
 
-test('one quiet disclosure, not repeated caveats', () => {
-  assert.equal(COPY.disclosure, 'Interactive preview');
-  assert.doesNotMatch(ALL, /Interactive example|sample data|fake demo/i);
+test('V12: no Replay, no Start over, no prominent preview pill; one understated note about the walkthrough', () => {
+  assert.equal(COPY.disclosure, 'About this walkthrough');
+  assert.match(COPY.about, /fictional examples/);
+  assert.doesNotMatch(SHELL + TOUR, />\s*(Replay|Start over|Watch Xroga work|Interactive preview)\s*</);
+  assert.doesNotMatch(SHELL + TOUR, /'Replay'|'Watch Xroga work'|\{type: 'reset'|type: 'reset'/);
+  assert.doesNotMatch(ALL, /Interactive example|sample data|fake demo|Interactive preview/i);
+  // the note lives in the stage's top row as a quiet text button, not a pill in the footer
+  assert.match(TOUR, /className=\{s\.aboutBtn\} aria-expanded=\{about\} aria-controls="s03-about"/);
+  assert.doesNotMatch(SHELL, /className=\{s\.preview\}/);
 });
 
 test('no generic slogans, no repeated "sample data", no promises of rankings or results', () => {
@@ -172,8 +180,11 @@ test('V11: the AI lens leads with a protein buyer, and the boiler-repair scene i
   assert.doesNotMatch(ALL, /boiler|Northlane|heating engineer|Headingley/i);
   assert.equal(SITE.name, 'PeakForm Nutrition');
   // one coherent example: every search lens names the same business, and its product page carries the facts answers cite
-  assert.equal(PRODUCT_FACTS.length, 3);
-  assert.ok(BEATS.some((b) => b.caption === 'Checking how AI answers find product information.'));
+  assert.deepEqual(
+    PRODUCT_FACTS.map((f) => f.id),
+    ['protein', 'allergens', 'price', 'testing'],
+  );
+  assert.ok(BEATS.some((b) => b.caption === 'Checked which sources an AI answer cites.'));
   assert.ok(BEATS.some((b) => b.steps.some((st) => st.actions.some((a) => a.type === 'set' && (a.patch as Partial<State>).aiCheck === true))));
 });
 
@@ -189,12 +200,13 @@ test('links: typed relationships with honest semantics', () => {
   // only verified relationships have a date observed; prospects and competitor-only sources do not link to the site
   for (const s of SOURCES) assert.equal(s.seen !== '—', s.cls === 'verified' || s.cls === 'mention', s.id);
   // edges: verified and competitor-only carry arrows; mentions stop short; prospects and excluded draw no line
-  assert.match(LINKS_SRC, /x\.cls === 'prospect' \|\| x\.cls === 'discarded'\) return null/);
-  assert.match(LINKS_SRC, /x\.cls === 'mention' \? 0\.72 : 1/);
-  assert.match(LINKS_SRC, /toRival \? RIVAL_AT : SITE_AT/);
+  assert.match(LINKS_SRC, /x\.cls === 'prospect' \|\| x\.cls === 'discarded'\) continue/);
+  assert.match(LINKS_SRC, /x\.cls === 'mention' \? 0\.7 : 1/);
+  assert.match(LINKS_SRC, /x\.cls === 'rival' \? rivalR : siteR/);
   assert.match(LINKS_SRC, /Draft · awaiting your review/);
   // the competitor gap shows PeakForm's missing link as an open line that never arrives, never as a completed edge
-  assert.match(LINKS_SRC, /data-cls="gap" markerEnd="url\(#s03-open\)"/);
+  assert.match(LINKS_SRC, /cls: 'gap'/);
+  assert.match(LINKS_SRC, /e\.end === 'open' \? 'url\(#s03-open\)'/);
   assert.match(LINKS_SRC, /No link from \{sel\.domain\} yet/);
   assert.match(LINKS_SRC, /A draft is not a link/);
   assert.match(by('discarded')[0].action, /breaks search policies/);
@@ -313,8 +325,13 @@ test('escape closes the innermost layer first; reset clears one chapter only', (
 });
 
 /* ----------------------------------------------------------------------------------------- motion & a11y */
-test('the guided tour: both modes, a real narrative, under 26 seconds, ending with the visitor in control', () => {
-  assert.ok(TOUR_MS >= 15000 && TOUR_MS <= 26000, `${TOUR_MS} ms`);
+test('the guided tour: both modes, a real narrative, 16–21 s on wider screens and shorter on phones', () => {
+  assert.ok(TOUR_MS >= 16000 && TOUR_MS <= 21000, `${TOUR_MS} ms`);
+  assert.ok(MOBILE_TOUR_MS < TOUR_MS && MOBILE_TOUR_MS <= 14000, `${MOBILE_TOUR_MS} ms`);
+  assert.equal(MOBILE_BEATS[0].view, 'search');
+  assert.equal(MOBILE_BEATS[MOBILE_BEATS.length - 1].view, 'growth');
+  // stage words are everyday verbs
+  for (const b of [...BEATS, ...MOBILE_BEATS]) assert.ok(['Found', 'Compared', 'Prepared', 'Needs approval'].includes(b.stage), b.stage);
   assert.equal(BEATS[0].view, 'search');
   assert.equal(BEATS[BEATS.length - 1].view, 'growth');
   // every search lens and every growth job is shown at least once
@@ -324,10 +341,10 @@ test('the guided tour: both modes, a real narrative, under 26 seconds, ending wi
       actions.some((a) => a.type === 'lens' && a.lens === l.id),
       l.id,
     );
-  for (const m of MISSIONS)
+  for (const m of ['search', 'social', 'paths'])
     assert.ok(
-      actions.some((a) => a.type === 'mission' && a.mission === m.id),
-      m.id,
+      actions.some((a) => a.type === 'mission' && a.mission === m),
+      m,
     );
   for (const b of BEATS) {
     assert.ok(words(b.caption) <= 9, b.caption);
@@ -341,20 +358,22 @@ test('the guided tour: both modes, a real narrative, under 26 seconds, ending wi
   assert.equal(end.mission, 'paths');
 });
 
-test('the tour hands over on any input, pauses offscreen and hidden, and never runs on phones or reduced motion', () => {
-  assert.match(TOUR, /addEventListener\('pointerdown', onInput, true\)/);
-  assert.match(TOUR, /addEventListener\('keydown', onInput, true\)/);
+test('the tour hands over on any input, pauses offscreen and hidden, runs a short intro on phones and none under reduced motion', () => {
+  assert.match(TOUR, /kinds\.forEach\(\(k\) => el\.addEventListener\(k, onInput, true\)\)/);
   assert.match(TOUR, /data-tour-ctl/);
   assert.match(TOUR, /visibilitychange/);
   assert.match(TOUR, /intersectionRatio >= 0\.5/);
   assert.match(TOUR, /clearTimeout/);
-  assert.match(SHELL, /useTour\(root, stage, dispatch, wide && !reduced\)/);
-  assert.match(SHELL, /min-width: 701px/);
+  // full story on wider screens, a short one on phones, none under reduced motion; once per visit
+  assert.match(SHELL, /setBeats\(reduced \? null : window\.matchMedia\('\(min-width: 701px\)'\)\.matches \? BEATS : MOBILE_BEATS\)/);
+  assert.match(TOUR, /!seenThisVisit\(\)/);
+  assert.match(TOUR, /sessionStorage/);
   assert.match(TOUR, /Skip/);
-  assert.match(TOUR, /Replay/);
+  // a bare click (some assistive technologies) interrupts like a pointer or a key
+  assert.match(TOUR, /\['pointerdown', 'keydown', 'click'\]/);
   // BUG-07: a paused beat resumes where it stopped; steps already shown are not replayed
   assert.match(TOUR, /if \(from === 0 \|\| step\.at > from\)/);
-  assert.match(TOUR, /BEATS\[i\]\.dur - from/);
+  assert.match(TOUR, /B\[i\]\.dur - from/);
 });
 
 test('no stray timers, reduced motion respected, header-aware', () => {
@@ -415,4 +434,80 @@ test('controls carry roles and names', () => {
   assert.match(UI, /aria-expanded=\{open\}/);
   assert.match(ADS_SRC, /aria-label="Proposed daily budget cap in pounds"/);
   assert.match(SEARCH, /aria-controls="s03-search-inspector"/);
+});
+
+/* ------------------------------------------------------------------------------- V12 regressions */
+const HEALTH_SRC = read('./search/Health.tsx');
+const AI_SRC = read('./search/Ai.tsx');
+const CONTENT_SRC = read('./search/Content.tsx');
+
+test('V12-01: graph lines run between measured card edges in an open lane, never under a caption', () => {
+  // sources sit in one lane with the marker before the label; lines leave from the marker and end at the target card's edge
+  assert.match(CSS, /\.src \{[^}]*left: var\(--lane, 54%\);[^}]*transform: translate\(-14px, -50%\);/);
+  assert.match(LINKS_SRC, /const x1 = dot\.left - b\.left - 3;/);
+  assert.match(LINKS_SRC, /const x2 = t\.right - b\.left \+ 6;/);
+  // crawl links go from card edge to card edge, measured without transforms
+  assert.match(HEALTH_SRC, /offset geometry ignores transforms/);
+  assert.match(HEALTH_SRC, /const x1 = a\.r \+ 4;/);
+  // lines are measured on layout changes only, and every graph paints beneath its cards
+  for (const src of [LINKS_SRC, HEALTH_SRC, AI_SRC]) assert.match(src, /new ResizeObserver\(measure\)/);
+  assert.match(AI_SRC, /first in the DOM, so every card paints above the lines/);
+  // a draft hides the graph instead of sitting on top of live lines
+  assert.match(CSS, /\.links\[data-draft\] \.graph \{\s*visibility: hidden;/);
+  // entrances fade in place, so measured ends never drift
+  for (const sel of ['src', 'siteNode', 'rivalNode']) assert.doesNotMatch(CSS.split(`\n.${sel} {`)[1]?.split('}')[0] ?? '', /srcIn|siteIn|popIn/, sel);
+});
+
+test('V12-02: the AI scene says what was asked, which sources are cited, what is missing, what is prepared and what comes next', () => {
+  assert.equal(AI_COPY.ask, 'AI shopping question');
+  assert.match(AI_SRC, /'Cited source'/);
+  assert.match(AI_SRC, /'Brand mentioned, not cited'/);
+  assert.match(AI_SRC, /'Not cited in this checked example'/);
+  assert.equal(AI_QUESTIONS[0].sources.filter((x) => x.state === 'cited').length, 2);
+  assert.match(AI_SRC, /'Draft · awaiting approval'/);
+  assert.match(AI_SRC, /'Ready to publish after review'/);
+  assert.match(AI_COPY.recheckShort, /needs a connected source/);
+  // the reveal order and its timing (question, sources, lines, product page, finding)
+  assert.match(AI_SRC, /animationDelay: `\$\{300 \+ i \* 80\}ms`/);
+  assert.match(AI_SRC, /animationDelay: `\$\{500 \+ i \* 100\}ms`/);
+  assert.match(CSS, /\.product \{[^}]*animation: textIn 400ms linear 1300ms backwards;/);
+  assert.match(CSS, /\.finding \{[^}]*animation: textIn 360ms linear 1700ms backwards;/);
+});
+
+test('V12-03: keyword research is a visible chain, with each data source beside the step it feeds and its true status', () => {
+  assert.deepEqual(
+    INTENTS.map((i) => i.label),
+    ['Buy', 'Compare', 'Learn', 'Nearby'],
+  );
+  for (const [id, job] of [
+    ['gsc', 'Your own searches'],
+    ['semrush', 'Demand'],
+    ['ahrefs', 'Competitor pages'],
+  ])
+    assert.match(CONTENT_SRC, new RegExp(`<Source id="${id}" job="${job}" />`));
+  assert.equal(AVAILABILITY_LABEL.unlisted, 'Not currently supported');
+  assert.equal(AVAILABILITY_LABEL.connect, 'Available to connect');
+  assert.match(CONTENT_SRC, /Needs your approval → publish → check results after publishing/);
+  assert.match(CONTENT_SRC, /Also cited in the AI answer/);
+  assert.doesNotMatch(CONTENT_SRC, /Connected and authorized|Ahrefs analyzed|Semrush analyzed/);
+});
+
+test('V12-04: the approved headline, supporting line and background (main 3a208262) are kept exactly', () => {
+  assert.equal(COPY.title, 'Get found. Get chosen. Grow.');
+  assert.equal(
+    COPY.lede,
+    'Xroga finds why customers miss you, strengthens your search presence, and prepares marketing that turns attention into customers. You approve each launch.',
+  );
+  assert.equal(COPY.search.line, 'See why customers can’t find you');
+  assert.equal(COPY.growth.line, 'Reach the right people. Win more customers.');
+  assert.match(CSS, /--ink: #142236;/);
+  assert.match(CSS, /linear-gradient\(145deg, #142639 0%, #182b3d 37%, #23283b 73%, #282735 100%\)/);
+  assert.match(CSS, /radial-gradient\(70% 52% at 105% 16%, rgba\(120, 101, 172, 0\.24\), transparent 74%\)/);
+  assert.match(CSS, /\.title\.title::after \{/);
+  // the homepage stylesheet clears section backgrounds; S03 re-asserts the same layers with higher specificity so they render
+  assert.match(CSS, /\.section\.section\.section \{\s*background-color: #142639 !important;\s*background-image:/);
+  assert.match(CSS, /linear-gradient\(145deg, #142639 0%, #182b3d 37%, #23283b 73%, #282735 100%\) !important;/);
+  // V12 adds no competing headline effect or backdrop layer
+  assert.doesNotMatch(CSS + SHELL, /titleMark|titleSweep|data-lit=/);
+  assert.doesNotMatch(CSS, /\.section::before|\.section::after/);
 });

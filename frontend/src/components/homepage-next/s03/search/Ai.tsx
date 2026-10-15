@@ -16,14 +16,14 @@ import { Seg } from '../ui';
 import s from '../S03.module.css';
 
 export const STATE_LABEL: Record<CiteState, string> = {
-  cited: 'Cited',
-  mentioned: 'Mentioned · not cited',
-  absent: 'Not mentioned or cited',
+  cited: 'Cited source',
+  mentioned: 'Brand mentioned, not cited',
+  absent: 'Not cited in this checked example',
   untested: 'Not checked yet',
 };
 export const questionOf = (id: string) => AI_QUESTIONS.find((x) => x.id === id) ?? AI_QUESTIONS[0];
 
-type Wire = { d: string; src: number };
+type Wire = { d: string; src: number; a: [number, number]; b: [number, number] };
 
 function useWires(box: React.RefObject<HTMLDivElement | null>, deps: unknown[]) {
   const [wires, setWires] = useState<{ cites: Wire[]; gap: { d: string; x: number; y: number } | null }>({ cites: [], gap: null });
@@ -49,7 +49,7 @@ function useWires(box: React.RefObject<HTMLDivElement | null>, deps: unknown[]) 
         const x2 = c.right - b.left + 2;
         const y2 = last.top + last.height / 2 - b.top;
         const m = (x1 + x2) / 2;
-        cites.push({ d: `M${x1} ${y1} C${m} ${y1} ${m} ${y2} ${x2} ${y2}`, src: n });
+        cites.push({ d: `M${x1} ${y1} C${m} ${y1} ${m} ${y2} ${x2} ${y2}`, src: n, a: [x1, y1], b: [x2, y2] });
       });
       // PeakForm's page reaches into the gutter toward the answer and stops short: nothing connects it
       const prod = el.querySelector<HTMLElement>('[data-product]');
@@ -79,8 +79,7 @@ export function AiStage({ st, dispatch }: { st: State; dispatch: Dispatch<Action
   const box = useRef<HTMLDivElement>(null);
   const wires = useWires(box, [q.id, st.aiFix, st.aiCheck, st.aiPick]);
   const pick = st.aiPick;
-  const status = st.aiCheck ? 'Recheck planned' : st.aiFix ? 'Draft for review' : STATE_LABEL[q.you];
-  const showFacts = st.aiFix || pick === 'product';
+  const status = st.aiCheck ? 'Ready to publish after review' : st.aiFix ? 'Draft · awaiting approval' : STATE_LABEL[q.you];
   return (
     <div className={s.ai} data-question={q.id} data-fix={st.aiFix || undefined} data-pick={pick ?? undefined}>
       <div className={s.stageBar}>
@@ -93,9 +92,28 @@ export function AiStage({ st, dispatch }: { st: State; dispatch: Dispatch<Action
         />
       </div>
       <div ref={box} key={q.id} className={s.aiGrid}>
+        {/* first in the DOM, so every card paints above the lines */}
+        <svg className={s.wires} aria-hidden="true">
+          {wires.cites.map((w, i) => (
+            <g key={`${q.id}-${i}`} data-lit={pick === w.src || undefined} style={{ animationDelay: `${800 + i * 80}ms` }}>
+              <path d={w.d} />
+              <circle cx={w.a[0]} cy={w.a[1]} r="2.6" />
+              <circle cx={w.b[0]} cy={w.b[1]} r="2.6" />
+            </g>
+          ))}
+          {wires.gap && (
+            <g data-gap="" data-fix={st.aiFix || undefined}>
+              <path d={wires.gap.d} />
+              <circle cx={wires.gap.x} cy={wires.gap.y} r="3.5" />
+            </g>
+          )}
+        </svg>
         <div className={s.answerCard} data-answer="">
-          <small className={s.answerLabel}>{AI_COPY.label}</small>
+          <small className={s.answerLabel}>{AI_COPY.ask}</small>
           <span className={s.ask}>{q.q}</span>
+          <small className={s.answerLabel} data-second="">
+            {AI_COPY.label}
+          </small>
           <p className={s.answerText}>
             {q.answer.map((a, i) => (
               <span
@@ -103,7 +121,7 @@ export function AiStage({ st, dispatch }: { st: State; dispatch: Dispatch<Action
                 data-sent={a.cite ?? undefined}
                 data-mention={a.mention || undefined}
                 data-lit={(typeof pick === 'number' && a.cite === pick) || undefined}
-                style={{ animationDelay: `${450 + i * 120}ms` }}
+                style={{ animationDelay: `${300 + i * 80}ms` }}
               >
                 {a.text}
                 {a.cite ? <sup>{a.cite}</sup> : null}.{' '}
@@ -121,7 +139,7 @@ export function AiStage({ st, dispatch }: { st: State; dispatch: Dispatch<Action
               data-src={x.state === 'cited' ? i + 1 : undefined}
               data-state={x.state}
               aria-pressed={pick === i + 1}
-              style={{ animationDelay: `${900 + i * 150}ms` }}
+              style={{ animationDelay: `${500 + i * 100}ms` }}
               onClick={() => dispatch({ type: 'set', patch: { aiPick: pick === i + 1 ? null : i + 1 } })}
             >
               <em aria-hidden="true">{x.state === 'cited' ? i + 1 : '·'}</em>
@@ -145,37 +163,26 @@ export function AiStage({ st, dispatch }: { st: State; dispatch: Dispatch<Action
           <span className={s.productHead}>
             <i aria-hidden="true" />
             <span>
-              {SITE.product}
+              PeakForm · {SITE.product}
               <small>{SITE.domain}/protein/whey-isolate</small>
             </span>
-            <b data-state={st.aiCheck ? 'check' : st.aiFix ? 'draft' : q.you}>{status}</b>
           </span>
+          <b className={s.productState} data-state={st.aiCheck ? 'check' : st.aiFix ? 'draft' : q.you}>
+            {status}
+          </b>
           {!st.aiFix && <span className={s.finding}>{q.finding}</span>}
-          {showFacts && (
-            <span className={s.productFacts}>
-              {PRODUCT_FACTS.map((f, i) => (
-                <span key={f.id} data-ok={st.aiFix || undefined} style={{ animationDelay: `${i * 140}ms` }}>
-                  <i aria-hidden="true" />
-                  {f.label}
-                  <em>{st.aiFix ? f.draft : 'Missing'}</em>
-                </span>
-              ))}
-              {st.aiFix && <small className={s.schema}>{AI_COPY.schema} · drafted</small>}
-            </span>
-          )}
+          <span className={s.productFacts}>
+            {PRODUCT_FACTS.map((f, i) => (
+              <span key={f.id} data-ok={st.aiFix || undefined} style={{ animationDelay: `${st.aiFix ? i * 110 : 1900 + i * 90}ms` }}>
+                <i aria-hidden="true" />
+                {f.label}
+                <em>{st.aiFix ? f.draft : 'Missing'}</em>
+              </span>
+            ))}
+          </span>
+          {/* one closing line: what else was drafted, then (once a recheck is asked for) what comes next */}
+          {st.aiCheck ? <small className={s.recheck}>{AI_COPY.recheckShort}</small> : st.aiFix && <small className={s.schema}>{AI_COPY.extras}</small>}
         </button>
-
-        <svg className={s.wires} aria-hidden="true">
-          {wires.cites.map((w, i) => (
-            <path key={`${q.id}-${i}`} d={w.d} data-lit={pick === w.src || undefined} style={{ animationDelay: `${1300 + i * 80}ms` }} />
-          ))}
-          {wires.gap && (
-            <g data-gap="" data-fix={st.aiFix || undefined}>
-              <path d={wires.gap.d} />
-              <circle cx={wires.gap.x} cy={wires.gap.y} r="3.5" />
-            </g>
-          )}
-        </svg>
       </div>
     </div>
   );

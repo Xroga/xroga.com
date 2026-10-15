@@ -27,7 +27,7 @@ export const TOOLS: Record<ToolId, Tool> = {
   gtm: { id: 'gtm', name: 'Tag Manager', catalog: null, reads: 'Conversion tags and the events they fire' },
 };
 export const availability = (t: Tool): Availability => (t.catalog ? 'connect' : 'unlisted');
-export const AVAILABILITY_LABEL: Record<Availability, string> = { connect: 'Available to connect', unlisted: 'Not in directory · example' };
+export const AVAILABILITY_LABEL: Record<Availability, string> = { connect: 'Available to connect', unlisted: 'Not currently supported' };
 
 /* =============================================================================================== A · SEARCH */
 /** One example business runs through all five search lenses, so every finding belongs to the same story. */
@@ -130,10 +130,10 @@ export const CRAWL = { pages: PAGES.length, links: LINKS.length, checks: 'Links,
 /* --- keywords & content ------------------------------------------------------------------------------- */
 export type Intent = 'compare' | 'buy' | 'local' | 'learn';
 export const INTENTS: { id: Intent; label: string }[] = [
-  { id: 'compare', label: 'Compare' },
   { id: 'buy', label: 'Buy' },
-  { id: 'local', label: 'Local' },
+  { id: 'compare', label: 'Compare' },
   { id: 'learn', label: 'Learn' },
+  { id: 'local', label: 'Nearby' },
 ];
 export interface Query {
   id: string;
@@ -142,6 +142,7 @@ export interface Query {
   you: string; // where PeakForm stands
   rival: string; // who answers it today
   rivalPage: string;
+  alsoCited?: boolean; // the same competitor page is a cited source in the AI answer for this question
   gap: boolean; // no page answers it
 }
 export const QUERIES: Query[] = [
@@ -152,6 +153,7 @@ export const QUERIES: Query[] = [
     you: 'No page answers this',
     rival: 'liftmag.example',
     rivalPage: 'Best protein powders, compared',
+    alsoCited: true,
     gap: true,
   },
   {
@@ -280,10 +282,14 @@ export const AI_QUESTIONS: AiQuestion[] = [
 export const PRODUCT_FACTS: { id: string; label: string; draft: string }[] = [
   { id: 'protein', label: 'Protein per serving', draft: '24 g in a 30 g serving' },
   { id: 'allergens', label: 'Ingredients & allergens', draft: 'Full list · contains milk' },
-  { id: 'faq', label: 'Comparison & FAQ', draft: 'Isolate or concentrate, compared' },
+  { id: 'price', label: 'Price per serving', draft: '£0.78 at 1 kg' },
+  { id: 'testing', label: 'Batch testing details', draft: 'Lab report, where one exists' },
 ];
 export const AI_COPY = {
-  label: 'AI answer · illustrative',
+  ask: 'AI shopping question',
+  label: 'Illustrative AI answer',
+  extras: 'Also drafted: comparison FAQ · Product structured data · links from your guides',
+  recheckShort: 'Recheck mentions & citations · needs a connected source',
   prepared: 'Better product facts, comparison content and clear answers.',
   schema: 'Product structured data',
   recheck:
@@ -309,8 +315,7 @@ export interface Source {
   relevance: 'High' | 'Medium' | 'Low';
   action: string;
   angle?: string; // the outreach angle a draft would use
-  x: number; // position on the source arc, % of the graph
-  y: number;
+  y: number; // the source's fixed place in the lane, % of the graph height
 }
 export const SOURCES: Source[] = [
   {
@@ -322,7 +327,6 @@ export const SOURCES: Source[] = [
     seen: '3 Aug',
     relevance: 'High',
     action: 'Keep the linked product page accurate',
-    x: 66,
     y: 8,
   },
   {
@@ -335,8 +339,7 @@ export const SOURCES: Source[] = [
     relevance: 'Medium',
     action: 'Ask the author to link the product they mention',
     angle: 'You mention PeakForm Whey Isolate in this thread; a link to the product page would help readers check the label.',
-    x: 94,
-    y: 30,
+    y: 22,
   },
   {
     id: 'liftmag',
@@ -348,7 +351,6 @@ export const SOURCES: Source[] = [
     relevance: 'High',
     action: 'Offer the ingredient comparison as a resource',
     angle: 'Your protein guide compares powders for beginners. Our ingredient-by-ingredient comparison could help your readers check labels.',
-    x: 90,
     y: 50,
   },
   {
@@ -361,8 +363,7 @@ export const SOURCES: Source[] = [
     relevance: 'Medium',
     action: 'Check the partner criteria and apply',
     angle: 'Your partner list names nutrition brands for club members. We’d like to apply and share our batch-testing details.',
-    x: 70,
-    y: 94,
+    y: 78,
   },
   {
     id: 'podcast',
@@ -374,8 +375,7 @@ export const SOURCES: Source[] = [
     relevance: 'Medium',
     action: 'Pitch an expert interview',
     angle: 'Your protein-myths episode drew questions about labels. Our product lead could explain how to read one.',
-    x: 52,
-    y: 72,
+    y: 64,
   },
   {
     id: 'homegym',
@@ -387,8 +387,7 @@ export const SOURCES: Source[] = [
     relevance: 'Medium',
     action: 'Draft a data-led pitch',
     angle: 'Your beginner plan asks readers to track protein. Our serving-size table could make that easier.',
-    x: 42,
-    y: 14,
+    y: 36,
   },
   {
     id: 'spam',
@@ -399,8 +398,7 @@ export const SOURCES: Source[] = [
     seen: '—',
     relevance: 'Low',
     action: 'Unsuitable: buying links breaks search policies',
-    x: 96,
-    y: 88,
+    y: 92,
   },
 ];
 export const RIVAL = { domain: 'ironwhey.example' };
@@ -571,7 +569,7 @@ export const COPY = {
   lede: 'Xroga finds why customers miss you, strengthens your search presence, and prepares marketing that turns attention into customers. You approve each launch.',
   search: { label: 'Search & Visibility', line: 'See why customers can’t find you', scenario: 'PeakForm Nutrition · a sports-nutrition brand' },
   growth: { label: 'Launch & Marketing', line: 'Reach the right people. Win more customers.', scenario: 'Ember Roasters · a coffee subscription' },
-  disclosure: 'Interactive preview',
+  disclosure: 'About this walkthrough',
   about:
-    'PeakForm Nutrition, Ember Roasters and the sites around them are fictional examples. Their pages, AI answers and figures illustrate how Xroga works: no accounts are connected, nothing was crawled, and nothing is published, sent or spent.',
+    'This walkthrough uses fictional examples: PeakForm Nutrition, Ember Roasters and the sites around them. Their pages, AI answers and figures show how Xroga works; nothing was crawled or measured, no accounts are connected, and nothing is published, sent or spent.',
 };

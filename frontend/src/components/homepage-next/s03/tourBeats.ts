@@ -1,11 +1,12 @@
 /**
- * The guided demonstration: a fixed list of beats that drive the same state the visitor drives. Each beat names the
- * stage of the work (noticed → prepared → for review), carries one short caption, and runs a few state steps at set
- * offsets. Nothing here publishes or connects anything; the tour only selects local states.
+ * The guided demonstration: fixed beats that drive the same state the visitor drives. Each beat names the stage of the
+ * work in everyday words (Found, Compared, Prepared, Needs approval), carries one short caption that describes what is
+ * on screen by the end of the beat, and runs a few state steps at set offsets. Nothing here publishes or connects
+ * anything; the tour only selects local states. Wider screens get the full story (about 20 s); phones get a shorter one.
  */
 import type { Chapter, Action } from './state';
 
-export type Stage = 'Noticed' | 'Prepared' | 'For review';
+export type Stage = 'Found' | 'Compared' | 'Prepared' | 'Needs approval';
 export interface Beat {
   view: Chapter;
   stage: Stage;
@@ -16,110 +17,111 @@ export interface Beat {
 
 const set = (patch: Record<string, unknown>): Action => ({ type: 'set', patch });
 
-export const BEATS: Beat[] = [
-  // Search & Visibility (PeakForm Nutrition): check → find a gap → prepare the work → ask before anything goes live
-  {
-    view: 'search',
-    stage: 'Noticed',
-    caption: 'Found a page customers can’t open.',
-    dur: 2300,
-    steps: [
-      { at: 0, actions: [{ type: 'view', view: 'search' }, { type: 'lens', lens: 'health' }, set({ issue: 'broken', repair: false }), { type: 'crawl' }] },
-    ],
-  },
-  {
-    view: 'search',
-    stage: 'Noticed',
-    caption: 'Found a search your site doesn’t answer.',
-    dur: 2500,
-    steps: [
-      { at: 0, actions: [{ type: 'lens', lens: 'content' }, set({ query: 'which', brief: false })] },
-      { at: 1300, actions: [set({ brief: true })] },
-    ],
-  },
-  {
-    // the AI lens plays its own short sequence on entry: question, sources, then PeakForm's unconnected product page
-    view: 'search',
-    stage: 'Noticed',
-    caption: 'Checking how AI answers find product information.',
-    dur: 3000,
-    steps: [{ at: 0, actions: [{ type: 'lens', lens: 'ai' }, set({ sample: 'buy', aiFix: false, aiCheck: false, aiPick: null })] }],
-  },
-  {
-    view: 'search',
-    stage: 'Prepared',
-    caption: 'Better product facts, ready for review and a recheck.',
-    dur: 2800,
-    steps: [
-      { at: 0, actions: [set({ aiFix: true })] },
-      { at: 1600, actions: [set({ aiCheck: true })] },
-    ],
-  },
-  {
-    view: 'search',
-    stage: 'Noticed',
-    caption: 'Found a relevant site linking to a competitor.',
-    dur: 2200,
-    steps: [{ at: 0, actions: [{ type: 'lens', lens: 'links' }, { type: 'mode', mode: 'gap' }, set({ source: 'liftmag', outreach: false })] }],
-  },
-  {
-    view: 'search',
-    stage: 'Prepared',
-    caption: 'An outreach angle, drafted for your review.',
-    dur: 1600,
-    steps: [{ at: 0, actions: [set({ mode: 'outreach', outreach: true })] }],
-  },
-  {
-    view: 'search',
-    stage: 'For review',
-    caption: 'Prepared a local listing correction.',
-    dur: 1900,
-    steps: [
-      { at: 0, actions: [{ type: 'lens', lens: 'local' }, set({ localFix: false })] },
-      { at: 800, actions: [set({ localFix: true })] },
-    ],
-  },
-  // Launch & Marketing: offer → campaign → channels → customers
-  {
-    view: 'growth',
-    stage: 'Prepared',
-    caption: 'Turn an offer into a launch plan.',
-    dur: 2000,
-    steps: [
-      { at: 0, actions: [{ type: 'view', view: 'growth' }, { type: 'mission', mission: 'launch' }, set({ asset: 'positioning' })] },
-      { at: 1000, actions: [set({ asset: 'page' })] },
-    ],
-  },
-  {
-    view: 'growth',
-    stage: 'Prepared',
-    caption: 'Target real buyers. Exclude the wrong searches.',
-    dur: 2600,
-    steps: [
-      { at: 0, actions: [{ type: 'mission', mission: 'search' }, set({ group: 'subscription', excluded: false })] },
-      { at: 1300, actions: [set({ excluded: true })] },
-    ],
-  },
-  {
-    view: 'growth',
-    stage: 'Prepared',
-    caption: 'One offer. The right message for each channel.',
-    dur: 2400,
-    steps: [
-      { at: 0, actions: [{ type: 'mission', mission: 'social' }, set({ placement: 'feed', audience: 'new' })] },
-      { at: 1200, actions: [set({ placement: 'story' })] },
-    ],
-  },
-  {
-    view: 'growth',
-    stage: 'For review',
-    caption: 'See where interest becomes customers.',
-    dur: 2400,
-    steps: [
-      { at: 0, actions: [{ type: 'mission', mission: 'paths' }, set({ channel: 'search' })] },
-      { at: 1200, actions: [set({ channel: 'social' })] },
-    ],
-  },
+const CRAWL: Beat = {
+  view: 'search',
+  stage: 'Found',
+  caption: 'Found a broken product page; prepared the repair.',
+  dur: 2200,
+  steps: [
+    { at: 0, actions: [{ type: 'view', view: 'search' }, { type: 'lens', lens: 'health' }, set({ issue: 'broken', repair: false }), { type: 'crawl' }] },
+    { at: 1300, actions: [set({ repair: true })] },
+  ],
+};
+const KEYWORDS: Beat = {
+  view: 'search',
+  stage: 'Compared',
+  caption: 'Compared buyer searches; drafted the missing page.',
+  dur: 2600,
+  steps: [
+    { at: 0, actions: [{ type: 'lens', lens: 'content' }, set({ query: 'which', brief: false })] },
+    { at: 1400, actions: [set({ brief: true })] },
+  ],
+};
+// the AI lens reveals its own sequence on entry: question, cited sources, then PeakForm's unconnected product page
+const AI_CHECK: Beat = {
+  view: 'search',
+  stage: 'Found',
+  caption: 'Checked which sources an AI answer cites.',
+  dur: 2600,
+  steps: [{ at: 0, actions: [{ type: 'lens', lens: 'ai' }, set({ sample: 'buy', aiFix: false, aiCheck: false, aiPick: null })] }],
+};
+const AI_FIX: Beat = {
+  view: 'search',
+  stage: 'Prepared',
+  caption: 'Prepared clearer product facts for your review.',
+  dur: 1900,
+  steps: [
+    { at: 0, actions: [set({ aiFix: true })] },
+    { at: 1000, actions: [set({ aiCheck: true })] },
+  ],
+};
+const LINK_GAP: Beat = {
+  view: 'search',
+  stage: 'Found',
+  caption: 'Found a site linking only to a competitor.',
+  dur: 2000,
+  steps: [{ at: 0, actions: [{ type: 'lens', lens: 'links' }, { type: 'mode', mode: 'gap' }, set({ source: 'liftmag', outreach: false })] }],
+};
+const OUTREACH: Beat = {
+  view: 'search',
+  stage: 'Prepared',
+  caption: 'Drafted an outreach note for your review.',
+  dur: 1500,
+  steps: [{ at: 0, actions: [set({ mode: 'outreach', outreach: true })] }],
+};
+const LOCAL: Beat = {
+  view: 'search',
+  stage: 'Needs approval',
+  caption: 'Drafted a listing fix that needs your approval.',
+  dur: 1700,
+  steps: [
+    { at: 0, actions: [{ type: 'lens', lens: 'local' }, set({ localFix: false })] },
+    { at: 600, actions: [set({ localFix: true })] },
+  ],
+};
+const ADS: Beat = {
+  view: 'growth',
+  stage: 'Prepared',
+  caption: 'Matched ads to buyers; excluded the wrong searches.',
+  dur: 2200,
+  steps: [
+    { at: 0, actions: [{ type: 'view', view: 'growth' }, { type: 'mission', mission: 'search' }, set({ group: 'subscription', excluded: false })] },
+    { at: 900, actions: [set({ excluded: true })] },
+  ],
+};
+const SOCIAL: Beat = {
+  view: 'growth',
+  stage: 'Prepared',
+  caption: 'Reshaped one offer for each placement.',
+  dur: 1800,
+  steps: [
+    { at: 0, actions: [{ type: 'mission', mission: 'social' }, set({ placement: 'feed', audience: 'new' })] },
+    { at: 800, actions: [set({ placement: 'story' })] },
+  ],
+};
+const RESULTS: Beat = {
+  view: 'growth',
+  stage: 'Found',
+  caption: 'Traced visits to subscribers; found the drop-off.',
+  dur: 2000,
+  steps: [
+    { at: 0, actions: [{ type: 'mission', mission: 'paths' }, set({ channel: 'search' })] },
+    { at: 800, actions: [set({ channel: 'social' })] },
+  ],
+};
+
+/** wider screens: both modes, every search lens, three marketing jobs */
+export const BEATS: Beat[] = [CRAWL, KEYWORDS, AI_CHECK, AI_FIX, LINK_GAP, OUTREACH, LOCAL, ADS, SOCIAL, RESULTS];
+/** phones: the same story, shorter: fewer beats, no draft overlay on the small graph */
+export const MOBILE_BEATS: Beat[] = [
+  { ...CRAWL, dur: 1700, steps: [CRAWL.steps[0], { at: 1000, actions: [set({ repair: true })] }] },
+  { ...KEYWORDS, dur: 2100, steps: [KEYWORDS.steps[0], { at: 1100, actions: [set({ brief: true })] }] },
+  AI_CHECK,
+  { ...AI_FIX, dur: 1400, steps: [AI_FIX.steps[0]] },
+  { ...LINK_GAP, dur: 1800 },
+  { ...ADS, dur: 1900, steps: [ADS.steps[0], { at: 800, actions: [set({ excluded: true })] }] },
+  { ...RESULTS, dur: 1700, steps: [RESULTS.steps[0], { at: 700, actions: [set({ channel: 'social' })] }] },
 ];
 
 export const TOUR_MS = BEATS.reduce((t, b) => t + b.dur, 0);
+export const MOBILE_TOUR_MS = MOBILE_BEATS.reduce((t, b) => t + b.dur, 0);

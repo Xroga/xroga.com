@@ -1,23 +1,39 @@
 'use client';
 
 /**
- * Find search opportunities: real buyer searches grouped by intent (compare, buy, local, learn). The chosen search runs
- * left to right: who answers it today, then PeakForm's page, or the empty slot where that page should be. "Prepare page
- * brief" shapes the slot into an editorial draft (heading, what it covers, a FAQ, internal links, product facts). It is
- * a draft to review, never a published page, and no ranking is promised.
+ * Find search opportunities: keyword research as one visible chain. Buyer searches cluster by intent (buy, compare,
+ * learn, nearby); the chosen intent is bright and the rest stay present but muted. The chosen search runs left to
+ * right: the competitor page that answers it today, then PeakForm's page, or the empty slot where that page should be.
+ * "Prepare page brief" shapes the slot into a draft (heading, what it covers, a FAQ, product facts, internal links) that
+ * needs approval before it is published and checked. Each data source sits beside the step it would feed, with its real
+ * status in Xroga's directory; the searches themselves are illustrative and no volumes are quoted.
  */
 import type { Dispatch } from 'react';
-import { BRIEF, INTENTS, QUERIES, QUERY_NEXT, SITE, queryOf } from '../data';
+import { AVAILABILITY_LABEL, BRIEF, INTENTS, QUERIES, QUERY_NEXT, SITE, TOOLS, availability, queryOf, type ToolId } from '../data';
+import { hasMark, ToolMark } from '../marks';
 import { rovingKeys } from '../keys';
 import type { Action, State } from '../state';
 import { Seg } from '../ui';
 import s from '../S03.module.css';
 
+/** a provider named beside the work it would feed, with its directory status; no sign-in state is ever implied */
+function Source({ id, job }: { id: ToolId; job: string }) {
+  const t = TOOLS[id];
+  return (
+    <span className={s.dataSource} data-avail={availability(t)}>
+      {hasMark(id) ? <ToolMark id={id} size={13} /> : <i aria-hidden="true">{t.name.slice(0, 1)}</i>}
+      <span>
+        {job}: <b>{t.name}</b> · {AVAILABILITY_LABEL[availability(t)].toLowerCase()}
+      </span>
+    </span>
+  );
+}
+
 export function ContentStage({ st, dispatch }: { st: State; dispatch: Dispatch<Action> }) {
   const q = queryOf(st.query);
   const brief = q.gap ? BRIEF[q.id] : null;
-  const shown = QUERIES.filter((x) => x.intent === q.intent);
   const own = q.rival === SITE.domain;
+  const ordered = INTENTS.flatMap((i) => QUERIES.filter((x) => x.intent === i.id));
   return (
     <div className={s.content} data-intent={q.intent} data-gap={q.gap || undefined} data-brief={(brief && st.brief) || undefined}>
       <div className={s.stageBar}>
@@ -34,22 +50,32 @@ export function ContentStage({ st, dispatch }: { st: State; dispatch: Dispatch<A
           small
         />
       </div>
-      <div className={s.queryList} role="radiogroup" aria-label="Buyer searches" onKeyDown={rovingKeys}>
-        {shown.map((x) => (
-          <button
-            key={x.id}
-            type="button"
-            role="radio"
-            aria-checked={x.id === q.id}
-            tabIndex={x.id === q.id ? 0 : -1}
-            className={s.query}
-            data-gap={x.gap || undefined}
-            onClick={() => dispatch({ type: 'set', patch: { query: x.id, brief: false } })}
-          >
-            <span>“{x.q}”</span>
-            <em>{x.gap ? 'Not answered' : x.you}</em>
-          </button>
-        ))}
+
+      <div className={s.research}>
+        <div className={s.dataLine}>
+          <Source id="gsc" job="Your own searches" />
+          <Source id="semrush" job="Demand" />
+          <Source id="ahrefs" job="Competitor pages" />
+        </div>
+        <div className={s.queryList} role="radiogroup" aria-label="Buyer searches" onKeyDown={rovingKeys}>
+          {ordered.map((x) => (
+            <button
+              key={x.id}
+              type="button"
+              role="radio"
+              aria-checked={x.id === q.id}
+              tabIndex={x.id === q.id ? 0 : -1}
+              className={s.query}
+              data-gap={x.gap || undefined}
+              data-dim={x.intent !== q.intent || undefined}
+              onClick={() => dispatch({ type: 'set', patch: { query: x.id, brief: false } })}
+            >
+              <small>{INTENTS.find((i) => i.id === x.intent)!.label}</small>
+              <span>“{x.q}”</span>
+              <em>{x.gap ? 'Not answered' : x.you}</em>
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className={s.flow} key={q.id}>
@@ -57,8 +83,7 @@ export function ContentStage({ st, dispatch }: { st: State; dispatch: Dispatch<A
           <small>Answered today by</small>
           <b>{q.rival}</b>
           <span>{q.rivalPage}</span>
-          <i aria-hidden="true" />
-          <i aria-hidden="true" />
+          {q.alsoCited && <em className={s.alsoCited}>Also cited in the AI answer</em>}
         </span>
         <span className={s.flowLink} aria-hidden="true" data-gap={q.gap || undefined}>
           <em>{q.gap ? 'Not on your site' : own ? 'Your page' : 'Ranks above you'}</em>
@@ -82,7 +107,10 @@ export function ContentStage({ st, dispatch }: { st: State; dispatch: Dispatch<A
               <span className={s.slotRow}>
                 <small>Links</small> {brief.link}
               </span>
-              <em className={s.draftState}>Page brief · draft for review</em>
+              <span className={s.approval}>
+                <em className={s.draftState}>Page brief · draft</em>
+                <span>Needs your approval → publish → check results after publishing</span>
+              </span>
             </>
           ) : (
             <b>{q.gap ? 'No page answers this search' : q.you}</b>
@@ -121,7 +149,8 @@ export function ContentInspector({ st, dispatch }: { st: State; dispatch: Dispat
         </span>
       )}
       <span className={s.insNote}>
-        Example searches. Once connected, Search Console shows the searches your site already appears for; Semrush and Ahrefs add demand and competitor pages.
+        Illustrative searches; no volumes are quoted. Semrush and Ahrefs are available to connect for demand and competitor pages; Search Console is not
+        currently supported.
       </span>
     </>
   );

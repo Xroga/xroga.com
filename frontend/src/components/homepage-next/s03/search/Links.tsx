@@ -1,23 +1,24 @@
 'use client';
 
 /**
- * Earn authority: PeakForm's site on the left, outside sources on an arc to the right. Shape, line pattern and words say
- * what each relationship is: a verified link (solid, pointing at the site), an unlinked mention (an open line that stops
- * short), a link that goes only to a competitor (dashed, to the competitor), an opportunity to contact (no line) and an
- * unsuitable source. In the competitor gap, the chosen publisher shows the missing link to PeakForm as an open, dotted
- * line that never arrives. Outreach produces a draft; it never draws a link that does not exist.
+ * Earn authority: PeakForm's site and the competitor on fixed anchors at the left, outside sources in one lane on the
+ * right with each marker before its label. Lines run only through the open lane between them, from a source's marker to
+ * the edge of its target card, so no line ever passes under a caption. Shape, line pattern and words say what each
+ * relationship is: a verified link (solid, to PeakForm), an unlinked mention (an open line that stops short), a link that
+ * goes only to the competitor (dashed, to the competitor), an opportunity to contact (no line) and an unsuitable source.
+ * In the competitor gap, the chosen publisher's missing link to PeakForm is a dotted line that never arrives. Outreach
+ * produces a draft; it never draws a link that does not exist. Line ends are measured on layout changes only.
  */
-import type { Dispatch } from 'react';
-import { CLASS_LABEL, LEGEND, LINK_MODES, RIVAL, SITE, SOURCES, sourceOf } from '../data';
+import { useLayoutEffect, useRef, useState, type Dispatch } from 'react';
+import { CLASS_LABEL, LEGEND, LINK_MODES, RIVAL, SITE, SOURCES, sourceOf, type LinkClass } from '../data';
 import { rovingKeys } from '../keys';
 import type { Action, State } from '../state';
 import { Seg } from '../ui';
 import s from '../S03.module.css';
 
-const SITE_AT = { x: 16, y: 40 };
-const RIVAL_AT = { x: 22, y: 86 };
+type Edge = { id: string; cls: LinkClass | 'gap'; d: string; end: 'arrow' | 'open' | null };
 
-/** a gentle curve from a source to its target, bending toward the middle of the graph */
+/** a horizontal-tangent curve from (x1,y1) toward (x2,y2); `stop` < 1 ends it short of the target */
 function curve(x1: number, y1: number, x2: number, y2: number, stop = 1) {
   const ex = x1 + (x2 - x1) * stop;
   const ey = y1 + (y2 - y1) * stop;
@@ -30,8 +31,45 @@ export function LinksStage({ st, dispatch }: { st: State; dispatch: Dispatch<Act
   const sel = sourceOf(st.source);
   const visible = SOURCES.filter((x) => shown.includes(x.cls));
   const rival = st.mode === 'gap' || st.mode === 'outreach';
+  const gap = st.mode === 'gap' && sel.cls === 'rival';
+  const draft = st.outreach && !!sel.angle;
+  const plot = useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = useState<Edge[]>([]);
+  const ids = visible.map((x) => x.id).join();
+
+  useLayoutEffect(() => {
+    const el = plot.current;
+    if (!el) return;
+    const measure = () => {
+      const b = el.getBoundingClientRect();
+      const box = (q: string) => el.querySelector<HTMLElement>(q)?.getBoundingClientRect();
+      const siteR = box('[data-anchor="site"]');
+      const rivalR = box('[data-anchor="rival"]');
+      const out: Edge[] = [];
+      for (const x of visible) {
+        if (x.cls === 'prospect' || x.cls === 'discarded') continue;
+        const t = x.cls === 'rival' ? rivalR : siteR;
+        const dot = el.querySelector<HTMLElement>(`[data-src="${x.id}"] i`)?.getBoundingClientRect();
+        if (!t || !dot) continue;
+        const x1 = dot.left - b.left - 3;
+        const y1 = dot.top + dot.height / 2 - b.top;
+        const x2 = t.right - b.left + 6;
+        const y2 = t.top + t.height / 2 - b.top + (x.cls === 'rival' ? 0 : x.cls === 'mention' ? 10 : -8);
+        out.push({ id: x.id, cls: x.cls, d: curve(x1, y1, x2, y2, x.cls === 'mention' ? 0.7 : 1), end: x.cls === 'mention' ? 'open' : 'arrow' });
+        if (gap && x.id === sel.id && siteR)
+          out.push({ id: `${x.id}-gap`, cls: 'gap', d: curve(x1, y1, x2, siteR.top + siteR.height / 2 - b.top + 10, 0.6), end: 'open' });
+      }
+      setEdges(out);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ids, st.mode, sel.id, gap]);
+
   return (
-    <div className={s.links} data-mode={st.mode} data-draft={(st.outreach && !!sel.angle) || undefined}>
+    <div className={s.links} data-mode={st.mode} data-draft={draft || undefined}>
       <div className={s.stageBar}>
         <Seg
           label="Link view"
@@ -41,8 +79,8 @@ export function LinksStage({ st, dispatch }: { st: State; dispatch: Dispatch<Act
           small
         />
       </div>
-      <div className={s.plot}>
-        <svg className={s.graph} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <div ref={plot} className={s.plot}>
+        <svg className={s.graph} aria-hidden="true">
           <defs>
             <marker id="s03-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
               <path d="M0 0 8 4 0 8z" className={s.arrowHead} />
@@ -51,39 +89,25 @@ export function LinksStage({ st, dispatch }: { st: State; dispatch: Dispatch<Act
               <circle cx="5" cy="5" r="3.4" className={s.openHead} />
             </marker>
           </defs>
-          {visible.map((x) => {
-            if (x.cls === 'prospect' || x.cls === 'discarded') return null;
-            const toRival = x.cls === 'rival';
-            const t = toRival ? RIVAL_AT : SITE_AT;
-            // a mention reaches toward the site but stops short: there is no link to follow
-            const d = curve(x.x, x.y, t.x + (toRival ? 4 : 7), t.y, x.cls === 'mention' ? 0.72 : 1);
-            return (
-              <path
-                key={`${x.id}-${st.mode}`}
-                d={d}
-                className={s.edge}
-                data-cls={x.cls}
-                data-on={x.id === sel.id || undefined}
-                markerEnd={x.cls === 'verified' || x.cls === 'rival' ? 'url(#s03-arrow)' : x.cls === 'mention' ? 'url(#s03-open)' : undefined}
-              />
-            );
-          })}
-          {st.mode === 'gap' && sel.cls === 'rival' && (
-            <path key={`gap-${sel.id}`} d={curve(sel.x, sel.y, SITE_AT.x + 7, SITE_AT.y, 0.62)} className={s.edge} data-cls="gap" markerEnd="url(#s03-open)" />
-          )}
+          {edges.map((e) => (
+            <path
+              key={`${e.id}-${st.mode}`}
+              d={e.d}
+              className={s.edge}
+              data-cls={e.cls}
+              data-on={e.id === sel.id || undefined}
+              markerEnd={e.end === 'arrow' ? 'url(#s03-arrow)' : e.end === 'open' ? 'url(#s03-open)' : undefined}
+            />
+          ))}
         </svg>
 
-        <span className={s.siteNode} style={{ left: `${SITE_AT.x}%`, top: `${SITE_AT.y}%` }} aria-hidden="true">
+        <span className={s.siteNode} data-anchor="site" aria-hidden="true">
           <b>{SITE.domain}</b>
           <small>Your site</small>
+          {gap && <em key={sel.id}>No link from {sel.domain} yet</em>}
         </span>
-        {st.mode === 'gap' && sel.cls === 'rival' && (
-          <span key={`tag-${sel.id}`} className={s.gapTag} style={{ left: `${SITE_AT.x}%`, top: `${SITE_AT.y + 15}%` }}>
-            No link from {sel.domain} yet
-          </span>
-        )}
         {rival && (
-          <span className={s.rivalNode} style={{ left: `${RIVAL_AT.x}%`, top: `${RIVAL_AT.y}%` }} aria-hidden="true">
+          <span className={s.rivalNode} data-anchor="rival" aria-hidden="true">
             <b>{RIVAL.domain}</b>
             <small>Competitor</small>
           </span>
@@ -99,8 +123,8 @@ export function LinksStage({ st, dispatch }: { st: State; dispatch: Dispatch<Act
               tabIndex={x.id === sel.id ? 0 : -1}
               className={s.src}
               data-cls={x.cls}
-              data-side={x.x < 60 ? 'right' : undefined}
-              style={{ left: `${x.x}%`, top: `${x.y}%` }}
+              data-src={x.id}
+              style={{ top: `${x.y}%` }}
               onClick={() => dispatch({ type: 'set', patch: { source: x.id } })}
             >
               <i aria-hidden="true" />
@@ -113,7 +137,7 @@ export function LinksStage({ st, dispatch }: { st: State; dispatch: Dispatch<Act
         </div>
       </div>
 
-      {st.outreach && sel.angle && (
+      {draft && (
         <div key={sel.id} className={s.draft} role="note">
           <span className={s.draftState}>Draft · awaiting your review</span>
           <b>To the editor of {sel.domain}</b>

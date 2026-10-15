@@ -75,7 +75,7 @@ export function LocalInspector({ st, dispatch }: { st: State; dispatch: Dispatch
         {st.localFix ? 'Discard the draft' : 'Prepare listing correction'}
       </button>
       <span className={s.insNote}>
-        {st.localFix ? 'Draft only. ' : ''}Business Profile isn’t in Xroga’s directory yet, so a listing change needs your own sign-in and approval.
+        {st.localFix ? 'Draft only. ' : ''}Business Profile isn’t currently supported in Xroga, so a listing change needs your own sign-in and approval.
       </span>
     </>
   );

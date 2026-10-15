@@ -5,23 +5,70 @@
  * broken one. Four page states are told apart by shape and words, not colour alone: can't be opened (404), opens slowly,
  * hidden by mistake, and hidden on purpose (not an issue). The inspector answers three questions in order: what was
  * checked, what is wrong, and what Xroga would prepare. A repair is drawn as a dashed proposal; nothing is applied.
+ * Links run from the edge of one page card to the edge of the next (measured from layout, so a card's own scale or
+ * entrance never moves them), so a line never runs over a page's address.
  */
-import type { Dispatch } from 'react';
+import { useLayoutEffect, useRef, useState, type Dispatch } from 'react';
 import { CRAWL, ISSUES, LINKS, PAGES, PAGE_STATE, issueOf } from '../data';
 import { rovingKeys } from '../keys';
 import type { Action, State } from '../state';
 import s from '../S03.module.css';
 
 const at = (id: string) => PAGES.find((p) => p.id === id)!;
-const edge = (a: string, b: string) => path(at(a), at(b));
-const path = (p: { x: number; y: number }, q: { x: number; y: number }) => {
-  const x1 = p.x + 5;
-  const x2 = q.x - 5;
-  return `M${x1} ${p.y} C${(x1 + x2) / 2} ${p.y} ${(x1 + x2) / 2} ${q.y} ${x2} ${q.y}`;
-};
+type Box = { l: number; r: number; t: number; b: number; cx: number; cy: number };
+
+/** card edge to card edge: side by side when the cards are in different columns, top to bottom when stacked */
+function link(a: Box, b: Box) {
+  if (Math.abs(a.cx - b.cx) < 40) {
+    const [up, down] = a.cy < b.cy ? [a, b] : [b, a];
+    const y1 = up.b + 4;
+    const y2 = down.t - 4;
+    return `M${up.cx} ${y1} C${up.cx} ${(y1 + y2) / 2} ${down.cx} ${(y1 + y2) / 2} ${down.cx} ${y2}`;
+  }
+  const x1 = a.r + 4;
+  const x2 = b.l - 4;
+  const m = (x1 + x2) / 2;
+  return `M${x1} ${a.cy} C${m} ${a.cy} ${m} ${b.cy} ${x2} ${b.cy}`;
+}
+
+function useCardLinks() {
+  const plot = useRef<HTMLDivElement>(null);
+  const [paths, setPaths] = useState<Record<string, string>>({});
+  useLayoutEffect(() => {
+    const el = plot.current;
+    if (!el) return;
+    const measure = () => {
+      const box: Record<string, Box> = {};
+      el.querySelectorAll<HTMLElement>('[data-page]').forEach((n) => {
+        // offset geometry ignores transforms: the card is centred on (offsetLeft, offsetTop)
+        const w = n.offsetWidth;
+        const h = n.offsetHeight;
+        box[n.dataset.page!] = {
+          l: n.offsetLeft - w / 2,
+          r: n.offsetLeft + w / 2,
+          t: n.offsetTop - h / 2,
+          b: n.offsetTop + h / 2,
+          cx: n.offsetLeft,
+          cy: n.offsetTop,
+        };
+      });
+      const out: Record<string, string> = {};
+      for (const [a, b] of LINKS) if (box[a] && box[b]) out[`${a}-${b}`] = link(box[a], box[b]);
+      setPaths(out);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    el.querySelectorAll('[data-page]').forEach((n) => ro.observe(n));
+    return () => ro.disconnect();
+  }, []);
+  return { plot, paths };
+}
 
 export function HealthStage({ st, dispatch }: { st: State; dispatch: Dispatch<Action> }) {
   const sel = issueOf(st.issue);
+  const { plot, paths } = useCardLinks();
+  const edge = (a: string, b: string) => paths[`${a}-${b}`] ?? '';
   return (
     <div className={s.health} data-issue={sel.id} data-repair={st.repair || undefined}>
       <div className={s.stageBar}>
@@ -35,8 +82,8 @@ export function HealthStage({ st, dispatch }: { st: State; dispatch: Dispatch<Ac
           {CRAWL.pages} pages · {CRAWL.links} internal links
         </span>
       </div>
-      <div className={s.plot}>
-        <svg className={s.graph} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <div ref={plot} className={s.plot}>
+        <svg className={s.graph} aria-hidden="true">
           {LINKS.map(([a, b]) => {
             const issue = ISSUES.find((i) => i.from === a && i.to === b);
             return (
@@ -45,6 +92,7 @@ export function HealthStage({ st, dispatch }: { st: State; dispatch: Dispatch<Ac
           })}
           {/* the tracer: one pass per run, stopping at the broken link */}
           {st.crawl > 0 &&
+            !!paths['home-protein'] &&
             LINKS.map(([a, b], i) => (
               <path
                 key={`t-${st.crawl}-${a}-${b}`}
@@ -64,6 +112,7 @@ export function HealthStage({ st, dispatch }: { st: State; dispatch: Dispatch<Ac
             <span
               key={p.id}
               className={s.page}
+              data-page={p.id}
               data-home={p.id === 'home' || undefined}
               data-state={p.state}
               data-on={(issue && issue.id === sel.id) || undefined}
