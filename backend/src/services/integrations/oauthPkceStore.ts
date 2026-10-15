@@ -5,7 +5,6 @@
 
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { randomUUID } from 'node:crypto';
-import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 
 const BUCKET = 'xroga-github-tokens';
@@ -117,9 +116,6 @@ export async function storePkceSession(
   session: PkceSession,
 ): Promise<void> {
   assertStorageIdentity(userId, provider);
-  if (githubSchemaAutoBootstrapEnabled()) {
-    await ensureGithubSchema();
-  }
 
   const supabase = getSupabaseAdmin();
   if (['supabase_oauth_pkce', 'vercel_oauth_pkce', 'cws_oauth_pkce', 'github_oauth_pkce'].includes(provider)) {
@@ -231,9 +227,6 @@ export async function storeProviderToken(
   revision?: string,
 ): Promise<void> {
   assertStorageIdentity(userId, provider);
-  if (githubSchemaAutoBootstrapEnabled()) {
-    await ensureGithubSchema();
-  }
 
   const supabase = getSupabaseAdmin();
   if (epochProviders.has(provider)) {

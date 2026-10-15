@@ -3,7 +3,6 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { getTenantSupabaseAdmin, getGlobalSupabaseAdmin } from '../security/serviceRoleGuard.js';
 import { requireTenantContext } from '../security/tenantContext.js';
-import { ensureMessageSharesSchema } from '../db/ensureMessageSharesSchema.js';
 import { authMiddleware, verifyAccessToken, type AuthRequest } from '../middleware/auth.js';
 import { cleanSharedText } from '../lib/messageShareText.js';
 
@@ -64,7 +63,6 @@ router.post('/', authMiddleware, async (req: AuthRequest, res) => {
     return;
   }
 
-  await ensureMessageSharesSchema().catch(() => false);
   const token = randomBytes(24).toString('base64url');
   try {
     const { data, error } = await getTenantSupabaseAdmin(requireTenantContext(req.tenantContext))

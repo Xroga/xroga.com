@@ -42,10 +42,6 @@ import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
 import capabilitiesRouter from './routes/capabilities.js';
 import { adminMiddleware } from './middleware/admin.js';
-import { ensureGithubSchema } from './db/ensureGithubSchema.js';
-import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
-import { ensureMessageSharesSchema } from './db/ensureMessageSharesSchema.js';
-import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
 import {
   activeRunIds,
   currentRunWorkerId,
@@ -282,18 +278,7 @@ server.listen(port, '0.0.0.0', () => {
   if (!process.env.SUPABASE_URL) {
     console.warn('WARNING: SUPABASE_URL is not set — authenticated routes will fail');
   }
-  void ensurePhase1Schema().catch((err) => {
-    console.warn('[phase1Schema] Startup ensure skipped:', (err as Error).message);
-  });
-  void ensureGithubSchema().catch((err) => {
-    console.warn('[githubSchema] Startup ensure skipped:', (err as Error).message);
-  });
-  void ensureTerminalSessionsSchema().catch((err) => {
-    console.warn('[terminalSessionsSchema] Startup ensure skipped:', (err as Error).message);
-  });
-  void ensureMessageSharesSchema().catch((err) => {
-    console.warn('[messageSharesSchema] Startup ensure skipped:', (err as Error).message);
-  });
+  // Schema changes belong to the migration gate, never request/startup credentials.
   // Provider health survives this restart (§15). Without it a circuit opened against a
   // failing provider was forgotten on every deploy, and the model went straight back into
   // rotation — a breaker that resets exactly when a bad deploy lands protects nothing.

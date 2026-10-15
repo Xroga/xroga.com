@@ -12,7 +12,6 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from '../middleware/auth.js';
-import { ensureTerminalSessionsSchema } from '../db/ensureTerminalSessionsSchema.js';
 import { approximateBytes, recordSupabaseCall } from '../lib/supabaseCallCounters.js';
 import { requireTenantContext } from '../security/tenantContext.js';
 import { persistOwnedTerminal } from '../security/ownedTerminalPersistence.js';
@@ -124,7 +123,6 @@ async function nextTerminalNumber(
 /** GET /api/terminal-sessions?repo=owner/name&limit=&offset= — metadata only */
 router.get('/', async (req: AuthRequest, res) => {
   const userId = req.userId!;
-  await ensureTerminalSessionsSchema().catch(() => false);
 
   const repo =
     typeof req.query.repo === 'string' && req.query.repo.includes('/')
@@ -212,7 +210,6 @@ router.get('/:id', async (req: AuthRequest, res) => {
 router.put('/:id', async (req: AuthRequest, res) => {
   const userId = req.userId!;
   const id = String(req.params.id || '').trim();
-  await ensureTerminalSessionsSchema().catch(() => false);
 
   const parsed = upsertSchema.safeParse({ ...req.body, id });
   if (!parsed.success) {

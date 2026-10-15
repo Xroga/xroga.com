@@ -5,7 +5,6 @@
 
 import { createHash, randomBytes, randomUUID } from 'crypto';
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 import {
   clearPkceSession,
@@ -708,9 +707,6 @@ export async function saveVercelConnection(
     updated_at: new Date().toISOString(),
   };
 
-  if (githubSchemaAutoBootstrapEnabled()) {
-    await ensureGithubSchema();
-  }
 
   const supabase = getSupabaseAdmin();
   const row = {

@@ -7,7 +7,6 @@
 
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
 import { isMissingTableError } from './githubTokenStore.js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 
@@ -408,9 +407,6 @@ export async function saveUserProviderKey(
   };
   const encrypted = encryptApiKey(trimmed);
 
-  if (githubSchemaAutoBootstrapEnabled()) {
-    await ensureGithubSchema();
-  }
 
   const saveArgs = {
     p_owner_id:userId,p_provider:providerRow,p_revision:issued.revision,p_access_token:encrypted,p_metadata:metadata,
