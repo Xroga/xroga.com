@@ -1,7 +1,22 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { buildRuntimeInventory, resolveDynamicBindings } from './runtime-inventory.mjs';
-import { validateRuntimeInventory } from './check-runtime-config.mjs';
+import { validateRuntimeInventory, validateApiBuildContract } from './check-runtime-config.mjs';
+import { readFileSync } from 'node:fs';
+import { root } from '../ci/toolchain.mjs';
+import { join } from 'node:path';
+
+test('canonical API build preserves compiled output and requires the pinned Git compatibility gate',()=>{
+  const docker=readFileSync(join(root,'Dockerfile.api'),'utf8'),fly=readFileSync(join(root,'fly.api.toml'),'utf8');
+  const backend=JSON.parse(readFileSync(join(root,'backend/package.json'),'utf8'));
+  assert.doesNotThrow(()=>validateApiBuildContract(docker,fly,backend));
+  for(const build of ['tsc','node scripts/cline-git-compat.mjs --check || tsc','echo done']){
+    assert.throws(()=>validateApiBuildContract(docker,fly,{...backend,scripts:{...backend.scripts,build}}),/Unsupported/);
+  }
+  assert.throws(()=>validateApiBuildContract(docker,fly,{...backend,scripts:{...backend.scripts,postinstall:'echo done'}}),/Unsupported/);
+  assert.throws(()=>validateApiBuildContract(docker.replace('RUN node scripts/cline-git-compat.mjs --apply',''),fly,backend),/Unsupported/);
+  assert.throws(()=>validateApiBuildContract(docker.replace('test -f dist/index.js','true'),fly,backend),/Unsupported/);
+});
 
 const baseline = buildRuntimeInventory();
 const fixture = () => structuredClone(baseline);

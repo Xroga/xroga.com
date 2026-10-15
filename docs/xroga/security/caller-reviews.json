@@ -2,6 +2,42 @@
   "version": "1.0",
   "reviews": [
     {
+      "path":"backend/src/services/integrations/supabaseAuth.ts",
+      "sourceSha256":"9d423376a702c32f13edb190c4e3ed9eb3078db683bd2681a0dc1e91d19393a9",
+      "callIds":["6f510ef0f75ba531a11a","f45175fbfa5aaa6bb06c","bf172f37bc468905d080"],
+      "disposition":"NOT_PERSISTENCE",
+      "authority":"All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
+      "reason":"Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
+      "evidence":[{"path":"backend/src/services/integrations/supabaseAuth.ts","marker":"function basicAuthHeader(): string"},{"path":"backend/src/routes/supabaseOAuth.ts","marker":"stateInfo.userId !== req.userId"}]
+    },
+    {
+      "path":"backend/src/services/integrations/supabaseProvision.ts",
+      "sourceSha256":"8b27bfece71d91990d5102b91b6842b3bbd763cbf43ce2d6d5e7e148f013f63e",
+      "callIds":["a903b91c390a73b943ee"],
+      "disposition":"REVIEWED_GAP",
+      "authority":"The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
+      "reason":"Full helper examined, including Management API, direct SQL and Storage calls outside the scanner. Generated memory tables lacked browser-role isolation and existing public buckets were falsely accepted; both corrected with pending real CI. Full caller provenance, provider/project binding, legacy customer catalog review, direct-PG TLS validation and explicit consequential approval remain unresolved, not certified from owner syntax.",
+      "evidence":[{"path":"backend/src/security/tenantIsolation.local.integration.ts","marker":"generated external-project memory SQL denies browser roles"},{"path":"backend/src/services/integrations/supabaseProvision.test.ts","marker":"existing public or unknown buckets cannot be reported private"}]
+    },
+    {
+      "path":"backend/src/ai/sessionMemory.ts",
+      "sourceSha256":"823527b6cbfa02c0908895be7872b5d2923430fcda2ccaaf0b4ea19d929289f6",
+      "callIds":["f7905886591a736e1914","e837a99df841634ba026","98d766017045e8a5d3db","ce716e261403d059a8cd","168c6fa5091bfb16b8c3","34d65bae1c5a105fe1a5"],
+      "disposition":"REVIEWED_GAP",
+      "authority":"Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
+      "reason":"Complete module inspected. Distinct external and platform identities must not be conflated; connected-project browser access is corrected in the generator, not retroactively deployed. Full pipeline option provenance, credential binding, raw error logging, ignored platform write errors and cross-process/callback tests remain incomplete. These queries are not granted blanket scoped certification.",
+      "evidence":[{"path":"backend/src/ai/pipeline.ts","marker":"loadSessionHistory(opts.userId"},{"path":"backend/src/ai/sessionMemory.ts","marker":"onConflict: 'xroga_user_id,repo'"}]
+    },
+    {
+      "path":"backend/src/ai/projectMemory.ts",
+      "sourceSha256":"ee3a3cde69ab30651cc9f7677c6798c3bdaa1b3149ab5240c2bf3e8aef4590eb",
+      "callIds":["c32965fff6598808b214","3da4920700bfa3a9ec80","2ca12dce241c43d18b5f","5f6d564abb336efdd2fb","91dd048ccce1966378f9","f7680656d9a9b0ab5281"],
+      "disposition":"REVIEWED_GAP",
+      "authority":"Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
+      "reason":"Direct owner predicates alone do not prove all upstream option provenance or credential/project binding. External project tables need the new generated isolation; existing connected schemas are not changed by this branch. Raw provider errors, mutable hot object aliases and background persistence failures still require review and cross-tenant acceptance. This records inspected control flow with explicit gaps, not a new global exemption.",
+      "evidence":[{"path":"backend/src/ai/projectMemory.ts","marker":"onConflict: 'xroga_user_id,repo,branch'"},{"path":"backend/src/ai/pipeline.ts","marker":"const saved = await setProjectMemoryDurable({"}]
+    },
+    {
       "path":"backend/src/services/BillingService.ts",
       "sourceSha256":"5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
       "callIds":["286bc857714c82f17839","47650e2cf3cc7a9cb97a","c7ed0ee2e36c6c8eaf43"],

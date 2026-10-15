@@ -48,6 +48,14 @@ export function validateRuntimeInventory(value, expectedNames = []) {
     dynamicBindings: inventory.dynamic_bindings.length, highRisks: inventory.risks.filter(row => ['P0', 'P1'].includes(row.severity)).length,
     secretValuesRead: false, productionDeployed: false };
 }
+export function validateApiBuildContract(docker, fly, backend) {
+  if (!docker.includes('test -f dist/index.js') || !docker.includes('"dist/index.js"') || !fly.includes('node dist/index.js')
+    || backend.scripts.build !== 'node scripts/cline-git-compat.mjs --check && tsc'
+    || backend.scripts.postinstall !== 'node scripts/cline-git-compat.mjs --apply'
+    || !docker.includes('RUN node scripts/cline-git-compat.mjs --apply')) {
+    throw new Error('Unsupported/inconsistent API deployment build output or missing Git compatibility gate');
+  }
+}
 export function main() {
   const read = path => readFileSync(join(root, path), 'utf8').replace(/\r\n/g, '\n');
   const inventory = JSON.parse(read('docs/xroga/dependency-inventory.json'));
@@ -62,7 +70,7 @@ export function main() {
   }
   const docker = read('Dockerfile.api'), fly = read('fly.api.toml'), vercel = JSON.parse(read('vercel.json'));
   const backend = JSON.parse(read('backend/package.json')), frontend = JSON.parse(read('frontend/package.json'));
-  if (!docker.includes('test -f dist/index.js') || !docker.includes('"dist/index.js"') || !fly.includes("node dist/index.js") || backend.scripts.build !== 'tsc') throw new Error('Unsupported/inconsistent API deployment build output');
+  validateApiBuildContract(docker, fly, backend);
   if (!vercel.buildCommand.includes('build') || !vercel.buildCommand.includes('frontend') || frontend.scripts.build !== 'next build') throw new Error('Unsupported frontend deployment build target');
   const actualManifests = ['Dockerfile.api', 'fly.api.toml', 'vercel.json'];
   for (const path of actualManifests) if (!inventory.manifests.some(row => row.path === path && row.presence === 'PRESENT')) throw new Error('Active deployment manifest is missing from inventory');

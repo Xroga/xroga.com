@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0db09bbb3b4824b8b897f74dc510e7a2f36c34e3",
+  "source_sha": "150d365dfa47bde5801cf4cc5d6de06d384c4058",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12464,7 +12464,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "0b6234eb297371a8b1bd1c1adaab90be69d9fd8416754f1f320cedc55cf668ee"
+      "sha256": "5999c0330a3614d01f58bfe628b8557974256dd9c067553f82b464ae12a01ae0"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12556,7 +12556,7 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "sha256": "84805e33d41d6acf3e7858edfc773f63a1cca6fb74be1a849e8f22717829e3ca"
+      "sha256": "8b27bfece71d91990d5102b91b6842b3bbd763cbf43ce2d6d5e7e148f013f63e"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
@@ -16524,7 +16524,7 @@
     },
     {
       "path": "scripts/xroga/check-runtime-config.mjs",
-      "sha256": "ee60133a227f6230fbfff8d773ff5b3c38063fc3938c25295b58481c7ba57e00"
+      "sha256": "89105660bb05aa72a4398bb33f8dae6279ac0915c12d3141b4f39bce8be1c1f6"
     },
     {
       "path": "scripts/xroga/runtime-discovery.mjs",
@@ -17907,35 +17907,35 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 35,
+      "line": 36,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 35,
+      "line": 36,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 135,
+      "line": 136,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 185,
+      "line": 186,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 266,
+      "line": 267,
       "credentialsInUrl": false
     },
     {
@@ -24032,7 +24032,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 568,
+      "line": 569,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

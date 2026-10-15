@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "0db09bbb3b4824b8b897f74dc510e7a2f36c34e3",
-    "sourceTimestampUtc": "2026-10-15T14:07:56+05:00",
-    "auditStartedUtc": "2026-10-15T09:25:07.859Z",
+    "sha": "150d365dfa47bde5801cf4cc5d6de06d384c4058",
+    "sourceTimestampUtc": "2026-10-15T14:25:42+05:00",
+    "auditStartedUtc": "2026-10-15T09:44:10.485Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -23000,7 +23000,7 @@
       "callers": [
         "backend/src/lib/platformReady.ts:8",
         "backend/src/routes/supabaseOAuth.ts:10",
-        "backend/src/services/integrations/supabaseProvision.ts:506",
+        "backend/src/services/integrations/supabaseProvision.ts:526",
         "backend/src/services/integrations/userProviderKeys.ts:801"
       ],
       "reachable": true,
@@ -23049,7 +23049,7 @@
       "id": "surface:20b164dcdac7e7fd299f",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/supabaseProvision.ts",
-      "sha256": "84805e33d41d6acf3e7858edfc773f63a1cca6fb74be1a849e8f22717829e3ca",
+      "sha256": "8b27bfece71d91990d5102b91b6842b3bbd763cbf43ce2d6d5e7e148f013f63e",
       "symbols": [
         "MGMT",
         "MgmtProject",
@@ -23065,6 +23065,7 @@
         "data",
         "ensureStorageBuckets",
         "err",
+        "existing",
         "fetchProjectApiKeys",
         "getUserSupabaseAdmin",
         "getUserSupabaseManagementToken",
@@ -23081,7 +23082,6 @@
         "memorySql",
         "method",
         "mgmtFetch",
-        "msg",
         "oauth",
         "ok",
         "oneClickConnectSupabase",
@@ -23105,6 +23105,7 @@
         "storageSql",
         "supabase",
         "text",
+        "url",
         "user",
         "userSupabaseMemoryReady"
       ],
@@ -23131,6 +23132,7 @@
         "backend/src/routes/integrations.ts:644",
         "backend/src/routes/integrations.ts:672",
         "backend/src/routes/supabaseOAuth.ts:20",
+        "backend/src/security/tenantIsolation.local.integration.ts:34",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.ts:864",
         "backend/src/services/integrations/userProviderKeys.ts:873"
@@ -23152,6 +23154,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/supabaseProvision.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -83084,6 +83087,7 @@
         "scripts/xroga/mission-check.mjs:5",
         "scripts/xroga/mission-schema.mjs:3",
         "scripts/xroga/run-golden-browser.mjs:7",
+        "scripts/xroga/runtime-config.test.mjs:6",
         "scripts/xroga/runtime-discovery.mjs:5",
         "scripts/xroga/runtime-inventory.mjs:7",
         "scripts/xroga/validate-golden-journeys.mjs:4"
@@ -83105,7 +83109,8 @@
       ],
       "testCoverage": [
         "scripts/ci/baseline.test.mjs",
-        "scripts/security/tenant-rls.database.test.mjs"
+        "scripts/security/tenant-rls.database.test.mjs",
+        "scripts/xroga/runtime-config.test.mjs"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -84631,7 +84636,7 @@
       "id": "surface:40d79d4afb30fa60cebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/check-runtime-config.mjs",
-      "sha256": "ee60133a227f6230fbfff8d773ff5b3c38063fc3938c25295b58481c7ba57e00",
+      "sha256": "89105660bb05aa72a4398bb33f8dae6279ac0915c12d3141b4f39bce8be1c1f6",
       "symbols": [
         "actualManifests",
         "api",
@@ -84658,6 +84663,7 @@
         "serialized",
         "service",
         "source",
+        "validateApiBuildContract",
         "validateRuntimeInventory",
         "vercel"
       ],
@@ -101674,7 +101680,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 40,
+      "declaredTests": 41,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101772,7 +101778,7 @@
     {
       "id": "test-suite:66b49fb760f9fb022307",
       "sourcePath": "backend/src/services/integrations/supabaseProvision.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -103685,7 +103691,7 @@
     {
       "id": "test-suite:e4abbb3327d5dd30e800",
       "sourcePath": "scripts/xroga/runtime-config.test.mjs",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

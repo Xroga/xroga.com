@@ -1,5 +1,13 @@
 # Command 007 acceptance checkpoint — not verified
 
+## Current assessment — 2026-10-15 connected-project candidate
+
+Latest feature `150d365dfa47bde5801cf4cc5d6de06d384c4058`: actual Git4/Cline frozen workspace and standalone tests38712879437 PASS, API Docker38712879465 PASS, frontend38712879455 and golden38712879498 PASS. Disposable Supabase38712879653 PASS40 real security/3 browser cases/all70 fresh+representative-upgrade files; actual API/web revision `079f4bfaf3504e0b5220ef6151dd478577156deb`. Aggregate38712879661 FAILED on both trees after successful builds/types/lint/backend2826/frontend1038(feature) or1053(integrated): the runtime-contract checker still required bare `tsc`. Candidate fixes that exact contract to REQUIRE compatibility-check AND tsc, preserving artifact-path/startup assertions and adding removal-negative tests. Full rerun pending; no failed run relabeled PASS.
+
+Connected-project candidate addresses missing generated memory RLS/grants, unverified public Storage success and raw provisioning failures. Seven unit tests and eight runtime-contract tests PASS locally, backend build PASS after correcting test callback types. One new real PostgreSQL generator/reapply/denial case awaits CI (41 total defined). No existing remote customer schema altered. See PROVISION_OWNER_BOUNDARY.md for residual approval, credential/account binding, legacy-schema and TLS gaps.
+
+Manual register now89/669 classified:15 scoped boundaries,2 narrow exceptions,13 non-persistence,59 reviewed gaps;580 unreviewed and639 unresolved. A reviewed gap remains unresolved, never a certified caller. Counts must be regenerated and checked with the final source. Git candidate audit has0 critical but27 aggregate highs (18 backend/13 frontend with overlap), not clean. Original full ten-criterion acceptance remains incomplete and Command007 NOT VERIFIED.008–010 NOT STARTED; PR803 draft and Batch1 NO-GO. Earlier sections below retain superseded investigation/evidence, not current certification.
+
 ## Superseding current candidate
 
 Actual subsequent Supabase run38619968286 passed37 real cases/3 browser cases/full69 migration history on web/API revision `f2585ccf44a37c75a9987c09e510979a4e8c919e`, PR event headb1202530, actual main parentcaba3dc7. These trees differ; older231/46bf runtime proof is not substituted. The next source includes BYOK private admission, provider traversal denial, MCP1.32.1 compatible patch and actual Agent-loop/issuer tests;38 real cases defined and exact-source CI required. Full criteria2/10 still FAIL; others retain only their scoped evidence. No007 VERIFIED claim, no008–010 or production action.
@@ -28,13 +36,13 @@ Current-lock audits return exit 1: aggregate 52 (6 low/15 moderate/30 high/1 cri
 | --- | --- | --- |
 | 1. Every tenant-bearing table documented | Inventory implemented; classification incomplete | All 118 observed tables include columns, nullable ownership, FKs, policy predicates and grants. RLS enabled is not isolation certification. Retired schema drift, inherited/global classification and production orphan counts remain unresolved. |
 | 2. Every privileged caller scoped or exempt | FAIL / incomplete | Conservative candidates retain REVIEW_REQUIRED; injected clients, callbacks, workers, growth/community, provisioning, publishing and credential callers need complete semantic review. Direct owner-filter syntax is not proof. |
-| 3. High-risk negative tests | Scoped PASS; complete coverage incomplete | Previously 35 real database/security tests plus 3 browser tests, zero skipped. Preview binding/grant creation/revocation test added, execution pending for new SHA. Full caller/account/resource matrix still missing. |
+| 3. High-risk negative tests | Scoped PASS; complete coverage incomplete | Latest committed candidate has40 real database/security cases plus3 browser cases passing. New generated-schema case needs final-source CI; full caller/account/resource matrix is still incomplete. |
 | 4. Protected endpoints distrust supplied ownership | Partly verified | Existing project/file/run/session/provider/cost and account denial assertions pass. No claim covering every endpoint or callback. |
 | 5. Owner survives job boundary | Partly verified | Owner-bound durable restore/collision/concurrency tests pass. All worker/callback/injected-client boundaries not yet certified. |
 | 6. Provider selection scoped | Partly verified | Own/foreign connection and Storage policy assertions pass; every OAuth/publishing/default-account selection not yet reviewed. |
 | 7. CI executes isolation tests | PASS at retained SHA | Disposable CLI/Docker Auth/Postgres/Storage/API/browser, no hosted test credentials or production data. Must rerun current source. |
-| 8. Fresh and upgrade migrations | PASS scoped at retained SHA | All 69 full-history files fresh and representative sanitized pre-upgrade/reapply. This is not actual staging or production catalog compatibility proof. |
-| 9. Legitimate same-tenant journeys preserved | Scoped PASS; integrated-tree proof pending | Both builds and repeated aggregate regression passed at retained SHA. Local main integration passes 67 homepage tests; complete integrated regression must rerun. |
+| 8. Fresh and upgrade migrations | PASS scoped at retained SHA | All70 full-history files fresh and representative sanitized pre-upgrade/reapply. Two retired observed tables differ from disposable schema; this is not actual staging, orphan review or production catalog compatibility proof. |
+| 9. Legitimate same-tenant journeys preserved | Scoped PASS; latest aggregate failed | 0db09bbb passes both full repeated feature/integrated aggregate runs.150d365d passes builds/unit/browser but fails old build-command contract; correction requires complete final-source rerun. Actual provider and hosted rollout compatibility remain blocked. |
 | 10. Zero unexplained service-role bypasses | FAIL / incomplete | Registry and explicit tenant context are implemented, not universal SDK query enforcement. Remaining semantic reviews, preview signature/header policies and redaction must pass. |
 
 ## Bounded changes in this continuation

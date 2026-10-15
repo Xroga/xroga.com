@@ -1,5 +1,13 @@
 # Xroga OS Batch 01 implementation tracker
 
+## 2026-10-15 continuation — connected-project isolation and build-contract correction
+
+Git compatibility source150d365dfa47bde5801cf4cc5d6de06d384c4058 passes actual frozen workspace/standalone SDK tests [38712879437](https://github.com/Xroga/xroga.com/actions/runs/38712879437), Docker38712879465, frontend38712879455 and golden38712879498. Real disposable Supabase [38712879653](https://github.com/Xroga/xroga.com/actions/runs/38712879653) passes40 security/3 browser/70 full fresh+upgrade migration cases on actual web/API079f4bfaf3504e0b5220ef6151dd478577156deb. Aggregate38712879661 fails because the contract checker still requires bare tsc after the new compatibility precheck; new exact contract and negative tests correct it without removing output/startup validation. This failure remains recorded.
+
+New source restricts generated connected-project AI memory to server access, refuses public/unknown buckets without changing them, validates canonical project origins, and reports partial provisioning safely.7 unit tests and8 runtime-contract tests PASS; backend build PASS after correcting initially missing callback types.41st actual Supabase test applies/reapplies generated SQL in a rollback-only transaction and verifies both Auth fixture identities/anon denial plus retained service-role access. Final-source execution pending.89/669 callers classified (59 reviewed gaps,580 unreviewed,639 unresolved), not full security verification. See PROVISION_OWNER_BOUNDARY.md and COMMAND_007_ACCEPTANCE_CHECKPOINT.md.
+
+001–006 remain scoped-complete;002 historical semantic reconciliation incomplete;005 has12 BLOCKED_KNOWN_GAP journeys.007 IN_PROGRESS;008–010 NOT_STARTED by prerequisites. No production action, main overwrite or cloud provisioning. Draft PR803, NO-GO. No owner credential needed for remaining internal work.
+
 ## 2026-10-15 continuation — pinned Git compatibility remediation
 
 Billing feature `0db09bbb3b4824b8b897f74dc510e7a2f36c34e3` passed aggregate [38710704650](https://github.com/Xroga/xroga.com/actions/runs/38710704650) on both feature and virtual-merge trees, and disposable Supabase [38710704504](https://github.com/Xroga/xroga.com/actions/runs/38710704504):40 real security tests,3 browser cases,70 full fresh/representative-upgrade migrations. Actual integrated API/web revision is `f9ad81d48e2023bbb2eb3171be7eadb99ec5de2d`, not the feature SHA. Golden38710704449 and frontend38710704550 also PASS. These results certify those scoped tests, not all Command007 criteria or subsequent dependency edits.

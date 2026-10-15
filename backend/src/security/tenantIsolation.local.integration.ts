@@ -31,6 +31,7 @@ import type { LivePreviewGrant } from '../synthesis/livePreview/types.js';
 import type { ProjectRuntimeSession } from '../synthesis/projectRuntime/types.js';
 import { createLivePreviewGrant, getLivePreviewGrant, revokeLivePreviewGrants } from '../synthesis/livePreview/store.js';
 import { BillingService } from '../services/BillingService.js';
+import { buildUserSupabaseProvisionSql } from '../services/integrations/supabaseProvision.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -599,6 +600,53 @@ test('real catalog and RPC denial prevent browser roles mutating own or foreign 
     }
     const after=await admin.from('user_token_usage').select('*').in('user_id',users.map(user=>user.id)).order('user_id');assert.equal(after.error,null);assert.deepEqual(after.data,before.data);
   } finally {await db.end();}
+});
+
+test('generated external-project memory SQL denies browser roles and preserves server data on reapply',async()=>{
+  const database=new URL(process.env.XB01_LOCAL_DATABASE_URL!);
+  assert.equal(database.hostname,'127.0.0.1');assert.equal(database.port,'54322');assert.equal(database.pathname,'/postgres');
+  const db=new pg.Client({connectionString:database.href,ssl:false});await db.connect();
+  const tables=['xroga_project_memory','xroga_session_memory'] as const;
+  try{
+    await db.query('begin');
+    for(const table of tables){
+      const existing=await db.query('select to_regclass($1) as relation',[`public.${table}`]);
+      assert.equal(existing.rows[0].relation,null,'Generated-customer-schema fixture must not overwrite existing platform tables');
+    }
+    const sql=buildUserSupabaseProvisionSql({includeAppSchema:false,includeStorage:false});
+    await db.query(sql);
+    await db.query('set local role service_role');
+    for(const table of tables)await db.query(`insert into public.${table}(xroga_user_id,repo) values($1,$2)`,[users[0].id,'retained-fixture']);
+    await db.query('reset role');
+    // Model legacy overly broad grants/policies, then reapply the ACTUAL generator.
+    for(const table of tables){
+      await db.query(`grant all on public.${table} to anon, authenticated`);
+      await db.query(`grant select(repo) on public.${table} to authenticated`);
+      await db.query(`create policy legacy_permissive on public.${table} for all to anon, authenticated using(true) with check(true)`);
+    }
+    await db.query(sql);
+    for(const table of tables){
+      const catalog=await db.query("select relrowsecurity,has_table_privilege('anon',oid,'SELECT') as anon_read,has_table_privilege('authenticated',oid,'SELECT') as member_read from pg_class where oid=$1::regclass",[`public.${table}`]);
+      assert.deepEqual(catalog.rows,[{relrowsecurity:true,anon_read:false,member_read:false}]);
+      // Even a stale column grant or subsequently reintroduced table grant cannot
+      // defeat restrictive RLS. An equal UUID in a different project is not ownership.
+      await db.query(`grant all on public.${table} to anon,authenticated`);
+      for(const role of ['anon','authenticated'])for(const actor of users){
+        await db.query(`set local role ${role}`);
+        await db.query("select set_config('request.jwt.claims',$1,true)",[JSON.stringify({sub:actor.id,role})]);
+        assert.equal((await db.query(`select * from public.${table}`)).rowCount,0);
+        assert.equal((await db.query(`update public.${table} set repo='denied'`)).rowCount,0);
+        assert.equal((await db.query(`delete from public.${table}`)).rowCount,0);
+        await db.query('savepoint denied_insert');
+        await assert.rejects(db.query(`insert into public.${table}(xroga_user_id,repo) values($1,$2)`,[actor.id,'denied']),{code:'42501'});
+        await db.query('rollback to savepoint denied_insert');
+        await db.query('reset role');
+      }
+      await db.query('set local role service_role');
+      assert.deepEqual((await db.query(`select xroga_user_id,repo from public.${table}`)).rows,[{xroga_user_id:users[0].id,repo:'retained-fixture'}]);
+      await db.query('reset role');
+    }
+  }finally{try{await db.query('rollback');}finally{await db.end();}}
 });
 
 test('real membership callbacks preserve existing ownership and reject competing tenant creation',async(t)=>{
