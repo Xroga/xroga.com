@@ -567,10 +567,10 @@ export const audienceOf = (id: Audience) => AUDIENCES.find((a) => a.id === id)!;
 
 export const COPY = {
   eyebrow: 'Xroga / Search & Growth',
-  title: 'Get discovered. Win the customer.',
-  lede: 'Xroga finds what stops people finding you, prepares the marketing that brings them in, and asks before anything goes live.',
-  search: { label: 'Search & Visibility', line: 'Find what stops people finding you', scenario: 'PeakForm Nutrition · a sports-nutrition brand' },
-  growth: { label: 'Launch & Marketing', line: 'Put your offer in front of the right people', scenario: 'Ember Roasters · a coffee subscription' },
+  title: 'Get found. Get chosen. Grow.',
+  lede: 'People are already looking for businesses like yours. Xroga finds what holds you back in search, prepares smarter marketing, and helps turn interest into customers. You approve what goes live.'
+  search: { label: 'Search & Visibility', line: 'See why customers can’t find you', scenario: 'PeakForm Nutrition · a sports-nutrition brand' },
+  growth: { label: 'Launch & Marketing', line: 'Reach the right people. Win more customers.', scenario: 'Ember Roasters · a coffee subscription' },
   disclosure: 'Interactive preview',
   about:
     'PeakForm Nutrition, Ember Roasters and the sites around them are fictional examples. Their pages, AI answers and figures illustrate how Xroga works: no accounts are connected, nothing was crawled, and nothing is published, sent or spent.',
