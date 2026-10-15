@@ -26,6 +26,7 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
   const [st, dispatch] = useReducer(reducer, undefined, initialState);
   const reduced = !!useReducedMotion();
   const [under, setUnder] = useState(false);
+  const [titleSeen, setTitleSeen] = useState(false);
   // the full story on wider screens, a shorter one on phones, none at all under reduced motion
   const [beats, setBeats] = useState<Beat[] | null>(null);
   useEffect(() => setBeats(reduced ? null : window.matchMedia('(min-width: 701px)').matches ? BEATS : MOBILE_BEATS), [reduced]);
@@ -37,6 +38,20 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
     const io = new IntersectionObserver(([e]) => setUnder(e.isIntersecting && e.boundingClientRect.top < 0), { rootMargin: '0px 0px -100% 0px', threshold: 0 });
     io.observe(el);
     return () => io.disconnect();
+  }, []);
+
+  // Reveal the highlighted payoff only when the S03 heading first enters the viewport.
+  // The underlying text remains fully visible without JS, and this never moves layout.
+  useEffect(() => {
+    const heading = root.current?.querySelector<HTMLElement>('#s03-title');
+    if (!heading) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return;
+      setTitleSeen(true);
+      observer.disconnect();
+    }, { threshold: 0.3 });
+    observer.observe(heading);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -77,6 +92,7 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
       data-reduced={reduced || undefined}
       data-modal={st.sheet ? '' : undefined}
       data-under={under || undefined}
+      data-title-seen={titleSeen || undefined}
       data-tour={tour.status}
     >
       <div className={s.shield} aria-hidden="true" />
@@ -84,7 +100,8 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
         <header className={s.head}>
           <p className={s.eyebrow}>{COPY.eyebrow}</p>
           <h2 id="s03-title" className={s.title}>
-            {COPY.title}
+            {COPY.title.slice(0, COPY.title.lastIndexOf(' ') + 1)}
+            <span className={s.titleAccent}>{COPY.title.slice(COPY.title.lastIndexOf(' ') + 1)}</span>
           </h2>
           <p className={s.lede}>{COPY.lede}</p>
         </header>
