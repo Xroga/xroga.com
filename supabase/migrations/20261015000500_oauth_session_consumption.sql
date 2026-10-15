@@ -1,11 +1,14 @@
 -- Consume existing OAuth sessions exactly once before external token exchange.
 -- No live credential migration or provider operation.
+DROP POLICY IF EXISTS oauth_session_server_insert_guard ON public.user_integrations;
 CREATE POLICY oauth_session_server_insert_guard ON public.user_integrations AS RESTRICTIVE
   FOR INSERT TO anon,authenticated WITH CHECK(provider NOT IN ('vercel_oauth_pkce','supabase_oauth_pkce','cws_oauth_pkce'));
+DROP POLICY IF EXISTS oauth_session_server_update_guard ON public.user_integrations;
 CREATE POLICY oauth_session_server_update_guard ON public.user_integrations AS RESTRICTIVE
   FOR UPDATE TO anon,authenticated
   USING(provider NOT IN ('vercel_oauth_pkce','supabase_oauth_pkce','cws_oauth_pkce'))
   WITH CHECK(provider NOT IN ('vercel_oauth_pkce','supabase_oauth_pkce','cws_oauth_pkce'));
+DROP POLICY IF EXISTS oauth_session_server_delete_guard ON public.user_integrations;
 CREATE POLICY oauth_session_server_delete_guard ON public.user_integrations AS RESTRICTIVE
   FOR DELETE TO anon,authenticated USING(provider NOT IN ('vercel_oauth_pkce','supabase_oauth_pkce','cws_oauth_pkce'));
 
