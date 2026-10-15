@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "06e02e39041e36e60771f168f3647738b9615c6b",
-    "sourceTimestampUtc": "2026-10-15T15:44:04+05:00",
-    "auditStartedUtc": "2026-10-15T10:56:05.072Z",
+    "sha": "4c335dc2681e4a86738c440f18dea523322aee76",
+    "sourceTimestampUtc": "2026-10-15T15:56:53+05:00",
+    "auditStartedUtc": "2026-10-15T11:00:12.438Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -10972,17 +10972,17 @@
       "id": "surface:3ee4ca91ab4d0ceb72e4",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/community/service.ts",
-      "sha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004",
+      "sha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
       "symbols": [
         "COMMENT_COLUMNS",
         "CommunityService",
         "CommunityServiceError",
         "DbRow",
         "POST_COLUMNS",
-        "allowed",
         "authorId",
         "authorIds",
         "bool",
+        "canUpdateCommentFields",
         "category",
         "comment",
         "commentCounts",
@@ -11002,6 +11002,7 @@
         "official",
         "owns",
         "ownsComment",
+        "ownsPost",
         "page",
         "parsed",
         "patch",
@@ -11038,6 +11039,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/community/community.test.ts:11",
         "backend/src/routes/community.ts:15"
       ],
       "reachable": true,
@@ -11056,13 +11058,15 @@
         "backend/src/community/service.ts#profileToAuthor"
       ],
       "tenantBoundary": [
-        "backend/src/community/service.ts:108 (user_id)",
-        "backend/src/community/service.ts:293 (user_id)"
+        "backend/src/community/service.ts:117 (user_id)",
+        "backend/src/community/service.ts:301 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/community/community.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -101304,7 +101308,7 @@
     {
       "id": "test-suite:725456892a9c0fbd14f9",
       "sourcePath": "backend/src/community/community.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101712,7 +101716,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 44,
+      "declaredTests": 45,
       "skipLocations": [],
       "focusLocations": []
     },

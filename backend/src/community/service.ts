@@ -48,6 +48,15 @@ function bool(row: DbRow, key: string): boolean {
   return row[key] === true;
 }
 
+/** Authorization is per field; permission to accept an answer cannot edit its author. */
+export function canUpdateCommentFields(role: CommunityRole, ownsComment: boolean, ownsPost: boolean, input: UpdateCommunityCommentInput): boolean {
+  if (isCommunityStaff(role)) return true;
+  if (input.isHidden !== undefined) return false;
+  if (input.body !== undefined && !ownsComment) return false;
+  if (input.isAcceptedAnswer !== undefined && !ownsPost) return false;
+  return input.body !== undefined || input.isAcceptedAnswer !== undefined;
+}
+
 function encodeCursor(row: DbRow): string {
   return Buffer.from(JSON.stringify({ createdAt: text(row, 'created_at'), id: text(row, 'id') })).toString('base64url');
 }
@@ -261,13 +270,12 @@ export class CommunityService {
     const current = await query<DbRow | null>(this.db.from('community_comments').select('author_id,post_id').eq('id', commentId).maybeSingle(), 'The reply could not be checked.');
     if (!current) throw new CommunityServiceError(404, 'COMMENT_NOT_FOUND', 'Reply not found.');
     const ownsComment = text(current, 'author_id') === userId;
-    let allowed = ownsComment && input.isHidden === undefined && input.isAcceptedAnswer === undefined;
-    if (isCommunityStaff(role)) allowed = true;
-    if (!allowed && input.isAcceptedAnswer !== undefined) {
+    let ownsPost = false;
+    if (!isCommunityStaff(role) && input.isAcceptedAnswer !== undefined) {
       const post = await query<DbRow | null>(this.db.from('community_posts').select('author_id').eq('id', text(current, 'post_id')).maybeSingle(), 'The post owner could not be checked.');
-      allowed = text(post ?? {}, 'author_id') === userId;
+      ownsPost = text(post ?? {}, 'author_id') === userId;
     }
-    if (!allowed) throw new CommunityServiceError(403, 'FORBIDDEN', 'You cannot update this reply.');
+    if (!canUpdateCommentFields(role, ownsComment, ownsPost, input)) throw new CommunityServiceError(403, 'FORBIDDEN', 'You cannot update this reply.');
     const patch: Record<string, unknown> = {};
     if (input.body !== undefined) patch.body = input.body;
     if (input.isHidden !== undefined) patch.is_hidden = input.isHidden;

@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "4851a0c88eb402ec79b713878e5db6e1a8a3fb523f02dde8823e14c4a966a265",
+  "reviewRegistrySha256": "bc3f9123ce8d5f36e04db262dbc7f379453197121f37a1f4d6eff49429176560",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -10,18 +10,18 @@
     "privilegedFactorySites": 160,
     "persistenceCandidates": 670,
     "ownerPredicateCandidates": 167,
-    "reviewRequired": 451,
-    "reviewedCandidates": 219,
-    "unresolvedSafetyCandidates": 623,
+    "reviewRequired": 421,
+    "reviewedCandidates": 249,
+    "unresolvedSafetyCandidates": 621,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 451,
+    "REVIEW_REQUIRED": 421,
     "SCOPED_BOUNDARY": 28,
     "NARROW_EXCEPTION": 6,
-    "NOT_PERSISTENCE": 13,
-    "REVIEWED_GAP": 172
+    "NOT_PERSISTENCE": 15,
+    "REVIEWED_GAP": 200
   },
   "callers": [
     {
@@ -1356,334 +1356,746 @@
       "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d"
     },
     {
-      "id": "0956777b21af8735a785",
+      "id": "78935998c35b555e2aae",
       "path": "backend/src/community/service.ts",
-      "line": 52,
+      "line": 61,
       "enclosing": "encodeCursor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Inspected encodeCursor and decodeCursor: both candidate calls are Buffer.from for base64url encoding/decoding, not Supabase, Storage or a database receiver.",
+        "reason": "These two receiver false positives can be excluded from persistence scope. This does not certify cursor filter serialization or the adjacent privileged community queries.",
+        "evidence": [
+          {
+            "path": "backend/src/community/service.ts",
+            "marker": "Buffer.from(cursor, 'base64url').toString('utf8')"
+          }
+        ]
+      }
     },
     {
-      "id": "debda928ceb33111137e",
+      "id": "6a416d1dca693768c1db",
       "path": "backend/src/community/service.ts",
-      "line": 58,
+      "line": 67,
       "enclosing": "decodeCursor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Inspected encodeCursor and decodeCursor: both candidate calls are Buffer.from for base64url encoding/decoding, not Supabase, Storage or a database receiver.",
+        "reason": "These two receiver false positives can be excluded from persistence scope. This does not certify cursor filter serialization or the adjacent privileged community queries.",
+        "evidence": [
+          {
+            "path": "backend/src/community/service.ts",
+            "marker": "Buffer.from(cursor, 'base64url').toString('utf8')"
+          }
+        ]
+      }
     },
     {
-      "id": "8a7ed5f58c53a897c6c9",
+      "id": "93ea06f3b1d77b264edc",
       "path": "backend/src/community/service.ts",
-      "line": 77,
+      "line": 86,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "d771d1c350b4254560bb",
+      "id": "b083947576e6de76709d",
       "path": "backend/src/community/service.ts",
-      "line": 82,
+      "line": 91,
       "enclosing": "role",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "9eed90d4ea3723c6dcf3",
+      "id": "66bf5020eb06402ead61",
       "path": "backend/src/community/service.ts",
-      "line": 93,
+      "line": 102,
       "enclosing": "profiles",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "bb13e4da8087c0cad337",
+      "id": "91455129ca4d68f6e45b",
       "path": "backend/src/community/service.ts",
-      "line": 105,
+      "line": 114,
       "enclosing": "enrichPosts",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_votes",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "c68f52c46061fbb375c8",
+      "id": "549b107e5fb767bde17d",
       "path": "backend/src/community/service.ts",
-      "line": 106,
+      "line": 115,
       "enclosing": "enrichPosts",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_comments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "c537a6bc9e26cd8e4ea2",
+      "id": "959648099b822b4e4c09",
       "path": "backend/src/community/service.ts",
-      "line": 108,
+      "line": 117,
       "enclosing": "enrichPosts",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_votes",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "0d2a4c2d73844d532ad1",
+      "id": "387798831f29e57a80c3",
       "path": "backend/src/community/service.ts",
-      "line": 155,
+      "line": 164,
       "enclosing": "listPosts",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_posts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "db4c1d7afdc967d8201f",
+      "id": "d1fd654773e96beeb89e",
       "path": "backend/src/community/service.ts",
-      "line": 186,
+      "line": 195,
       "enclosing": "getPost",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_posts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "ff7745acd1380422af38",
+      "id": "d64f390eb902fb669ec3",
       "path": "backend/src/community/service.ts",
-      "line": 190,
+      "line": 199,
       "enclosing": "getPost",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_comments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "da28d4b6db7b394c98f2",
+      "id": "cbfa1dfb86038694dd54",
       "path": "backend/src/community/service.ts",
-      "line": 215,
+      "line": 224,
       "enclosing": "createPost",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_posts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "43093c722b92c8b942bb",
+      "id": "28e511d91cf6c7a6a62f",
       "path": "backend/src/community/service.ts",
-      "line": 223,
+      "line": 232,
       "enclosing": "updatePost",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_posts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "3944600476d7ccc68255",
+      "id": "23601ac49976a12cfbc8",
       "path": "backend/src/community/service.ts",
-      "line": 227,
+      "line": 236,
       "enclosing": "updatePost",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_posts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "02c997d4d1322d7e046c",
+      "id": "a785ebe72215f398cbed",
       "path": "backend/src/community/service.ts",
-      "line": 233,
+      "line": 242,
       "enclosing": "deletePost",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_posts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "e26fe4e3a51ba4b05f5a",
+      "id": "7bae5054693628374d2d",
       "path": "backend/src/community/service.ts",
-      "line": 238,
+      "line": 247,
       "enclosing": "deletePost",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_posts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "9e565007891ae93bec37",
+      "id": "6202880407bfa5d7b6d4",
       "path": "backend/src/community/service.ts",
-      "line": 243,
+      "line": 252,
       "enclosing": "createComment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_posts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "22bdccd6966f08658306",
+      "id": "de28bdb7f59e551b9256",
       "path": "backend/src/community/service.ts",
-      "line": 249,
+      "line": 258,
       "enclosing": "createComment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_comments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "0625d74d04a5abdf3edf",
+      "id": "51a59a00e876815e1bd3",
       "path": "backend/src/community/service.ts",
-      "line": 261,
+      "line": 270,
       "enclosing": "updateComment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_comments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "b22984d06e9e15b6edd5",
-      "path": "backend/src/community/service.ts",
-      "line": 267,
-      "enclosing": "updateComment",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_posts",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
-    },
-    {
-      "id": "c46953ddc71f3c60a298",
+      "id": "ac5ebc6cfa07483a5af6",
       "path": "backend/src/community/service.ts",
       "line": 275,
       "enclosing": "updateComment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_comments",
+      "target": "community_posts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "562689ce115c85c1ad2e",
-      "path": "backend/src/community/service.ts",
-      "line": 280,
-      "enclosing": "deleteComment",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_comments",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
-    },
-    {
-      "id": "ac40f9a44d6d297cd4a7",
+      "id": "41165efbb86569ac1662",
       "path": "backend/src/community/service.ts",
       "line": 283,
+      "enclosing": "updateComment",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "community_comments",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2445a821cc00ddbcbaa4",
+      "path": "backend/src/community/service.ts",
+      "line": 288,
       "enclosing": "deleteComment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_comments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "d78aa08e9e8296c9ab0e",
+      "id": "7ca568ff63f4e854cedb",
       "path": "backend/src/community/service.ts",
-      "line": 287,
+      "line": 291,
+      "enclosing": "deleteComment",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "community_comments",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
+    },
+    {
+      "id": "98c52c7cbfdf6cebb0f4",
+      "path": "backend/src/community/service.ts",
+      "line": 295,
       "enclosing": "setVote",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_posts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "d0091225b076d8148f94",
+      "id": "bd0a0308b641e54e611d",
       "path": "backend/src/community/service.ts",
-      "line": 290,
+      "line": 298,
       "enclosing": "setVote",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_votes",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "41c9b755519d8a46f225",
+      "id": "3dc1697c69b185301b2e",
       "path": "backend/src/community/service.ts",
-      "line": 293,
+      "line": 301,
       "enclosing": "setVote",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_votes",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "2dc8b06d473e01d8115f",
+      "id": "f5608be961439b23cead",
       "path": "backend/src/community/service.ts",
-      "line": 306,
+      "line": 314,
       "enclosing": "moderatePost",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_posts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "fcb2225a57240a4567ba",
+      "id": "00384cbed0af8d8f23bb",
       "path": "backend/src/community/service.ts",
-      "line": 314,
+      "line": 322,
       "enclosing": "addNote",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_admin_notes",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "8918cc5301c6f8ad0ffb",
+      "id": "53837fd5ffe75b74b115",
       "path": "backend/src/community/service.ts",
-      "line": 321,
+      "line": 329,
       "enclosing": "notes",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_admin_notes",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
-      "id": "145bfab2e94d808cc93d",
+      "id": "c34ac3248cf241e155fe",
       "path": "backend/src/community/service.ts",
-      "line": 327,
+      "line": 335,
       "enclosing": "summary",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_posts",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3ec3ae6c39f03f1d7581bdf9364da91512c2b398bfad99eb54c69cf0ceeb3004"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "semanticReview": {
+        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "evidence": [
+          {
+            "path": "backend/src/community/community.test.ts",
+            "marker": "accepting an answer never grants body editing or moderation of another author"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+          }
+        ]
+      }
     },
     {
       "id": "20816c60d7b178821712",

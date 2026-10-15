@@ -86,6 +86,27 @@ test('real owner helpers deny every foreign high-risk resource without enumerati
   await assert.rejects(requireOwnedFile(owner.context,other.file,admin),{status:404});
 });
 
+test('real community API rejects cross-author mixed-field privilege escalation without partial writes',async()=>{
+  const [postOwner,author]=users;
+  const postId=await insert('community_posts',{author_id:postOwner.id,category:'question',title:'Synthetic authorization question',body:'Isolated test content, not a user post.'});
+  try {
+    const commentId=await insert('community_comments',{post_id:postId,author_id:author.id,body:'Original synthetic answer'});
+    const path=`/api/community/comments/${commentId}`;
+    const original={body:'Original synthetic answer',is_hidden:false,is_accepted_answer:false};
+    for(const patch of [{body:'forged answer',isAcceptedAnswer:true},{isHidden:true,isAcceptedAnswer:true},{body:'forged answer',isHidden:true,isAcceptedAnswer:false}]) {
+      const denied=await request(path,postOwner.token,'PATCH',patch);assert.equal(denied.status,403);
+      const row=await admin.from('community_comments').select('body,is_hidden,is_accepted_answer').eq('id',commentId).single();
+      assert.equal(row.error,null);assert.deepEqual(row.data,original);
+    }
+    assert.equal((await request(path,undefined,'PATCH',{body:'anonymous'})).status,401);
+    assert.equal((await request(path,author.token,'PATCH',{body:'self approval',isAcceptedAnswer:true})).status,403);
+    assert.equal((await request(path,postOwner.token,'PATCH',{isAcceptedAnswer:true})).status,204);
+    assert.equal((await request(path,author.token,'PATCH',{body:'Author approved edit'})).status,204);
+    const final=await admin.from('community_comments').select('body,is_hidden,is_accepted_answer').eq('id',commentId).single();
+    assert.equal(final.error,null);assert.deepEqual(final.data,{body:'Author approved edit',is_hidden:false,is_accepted_answer:true});
+  } finally {assert.equal((await admin.from('community_posts').delete().eq('id',postId).eq('author_id',postOwner.id)).error,null);}
+});
+
 test('real revision restore rejects mismatched snapshot identities before restore or fork writes',async()=>{
   const [owner,other]=users,store=new SupabaseProjectRuntimeStore();
   const projectId=`revision-binding-${randomUUID()}`,runId=randomUUID();

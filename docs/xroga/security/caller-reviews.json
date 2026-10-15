@@ -2,6 +2,24 @@
   "version": "1.0",
   "reviews": [
     {
+      "path": "backend/src/community/service.ts",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "callIds": ["78935998c35b555e2aae", "6a416d1dca693768c1db"],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected encodeCursor and decodeCursor: both candidate calls are Buffer.from for base64url encoding/decoding, not Supabase, Storage or a database receiver.",
+      "reason": "These two receiver false positives can be excluded from persistence scope. This does not certify cursor filter serialization or the adjacent privileged community queries.",
+      "evidence": [{"path": "backend/src/community/service.ts", "marker": "Buffer.from(cursor, 'base64url').toString('utf8')"}]
+    },
+    {
+      "path": "backend/src/community/service.ts",
+      "sourceSha256": "a69698133c46daae1c93ec2e6efa160e88d8f7357aa8930fa3817fa1f1477a8e",
+      "callIds": ["93ea06f3b1d77b264edc", "b083947576e6de76709d", "66bf5020eb06402ead61", "91455129ca4d68f6e45b", "549b107e5fb767bde17d", "959648099b822b4e4c09", "387798831f29e57a80c3", "d1fd654773e96beeb89e", "d64f390eb902fb669ec3", "cbfa1dfb86038694dd54", "28e511d91cf6c7a6a62f", "23601ac49976a12cfbc8", "a785ebe72215f398cbed", "7bae5054693628374d2d", "6202880407bfa5d7b6d4", "de28bdb7f59e551b9256", "51a59a00e876815e1bd3", "ac5ebc6cfa07483a5af6", "41165efbb86569ac1662", "2445a821cc00ddbcbaa4", "7ca568ff63f4e854cedb", "98c52c7cbfdf6cebb0f4", "bd0a0308b641e54e611d", "3dc1697c69b185301b2e", "f5608be961439b23cead", "00384cbed0af8d8f23bb", "53837fd5ffe75b74b115", "c34ac3248cf241e155fe"],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
+      "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+      "evidence": [{"path": "backend/src/community/community.test.ts", "marker": "accepting an answer never grants body editing or moderation of another author"}, {"path": "backend/src/security/tenantIsolation.local.integration.ts", "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"}]
+    },
+    {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
       "sourceSha256": "f5fcc7723440bd62d307c4b25bbb5af3f7922faff78b6beab79485e4cb2eaf7f",
       "callIds": ["25095802651b5e4dce5f", "fb111a342e49d30c3a9b", "4e72541c1ae02e397acf", "d9ad9a5d90bb4165dc7d", "41edb400573bacaa555d", "89d858807f97969b7dce", "cb711330e00db90f12bb", "281a3d3a7e272f923671", "31c93d187197768b3b71", "4645f852d77431f00664", "c064132c2275b340e97a", "7a4a7a0c551fe84cdb17", "7fecfb4d81f547ff8e57", "4af535a6c0e6f4a53b30", "2df9f446963207e45a86"],

@@ -1,5 +1,11 @@
 # Xroga OS Batch 01 implementation tracker
 
+## Community authorization correction — candidate, not verified
+
+Semantic review found a confirmed mixed-field permission escalation: a post owner could submit an accepted-answer flag together with changes to another author's comment body or staff-only hidden state. The service now authorizes each field independently;11 community tests and backend build PASS. A45th real security case checks denial leaves the complete row unchanged and preserves legitimate answer acceptance/author editing. Final-source CI is required; this is not a production fix until an authorized release.
+
+30 additional community candidates reviewed:2 Buffer false positives,28 reviewed gaps. Current249/670 reviewed;421 unreviewed,200 reviewed gaps,28 scoped,6 narrow exceptions,15 non-persistence;621 unresolved safety candidates. Other community mutation/concurrency/global-admission gaps remain explicit. Commands008–010 still NOT_STARTED;007 remains incomplete and Batch1 NO-GO. No merge/deploy/provisioning.
+
 ## Revision binding continuation — final-source CI required
 
 Feature06e02e39041e36e60771f168f3647738b9615c6b isolated38722375107 PASS:43 actual security tests,3 authenticated browser tests,70 complete fresh/representative-upgrade migrations and verified whole-cluster teardown. Actual API/web revision d211a05bcb57c3dc84615f4593eb5ac2fa4049f1. Frontend frozen build, Cline compatibility and Docker PASS; aggregate38722374920 still finishing when this checkpoint was written. Earlier b2 aggregate38721662082 was CANCELLED by a subsequent push, not PASS.
