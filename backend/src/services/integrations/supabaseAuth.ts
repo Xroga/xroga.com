@@ -8,7 +8,7 @@ import { createHash, randomBytes } from 'crypto';
 import {
   clearPkceSession,
   clearProviderToken,
-  loadPkceSession,
+  consumePkceSession,
   loadProviderToken,
   storePkceSession,
   storeProviderToken,
@@ -118,7 +118,7 @@ export async function exchangeSupabaseOAuthCode(opts: {
     throw new Error('Supabase OAuth not configured — set SUPABASE_OAUTH_CLIENT_ID/SECRET');
   }
 
-  const pkce = await loadPkceSession(opts.userId, PKCE_PROVIDER, opts.state);
+  const pkce = await consumePkceSession(opts.userId, PKCE_PROVIDER, opts.state);
   if (!pkce?.verifier) {
     throw new Error('Invalid or expired OAuth state — try Connect Supabase again');
   }
@@ -167,8 +167,6 @@ export async function exchangeSupabaseOAuthCode(opts: {
       token_type: json.token_type || 'bearer',
     },
   });
-
-  await clearPkceSession(opts.userId, PKCE_PROVIDER);
 
   return json;
 }

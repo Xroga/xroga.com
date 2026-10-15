@@ -9,7 +9,7 @@ import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/e
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 import {
   clearPkceSession,
-  loadPkceSession,
+  consumePkceSession,
   storePkceSession,
 } from './oauthPkceStore.js';
 
@@ -274,7 +274,7 @@ export async function exchangeVercelOAuthCode(opts: {
     throw new Error('Vercel OAuth not configured — set VERCEL_CLIENT_ID/SECRET');
   }
 
-  const pkce = await loadPkceSession(opts.userId, PKCE_PROVIDER, opts.state);
+  const pkce = await consumePkceSession(opts.userId, PKCE_PROVIDER, opts.state);
   if (!pkce?.verifier) {
     throw new Error('Invalid or expired OAuth state — click Authorize Vercel again');
   }
@@ -308,8 +308,6 @@ export async function exchangeVercelOAuthCode(opts: {
     error?: string;
     error_description?: string;
   };
-
-  await clearPkceSession(opts.userId, PKCE_PROVIDER);
 
   if (!tokenData.access_token) {
     throw new Error(

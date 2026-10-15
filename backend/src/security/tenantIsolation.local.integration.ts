@@ -39,12 +39,14 @@ import { createLivePreviewGrant, getLivePreviewGrant, revokeLivePreviewGrants } 
 import { BillingService } from '../services/BillingService.js';
 import { buildUserSupabaseProvisionSql } from '../services/integrations/supabaseProvision.js';
 import { registerProviderKeyRevisionTests } from './providerKeyRevision.local.integration.js';
+import { registerOAuthSessionTests } from './oauthSession.local.integration.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
 const admin=createClient(url,process.env.SUPABASE_SERVICE_ROLE_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});
 const users: Array<{id:string;token:string;context:TenantContext;project:string;file:string;run:string;provider:string;session:string;cost:string}>=[];
 registerProviderKeyRevisionTests(admin, () => users);
+registerOAuthSessionTests(admin, () => users);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }
@@ -165,7 +167,11 @@ test('real revision restore rejects mismatched snapshot identities before restor
   const projectId=`revision-binding-${randomUUID()}`,runId=randomUUID();
   // Only identity restoration is exercised; no fixture is executed or sent to a provider.
   const snapshot={projectId,runId,contract:{projectId,runId},workspace:{files:[]}};
-  const revisionId=await insert('project_runtime_revisions',{user_id:owner.id,project_id:projectId,run_id:runId,workspace_fingerprint:'synthetic-binding-fixture',software_project:snapshot},'revision_id');
+  const saved=await store.saveRevision(owner.id,snapshot as Parameters<typeof store.saveRevision>[1]);
+  const revisionId=saved.revisionId;
+  assert.deepEqual(saved.project,snapshot);
+  assert.equal(saved.userId,owner.id);assert.equal(saved.projectId,projectId);assert.equal(saved.runId,runId);
+  assert.ok(saved.revisionNumber>0);
   try {
     assert.deepEqual((await store.loadLatestRevision(owner.id,projectId))?.project,snapshot);
     assert.equal((await loadProjectRevision(owner.id,projectId,revisionId))?.revisionId,revisionId);

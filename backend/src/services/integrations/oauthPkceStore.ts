@@ -174,6 +174,23 @@ export async function clearPkceSession(userId: string, provider: string): Promis
   if (!(await removePath(pkcePath(userId, provider)))) throw new Error('OAuth session revoked, but legacy cleanup is pending. Retry shortly.');
 }
 
+/** Atomic, expiring one-use admission. Never consult a legacy mirror here. */
+export async function consumePkceSession(userId: string, provider: string, expectedState: string): Promise<PkceSession | null> {
+  assertStorageIdentity(userId, provider);
+  if (!['vercel_oauth_pkce', 'supabase_oauth_pkce', 'cws_oauth_pkce'].includes(provider)
+    || typeof expectedState !== 'string' || expectedState.length < 16 || expectedState.length > 512) return null;
+  const { data, error } = await getSupabaseAdmin().rpc('consume_oauth_session', {
+    p_owner_id: userId, p_provider: provider, p_state: expectedState,
+  });
+  if (error || !data || Array.isArray(data) || typeof data !== 'object'
+    || data.state !== expectedState || typeof data.verifier !== 'string' || !data.verifier
+    || typeof data.redirect_uri !== 'string' || !data.redirect_uri
+    || typeof data.created_at !== 'string'
+    || (data.nonce != null && typeof data.nonce !== 'string')) return null;
+  return { verifier: data.verifier, state: data.state, redirect_uri: data.redirect_uri,
+    created_at: data.created_at, ...(data.nonce == null ? {} : { nonce: data.nonce }) };
+}
+
 /** Save OAuth access tokens only after authoritative database persistence. */
 export async function storeProviderToken(
   userId: string,

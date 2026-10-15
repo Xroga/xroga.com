@@ -14,8 +14,7 @@ import {
   saveUserProviderKey,
 } from '../integrations/userProviderKeys.js';
 import {
-  clearPkceSession,
-  loadPkceSession,
+  consumePkceSession,
   storePkceSession,
 } from '../integrations/oauthPkceStore.js';
 
@@ -234,7 +233,7 @@ export async function completeCwsOAuth(opts: {
   state: string;
   redirectUri?: string;
 }): Promise<{ ok: true; message: string } | { ok: false; error: string }> {
-  const pkce = await loadPkceSession(opts.userId, PKCE_PROVIDER, opts.state);
+  const pkce = await consumePkceSession(opts.userId, PKCE_PROVIDER, opts.state);
   if (!pkce) {
     return {
       ok: false,
@@ -258,7 +257,6 @@ export async function completeCwsOAuth(opts: {
   const extensionId = String(meta.extensionId || '').trim();
   const publisherId = String(meta.publisherId || '').trim();
   if (!clientId || !clientSecret || !extensionId || !publisherId) {
-    await clearPkceSession(opts.userId, PKCE_PROVIDER);
     return { ok: false, error: 'CWS OAuth session missing client fields — start again' };
   }
 
@@ -280,7 +278,6 @@ export async function completeCwsOAuth(opts: {
     error?: string;
     error_description?: string;
   };
-  await clearPkceSession(opts.userId, PKCE_PROVIDER);
 
   if (!res.ok || !json.refresh_token) {
     return {
