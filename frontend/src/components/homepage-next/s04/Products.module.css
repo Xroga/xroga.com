@@ -589,3 +589,17 @@
 .aTabs {
   margin-top: auto !important;
 }
+
+/* the device is scaled down on small screens; keep each live control's touch area at least 44 px */
+.aBtn,
+.rBtn,
+.ext {
+  position: relative;
+}
+.aBtn::after,
+.rBtn::after,
+.ext::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}

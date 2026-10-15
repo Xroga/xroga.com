@@ -50,6 +50,7 @@
 
 /* store artwork: printed, pearl, the output of the work */
 .art {
+  --s: 1;
   display: grid;
   gap: calc(14px * var(--s));
   padding: calc(18px * var(--s)) calc(20px * var(--s)) calc(16px * var(--s));
@@ -234,45 +235,70 @@
   background: #d9ae73;
 }
 
-/* Xroga's evidence line */
-.xline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 18px;
-  margin: 0;
-  font-size: 14px;
+
+/* the screenshot slot: empty and dashed until the tested screen is captured into it */
+.slot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 10px;
+  background: transparent;
+  outline: 1.5px dashed #9fb0bf;
+  outline-offset: -1.5px;
+}
+.slot small {
+  max-width: 78%;
+  font-size: 12px;
   font-weight: 560;
-  color: #a8b4c2;
+  line-height: 1.35;
+  text-align: center;
+  color: #6c7c8c;
 }
-.xmark {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  color: #eff3f5;
+.slot[data-filled] {
+  outline: 0;
+  box-shadow:
+    0 0 0 2px #568ffc,
+    0 0 0 6px rgba(86, 143, 252, 0.18);
 }
-.xline span[data-k] {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
+.shotDevice .slot {
+  border-radius: 14px 14px 0 0;
+  outline-color: rgba(242, 246, 247, 0.4);
 }
-.xline span[data-k='done']::before {
-  content: '';
-  width: 8px;
-  height: 4px;
-  margin-top: -3px;
-  border-left: 1.7px solid #80c9b2;
-  border-bottom: 1.7px solid #80c9b2;
-  transform: rotate(-45deg);
+.shotDevice .slot small {
+  color: rgba(242, 246, 247, 0.75);
 }
-.xline span[data-k='owner'] {
-  color: #e9cc9f;
+.shotDevice .slot[data-filled] {
+  box-shadow: none;
 }
-.xline span[data-k='owner']::before {
-  content: '';
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #d9ae73;
+.shot[data-show] .shotDevice,
+.shot:first-child .shotDevice {
+  opacity: 1;
+}
+.shot:not([data-show]) {
+  background: rgba(18, 26, 38, 0.06);
+}
+.shot:not([data-show]) > * {
+  visibility: hidden;
+}
+.slot .fromTest {
+  top: auto;
+  bottom: 8px;
+}
+.art[data-filled] .shot:first-child {
+  box-shadow:
+    0 0 0 2px #568ffc,
+    0 0 0 6px rgba(86, 143, 252, 0.18);
+}
+.tile:not([data-show]),
+.owner:not([data-show]) {
+  visibility: hidden;
+}
+.skel {
+  display: block;
+  width: 150px;
+  height: 8px;
+  margin-top: 4px;
+  border-radius: 4px;
+  background: #d3dbe2;
 }

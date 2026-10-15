@@ -1,4 +1,12 @@
-# S04 V8 — Brand asset audit (Gate A1)
+# S04 — Brand asset audit (final hybrid, production)
+
+**Production decision: the lawful fallback is shipped.** `STORE_MARKS_CLEARED = false` in `frontend/src/components/homepage-next/s04/storeMarks.ts`. Every destination therefore shows its exact official store name ("App Store", "Google Play", "Chrome Web Store") beside a **neutral, generic symbol** (lucide `Smartphone`, `Gamepad2`, `Puzzle`). No Apple or Google mark, badge or store-icon artwork renders anywhere in production S04. A unit test (`s04.test.ts`) fails if the flag is flipped without updating it.
+
+**Unresolved brand concern (founder action):** permission to show the App Store, Google Play and Chrome Web Store marks has **not** been established (see the Gate A1 table below). The vendored simple-icons paths remain in `storeMarks.ts` only so that the marks can be enabled by setting the flag after written clearance. Availability badges ("Download on…", "Get it on…", "Available in…") are not used. The Xroga mark appears as the typeset word "Xroga" only. The product icons (Arcset, Ridgeline, MerchantLens) are original and fictional. No coding-tool logos appear.
+
+---
+
+## Gate A1 record (preview only, superseded for production by the decision above)
 
 **Status: blockers remain.** The store marks are shown so the founder can judge recognisability. Each one still needs brand/legal clearance before any production release.
 

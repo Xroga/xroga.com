@@ -1,14 +1,13 @@
 'use client';
 
 /**
- * Shared pieces for both S04 compositions:
+ * S04 building blocks:
  * - StoreMark: a destination identity (mark + exact store name), never an app icon;
  * - Product: the live, clickable example product; Still: the same component rendered again at natural size and
  *   scaled, which is how every capture, lens view and store screenshot is made (same UI, same state);
- * - Artwork: each store's own listing artwork built from those stills;
- * - XrogaLine: Xroga's compact evidence line, with the canonical Xroga mark from the repo.
+ * - Artwork: each store's own listing artwork; its first image is the captured, tested screen.
  */
-import Image from 'next/image';
+import { Gamepad2, Puzzle, Smartphone } from 'lucide-react';
 import type { CSSProperties, ReactNode } from 'react';
 import { ArcsetHistory, ArcsetIcon, ArcsetPlan, ArcsetScreen, LensIcon, MerchantLensBrowser, RidgelineGame, RidgelineIcon } from './Products';
 import { STORY, type Dest } from './publish';
@@ -16,9 +15,18 @@ import { STORE_MARKS, STORE_MARKS_CLEARED, type StoreId } from './storeMarks';
 import x from './Pieces.module.css';
 
 /* ------------------------------------------------------------------------------------------------ store identity */
+/**
+ * The destination's identity: the store mark only when STORE_MARKS_CLEARED (brand approval recorded in
+ * S04_BRAND_ASSET_AUDIT.md); otherwise a neutral symbol for the kind of release, beside the store's exact name.
+ * The mark itself is never recoloured, skewed or animated; selection light belongs to its container.
+ */
+const NEUTRAL: Record<StoreId, typeof Smartphone> = { appstore: Smartphone, googleplay: Gamepad2, chromewebstore: Puzzle };
 export function StoreMark({ id, size = 24, tone }: { id: StoreId; size?: number; tone?: 'light' | 'ink' }) {
   const m = STORE_MARKS[id];
-  if (!STORE_MARKS_CLEARED) return null;
+  if (!STORE_MARKS_CLEARED) {
+    const N = NEUTRAL[id];
+    return <N className={x.mark} width={size} height={size} strokeWidth={1.6} aria-hidden="true" />;
+  }
   const fill = id === 'googleplay' ? (tone === 'ink' ? '#3c4043' : '#ECE9E2') : m.hex;
   return (
     <svg className={x.mark} width={size} height={size} viewBox="0 0 24 24" role="img" aria-label={`${m.name} mark`}>
@@ -82,47 +90,78 @@ export function LensView({ dest, w = 176, h = 176, k = 1.7 }: { dest: Dest; w?: 
 }
 
 /* ------------------------------------------------------------------------------------------------ store artwork */
-function Shot({ caption, children, captured, tone }: { caption: string; children: ReactNode; captured?: boolean; tone: string }) {
+/**
+ * The captured screen: which region of the product becomes the first store image, and the scale it is shown at.
+ * The flying capture and the seated screenshot both render exactly this region, so they are the same picture.
+ */
+export const CAPTURE: Record<Dest, { x: number; y: number; w: number; h: number; k: number }> = {
+  ios: { x: 0, y: 8, w: 214, h: 374, k: 0.6 },
+  android: { x: 0, y: 0, w: 520, h: 244, k: 0.74 },
+  chrome: { x: 0, y: 0, w: 548, h: 318, k: 0.53 },
+};
+
+/** the captured region as a still at scale k */
+export function CaptureStill({ dest, k, className }: { dest: Dest; k?: number; className?: string }) {
+  const C = CAPTURE[dest];
+  const s = k ?? C.k;
   return (
-    <figure className={x.shot} data-captured={captured || undefined} style={{ ['--tone' as string]: tone }}>
+    <Still w={C.w * s} h={C.h * s} k={s} x={C.x} y={C.y} className={className}>
+      <Product dest={dest} />
+    </Still>
+  );
+}
+
+function Slot({ dest, filled, slotRef }: { dest: Dest; filled: boolean; slotRef?: (el: HTMLElement | null) => void }) {
+  const C = CAPTURE[dest];
+  return (
+    <span ref={slotRef} className={x.slot} data-filled={filled || undefined} style={{ width: C.w * C.k, height: C.h * C.k }}>
+      {filled ? <CaptureStill dest={dest} /> : <small>Screenshot from the tested screen</small>}
+      {filled && dest === 'ios' && <em className={x.fromTest}>From the test</em>}
+    </span>
+  );
+}
+
+function Shot({ caption, children, tone, show }: { caption: string; children: ReactNode; tone: string; show: boolean }) {
+  return (
+    <figure className={x.shot} data-show={show || undefined} style={{ ['--tone' as string]: tone }}>
       <figcaption>{caption}</figcaption>
       <span className={x.shotDevice}>{children}</span>
-      {captured && <em className={x.fromTest}>From the test</em>}
     </figure>
   );
 }
 
-export function Artwork({ dest, scale = 1 }: { dest: Dest; scale?: number }) {
+export function Artwork({ dest, filled, assets, slotRef }: { dest: Dest; filled: boolean; assets: boolean; slotRef?: (el: HTMLElement | null) => void }) {
   const S = STORY[dest];
   const I = PRODUCT_ICON[dest];
-  const k = (n: number) => n * scale;
+  const C = CAPTURE[dest];
   return (
-    <div className={x.art} data-dest={dest} style={{ ['--s' as string]: scale }}>
+    <div className={x.art} data-dest={dest} data-filled={filled || undefined}>
       <header className={x.artHead}>
-        <I size={k(44)} />
+        <I size={40} />
         <span>
           <b>{S.product}</b>
-          <small>{S.tagline}</small>
+          {filled ? <small>{S.tagline}</small> : <i className={x.skel} aria-hidden="true" />}
         </span>
         <span className={x.artStore}>
-          <StoreMark id={S.store} size={k(18)} tone="ink" />
-          {S.storeName}
+          <StoreMark id={S.store} size={16} tone="ink" />
+          {S.storeName} listing
         </span>
       </header>
       {dest === 'ios' && (
         <div className={x.shots}>
-          <Shot caption="Log every set in one tap" tone="#16353a" captured>
-            <Still w={k(132)} h={k(232)} k={k(0.62)} y={8}>
-              <ArcsetScreen done />
-            </Still>
-          </Shot>
-          <Shot caption="Watch your strength grow" tone="#1d2a3a">
-            <Still w={k(132)} h={k(232)} k={k(0.62)} y={8}>
+          <figure className={x.shot} data-show="" style={{ ['--tone' as string]: '#16353a' }}>
+            <figcaption>Log every set in one tap</figcaption>
+            <span className={x.shotDevice}>
+              <Slot dest={dest} filled={filled} slotRef={slotRef} />
+            </span>
+          </figure>
+          <Shot caption="Watch your strength grow" tone="#1d2a3a" show={assets}>
+            <Still w={C.w * C.k} h={C.h * C.k} k={C.k} y={8}>
               <ArcsetHistory />
             </Still>
           </Shot>
-          <Shot caption="A plan for every week" tone="#2b2f3a">
-            <Still w={k(132)} h={k(232)} k={k(0.62)} y={8}>
+          <Shot caption="A plan for every week" tone="#2b2f3a" show={assets}>
+            <Still w={C.w * C.k} h={C.h * C.k} k={C.k} y={8}>
               <ArcsetPlan />
             </Still>
           </Shot>
@@ -130,31 +169,27 @@ export function Artwork({ dest, scale = 1 }: { dest: Dest; scale?: number }) {
       )}
       {dest === 'android' && (
         <div className={x.wide}>
-          <figure className={x.feature} data-captured="">
-            <Still w={k(400)} h={k(196)} k={k(0.8)} y={8}>
-              <RidgelineGame jumped />
-            </Still>
-            <span className={x.featureTitle}>
-              <b>Ridgeline</b>
-              <small>Glide the ridges at dusk</small>
-            </span>
-            <em className={x.fromTest}>From the test</em>
+          <figure className={x.feature}>
+            <Slot dest={dest} filled={filled} slotRef={slotRef} />
+            {filled && assets && (
+              <span className={x.featureTitle}>
+                <b>Ridgeline</b>
+                <small>Glide the ridges at dusk</small>
+              </span>
+            )}
           </figure>
-          <span className={x.dim}>Feature graphic · 1024 × 500</span>
+          <span className={x.dim}>Feature graphic · 1024 × 500 · from the tested gameplay</span>
         </div>
       )}
       {dest === 'chrome' && (
         <div className={x.wide} data-row="">
-          <figure className={x.cws} data-captured="">
-            <Still w={k(300)} h={k(188)} k={k(0.548)} y={0}>
-              <MerchantLensBrowser open saved />
-            </Still>
-            <em className={x.fromTest}>From the test</em>
-            <span className={x.dim}>Screenshot · 1280 × 800</span>
+          <figure className={x.cws}>
+            <Slot dest={dest} filled={filled} slotRef={slotRef} />
+            <span className={x.dim}>Screenshot · 1280 × 800 · from the test</span>
           </figure>
-          <figure className={x.tile}>
-            <span className={x.tileArt} style={{ width: k(150), height: k(95) }}>
-              <LensIcon size={k(26)} />
+          <figure className={x.tile} data-show={assets || undefined}>
+            <span className={x.tileArt}>
+              <LensIcon size={24} />
               <b>MerchantLens</b>
               <small>Research as you browse</small>
             </span>
@@ -162,27 +197,11 @@ export function Artwork({ dest, scale = 1 }: { dest: Dest; scale?: number }) {
           </figure>
         </div>
       )}
-      <p className={x.owner}>
+      <p className={x.owner} data-show={assets || undefined}>
         <i aria-hidden="true" />
-        {S.owner}
+        {dest === 'ios' ? 'App privacy answers drafted · you confirm' : dest === 'android' ? 'Data safety answers drafted · you confirm' : 'Permission justification drafted · you confirm'}
       </p>
     </div>
   );
 }
 
-/* ------------------------------------------------------------------------------------------------ Xroga line */
-export function XrogaLine({ dest }: { dest: Dest }) {
-  const W = STORY[dest].work;
-  return (
-    <p className={x.xline}>
-      <span className={x.xmark}>
-        <Image src="/brand/xroga-orb-mark-v2.webp" width={22} height={22} alt="" />
-        Xroga
-      </span>
-      <span data-k="done">{W.tested}</span>
-      <span data-k="done">{W.captured}</span>
-      <span data-k="done">{W.prepared}</span>
-      <span data-k="owner">Your review next</span>
-    </p>
-  );
-}

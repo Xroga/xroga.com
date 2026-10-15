@@ -8,10 +8,11 @@
  * - Google allows the Google Play name and Store icon only with devices licensed for Google Play, other uses need
  *   Android brand-team review; the official Google Play icon is multicolour (this is a monochrome rendering);
  * - Chrome Web Store branding guidance could not be opened from this environment.
- * Set STORE_MARKS_CLEARED to false to render the typeset store names only. Production needs founder/legal sign-off.
+ * Until brand approval is recorded, STORE_MARKS_CLEARED stays false: each destination shows its exact store name with a
+ * neutral symbol for the kind of release. Set it to true only after sign-off is documented in the audit.
  * See docs/homepage-implementation/s04-v8/S04_BRAND_ASSET_AUDIT.md.
  */
-export const STORE_MARKS_CLEARED = true; // shows the uncleared marks for founder review; false renders store names only
+export const STORE_MARKS_CLEARED = false;
 
 export type StoreId = 'appstore' | 'googleplay' | 'chromewebstore';
 export interface StoreMark { name: string; owner: string; hex: string; guideline: string; d: string }
