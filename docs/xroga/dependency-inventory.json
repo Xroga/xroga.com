@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8a7bdd901a4a1bf180c54ae1da81b2b98ca2054a",
+  "source_sha": "0e23f09f519b6af5d911d3399f1e42ab8e3748cd",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11902,7 +11902,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "sha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c"
     },
     {
       "path": "backend/src/index.ts",
@@ -12154,7 +12154,7 @@
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "sha256": "8a8f3cd06cde5e1d8ad478adbe79368cdaa92570fda925d1b4e3a0e7cfc5737a"
+      "sha256": "bdf333471823ae83b46be56be926008a9abb58b56aa784422b134d2b48e7d7a3"
     },
     {
       "path": "backend/src/operations/operationsService.ts",
@@ -12286,7 +12286,7 @@
     },
     {
       "path": "backend/src/routes/dashboard.ts",
-      "sha256": "28e91797c6113878a3800217d201eca7df11562a43fed82dcb445e26da862420"
+      "sha256": "7950a1c0c04fcb2d97104151c1c07a8a59655473fdfeefcd004722020b888360"
     },
     {
       "path": "backend/src/routes/debug.ts",
@@ -12466,7 +12466,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "f8012c64d4ca3c54ac4806aa5a5b3f0dae0a6e7f224b3d32b3e825b658ee8d9d"
+      "sha256": "6ab4a12a0e92293f27fecf7860a7e6e5a620615bea1b92d993f25bc846573110"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -13018,7 +13018,7 @@
     },
     {
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "sha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
+      "sha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594"
     },
     {
       "path": "backend/src/synthesis/universalProductSpec.ts",
@@ -17913,42 +17913,42 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 41,
+      "line": 42,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 41,
+      "line": 42,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 245,
+      "line": 246,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 295,
+      "line": 296,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 376,
+      "line": 377,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 526,
+      "line": 529,
       "credentialsInUrl": false
     },
     {
@@ -23093,7 +23093,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "line": 214,
+      "line": 217,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -23261,13 +23261,6 @@
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 141,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/operations/operationsEngine.ts",
       "line": 142,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
@@ -23275,7 +23268,14 @@
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 175,
+      "line": 143,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/operations/operationsEngine.ts",
+      "line": 176,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24052,7 +24052,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 828,
+      "line": 845,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25277,7 +25277,7 @@
     },
     {
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 311,
+      "line": 312,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

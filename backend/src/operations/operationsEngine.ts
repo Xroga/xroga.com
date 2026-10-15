@@ -116,7 +116,8 @@ export function approvalIsValid(input: {
 }): { valid: boolean; reason?: string } {
   if (input.requesterId === input.approverId) return { valid: false, reason: 'requester_cannot_self_approve' };
   if (input.decision !== 'approved') return { valid: false, reason: 'approval_not_granted' };
-  if (new Date(input.expiresAt).getTime() <= Date.now()) return { valid: false, reason: 'approval_expired' };
+  const expiresAt = new Date(input.expiresAt).getTime();
+  if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) return { valid: false, reason: 'approval_expired' };
   if (input.approvedTargetVersion !== input.currentTargetVersion || input.approvedPlanDigest !== input.currentPlanDigest) {
     return { valid: false, reason: 'approved_target_changed' };
   }

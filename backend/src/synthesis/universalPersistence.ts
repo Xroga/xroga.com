@@ -282,6 +282,7 @@ export class SupabaseUniversalStore implements UniversalStore {
       .from('plan_mutations')
       .select('*')
       .eq('user_id', owner.userId)
+      .eq('project_id', owner.projectId)
       .eq('run_id', runId)
       .order('id', { ascending: true });
     if (error || !data) return [];

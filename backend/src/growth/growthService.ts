@@ -10,10 +10,10 @@ export class GrowthServiceError extends Error {
   constructor(public readonly code: string, message: string, public readonly statusCode = 400) { super(message); }
 }
 
-async function query<T = Row[]>(promise: PromiseLike<{ data: T | null; error: any }>, message: string): Promise<T> {
+async function query<T = Row[]>(promise: PromiseLike<{ data: T | null; error: any }>, message: string, missing: T = [] as T): Promise<T> {
   const { data, error } = await promise;
   if (error) throw new GrowthServiceError('storage_unavailable', message, 503);
-  return (data ?? []) as T;
+  return data ?? missing;
 }
 
 function hash(value: string): string { return createHash('sha256').update(value).digest('hex'); }
@@ -30,7 +30,7 @@ export class GrowthService {
       throw error;
     }
     if (permission === 'manage' && !result.permissions.includes('manage_automation')) throw new GrowthServiceError('forbidden', 'Growth management is not permitted', 403);
-    const project = await query<Row | null>(this.db.from('projects').select('user_id').eq('id', projectId).maybeSingle(), 'Project unavailable');
+    const project = await query<Row | null>(this.db.from('projects').select('user_id').eq('id', projectId).maybeSingle(), 'Project unavailable', null);
     if (!project) throw new GrowthServiceError('not_found', 'Project not found', 404);
     return { tenantId: project.user_id, permissions: result.permissions };
   }
@@ -53,8 +53,11 @@ export class GrowthService {
   async recordEvent(userId: string, input: { projectId: string; name: string; idempotencyKey: string; environment: 'test'|'preview'|'production'; anonymousId?: string; sessionId?: string; releaseId?: string; deploymentId?: string; campaignId?: string; referralId?: string; experimentId?: string; consentState: 'granted'|'denied'|'unknown'|'not_required'; source: string; evidenceReference: string; metadata?: Record<string, unknown>; occurredAt?: string }): Promise<{ event: Row; duplicate: boolean }> {
     if (!validateEventName(input.name)) throw new GrowthServiceError('invalid_event', 'Event name is not registered or versioned', 400);
     const { tenantId } = await this.access(userId, input.projectId);
-    const existing = await query<Row | null>(this.db.from('analytics_events').select('*').eq('tenant_id', tenantId).eq('idempotency_key', input.idempotencyKey).maybeSingle(), 'Event deduplication unavailable');
-    if (existing) return { event: existing, duplicate: true };
+    const existing = await query<Row | null>(this.db.from('analytics_events').select('*').eq('tenant_id', tenantId).eq('idempotency_key', input.idempotencyKey).maybeSingle(), 'Event deduplication unavailable', null);
+    if (existing) {
+      if (existing.project_id !== input.projectId) throw new GrowthServiceError('idempotency_conflict', 'Event key cannot be reused for this project', 409);
+      return { event: existing, duplicate: true };
+    }
     const version = Number(input.name.match(/\.v([0-9]+)$/)?.[1] ?? 0);
     const rows = await query<Row[]>(this.db.from('analytics_events').insert({ user_id: userId, tenant_id: tenantId, project_id: input.projectId, event_type: input.name, event_version: version, idempotency_key: input.idempotencyKey, environment: input.environment, anonymous_id: input.anonymousId ?? null, session_id: input.sessionId ?? null, release_id: input.releaseId ?? null, deployment_id: input.deploymentId ?? null, campaign_id: input.campaignId ?? null, referral_id: input.referralId ?? null, experiment_id: input.experimentId ?? null, consent_state: input.consentState, source: input.source.slice(0, 80), evidence_reference: input.evidenceReference.slice(0, 500), metadata: redactGrowthPayload(input.metadata ?? {}), occurred_at: input.occurredAt ?? new Date().toISOString() }).select('*'), 'Event could not be recorded');
     return { event: rows[0], duplicate: false };
@@ -75,11 +78,11 @@ export class GrowthService {
 
   async evaluateActivation(userId: string, projectId: string, subjectUserId = userId): Promise<{ activated: boolean; lifecycle: Row | null; reason: string }> {
     const { tenantId } = await this.access(userId, projectId);
-    const definition = await query<Row | null>(this.db.from('growth_activation_definitions').select('*').eq('tenant_id', tenantId).eq('project_id', projectId).eq('active', true).order('version', { ascending: false }).limit(1).maybeSingle(), 'Activation definition unavailable');
+    const definition = await query<Row | null>(this.db.from('growth_activation_definitions').select('*').eq('tenant_id', tenantId).eq('project_id', projectId).eq('active', true).order('version', { ascending: false }).limit(1).maybeSingle(), 'Activation definition unavailable', null);
     if (!definition) return { activated: false, lifecycle: null, reason: 'not_configured' };
     const [events, deployment] = await Promise.all([
       query<Row[]>(this.db.from('analytics_events').select('event_type').eq('tenant_id', tenantId).eq('project_id', projectId).eq('user_id', subjectUserId), 'Activation events unavailable'),
-      query<Row | null>(this.db.from('deployment_status').select('id,status,verification_state').eq('user_id', tenantId).eq('project_id', projectId).order('created_at', { ascending: false }).limit(1).maybeSingle(), 'Deployment evidence unavailable'),
+      query<Row | null>(this.db.from('deployment_status').select('id,status,verification_state').eq('user_id', tenantId).eq('project_id', projectId).order('created_at', { ascending: false }).limit(1).maybeSingle(), 'Deployment evidence unavailable', null),
     ]);
     const deploymentVerified = ['verified','production_verified','succeeded'].includes(String(deployment?.verification_state ?? deployment?.status));
     const activated = activationSatisfied(definition.required_event_names, events.map((item) => item.event_type), deploymentVerified);
@@ -93,9 +96,9 @@ export class GrowthService {
     const { tenantId } = await this.access(userId, input.projectId);
     const [incidents, deployment, lifecycle, suppression] = await Promise.all([
       query<Row[]>(this.db.from('production_incidents').select('id,severity,status').eq('user_id', tenantId).eq('project_id', input.projectId).not('status', 'in', '(resolved,closed,cancelled)'), 'Incident state unavailable'),
-      query<Row | null>(this.db.from('deployment_status').select('id,status,verification_state').eq('user_id', tenantId).eq('project_id', input.projectId).order('created_at', { ascending: false }).limit(1).maybeSingle(), 'Deployment state unavailable'),
-      query<Row | null>(this.db.from('growth_lifecycle_state').select('lifecycle_state,evidence_reference').eq('tenant_id', tenantId).eq('project_id', input.projectId).eq('subject_type', 'user').eq('subject_id', userId).maybeSingle(), 'Lifecycle state unavailable'),
-      query<Row | null>(this.db.from('growth_suppressions').select('id').eq('tenant_id', tenantId).eq('channel', 'email').eq('address_hash', hash(userId)).maybeSingle(), 'Suppression state unavailable'),
+      query<Row | null>(this.db.from('deployment_status').select('id,status,verification_state').eq('user_id', tenantId).eq('project_id', input.projectId).order('created_at', { ascending: false }).limit(1).maybeSingle(), 'Deployment state unavailable', null),
+      query<Row | null>(this.db.from('growth_lifecycle_state').select('lifecycle_state,evidence_reference').eq('tenant_id', tenantId).eq('project_id', input.projectId).eq('subject_type', 'user').eq('subject_id', userId).maybeSingle(), 'Lifecycle state unavailable', null),
+      query<Row | null>(this.db.from('growth_suppressions').select('id').eq('tenant_id', tenantId).eq('channel', 'email').eq('address_hash', hash(userId)).maybeSingle(), 'Suppression state unavailable', null),
     ]);
     const critical = incidents.some((item) => ['critical','sev0','sev1'].includes(String(item.severity).toLowerCase()));
     const deploymentVerified = ['verified','production_verified','succeeded'].includes(String(deployment?.verification_state ?? deployment?.status));
@@ -107,7 +110,7 @@ export class GrowthService {
 
   async transitionLifecycle(userId: string, input: { projectId: string; subjectType: 'user'|'product'; subjectId: string; state: string; evidenceReference: string }): Promise<Row> {
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
-    const existing = await query<Row | null>(this.db.from('growth_lifecycle_state').select('version').eq('project_id', input.projectId).eq('subject_type', input.subjectType).eq('subject_id', input.subjectId).maybeSingle(), 'Lifecycle state unavailable');
+    const existing = await query<Row | null>(this.db.from('growth_lifecycle_state').select('version').eq('project_id', input.projectId).eq('subject_type', input.subjectType).eq('subject_id', input.subjectId).maybeSingle(), 'Lifecycle state unavailable', null);
     const rows = await query<Row[]>(this.db.from('growth_lifecycle_state').upsert({ tenant_id: tenantId, project_id: input.projectId, subject_type: input.subjectType, subject_id: input.subjectId, lifecycle_state: input.state, version: Number(existing?.version ?? 0) + 1, evidence_reference: input.evidenceReference, transitioned_at: new Date().toISOString() }, { onConflict: 'project_id,subject_type,subject_id' }).select('*'), 'Lifecycle transition failed');
     return rows[0];
   }
@@ -142,7 +145,7 @@ export class GrowthService {
   }
 
   async processCampaign(userId: string, campaignId: string): Promise<{ queued: number; suppressed: number; duplicate: number }> {
-    const campaign = await query<Row | null>(this.db.from('growth_campaigns').select('*,growth_segments(definition)').eq('id', campaignId).maybeSingle(), 'Campaign unavailable');
+    const campaign = await query<Row | null>(this.db.from('growth_campaigns').select('*,growth_segments(definition)').eq('id', campaignId).maybeSingle(), 'Campaign unavailable', null);
     if (!campaign) throw new GrowthServiceError('not_found', 'Campaign not found', 404);
     const { tenantId } = await this.access(userId, campaign.project_id, 'manage');
     if (campaign.tenant_id !== tenantId || campaign.status !== 'running') throw new GrowthServiceError('approval_required', 'Campaign requires a verified operations approval', 409);
@@ -151,10 +154,10 @@ export class GrowthService {
     const recipients = await query<Row[]>(this.db.from('growth_lifecycle_state').select('subject_id').eq('tenant_id', tenantId).eq('project_id', campaign.project_id).eq('subject_type', 'user').in('lifecycle_state', states).limit(500), 'Segment evaluation failed');
     let queued = 0, suppressed = 0, duplicate = 0;
     for (const recipient of recipients) {
-      const existing = await query<Row | null>(this.db.from('growth_messages').select('id').eq('campaign_id', campaign.id).eq('recipient_user_id', recipient.subject_id).maybeSingle(), 'Message deduplication failed');
+      const existing = await query<Row | null>(this.db.from('growth_messages').select('id').eq('campaign_id', campaign.id).eq('recipient_user_id', recipient.subject_id).maybeSingle(), 'Message deduplication failed', null);
       if (existing) { duplicate += 1; continue; }
-      const consent = await query<Row | null>(this.db.from('analytics_events').select('consent_state').eq('tenant_id', tenantId).eq('project_id', campaign.project_id).eq('user_id', recipient.subject_id).order('occurred_at', { ascending: false }).limit(1).maybeSingle(), 'Consent state unavailable');
-      const blocked = await query<Row | null>(this.db.from('growth_suppressions').select('id').eq('tenant_id', tenantId).eq('channel', 'in_app').eq('address_hash', hash(recipient.subject_id)).maybeSingle(), 'Suppression state unavailable');
+      const consent = await query<Row | null>(this.db.from('analytics_events').select('consent_state').eq('tenant_id', tenantId).eq('project_id', campaign.project_id).eq('user_id', recipient.subject_id).order('occurred_at', { ascending: false }).limit(1).maybeSingle(), 'Consent state unavailable', null);
+      const blocked = await query<Row | null>(this.db.from('growth_suppressions').select('id').eq('tenant_id', tenantId).eq('channel', 'in_app').eq('address_hash', hash(recipient.subject_id)).maybeSingle(), 'Suppression state unavailable', null);
       if (consent?.consent_state !== 'granted' || blocked) { suppressed += 1; continue; }
       const key = randomUUID();
       const messages = await query<Row[]>(this.db.from('growth_messages').insert({ tenant_id: tenantId, project_id: campaign.project_id, campaign_id: campaign.id, recipient_user_id: recipient.subject_id, channel: 'in_app', provider: 'xroga', template_key: campaign.template_key, recipient_hash: hash(recipient.subject_id), idempotency_key: key, status: 'submitted', consent_state: 'granted', attempt_count: 1 }).select('*'), 'Message queue failed');
@@ -174,10 +177,10 @@ export class GrowthService {
   }
 
   async assignExperiment(userId: string, experimentId: string, subjectKey: string): Promise<Row> {
-    const experiment = await query<Row | null>(this.db.from('growth_experiments').select('*').eq('id', experimentId).maybeSingle(), 'Experiment unavailable');
+    const experiment = await query<Row | null>(this.db.from('growth_experiments').select('*').eq('id', experimentId).maybeSingle(), 'Experiment unavailable', null);
     if (!experiment) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
     const { tenantId } = await this.access(userId, experiment.project_id);
-    const existing = await query<Row | null>(this.db.from('growth_experiment_assignments').select('*').eq('experiment_id', experimentId).eq('subject_key', subjectKey).maybeSingle(), 'Assignment unavailable');
+    const existing = await query<Row | null>(this.db.from('growth_experiment_assignments').select('*').eq('experiment_id', experimentId).eq('subject_key', subjectKey).maybeSingle(), 'Assignment unavailable', null);
     if (existing) return existing;
     const variant = deterministicVariant({ experimentId, subjectKey, seed: experiment.allocation_seed, variants: experiment.variants });
     const rows = await query<Row[]>(this.db.from('growth_experiment_assignments').insert({ experiment_id: experimentId, tenant_id: tenantId, subject_key: subjectKey, variant }).select('*'), 'Assignment failed');
@@ -185,7 +188,7 @@ export class GrowthService {
   }
 
   async exposeExperiment(userId: string, assignmentId: string, evidenceReference: string): Promise<Row> {
-    const assignment = await query<Row | null>(this.db.from('growth_experiment_assignments').select('*,growth_experiments(project_id)').eq('id', assignmentId).maybeSingle(), 'Assignment unavailable');
+    const assignment = await query<Row | null>(this.db.from('growth_experiment_assignments').select('*,growth_experiments(project_id)').eq('id', assignmentId).maybeSingle(), 'Assignment unavailable', null);
     if (!assignment) throw new GrowthServiceError('not_found', 'Assignment not found', 404);
     await this.access(userId, assignment.growth_experiments.project_id);
     const rows = await query<Row[]>(this.db.from('growth_experiment_assignments').update({ exposed_at: new Date().toISOString(), evidence_reference: evidenceReference }).eq('id', assignmentId).is('exposed_at', null).select('*'), 'Exposure could not be recorded');
@@ -194,17 +197,17 @@ export class GrowthService {
   }
 
   async recordExperimentOutcome(userId: string, input: { experimentId: string; assignmentId: string; eventId: string; metricKey: string }): Promise<Row> {
-    const experiment = await query<Row | null>(this.db.from('growth_experiments').select('project_id').eq('id', input.experimentId).maybeSingle(), 'Experiment unavailable');
+    const experiment = await query<Row | null>(this.db.from('growth_experiments').select('project_id').eq('id', input.experimentId).maybeSingle(), 'Experiment unavailable', null);
     if (!experiment) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
     await this.access(userId, experiment.project_id);
-    const assignment = await query<Row | null>(this.db.from('growth_experiment_assignments').select('id,exposed_at').eq('id', input.assignmentId).eq('experiment_id', input.experimentId).maybeSingle(), 'Assignment unavailable');
+    const assignment = await query<Row | null>(this.db.from('growth_experiment_assignments').select('id,exposed_at').eq('id', input.assignmentId).eq('experiment_id', input.experimentId).maybeSingle(), 'Assignment unavailable', null);
     if (!assignment?.exposed_at) throw new GrowthServiceError('invalid_state', 'Outcome requires recorded exposure', 409);
     const rows = await query<Row[]>(this.db.from('growth_experiment_outcomes').upsert({ experiment_id: input.experimentId, assignment_id: input.assignmentId, event_id: input.eventId, metric_key: input.metricKey }, { onConflict: 'assignment_id,event_id,metric_key' }).select('*'), 'Experiment outcome failed');
     return rows[0];
   }
 
   async experimentResult(userId: string, experimentId: string): Promise<Record<string, unknown>> {
-    const experiment = await query<Row | null>(this.db.from('growth_experiments').select('*').eq('id', experimentId).maybeSingle(), 'Experiment unavailable');
+    const experiment = await query<Row | null>(this.db.from('growth_experiments').select('*').eq('id', experimentId).maybeSingle(), 'Experiment unavailable', null);
     if (!experiment) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
     await this.access(userId, experiment.project_id);
     const [assignments, outcomes] = await Promise.all([

@@ -28,6 +28,7 @@ import { clearVercelConnection, getVercelToken, saveVercelConnection } from '../
 import { clearPkceSession, clearProviderToken, loadPkceSession, loadProviderToken, storePkceSession, storeProviderToken } from '../services/integrations/oauthPkceStore.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
 import { createRunDurable, getRun, activeRunIds } from '../ai/runStore.js';
+import { GrowthService } from '../growth/growthService.js';
 import { storeProjectFile } from '../services/storage/projectFiles.js';
 import { ownedFile } from '../services/storage/privateFileDelivery.js';
 import { signFileLink } from '../services/storage/fileDeliveryPolicy.js';
@@ -394,6 +395,8 @@ test('real planning mutation replay is append-only and a foreign collision is no
   assert.equal((await a.saveMutations(actor,randomUUID(),[mutation])).saved,false);
   assert.equal((await a.saveMutations({...actor,projectId:randomUUID()},runId,[mutation])).saved,false);
   assert.deepEqual(await b.loadMutations(attacker,runId),[]);
+  assert.deepEqual(await a.loadMutations({...actor,projectId:randomUUID()},runId),[]);
+  assert.equal((await a.loadMutations(actor,runId)).length,1);
   const stored=await admin.from('plan_mutations').select('user_id,reason').eq('mutation_key',mutation.mutationKey).single();assert.equal(stored.error,null);assert.equal(stored.data?.user_id,owner.id);assert.equal(stored.data?.reason,'OWNER_MUTATION_CANARY');
 });
 
@@ -610,6 +613,8 @@ test('profile activity keeps own and project-less entries but redacts a corrupt 
   assert.ok(entries.some(row=>row.id===noProject&&row.projects===null));
   assert.ok(entries.some(row=>row.id===corrupt&&row.projects===null));
   assert.ok(!JSON.stringify(entries).includes('FOREIGN_PROJECT_NAME_CANARY'));assert.ok(!entries.some(row=>row.action==='FOREIGN_ACTIVITY_CANARY'));
+  const dashboard=await request('/api/dashboard/summary',owner.token);assert.equal(dashboard.status,200);
+  const dashboardBody=await dashboard.text();assert.ok(!dashboardBody.includes('FOREIGN_PROJECT_NAME_CANARY'));assert.ok(dashboardBody.includes('PROJECTLESS_ACTIVITY_CANARY'));
   assert.equal((await request('/api/profile')).status,401);
   const promotion=await request('/api/profile',owner.token,'PATCH',{role:'owner',user_id:other.id});assert.equal(promotion.status,400);
   const profile=await request('/api/profile',owner.token);assert.equal(profile.status,200);
@@ -632,10 +637,22 @@ test('actual member identity cannot fetch privileged operational endpoints',asyn
   const safe=await absent.json() as {error:string;code:string};assert.equal(safe.code,'forbidden');assert.equal(safe.error,'Operation is not permitted');
 });
 
+test('real growth event replay cannot disclose a different project event',async()=>{
+  const owner=users[0];
+  const otherProject=await insert('projects',{user_id:owner.id,name:'Disposable growth scope',type:'app'});
+  const service=new GrowthService(admin);
+  const input={projectId:otherProject,name:'identity.linked.v1',idempotencyKey:randomUUID(),environment:'test' as const,consentState:'granted' as const,source:'isolated-fixture',evidenceReference:'isolated-growth-replay'};
+  const created=await service.recordEvent(owner.id,input);assert.equal(created.duplicate,false);assert.ok(created.event.id);
+  await assert.rejects(service.recordEvent(owner.id,{...input,projectId:owner.project}),{code:'idempotency_conflict',statusCode:409});
+  const replay=await service.recordEvent(owner.id,input);assert.equal(replay.duplicate,true);assert.equal(replay.event.id,created.event.id);
+  const rows=await admin.from('analytics_events').select('id,project_id').eq('tenant_id',owner.id).eq('idempotency_key',input.idempotencyKey);
+  assert.equal(rows.error,null);assert.deepEqual(rows.data,[{id:created.event.id,project_id:otherProject}]);
+});
+
 test('real durable creation cannot overwrite existing same-owner or foreign runs',async()=>{
   const [owner,other]=users;
   for(const existingOwner of [owner,other]) {
-    const id=`creation-collision-${randomUUID()}`;
+    const id=randomUUID();
     await insert('swarm_runs',{id,user_id:existingOwner.id,prompt:'RETAINED_RUN_CANARY',status:'cancelled'});
     const before=await admin.from('swarm_runs').select('*').eq('id',id).single();assert.equal(before.error,null);
     await assert.rejects(createRunDurable(owner.id,'must not overwrite',id),{code:'RUN_ALREADY_EXISTS'});
@@ -643,7 +660,7 @@ test('real durable creation cannot overwrite existing same-owner or foreign runs
     assert.deepEqual(after.data,before.data);
     assert.equal(getRun(id),null);assert.equal(activeRunIds().includes(id),false);
   }
-  const id=`creation-concurrent-${randomUUID()}`;
+  const id=randomUUID();
   const attempts=await Promise.allSettled([createRunDurable(owner.id,'first',id),createRunDurable(owner.id,'second',id)]);
   assert.equal(attempts.filter(result=>result.status==='fulfilled').length,1);
   const stored=await admin.from('swarm_runs').select('user_id,prompt').eq('id',id).single();assert.equal(stored.error,null);

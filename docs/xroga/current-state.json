@@ -12093,7 +12093,7 @@
       "id": "surface:4cd464f7016cf52503dd",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c",
+      "sha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
       "symbols": [
         "GrowthService",
         "GrowthServiceError",
@@ -12148,7 +12148,9 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/growth.ts:5"
+        "backend/src/growth/growthService.boundary.test.ts:4",
+        "backend/src/routes/growth.ts:5",
+        "backend/src/security/tenantIsolation.local.integration.ts:31"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -12185,18 +12187,18 @@
         "backend/src/growth/growthService.ts:47 (tenant_id)",
         "backend/src/growth/growthService.ts:48 (tenant_id)",
         "backend/src/growth/growthService.ts:56 (tenant_id)",
-        "backend/src/growth/growthService.ts:78 (tenant_id)",
-        "backend/src/growth/growthService.ts:81 (user_id)",
         "backend/src/growth/growthService.ts:81 (tenant_id)",
-        "backend/src/growth/growthService.ts:82 (user_id)",
-        "backend/src/growth/growthService.ts:95 (user_id)",
-        "backend/src/growth/growthService.ts:96 (user_id)",
-        "backend/src/growth/growthService.ts:97 (tenant_id)",
-        "backend/src/growth/growthService.ts:98 (tenant_id)",
-        "backend/src/growth/growthService.ts:151 (tenant_id)",
-        "backend/src/growth/growthService.ts:156 (user_id)",
-        "backend/src/growth/growthService.ts:156 (tenant_id)",
-        "backend/src/growth/growthService.ts:157 (tenant_id)"
+        "backend/src/growth/growthService.ts:84 (user_id)",
+        "backend/src/growth/growthService.ts:84 (tenant_id)",
+        "backend/src/growth/growthService.ts:85 (user_id)",
+        "backend/src/growth/growthService.ts:98 (user_id)",
+        "backend/src/growth/growthService.ts:99 (user_id)",
+        "backend/src/growth/growthService.ts:100 (tenant_id)",
+        "backend/src/growth/growthService.ts:101 (tenant_id)",
+        "backend/src/growth/growthService.ts:154 (tenant_id)",
+        "backend/src/growth/growthService.ts:159 (user_id)",
+        "backend/src/growth/growthService.ts:159 (tenant_id)",
+        "backend/src/growth/growthService.ts:160 (tenant_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -12205,7 +12207,10 @@
         "backend/src/growth/growthService.ts#evidenceReference",
         "backend/src/growth/growthService.ts#validateEventName"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/growth/growthService.boundary.test.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -15376,7 +15381,7 @@
       "id": "surface:2bc5a5e3712ff02bb56b",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsEngine.ts",
-      "sha256": "8a8f3cd06cde5e1d8ad478adbe79368cdaa92570fda925d1b4e3a0e7cfc5737a",
+      "sha256": "bdf333471823ae83b46be56be926008a9abb58b56aa784422b134d2b48e7d7a3",
       "symbols": [
         "ACTION_DEFINITIONS",
         "BAD_STATUSES",
@@ -15394,6 +15399,7 @@
         "deriveProductStatus",
         "derived",
         "evidence",
+        "expiresAt",
         "initialActionStatus",
         "isStale",
         "lastVerification",
@@ -17868,7 +17874,7 @@
       "id": "surface:0f88f87d06e0076e11f0",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/dashboard.ts",
-      "sha256": "28e91797c6113878a3800217d201eca7df11562a43fed82dcb445e26da862420",
+      "sha256": "7950a1c0c04fcb2d97104151c1c07a8a59655473fdfeefcd004722020b888360",
       "symbols": [
         "blocked",
         "blockers",
@@ -17881,11 +17887,13 @@
         "handoff",
         "kind",
         "out",
+        "ownedActivityProjectName",
         "paid",
         "promotion",
         "recent",
         "recentActivity",
         "router",
+        "row",
         "run",
         "runs",
         "ship",
@@ -17913,7 +17921,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:30"
+        "backend/src/index.ts:30",
+        "backend/src/routes/dashboard.activity.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -17926,12 +17935,14 @@
         "backend/src/routes/dashboard.ts#AuthRequest"
       ],
       "tenantBoundary": [
-        "backend/src/routes/dashboard.ts:233 (user_id)"
+        "backend/src/routes/dashboard.ts:239 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/routes/dashboard.activity.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -21080,7 +21091,7 @@
         "backend/src/routes/billing.ts:3",
         "backend/src/routes/billingWebhook.test.ts:7",
         "backend/src/routes/billingWebhook.ts:3",
-        "backend/src/security/tenantIsolation.local.integration.ts:38",
+        "backend/src/security/tenantIsolation.local.integration.ts:39",
         "backend/src/services/BillingService.test.ts:4"
       ],
       "reachable": true,
@@ -23167,7 +23178,7 @@
         "backend/src/routes/integrations.ts:644",
         "backend/src/routes/integrations.ts:672",
         "backend/src/routes/supabaseOAuth.ts:20",
-        "backend/src/security/tenantIsolation.local.integration.ts:39",
+        "backend/src/security/tenantIsolation.local.integration.ts:40",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.ts:858",
         "backend/src/services/integrations/userProviderKeys.ts:867"
@@ -25236,7 +25247,7 @@
       "callers": [
         "backend/src/lib/r2.ts:3",
         "backend/src/routes/projects.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:33",
+        "backend/src/security/tenantIsolation.local.integration.ts:34",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.ts:6",
         "backend/src/services/storage/projectFiles.ts:6"
@@ -25348,7 +25359,7 @@
       ],
       "callers": [
         "backend/src/routes/projects.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:32",
+        "backend/src/security/tenantIsolation.local.integration.ts:33",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5"
       ],
       "reachable": true,
@@ -25415,7 +25426,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/security/tenantIsolation.integration.test.ts:14",
-        "backend/src/security/tenantIsolation.local.integration.ts:31",
+        "backend/src/security/tenantIsolation.local.integration.ts:32",
         "backend/src/services/memory/buildProjectStore.ts:8",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7"
       ],
@@ -27723,7 +27734,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:29",
-        "backend/src/security/tenantIsolation.local.integration.ts:34",
+        "backend/src/security/tenantIsolation.local.integration.ts:35",
         "backend/src/synthesis/livePreview/access.test.ts:5",
         "backend/src/synthesis/livePreview/store.ts:9"
       ],
@@ -28227,7 +28238,7 @@
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:26",
         "backend/src/routes/projectRuntime.ts:20",
-        "backend/src/security/tenantIsolation.local.integration.ts:37",
+        "backend/src/security/tenantIsolation.local.integration.ts:38",
         "backend/src/synthesis/livePreview/coordinator.ts:27",
         "backend/src/synthesis/livePreview/index.ts:3"
       ],
@@ -31706,7 +31717,7 @@
       "id": "surface:81efabca9d69b6c92592",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/universalPersistence.ts",
-      "sha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670",
+      "sha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
       "symbols": [
         "InMemoryUniversalStore",
         "OK",
@@ -31775,10 +31786,10 @@
         "backend/src/synthesis/universalPersistence.ts:214 (user_id)",
         "backend/src/synthesis/universalPersistence.ts:236 (user_id)",
         "backend/src/synthesis/universalPersistence.ts:281 (user_id)",
-        "backend/src/synthesis/universalPersistence.ts:345 (user_id)",
-        "backend/src/synthesis/universalPersistence.ts:353 (user_id)",
-        "backend/src/synthesis/universalPersistence.ts:398 (user_id)",
-        "backend/src/synthesis/universalPersistence.ts:404 (user_id)"
+        "backend/src/synthesis/universalPersistence.ts:346 (user_id)",
+        "backend/src/synthesis/universalPersistence.ts:354 (user_id)",
+        "backend/src/synthesis/universalPersistence.ts:399 (user_id)",
+        "backend/src/synthesis/universalPersistence.ts:405 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -87472,9 +87483,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a5ce9b52a555dc727514",
+      "id": "registration:be602ec8c8a56b2e980b",
       "sourcePath": "backend/src/routes/dashboard.ts",
-      "line": 15,
+      "line": 21,
       "receiver": "router",
       "method": "get",
       "path": "/platform-ready",
@@ -87484,9 +87495,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:cc2c1b0526934a75fc7e",
+      "id": "registration:b792a0a4ea5ae031283e",
       "sourcePath": "backend/src/routes/dashboard.ts",
-      "line": 28,
+      "line": 34,
       "receiver": "router",
       "method": "get",
       "path": "/promo-access",
@@ -87496,9 +87507,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9e76457a6d65d6103ee6",
+      "id": "registration:564a067c229f0ac87963",
       "sourcePath": "backend/src/routes/dashboard.ts",
-      "line": 42,
+      "line": 48,
       "receiver": "router",
       "method": "get",
       "path": "/ship-analytics",
@@ -87508,9 +87519,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:986b38151a4ca2345bf9",
+      "id": "registration:65b60d46247b6877b0ec",
       "sourcePath": "backend/src/routes/dashboard.ts",
-      "line": 208,
+      "line": 214,
       "receiver": "router",
       "method": "get",
       "path": "/summary",
@@ -87520,7 +87531,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3fdcd37a8c910741fc5e",
+      "id": "registration:ee5c5fb17a4165fba72b",
       "sourcePath": "backend/src/routes/dashboard.ts",
       "line": 367,
       "receiver": "router",
@@ -90254,10 +90265,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:34c6781c014c1ea6b0f2",
-      "registrationId": "registration:a5ce9b52a555dc727514",
+      "id": "route:9e3cbfc16518c03d085c",
+      "registrationId": "registration:be602ec8c8a56b2e980b",
       "sourcePath": "backend/src/routes/dashboard.ts",
-      "line": 15,
+      "line": 21,
       "method": "GET",
       "path": "/api/dashboard/platform-ready",
       "mountChain": [
@@ -90271,10 +90282,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5bec0244ee48f64c1d84",
-      "registrationId": "registration:cc2c1b0526934a75fc7e",
+      "id": "route:539e93328dc2ead3f984",
+      "registrationId": "registration:b792a0a4ea5ae031283e",
       "sourcePath": "backend/src/routes/dashboard.ts",
-      "line": 28,
+      "line": 34,
       "method": "GET",
       "path": "/api/dashboard/promo-access",
       "mountChain": [
@@ -90288,10 +90299,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:196781901f6ef94744eb",
-      "registrationId": "registration:9e76457a6d65d6103ee6",
+      "id": "route:2ae23f2073ad8ddcb10c",
+      "registrationId": "registration:564a067c229f0ac87963",
       "sourcePath": "backend/src/routes/dashboard.ts",
-      "line": 42,
+      "line": 48,
       "method": "GET",
       "path": "/api/dashboard/ship-analytics",
       "mountChain": [
@@ -90305,10 +90316,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:344b401dafdfbab939c1",
-      "registrationId": "registration:986b38151a4ca2345bf9",
+      "id": "route:c248728a683edd5dca22",
+      "registrationId": "registration:65b60d46247b6877b0ec",
       "sourcePath": "backend/src/routes/dashboard.ts",
-      "line": 208,
+      "line": 214,
       "method": "GET",
       "path": "/api/dashboard/summary",
       "mountChain": [
@@ -90322,8 +90333,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:df16217bc3c58b9251f6",
-      "registrationId": "registration:3fdcd37a8c910741fc5e",
+      "id": "route:d0f135c7b4d82f9f4899",
+      "registrationId": "registration:ee5c5fb17a4165fba72b",
       "sourcePath": "backend/src/routes/dashboard.ts",
       "line": 367,
       "method": "POST",
@@ -101445,6 +101456,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:0f3dad98c31d27f776fb",
+      "sourcePath": "backend/src/growth/growthService.boundary.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:2b05d677bbde176a18cc",
       "sourcePath": "backend/src/hardening/launchHardening.test.ts",
       "declaredTests": 47,
@@ -101587,7 +101605,7 @@
     {
       "id": "test-suite:99454241b55a3c00e12a",
       "sourcePath": "backend/src/operations/operationsEngine.test.ts",
-      "declaredTests": 27,
+      "declaredTests": 28,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101652,6 +101670,13 @@
     {
       "id": "test-suite:282ee7d2da39584e2d7c",
       "sourcePath": "backend/src/routes/billingWebhook.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9abe6f49b748d4688946",
+      "sourcePath": "backend/src/routes/dashboard.activity.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
@@ -101827,7 +101852,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 52,
+      "declaredTests": 53,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102478,7 +102503,7 @@
     {
       "id": "test-suite:a71a36552007294fc0ce",
       "sourcePath": "backend/src/synthesis/universalPersistence.owner.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

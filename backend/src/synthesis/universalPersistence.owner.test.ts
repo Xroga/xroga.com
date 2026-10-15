@@ -27,3 +27,15 @@ test('foreign repository header denies child read and mutation predicates includ
   assert.equal(await store.load(identity),null);assert.equal(requests.length,1);assert.equal(requests[0].searchParams.get('user_id'),`eq.${owner}`);
   await store.delete(identity);assert.equal(requests[1].searchParams.get('user_id'),`eq.${owner}`);
 });
+
+test('mutation history binds the requested project as well as owner and run',async()=>{
+  const client=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(input)=>{
+    const url=new URL(String(input));
+    assert.equal(url.searchParams.get('user_id'),`eq.${owner}`);
+    assert.equal(url.searchParams.get('project_id'),'eq.requested-project');
+    assert.equal(url.searchParams.get('run_id'),'eq.other-project-run');
+    return new Response('[]',{headers:{'Content-Type':'application/json'}});
+  }}});
+  const store=new SupabaseUniversalStore(client,createTenantContext({userId:owner,via:'persisted_owner'}));
+  assert.deepEqual(await store.loadMutations({userId:owner,projectId:'requested-project'},'other-project-run'),[]);
+});

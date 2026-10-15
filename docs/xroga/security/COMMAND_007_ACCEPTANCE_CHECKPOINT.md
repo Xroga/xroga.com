@@ -2,6 +2,8 @@
 
 ## Authoritative continuation, 2026-10-15
 
+Current register:666 reviewed of666,0 unreviewed,487 reviewed gaps/unresolved. Complete review coverage does not certify those gaps. Follow-up growth/null/replay, dashboard parent-name, universal project filter and malformed approval expiry corrections pass34 focused tests. Isolated0e23 run38779399330 failed a new non-UUID fixture51/52; corrected to UUID without weakening assertions. Aggregate38779399165 failed requirements-source manifest drift, not waived. New final-source CI is required.008-010 remain gated and full007 BLOCKED. Historical counts below are retained provenance only.
+
 Current generated register supersedes earlier candidate counts:552/666 reviewed,114 unreviewed,382 reviewed gaps,496 unresolved. Referral and project-create failed-lookup fixes add13 passing focused tests. Canonical final-source Linux/disposable CI is pending. Command007 and Commands008-010 acceptance remain unchanged and blocked.
 
 Latest working candidate after c08ac476:518/666 reviewed,148 unreviewed,348 reviewed gaps,496 unresolved. One new insert-only run creation candidate explains the total increase. Added semantic review is not resolved security evidence. Fixes and exact next tasks are maintained in IMPLEMENTATION_STATUS.md and source-bound caller-reviews.json. High dependency findings reduced24 to22 via the tested scoped image-size override. Full007 remains BLOCKED,008-010 gated.

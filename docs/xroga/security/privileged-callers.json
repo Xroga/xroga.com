@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "f3da1e9fe0f16b7cb4d4d1aa1fb9955537fc6c1bbca4ce3cda3a680a47dc8178",
+  "reviewRegistrySha256": "6545729efc6702cf02d66f740ad4b7e8b502d1bd2ee030beea8854e45ee826dc",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -10,18 +10,18 @@
     "privilegedFactorySites": 160,
     "persistenceCandidates": 666,
     "ownerPredicateCandidates": 162,
-    "reviewRequired": 114,
-    "reviewedCandidates": 552,
-    "unresolvedSafetyCandidates": 496,
+    "reviewRequired": 0,
+    "reviewedCandidates": 666,
+    "unresolvedSafetyCandidates": 487,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 114,
-    "SCOPED_BOUNDARY": 35,
-    "NARROW_EXCEPTION": 6,
-    "NOT_PERSISTENCE": 129,
-    "REVIEWED_GAP": 382
+    "REVIEW_REQUIRED": 0,
+    "SCOPED_BOUNDARY": 41,
+    "NARROW_EXCEPTION": 8,
+    "NOT_PERSISTENCE": 130,
+    "REVIEWED_GAP": 487
   },
   "callers": [
     {
@@ -116,8 +116,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "model_benchmark_runs",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4fefef73278c98fcc8916030f07c6387ff1de061425f7005215782f996f666f2"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "4fefef73278c98fcc8916030f07c6387ff1de061425f7005215782f996f666f2",
+      "semanticReview": {
+        "authority": "SupabaseBenchmarkResultStore receives the Operations benchmark adapter's database client and inserts aggregate model/case performance without user or credential fields.",
+        "reason": "Platform-global write still requires full upstream paid-benchmark approval/budget proof, registered exception scope, numeric/result validation and replay policy. The in-memory record method is separate.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/benchmarkRunner.ts",
+            "marker": "SupabaseBenchmarkResultStore"
+          }
+        ]
+      }
     },
     {
       "id": "c7adb57133fe6d4372c3",
@@ -148,8 +158,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "build_outcomes",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec",
+      "semanticReview": {
+        "authority": "Pipeline invokes the improvement loader for opts.userId; the loader filters build_outcomes by user_id, age cutoff and bounded row limit.",
+        "reason": "Owner-filtered learning reads do not certify pipeline actor provenance, model_telemetry validation, project reuse policy or poisoning resistance. No mutation occurs at these sites.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/buildImprovementMemory.ts",
+            "marker": "MAX_IMPROVEMENT_ROWS"
+          }
+        ]
+      }
     },
     {
       "id": "b85bc952750476ba5d75",
@@ -159,8 +179,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec",
+      "semanticReview": {
+        "authority": "Pipeline invokes the improvement loader for opts.userId; the loader filters build_outcomes by user_id, age cutoff and bounded row limit.",
+        "reason": "Owner-filtered learning reads do not certify pipeline actor provenance, model_telemetry validation, project reuse policy or poisoning resistance. No mutation occurs at these sites.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/buildImprovementMemory.ts",
+            "marker": "MAX_IMPROVEMENT_ROWS"
+          }
+        ]
+      }
     },
     {
       "id": "4daa7b94f69a992ec78a",
@@ -170,8 +200,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a51c00b5bb253febf3853edff423634fdb54f2c1ec5a4f516abd84a5e0d1903a"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a51c00b5bb253febf3853edff423634fdb54f2c1ec5a4f516abd84a5e0d1903a",
+      "semanticReview": {
+        "authority": "Terminal run outcome capture uses its supplied run identity, issued context and owner-bound run key persistence. Retention deletes only that owner's rows older than its cutoff.",
+        "reason": "Parent run admission, same-owner concurrent overwrite, evidence validity and retention policy remain open. Foreign-collision tests prove the helper, not full learning provenance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/buildOutcomeMemory.ts",
+            "marker": "BUILD_OUTCOME_RETENTION_MS"
+          }
+        ]
+      }
     },
     {
       "id": "f2354711e3fb436d578b",
@@ -181,8 +221,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "build_outcomes",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a51c00b5bb253febf3853edff423634fdb54f2c1ec5a4f516abd84a5e0d1903a"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "a51c00b5bb253febf3853edff423634fdb54f2c1ec5a4f516abd84a5e0d1903a",
+      "semanticReview": {
+        "authority": "Terminal run outcome capture uses its supplied run identity, issued context and owner-bound run key persistence. Retention deletes only that owner's rows older than its cutoff.",
+        "reason": "Parent run admission, same-owner concurrent overwrite, evidence validity and retention policy remain open. Foreign-collision tests prove the helper, not full learning provenance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/buildOutcomeMemory.ts",
+            "marker": "BUILD_OUTCOME_RETENTION_MS"
+          }
+        ]
+      }
     },
     {
       "id": "5e75a66eaa35941a01e5",
@@ -192,8 +242,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "build_outcomes",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "bfa3804acb045b2a53877859dbd03f288a6db28533528972e31b3a6d8bdee902"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "bfa3804acb045b2a53877859dbd03f288a6db28533528972e31b3a6d8bdee902",
+      "semanticReview": {
+        "authority": "Pipeline invokes this userId-scoped reader, filtering build_outcomes by owner, age and row cap before summarizing model telemetry.",
+        "reason": "Remaining gaps are pipeline identity provenance, malformed persisted telemetry, cross-project reuse policy and verification of all exported consumers.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/buildOutcomeRoutingMemory.ts",
+            "marker": "loadBuildOutcomeRoutingMemory"
+          }
+        ]
+      }
     },
     {
       "id": "23ab29cbd5073a2cb088",
@@ -203,8 +263,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "bfa3804acb045b2a53877859dbd03f288a6db28533528972e31b3a6d8bdee902"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "bfa3804acb045b2a53877859dbd03f288a6db28533528972e31b3a6d8bdee902",
+      "semanticReview": {
+        "authority": "Pipeline invokes this userId-scoped reader, filtering build_outcomes by owner, age and row cap before summarizing model telemetry.",
+        "reason": "Remaining gaps are pipeline identity provenance, malformed persisted telemetry, cross-project reuse policy and verification of all exported consumers.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/buildOutcomeRoutingMemory.ts",
+            "marker": "loadBuildOutcomeRoutingMemory"
+          }
+        ]
+      }
     },
     {
       "id": "c0288e26c844107ebca9",
@@ -214,8 +284,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "build_outcomes",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56",
+      "semanticReview": {
+        "authority": "Pipeline strategy memory reads selected outcome/recipe fields for supplied userId with age and row bounds, then feeds the existing strategy scorer.",
+        "reason": "Upstream actor assurance, persisted strategy validation, same-user project isolation policy and contaminated learning evidence remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/buildStrategyMemory.ts",
+            "marker": "MAX_STRATEGY_ROWS"
+          }
+        ]
+      }
     },
     {
       "id": "51e187f3cd0b99673791",
@@ -225,8 +305,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56",
+      "semanticReview": {
+        "authority": "Pipeline strategy memory reads selected outcome/recipe fields for supplied userId with age and row bounds, then feeds the existing strategy scorer.",
+        "reason": "Upstream actor assurance, persisted strategy validation, same-user project isolation policy and contaminated learning evidence remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/buildStrategyMemory.ts",
+            "marker": "MAX_STRATEGY_ROWS"
+          }
+        ]
+      }
     },
     {
       "id": "dda0c49c9201c6729182",
@@ -299,8 +389,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "model_benchmark_runs",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f6d398f95914ca73aa5f48f6709f59e27895c55a443970cf054a3d193c886be9"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f6d398f95914ca73aa5f48f6709f59e27895c55a443970cf054a3d193c886be9",
+      "semanticReview": {
+        "authority": "supabaseBenchmarkResults reads global model_benchmark_runs with a2000-row bound, maps numeric benchmark fields and feeds cached aggregation to the existing model router.",
+        "reason": "Global reader needs explicit reviewed scope. Unvalidated persisted numeric values, raw database failure text propagated into evidence reasons, provenance of benchmark producers and downstream display require resolution.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/measuredEvidence.ts",
+            "marker": "export async function supabaseBenchmarkResults"
+          }
+        ]
+      }
     },
     {
       "id": "2d1c3b5480a89552ab1e",
@@ -310,8 +410,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f6d398f95914ca73aa5f48f6709f59e27895c55a443970cf054a3d193c886be9"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f6d398f95914ca73aa5f48f6709f59e27895c55a443970cf054a3d193c886be9",
+      "semanticReview": {
+        "authority": "supabaseBenchmarkResults reads global model_benchmark_runs with a2000-row bound, maps numeric benchmark fields and feeds cached aggregation to the existing model router.",
+        "reason": "Global reader needs explicit reviewed scope. Unvalidated persisted numeric values, raw database failure text propagated into evidence reasons, provenance of benchmark producers and downstream display require resolution.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/measuredEvidence.ts",
+            "marker": "export async function supabaseBenchmarkResults"
+          }
+        ]
+      }
     },
     {
       "id": "77ae5ca6237b9db28401",
@@ -1249,8 +1359,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "model_routing_outcomes",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9",
+      "semanticReview": {
+        "authority": "Pipeline reads global model routing history and records outcomes with opts.userId/runId. The global cache deliberately aggregates all users for model quality, but contains raw user/run identities as well as numeric signals.",
+        "reason": "Global aggregate admission is not registered here. Raw identity retention, output consumers, valid run-owner relationships, numeric validation and fail-open persistence remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/routingOutcomes.ts",
+            "marker": "loadRoutingOutcomes"
+          }
+        ]
+      }
     },
     {
       "id": "1740e151510be65ae1da",
@@ -1260,8 +1380,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9",
+      "semanticReview": {
+        "authority": "Pipeline reads global model routing history and records outcomes with opts.userId/runId. The global cache deliberately aggregates all users for model quality, but contains raw user/run identities as well as numeric signals.",
+        "reason": "Global aggregate admission is not registered here. Raw identity retention, output consumers, valid run-owner relationships, numeric validation and fail-open persistence remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/routingOutcomes.ts",
+            "marker": "loadRoutingOutcomes"
+          }
+        ]
+      }
     },
     {
       "id": "a11bf3e4f0c999a36b58",
@@ -1271,8 +1401,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9",
+      "semanticReview": {
+        "authority": "Pipeline reads global model routing history and records outcomes with opts.userId/runId. The global cache deliberately aggregates all users for model quality, but contains raw user/run identities as well as numeric signals.",
+        "reason": "Global aggregate admission is not registered here. Raw identity retention, output consumers, valid run-owner relationships, numeric validation and fail-open persistence remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/routingOutcomes.ts",
+            "marker": "loadRoutingOutcomes"
+          }
+        ]
+      }
     },
     {
       "id": "952ba0881d01437685bf",
@@ -1282,8 +1422,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "model_routing_outcomes",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9",
+      "semanticReview": {
+        "authority": "Pipeline reads global model routing history and records outcomes with opts.userId/runId. The global cache deliberately aggregates all users for model quality, but contains raw user/run identities as well as numeric signals.",
+        "reason": "Global aggregate admission is not registered here. Raw identity retention, output consumers, valid run-owner relationships, numeric validation and fail-open persistence remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/routingOutcomes.ts",
+            "marker": "loadRoutingOutcomes"
+          }
+        ]
+      }
     },
     {
       "id": "dd0376eeca45f71ec6f1",
@@ -1729,8 +1879,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b61429b7f71e724d142672dfbbc8264cfef8c58d0b7ba07e62bfefa239d79780"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b61429b7f71e724d142672dfbbc8264cfef8c58d0b7ba07e62bfefa239d79780",
+      "semanticReview": {
+        "authority": "Pipeline constructs RunTrace with runId and opts.userId. Persist embeds that identity and delegates to the global-key owner collision helper after schema bootstrap.",
+        "reason": "Helper prevents foreign overwrite, but parent run authorization, constructor provenance, stage/meta secret redaction, schema authority and swallowed persistence errors remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/runTrace.ts",
+            "marker": "persistOwnedRunTrace"
+          }
+        ]
+      }
     },
     {
       "id": "f7905886591a736e1914",
@@ -2793,565 +2953,1279 @@
       }
     },
     {
-      "id": "20816c60d7b178821712",
+      "id": "b5f4d6c51b93bef8a77f",
       "path": "backend/src/growth/growthService.ts",
       "line": 23,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "2d2b517d8879781f5c79",
+      "id": "13057f6e120893f86bb4",
       "path": "backend/src/growth/growthService.ts",
       "line": 33,
       "enclosing": "access",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "cc2fc53f6d1a38e5be59",
+      "id": "89486275413635746224",
       "path": "backend/src/growth/growthService.ts",
       "line": 41,
       "enclosing": "overview",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "f2afc1a0d8feeca141bc",
+      "id": "b35dec4136bb827bad45",
       "path": "backend/src/growth/growthService.ts",
       "line": 42,
       "enclosing": "overview",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_recommendations",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "68274f772299bb6f43b0",
+      "id": "5f0636f9fc05edb44acc",
       "path": "backend/src/growth/growthService.ts",
       "line": 43,
       "enclosing": "overview",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "6b67f6ee485f823a2037",
+      "id": "73b8316f545e2102a8f7",
       "path": "backend/src/growth/growthService.ts",
       "line": 44,
       "enclosing": "overview",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_messages",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "f1eb515e30e277094dcf",
+      "id": "3bea13cbf25faa4f3b0b",
       "path": "backend/src/growth/growthService.ts",
       "line": 45,
       "enclosing": "overview",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_segments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "33b41eea9d603487e839",
+      "id": "375216d0041278a0d236",
       "path": "backend/src/growth/growthService.ts",
       "line": 46,
       "enclosing": "overview",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "5b151470125a5572688e",
+      "id": "e444d50f7f96f23bae95",
       "path": "backend/src/growth/growthService.ts",
       "line": 47,
       "enclosing": "overview",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_attribution_touches",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "7f0fbeb35a25480909b6",
+      "id": "e481bb97ad525424efad",
       "path": "backend/src/growth/growthService.ts",
       "line": 48,
       "enclosing": "overview",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "analytics_events",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "1d1e9f9b787137ec3893",
+      "id": "d1db9456f44fcf37cc83",
       "path": "backend/src/growth/growthService.ts",
       "line": 56,
       "enclosing": "recordEvent",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "analytics_events",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "10fe10c1e4f3041a07a0",
+      "id": "82bf90ef0214bc149b2c",
       "path": "backend/src/growth/growthService.ts",
-      "line": 59,
+      "line": 62,
       "enclosing": "recordEvent",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "analytics_events",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "6b4a7706ef24320974d3",
+      "id": "2f9667800ce49593f7c8",
       "path": "backend/src/growth/growthService.ts",
-      "line": 65,
+      "line": 68,
       "enclosing": "linkIdentity",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_identity_links",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "a3401b51d11b868fe94b",
+      "id": "893a36aad028d867a565",
       "path": "backend/src/growth/growthService.ts",
-      "line": 72,
+      "line": 75,
       "enclosing": "defineActivation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_activation_definitions",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "ffa61438dc04a7630014",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 78,
-      "enclosing": "evaluateActivation",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_activation_definitions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
-    },
-    {
-      "id": "09f6b8a325a426074c9b",
+      "id": "2d91b4a2ba551ab03635",
       "path": "backend/src/growth/growthService.ts",
       "line": 81,
       "enclosing": "evaluateActivation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_activation_definitions",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "68931cd3d8d9098ba238",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 84,
+      "enclosing": "evaluateActivation",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "analytics_events",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "b5a6d4a34389130ea1c5",
+      "id": "93a3341e6bf10e0eeebb",
       "path": "backend/src/growth/growthService.ts",
-      "line": 82,
+      "line": 85,
       "enclosing": "evaluateActivation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "deployment_status",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "4aff44924df5febe4fee",
+      "id": "1108fa71abf5deaf031d",
       "path": "backend/src/growth/growthService.ts",
-      "line": 88,
+      "line": 91,
       "enclosing": "evaluateActivation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "d8b585a420582380de4b",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 95,
-      "enclosing": "recommend",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "production_incidents",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
-    },
-    {
-      "id": "11cb1abea5f4329fcfea",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 96,
-      "enclosing": "recommend",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "deployment_status",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
-    },
-    {
-      "id": "a0d9bdca3c2e20cdd63d",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 97,
-      "enclosing": "recommend",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_lifecycle_state",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
-    },
-    {
-      "id": "1da0d99fb8d6c2ee6c8f",
+      "id": "d76a2060b61b37513127",
       "path": "backend/src/growth/growthService.ts",
       "line": 98,
       "enclosing": "recommend",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_suppressions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "target": "production_incidents",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "55240a88673b7ce91878",
+      "id": "9cf74f9963234e09bf78",
       "path": "backend/src/growth/growthService.ts",
-      "line": 104,
+      "line": 99,
+      "enclosing": "recommend",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "deployment_status",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "7a82ff0953f829795a7e",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 100,
+      "enclosing": "recommend",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_lifecycle_state",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "baab4f4b6be6ad099873",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 101,
+      "enclosing": "recommend",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_suppressions",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "a08f759902e6d2af3592",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 107,
       "enclosing": "recommend",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_recommendations",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "8badc84b8b4494f75a8c",
+      "id": "1fed30800aba3cd77fe3",
       "path": "backend/src/growth/growthService.ts",
-      "line": 110,
+      "line": 113,
       "enclosing": "transitionLifecycle",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "a4668901df0b4eb941fb",
+      "id": "2c35f40b1fee66edc24e",
       "path": "backend/src/growth/growthService.ts",
-      "line": 111,
+      "line": 114,
       "enclosing": "transitionLifecycle",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "36af7f5da3eca0e521e7",
+      "id": "2a88fd3d9c767670265f",
       "path": "backend/src/growth/growthService.ts",
-      "line": 117,
+      "line": 120,
       "enclosing": "suppress",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_suppressions",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "4d45014803b1c72a3e34",
+      "id": "99d418832e7097a15764",
       "path": "backend/src/growth/growthService.ts",
-      "line": 123,
+      "line": 126,
       "enclosing": "recordAttribution",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_attribution_touches",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "8122b854070f7b6a6857",
+      "id": "c82a0da7365c4207a16b",
       "path": "backend/src/growth/growthService.ts",
-      "line": 130,
+      "line": 133,
       "enclosing": "createSegment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_segments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "584fb82701fbcc6b5f20",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 137,
-      "enclosing": "createCampaign",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_campaigns",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
-    },
-    {
-      "id": "f9754aa877e771b985fc",
+      "id": "39083d3f5144b2d89263",
       "path": "backend/src/growth/growthService.ts",
       "line": 140,
       "enclosing": "createCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "407d2ffd1eba2c3e3ad8",
+      "id": "3d3307bbcb595379a51f",
       "path": "backend/src/growth/growthService.ts",
-      "line": 145,
+      "line": 143,
+      "enclosing": "createCampaign",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_campaigns",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "60edaf13880c89ff36ae",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 148,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "25f4dcced39b6b406970",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 151,
-      "enclosing": "processCampaign",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_lifecycle_state",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
-    },
-    {
-      "id": "632c752f12e4546bbd50",
+      "id": "731f29fca4fb5be82d1d",
       "path": "backend/src/growth/growthService.ts",
       "line": 154,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_messages",
+      "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "a899e1195f210f37084c",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 156,
-      "enclosing": "processCampaign",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "analytics_events",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
-    },
-    {
-      "id": "3eb001da87aa7bf2ea97",
+      "id": "ac62b63b58d2a4e7776f",
       "path": "backend/src/growth/growthService.ts",
       "line": 157,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_suppressions",
+      "target": "growth_messages",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "0747facd907b98523ab9",
+      "id": "8e21c297024e0e9a12ec",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 159,
+      "enclosing": "processCampaign",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "analytics_events",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ab70121f0b866fabd8e7",
       "path": "backend/src/growth/growthService.ts",
       "line": 160,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_messages",
+      "target": "growth_suppressions",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "f3b86824ec167a7a9b7a",
+      "id": "83399bb44734e27ddb69",
       "path": "backend/src/growth/growthService.ts",
-      "line": 161,
+      "line": 163,
+      "enclosing": "processCampaign",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_messages",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "be2c47ce047d32ee4b80",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 164,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "3cb7e090d4f051f374f3",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 162,
-      "enclosing": "processCampaign",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_messages",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
-    },
-    {
-      "id": "4f558e89a9b09d5aaec2",
+      "id": "fdc5c112ff8f5a7e5048",
       "path": "backend/src/growth/growthService.ts",
       "line": 165,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_campaigns",
+      "target": "growth_messages",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "0ca67638a0c124d1f31d",
+      "id": "a20acddb1ff22c4c759f",
       "path": "backend/src/growth/growthService.ts",
-      "line": 172,
+      "line": 168,
+      "enclosing": "processCampaign",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_campaigns",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8141fe01c9ce3d434dea",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 175,
       "enclosing": "createExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "0a32cc18fadc47f7b689",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 177,
-      "enclosing": "assignExperiment",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_experiments",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
-    },
-    {
-      "id": "049df645ffbe5445ceb2",
+      "id": "c1012ab4d541c2b03896",
       "path": "backend/src/growth/growthService.ts",
       "line": 180,
       "enclosing": "assignExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_experiment_assignments",
+      "target": "growth_experiments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "5d4dc57513d40f8f99c9",
+      "id": "7646a6c43a5a71d69e43",
       "path": "backend/src/growth/growthService.ts",
       "line": 183,
       "enclosing": "assignExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_assignments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "417933e6efe4a33c559d",
+      "id": "816dd5eedb6d042b46a7",
       "path": "backend/src/growth/growthService.ts",
-      "line": 188,
-      "enclosing": "exposeExperiment",
+      "line": 186,
+      "enclosing": "assignExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_assignments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "45e6d68c3fc7c0055ea3",
+      "id": "61c82eba3b4851d1cf61",
       "path": "backend/src/growth/growthService.ts",
       "line": 191,
       "enclosing": "exposeExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_assignments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "12ad2a6839b4953cc792",
+      "id": "1ada7e531470770eda1d",
       "path": "backend/src/growth/growthService.ts",
-      "line": 197,
-      "enclosing": "recordExperimentOutcome",
+      "line": 194,
+      "enclosing": "exposeExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_experiments",
+      "target": "growth_experiment_assignments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "bc8d4a1306b84752bbe9",
+      "id": "e1522d052aadf33048df",
       "path": "backend/src/growth/growthService.ts",
       "line": 200,
       "enclosing": "recordExperimentOutcome",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_experiment_assignments",
+      "target": "growth_experiments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "6292a163d2d9f04095d2",
+      "id": "fe3725158445c26bfa32",
       "path": "backend/src/growth/growthService.ts",
-      "line": 202,
+      "line": 203,
+      "enclosing": "recordExperimentOutcome",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_experiment_assignments",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "818dbe6b5a1f383a81fe",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 205,
       "enclosing": "recordExperimentOutcome",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_outcomes",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "10e1ba16ee51e1520e5f",
+      "id": "ebb2b990e28650df73b0",
       "path": "backend/src/growth/growthService.ts",
-      "line": 207,
+      "line": 210,
       "enclosing": "experimentResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "d17228b539b7066010a7",
+      "id": "56124819a56b82bd877c",
       "path": "backend/src/growth/growthService.ts",
-      "line": 211,
+      "line": 214,
       "enclosing": "experimentResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_assignments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
-      "id": "fb99d22149134eeb4246",
+      "id": "5889ed83c7f0a84c2d4c",
       "path": "backend/src/growth/growthService.ts",
-      "line": 212,
+      "line": 215,
       "enclosing": "experimentResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_outcomes",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2b646684c089df527686491854b1cf3eff90c916ca0a13d24028bc08c2df215c"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8edd2b067fcfddc31ebb0a720ead37d272641be8f75095fecbfc2d2b21384a5c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "All singleton query sites now preserve null rather than a truthy empty array. Event replay rejects a different project before returning its row. Focused missing-resource and replay tests pass; real replay proof added but pending. Remaining gaps: TOCTOU between permissions and project re-read, member mutation permissions, arbitrary event/subject parent relationships, segment-to-campaign ownership, experiment/assignment/event tenant consistency, cross-project suppression conflict key, same-key changed-intent handling, notification recipient eligibility, durable campaign approval/lease/idempotency and partial delivery recovery. All51 candidates remain gaps, not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
     },
     {
       "id": "00ba921c100e822d0045",
@@ -3445,8 +4319,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "ftyp",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c9f93d413f86935e669ab5934337e708af8d10a08c52eb7606ddebf901b3d391"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "c9f93d413f86935e669ab5934337e708af8d10a08c52eb7606ddebf901b3d391",
+      "semanticReview": {
+        "authority": "The only candidate is Buffer.from('ftyp') used for an in-memory byte search in isValidMp4Buffer. It does not access a database or provider.",
+        "reason": "Close this scanner false positive only. MP4 structural validation, input size and external URL safety are separate concerns, not certified by this disposition.",
+        "evidence": [
+          {
+            "path": "backend/src/lib/mediaValidation.ts",
+            "marker": "buffer.includes(Buffer.from('ftyp'))"
+          }
+        ]
+      }
     },
     {
       "id": "e30cf157b28358ab0753",
@@ -3582,8 +4466,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ead49170241f447e25c5a38334e35791dc6d435d487a275d7032f19921112b00"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "ead49170241f447e25c5a38334e35791dc6d435d487a275d7032f19921112b00",
+      "semanticReview": {
+        "authority": "Issued tenantContext supplies the profile ID. The middleware reads only that ID's role and permits exact admin or owner values. Request body and auth metadata cannot select the role.",
+        "reason": "This scoped role-read boundary fails closed for absent context/profile/database failure. Mount and real member-denial tests exist. It preserves admin/owner access, not founder exclusivity, and does not certify downstream global payload redaction.",
+        "evidence": [
+          {
+            "path": "backend/src/middleware/admin.ts",
+            "marker": "requireTenantContext(req.tenantContext)"
+          }
+        ]
+      }
     },
     {
       "id": "cb83a545beae49fe93a5",
@@ -3593,8 +4487,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ead49170241f447e25c5a38334e35791dc6d435d487a275d7032f19921112b00"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "ead49170241f447e25c5a38334e35791dc6d435d487a275d7032f19921112b00",
+      "semanticReview": {
+        "authority": "Issued tenantContext supplies the profile ID. The middleware reads only that ID's role and permits exact admin or owner values. Request body and auth metadata cannot select the role.",
+        "reason": "This scoped role-read boundary fails closed for absent context/profile/database failure. Mount and real member-denial tests exist. It preserves admin/owner access, not founder exclusivity, and does not certify downstream global payload redaction.",
+        "evidence": [
+          {
+            "path": "backend/src/middleware/admin.ts",
+            "marker": "requireTenantContext(req.tenantContext)"
+          }
+        ]
+      }
     },
     {
       "id": "37aeba5e7ba598d930da",
@@ -5525,8 +6429,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba",
+      "semanticReview": {
+        "authority": "Index mounts this router behind authMiddleware and adminMiddleware. Fixed named global exceptions read system_errors and deployment_status, with no writes or client-selected table.",
+        "reason": "The read authorization is explicit, but unrestricted diagnostic/metadata columns, deployment secret redaction, malformed negative limits and false-empty success on database outage remain unresolved. Named exceptions do not resolve these gaps.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/admin.ts",
+            "marker": "authorized_platform_errors"
+          }
+        ]
+      }
     },
     {
       "id": "8cd3a36193db061cb7b3",
@@ -5536,8 +6450,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "system_errors",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba",
+      "semanticReview": {
+        "authority": "Index mounts this router behind authMiddleware and adminMiddleware. Fixed named global exceptions read system_errors and deployment_status, with no writes or client-selected table.",
+        "reason": "The read authorization is explicit, but unrestricted diagnostic/metadata columns, deployment secret redaction, malformed negative limits and false-empty success on database outage remain unresolved. Named exceptions do not resolve these gaps.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/admin.ts",
+            "marker": "authorized_platform_errors"
+          }
+        ]
+      }
     },
     {
       "id": "b798bb7e364d9e00d7b9",
@@ -5547,8 +6471,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba",
+      "semanticReview": {
+        "authority": "Index mounts this router behind authMiddleware and adminMiddleware. Fixed named global exceptions read system_errors and deployment_status, with no writes or client-selected table.",
+        "reason": "The read authorization is explicit, but unrestricted diagnostic/metadata columns, deployment secret redaction, malformed negative limits and false-empty success on database outage remain unresolved. Named exceptions do not resolve these gaps.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/admin.ts",
+            "marker": "authorized_platform_errors"
+          }
+        ]
+      }
     },
     {
       "id": "dd8d90c71a09075b1f17",
@@ -5558,8 +6492,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "deployment_status",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ecb3c1894f389fd9ee8ee93502fa6c3a507ce5d091ca478d2bb35676e1b292ba",
+      "semanticReview": {
+        "authority": "Index mounts this router behind authMiddleware and adminMiddleware. Fixed named global exceptions read system_errors and deployment_status, with no writes or client-selected table.",
+        "reason": "The read authorization is explicit, but unrestricted diagnostic/metadata columns, deployment secret redaction, malformed negative limits and false-empty success on database outage remain unresolved. Named exceptions do not resolve these gaps.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/admin.ts",
+            "marker": "authorized_platform_errors"
+          }
+        ]
+      }
     },
     {
       "id": "d56574a3766af9147051",
@@ -5712,26 +6656,46 @@
       }
     },
     {
-      "id": "719380c94968b0bd95bb",
+      "id": "2a2b04bfcdf9721a6f51",
       "path": "backend/src/routes/dashboard.ts",
-      "line": 227,
+      "line": 233,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "28e91797c6113878a3800217d201eca7df11562a43fed82dcb445e26da862420"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7950a1c0c04fcb2d97104151c1c07a8a59655473fdfeefcd004722020b888360",
+      "semanticReview": {
+        "authority": "Index mounts dashboard behind authMiddleware; overview queries activity_logs by req.userId and joins projects(name), returning mapped activity.",
+        "reason": "The corrupt foreign-project label gap is fixed: selected parent user_id must independently equal the server user before its name is returned. Focused projection tests pass and real dashboard corruption coverage is added. Database failures still appear as empty optional activity; complete metadata/redaction and source-identity lifecycle remain gaps.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/dashboard.activity.test.ts",
+            "marker": "dashboard project labels require independently matching parent ownership"
+          }
+        ]
+      }
     },
     {
-      "id": "6efca0f37604edbc7532",
+      "id": "2c2f746e6c99a355ea8c",
       "path": "backend/src/routes/dashboard.ts",
-      "line": 233,
+      "line": 239,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "activity_logs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "28e91797c6113878a3800217d201eca7df11562a43fed82dcb445e26da862420"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7950a1c0c04fcb2d97104151c1c07a8a59655473fdfeefcd004722020b888360",
+      "semanticReview": {
+        "authority": "Index mounts dashboard behind authMiddleware; overview queries activity_logs by req.userId and joins projects(name), returning mapped activity.",
+        "reason": "The corrupt foreign-project label gap is fixed: selected parent user_id must independently equal the server user before its name is returned. Focused projection tests pass and real dashboard corruption coverage is added. Database failures still appear as empty optional activity; complete metadata/redaction and source-identity lifecycle remain gaps.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/dashboard.activity.test.ts",
+            "marker": "dashboard project labels require independently matching parent ownership"
+          }
+        ]
+      }
     },
     {
       "id": "654b1bd6e0834f8bb999",
@@ -5741,8 +6705,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe",
+      "semanticReview": {
+        "authority": "Authenticated status/settings use req.userId for github_integrations and user_integrations. Status resolves the canonical token then legacy metadata. Settings updates only that user's legacy row.",
+        "reason": "Settings can report success for zero rows and expose raw errors; metadata versus reconnect races remain. Full callback, repository target and external write authority are not certified.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/github.ts",
+            "marker": "repo_strategy"
+          }
+        ]
+      }
     },
     {
       "id": "a9d3d7c94936c3a05e05",
@@ -5752,8 +6726,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe",
+      "semanticReview": {
+        "authority": "Authenticated status/settings use req.userId for github_integrations and user_integrations. Status resolves the canonical token then legacy metadata. Settings updates only that user's legacy row.",
+        "reason": "Settings can report success for zero rows and expose raw errors; metadata versus reconnect races remain. Full callback, repository target and external write authority are not certified.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/github.ts",
+            "marker": "repo_strategy"
+          }
+        ]
+      }
     },
     {
       "id": "ad7eef0f4bbb650da361",
@@ -5763,8 +6747,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe",
+      "semanticReview": {
+        "authority": "Authenticated status/settings use req.userId for github_integrations and user_integrations. Status resolves the canonical token then legacy metadata. Settings updates only that user's legacy row.",
+        "reason": "Settings can report success for zero rows and expose raw errors; metadata versus reconnect races remain. Full callback, repository target and external write authority are not certified.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/github.ts",
+            "marker": "repo_strategy"
+          }
+        ]
+      }
     },
     {
       "id": "798016ba0fbae052dcdf",
@@ -5774,8 +6768,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe",
+      "semanticReview": {
+        "authority": "Authenticated status/settings use req.userId for github_integrations and user_integrations. Status resolves the canonical token then legacy metadata. Settings updates only that user's legacy row.",
+        "reason": "Settings can report success for zero rows and expose raw errors; metadata versus reconnect races remain. Full callback, repository target and external write authority are not certified.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/github.ts",
+            "marker": "repo_strategy"
+          }
+        ]
+      }
     },
     {
       "id": "89e14e13b5da53a71045",
@@ -5785,8 +6789,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe",
+      "semanticReview": {
+        "authority": "Authenticated status/settings use req.userId for github_integrations and user_integrations. Status resolves the canonical token then legacy metadata. Settings updates only that user's legacy row.",
+        "reason": "Settings can report success for zero rows and expose raw errors; metadata versus reconnect races remain. Full callback, repository target and external write authority are not certified.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/github.ts",
+            "marker": "repo_strategy"
+          }
+        ]
+      }
     },
     {
       "id": "c56beb0ba7369120a000",
@@ -5796,8 +6810,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0",
+      "semanticReview": {
+        "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "private share token cannot grant another tenant access or revocation authority"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "owner opt-in public share is readable without auth"
+          }
+        ]
+      }
     },
     {
       "id": "e00f5d26505b31d7cc73",
@@ -5807,8 +6835,22 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0",
+      "semanticReview": {
+        "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "private share token cannot grant another tenant access or revocation authority"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "owner opt-in public share is readable without auth"
+          }
+        ]
+      }
     },
     {
       "id": "65916fe5f5497b31f238",
@@ -5818,8 +6860,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0"
+      "review": "NARROW_EXCEPTION",
+      "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0",
+      "semanticReview": {
+        "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "private share token cannot grant another tenant access or revocation authority"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "owner opt-in public share is readable without auth"
+          }
+        ]
+      }
     },
     {
       "id": "840e8369d3a3923597b3",
@@ -5829,8 +6885,22 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0"
+      "review": "NARROW_EXCEPTION",
+      "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0",
+      "semanticReview": {
+        "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "private share token cannot grant another tenant access or revocation authority"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "owner opt-in public share is readable without auth"
+          }
+        ]
+      }
     },
     {
       "id": "3a0472e21aefbd6e9a13",
@@ -5840,8 +6910,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0",
+      "semanticReview": {
+        "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "private share token cannot grant another tenant access or revocation authority"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "owner opt-in public share is readable without auth"
+          }
+        ]
+      }
     },
     {
       "id": "3fabd01b61a497c27e09",
@@ -5851,8 +6935,22 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "04623d7c05116ab74043e8da92ddf451b6e825faad8b00cf2c90f923d357ffe0",
+      "semanticReview": {
+        "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "private share token cannot grant another tenant access or revocation authority"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "owner opt-in public share is readable without auth"
+          }
+        ]
+      }
     },
     {
       "id": "95aca8562235b1b02997",
@@ -6072,8 +7170,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_evidence",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "46ef11fb24c684b47c8a4fca31993b0d8c2f97891ecc76db9d40c5ea5db6ea5e"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "46ef11fb24c684b47c8a4fca31993b0d8c2f97891ecc76db9d40c5ea5db6ea5e",
+      "semanticReview": {
+        "authority": "The two direct persistence candidates are the readiness route, separately guarded by adminMiddleware, using the named authorized_release_readiness global exception and fixed columns/limit50. Index requires auth for the router.",
+        "reason": "Read authorization is deliberate and not tenant-project access. Evidence summary/reference redaction and freshness, role revocation during reads and live readiness semantics remain gaps. Other mutating routes delegate to separately reviewed OperationsService.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/operations.ts",
+            "marker": "authorized_release_readiness"
+          }
+        ]
+      }
     },
     {
       "id": "6ac8a018f3c309f7f133",
@@ -6083,8 +7191,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "46ef11fb24c684b47c8a4fca31993b0d8c2f97891ecc76db9d40c5ea5db6ea5e"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "46ef11fb24c684b47c8a4fca31993b0d8c2f97891ecc76db9d40c5ea5db6ea5e",
+      "semanticReview": {
+        "authority": "The two direct persistence candidates are the readiness route, separately guarded by adminMiddleware, using the named authorized_release_readiness global exception and fixed columns/limit50. Index requires auth for the router.",
+        "reason": "Read authorization is deliberate and not tenant-project access. Evidence summary/reference redaction and freshness, role revocation during reads and live readiness semantics remain gaps. Other mutating routes delegate to separately reviewed OperationsService.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/operations.ts",
+            "marker": "authorized_release_readiness"
+          }
+        ]
+      }
     },
     {
       "id": "74229d60e093f2e44542",
@@ -6115,8 +7233,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1c7b647b97510721b182a2bf054052ae25ffb2d9c8223ac778788bd1dbd4153b"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "1c7b647b97510721b182a2bf054052ae25ffb2d9c8223ac778788bd1dbd4153b",
+      "semanticReview": {
+        "authority": "Mounted after phase1AuthMiddleware. latestPendingConfirmation reads current-user pending metadata and selects an unexpired recent row; execution delegates to the claim service.",
+        "reason": "Latest intent selection instead of a displayed exact ID risks confirming a different action across concurrent conversations. Store errors appear as no pending action. Outcome/account authority remains open.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/phase1BusinessPreflight.ts",
+            "marker": "latestPendingConfirmation"
+          }
+        ]
+      }
     },
     {
       "id": "cce0ff1b94d71f3be8f0",
@@ -6126,8 +7254,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "1c7b647b97510721b182a2bf054052ae25ffb2d9c8223ac778788bd1dbd4153b"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "1c7b647b97510721b182a2bf054052ae25ffb2d9c8223ac778788bd1dbd4153b",
+      "semanticReview": {
+        "authority": "Mounted after phase1AuthMiddleware. latestPendingConfirmation reads current-user pending metadata and selects an unexpired recent row; execution delegates to the claim service.",
+        "reason": "Latest intent selection instead of a displayed exact ID risks confirming a different action across concurrent conversations. Store errors appear as no pending action. Outcome/account authority remains open.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/phase1BusinessPreflight.ts",
+            "marker": "latestPendingConfirmation"
+          }
+        ]
+      }
     },
     {
       "id": "69348e841941208b2323",
@@ -8403,8 +9541,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "semanticReview": {
+        "authority": "getIntegration obtains the canonical user-bound GitHub token, then reads legacy access_token/settings for that user. Repository inspection and deploy helpers consume it.",
+        "reason": "The second legacy token can override the canonical token and race reconnect/revocation. Actor/target provenance, metadata authority, errors and external publishing remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubDeploy.ts",
+            "marker": "async function getIntegration"
+          }
+        ]
+      }
     },
     {
       "id": "954d2cb129f5b902c895",
@@ -8414,8 +9562,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ef70bda979303b18fc4cad52971f0cfaf692e35aadbd9318ab80ee98044fc59f",
+      "semanticReview": {
+        "authority": "getIntegration obtains the canonical user-bound GitHub token, then reads legacy access_token/settings for that user. Repository inspection and deploy helpers consume it.",
+        "reason": "The second legacy token can override the canonical token and race reconnect/revocation. Actor/target provenance, metadata authority, errors and external publishing remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubDeploy.ts",
+            "marker": "async function getIntegration"
+          }
+        ]
+      }
     },
     {
       "id": "408b490907b38a2277f0",
@@ -10399,8 +11557,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "141dc91fa4cf33fd8cb2ce36a72bb184d34b44d1d5412b49a196c7aa46759fb8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "141dc91fa4cf33fd8cb2ce36a72bb184d34b44d1d5412b49a196c7aa46759fb8",
+      "semanticReview": {
+        "authority": "getPreviousBuilds reads prompt/output only from supplied userId's completed swarm_runs and produces a bounded history summary. No active production importer was found in the inspected source search.",
+        "reason": "Query owner filtering is present. Exported identity provenance, output/prompt redaction, project-level context and claims that returned memory implies durable file persistence require separate proof.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildMemory.ts",
+            "marker": "export async function getPreviousBuilds"
+          }
+        ]
+      }
     },
     {
       "id": "76af868afcec7d3a5059",
@@ -10410,8 +11578,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "141dc91fa4cf33fd8cb2ce36a72bb184d34b44d1d5412b49a196c7aa46759fb8"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "141dc91fa4cf33fd8cb2ce36a72bb184d34b44d1d5412b49a196c7aa46759fb8",
+      "semanticReview": {
+        "authority": "getPreviousBuilds reads prompt/output only from supplied userId's completed swarm_runs and produces a bounded history summary. No active production importer was found in the inspected source search.",
+        "reason": "Query owner filtering is present. Exported identity provenance, output/prompt redaction, project-level context and claims that returned memory implies durable file persistence require separate proof.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildMemory.ts",
+            "marker": "export async function getPreviousBuilds"
+          }
+        ]
+      }
     },
     {
       "id": "4fd6df1420b596f63cae",
@@ -10421,8 +11599,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4a1e79b7861d6bcbba48176e4fc0d00922a3a67a6d2064782a8927e803e114b2"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "4a1e79b7861d6bcbba48176e4fc0d00922a3a67a6d2064782a8927e803e114b2",
+      "semanticReview": {
+        "authority": "persistBuildRun inserts a generated or supplied run ID with supplied userId/projectId. Insert-only identity cannot overwrite a collision. Source search found no active importer in current production code.",
+        "reason": "Parent project ownership and exported actor provenance are unchecked. Failed writes still return the chosen run ID and raw diagnostics are logged. No durable-save or authorization certification.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildPersistence.ts",
+            "marker": "export async function persistBuildRun"
+          }
+        ]
+      }
     },
     {
       "id": "13083e0ecb46eb0d8700",
@@ -10432,8 +11620,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4a1e79b7861d6bcbba48176e4fc0d00922a3a67a6d2064782a8927e803e114b2"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "4a1e79b7861d6bcbba48176e4fc0d00922a3a67a6d2064782a8927e803e114b2",
+      "semanticReview": {
+        "authority": "persistBuildRun inserts a generated or supplied run ID with supplied userId/projectId. Insert-only identity cannot overwrite a collision. Source search found no active importer in current production code.",
+        "reason": "Parent project ownership and exported actor provenance are unchecked. Failed writes still return the chosen run ID and raw diagnostics are logged. No durable-save or authorization certification.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildPersistence.ts",
+            "marker": "export async function persistBuildRun"
+          }
+        ]
+      }
     },
     {
       "id": "d0f7e4c9e9f483e973f0",
@@ -11052,8 +12250,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b333804ab4e08635a8ecc1183a4774b9d01e96fe4946cee30cac40c9c1bacdca"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b333804ab4e08635a8ecc1183a4774b9d01e96fe4946cee30cac40c9c1bacdca",
+      "semanticReview": {
+        "authority": "Both cache operations require issued context and derive the key from server userId plus normalized prompt. The database is keyed by that digest; an omitted or forged context fails before query.",
+        "reason": "Real disposable identical-prompt cross-tenant tests prove distinct user keys. Remaining project/context variation, unverified cache payload type, write acknowledgement and lifecycle/deletion semantics prevent full cache certification.",
+        "evidence": [
+          {
+            "path": "backend/src/services/responseCache.ts",
+            "marker": "tenantResponseCacheKey"
+          }
+        ]
+      }
     },
     {
       "id": "9bf475bebd6a5eb2cb5e",
@@ -11063,8 +12271,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "response_cache",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b333804ab4e08635a8ecc1183a4774b9d01e96fe4946cee30cac40c9c1bacdca"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b333804ab4e08635a8ecc1183a4774b9d01e96fe4946cee30cac40c9c1bacdca",
+      "semanticReview": {
+        "authority": "Both cache operations require issued context and derive the key from server userId plus normalized prompt. The database is keyed by that digest; an omitted or forged context fails before query.",
+        "reason": "Real disposable identical-prompt cross-tenant tests prove distinct user keys. Remaining project/context variation, unverified cache payload type, write acknowledgement and lifecycle/deletion semantics prevent full cache certification.",
+        "evidence": [
+          {
+            "path": "backend/src/services/responseCache.ts",
+            "marker": "tenantResponseCacheKey"
+          }
+        ]
+      }
     },
     {
       "id": "e8f4d68d2e00c2e072ff",
@@ -11074,8 +12292,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b333804ab4e08635a8ecc1183a4774b9d01e96fe4946cee30cac40c9c1bacdca"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b333804ab4e08635a8ecc1183a4774b9d01e96fe4946cee30cac40c9c1bacdca",
+      "semanticReview": {
+        "authority": "Both cache operations require issued context and derive the key from server userId plus normalized prompt. The database is keyed by that digest; an omitted or forged context fails before query.",
+        "reason": "Real disposable identical-prompt cross-tenant tests prove distinct user keys. Remaining project/context variation, unverified cache payload type, write acknowledgement and lifecycle/deletion semantics prevent full cache certification.",
+        "evidence": [
+          {
+            "path": "backend/src/services/responseCache.ts",
+            "marker": "tenantResponseCacheKey"
+          }
+        ]
+      }
     },
     {
       "id": "49d16a15661312988489",
@@ -11085,8 +12313,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "response_cache",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b333804ab4e08635a8ecc1183a4774b9d01e96fe4946cee30cac40c9c1bacdca"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b333804ab4e08635a8ecc1183a4774b9d01e96fe4946cee30cac40c9c1bacdca",
+      "semanticReview": {
+        "authority": "Both cache operations require issued context and derive the key from server userId plus normalized prompt. The database is keyed by that digest; an omitted or forged context fails before query.",
+        "reason": "Real disposable identical-prompt cross-tenant tests prove distinct user keys. Remaining project/context variation, unverified cache payload type, write acknowledgement and lifecycle/deletion semantics prevent full cache certification.",
+        "evidence": [
+          {
+            "path": "backend/src/services/responseCache.ts",
+            "marker": "tenantResponseCacheKey"
+          }
+        ]
+      }
     },
     {
       "id": "09fd7c8816ae6e3ba4dd",
@@ -11477,8 +12715,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "70d44ea9a22d7b857577f608c94ced0fcc3ee67c818b26018a8838acdf78a93d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "70d44ea9a22d7b857577f608c94ced0fcc3ee67c818b26018a8838acdf78a93d",
+      "semanticReview": {
+        "authority": "Audio provider and fallback transport callers supply diagnostics and optional user/session/run attribution. Logger writes global system_errors with the service role and never rethrows.",
+        "reason": "No raw diagnostic or metadata redaction before console/database persistence, unchecked attributed resource ownership and unregistered global logger scope remain gaps. Non-fatal logging is not evidence of durable or safe audit storage.",
+        "evidence": [
+          {
+            "path": "backend/src/services/systemErrorLog.ts",
+            "marker": "export async function logSystemError"
+          }
+        ]
+      }
     },
     {
       "id": "be601fe5c3220a2b1659",
@@ -11488,8 +12736,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "system_errors",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "70d44ea9a22d7b857577f608c94ced0fcc3ee67c818b26018a8838acdf78a93d"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "70d44ea9a22d7b857577f608c94ced0fcc3ee67c818b26018a8838acdf78a93d",
+      "semanticReview": {
+        "authority": "Audio provider and fallback transport callers supply diagnostics and optional user/session/run attribution. Logger writes global system_errors with the service role and never rethrows.",
+        "reason": "No raw diagnostic or metadata redaction before console/database persistence, unchecked attributed resource ownership and unregistered global logger scope remain gaps. Non-fatal logging is not evidence of durable or safe audit storage.",
+        "evidence": [
+          {
+            "path": "backend/src/services/systemErrorLog.ts",
+            "marker": "export async function logSystemError"
+          }
+        ]
+      }
     },
     {
       "id": "371f13126c4ab7aab2dc",
@@ -11499,8 +12757,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_events",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+      "semanticReview": {
+        "authority": "loadProjectDelivery supplies user/project to the runtime revision loader and loadEvidence; evidence selects owner/project and four publication/deployment types.",
+        "reason": "Payloads are interpreted as ready/failed without provider proof. Actor provenance, parent consistency across reads, payload URL/reason validation and publish/deploy authority remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
+            "marker": "async function loadEvidence"
+          }
+        ]
+      }
     },
     {
       "id": "74cc6545383bea8e320f",
@@ -11510,8 +12778,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+      "semanticReview": {
+        "authority": "loadProjectDelivery supplies user/project to the runtime revision loader and loadEvidence; evidence selects owner/project and four publication/deployment types.",
+        "reason": "Payloads are interpreted as ready/failed without provider proof. Actor provenance, parent consistency across reads, payload URL/reason validation and publish/deploy authority remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
+            "marker": "async function loadEvidence"
+          }
+        ]
+      }
     },
     {
       "id": "cfa02537722c186eaf48",
@@ -12498,8 +13776,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
+      "semanticReview": {
+        "authority": "tryUniversalBuild constructs the existing SupabaseUniversalStore with issued persisted-owner context from input.userId and passes owner/run to executeUniversalRun.",
+        "reason": "Construction scope does not prove input project/run ownership. Route-to-pipeline provenance, parent-resource admission, supplied custom stores and action/egress coverage remain open.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/universalEntrypoint.ts",
+            "marker": "createTenantContext({userId:input.userId"
+          }
+        ]
+      }
     },
     {
       "id": "64f407d366e10a9dfcd1",
@@ -12509,8 +13797,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_specs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "semanticReview": {
+        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
+        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
+            "marker": "mutation history binds the requested project"
+          }
+        ]
+      }
     },
     {
       "id": "021a1053edfc28b60144",
@@ -12520,8 +13818,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_specs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "semanticReview": {
+        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
+        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
+            "marker": "mutation history binds the requested project"
+          }
+        ]
+      }
     },
     {
       "id": "0a7888531f20b1d27904",
@@ -12531,8 +13839,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "architecture_plans",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "semanticReview": {
+        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
+        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
+            "marker": "mutation history binds the requested project"
+          }
+        ]
+      }
     },
     {
       "id": "2fafb3e98670128c999c",
@@ -12542,52 +13860,102 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "plan_mutations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "semanticReview": {
+        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
+        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
+            "marker": "mutation history binds the requested project"
+          }
+        ]
+      }
     },
     {
-      "id": "da9b5a35fab66a773cb7",
+      "id": "899e38d98973b3b770f7",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 345,
+      "line": 346,
       "enclosing": "load",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "repository_indexes",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "semanticReview": {
+        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
+        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
+            "marker": "mutation history binds the requested project"
+          }
+        ]
+      }
     },
     {
-      "id": "b9ef42116c82b1a60f6b",
+      "id": "b3288611c48e89eab675",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 353,
+      "line": 354,
       "enclosing": "load",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "repository_index_files",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "semanticReview": {
+        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
+        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
+            "marker": "mutation history binds the requested project"
+          }
+        ]
+      }
     },
     {
-      "id": "d065fb722ad8135f2d05",
+      "id": "0a1a64d6016eda7d606f",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 398,
+      "line": 399,
       "enclosing": "save",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "repository_index_files",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "semanticReview": {
+        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
+        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
+            "marker": "mutation history binds the requested project"
+          }
+        ]
+      }
     },
     {
-      "id": "60b01e8c8bac6f5ea91c",
+      "id": "5da4a577b9058f65744d",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 404,
+      "line": 405,
       "enclosing": "delete",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "repository_indexes",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "semanticReview": {
+        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
+        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
+            "marker": "mutation history binds the requested project"
+          }
+        ]
+      }
     },
     {
       "id": "b605ee8256acf51c3655",
