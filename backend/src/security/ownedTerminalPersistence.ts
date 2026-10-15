@@ -6,6 +6,8 @@ const allowedMetadata=new Set(['id','github_repo_name','github_branch','terminal
 /** Existing terminal autosave with collision-safe, owner-bound writes and metadata-only return. */
 export async function persistOwnedTerminal(db: SupabaseClient, context: TenantContext, row: {id:string;user_id:string;[key:string]:unknown}, columns: string): Promise<{data:Record<string,unknown>|null;error:PostgrestError|null}> {
   const scope=requireTenantContext(context);
+  // Caller mutations while insertion awaits must not alter the validated write.
+  row=structuredClone(row);
   if(!columns.trim()||columns.split(',').some(column=>!allowedMetadata.has(column.trim())))throw new TenantAccessError(503,'RESOURCE_ACCESS_UNAVAILABLE');
   if(row.user_id!==scope.userId)throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
   const insertion=await db.from('terminal_sessions').upsert(row,{onConflict:'id',ignoreDuplicates:true});

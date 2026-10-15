@@ -1,11 +1,42 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createClient } from '@supabase/supabase-js';
-import { persistOwnedRun, persistOwnedRuntimeSession, persistOwnedRunTrace } from './ownedRunPersistence.js';
+import { persistOwnedRun, persistOwnedRuntimeSession, persistOwnedRunTrace, persistOwnedUniversalRecord } from './ownedRunPersistence.js';
 import { createTenantContext } from './tenantContext.js';
 import { TenantAccessError } from './tenantErrors.js';
 const owner='11111111-1111-4111-8111-111111111111';
 const context=createTenantContext({userId:owner,via:'persisted_owner'});
+test('owner-bound writer snapshots identity and nested data across the insertion await',async()=>{
+  const row={id:'original',user_id:owner,output:{text:'original'}};
+  const requests:{url:URL;body:unknown}[]=[];
+  const db=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(input,init)=>{
+    requests.push({url:new URL(String(input)),body:JSON.parse(String(init?.body))});
+    if(init?.method==='POST'){
+      row.id='changed';row.user_id='22222222-2222-4222-8222-222222222222';row.output.text='changed';
+    }
+    return new Response(JSON.stringify(init?.method==='PATCH'?[{id:'original'}]:[]),{headers:{'Content-Type':'application/json'}});
+  }}});
+  await persistOwnedRun(db,context,row);
+  assert.deepEqual(requests[0].body,{id:'original',user_id:owner,output:{text:'original'}});
+  assert.deepEqual(requests[1].body,requests[0].body);
+  assert.equal(requests[1].url.searchParams.get('id'),'eq.original');
+  assert.equal(requests[1].url.searchParams.get('user_id'),`eq.${owner}`);
+});
+
+test('append-only verification uses the inserted snapshot after caller mutation',async()=>{
+  const row={mutation_key:'original',user_id:owner,run_id:'original-run',project_id:'original-project'};
+  const requests:URL[]=[];
+  const db=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(input,init)=>{
+    requests.push(new URL(String(input)));
+    if(init?.method==='POST')Object.assign(row,{mutation_key:'changed',user_id:'other',run_id:'changed-run',project_id:'changed-project'});
+    return new Response(JSON.stringify(init?.method==='POST'?[]:[{mutation_key:'original'}]),{headers:{'Content-Type':'application/json'}});
+  }}});
+  await persistOwnedUniversalRecord(db,context,'mutation',row);
+  assert.equal(requests[1].searchParams.get('mutation_key'),'eq.original');
+  assert.equal(requests[1].searchParams.get('user_id'),`eq.${owner}`);
+  assert.equal(requests[1].searchParams.get('run_id'),'eq.original-run');
+  assert.equal(requests[1].searchParams.get('project_id'),'eq.original-project');
+});
 test('durable writer never merges on conflict; mutation predicates include persisted owner',async()=>{
   let foreign=false;const requests:{method:string;url:URL;headers:Headers}[]=[];
   const db=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(input,init)=>{

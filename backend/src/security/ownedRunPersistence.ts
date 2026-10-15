@@ -54,6 +54,8 @@ export async function persistOwnedUniversalRecord(client: SupabaseClient, contex
 
 async function persistOwnerBoundRecord(client: SupabaseClient, context: TenantContext, table:'swarm_runs'|'project_runtime_sessions'|'swarm_run_traces'|'execution_runs'|typeof universalRecords[OwnedUniversalRecordKind]['table'], key:'id'|'session_id'|'run_id'|typeof universalRecords[OwnedUniversalRecordKind]['key'], row:{user_id:string;[column:string]:unknown},appendOnly=false): Promise<void> {
   const scope = requireTenantContext(context);
+  // Bind both writes and their predicates to the same caller-independent snapshot.
+  row = structuredClone(row);
   if (row.user_id !== scope.userId) throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
   if(typeof row[key]!=='string'||!row[key]||String(row[key]).length>2000)throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
   const inserted = await client.from(table).upsert(row,{onConflict:key,ignoreDuplicates:true});

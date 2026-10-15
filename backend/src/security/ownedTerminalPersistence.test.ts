@@ -5,6 +5,23 @@ import { createTenantContext } from './tenantContext.js';
 import { persistOwnedTerminal } from './ownedTerminalPersistence.js';
 import { TenantAccessError } from './tenantErrors.js';
 const owner='11111111-1111-4111-8111-111111111111';
+test('terminal autosave snapshots owner, key and transcript before insertion awaits',async()=>{
+  const row={id:'original',user_id:owner,messages:[{content:'original'}]};
+  const requests:{url:URL;body:unknown}[]=[];
+  const db=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(input,init)=>{
+    requests.push({url:new URL(String(input)),body:JSON.parse(String(init?.body))});
+    if(init?.method==='POST'){
+      row.id='changed';row.user_id='22222222-2222-4222-8222-222222222222';row.messages[0].content='changed';
+    }
+    return new Response(JSON.stringify(init?.method==='PATCH'?{id:'original'}:[]),{headers:{'Content-Type':'application/json'}});
+  }}});
+  const result=await persistOwnedTerminal(db,createTenantContext({userId:owner,via:'local_jwt'}),row,'id');
+  assert.deepEqual(result.data,{id:'original'});
+  assert.deepEqual(requests[0].body,{id:'original',user_id:owner,messages:[{content:'original'}]});
+  assert.deepEqual(requests[1].body,requests[0].body);
+  assert.equal(requests[1].url.searchParams.get('id'),'eq.original');
+  assert.equal(requests[1].url.searchParams.get('user_id'),`eq.${owner}`);
+});
 test('terminal autosave ignores collisions, scopes updates and returns only requested metadata',async()=>{
   let foreign=false;const requests:{url:URL;method:string;headers:Headers}[]=[];
   const db=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(input,init)=>{
