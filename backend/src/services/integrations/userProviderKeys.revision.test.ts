@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import test from 'node:test';
-import { deleteUserProviderKey, prepareUserProviderKeyWrite, saveUserProviderKey } from './userProviderKeys.js';
+import { deleteUserProviderKey, getUserProviderKey, prepareUserProviderKeyWrite, saveUserProviderKey } from './userProviderKeys.js';
 import { oneClickConnectSupabase } from './supabaseProvision.js';
 import { ensureExpoProjectLinked } from '../publish/easPublish.js';
 
@@ -67,6 +67,16 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
     assert.equal(revoked,false);assert.notEqual(revision,freshRevision);
     const latest=calls.filter(call=>call.path.endsWith('/save_provider_key_if_current')).at(-1)!;
     assert.equal(latest.body.p_revision,freshRevision);
+    await deleteUserProviderKey(user,'supabase_service');
+    assert.equal(calls.filter(call=>call.path.endsWith('/revoke_provider_key')).at(-1)?.body.p_provider,'apikey_supabase_service');
+    assert.equal(revoked,true);
+    const aliasCalls=calls.length;
+    await assert.rejects(saveUserProviderKey(user,'supabase_service','SYNTHETIC_UNSUPPORTED_KEY'));
+    await assert.rejects(getUserProviderKey(user,'supabase_service'),{message:'Unsupported credential provider.'});
+    for(const invalid of ['supabase_service_other','../supabase_service','apikey_supabase_service']) {
+      await assert.rejects(deleteUserProviderKey(user,invalid),{message:'Unsupported credential provider.'});
+    }
+    assert.equal(calls.length,aliasCalls,'Delete-only alias must not widen other credential admission');
     const upstreamAdmission=await prepareUserProviderKeyWrite(user,'openai');
     await deleteUserProviderKey(user,'openai');
     const prepareCount=calls.filter(call=>call.path.endsWith('/prepare_provider_key_write')).length;

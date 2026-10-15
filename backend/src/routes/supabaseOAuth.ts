@@ -407,8 +407,8 @@ router.get('/organizations', async (req: AuthRequest, res) => {
 });
 
 router.delete('/disconnect', async (req: AuthRequest, res) => {
-  try {
-    await clearSupabaseOAuth(req.userId!);
+    let failed = false;
+    try { await clearSupabaseOAuth(req.userId!); } catch { failed = true; }
     // Also clear vault Supabase keys so status does not stay "connected" via leftover URL/keys
     const vaultProviders = [
       'supabase_url',
@@ -422,13 +422,16 @@ router.delete('/disconnect', async (req: AuthRequest, res) => {
       try {
         await deleteUserProviderKey(req.userId!, p);
       } catch {
-        /* ignore missing */
+        // Missing keys are handled by the durable tombstone operation. Any
+        // thrown error means revocation or legacy cleanup remains unconfirmed.
+        failed = true;
       }
     }
+    if (failed) {
+      res.status(503).json({ ok: false, error: 'Supabase disconnect is incomplete. Retry shortly.' });
+      return;
+    }
     res.json({ ok: true });
-  } catch (err) {
-    res.status(400).json({ error: (err as Error).message });
-  }
 });
 
 export default router;

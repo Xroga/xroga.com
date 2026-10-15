@@ -242,8 +242,12 @@ export async function isSupabaseOAuthConnected(userId: string): Promise<boolean>
 }
 
 export async function clearSupabaseOAuth(userId: string): Promise<void> {
-  await clearProviderToken(userId, PROVIDER);
-  await clearPkceSession(userId, PKCE_PROVIDER);
+  const results = await Promise.allSettled([
+    clearProviderToken(userId, PROVIDER), clearPkceSession(userId, PKCE_PROVIDER),
+  ]);
+  if (results.some(result => result.status === 'rejected')) {
+    throw new Error('Supabase OAuth disconnect is incomplete. Retry shortly.');
+  }
 }
 
 export function parseOAuthState(state: string): { userId: string } | null {

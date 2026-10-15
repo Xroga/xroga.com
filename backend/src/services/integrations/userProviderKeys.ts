@@ -461,6 +461,11 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
 }
 
 export async function deleteUserProviderKey(userId: string, provider: string): Promise<void> {
+  // Historical disconnect alias is delete-only, never a supported save/read key.
+  if (provider === 'supabase_service') {
+    await revokeProviderRow(userId, 'apikey_supabase_service');
+    return;
+  }
   const p = credentialProviderSelection(provider);
   const supabase = getSupabaseAdmin();
   // Only the legacy category-level request selects all custom keys. A named
@@ -492,7 +497,7 @@ export async function deleteUserProviderKey(userId: string, provider: string): P
  * A missing database cannot safely certify revocation through Storage alone.
  */
 async function revokeProviderRow(userId: string, providerRow: string): Promise<void> {
-  credentialProviderSelection(providerRow);
+  if (providerRow !== 'apikey_supabase_service') credentialProviderSelection(providerRow);
   const supabase = getSupabaseAdmin();
   const { data,error } = await supabase.rpc('revoke_provider_key', {p_owner_id:userId,p_provider:providerRow});
   if (error || data !== true) throw new Error('Credential revocation could not be recorded. Retry shortly.');
