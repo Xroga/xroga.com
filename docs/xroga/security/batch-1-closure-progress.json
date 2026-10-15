@@ -6,13 +6,23 @@
     "status": "IN PROGRESS",
     "lifecycle": "NEGATIVE TEST PASSED",
     "baseline": "b4d1b817027878358a94147c2e2315a87ee6fc9d",
-    "scope": "Supabase and Vercel authorization start through consumed state, conditional callback save and revision-bound refresh",
+    "scope": "Supabase, Vercel, CWS and GitHub authorization start through consumed state and conditional callback save, plus revision-bound Supabase/Vercel refresh",
     "rootCause": "Unconditional callback upsert could resurrect a disconnected credential after provider exchange. Refresh-token equality alone did not distinguish reused provider token values.",
     "fix": "Reuse credential_revision, serialize start/consume/save on the token row, require unexpired consumed receipt for callback saves, rotate revision on disconnect and every successful save. No absent-authority mirror fallback for these providers.",
-    "focusedTests": 14,
-    "localSqlAssertions": 44,
+    "focusedTests": 19,
+    "localSqlAssertions": 89,
     "integration": "PENDING exact-source two-client disposable Supabase",
-    "remaining": "CWS, GitHub, full caller provenance and production credential/KMS acceptance are separate unresolved requirements. No full caller or command certified."
+    "remaining": "Current CWS/GitHub extension requires exact-source disposable and full CI. Complete caller provenance, issued external credentials and production vault/KMS remain open. No full caller or command certified.",
+    "precedingIntegration": {
+      "source": "f33a4e9f9cdbff619c030f1ea514aedf6dfc6b4f",
+      "run": "38802283477",
+      "status": "VERIFIED",
+      "migrations": 75,
+      "securityTests": 64,
+      "failures": 0,
+      "skips": 0,
+      "scope": "Supabase/Vercel epoch, before CWS/GitHub extension"
+    }
   },
   "workQueue": [
     {
@@ -21,11 +31,11 @@
     },
     {
       "item": "CWS epoch and BYOK admission",
-      "status": "READY"
+      "status": "IN PROGRESS"
     },
     {
       "item": "GitHub authorization and connection persistence",
-      "status": "READY"
+      "status": "IN PROGRESS"
     },
     {
       "item": "Remaining caller root-cause groups",
@@ -70,7 +80,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:493 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:492 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -89,23 +99,23 @@
     "result": "PASS twice on both branch and integrated candidate"
   },
   "verifiedBaseline": {
-    "branch": "b4d1b817027878358a94147c2e2315a87ee6fc9d",
-    "integrated": "a1999553629623c1391bb36186f335015e4e52d0",
-    "aggregateCi": "38795480746",
-    "isolatedCi": "38795480831",
+    "branch": "f33a4e9f9cdbff619c030f1ea514aedf6dfc6b4f",
+    "integrated": "8322eb0d5fff8aa562a4244c17c43a3fc7b8a800",
+    "aggregateCi": "38802283726",
+    "isolatedCi": "38802283477",
     "workflows": 11,
-    "securityTests": 63,
+    "securityTests": 64,
     "newSourceCertified": false
   },
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 163,
-    "persistenceCandidates": 680,
+    "persistenceCandidates": 679,
     "ownerPredicateCandidates": 168,
     "reviewRequired": 0,
-    "reviewedCandidates": 680,
-    "unresolvedSafetyCandidates": 493,
+    "reviewedCandidates": 679,
+    "unresolvedSafetyCandidates": 492,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 9
   },
@@ -155,7 +165,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Verify current OAuth epoch source in disposable Supabase and repeated branch/integrated CI. Continue CWS BYOK epoch and GitHub persistence independently, then reconcile only semantically proven caller groups. Strict007 remains mandatory.",
+  "nextTask": "Verify current four-provider OAuth epoch source in disposable Supabase and repeated branch/integrated CI. Continue remaining dependency parser remediation and caller groups independently, then reconcile only semantically proven boundaries. Strict007 remains mandatory.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
@@ -197,24 +207,22 @@
       "existingImplementation": "Existing OAuth, BYOK and credential mirrors",
       "missingBehavior": "Atomic save/revoke ordering, one-use PKCE, encrypted vault migration and KMS boundary",
       "acceptanceTest": "Wrong owner, revocation during read/write, replay, rotation and tampering",
-      "pendingCandidates": 84,
+      "pendingCandidates": 83,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/services/integrations/credentialStorageBucket.ts": [
           "36f74cf393d92fc17a74"
         ],
         "backend/src/services/integrations/githubAuth.ts": [
-          "f8bd72ce7b41e47c780a",
-          "69f92d6c218d524974df",
-          "3458113405e334d0de13",
-          "dc59e6f793b207280b2d",
-          "0406dca0597f3236b3b7",
-          "be3bc6ac9507df178e4a",
-          "a098922758b2b1ee2d43",
-          "9f708d8a33157d711655",
-          "26a5feb362efbd53e788",
-          "c7aaad47a8f8145eddcc",
-          "8a230e1bb6f42f536618"
+          "b70ee379276adab760e6",
+          "9e57c6ce291da4a475fc",
+          "80d4aa9a3397bd3252df",
+          "19f880a066ae90d323b8",
+          "fe9e64d47a236dfa8cc8",
+          "1d4403776376ef52007e",
+          "33102ec273c5d27f3bef",
+          "cbd51a32daf85609f9c2",
+          "6f6e8123506c884fea1b"
         ],
         "backend/src/services/integrations/githubDeploy.ts": [
           "b4b2b91f3280a140691a",
@@ -243,21 +251,21 @@
           "dfd64a81844408cf77d6",
           "6060adfc7cd590c49c87",
           "ecd4ea462063b19cc4f5",
-          "8f6dfcb3562eb2117b07",
-          "8940e38182206b243784",
-          "398508f67454790b76ca",
-          "26e6427ad843f72fc87d",
-          "5d546d2c49ee261103ed",
-          "dee48db1d13599c1a019",
-          "cb4b725c6c351643f585",
-          "e8c58dd78c96f2f72bd3",
-          "78de3fcbb23b31cc3518",
-          "b7611e474793973093da",
-          "e167127409cd8336203d",
-          "8bb35ef910c1ab533293",
-          "d9c244c20fc704201edd",
-          "3d5808c630067950ecef",
-          "f7c26dfb42719301e2c9"
+          "ba72283652f4077aa4d2",
+          "75327d809372f31e622c",
+          "4f7f04b4d883d6083157",
+          "a32e30f80d135c22eda9",
+          "3ede01d27e0db57fc1e6",
+          "cdc78a05e423ae70547d",
+          "d453df81a53ba27aaee5",
+          "5c4f78f47b84a1e200a8",
+          "feb02b4d5c7bd5310aba",
+          "728591045ff9daf9cf18",
+          "ea9742699d6cfaf27e50",
+          "bccd85252548b255e1e1",
+          "7d0a9cd0a802235537b3",
+          "33e895f743064f03550e",
+          "b77e4c3d1679b0357541"
         ],
         "backend/src/services/integrations/userProviderKeys.ts": [
           "1820ca770e3eb79483c2",
@@ -267,21 +275,22 @@
           "e948275ac03420374cc6",
           "67ccfcf6b0247b2d271d",
           "f68c7243e8023c812ac6",
-          "a4f3d85cadbd037c992f",
-          "d01a6c21f19b545cb3c2",
-          "e6d53a18c5ff714d362f",
-          "0309ab57d4a52e50411e",
-          "cc516741e4b6df265af9",
-          "02122e978e9048259ac3",
-          "d8b46cdc480a438d7262",
-          "ef1b02af7bf9bf23df2e",
-          "083027e3b0f54f1be515",
-          "5d0abed488ffb2ba8d31",
-          "99a8ee25c2b88ab72e65",
-          "f4a1ec8e6f49b6f03427",
-          "a02fbe582a0b9e386b39",
-          "6dd726c7ef1eb06aece3",
-          "eece34389c51a3ba79d3"
+          "ce13299a4e9bcd5fd7ba",
+          "8dedb580cee0db08187b",
+          "b449f5a4e5268e235611",
+          "9a63fce8138064a5b0c6",
+          "4346ac9fb7d1fe4c5869",
+          "a7727f3085049cc92d47",
+          "a166bad5b3dcc8c513ee",
+          "6416b67f44fe79673de8",
+          "05c6eb9807cdeee8c334",
+          "6453568c731de79e8c90",
+          "d0b04b2567df42ce21c3",
+          "ec4ecb4ba6d7109ff5bf",
+          "8ab6c98a01d5caf49df2",
+          "fbd9142975d65a10de10",
+          "ecb5cc3076652910a33f",
+          "789b72741e1f45a5e16c"
         ],
         "backend/src/services/integrations/vercelAuth.ts": [
           "793ac6ded3969a9efb2d",
@@ -770,11 +779,11 @@
           "2c2f746e6c99a355ea8c"
         ],
         "backend/src/routes/github.ts": [
-          "654b1bd6e0834f8bb999",
-          "a9d3d7c94936c3a05e05",
-          "ad7eef0f4bbb650da361",
-          "798016ba0fbae052dcdf",
-          "89e14e13b5da53a71045"
+          "12747a6fb6ec4eaa73a1",
+          "d165083d045dbcc9134c",
+          "86c762c54422d5080814",
+          "8b37fa4bae437ab9a2c7",
+          "0ae20826442f3e92f239"
         ],
         "backend/src/routes/phase1BusinessPreflight.ts": [
           "a4bd236f9d86c07f2ffc",

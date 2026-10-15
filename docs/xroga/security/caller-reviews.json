@@ -144,13 +144,13 @@
     },
     {
       "path": "backend/src/routes/github.ts",
-      "sourceSha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe",
+      "sourceSha256": "891ac1fd7807cd7590acd120c8b6968454aea436c67e3d83c39c2924218ae57e",
       "callIds": [
-        "654b1bd6e0834f8bb999",
-        "a9d3d7c94936c3a05e05",
-        "ad7eef0f4bbb650da361",
-        "798016ba0fbae052dcdf",
-        "89e14e13b5da53a71045"
+        "12747a6fb6ec4eaa73a1",
+        "d165083d045dbcc9134c",
+        "86c762c54422d5080814",
+        "8b37fa4bae437ab9a2c7",
+        "0ae20826442f3e92f239"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Authenticated status/settings use req.userId for github_integrations and user_integrations. Status resolves the canonical token then legacy metadata. Settings updates only that user's legacy row.",
@@ -905,23 +905,21 @@
     },
     {
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "sourceSha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45",
+      "sourceSha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf",
       "callIds": [
-        "f8bd72ce7b41e47c780a",
-        "69f92d6c218d524974df",
-        "3458113405e334d0de13",
-        "dc59e6f793b207280b2d",
-        "0406dca0597f3236b3b7",
-        "be3bc6ac9507df178e4a",
-        "a098922758b2b1ee2d43",
-        "9f708d8a33157d711655",
-        "26a5feb362efbd53e788",
-        "c7aaad47a8f8145eddcc",
-        "8a230e1bb6f42f536618"
+        "b70ee379276adab760e6",
+        "9e57c6ce291da4a475fc",
+        "80d4aa9a3397bd3252df",
+        "19f880a066ae90d323b8",
+        "fe9e64d47a236dfa8cc8",
+        "1d4403776376ef52007e",
+        "33102ec273c5d27f3bef",
+        "cbd51a32daf85609f9c2",
+        "6f6e8123506c884fea1b"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
-      "reason": "Loopback outage/revocation tests pass; the real owner/reconnect/delayed-mirror case is defined but awaits exact-source CI. Arbitrary internal userId provenance, runtime schema DDL, concurrent connect/disconnect, in-flight tokens, plaintext legacy copies and external GitHub revocation remain unresolved. This is not complete CredentialVault acceptance.",
+    "reason": "GitHub callback now requires a consumed durable authorization revision. Service-only RPC atomically updates primary and legacy authority, while revoke serializes on the same epoch and invalidates pending sessions. Route replay/late-save regressions and local SQL rollback assertions pass. New real two-client integration is pending. Primitive userId provenance, repository settings/target races, already-issued tokens, legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
@@ -1133,7 +1131,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
+      "sourceSha256": "4af688b138a21ff3882f6227048bc14a5e7de6f7e5e475823cbd7c6342bdfbb4",
       "callIds": [
         "241716ea497721fe54e5",
         "b413c3ab1ace9d65accf",
@@ -1152,7 +1150,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
+      "sourceSha256": "4af688b138a21ff3882f6227048bc14a5e7de6f7e5e475823cbd7c6342bdfbb4",
       "callIds": [
         "1820ca770e3eb79483c2",
         "5430d13294eb1a13f663",
@@ -1160,18 +1158,18 @@
         "a70e41a64d0371e71b1f",
         "67ccfcf6b0247b2d271d",
         "f68c7243e8023c812ac6",
-        "e6d53a18c5ff714d362f",
-        "cc516741e4b6df265af9",
-        "02122e978e9048259ac3",
-        "d8b46cdc480a438d7262",
-        "ef1b02af7bf9bf23df2e",
-        "083027e3b0f54f1be515",
-        "5d0abed488ffb2ba8d31",
-        "99a8ee25c2b88ab72e65",
-        "f4a1ec8e6f49b6f03427",
-        "a02fbe582a0b9e386b39",
-        "6dd726c7ef1eb06aece3",
-        "eece34389c51a3ba79d3"
+        "b449f5a4e5268e235611",
+        "a7727f3085049cc92d47",
+        "a166bad5b3dcc8c513ee",
+        "6416b67f44fe79673de8",
+        "05c6eb9807cdeee8c334",
+        "6453568c731de79e8c90",
+        "d0b04b2567df42ce21c3",
+        "ec4ecb4ba6d7109ff5bf",
+        "8ab6c98a01d5caf49df2",
+        "fbd9142975d65a10de10",
+        "ecb5cc3076652910a33f",
+        "789b72741e1f45a5e16c"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -3533,7 +3531,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc",
+      "sourceSha256": "676b0c2d9ebd65b40d753636a2398c593d30c1da36acc2032a6bb6527630baab",
       "callIds": [
         "372b30381ae05e3bffdb",
         "8391ad0add011a52ecad",
@@ -3545,25 +3543,25 @@
         "dfd64a81844408cf77d6",
         "6060adfc7cd590c49c87",
         "ecd4ea462063b19cc4f5",
-        "8f6dfcb3562eb2117b07",
-        "8940e38182206b243784",
-        "398508f67454790b76ca",
-        "26e6427ad843f72fc87d",
-        "5d546d2c49ee261103ed",
-        "dee48db1d13599c1a019",
-        "cb4b725c6c351643f585",
-        "e8c58dd78c96f2f72bd3",
-        "78de3fcbb23b31cc3518",
-        "b7611e474793973093da",
-        "e167127409cd8336203d",
-        "8bb35ef910c1ab533293",
-        "d9c244c20fc704201edd",
-        "3d5808c630067950ecef",
-        "f7c26dfb42719301e2c9"
+        "ba72283652f4077aa4d2",
+        "75327d809372f31e622c",
+        "4f7f04b4d883d6083157",
+        "a32e30f80d135c22eda9",
+        "3ede01d27e0db57fc1e6",
+        "cdc78a05e423ae70547d",
+        "d453df81a53ba27aaee5",
+        "5c4f78f47b84a1e200a8",
+        "feb02b4d5c7bd5310aba",
+        "728591045ff9daf9cf18",
+        "ea9742699d6cfaf27e50",
+        "bccd85252548b255e1e1",
+        "7d0a9cd0a802235537b3",
+        "33e895f743064f03550e",
+        "b77e4c3d1679b0357541"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-      "reason": "Supabase/Vercel authorization start advances the existing credential revision. Consumed state carries that revision through external exchange; save_oauth_connection requires exact owner/provider/revision and an unexpired consumed receipt, or the observed refresh token and revision. Disconnect rotates the revision. Fourteen focused tests and44 local SQL assertions pass, while new real two-client cases await exact-source CI. CWS, GitHub, primitive caller provenance, legacy generic paths and encryption/KMS remain unresolved. Existing legacy read helper is not callback admission.",
+    "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -3774,7 +3772,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
+      "sourceSha256": "4af688b138a21ff3882f6227048bc14a5e7de6f7e5e475823cbd7c6342bdfbb4",
       "callIds": [
         "e948275ac03420374cc6"
       ],
@@ -3812,9 +3810,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
+      "sourceSha256": "4af688b138a21ff3882f6227048bc14a5e7de6f7e5e475823cbd7c6342bdfbb4",
       "callIds": [
-        "0309ab57d4a52e50411e"
+        "4346ac9fb7d1fe4c5869"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -3832,13 +3830,13 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
+      "sourceSha256": "4af688b138a21ff3882f6227048bc14a5e7de6f7e5e475823cbd7c6342bdfbb4",
       "callIds": [
-        "a4f3d85cadbd037c992f",
-        "d01a6c21f19b545cb3c2"
+        "ce13299a4e9bcd5fd7ba",
+        "8dedb580cee0db08187b"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "prepareUserProviderKeyWrite captures the exact owner/provider revision through service-only prepare_provider_key_write and issues an opaque process-local owner/provider/env handle. This is write admission, not a post-download authority query.",
+      "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
       "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved.",
       "evidence": [
         {
@@ -3853,9 +3851,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee",
+      "sourceSha256": "4af688b138a21ff3882f6227048bc14a5e7de6f7e5e475823cbd7c6342bdfbb4",
       "callIds": [
-        "6c923e3312df36d37c2a"
+        "63bca4c31e0cd04a84d8"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact-row revocation RPC only. Authenticated integration and Supabase disconnect routes supply req.userId. Private helper admits validated provider or exact delete-only legacy alias, calls service-only revoke_provider_key and requires true receipt. SQL binds owner/provider, clears credentials, retains revoked tombstone and rotates revision atomically.",
@@ -3872,6 +3870,22 @@
         {
           "path": "backend/src/routes/supabaseOAuth.disconnect.test.ts",
           "marker": "Supabase disconnect reports incomplete revocation safely"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sourceSha256": "4af688b138a21ff3882f6227048bc14a5e7de6f7e5e475823cbd7c6342bdfbb4",
+      "callIds": [
+        "9a63fce8138064a5b0c6"
+      ],
+      "disposition": "REVIEWED_GAP",
+    "authority": "CWS callback consumes the exact owner/state before provider I/O and obtains an issued BYOK admission only when the current revision matches the consumed epoch. save_cws_oauth_key_if_current locks that owner/key, checks the unexpired consumed receipt, then delegates encrypted metadata validation and revision CAS to the existing BYOK RPC.",
+    "reason": "Focused CWS tests deny changes before exchange and before encrypted persistence. Local SQL checks cover lost revision, duplicate save, revoke, reconnect and receipt expiry. Actual two-client CI is pending. Complete caller admission, legacy cryptography and external provider revocation remain open.",
+      "evidence": [
+        {
+        "path": "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
+        "marker": "CWS carries the consumed epoch"
         }
       ]
     }

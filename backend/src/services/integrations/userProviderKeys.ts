@@ -304,25 +304,32 @@ export interface ProviderKeyWriteAdmission {
   readonly providerRow: string;
   readonly envVar: string;
 }
-const issuedWriteAdmissions = new WeakMap<ProviderKeyWriteAdmission, string>();
+const issuedWriteAdmissions = new WeakMap<ProviderKeyWriteAdmission, { revision: string; oauthReceipt: boolean }>();
 
 /** Carry the existing database CAS admission across this process's async work. */
 export async function prepareUserProviderKeyWrite(
   userId: string,
   provider: string,
-  opts?: { envVarName?: string },
+  opts?: { envVarName?: string; cwsAuthorizationRevision?: string },
 ): Promise<ProviderKeyWriteAdmission> {
   const p = normalizeProvider(provider);
   if (!ALLOWED_SET.has(p)) throw new Error('Unsupported credential provider.');
   if (p === 'custom' && !opts?.envVarName?.trim()) throw new Error('Custom keys require an env var name (e.g. MY_SERVICE_API_KEY)');
   const envVar = envVarForProvider(p, opts?.envVarName);
   const providerRow = `${PROVIDER_PREFIX}${p === 'custom' ? `custom_${envVar.toLowerCase()}` : p}`;
+  if (opts?.cwsAuthorizationRevision !== undefined && (p !== 'cws_oauth'
+    || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(opts.cwsAuthorizationRevision))) {
+    throw new Error('Invalid CWS authorization revision. Authorize again.');
+  }
   const prepared = await getSupabaseAdmin().rpc('prepare_provider_key_write', { p_owner_id: userId, p_provider: providerRow });
   if (prepared.error || typeof prepared.data !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(prepared.data)) {
     throw new Error('Credential could not be saved. Retry shortly.');
   }
+  if (opts?.cwsAuthorizationRevision !== undefined && prepared.data !== opts.cwsAuthorizationRevision) {
+    throw new Error('CWS connection changed during authorization. Authorize again.');
+  }
   const admission = Object.freeze({ userId, providerRow, envVar });
-  issuedWriteAdmissions.set(admission, prepared.data);
+  issuedWriteAdmissions.set(admission, { revision: prepared.data, oauthReceipt: opts?.cwsAuthorizationRevision !== undefined });
   return admission;
 }
 
@@ -383,8 +390,8 @@ export async function saveUserProviderKey(
   // Capture before asynchronous bootstrap or persistence. A concurrent revoke or
   // newer save invalidates this exact attempt, including an initially absent row.
   const admission = opts?.writeAdmission ?? await prepareUserProviderKeyWrite(userId, p, { envVarName: envVar });
-  const revision = issuedWriteAdmissions.get(admission);
-  if (!revision || admission.userId !== userId || admission.providerRow !== providerRow || admission.envVar !== envVar) {
+  const issued = issuedWriteAdmissions.get(admission);
+  if (!issued || admission.userId !== userId || admission.providerRow !== providerRow || admission.envVar !== envVar) {
     throw Object.assign(new Error('Credential write admission does not match this request.'), { code: 'CREDENTIAL_WRITE_CONFLICT' });
   }
   const metadata = {
@@ -405,9 +412,12 @@ export async function saveUserProviderKey(
     await ensureGithubSchema();
   }
 
-  const { data:saved,error } = await supabase.rpc('save_provider_key_if_current', {
-    p_owner_id:userId,p_provider:providerRow,p_revision:revision,p_access_token:encrypted,p_metadata:metadata,
-  });
+  const saveArgs = {
+    p_owner_id:userId,p_provider:providerRow,p_revision:issued.revision,p_access_token:encrypted,p_metadata:metadata,
+  };
+  const { data:saved,error } = issued.oauthReceipt
+    ? await supabase.rpc('save_cws_oauth_key_if_current', saveArgs)
+    : await supabase.rpc('save_provider_key_if_current', saveArgs);
   if (error) throw new Error('Credential could not be saved. Retry shortly.');
   if (saved !== true) throw Object.assign(new Error('Credential changed while saving. Reconnect explicitly and retry.'), {code:'CREDENTIAL_WRITE_CONFLICT'});
 

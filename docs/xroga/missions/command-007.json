@@ -10,6 +10,8 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "supabase/migrations/20261016000200_github_oauth_atomic_connection.sql",
+    "backend/src/routes/github.oauth.test.ts",
     "supabase/migrations/20261016000100_oauth_authorization_epoch.sql",
     "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
     "backend/src/services/integrations/credentialEnvelope.ts",
@@ -237,6 +239,7 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
+      "supabase/migrations/20261016000200_github_oauth_atomic_connection.sql",
       "supabase/migrations/20261016000100_oauth_authorization_epoch.sql",
       "supabase/migrations/20261015000500_oauth_session_consumption.sql",
       "supabase/migrations/20261015000400_provider_key_revision_fencing.sql",

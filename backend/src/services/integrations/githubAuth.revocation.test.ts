@@ -17,6 +17,7 @@ test('GitHub authority outages and durable revocation prevent stale mirror resur
       const fail = mode === 'outage' || (mode === 'legacy-outage' && !primary) || (mode === 'cleanup-failure' && storage);
       res.writeHead(fail ? 400 : 200, { 'Content-Type': 'application/json' });
       if (fail) res.end(JSON.stringify({ message: 'SYNTHETIC_PRIVATE_ERROR', code: '42P01' }));
+      else if (path==='/rest/v1/rpc/revoke_github_oauth_connection') res.end('true');
       else if (storage) res.end(JSON.stringify({ access_token: 'synthetic-stale-token', username: 'fixture' }));
       else if (req.method !== 'GET') res.end('null');
       else if (mode === 'revoked') res.end(JSON.stringify([{ access_token: '' }]));
@@ -37,9 +38,9 @@ test('GitHub authority outages and durable revocation prevent stale mirror resur
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-loopback-only';
     assert.equal(await getGitHubToken(user), null);
     await assert.rejects(clearGitHubConnection(user), { message: 'GitHub revocation could not be recorded. Retry shortly.' });
-    await assert.rejects(saveGitHubConnection(user, 'synthetic-new-token', { providerUserId: '123', username: 'fixture' }),
+    await assert.rejects(saveGitHubConnection(user, 'synthetic-new-token', { providerUserId: '123', username: 'fixture', authorizationRevision:'10000000-0000-4000-8000-000000000001' }),
       { message: 'GitHub connection could not be saved. Retry shortly.' });
-    assert.ok(calls.every(call => call.path.startsWith('/rest/v1/github_integrations')));
+    assert.ok(calls.every(call => call.path.startsWith('/rest/v1/github_integrations') || call.path.startsWith('/rest/v1/rpc/')));
     for (mode of ['legacy-outage', 'revoked', 'legacy-revoked']) {
       calls.length = 0;
       assert.equal(await getGitHubToken(user), null);
@@ -54,10 +55,9 @@ test('GitHub authority outages and durable revocation prevent stale mirror resur
     calls.length = 0;
     await assert.rejects(clearGitHubConnection(user), { message: 'GitHub disconnected, but legacy copy cleanup is pending. Retry shortly.' });
     assert.equal(calls[0].method, 'POST');
-    assert.equal(JSON.parse(calls[0].body).access_token, '');
-    assert.equal(JSON.parse(calls[0].body).user_id, user);
-    assert.equal(JSON.parse(calls[1].body).metadata.revoked, true);
-    assert.ok(calls[2].path.startsWith('/storage/'));
+    assert.equal(calls[0].path,'/rest/v1/rpc/revoke_github_oauth_connection');
+    assert.deepEqual(JSON.parse(calls[0].body),{p_owner_id:user});
+    assert.ok(calls[1].path.startsWith('/storage/'));
   } finally {
     for (const [key, value] of previous) {
       if (value === undefined) delete process.env[key]; else process.env[key] = value;

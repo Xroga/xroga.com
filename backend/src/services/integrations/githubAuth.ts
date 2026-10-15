@@ -1,5 +1,4 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
 import {
   getGitHubTokenFromStorage,
   isMissingTableError,
@@ -71,74 +70,33 @@ export async function saveGitHubConnection(
     username: string;
     repoStrategy?: GitHubRepoStrategy;
     defaultRepo?: string | null;
+    authorizationRevision: string;
   }
 ): Promise<void> {
   const token = accessToken.trim();
   if (!token) throw new Error('Empty GitHub access token');
 
-  const supabase = getSupabaseAdmin();
-  const repoStrategy = opts.repoStrategy ?? 'auto';
-  const defaultRepo = opts.defaultRepo ?? null;
-
-  const storagePayload = {
-    access_token: token,
-    username: opts.username,
-    provider_user_id: opts.providerUserId,
-    repo_strategy: repoStrategy,
-    default_repo: defaultRepo,
-    updated_at: new Date().toISOString(),
-  };
-
-  if (githubSchemaAutoBootstrapEnabled()) await ensureGithubSchema();
-
-  const { error: ghErr } = await supabase.from('github_integrations').upsert(
-    {
-      user_id: userId,
-      access_token: token,
-      repo_strategy: repoStrategy,
-      default_repo: defaultRepo,
-      github_username: opts.username,
-    },
-    { onConflict: 'user_id' }
-  );
-
-  if (ghErr) {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(opts.authorizationRevision)) {
+    throw new Error('GitHub authorization revision required. Authorize again.');
+  }
+  const { data, error } = await getSupabaseAdmin().rpc('save_github_oauth_connection', {
+    p_owner_id:userId,p_revision:opts.authorizationRevision,p_access_token:token,
+    p_provider_user_id:opts.providerUserId,p_username:opts.username,
+    p_repo_strategy:opts.repoStrategy??'auto',p_default_repo:opts.defaultRepo??null,
+  });
+  if (error) {
     throw new Error('GitHub connection could not be saved. Retry shortly.');
   }
-
-  const { error: userErr } = await supabase.from('user_integrations').upsert(
-    {
-      user_id: userId,
-      provider: 'github',
-      access_token: token,
-      provider_user_id: opts.providerUserId,
-      metadata: { username: opts.username },
-    },
-    { onConflict: 'user_id,provider' }
-  );
-  if (userErr && !isMissingTableError(userErr.message)) {
-    console.warn('[githubAuth] optional integration mirror save failed');
-  }
-
-  await saveGitHubTokenToStorage(userId, storagePayload).catch(() => {
-    /* DB is primary; storage mirror is best-effort */
-  });
+  if (data !== true) throw new Error('GitHub connection changed during authorization. Authorize again.');
 }
 
 export async function clearGitHubConnection(userId: string): Promise<void> {
   const supabase = getSupabaseAdmin();
-  // Keep an authoritative empty-token row so delayed mirrors cannot reconnect.
-  const { error: primaryError } = await supabase.from('github_integrations').upsert(
-    { user_id: userId, access_token: '', refresh_token: null, expires_at: null },
-    { onConflict: 'user_id' }
-  );
-  if (primaryError) throw new Error('GitHub revocation could not be recorded. Retry shortly.');
-  const { error: legacyError } = await supabase
-    .from('user_integrations')
-    .upsert({ user_id: userId, provider: 'github', access_token: '', refresh_token: null,
-      expires_at: null, metadata: { revoked: true } }, { onConflict: 'user_id,provider' });
+  // Both authority rows and the pending session revoke atomically.
+  const { data, error } = await supabase.rpc('revoke_github_oauth_connection', {p_owner_id:userId});
+  if (error || data !== true) throw new Error('GitHub revocation could not be recorded. Retry shortly.');
   const removed = await deleteGitHubTokenFromStorage(userId);
-  if (legacyError || !removed) throw new Error('GitHub disconnected, but legacy copy cleanup is pending. Retry shortly.');
+  if (!removed) throw new Error('GitHub disconnected, but legacy copy cleanup is pending. Retry shortly.');
 }
 
 /** Persist the live ship target so later updates auto-bind without re-picking. */

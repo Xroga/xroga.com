@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { exchangeSupabaseOAuthCode, refreshSupabaseOAuthToken } from './supabaseAuth.js';
 import { exchangeVercelOAuthCode, saveVercelConnection } from './vercelAuth.js';
 import { loadProviderToken, storePkceSession, storeProviderToken } from './oauthPkceStore.js';
+import { completeCwsOAuth } from '../publish/chromeWebStore.js';
 
 test('OAuth entry points carry consumed revisions across provider I/O and never upsert on a lost epoch',async()=>{
   const keys=['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_OAUTH_CLIENT_ID','SUPABASE_OAUTH_CLIENT_SECRET','VERCEL_CLIENT_ID','VERCEL_CLIENT_SECRET'];
@@ -45,6 +46,37 @@ test('OAuth entry points carry consumed revisions across provider I/O and never 
     failConsume=true;const calls=providerCalls;
     await assert.rejects(exchangeSupabaseOAuthCode(opts),/Invalid or expired/);assert.equal(providerCalls,calls);
     assert.ok(requests.every(request=>request.path.startsWith('/rest/v1/rpc/')),'no Storage or unconditional REST upsert fallback');
+  } finally {globalThis.fetch=original;keys.forEach((key,index)=>{if(previous[index]===undefined)delete process.env[key];else process.env[key]=previous[index];});}
+});
+
+test('CWS carries the consumed epoch through encrypted BYOK admission and denies lost epochs before or after exchange',async()=>{
+  const keys=['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','USER_SECRETS_ENCRYPTION_KEY'];
+  const previous=keys.map(key=>process.env[key]);keys.forEach(key=>process.env[key]='synthetic-only');
+  process.env.SUPABASE_URL='http://127.0.0.1:49191';
+  const original=globalThis.fetch,revision=randomUUID(),state=randomUUID();
+  let mismatch=true,allowSave=false,providerCalls=0;
+  globalThis.fetch=async(input,init)=>{
+    const url=new URL(String(input instanceof Request?input.url:input));
+    if(url.hostname==='oauth2.googleapis.com'){providerCalls++;return Response.json({refresh_token:'SYNTHETIC_GOOGLE_REFRESH'});}
+    assert.equal(url.origin,process.env.SUPABASE_URL);
+    if(url.pathname.endsWith('/consume_oauth_session'))return Response.json({verifier:'SYNTHETIC_CLIENT_SECRET',state,
+      redirect_uri:'https://xroga.com/dashboard/publish/cws/callback',created_at:new Date().toISOString(),authorization_revision:revision,
+      nonce:JSON.stringify({clientId:'SYNTHETIC_CLIENT',extensionId:'synthetic-extension',publisherId:'synthetic-publisher'})});
+    if(url.pathname.endsWith('/prepare_provider_key_write'))return Response.json(mismatch?randomUUID():revision);
+    if(url.pathname.endsWith('/save_cws_oauth_key_if_current')){
+      const body=JSON.parse(String(init?.body));assert.equal(body.p_revision,revision);assert.equal(body.p_provider,'apikey_cws_oauth');
+      assert.ok(body.p_access_token.startsWith('v1:'));assert.ok(!body.p_access_token.includes('SYNTHETIC_GOOGLE_REFRESH'));
+      return Response.json(allowSave);
+    }
+    // Existing encrypted BYOK mirror is best effort after the conditional save.
+    if(url.pathname.startsWith('/storage/'))return Response.json({message:'synthetic unavailable'},{status:400});
+    throw new Error(`Unexpected persistence fallback: ${url.pathname}`);
+  };
+  try {
+    const opts={userId:'owner',code:'synthetic-code',state};
+    await assert.rejects(completeCwsOAuth(opts),/changed during authorization/);assert.equal(providerCalls,0);
+    mismatch=false;await assert.rejects(completeCwsOAuth(opts),/Credential changed while saving/);assert.equal(providerCalls,1);
+    allowSave=true;assert.equal((await completeCwsOAuth(opts)).ok,true);assert.equal(providerCalls,2);
   } finally {globalThis.fetch=original;keys.forEach((key,index)=>{if(previous[index]===undefined)delete process.env[key];else process.env[key]=previous[index];});}
 });
 

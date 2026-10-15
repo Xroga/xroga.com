@@ -12,6 +12,8 @@ import { randomBytes } from 'crypto';
 import {
   getUserProviderKey,
   saveUserProviderKey,
+  prepareUserProviderKeyWrite,
+  type ProviderKeyWriteAdmission,
 } from '../integrations/userProviderKeys.js';
 import {
   consumePkceSession,
@@ -107,6 +109,7 @@ export async function getCwsCredentials(userId: string): Promise<CwsCredentials 
 export async function saveCwsCredentials(
   userId: string,
   creds: CwsCredentials,
+  writeAdmission?: ProviderKeyWriteAdmission,
 ): Promise<void> {
   await saveUserProviderKey(
     userId,
@@ -118,6 +121,7 @@ export async function saveCwsCredentials(
       extensionId: creds.extensionId.trim(),
       publisherId: creds.publisherId.trim().replace(/^publishers\//, ''),
     }),
+    { writeAdmission },
   );
 }
 
@@ -234,7 +238,7 @@ export async function completeCwsOAuth(opts: {
   redirectUri?: string;
 }): Promise<{ ok: true; message: string } | { ok: false; error: string }> {
   const pkce = await consumePkceSession(opts.userId, PKCE_PROVIDER, opts.state);
-  if (!pkce) {
+  if (!pkce?.authorization_revision) {
     return {
       ok: false,
       error: 'CWS OAuth session expired — start Authorize again from Publish',
@@ -259,6 +263,10 @@ export async function completeCwsOAuth(opts: {
   if (!clientId || !clientSecret || !extensionId || !publisherId) {
     return { ok: false, error: 'CWS OAuth session missing client fields — start again' };
   }
+
+  const writeAdmission = await prepareUserProviderKeyWrite(opts.userId, 'cws_oauth', {
+    cwsAuthorizationRevision: pkce.authorization_revision,
+  });
 
   const body = new URLSearchParams({
     code: opts.code,
@@ -298,7 +306,7 @@ export async function completeCwsOAuth(opts: {
     extensionId,
     publisherId,
   };
-  await saveCwsCredentials(opts.userId, creds);
+  await saveCwsCredentials(opts.userId, creds, writeAdmission);
 
   return {
     ok: true,

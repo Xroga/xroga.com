@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION public.begin_oauth_session(p_owner_id UUID,p_provider
 RETURNS BOOLEAN LANGUAGE plpgsql SECURITY INVOKER SET search_path=public AS $$
 DECLARE target TEXT; epoch UUID;
 BEGIN
-  target := CASE p_provider WHEN 'supabase_oauth_pkce' THEN 'supabase_oauth' WHEN 'vercel_oauth_pkce' THEN 'vercel' END;
+  target := CASE p_provider WHEN 'supabase_oauth_pkce' THEN 'supabase_oauth' WHEN 'vercel_oauth_pkce' THEN 'vercel' WHEN 'cws_oauth_pkce' THEN 'apikey_cws_oauth' WHEN 'github_oauth_pkce' THEN 'github' END;
   IF p_owner_id IS NULL OR target IS NULL OR jsonb_typeof(p_session) IS DISTINCT FROM 'object'
     OR jsonb_typeof(p_session->'verifier') IS DISTINCT FROM 'string' OR length(p_session->>'verifier')=0
     OR jsonb_typeof(p_session->'state') IS DISTINCT FROM 'string' OR length(p_session->>'state') NOT BETWEEN 16 AND 512
@@ -32,9 +32,9 @@ RETURNS JSONB LANGUAGE plpgsql SECURITY INVOKER SET search_path=public AS $$
 DECLARE session public.user_integrations%ROWTYPE; created TIMESTAMPTZ; result JSONB; target TEXT; epoch UUID;
 BEGIN
   IF p_owner_id IS NULL OR p_provider IS NULL OR p_provider NOT IN
-    ('vercel_oauth_pkce','supabase_oauth_pkce','cws_oauth_pkce')
+    ('vercel_oauth_pkce','supabase_oauth_pkce','cws_oauth_pkce','github_oauth_pkce')
     OR p_state IS NULL OR length(p_state)<16 OR length(p_state)>512 THEN RETURN NULL; END IF;
-  target := CASE p_provider WHEN 'supabase_oauth_pkce' THEN 'supabase_oauth' WHEN 'vercel_oauth_pkce' THEN 'vercel' END;
+  target := CASE p_provider WHEN 'supabase_oauth_pkce' THEN 'supabase_oauth' WHEN 'vercel_oauth_pkce' THEN 'vercel' WHEN 'cws_oauth_pkce' THEN 'apikey_cws_oauth' WHEN 'github_oauth_pkce' THEN 'github' END;
   IF target IS NOT NULL THEN
     SELECT credential_revision INTO epoch FROM public.user_integrations
       WHERE user_id=p_owner_id AND provider=target FOR UPDATE;
@@ -97,15 +97,39 @@ $$;
 REVOKE ALL ON FUNCTION public.save_oauth_connection(UUID,TEXT,UUID,TEXT,TEXT,JSONB,TEXT,TEXT) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.save_oauth_connection(UUID,TEXT,UUID,TEXT,TEXT,JSONB,TEXT,TEXT) TO service_role;
 
+-- CWS retains the existing encrypted BYOK persistence and metadata validation.
+-- This adapter only adds the consumed-session lifetime to its existing revision CAS.
+CREATE OR REPLACE FUNCTION public.save_cws_oauth_key_if_current(
+  p_owner_id UUID,p_provider TEXT,p_revision UUID,p_access_token TEXT,p_metadata JSONB)
+RETURNS BOOLEAN LANGUAGE plpgsql SECURITY INVOKER SET search_path=public AS $$
+DECLARE observed UUID; receipt JSONB;
+BEGIN
+  IF p_owner_id IS NULL OR p_provider IS DISTINCT FROM 'apikey_cws_oauth' OR p_revision IS NULL THEN RETURN FALSE; END IF;
+  SELECT credential_revision INTO observed FROM public.user_integrations
+    WHERE user_id=p_owner_id AND provider=p_provider FOR UPDATE;
+  IF observed IS DISTINCT FROM p_revision THEN RETURN FALSE; END IF;
+  SELECT metadata INTO receipt FROM public.user_integrations
+    WHERE user_id=p_owner_id AND provider='cws_oauth_pkce' FOR UPDATE;
+  IF receipt->>'authorization_revision' IS DISTINCT FROM p_revision::text
+    OR receipt->>'consumed_at' IS NULL OR receipt->>'authorization_expires_at' IS NULL
+    OR NOT isfinite((receipt->>'authorization_expires_at')::timestamptz)
+    OR (receipt->>'authorization_expires_at')::timestamptz <= clock_timestamp() THEN RETURN FALSE; END IF;
+  RETURN public.save_provider_key_if_current(p_owner_id,p_provider,p_revision,p_access_token,p_metadata);
+EXCEPTION WHEN invalid_datetime_format OR datetime_field_overflow THEN RETURN FALSE;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.save_cws_oauth_key_if_current(UUID,TEXT,UUID,TEXT,JSONB) FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.save_cws_oauth_key_if_current(UUID,TEXT,UUID,TEXT,JSONB) TO service_role;
+
 -- Browser writes must not bypass the epoch, including renaming into/out of protected rows.
 DROP POLICY IF EXISTS oauth_connection_server_insert_guard ON public.user_integrations;
 CREATE POLICY oauth_connection_server_insert_guard ON public.user_integrations AS RESTRICTIVE
-  FOR INSERT TO anon,authenticated WITH CHECK(provider NOT IN ('supabase_oauth','vercel'));
+  FOR INSERT TO anon,authenticated WITH CHECK(provider NOT IN ('supabase_oauth','vercel','github','github_oauth_pkce'));
 DROP POLICY IF EXISTS oauth_connection_server_update_guard ON public.user_integrations;
 CREATE POLICY oauth_connection_server_update_guard ON public.user_integrations AS RESTRICTIVE
-  FOR UPDATE TO anon,authenticated USING(provider NOT IN ('supabase_oauth','vercel'))
-  WITH CHECK(provider NOT IN ('supabase_oauth','vercel'));
+  FOR UPDATE TO anon,authenticated USING(provider NOT IN ('supabase_oauth','vercel','github','github_oauth_pkce'))
+  WITH CHECK(provider NOT IN ('supabase_oauth','vercel','github','github_oauth_pkce'));
 DROP POLICY IF EXISTS oauth_connection_server_delete_guard ON public.user_integrations;
 CREATE POLICY oauth_connection_server_delete_guard ON public.user_integrations AS RESTRICTIVE
-  FOR DELETE TO anon,authenticated USING(provider NOT IN ('supabase_oauth','vercel'));
+  FOR DELETE TO anon,authenticated USING(provider NOT IN ('supabase_oauth','vercel','github','github_oauth_pkce'));
 NOTIFY pgrst,'reload schema';

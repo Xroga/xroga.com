@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b4d1b817027878358a94147c2e2315a87ee6fc9d",
+  "source_sha": "f33a4e9f9cdbff619c030f1ea514aedf6dfc6b4f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12311,7 +12311,7 @@
     },
     {
       "path": "backend/src/routes/github.ts",
-      "sha256": "e053b991879ce4a0ba36bd016e484c05030e302f44383186b674b05e088e82fe"
+      "sha256": "891ac1fd7807cd7590acd120c8b6968454aea436c67e3d83c39c2924218ae57e"
     },
     {
       "path": "backend/src/routes/growth.ts",
@@ -12459,7 +12459,7 @@
     },
     {
       "path": "backend/src/security/oauthSession.local.integration.ts",
-      "sha256": "687472133d4f17c30285aa48b4fb85a8bb58b4b2553f4cb5b95111150b466015"
+      "sha256": "199bd787a29b02c2f340254ea665b66ad9ddcff43e335edbbe3c03f898f25370"
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
@@ -12491,7 +12491,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "cfef2a4041a4e9e1a612d0fe24a27996e2d12f783afbd5d9a0e3f034c51b595f"
+      "sha256": "04e67fdb2f7bd61026adbb223fb34fb5aa8d4567eb4502f24087744bcfc744fd"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12539,7 +12539,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "sha256": "058f2f479d45a4c87c8d386e00ca4be9b08700d35eb5589f79d7f178eff70d45"
+      "sha256": "df731547d900e59390897125514ce3246745e4e2726ca41b9d939503401dbdcf"
     },
     {
       "path": "backend/src/services/integrations/githubBranchAuthorization.ts",
@@ -12575,7 +12575,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "cc9bf7d80409812f384c14af70df32e97037ec709fd10367e582e5d1bb0f71fc"
+      "sha256": "676b0c2d9ebd65b40d753636a2398c593d30c1da36acc2032a6bb6527630baab"
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
@@ -12591,7 +12591,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "f35e750bb5e11d34b9fda3622c40717223e11a521ca824588e2384ec64d687ee"
+      "sha256": "4af688b138a21ff3882f6227048bc14a5e7de6f7e5e475823cbd7c6342bdfbb4"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -12619,7 +12619,7 @@
     },
     {
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "sha256": "8aba3a3543ea45a51f0dbee270452eec92e6d078a1f9de8bcee8ab2951be8692"
+      "sha256": "4f82f9c460dd695759d8cfbbc5c9ec6555eaa6edc3716bf4df7ee100523c995a"
     },
     {
       "path": "backend/src/services/publish/easCredentials.ts",
@@ -17795,70 +17795,70 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 19,
+      "line": 20,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 20,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "localhost",
-      "protocol": "http:",
-      "path": "backend/src/routes/github.ts",
       "line": 21,
       "credentialsInUrl": false
     },
     {
-      "hostname": "127.0.0.1",
+      "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/routes/github.ts",
       "line": 22,
       "credentialsInUrl": false
     },
     {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/routes/github.ts",
+      "line": 23,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 30,
+      "line": 31,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/routes/github.ts",
-      "line": 45,
+      "line": 46,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 68,
+      "line": 69,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 86,
+      "line": 91,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 152,
+      "line": 166,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 174,
+      "line": 188,
       "credentialsInUrl": false
     },
     {
@@ -17942,21 +17942,21 @@
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/oauthSession.local.integration.ts",
-      "line": 16,
+      "line": 18,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/oauthSession.local.integration.ts",
-      "line": 23,
+      "line": 25,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/oauthSession.local.integration.ts",
-      "line": 59,
+      "line": 66,
       "credentialsInUrl": false
     },
     {
@@ -18002,10 +18002,17 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "example.invalid",
+      "protocol": "https:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 491,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 538,
+      "line": 542,
       "credentialsInUrl": false
     },
     {
@@ -18264,105 +18271,105 @@
       "hostname": "oauth2.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 21,
+      "line": 23,
       "credentialsInUrl": false
     },
     {
       "hostname": "accounts.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 22,
+      "line": 24,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 23,
+      "line": 25,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 46,
+      "line": 48,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 52,
+      "line": 54,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 53,
+      "line": 55,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 54,
+      "line": 56,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 77,
+      "line": 79,
       "credentialsInUrl": false
     },
     {
       "hostname": "chromewebstore.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 360,
+      "line": 368,
       "credentialsInUrl": false
     },
     {
       "hostname": "chrome.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 385,
+      "line": 393,
       "credentialsInUrl": false
     },
     {
       "hostname": "chromewebstore.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 389,
+      "line": 397,
       "credentialsInUrl": false
     },
     {
       "hostname": "chrome.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 410,
+      "line": 418,
       "credentialsInUrl": false
     },
     {
       "hostname": "chrome.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 424,
+      "line": 432,
       "credentialsInUrl": false
     },
     {
       "hostname": "chromewebstore.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 454,
+      "line": 462,
       "credentialsInUrl": false
     },
     {
       "hostname": "chrome.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 467,
+      "line": 475,
       "credentialsInUrl": false
     },
     {
@@ -24109,7 +24116,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 959,
+      "line": 963,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24340,7 +24347,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 809,
+      "line": 819,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24382,7 +24389,7 @@
     },
     {
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 57,
+      "line": 59,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

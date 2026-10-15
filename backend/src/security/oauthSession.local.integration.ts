@@ -4,18 +4,20 @@ import { randomUUID } from 'node:crypto';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 export function registerOAuthSessionTests(admin:SupabaseClient, users:()=>Array<{id:string;token:string}>) {
-  test('real two-client OAuth claims enforce one-use, expiry, identity and newer-session preservation',async()=>{
+  test('real two-client OAuth claims enforce one-use, expiry, identity and newer-session preservation',async(t)=>{
     const [owner,foreign]=users();
+    t.after(async()=>{const removed=await admin.from('user_integrations').delete().eq('user_id',owner.id)
+      .in('provider',['vercel','supabase_oauth','apikey_cws_oauth','github','github_oauth_pkce','vercel_oauth_pkce','supabase_oauth_pkce','cws_oauth_pkce']);assert.equal(removed.error,null);});
     const other=createClient(process.env.SUPABASE_URL!,process.env.SUPABASE_SERVICE_ROLE_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});
-    for(const provider of ['vercel_oauth_pkce','supabase_oauth_pkce','cws_oauth_pkce']) {
+    for(const provider of ['vercel_oauth_pkce','supabase_oauth_pkce','cws_oauth_pkce','github_oauth_pkce']) {
       const state=randomUUID();
       const write=async(created_at:string,overrides:Record<string,unknown>={})=>{
         let authorization_revision: string | undefined;
-        if (provider !== 'cws_oauth_pkce') {
+        {
           const started=await admin.rpc('begin_oauth_session',{p_owner_id:owner.id,p_provider:provider,
             p_session:{verifier:'synthetic-verifier',state,redirect_uri:'https://example.invalid/callback'}});
           assert.equal(started.error,null);assert.equal(started.data,true);
-          const target=provider==='vercel_oauth_pkce'?'vercel':'supabase_oauth';
+          const target=provider==='vercel_oauth_pkce'?'vercel':provider==='cws_oauth_pkce'?'apikey_cws_oauth':provider==='github_oauth_pkce'?'github':'supabase_oauth';
           const authority=await admin.from('user_integrations').select('credential_revision').eq('user_id',owner.id).eq('provider',target).single();
           assert.equal(authority.error,null);authorization_revision=authority.data!.credential_revision;
         }
@@ -48,11 +50,16 @@ export function registerOAuthSessionTests(admin:SupabaseClient, users:()=>Array<
     }
   });
 
-  test('real OAuth epoch fences two-client callbacks, reconnect, disconnect and reused refresh tokens',async()=>{
+  test('real OAuth epoch fences two-client callbacks, reconnect, disconnect and reused refresh tokens',async(t)=>{
     const [owner,foreign]=users();
+    t.after(async()=>{const removed=await admin.from('user_integrations').delete().eq('user_id',owner.id)
+      .in('provider',['vercel','supabase_oauth','apikey_cws_oauth','github','github_oauth_pkce','vercel_oauth_pkce','supabase_oauth_pkce','cws_oauth_pkce']);assert.equal(removed.error,null);});
     const other=createClient(process.env.SUPABASE_URL!,process.env.SUPABASE_SERVICE_ROLE_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});
-    for(const provider of ['supabase_oauth','vercel']) {
-      const sessionProvider=provider==='vercel'?'vercel_oauth_pkce':'supabase_oauth_pkce';
+    t.after(async()=>{const removed=await admin.from('github_integrations').delete().eq('user_id',owner.id);assert.equal(removed.error,null);});
+    for(const provider of ['supabase_oauth','vercel','apikey_cws_oauth','github']) {
+      const cws=provider==='apikey_cws_oauth';
+      const github=provider==='github';
+      const sessionProvider=provider==='vercel'?'vercel_oauth_pkce':cws?'cws_oauth_pkce':github?'github_oauth_pkce':'supabase_oauth_pkce';
       const start=async()=>{
         const state=randomUUID();
         const result=await admin.rpc('begin_oauth_session',{p_owner_id:owner.id,p_provider:sessionProvider,
@@ -64,13 +71,20 @@ export function registerOAuthSessionTests(admin:SupabaseClient, users:()=>Array<
         assert.equal(result.error,null);return result.data;
       };
       const save=async(revision:string,token:string,client=admin,user=owner.id,refresh:string|null=null)=>{
-        const result=await client.rpc('save_oauth_connection',{p_owner_id:user,p_provider:provider,p_revision:revision,
-          p_access_token:token,p_refresh_token:'synthetic-reused-refresh',p_metadata:{},p_provider_user_id:null,p_expected_refresh_token:refresh});
+        const result=github?await client.rpc('save_github_oauth_connection',{p_owner_id:user,p_revision:revision,p_access_token:token,
+          p_provider_user_id:'synthetic-account',p_username:'synthetic-user',p_repo_strategy:'auto',p_default_repo:null})
+          :cws?await client.rpc('save_cws_oauth_key_if_current',{p_owner_id:user,p_provider:provider,p_revision:revision,
+          p_access_token:`v1:${token}`,p_metadata:{provider:'cws_oauth',type:'user_publish_credential',env_var:'CWS_OAUTH_JSON',
+            sync_target:'eas',connected_at:new Date().toISOString(),masked:'synthetic'}})
+          :await client.rpc('save_oauth_connection',{p_owner_id:user,p_provider:provider,p_revision:revision,
+            p_access_token:token,p_refresh_token:'synthetic-reused-refresh',p_metadata:{},p_provider_user_id:null,p_expected_refresh_token:refresh});
         assert.equal(result.error,null);return result.data;
       };
       const current=async()=>{
         const row=await admin.from('user_integrations').select('*').eq('user_id',owner.id).eq('provider',provider).single();
-        assert.equal(row.error,null);return row.data!;
+        if(github){const primary=await admin.from('github_integrations').select('access_token').eq('user_id',owner.id).single();
+          assert.equal(primary.error,null);assert.equal(primary.data?.access_token,row.data?.access_token);}
+        assert.equal(row.error,null);return {...row.data!,access_token:cws?row.data!.access_token.replace(/^v1:/,''):row.data!.access_token};
       };
       // Both exchanges were valid when started. Only the newest explicit authorization may save.
       const first=await claim(await start());const second=await claim(await start(),other);
@@ -80,16 +94,20 @@ export function registerOAuthSessionTests(admin:SupabaseClient, users:()=>Array<
       assert.deepEqual(raced.sort(),[false,true]);
       const connected=await current();assert.ok(['winner-a','winner-b'].includes(connected.access_token));
       // Refresh responses may reuse the same provider refresh token. Revision still permits one winner.
-      assert.equal(await save(connected.credential_revision,'refresh-winner',admin,owner.id,'synthetic-reused-refresh'),true);
-      assert.equal(await save(connected.credential_revision,'late-refresh',other,owner.id,'synthetic-reused-refresh'),false);
+      if(!cws&&!github){
+        assert.equal(await save(connected.credential_revision,'refresh-winner',admin,owner.id,'synthetic-reused-refresh'),true);
+        assert.equal(await save(connected.credential_revision,'late-refresh',other,owner.id,'synthetic-reused-refresh'),false);
+      }
       const pending=await claim(await start());
-      const revoked=await other.from('user_integrations').upsert({user_id:owner.id,provider,access_token:'',refresh_token:null,
+      const revoked=github?await other.rpc('revoke_github_oauth_connection',{p_owner_id:owner.id})
+        :await other.from('user_integrations').upsert({user_id:owner.id,provider,access_token:'',refresh_token:null,
         credential_revision:randomUUID(),metadata:{revoked:true}},{onConflict:'user_id,provider'});
       assert.equal(revoked.error,null);
       assert.equal(await save(pending.authorization_revision,'late-after-disconnect'),false);
       assert.equal((await current()).access_token,'');
       const unconsumed=await start();
-      const revokeAgain=await other.from('user_integrations').update({credential_revision:randomUUID(),access_token:'',refresh_token:null,metadata:{revoked:true}})
+      const revokeAgain=github?await other.rpc('revoke_github_oauth_connection',{p_owner_id:owner.id})
+        :await other.from('user_integrations').update({credential_revision:randomUUID(),access_token:'',refresh_token:null,metadata:{revoked:true}})
         .eq('user_id',owner.id).eq('provider',provider);assert.equal(revokeAgain.error,null);
       assert.equal(await claim(unconsumed),null,'disconnect invalidates outstanding state even before session cleanup');
       const fresh=await claim(await start());assert.equal(await save(fresh.authorization_revision,'fresh-reconnect'),true);
@@ -99,6 +117,8 @@ export function registerOAuthSessionTests(admin:SupabaseClient, users:()=>Array<
       const denied=await browser.rpc('begin_oauth_session',{p_owner_id:owner.id,p_provider:sessionProvider,p_session:{}});assert.ok(denied.error);
       const mutation=await browser.from('user_integrations').update({access_token:'browser-bypass'}).eq('user_id',owner.id).eq('provider',provider).select('id');
       assert.ok(mutation.error||mutation.data?.length===0);assert.equal((await current()).access_token,'fresh-reconnect');
+      if(github){const primaryBypass=await browser.from('github_integrations').update({access_token:'browser-bypass'}).eq('user_id',owner.id).select('id');
+        assert.ok(primaryBypass.error||primaryBypass.data?.length===0);assert.equal((await current()).access_token,'fresh-reconnect');}
     }
   });
 }

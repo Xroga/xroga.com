@@ -25,7 +25,7 @@ import { saveGitHubTokenToStorage,getGitHubTokenFromStorage } from '../services/
 import { ensurePrivateOAuthBucket } from '../services/integrations/credentialStorageBucket.js';
 import { clearGitHubConnection, getGitHubToken, saveGitHubConnection } from '../services/integrations/githubAuth.js';
 import { clearVercelConnection, getVercelToken, saveVercelConnection } from '../services/integrations/vercelAuth.js';
-import { clearPkceSession, clearProviderToken, loadPkceSession, loadProviderToken, storePkceSession, storeProviderToken } from '../services/integrations/oauthPkceStore.js';
+import { clearPkceSession, clearProviderToken, consumePkceSession, loadPkceSession, loadProviderToken, storePkceSession, storeProviderToken } from '../services/integrations/oauthPkceStore.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
 import { createRunDurable, getRun, activeRunIds, resumeRunDurable, withRunAttempt, appendRunEvent, persistRunState } from '../ai/runStore.js';
 import { GrowthService } from '../growth/growthService.js';
@@ -487,9 +487,13 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
 test('real GitHub disconnect persists owner-bound revocation despite a delayed legacy mirror',async()=>{
   const [owner,other]=users,bucket='xroga-github-tokens';
   const payload={access_token:'SYNTHETIC_DELAYED_GITHUB_COPY',username:'fixture',provider_user_id:'fixture',repo_strategy:'auto' as const,default_repo:null,updated_at:new Date().toISOString()};
+  const authorize=async(userId:string)=>{
+    const state=randomUUID();await storePkceSession(userId,'github_oauth_pkce',{verifier:'synthetic',state,redirect_uri:'https://example.invalid/callback',created_at:new Date().toISOString()});
+    const session=await consumePkceSession(userId,'github_oauth_pkce',state);assert.ok(session?.authorization_revision);return session.authorization_revision;
+  };
   try {
-    await saveGitHubConnection(owner.id,'SYNTHETIC_OWNER_GITHUB',{providerUserId:'owner-fixture',username:'owner-fixture'});
-    await saveGitHubConnection(other.id,'SYNTHETIC_OTHER_GITHUB',{providerUserId:'other-fixture',username:'other-fixture'});
+    await saveGitHubConnection(owner.id,'SYNTHETIC_OWNER_GITHUB',{providerUserId:'owner-fixture',username:'owner-fixture',authorizationRevision:await authorize(owner.id)});
+    await saveGitHubConnection(other.id,'SYNTHETIC_OTHER_GITHUB',{providerUserId:'other-fixture',username:'other-fixture',authorizationRevision:await authorize(other.id)});
     assert.equal(await getGitHubToken(owner.id),'SYNTHETIC_OWNER_GITHUB');
     const disconnect=await request('/api/github/disconnect',owner.token,'DELETE');
     assert.equal(disconnect.status,200);assert.equal((await disconnect.json() as {disconnected:boolean}).disconnected,true);
@@ -501,7 +505,7 @@ test('real GitHub disconnect persists owner-bound revocation despite a delayed l
     const status=await request('/api/github/status',owner.token);assert.equal(status.status,200);
     assert.equal((await status.json() as {connected:boolean}).connected,false);
     // Explicit reconnect replaces the tombstone through the authoritative DB.
-    await saveGitHubConnection(owner.id,'SYNTHETIC_RECONNECTED_GITHUB',{providerUserId:'owner-fixture',username:'owner-fixture'});
+    await saveGitHubConnection(owner.id,'SYNTHETIC_RECONNECTED_GITHUB',{providerUserId:'owner-fixture',username:'owner-fixture',authorizationRevision:await authorize(owner.id)});
     assert.equal(await getGitHubToken(owner.id),'SYNTHETIC_RECONNECTED_GITHUB');
   } finally {
     for(const user of users) await clearGitHubConnection(user.id);

@@ -122,7 +122,7 @@ export async function storePkceSession(
   }
 
   const supabase = getSupabaseAdmin();
-  if (provider === 'supabase_oauth_pkce' || provider === 'vercel_oauth_pkce') {
+  if (['supabase_oauth_pkce', 'vercel_oauth_pkce', 'cws_oauth_pkce', 'github_oauth_pkce'].includes(provider)) {
     const { data, error } = await supabase.rpc('begin_oauth_session', {
       p_owner_id: userId, p_provider: provider, p_session: session,
     });
@@ -206,7 +206,7 @@ export async function clearPkceSession(userId: string, provider: string): Promis
 /** Atomic, expiring one-use admission. Never consult a legacy mirror here. */
 export async function consumePkceSession(userId: string, provider: string, expectedState: string): Promise<PkceSession | null> {
   assertStorageIdentity(userId, provider);
-  if (!['vercel_oauth_pkce', 'supabase_oauth_pkce', 'cws_oauth_pkce'].includes(provider)
+  if (!['vercel_oauth_pkce', 'supabase_oauth_pkce', 'cws_oauth_pkce', 'github_oauth_pkce'].includes(provider)
     || typeof expectedState !== 'string' || expectedState.length < 16 || expectedState.length > 512) return null;
   const { data, error } = await getSupabaseAdmin().rpc('consume_oauth_session', {
     p_owner_id: userId, p_provider: provider, p_state: expectedState,
@@ -215,11 +215,11 @@ export async function consumePkceSession(userId: string, provider: string, expec
     || data.state !== expectedState || typeof data.verifier !== 'string' || !data.verifier
     || typeof data.redirect_uri !== 'string' || !data.redirect_uri
     || typeof data.created_at !== 'string'
-    || (provider !== 'cws_oauth_pkce' && !validRevision(data.authorization_revision))
+    || !validRevision(data.authorization_revision)
     || (data.nonce != null && typeof data.nonce !== 'string')) return null;
   return { verifier: data.verifier, state: data.state, redirect_uri: data.redirect_uri,
     created_at: data.created_at, ...(data.nonce == null ? {} : { nonce: data.nonce }),
-    ...(provider === 'cws_oauth_pkce' ? {} : { authorization_revision: data.authorization_revision }) };
+    authorization_revision: data.authorization_revision };
 }
 
 /** Save OAuth access tokens only after authoritative database persistence. */
