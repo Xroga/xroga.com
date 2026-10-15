@@ -351,6 +351,12 @@ export async function saveUserProviderKey(
       ? 'xroga_server'
       : 'vercel';
   const providerRow = `${PROVIDER_PREFIX}${p === 'custom' ? `custom_${envVar.toLowerCase()}` : p}`;
+  // Capture before asynchronous bootstrap or persistence. A concurrent revoke or
+  // newer save invalidates this exact attempt, including an initially absent row.
+  const prepared = await supabase.rpc('prepare_provider_key_write', { p_owner_id:userId,p_provider:providerRow });
+  if (prepared.error || typeof prepared.data !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(prepared.data)) {
+    throw new Error('Credential could not be saved. Retry shortly.');
+  }
   const metadata = {
     type: PUBLISH_ONLY_PROVIDERS.has(p)
       ? 'user_publish_credential'
@@ -369,31 +375,11 @@ export async function saveUserProviderKey(
     await ensureGithubSchema();
   }
 
-  let { error } = await supabase.from('user_integrations').upsert(
-    {
-      user_id: userId,
-      provider: providerRow,
-      access_token: encrypted,
-      metadata,
-    },
-    { onConflict: 'user_id,provider' },
-  );
-
-  if (error && isMissingTableError(error.message)) {
-    await ensureGithubSchema();
-    await new Promise((r) => setTimeout(r, 400));
-    ({ error } = await supabase.from('user_integrations').upsert(
-      {
-        user_id: userId,
-        provider: providerRow,
-        access_token: encrypted,
-        metadata,
-      },
-      { onConflict: 'user_id,provider' },
-    ));
-  }
-
+  const { data:saved,error } = await supabase.rpc('save_provider_key_if_current', {
+    p_owner_id:userId,p_provider:providerRow,p_revision:prepared.data,p_access_token:encrypted,p_metadata:metadata,
+  });
   if (error) throw new Error('Credential could not be saved. Retry shortly.');
+  if (saved !== true) throw Object.assign(new Error('Credential changed while saving. Reconnect explicitly and retry.'), {code:'CREDENTIAL_WRITE_CONFLICT'});
 
   void saveKeyToStorage(userId, providerRow, {
     access_token: encrypted,
@@ -478,11 +464,8 @@ export async function deleteUserProviderKey(userId: string, provider: string): P
 async function revokeProviderRow(userId: string, providerRow: string): Promise<void> {
   credentialProviderSelection(providerRow);
   const supabase = getSupabaseAdmin();
-  const { error } = await supabase.from('user_integrations').upsert({
-    user_id: userId, provider: providerRow, access_token: '',
-    metadata: { revoked: true, revoked_at: new Date().toISOString() },
-  }, { onConflict: 'user_id,provider' });
-  if (error) throw new Error('Credential revocation could not be recorded. Retry shortly.');
+  const { data,error } = await supabase.rpc('revoke_provider_key', {p_owner_id:userId,p_provider:providerRow});
+  if (error || data !== true) throw new Error('Credential revocation could not be recorded. Retry shortly.');
   try {
     const result = await supabase.storage.from(KEY_BUCKET).remove([keyStoragePath(userId, providerRow)]);
     if (result.error) throw new Error('cleanup failed');

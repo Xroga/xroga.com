@@ -38,11 +38,13 @@ import type { ProjectRuntimeSession } from '../synthesis/projectRuntime/types.js
 import { createLivePreviewGrant, getLivePreviewGrant, revokeLivePreviewGrants } from '../synthesis/livePreview/store.js';
 import { BillingService } from '../services/BillingService.js';
 import { buildUserSupabaseProvisionSql } from '../services/integrations/supabaseProvision.js';
+import { registerProviderKeyRevisionTests } from './providerKeyRevision.local.integration.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
 const admin=createClient(url,process.env.SUPABASE_SERVICE_ROLE_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});
 const users: Array<{id:string;token:string;context:TenantContext;project:string;file:string;run:string;provider:string;session:string;cost:string}>=[];
+registerProviderKeyRevisionTests(admin, () => users);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }
@@ -953,11 +955,22 @@ test('real reservation concurrency and foreign settlement cannot transfer budget
     const r=await admin.from('xroga_provider_reservations').select('id,user_id,status,reserved_micro_usd,settled_micro_usd').in('id',[replay[0].id,foreign.id]).order('id');assert.equal(r.error,null);assert.equal(r.data?.length,2);return r.data;
   };
   const before=await read();
+  for (const changed of [{ modelId:'kimi_k3' as const },{purpose:'completion' as const},{estimatedInputTokens:101},{maximumOutputTokens:99}]) {
+    await assert.rejects(reserveProviderBudget({...input,...changed,userId:owner.id}),/Provider reservation evidence is invalid/);
+  }
+  assert.deepEqual(await read(),before,'same-key changed intent must not mutate the original hold');
   await assert.rejects(settleProviderBudget({userId:other.id,modelId:input.modelId,reservation:replay[0],result:{inputTokens:10,outputTokens:10}}),/Provider reservation settlement failed/);
   const denied=await admin.rpc('release_xroga_provider_budget',{p_user_id:other.id,p_reservation_id:replay[0].id,p_error_category:'fixture',p_pending_reconciliation:false});assert.ok(denied.error);
   assert.deepEqual(await read(),before,'failed foreign writes must leave both reservations unchanged');
   await settleProviderBudget({userId:owner.id,modelId:input.modelId,reservation:replay[0],result:{inputTokens:10,outputTokens:10}});
   const after=await read();assert.equal(after?.find(r=>r.id===replay[0].id)?.status,'settled');assert.equal(after?.find(r=>r.id===foreign.id)?.status,'reserved');
+  await assert.rejects(reserveProviderBudget({...input,userId:owner.id}),/Provider reservation evidence is invalid/);
+  const released=await admin.rpc('release_xroga_provider_budget',{p_user_id:other.id,p_reservation_id:foreign.id,p_error_category:'fixture',p_pending_reconciliation:false});assert.equal(released.error,null);
+  await assert.rejects(reserveProviderBudget({...input,userId:other.id}),/Provider reservation evidence is invalid/);
+  const uncertainInput={...input,userId:owner.id,idempotencyKey:randomUUID()};
+  const uncertain=await reserveProviderBudget(uncertainInput);
+  const held=await admin.rpc('release_xroga_provider_budget',{p_user_id:owner.id,p_reservation_id:uncertain.id,p_error_category:'fixture',p_pending_reconciliation:true});assert.equal(held.error,null);
+  await assert.rejects(reserveProviderBudget(uncertainInput),/Provider reservation evidence is invalid/);
   const count=await admin.from('xroga_provider_reservations').select('id',{count:'exact',head:true}).eq('user_id',owner.id).eq('idempotency_key',key);assert.equal(count.error,null);assert.equal(count.count,1);
 });
 

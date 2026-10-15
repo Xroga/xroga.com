@@ -21,7 +21,7 @@ test('unavailable credential authority never reads a legacy mirror or reports su
         res.end(JSON.stringify({ message: 'SYNTHETIC_CLEANUP_ERROR_CANARY' }));
       } else {
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(req.method === 'POST' ? null : [{ provider: 'apikey_openai', access_token: '', metadata: { revoked: true } }]));
+        res.end(JSON.stringify(req.url?.includes('/rpc/revoke_provider_key') ? true : [{ provider: 'apikey_openai', access_token: '', metadata: { revoked: true } }]));
       }
     });
   });
@@ -40,17 +40,15 @@ test('unavailable credential authority never reads a legacy mirror or reports su
     await assert.rejects(listUserProviderKeys(user), { message: 'Credential lookup unavailable. Retry shortly.' });
     await assert.rejects(resolveProviderEnvForDeploy(user), { message: 'Credential lookup unavailable. Retry shortly.' });
     assert.ok(paths.length >= 8);
-    assert.ok(paths.every((path) => path.startsWith('/rest/v1/user_integrations')), 'No Storage fallback may bypass unavailable revocation state');
+    assert.ok(paths.every((path) => path.startsWith('/rest/v1/user_integrations') || path.startsWith('/rest/v1/rpc/revoke_provider_key')), 'No Storage fallback may bypass unavailable revocation state');
     mode = 'cleanup';
     const start = paths.length;
     await assert.rejects(deleteUserProviderKey(user, 'openai'), { message: 'Credential revoked, but legacy copy cleanup is pending. Retry shortly.' });
-    assert.ok(paths[start].startsWith('/rest/v1/user_integrations'));
+    assert.ok(paths[start].startsWith('/rest/v1/rpc/revoke_provider_key'));
     assert.ok(paths[start + 1].startsWith('/storage/'));
     const tombstone = JSON.parse(bodies[start]);
-    assert.equal(tombstone.user_id, user);
-    assert.equal(tombstone.provider, 'apikey_openai');
-    assert.equal(tombstone.access_token, '');
-    assert.equal(tombstone.metadata.revoked, true);
+    assert.equal(tombstone.p_owner_id, user);
+    assert.equal(tombstone.p_provider, 'apikey_openai');
     const reads = paths.length;
     assert.equal(await getUserProviderKey(user, 'openai'), null);
     assert.equal(await getUserProviderKey(user, 'custom'), null);
