@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { test } from 'node:test';
 import { PROVIDER_PRICE_VERSION, actualProviderCostMicroUsd, estimateProviderReservationMicroUsd, settleProviderBudget, withProviderReservation, type ProviderUsageResult } from './providerBudget.js';
+import { executeWithProviderFallback } from './providerRuntime.js';
 
 test('settlement requires an exact durable receipt and wrapper failures retain uncertain spend', async () => {
   const userId = '11111111-1111-4111-8111-111111111111';
@@ -59,17 +60,22 @@ test('settlement requires an exact durable receipt and wrapper failures retain u
     const run = (executeResult: ProviderUsageResult = result) => withProviderReservation({ userId, modelId: 'kimi_k3', estimatedInputTokens: 100, maximumOutputTokens: 100,
       execute: async () => { executions++; return executeResult; } });
     evidence = null;
-    await assert.rejects(run(), /settlement evidence/);
+    await assert.rejects(run(), { code: 'POST_COMPLETION_ACCOUNTING_UNCERTAIN', retryable: false });
     failSettlement = true;
-    await assert.rejects(run(), /settlement failed/);
+    await assert.rejects(run(), { code: 'POST_COMPLETION_ACCOUNTING_UNCERTAIN', retryable: false });
     failSettlement = false;
     // Even an accounting adapter error whose text resembles a provider auth
     // failure must retain a hold once execution has returned successfully.
     const brokenReceipt: ProviderUsageResult = { inputTokens: 10, outputTokens: 20,
       get providerRequestId(): string { throw new Error('authentication failure reading receipt'); } };
-    await assert.rejects(run(brokenReceipt), /authentication failure reading receipt/);
+    await assert.rejects(run(brokenReceipt), { code: 'POST_COMPLETION_ACCOUNTING_UNCERTAIN', retryable: false });
     assert.equal(executions, 3); assert.equal(holds, 3);
     assert.equal(settlementCalls, 23);
+    evidence = null;
+    await assert.rejects(executeWithProviderFallback({routes:['kimi_k3','deepseek_v4_flash'],recordHealth:false,
+      execute:async()=>run(),sleep:async()=>{throw new Error('Completed provider must not be retried');}}),
+      {code:'POST_COMPLETION_ACCOUNTING_UNCERTAIN',retryable:false});
+    assert.equal(executions,4);assert.equal(holds,4);assert.equal(settlementCalls,24);
   } finally {
     if (previous.url === undefined) delete process.env.SUPABASE_URL; else process.env.SUPABASE_URL = previous.url;
     if (previous.key === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY; else process.env.SUPABASE_SERVICE_ROLE_KEY = previous.key;

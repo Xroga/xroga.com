@@ -15,6 +15,14 @@ function keyRepo(repo: string | null | undefined): string {
   return repo?.includes('/') ? repo : '_workspace';
 }
 
+function restoreSessionMessages(row: Record<string,unknown>, userId:string, repo:string|null|undefined, limit:number, external=false):SessionMessage[] {
+  if (row[external ? 'xroga_user_id' : 'user_id'] !== userId || row.repo !== keyRepo(repo) || !Array.isArray(row.messages)) return [];
+  const safeLimit = Number.isSafeInteger(limit) && limit > 0 ? Math.min(limit,40) : 12;
+  return row.messages.filter((message):message is SessionMessage => !!message && typeof message === 'object' &&
+    (message.role === 'user' || message.role === 'assistant') && typeof message.content === 'string')
+    .map(message=>({role:message.role,content:message.content.slice(0,8000)})).slice(-safeLimit);
+}
+
 async function loadFromUserProject(
   userId: string,
   repo: string | null | undefined,
@@ -25,27 +33,18 @@ async function loadFromUserProject(
     if (!client) return null;
     const { data, error } = await client
       .from('xroga_session_memory')
-      .select('messages')
+      .select('xroga_user_id,repo,messages')
       .eq('xroga_user_id', userId)
       .eq('repo', keyRepo(repo))
       .maybeSingle();
     if (error) {
       if (!/relation|does not exist|PGRST/i.test(error.message)) {
-        console.warn('[sessionMemory] user project load:', error.message);
+        console.warn('[sessionMemory] user project load unavailable');
       }
       return null;
     }
     if (!data) return [];
-    const msgs = Array.isArray(data.messages) ? data.messages : [];
-    return msgs
-      .filter(
-        (m): m is SessionMessage =>
-          !!m &&
-          typeof m === 'object' &&
-          (m as SessionMessage).role &&
-          typeof (m as SessionMessage).content === 'string',
-      )
-      .slice(-limit);
+    return restoreSessionMessages(data,userId,repo,limit,true);
   } catch {
     return null;
   }
@@ -73,7 +72,7 @@ async function saveToUserProject(
       { onConflict: 'xroga_user_id,repo' },
     );
     if (error) {
-      console.warn('[sessionMemory] user project save:', error.message);
+      console.warn('[sessionMemory] user project save unavailable');
       return false;
     }
     return true;
@@ -96,23 +95,14 @@ export async function loadSessionHistory(
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from('session_memory')
-      .select('messages')
+      .select('user_id,repo,messages')
       .eq('user_id', userId)
       .eq('repo', keyRepo(repo))
       .maybeSingle();
     if (error || !data) return [];
-    const msgs = Array.isArray(data.messages) ? data.messages : [];
-    return msgs
-      .filter(
-        (m): m is SessionMessage =>
-          !!m &&
-          typeof m === 'object' &&
-          (m as SessionMessage).role &&
-          typeof (m as SessionMessage).content === 'string',
-      )
-      .slice(-limit);
+    return restoreSessionMessages(data,userId,repo,limit);
   } catch (err) {
-    console.warn('[sessionMemory] load failed:', (err as Error).message);
+    console.warn('[sessionMemory] platform load unavailable');
     return [];
   }
 }
@@ -143,7 +133,7 @@ export async function saveSessionHistory(
       { onConflict: 'user_id,repo' },
     );
   } catch (err) {
-    console.warn('[sessionMemory] save failed:', (err as Error).message);
+    console.warn('[sessionMemory] platform save unavailable');
   }
 }
 

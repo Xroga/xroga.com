@@ -6,6 +6,22 @@ import { createTenantContext } from './tenantContext.js';
 import { TenantAccessError } from './tenantErrors.js';
 const owner='11111111-1111-4111-8111-111111111111';
 const context=createTenantContext({userId:owner,via:'persisted_owner'});
+
+test('shared owner-bound writers reject malformed or substituted acknowledgements',async()=>{
+  let receipt:unknown;
+  const db=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(_input,init)=>
+    Response.json(init?.method==='POST'?[]:receipt)}});
+  const writers=[
+    {key:'id',save:()=>persistOwnedRun(db,context,{id:'expected',user_id:owner})},
+    {key:'session_id',save:()=>persistOwnedRuntimeSession(db,context,{session_id:'expected',user_id:owner})},
+    {key:'run_id',save:()=>persistOwnedRunTrace(db,context,{run_id:'expected',user_id:owner})},
+    {key:'mutation_key',save:()=>persistOwnedUniversalRecord(db,context,'mutation',{mutation_key:'expected',run_id:'run',project_id:'project',user_id:owner})},
+  ];
+  for(const writer of writers){
+    for(receipt of [[{[writer.key]:'substituted'}],[{}],[null],[['expected']]])await assert.rejects(writer.save(),{code:'RESOURCE_ACCESS_UNAVAILABLE'});
+    receipt=[{[writer.key]:'expected'}];await writer.save();
+  }
+});
 test('owner-bound writer snapshots identity and nested data across the insertion await',async()=>{
   const row={id:'original',user_id:owner,output:{text:'original'}};
   const requests:{url:URL;body:unknown}[]=[];

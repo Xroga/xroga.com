@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { test } from 'node:test';
 import { projectContextKey, requireResumeProjectContext } from './projectContext.js';
+import { createCanonicalExecutionState } from '../executionRuntime.js';
 
 test('resume target comes from durable repository branch and root, not new client values', () => {
   const runId = randomUUID();
@@ -32,6 +33,8 @@ test('actual pipeline refuses changed resume lineage before worker claims or pro
   const userId = randomUUID(), runId = randomUUID();
   const projectId = projectContextKey({ repo: 'org/original', branch: 'topic', projectRoot: '/app' });
   const paths: string[] = [];
+  const state = createCanonicalExecutionState({runId,projectId,repository:{owner:'org',name:'original'},selectedBranch:'topic'});
+  let malformed = false;
   process.env.SUPABASE_URL = 'http://127.0.0.1:49223';
   process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-only';
   globalThis.fetch = async (input, init) => {
@@ -43,7 +46,7 @@ test('actual pipeline refuses changed resume lineage before worker claims or pro
     assert.equal(url.searchParams.get('user_id'), `eq.${userId}`);
     assert.equal(url.searchParams.get('run_id'), `eq.${runId}`);
     return Response.json({ run_id: runId, user_id: userId, project_id: projectId,
-      state: { runId, projectId, repository: { owner: 'org', name: 'original' }, selectedBranch: 'topic' } });
+      repository_identity:state.repository,selected_branch:malformed?'foreign':state.selectedBranch,starting_commit_sha:state.startingCommitSha,state });
   };
   try {
     const { runBuildPipeline } = await import('../pipeline.js');
@@ -53,6 +56,9 @@ test('actual pipeline refuses changed resume lineage before worker claims or pro
     assert.equal(paths.length, 3, 'each denied resume performs only its owner-scoped checkpoint lookup');
     await assert.rejects(runBuildPipeline({ runId, userId, projectId: randomUUID(), prompt: 'resume', clientMeta: { resumeRun: true } }), { code: 'RUN_RESUME_LINEAGE_UNAVAILABLE' });
     assert.equal(paths.length, 4, 'legacy checkpoint cannot authorize a database project substitution');
+    malformed = true;
+    await assert.rejects(runBuildPipeline({runId,userId,prompt:'resume',clientMeta:{resumeRun:true}}),{code:'RUN_RESUME_LINEAGE_UNAVAILABLE'});
+    assert.equal(paths.length,5,'misbound durable branch stops before worker admission');
   } finally {
     globalThis.fetch = originalFetch;
     keys.forEach((key, index) => { if (prior[index] === undefined) delete process.env[key]; else process.env[key] = prior[index]; });

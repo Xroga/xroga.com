@@ -1,7 +1,17 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import test from 'node:test';
+import { readFileSync } from 'node:fs';
 import { prepareSupabaseBundleWrite, readUserSupabaseBundle, saveSupabaseBundle, resolveProviderEnvForDeploy } from './userProviderKeys.js';
+
+test('manual provisioning and worker provisioning use one bundle snapshot',()=>{
+  const route=readFileSync(new URL('../../routes/integrations.ts',import.meta.url),'utf8');
+  const worker=readFileSync(new URL('../../ai/pipeline.ts',import.meta.url),'utf8');
+  assert.match(route,/const bundle = await readUserSupabaseBundle\(req\.userId!\)/);
+  assert.match(worker,/const bundle = await readUserSupabaseBundle\(opts\.userId\)/);
+  assert.doesNotMatch(route,/getUserProviderKey\(\s*req\.userId!,\s*'supabase(?:_url|_db_password)?'/);
+  assert.doesNotMatch(worker,/getUserProviderKey\(\s*opts\.userId,\s*'supabase(?:_url|_db_password)?'/);
+});
 
 test('bundle reads preserve consistent legacy JWTs and deny opaque, mixed and changed associations', async () => {
   const owner = '11111111-1111-4111-8111-111111111111';

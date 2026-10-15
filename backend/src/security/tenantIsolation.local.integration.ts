@@ -54,6 +54,10 @@ import { registerSystemErrorLogTests } from './systemErrorLog.local.integration.
 import { registerWorkerRevisionTests } from './workerRevision.local.integration.js';
 import { registerSoftwareCheckpointAttemptTests } from './softwareCheckpointAttempt.local.integration.js';
 import { registerSupabaseBundleTests } from './supabaseBundle.local.integration.js';
+import { registerProvisioningReceiptTests } from './provisioningReceipt.local.integration.js';
+import { registerCommunityCommentUpdateTests } from '../community/commentUpdate.local.integration.js';
+import { registerRecoveryMemoryReadTests } from './recoveryMemoryRead.local.integration.js';
+import { registerCommunityPostMutationTests } from '../community/postMutation.local.integration.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -73,6 +77,10 @@ registerSystemErrorLogTests(admin);
 registerWorkerRevisionTests(admin, () => users);
 registerSoftwareCheckpointAttemptTests(admin, () => users);
 registerSupabaseBundleTests(admin, () => users);
+registerProvisioningReceiptTests(admin);
+registerCommunityCommentUpdateTests(admin);
+registerRecoveryMemoryReadTests(admin);
+registerCommunityPostMutationTests(admin);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }

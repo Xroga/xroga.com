@@ -250,24 +250,33 @@ function encryptApiKey(plain: string): string {
 }
 
 function decryptApiKey(stored: string): string | null {
+  if (typeof stored !== 'string' || !stored.length || stored.length > 70000) return null;
+  const decode = (value: string): Buffer | null => {
+    if (!value || !/^[A-Za-z0-9+/]+={0,2}$/.test(value)) return null;
+    const bytes = Buffer.from(value, 'base64');
+    return bytes.toString('base64') === value ? bytes : null;
+  };
+  const utf8 = (bytes: Buffer): string | null => {
+    const text = bytes.toString('utf8');
+    return Buffer.from(text, 'utf8').equals(bytes) ? text : null;
+  };
   if (!stored.startsWith('v1:')) {
-    try {
-      const raw = Buffer.from(stored.replace(/^enc:/, ''), 'base64').toString('utf8');
-      const idx = raw.indexOf(':');
-      return idx >= 0 ? raw.slice(idx + 1) : raw;
-    } catch {
-      return null;
-    }
+    // Keep known legacy enc:/bare-base64 records, never interpret unknown
+    // versioned envelopes or malformed bytes as credentials.
+    const bytes = decode(stored.startsWith('enc:') ? stored.slice(4) : stored);
+    const raw = bytes && utf8(bytes);
+    if (!raw) return null;
+    const idx = raw.indexOf(':');
+    return (idx >= 0 ? raw.slice(idx + 1) : raw) || null;
   }
   const parts = stored.split(':');
-  if (parts.length < 4) return null;
+  if (parts.length !== 4) return null;
   try {
-    const iv = Buffer.from(parts[1]!, 'base64');
-    const tag = Buffer.from(parts[2]!, 'base64');
-    const data = Buffer.from(parts.slice(3).join(':'), 'base64');
+    const iv = decode(parts[1]!), tag = decode(parts[2]!), data = decode(parts[3]!);
+    if (!iv || iv.length !== 12 || !tag || tag.length !== 16 || !data) return null;
     const decipher = createDecipheriv('aes-256-gcm', encryptionKey(), iv);
     decipher.setAuthTag(tag);
-    return Buffer.concat([decipher.update(data), decipher.final()]).toString('utf8');
+    return utf8(Buffer.concat([decipher.update(data), decipher.final()]));
   } catch {
     return null;
   }
@@ -713,16 +722,27 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
 
   const out: Record<string, string> = {};
   for (const row of rows) {
+    if (!row || (row.metadata != null && (typeof row.metadata !== 'object' || Array.isArray(row.metadata)))) {
+      throw new Error('Credential metadata is invalid. Reconnect before syncing.');
+    }
     if (row.metadata?.revoked === true) continue;
     const meta = (row.metadata ?? {}) as {
       env_var?: string;
       provider?: string;
       sync_target?: string;
     };
-    const provider = meta.provider ?? String(row.provider).replace(PROVIDER_PREFIX, '');
+    // Row identity, not display metadata, determines where a secret may go.
+    if (typeof row.provider !== 'string' || !row.provider.startsWith(PROVIDER_PREFIX)) throw new Error('Credential metadata is invalid. Reconnect before syncing.');
+    let provider: string;
+    try { provider = credentialProviderSelection(row.provider); }
+    catch { throw new Error('Credential metadata is invalid. Reconnect before syncing.'); }
     if (PUBLISH_ONLY_PROVIDERS.has(provider) || meta.sync_target === 'eas') continue;
     if (SUPABASE_SERVER_ONLY_PROVIDERS.has(provider) || meta.sync_target === 'xroga_server') continue;
+    if (meta.provider !== undefined && meta.provider !== provider && !(provider.startsWith('custom_') && meta.provider === 'custom')) {
+      throw new Error('Credential metadata is invalid. Reconnect before syncing.');
+    }
     const varName = meta.env_var ?? envVarForProvider(provider);
+    if (typeof varName !== 'string' || !/^[A-Z_][A-Z0-9_]{1,63}$/.test(varName)) throw new Error('Credential metadata is invalid. Reconnect before syncing.');
     const plain = row.access_token ? decryptApiKey(row.access_token) : null;
     if (plain && varName) out[varName] = plain;
   }

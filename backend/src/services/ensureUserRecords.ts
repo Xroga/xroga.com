@@ -1,6 +1,8 @@
 import {
   getApiBudgetUsd,
 } from '../config/plans.js';
+import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
+import { TenantAccessError } from '../security/tenantErrors.js';
 
 import {
   getSupabaseAdmin,
@@ -63,12 +65,12 @@ const inFlight =
  * repeat reads.
  */
 export async function ensureUserRecords(
-  userId:
-    string,
+  context: TenantContext,
 
   email?:
     string,
 ): Promise<void> {
+  const { userId } = requireTenantContext(context);
 
   if (
     isUserProvisioned(
@@ -174,8 +176,9 @@ async function provisionUserRecords(
   if (
     profileSelectError
   ) {
-    throw profileSelectError;
+    throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
   }
+  if (profile && profile.id !== userId) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
 
 
   if (
@@ -228,8 +231,12 @@ async function provisionUserRecords(
     if (
       profileInsertError
     ) {
-      throw profileInsertError;
+      throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
     }
+    // An ignore-duplicates insert has no row receipt. Verify the winning row
+    // before caching existence, including a concurrent process's successful insert.
+    const receipt = await supabase.from('profiles').select('id').eq('id', userId).maybeSingle();
+    if (receipt.error || receipt.data?.id !== userId) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
   }
 
 
@@ -281,8 +288,9 @@ async function provisionUserRecords(
   if (
     tokenSelectError
   ) {
-    throw tokenSelectError;
+    throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
   }
+  if (tokenRow && tokenRow.user_id !== userId) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
 
 
   /*
@@ -375,8 +383,10 @@ async function provisionUserRecords(
     if (
       tokenInsertError
     ) {
-      throw tokenInsertError;
+      throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
     }
+    const receipt = await supabase.from('user_token_usage').select('user_id').eq('user_id', userId).maybeSingle();
+    if (receipt.error || receipt.data?.user_id !== userId) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
   }
 
 

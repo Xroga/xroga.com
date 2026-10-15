@@ -3,6 +3,7 @@ import { getSupabaseAdmin } from '../config/supabase.js';
 import { MODELS, requirePricing, type ModelId } from './models.js';
 import { normalizeProviderError } from './providerRuntime.js';
 import { capacityUnavailableError } from './capacityUnavailable.js';
+import { PostCompletionAccountingError } from './postCompletionAccounting.js';
 
 export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 20_000_000;
 export const FREE_PROVIDER_ENTITLEMENT_MICRO_USD = 1_650_000;
@@ -485,8 +486,17 @@ export async function withProviderReservation<T extends ProviderUsageResult>(inp
   } catch (error) {
     // A completed provider request may already have incurred cost. Accounting
     // validation/storage failure must retain the hold, regardless of error text.
-    await finishFailedProviderReservation({ userId: input.userId, reservation,
-      error: providerCompleted ? new Error('Provider accounting outcome requires reconciliation') : error });
+    if (providerCompleted) {
+      try {
+        await finishFailedProviderReservation({ userId: input.userId, reservation,
+          error: new Error('Provider accounting outcome requires reconciliation') });
+      } catch {
+        // The original reservation remains held if reconciliation cannot be written.
+        // A second accounting failure must not turn completed work into a retry.
+      }
+      throw new PostCompletionAccountingError();
+    }
+    await finishFailedProviderReservation({ userId: input.userId, reservation, error });
     throw error;
   }
 }

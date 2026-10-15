@@ -174,7 +174,7 @@ export class SupabaseExecutionStateStore implements ExecutionStateStore {
 
   async load(runId: string): Promise<CanonicalExecutionState | null> {
     const context=createTenantContext({userId:this.userId,via:'persisted_owner'});
-    const { data, error } = await getTenantSupabaseAdmin(context).from('execution_runs').select('state,user_id,run_id,project_id').eq('run_id', runId).eq('user_id', context.userId).maybeSingle();
+    const { data, error } = await getTenantSupabaseAdmin(context).from('execution_runs').select('state,user_id,run_id,project_id,repository_identity,selected_branch,starting_commit_sha').eq('run_id', runId).eq('user_id', context.userId).maybeSingle();
     if (error) throw error;
     return restoreOwnerBoundExecutionState(data,this.userId,runId);
   }
@@ -216,7 +216,44 @@ export function restoreOwnerBoundExecutionState(row:unknown,userId:string,runId:
   if(!state||typeof state!=='object'||Array.isArray(state))return null;
   const snapshot=state as Record<string,unknown>;
   if(record.user_id!==userId||record.run_id!==runId||typeof record.project_id!=='string'||!record.project_id||snapshot.runId!==runId||snapshot.projectId!==record.project_id)return null;
+  if (!validCanonicalRecoveryState(snapshot) || record.selected_branch !== snapshot.selectedBranch ||
+      record.starting_commit_sha !== snapshot.startingCommitSha || !sameCanonicalRepository(record.repository_identity,snapshot.repository)) return null;
   return structuredClone(state as CanonicalExecutionState);
+}
+
+function sameCanonicalRepository(left:unknown,right:unknown):boolean {
+  if(left===null||right===null)return left===null&&right===null;
+  if(!left||!right||typeof left!=='object'||typeof right!=='object'||Array.isArray(left)||Array.isArray(right))return false;
+  const a=left as Record<string,unknown>,b=right as Record<string,unknown>;
+  return ['owner','name'].every(key=>typeof a[key]==='string'&&!!a[key]&&a[key]===b[key]) &&
+    (a.remote===undefined||typeof a.remote==='string') && a.remote===b.remote;
+}
+
+/** Reject malformed durable control data before it can acquire a resumed worker lease. */
+function validCanonicalRecoveryState(state:Record<string,unknown>):boolean {
+  const strings=(value:unknown):value is string[]=>Array.isArray(value)&&value.every(item=>typeof item==='string');
+  const object=(value:unknown):value is Record<string,unknown>=>!!value&&typeof value==='object'&&!Array.isArray(value);
+  if(typeof state.selectedBranch!=='string'||!state.selectedBranch||
+    !(state.startingCommitSha===null||typeof state.startingCommitSha==='string')||
+    !(state.databaseProjectId===undefined||state.databaseProjectId===null||typeof state.databaseProjectId==='string')||
+    !sameCanonicalRepository(state.repository,state.repository)||
+    !Array.isArray(state.currentWorkingSnapshot)||!state.currentWorkingSnapshot.every(file=>object(file)&&typeof file.path==='string'&&typeof file.content==='string')||
+    !object(state.productManifest)||!object(state.deploymentState)||typeof state.deploymentState.status!=='string'||
+    !['architectureDecisions','requiredCapabilities','selectedIntegrations','generatedFiles','changedFiles','deletedFiles','blockers'].every(key=>strings(state[key]))||
+    !['pendingPatches','appliedPatches','validationResults','reviewFindings','repairHistory','evidence','tasks'].every(key=>Array.isArray(state[key]))||
+    !['createdAt','updatedAt'].every(key=>typeof state[key]==='string'&&Number.isFinite(Date.parse(state[key] as string))))return false;
+  const ids=new Set<string>();
+  for(const task of state.tasks as unknown[]){
+    if(!object(task)||typeof task.id!=='string'||!task.id||ids.has(task.id)||typeof task.operationType!=='string'||!task.operationType||
+      typeof task.objective!=='string'||!['pending','ready','running','waiting_for_authorization','waiting_for_user_input','waiting_for_provider','validating','repairing','completed','blocked','failed','cancelled'].includes(String(task.status))||
+      !['requiredCapabilities','requiredContextReferences','allowedFiles','dependencies','validationMethod','evidenceRequirements'].every(key=>strings(task[key]))||
+      !Array.isArray(task.evidence)||!Array.isArray(task.fallbackRoutes)||!object(task.expectedOutputSchema)||!object(task.budget)||!object(task.retryPolicy)||
+      !Number.isSafeInteger(task.attempts)||Number(task.attempts)<0||!Number.isFinite(task.timeoutMs)||Number(task.timeoutMs)<=0||
+      !Number.isSafeInteger(task.retryPolicy.maximumAttempts)||Number(task.retryPolicy.maximumAttempts)<1||
+      !['initialBackoffMs','maximumBackoffMs'].every(key=>typeof task.retryPolicy==='object'&&task.retryPolicy!==null&&Number.isFinite((task.retryPolicy as Record<string,unknown>)[key])&&Number((task.retryPolicy as Record<string,unknown>)[key])>=0))return false;
+    ids.add(task.id);
+  }
+  return true;
 }
 
 export function createCanonicalExecutionState(input: {

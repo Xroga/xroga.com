@@ -634,7 +634,7 @@ router.post(
 
     try {
       const {
-        getUserProviderKey,
+        readUserSupabaseBundle,
       } = await import(
         '../services/integrations/userProviderKeys.js'
       );
@@ -645,27 +645,8 @@ router.post(
         '../services/integrations/supabaseProvision.js'
       );
 
-      const [
-        url,
-        service,
-        dbPass,
-      ] =
-        await Promise.all([
-          getUserProviderKey(
-            req.userId!,
-            'supabase_url',
-          ),
-
-          getUserProviderKey(
-            req.userId!,
-            'supabase',
-          ),
-
-          getUserProviderKey(
-            req.userId!,
-            'supabase_db_password',
-          ),
-        ]);
+      const bundle = await readUserSupabaseBundle(req.userId!);
+      const url = bundle?.projectUrl, service = bundle?.serviceRoleKey, dbPass = bundle?.dbPassword;
 
       const {
         getUserSupabaseManagementToken,
