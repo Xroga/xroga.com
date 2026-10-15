@@ -1,5 +1,11 @@
 # Xroga OS Batch 01 implementation tracker
 
+## Latest candidate — parser patches and real fixture correction
+
+Operations feature319c22887981797f6f4eae2c081790779a40f8cd passes aggregate38717352239, frozen Agent38717352159, Docker38717352121, frontend38717352228 and golden38717352120. Real isolated38717352049 FAILS42/43 security cases (zero skips) at integrated runtime1195de8c94afac16148670ab4add906cdab2b974: new project fixture incorrectly used disallowed status draft. Corrected to the actual schema default, without relaxing constraints or negative assertions; full real rerun required.
+
+Same-major parser locks remove three aggregate high findings: actual47/high24/critical0 overall, backend37/high17/critical0, frontend15/high10/critical0.10 dependency/integrity/PostCSS and14 real Cline/Git/MCP tests PASS; final-source full CI pending. Additional full-source profile/notification/provisioning/identity reviews classify190/670 candidates:28 scoped boundaries,2 narrow exceptions,13 non-persistence,147 reviewed gaps,480 unreviewed (627 unresolved including gaps).4 audit-policy and14 profile/notification tests PASS; these do not prove immediate token revocation/account-deletion lifecycle. Original007 acceptance still fails;008–010 NOT_STARTED, PR803 draft, NO-GO. No owner credentials, cloud actions or production changes.
+
 ## 2026-10-15 continuation — Operations owner/project boundaries
 
 Feature63bfd812e4704e0f2ae4d7e177461abb8021b21e now passes aggregate [38715245278](https://github.com/Xroga/xroga.com/actions/runs/38715245278), both feature and virtual-merge trees with repeated full baseline. Real isolated Supabase [38715245296](https://github.com/Xroga/xroga.com/actions/runs/38715245296) passes41 security/3 browser cases and70 fresh/representative-upgrade migrations. Actual tested web/API revision is fd4f848df1bf0bacffaabbc168ec848576497733, not the feature SHA. The strict build-contract correction passes; previous150d failure remains recorded below. Frozen Cline, Docker, frontend and golden workflows also pass at63bfd.

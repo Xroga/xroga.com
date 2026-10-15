@@ -2,6 +2,106 @@
   "version": "1.0",
   "reviews": [
     {
+      "path": "backend/src/routes/notifications.ts",
+      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "callIds": [
+        "95aca8562235b1b02997",
+        "cc2c2522f42d6ac8d5bd",
+        "96f82d20ad4bfc5af43e",
+        "faa4cebd0c15a1b5d69c",
+        "5233e1547ffa2fd23fd6",
+        "8f55ff924d59067efc48",
+        "83827643069e9005dce3",
+        "b1d953653483a66af3d9",
+        "add984aaad8b65bdbdfa",
+        "f0601134e3c2080d41f3"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
+      "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "FOREIGN_NOTIFICATION_CANARY"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/routes/profile.ts",
+      "sourceSha256": "fee53587ad176cd91f70a3645a28171117400d0e12e48474b5d345296cf060f8",
+      "callIds": [
+        "69348e841941208b2323",
+        "0d86495063002c4ecffb",
+        "5051a4856f4fe27770f4",
+        "7db18803d9573b2c4c27",
+        "ccfa687374473dfb4744",
+        "cd054bc115d4065fd8eb",
+        "aa36c7317176bddd7068"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Inspected all profile routes, auth mount, strict patch schema and companion/onboarding transformations. Actor-derived profile reads/writes cannot set role; activity joins suppress foreign project names. Delete targets the authenticated actor with exact DELETE confirmation and clears existence cache.",
+      "reason": "Owner-bound update/read and role denial have real API evidence. Account deletion lacks a fresh remote session check and dedicated revoked-session/cascade race proof. Local JWT acceptance and downstream FK/storage cleanup need further work; schema confirmation unit tests are not a real account lifecycle test.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "profile activity keeps own and project-less entries"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/notificationService.ts",
+      "sourceSha256": "082f6cba830061d4a8979d013b8409377ae64f6a610553e5866e0cbea09443f9",
+      "callIds": [
+        "75cd82142cc716ceb6ad",
+        "c3188b628c66ba5bc9ea"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Both service-role candidates are inside pushNotification. The only discovered production build consumers pass authenticated swarm route userId; build failure details are replaced by fixed safe text. Video helper exports have no discovered production consumers.",
+      "reason": "Internal primitive userId is not itself an authority token. Complete pipeline completion evidence, provider URL trust, metadata minimization and historical raw notification migration are not certified. Insert failure still logs a provider message internally; tests prove current failure-copy isolation only.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "RAW_DIAGNOSTIC_PRIVATE_CANARY"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/ensureUserRecords.ts",
+      "sourceSha256": "8de1e8a52e2bca3756641234eb803d3c6a6b4ce6c075105bc5a5ee681d7006d5",
+      "callIds": [
+        "3ce965d2442eccc9a99a",
+        "f79c3488b2d7a4ebc616",
+        "fac3262098bf29e3c52b",
+        "9b2b1fbd5f8964f299b3",
+        "f2586952366ff60faf5e"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Full provisioning/cache sources and all call sites inspected: only auth middleware invokes it after resolved server identity. Profile and usage inserts ignore duplicates rather than overwrite existing roles, usage or balances. Existence cache is keyed by actor and does not cache permissions.",
+      "reason": "Deleted/revoked local-JWT sessions, concurrent delete/reprovision and all database trigger defaults are not independently verified. Process-level in-flight deduplication is not a cross-process transaction. Real login tests prove bootstrap scope, not complete account lifecycle safety.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real profile column grants reject self-promotion"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/resolveIdentity.ts",
+      "sourceSha256": "d842ab8f2a9b3dcbe91bf8f6860ba7088d10d9069aca982471bf6efe39e5d724",
+      "callIds": [
+        "c0648bd26f06aad1cad0"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Single discovered privileged factory is used only for auth.getUser(token), not a caller-selected table. Token fingerprints deduplicate concurrent remote verification and entries are removed on settlement. Callers receive canonical identity, not supplied user_metadata ownership.",
+      "reason": "Local JWT verification remains the default and accepts unexpired tokens without immediate remote revocation checks; REQUIRE_REMOTE_AUTH_CHECK is not silently enabled here. Founder server gate is separate. Sensitive operation freshness and account-deletion lifecycle remain unresolved, not waived by this factory classification.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real profile column grants reject self-promotion"
+        }
+      ]
+    },
+    {
       "path": "backend/src/operations/operationsService.ts",
       "sourceSha256": "eb72201cdccb621547de2247ee498ec8b7c55baf28c88b315aa1633cf28798d4",
       "callIds": [

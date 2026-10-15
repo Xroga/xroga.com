@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "observedAt": "2026-10-15T09:15:51.021Z",
+  "observedAt": "2026-10-15T10:08:53.987Z",
   "result": "ADVISORY_INVENTORY_NOT_RELEASE_APPROVAL",
   "graphs": [
     {
@@ -8,14 +8,14 @@
       "command": "npm audit --json",
       "cwd": ".",
       "exitCode": 1,
-      "lockSha256": "22de169b30e8d80cca7b9b3446f63698235395e4013c9b147ff7326ed31d7588",
+      "lockSha256": "f68d221902be9bbc97c28bb3193961de07e6cc47fa411222a8e395f66cd2648b",
       "counts": {
         "info": 0,
         "low": 6,
         "moderate": 17,
-        "high": 27,
+        "high": 24,
         "critical": 0,
-        "total": 50
+        "total": 47
       },
       "findings": [
         {
@@ -409,10 +409,8 @@
               "dependency": "@opentelemetry/sdk-metrics"
             }
           ],
-          "effects": [
-            "@cline/core"
-          ],
-          "fixAvailable": false,
+          "effects": [],
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -470,7 +468,7 @@
             "@opentelemetry/exporter-metrics-otlp-http",
             "@opentelemetry/exporter-trace-otlp-http"
           ],
-          "fixAvailable": false,
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -506,7 +504,7 @@
             "@opentelemetry/exporter-trace-otlp-http",
             "@opentelemetry/otlp-exporter-base"
           ],
-          "fixAvailable": false,
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -561,6 +559,7 @@
             }
           ],
           "effects": [
+            "@cline/core",
             "@opentelemetry/otlp-transformer"
           ],
           "fixAvailable": false,
@@ -593,7 +592,7 @@
             "@opentelemetry/exporter-metrics-otlp-http",
             "@opentelemetry/otlp-transformer"
           ],
-          "fixAvailable": false,
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -849,93 +848,6 @@
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
-          "name": "brace-expansion",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "<=1.1.20 || 3.0.0 - 5.0.11",
-          "installed": [
-            {
-              "path": "backend/node_modules/brace-expansion",
-              "version": "5.0.6"
-            },
-            {
-              "path": "node_modules/brace-expansion",
-              "version": "1.1.16"
-            }
-          ],
-          "via": [
-            {
-              "title": "brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups",
-              "url": "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp",
-              "severity": "high",
-              "range": ">=3.0.0 <5.0.7"
-            },
-            {
-              "title": "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
-              "url": "https://github.com/advisories/GHSA-mh99-v99m-4gvg",
-              "severity": "high",
-              "range": "<1.1.17"
-            },
-            {
-              "title": "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
-              "url": "https://github.com/advisories/GHSA-mh99-v99m-4gvg",
-              "severity": "high",
-              "range": ">=4.0.0 <5.0.8"
-            },
-            {
-              "title": "brace-expansion: DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation",
-              "url": "https://github.com/advisories/GHSA-rgw5-rvv9-x895",
-              "severity": "high",
-              "range": ">=4.0.0 <5.0.9"
-            },
-            {
-              "title": "brace-expansion: DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation",
-              "url": "https://github.com/advisories/GHSA-rgw5-rvv9-x895",
-              "severity": "high",
-              "range": "<1.1.18"
-            },
-            {
-              "title": "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
-              "url": "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr",
-              "severity": "moderate",
-              "range": "<1.1.21"
-            },
-            {
-              "title": "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
-              "url": "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr",
-              "severity": "moderate",
-              "range": ">=4.0.0 <5.0.12"
-            },
-            {
-              "title": "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
-              "url": "https://github.com/advisories/GHSA-qhr7-859c-m2p7",
-              "severity": "high",
-              "range": "<1.1.20"
-            },
-            {
-              "title": "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
-              "url": "https://github.com/advisories/GHSA-qhr7-859c-m2p7",
-              "severity": "high",
-              "range": ">=4.0.0 <5.0.11"
-            },
-            {
-              "title": "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion",
-              "url": "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p",
-              "severity": "high",
-              "range": "<1.1.19"
-            },
-            {
-              "title": "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion",
-              "url": "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p",
-              "severity": "high",
-              "range": ">=4.0.0 <5.0.10"
-            }
-          ],
-          "effects": [],
-          "fixAvailable": true,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
           "name": "braces",
           "severity": "high",
           "direct": false,
@@ -1132,35 +1044,6 @@
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
-          "name": "js-yaml",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "4.0.0 - 4.3.1",
-          "installed": [
-            {
-              "path": "node_modules/js-yaml",
-              "version": "4.3.0"
-            }
-          ],
-          "via": [
-            {
-              "title": "JS-YAML: Quadratic CPU consumption in !!omap resolution (3.x and 4.x) — CVE-2026-59870 fix not backported",
-              "url": "https://github.com/advisories/GHSA-5p4m-2wfm-xmqj",
-              "severity": "high",
-              "range": ">=4.0.0 <4.3.1"
-            },
-            {
-              "title": "js-yaml: maxTotalMergeKeys does not limit CPU use for empty merge sources",
-              "url": "https://github.com/advisories/GHSA-2883-xcg3-v3hh",
-              "severity": "high",
-              "range": ">=4.0.0 <4.3.2"
-            }
-          ],
-          "effects": [],
-          "fixAvailable": true,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
           "name": "katex",
           "severity": "low",
           "direct": true,
@@ -1338,29 +1221,6 @@
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
-          "name": "source-map-js",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "1.0.0 - 1.2.1",
-          "installed": [
-            {
-              "path": "node_modules/source-map-js",
-              "version": "1.2.1"
-            }
-          ],
-          "via": [
-            {
-              "title": "source-map-js allows event-loop denial of service through indexed source-map section offsets",
-              "url": "https://github.com/advisories/GHSA-68fv-2mgg-jv7q",
-              "severity": "high",
-              "range": ">=1.0.0 <1.2.2"
-            }
-          ],
-          "effects": [],
-          "fixAvailable": true,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
           "name": "tailwindcss",
           "severity": "high",
           "direct": true,
@@ -1532,14 +1392,14 @@
       "command": "npm audit --json --workspaces=false",
       "cwd": "frontend",
       "exitCode": 1,
-      "lockSha256": "717296c260bb150f56b3094a131fd18500a97d464055e5fc97a745bf87442027",
+      "lockSha256": "fad5fd8b9f05804cf5a944c8f1866993b2c9eef6215b2b7139dc528a89670374",
       "counts": {
         "info": 0,
         "low": 1,
         "moderate": 4,
-        "high": 13,
+        "high": 10,
         "critical": 0,
-        "total": 18
+        "total": 15
       },
       "findings": [
         {
@@ -1566,99 +1426,6 @@
             "version": "14.2.35",
             "isSemVerMajor": true
           },
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
-          "name": "brace-expansion",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "<=1.1.20 || 3.0.0 - 5.0.11",
-          "installed": [
-            {
-              "path": "node_modules/@typescript-eslint/typescript-estree/node_modules/brace-expansion",
-              "version": "5.0.6"
-            },
-            {
-              "path": "node_modules/brace-expansion",
-              "version": "1.1.15"
-            }
-          ],
-          "via": [
-            {
-              "title": "brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups",
-              "url": "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp",
-              "severity": "high",
-              "range": "<1.1.16"
-            },
-            {
-              "title": "brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups",
-              "url": "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp",
-              "severity": "high",
-              "range": ">=3.0.0 <5.0.7"
-            },
-            {
-              "title": "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
-              "url": "https://github.com/advisories/GHSA-mh99-v99m-4gvg",
-              "severity": "high",
-              "range": "<1.1.17"
-            },
-            {
-              "title": "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
-              "url": "https://github.com/advisories/GHSA-mh99-v99m-4gvg",
-              "severity": "high",
-              "range": ">=4.0.0 <5.0.8"
-            },
-            {
-              "title": "brace-expansion: DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation",
-              "url": "https://github.com/advisories/GHSA-rgw5-rvv9-x895",
-              "severity": "high",
-              "range": ">=4.0.0 <5.0.9"
-            },
-            {
-              "title": "brace-expansion: DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation",
-              "url": "https://github.com/advisories/GHSA-rgw5-rvv9-x895",
-              "severity": "high",
-              "range": "<1.1.18"
-            },
-            {
-              "title": "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
-              "url": "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr",
-              "severity": "moderate",
-              "range": "<1.1.21"
-            },
-            {
-              "title": "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
-              "url": "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr",
-              "severity": "moderate",
-              "range": ">=4.0.0 <5.0.12"
-            },
-            {
-              "title": "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
-              "url": "https://github.com/advisories/GHSA-qhr7-859c-m2p7",
-              "severity": "high",
-              "range": "<1.1.20"
-            },
-            {
-              "title": "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
-              "url": "https://github.com/advisories/GHSA-qhr7-859c-m2p7",
-              "severity": "high",
-              "range": ">=4.0.0 <5.0.11"
-            },
-            {
-              "title": "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion",
-              "url": "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p",
-              "severity": "high",
-              "range": "<1.1.19"
-            },
-            {
-              "title": "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion",
-              "url": "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p",
-              "severity": "high",
-              "range": ">=4.0.0 <5.0.10"
-            }
-          ],
-          "effects": [],
-          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -1831,41 +1598,6 @@
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
-          "name": "js-yaml",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "4.0.0 - 4.3.1",
-          "installed": [
-            {
-              "path": "node_modules/js-yaml",
-              "version": "4.2.0"
-            }
-          ],
-          "via": [
-            {
-              "title": "js-yaml: YAML merge-key chains can force quadratic CPU consumption",
-              "url": "https://github.com/advisories/GHSA-52cp-r559-cp3m",
-              "severity": "high",
-              "range": ">=4.0.0 <4.3.0"
-            },
-            {
-              "title": "JS-YAML: Quadratic CPU consumption in !!omap resolution (3.x and 4.x) — CVE-2026-59870 fix not backported",
-              "url": "https://github.com/advisories/GHSA-5p4m-2wfm-xmqj",
-              "severity": "high",
-              "range": ">=4.0.0 <4.3.1"
-            },
-            {
-              "title": "js-yaml: maxTotalMergeKeys does not limit CPU use for empty merge sources",
-              "url": "https://github.com/advisories/GHSA-2883-xcg3-v3hh",
-              "severity": "high",
-              "range": ">=4.0.0 <4.3.2"
-            }
-          ],
-          "effects": [],
-          "fixAvailable": true,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
           "name": "katex",
           "severity": "low",
           "direct": true,
@@ -2017,29 +1749,6 @@
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
-          "name": "source-map-js",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "1.0.0 - 1.2.1",
-          "installed": [
-            {
-              "path": "node_modules/source-map-js",
-              "version": "1.2.1"
-            }
-          ],
-          "via": [
-            {
-              "title": "source-map-js allows event-loop denial of service through indexed source-map section offsets",
-              "url": "https://github.com/advisories/GHSA-68fv-2mgg-jv7q",
-              "severity": "high",
-              "range": ">=1.0.0 <1.2.2"
-            }
-          ],
-          "effects": [],
-          "fixAvailable": true,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
           "name": "tailwindcss",
           "severity": "high",
           "direct": true,
@@ -2111,14 +1820,14 @@
       "command": "npm audit --json --workspaces=false",
       "cwd": "backend",
       "exitCode": 1,
-      "lockSha256": "771f023f8b2b183284d1a99729257e3b9663fe8c900157724826b05f43630fe1",
+      "lockSha256": "cd39eba163ef9ed0063d8bc3c37d5d88c962e17565410256372822aa8b5e0496",
       "counts": {
         "info": 0,
         "low": 5,
         "moderate": 15,
-        "high": 18,
+        "high": 17,
         "critical": 0,
-        "total": 38
+        "total": 37
       },
       "findings": [
         {
@@ -2943,53 +2652,6 @@
           "via": [
             {
               "dependency": "qs"
-            }
-          ],
-          "effects": [],
-          "fixAvailable": true,
-          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
-        },
-        {
-          "name": "brace-expansion",
-          "severity": "high",
-          "direct": false,
-          "affectedRange": "4.0.0 - 5.0.11",
-          "installed": [
-            {
-              "path": "node_modules/brace-expansion",
-              "version": "5.0.7"
-            }
-          ],
-          "via": [
-            {
-              "title": "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
-              "url": "https://github.com/advisories/GHSA-mh99-v99m-4gvg",
-              "severity": "high",
-              "range": ">=4.0.0 <5.0.8"
-            },
-            {
-              "title": "brace-expansion: DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation",
-              "url": "https://github.com/advisories/GHSA-rgw5-rvv9-x895",
-              "severity": "high",
-              "range": ">=4.0.0 <5.0.9"
-            },
-            {
-              "title": "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
-              "url": "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr",
-              "severity": "moderate",
-              "range": ">=4.0.0 <5.0.12"
-            },
-            {
-              "title": "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
-              "url": "https://github.com/advisories/GHSA-qhr7-859c-m2p7",
-              "severity": "high",
-              "range": ">=4.0.0 <5.0.11"
-            },
-            {
-              "title": "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion",
-              "url": "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p",
-              "severity": "high",
-              "range": ">=4.0.0 <5.0.10"
             }
           ],
           "effects": [],

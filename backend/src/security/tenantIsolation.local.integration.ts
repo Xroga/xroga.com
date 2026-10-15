@@ -521,7 +521,7 @@ test('misbound persisted operations actions cannot leak a receipt or grant confi
 
 test('project-limited operators cannot retry another project job or webhook owned by the same tenant',async()=>{
   const [owner,member]=users;
-  const restrictedProject=await insert('projects',{user_id:owner.id,name:'Owner separate private project',type:'website',status:'draft'});
+  const restrictedProject=await insert('projects',{user_id:owner.id,name:'Owner separate private project',type:'app'});
   const membership=await insert('operations_memberships',{user_id:owner.id,project_id:owner.project,member_user_id:member.id,role:'operator',created_by:owner.id});
   const job=await insert('swarm_job_queue',{user_id:owner.id,project_id:restrictedProject,run_id:randomUUID(),prompt:'synthetic fixture only',status:'failed',attempt_count:0});
   const webhook=await insert('webhook_deliveries',{provider:'fixture-no-provider',delivery_id:randomUUID(),payload_digest:'a'.repeat(64),user_id:owner.id,project_id:restrictedProject,status:'failed',attempt_count:0},'delivery_id');

@@ -10,6 +10,7 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "scripts/security/dependency-advisories.test.mjs",
     "backend/src/operations/operationsService.ts",
     "backend/src/operations/operationsService.owner.test.ts",
     "docs/xroga/security/OPERATIONS_OWNER_BOUNDARY.md",

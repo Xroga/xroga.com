@@ -1,5 +1,9 @@
 # Command 007 acceptance checkpoint — not verified
 
+## Latest candidate and retained failure
+
+319c22887981797f6f4eae2c081790779a40f8cd aggregate38717352239 PASS. Isolated38717352049 FAIL42/43: new cross-project retry fixture inserted projects.status=draft against the real check constraint. Actual integrated runtime1195de8c94afac16148670ab4add906cdab2b974. Fixed fixture uses existing default, no schema/assertion relaxation. New parser locks and fixture require final-source CI. Caller review190/670:28 scoped,2 narrow exceptions,13 non-persistence,147 reviewed gaps;480 unreviewed/627 unresolved. Full criteria2/10 still FAIL. Remaining high advisories24 aggregate/17 backend/10 frontend,critical0; no release waiver. Full ten-criterion checklist below retains scope limits. NO-GO.
+
 ## Current assessment — Operations ownership continuation
 
 Feature63bfd812e4704e0f2ae4d7e177461abb8021b21e: aggregate38715245278 PASS on both repeated feature/integrated baselines; isolated38715245296 PASS41 security/3 browser/70 fresh+representative-upgrade migrations. Actual API/web fd4f848df1bf0bacffaabbc168ec848576497733. Frontend, golden, Docker and frozen Cline compatibility also PASS. These results resolve the previous build-contract failure, not all Command007 criteria.

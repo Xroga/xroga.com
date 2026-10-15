@@ -1,5 +1,15 @@
 # Dependency decisions — not release approval
 
+## Same-major parser security patches, 2026-10-15
+
+Three lock graphs now retain brace-expansion1.1.21/5.0.12 (existing2.1.7 unchanged), js-yaml4.3.2 and source-map-js1.2.2. Actual paths: ESLint8/minimatch3 and nodemon3/minimatch10 consume brace expansion; ESLint consumes YAML; PostCSS8 consumes source maps. These parse build/config/glob inputs; malicious source/config can exhaust a process. Existing dependency ranges admit these patch releases, so no major override, application manifest change or framework migration was needed. MIT for brace-expansion/js-yaml; BSD-3-Clause for source-map-js. Selected brace5 requires Node20 or22+, compatible with the pinned22.21.1 toolchain.
+
+Primary fix references: [brace depth](https://github.com/advisories/GHSA-qhr7-859c-m2p7), [YAML empty merge budget](https://github.com/advisories/GHSA-2883-xcg3-v3hh), [source-map offsets](https://github.com/advisories/GHSA-68fv-2mgg-jv7q). Updated versions also cover the subsequent same-major brace rewrite fixes recorded in the advisory inventory.
+
+Actual audit exits remain1: aggregate47/high24/critical0, backend37/high17/critical0, frontend15/high10/critical0. No claim of audit cleanliness. Only four actual installed packages changed.10 parser/PostCSS/Cline integrity tests and14 actual SDK/Git/MCP tests PASS locally, locks PASS. Initial new tests failed because of an incorrect indexed-map coordinate and CommonJS namespace assumption; inspected the real exports/offset implementation and corrected fixtures, retaining all negative checks. Fresh/full CI required on the final candidate; prior63bfd/319c runs do not certify these locks.
+
+Critical Git compatibility has since passed frozen workspace/standalone, Docker and full aggregate at63bfd812 (aggregate38715245278, Agent38715245173, Docker38715245360); prior candidate discussion below is historical. Remaining highs include SAP/node-forge, braces and propagated build tools, image-size/pptxgenjs, and Dify/undici/busboy. None is silently waived. Reverting parser locks restores known findings; not an approved production remedy. No production installation or release occurred.
+
 ## Git4 compatibility candidate, 2026-10-15
 
 The original blind override failed because core0.0.82 imports a removed default factory. Inspection of its actual compiled runtime finds exactly three bundled imports, and two uses per bundle calling the factory with baseDir for repository discovery. Candidate now changes only those imports to the upstream named simpleGit factory. Every original bundle is SHA256 pinned; unknown content/version fails, existing patches are idempotently verified, and each modified file carries an explicit notice. Original core/SDK0.0.82 versions and all other runtime bytes are preserved. No Cline fork or replacement orchestrator.
