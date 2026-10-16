@@ -7,6 +7,7 @@ import {
   getSupabaseAdmin,
 } from '../../config/supabase.js';
 import { createTenantContext } from '../../security/tenantContext.js';
+import { TenantAccessError } from '../../security/tenantErrors.js';
 import { persistOwnedRuntimeSession } from '../../security/ownedRunPersistence.js';
 import { captureAdmittedRunAttempt, requireAdmittedRunAttempt, type AdmittedRunAttempt } from '../../ai/runStore.js';
 
@@ -452,6 +453,10 @@ export class InMemoryProjectRuntimeStore
     session:
       ProjectRuntimeSession,
   ): Promise<void> {
+    const existing = this.sessions.get(this.sessionKey(session.userId, session.sessionId));
+    if (existing?.status === 'destroyed' && session.status !== 'destroyed') {
+      throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
+    }
     this.sessions.set(
       this.sessionKey(
         session.userId,
@@ -1026,7 +1031,7 @@ export class SupabaseProjectRuntimeStore
           'project_runtime_secrets',
         )
         .select(
-          'name, scope, encrypted_value, key_version, created_at, updated_at',
+          'user_id, project_id, name, scope, encrypted_value, key_version, created_at, updated_at',
         )
         .eq(
           'user_id',
@@ -1043,47 +1048,7 @@ export class SupabaseProjectRuntimeStore
       throw error;
     }
 
-    return (
-      data ??
-      []
-    ).map(
-      (
-        row,
-      ) => ({
-        userId,
-
-        projectId,
-
-        name:
-          String(
-            row.name,
-          ),
-
-        scope:
-          row.scope as
-            ProjectSecretScope,
-
-        encryptedValue:
-          String(
-            row.encrypted_value,
-          ),
-
-        keyVersion:
-          Number(
-            row.key_version,
-          ),
-
-        createdAt:
-          String(
-            row.created_at,
-          ),
-
-        updatedAt:
-          String(
-            row.updated_at,
-          ),
-      }),
-    );
+    return (data ?? []).map(row => restoreOwnerBoundEncryptedSecret(row, userId, projectId));
   }
 
   async deleteEncryptedSecret(
@@ -1132,6 +1097,26 @@ export class SupabaseProjectRuntimeStore
       throw error;
     }
   }
+}
+
+/** Validate the existing v1 envelope without decrypting or asserting key custody. */
+export function restoreOwnerBoundEncryptedSecret(row: unknown, userId: string, projectId: string): EncryptedProjectSecretRecord {
+  const fail = (): never => { throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE'); };
+  if (!row || typeof row !== 'object' || Array.isArray(row)) return fail();
+  const record = row as Record<string, unknown>;
+  if (!userId || !projectId || record.user_id !== userId || record.project_id !== projectId ||
+    typeof record.name !== 'string' || !/^[A-Z_][A-Z0-9_]{1,63}$/.test(record.name) ||
+    typeof record.scope !== 'string' || !['development','preview','verification','deployment','shared'].includes(record.scope) ||
+    record.key_version !== 1 || typeof record.encrypted_value !== 'string' || record.encrypted_value.length > 342000 ||
+    typeof record.created_at !== 'string' || !Number.isFinite(Date.parse(record.created_at)) ||
+    typeof record.updated_at !== 'string' || !Number.isFinite(Date.parse(record.updated_at))) return fail();
+  const parts = record.encrypted_value.split(':');
+  if (parts.length !== 4 || parts[0] !== 'v1') return fail();
+  const bytes = parts.slice(1).map(part => Buffer.from(part, 'base64'));
+  if (bytes.some((value,index) => value.toString('base64') !== parts[index+1]) ||
+    bytes[0].length !== 12 || bytes[1].length !== 16 || bytes[2].length < 1 || bytes[2].length > 256000) return fail();
+  return {userId, projectId, name:record.name, scope:record.scope as ProjectSecretScope,
+    encryptedValue:record.encrypted_value, keyVersion:1, createdAt:record.created_at, updatedAt:record.updated_at};
 }
 
 /** Bind persisted snapshot identity before any restore/runtime consumer uses it.

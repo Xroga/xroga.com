@@ -1,6 +1,7 @@
 import {
   randomUUID,
 } from 'node:crypto';
+import { redactSecrets } from '../../lib/truthfulExecution.js';
 
 import type {
   ProjectFile,
@@ -324,6 +325,10 @@ export class ProjectRuntimeManager {
       await this.session(
         sessionId,
       );
+
+    if (persisted.status === 'destroyed') {
+      throw new Error('Destroyed runtime sessions cannot be restored.');
+    }
 
     if (
       persisted.runtimeClass ===
@@ -698,15 +703,13 @@ export class ProjectRuntimeManager {
 
         payload: {
           command:
-            input.command,
+            redactSecrets(redactRuntimeSecrets(input.command, secretValues)),
 
           args:
-            input.args ??
-            [],
+            (input.args ?? []).map(value => redactSecrets(redactRuntimeSecrets(value, secretValues))),
 
           cwd:
-            input.cwd ??
-            '',
+            redactSecrets(redactRuntimeSecrets(input.cwd ?? '', secretValues)),
 
           exitCode:
             safe.exitCode,
@@ -888,7 +891,7 @@ export class ProjectRuntimeManager {
         payload: {
           processId,
           command:
-            input.command,
+            redactSecrets(redactRuntimeSecrets(input.command, Object.values(secretEnvironment))),
           port:
             record.port,
         },

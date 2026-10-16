@@ -234,7 +234,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
         : [];
       const hasVerifiedHandoff = output.fullyShipped === true || output.handoffReady === true;
       if (terminalStatus === 'complete' && result.success && hasVerifiedHandoff) {
-        void notifyBuildComplete(userId, {
+        void notifyBuildComplete(requireTenantContext(req.tenantContext), {
           projectName: String(output.projectName ?? 'Xroga project'),
           prompt: prompt.trim(),
           githubRepoUrl: typeof output.githubRepoUrl === 'string' ? output.githubRepoUrl : undefined,
@@ -247,7 +247,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
           assistantMessageId: String(clientMeta.assistantMessageId),
         }).catch(() => {});
       } else {
-        void notifyBuildFailed(userId, {
+        void notifyBuildFailed(requireTenantContext(req.tenantContext), {
           projectName: String(output.projectName ?? 'Xroga project'),
           prompt: prompt.trim(),
           error: blockers[0] || 'Build finished without verified GitHub and deployment evidence',
@@ -320,7 +320,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
       }
     }
     if (failurePersisted && clientMeta?.assistantMessageId && code !== 'BUILD_CANCELLED') {
-      void notifyBuildFailed(userId, {
+      void notifyBuildFailed(requireTenantContext(req.tenantContext), {
         projectName: 'Xroga project',
         prompt: prompt.trim(),
         error: e.message || 'Build failed',

@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { OperationsService, OperationsServiceError } from '../operations/operationsService.js';
@@ -30,9 +30,8 @@ export class GrowthService {
       throw error;
     }
     if (permission === 'manage' && !result.permissions.includes('manage_automation')) throw new GrowthServiceError('forbidden', 'Growth management is not permitted', 403);
-    const project = await query<Row | null>(this.db.from('projects').select('user_id').eq('id', projectId).maybeSingle(), 'Project unavailable', null);
-    if (!project) throw new GrowthServiceError('not_found', 'Project not found', 404);
-    return { tenantId: project.user_id, permissions: result.permissions };
+    if (typeof result.ownerId !== 'string' || !result.ownerId) throw new GrowthServiceError('storage_unavailable', 'Project ownership could not be verified', 503);
+    return { tenantId: result.ownerId, permissions: result.permissions };
   }
 
   async overview(userId: string, projectId: string): Promise<Record<string, unknown>> {
@@ -162,36 +161,52 @@ export class GrowthService {
     if (input.channel === 'email' && !process.env.RESEND_API_KEY && !process.env.BREVO_API_KEY) throw new GrowthServiceError('external_setup_required', 'No email provider is configured', 409);
     const rows = await query<Row[]>(this.db.from('growth_campaigns').insert({ tenant_id: tenantId, project_id: input.projectId, segment_id: input.segmentId, name: input.name, channel: input.channel, status: 'approval_required', template_key: input.templateKey, consent_required: true }).select('*'), 'Campaign could not be stored');
     const campaign = rows[0];
+    if (rows.length !== 1 || !campaign || typeof campaign.id !== 'string' || !campaign.id
+      || campaign.tenant_id !== tenantId || campaign.project_id !== input.projectId || campaign.segment_id !== input.segmentId
+      || campaign.channel !== input.channel || campaign.name !== input.name || campaign.template_key !== input.templateKey
+      || campaign.consent_required !== true || campaign.status !== 'approval_required' || !Number.isSafeInteger(campaign.version) || campaign.version < 1) {
+      throw new GrowthServiceError('storage_unavailable', 'Campaign creation could not be verified', 503);
+    }
     const action = await this.operations.createAction(userId, { actionType: 'execute_growth_campaign', projectId: input.projectId, targetType: 'growth_campaign', targetId: campaign.id, targetVersion: campaign.version, idempotencyKey: input.idempotencyKey, confirmed: true, parameters: { campaignId: campaign.id, recipientPolicy: 'consented_and_not_suppressed' } });
-    await this.db.from('growth_campaigns').update({ approval_id: null, evidence_reference: `operations_action:${action.id}` }).eq('id', campaign.id);
-    return { campaign: { ...campaign, evidence_reference: `operations_action:${action.id}` }, action };
+    if (!action || typeof action.id !== 'string' || !action.id || action.user_id !== tenantId || action.project_id !== input.projectId
+      || action.requested_by !== userId || action.action_type !== 'execute_growth_campaign' || action.target_type !== 'growth_campaign'
+      || action.target_id !== campaign.id || action.target_version !== campaign.version || action.idempotency_key !== input.idempotencyKey) {
+      throw new GrowthServiceError('idempotency_conflict', 'Campaign action does not match the requested campaign', 409);
+    }
+    const reference = `operations_action:${action.id}`;
+    const linked = await query<Row[]>(this.db.from('growth_campaigns').update({ approval_id: null, evidence_reference: reference })
+      .eq('id', campaign.id).eq('tenant_id', tenantId).eq('project_id', input.projectId)
+      .eq('version', campaign.version).eq('status', 'approval_required').select('*'), 'Campaign action link failed');
+    const receipt = linked[0];
+    if (linked.length !== 1 || !receipt || receipt.id !== campaign.id || receipt.tenant_id !== tenantId
+      || receipt.project_id !== input.projectId || receipt.version !== campaign.version || receipt.status !== 'approval_required'
+      || receipt.segment_id !== campaign.segment_id || receipt.channel !== campaign.channel || receipt.name !== campaign.name
+      || receipt.template_key !== campaign.template_key || receipt.consent_required !== true
+      || receipt.evidence_reference !== reference || receipt.approval_id !== null) {
+      throw new GrowthServiceError('storage_unavailable', 'Campaign action link could not be verified', 503);
+    }
+    return { campaign: receipt, action };
   }
 
   async processCampaign(userId: string, campaignId: string): Promise<{ queued: number; suppressed: number; duplicate: number }> {
     const campaign = await query<Row | null>(this.db.from('growth_campaigns').select('*').eq('id', campaignId).maybeSingle(), 'Campaign unavailable', null);
     if (!campaign) throw new GrowthServiceError('not_found', 'Campaign not found', 404);
     const { tenantId } = await this.access(userId, campaign.project_id, 'manage');
-    if (campaign.tenant_id !== tenantId || campaign.status !== 'running') throw new GrowthServiceError('approval_required', 'Campaign requires a verified operations approval', 409);
+    if (campaign.tenant_id !== tenantId || !['running','completed'].includes(campaign.status)) throw new GrowthServiceError('approval_required', 'Campaign requires a verified operations approval', 409);
     if (campaign.channel !== 'in_app') throw new GrowthServiceError('external_setup_required', 'Configured email delivery adapter is required', 409);
     const segment = await query<Row | null>(this.db.from('growth_segments').select('definition').eq('id', campaign.segment_id).eq('tenant_id', tenantId).eq('project_id', campaign.project_id).eq('status', 'active').maybeSingle(), 'Segment unavailable', null);
     if (!segment) throw new GrowthServiceError('not_found', 'Segment not found', 404);
-    const states = Array.isArray(segment.definition?.lifecycleStates) ? segment.definition.lifecycleStates : [];
-    const recipients = await query<Row[]>(this.db.from('growth_lifecycle_state').select('subject_id').eq('tenant_id', tenantId).eq('project_id', campaign.project_id).eq('subject_type', 'user').in('lifecycle_state', states).limit(500), 'Segment evaluation failed');
-    let queued = 0, suppressed = 0, duplicate = 0;
-    for (const recipient of recipients) {
-      const existing = await query<Row | null>(this.db.from('growth_messages').select('id').eq('campaign_id', campaign.id).eq('recipient_user_id', recipient.subject_id).maybeSingle(), 'Message deduplication failed', null);
-      if (existing) { duplicate += 1; continue; }
-      const consent = await query<Row | null>(this.db.from('analytics_events').select('consent_state').eq('tenant_id', tenantId).eq('project_id', campaign.project_id).eq('user_id', recipient.subject_id).order('occurred_at', { ascending: false }).limit(1).maybeSingle(), 'Consent state unavailable', null);
-      const blocked = await query<Row | null>(this.db.from('growth_suppressions').select('id').eq('tenant_id', tenantId).eq('channel', 'in_app').eq('address_hash', hash(recipient.subject_id)).maybeSingle(), 'Suppression state unavailable', null);
-      if (consent?.consent_state !== 'granted' || blocked) { suppressed += 1; continue; }
-      const key = randomUUID();
-      const messages = await query<Row[]>(this.db.from('growth_messages').insert({ tenant_id: tenantId, project_id: campaign.project_id, campaign_id: campaign.id, recipient_user_id: recipient.subject_id, channel: 'in_app', provider: 'xroga', template_key: campaign.template_key, recipient_hash: hash(recipient.subject_id), idempotency_key: key, status: 'submitted', consent_state: 'granted', attempt_count: 1 }).select('*'), 'Message queue failed');
-      const notifications = await query<Row[]>(this.db.from('notifications').insert({ user_id: recipient.subject_id, title: campaign.name, message: `Open Xroga to continue: ${campaign.template_key}`, type: 'info', link: '/dashboard/growth', metadata: { growthMessageId: messages[0].id, campaignId: campaign.id }, read: false }).select('id'), 'In-app delivery failed');
-      await query(this.db.from('growth_messages').update({ status: 'delivered', evidence_reference: `notification:${notifications[0].id}`, updated_at: new Date().toISOString() }).eq('id', messages[0].id).select(), 'Delivery evidence failed');
-      queued += 1;
+    const { data, error } = await this.db.rpc('process_growth_in_app_campaign', { p_actor: userId, p_campaign: campaignId });
+    if (error?.code === '42501' || error?.code === 'P0002') throw new GrowthServiceError('not_found', 'Campaign unavailable', 404);
+    if (error?.code === 'P0001') throw new GrowthServiceError('approval_required', 'Campaign approval or delivery recovery is required', 409);
+    if (error?.code === '0A000') throw new GrowthServiceError('external_setup_required', 'Configured email delivery adapter is required', 409);
+    if (error || !data || data.campaign_id !== campaignId || data.tenant_id !== tenantId || data.project_id !== campaign.project_id
+      || data.status !== 'completed' || data.version !== campaign.version + (campaign.status === 'running' ? 1 : 0)
+      || typeof data.replayed !== 'boolean' || ['queued','suppressed','duplicate'].some(key => !Number.isSafeInteger(data[key]) || data[key] < 0)
+      || data.queued + data.suppressed + data.duplicate > 500) {
+      throw new GrowthServiceError('storage_unavailable', 'Campaign delivery receipt could not be verified', 503);
     }
-    await query(this.db.from('growth_campaigns').update({ status: 'completed', evidence_reference: `processed:${queued}:${suppressed}:${duplicate}`, version: Number(campaign.version) + 1, updated_at: new Date().toISOString() }).eq('id', campaign.id).eq('version', campaign.version).select(), 'Campaign completion failed');
-    return { queued, suppressed, duplicate };
+    return { queued: data.queued, suppressed: data.suppressed, duplicate: data.duplicate };
   }
 
   async createExperiment(userId: string, input: { projectId: string; key: string; seed: string; variants: Array<{ key: string; weight: number }>; minimumSampleSize: number }): Promise<Row> {

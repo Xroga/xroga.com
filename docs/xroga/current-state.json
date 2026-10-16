@@ -7163,7 +7163,7 @@
         "backend/src/security/workerRevision.local.integration.ts:7",
         "backend/src/synthesis/livePreview/agentBridge.drain.test.ts:5",
         "backend/src/synthesis/livePreview/agentBridge.ts:4",
-        "backend/src/synthesis/projectRuntime/store.ts:11",
+        "backend/src/synthesis/projectRuntime/store.ts:12",
         "backend/src/synthesis/projectRuntime/store.worker.test.ts:4",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:16",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:9"
@@ -12210,7 +12210,7 @@
       "id": "surface:4cd464f7016cf52503dd",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sha256": "b6aa970ee2ac560750ef3844277d5e935c64dfc7a69e7a651c0762b38d97f28b",
+      "sha256": "c7659b757ba75b551ff996124eafda87783c62975daa7b014da14cd91d899207",
       "symbols": [
         "GrowthService",
         "GrowthServiceError",
@@ -12220,35 +12220,26 @@
         "assignment",
         "assignmentById",
         "attribution",
-        "blocked",
         "campaign",
-        "consent",
         "counts",
         "critical",
         "decision",
         "definition",
         "deploymentVerified",
-        "duplicate",
         "error",
         "event",
         "evidenceReference",
         "existing",
         "experiment",
         "hash",
-        "key",
-        "messages",
-        "notifications",
+        "linked",
         "outcome",
-        "project",
         "query",
-        "queued",
-        "recipient",
-        "recipients",
+        "receipt",
+        "reference",
         "result",
         "rows",
         "segment",
-        "states",
-        "suppressed",
         "variant",
         "version"
       ],
@@ -12268,7 +12259,11 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/growth/campaignReceipt.local.integration.ts:6",
+        "backend/src/growth/delivery.local.integration.ts:1",
+        "backend/src/growth/deliveryReceipt.test.ts:1",
         "backend/src/growth/growthService.boundary.test.ts:4",
+        "backend/src/growth/growthService.campaignReceipt.test.ts:4",
         "backend/src/growth/growthService.referralBoundary.test.ts:4",
         "backend/src/routes/growth.ts:5",
         "backend/src/security/growthReferral.local.integration.ts:7",
@@ -12291,9 +12286,7 @@
         "growth_referral_attribution",
         "growth_segments",
         "growth_suppressions",
-        "notifications",
-        "production_incidents",
-        "projects"
+        "production_incidents"
       ],
       "externalProviderDependencies": [
         "@supabase/supabase-js",
@@ -12301,6 +12294,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
+        "backend/src/growth/growthService.ts:40 (tenant_id)",
         "backend/src/growth/growthService.ts:41 (tenant_id)",
         "backend/src/growth/growthService.ts:42 (tenant_id)",
         "backend/src/growth/growthService.ts:43 (tenant_id)",
@@ -12308,30 +12302,26 @@
         "backend/src/growth/growthService.ts:45 (tenant_id)",
         "backend/src/growth/growthService.ts:46 (tenant_id)",
         "backend/src/growth/growthService.ts:47 (tenant_id)",
-        "backend/src/growth/growthService.ts:48 (tenant_id)",
-        "backend/src/growth/growthService.ts:56 (tenant_id)",
-        "backend/src/growth/growthService.ts:62 (tenant_id)",
-        "backend/src/growth/growthService.ts:66 (tenant_id)",
-        "backend/src/growth/growthService.ts:73 (tenant_id)",
-        "backend/src/growth/growthService.ts:102 (tenant_id)",
+        "backend/src/growth/growthService.ts:55 (tenant_id)",
+        "backend/src/growth/growthService.ts:61 (tenant_id)",
+        "backend/src/growth/growthService.ts:65 (tenant_id)",
+        "backend/src/growth/growthService.ts:72 (tenant_id)",
+        "backend/src/growth/growthService.ts:101 (tenant_id)",
+        "backend/src/growth/growthService.ts:104 (user_id)",
+        "backend/src/growth/growthService.ts:104 (tenant_id)",
         "backend/src/growth/growthService.ts:105 (user_id)",
-        "backend/src/growth/growthService.ts:105 (tenant_id)",
-        "backend/src/growth/growthService.ts:106 (user_id)",
+        "backend/src/growth/growthService.ts:118 (user_id)",
         "backend/src/growth/growthService.ts:119 (user_id)",
-        "backend/src/growth/growthService.ts:120 (user_id)",
+        "backend/src/growth/growthService.ts:120 (tenant_id)",
         "backend/src/growth/growthService.ts:121 (tenant_id)",
-        "backend/src/growth/growthService.ts:122 (tenant_id)",
-        "backend/src/growth/growthService.ts:160 (tenant_id)",
-        "backend/src/growth/growthService.ts:176 (tenant_id)",
-        "backend/src/growth/growthService.ts:179 (tenant_id)",
-        "backend/src/growth/growthService.ts:184 (user_id)",
-        "backend/src/growth/growthService.ts:184 (tenant_id)",
-        "backend/src/growth/growthService.ts:185 (tenant_id)",
-        "backend/src/growth/growthService.ts:209 (tenant_id)",
-        "backend/src/growth/growthService.ts:221 (tenant_id)",
-        "backend/src/growth/growthService.ts:231 (tenant_id)",
-        "backend/src/growth/growthService.ts:233 (tenant_id)",
-        "backend/src/growth/growthService.ts:245 (tenant_id)"
+        "backend/src/growth/growthService.ts:159 (tenant_id)",
+        "backend/src/growth/growthService.ts:177 (tenant_id)",
+        "backend/src/growth/growthService.ts:197 (tenant_id)",
+        "backend/src/growth/growthService.ts:224 (tenant_id)",
+        "backend/src/growth/growthService.ts:236 (tenant_id)",
+        "backend/src/growth/growthService.ts:246 (tenant_id)",
+        "backend/src/growth/growthService.ts:248 (tenant_id)",
+        "backend/src/growth/growthService.ts:260 (tenant_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -12339,10 +12329,15 @@
         "backend/src/growth/growthService.ts#deploymentVerified",
         "backend/src/growth/growthService.ts#event",
         "backend/src/growth/growthService.ts#evidenceReference",
+        "backend/src/growth/growthService.ts#receipt",
         "backend/src/growth/growthService.ts#validateEventName"
       ],
       "testCoverage": [
+        "backend/src/growth/campaignReceipt.local.integration.ts",
+        "backend/src/growth/delivery.local.integration.ts",
+        "backend/src/growth/deliveryReceipt.test.ts",
         "backend/src/growth/growthService.boundary.test.ts",
+        "backend/src/growth/growthService.campaignReceipt.test.ts",
         "backend/src/growth/growthService.referralBoundary.test.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
@@ -14600,6 +14595,7 @@
         "backend/src/lib/adaptiveEngine.test.ts:9",
         "backend/src/lib/truthfulExecution.test.ts:3",
         "backend/src/synthesis/productDefinition.ts:3",
+        "backend/src/synthesis/projectRuntime/manager.ts:4",
         "backend/src/synthesis/research/researchEngine.ts:2"
       ],
       "reachable": true,
@@ -14798,7 +14794,7 @@
       "id": "surface:a4bd8c3261952fbd7b02",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/vercelEnv.ts",
-      "sha256": "9a2c3310b77ec621bdeeec8d18a856ba477aaa3e39c2283bd09f98a196e96db0",
+      "sha256": "b7ad8074fd9c03caead5995511518830eae19c7828956296a823ceb0947abaf9",
       "symbols": [
         "VercelEnvItem",
         "VercelEnvSyncResult",
@@ -14807,26 +14803,30 @@
         "created",
         "data",
         "ensureProject",
+        "env",
         "err",
         "existing",
         "getRes",
         "keys",
         "listEnv",
         "ok",
-        "p",
         "patchRes",
         "postRes",
         "prev",
         "project",
-        "projectName",
+        "projectReceipt",
         "q",
+        "receipt",
         "res",
+        "row",
+        "rows",
         "skipped",
         "syncEnvVarsToVercelProject",
         "targets",
         "teamQuery",
         "upsertEnvVar",
-        "upserted"
+        "upserted",
+        "validEnvReceipt"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -14834,6 +14834,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/lib/vercelEnv.authority.test.ts:3",
         "backend/src/services/integrations/githubDeploy.ts:8"
       ],
       "reachable": true,
@@ -14843,8 +14844,14 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
-      "testCoverage": [],
+      "evidenceBoundary": [
+        "backend/src/lib/vercelEnv.ts#projectReceipt",
+        "backend/src/lib/vercelEnv.ts#receipt",
+        "backend/src/lib/vercelEnv.ts#validEnvReceipt"
+      ],
+      "testCoverage": [
+        "backend/src/lib/vercelEnv.authority.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -15595,7 +15602,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "d824127d2f17948c1f15b574822bd04c9213b74b3879b786bf0fd817cba38871",
+      "sha256": "9c7614bee2559935f300ed22bc4720c765d0741b0d55e320beb160fc98d494fb",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -15697,6 +15704,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/growth/campaignReceipt.local.integration.ts:7",
+        "backend/src/growth/delivery.local.integration.ts:1",
         "backend/src/growth/growthService.ts:4",
         "backend/src/operations/operationsService.owner.test.ts:4",
         "backend/src/routes/operations.ts:9"
@@ -15791,6 +15800,8 @@
         "backend/src/operations/operationsService.ts#httpVerificationAdapter"
       ],
       "testCoverage": [
+        "backend/src/growth/campaignReceipt.local.integration.ts",
+        "backend/src/growth/delivery.local.integration.ts",
         "backend/src/operations/operationsService.owner.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -19733,7 +19744,7 @@
       "id": "surface:10d425da4453da6d649f",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "sha256": "4afd2c0da1fafaf24125af6478bdfc0f08967f762f49f86f76c3286738138d05",
+      "sha256": "eb65b69a7babc3345c348b81c13ad9323a3f385a725f418b3de3b9f9eb7a8793",
       "symbols": [
         "ac",
         "activeBuildControllers",
@@ -20432,7 +20443,7 @@
         "backend/src/sandbox/sandboxProviders.ts:23",
         "backend/src/synthesis/browserVerificationAdapter.ts:34",
         "backend/src/synthesis/productionAdapters.ts:25",
-        "backend/src/synthesis/projectRuntime/manager.ts:9"
+        "backend/src/synthesis/projectRuntime/manager.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -20859,7 +20870,7 @@
         "backend/src/ai/runStore.ts:12",
         "backend/src/security/ownedRunPersistence.test.ts:4",
         "backend/src/security/tenantIsolation.local.integration.ts:10",
-        "backend/src/synthesis/projectRuntime/store.ts:10",
+        "backend/src/synthesis/projectRuntime/store.ts:11",
         "backend/src/synthesis/universalPersistence.ts:25"
       ],
       "reachable": true,
@@ -21156,6 +21167,8 @@
         "backend/src/services/integrations/userProviderKeys.ts:10",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts:5",
         "backend/src/services/integrations/vercelAuth.ts:7",
+        "backend/src/services/notificationService.receipt.test.ts:5",
+        "backend/src/services/notificationService.ts:2",
         "backend/src/services/publish/chromeWebStore.ts:12",
         "backend/src/services/referralService.failure.test.ts:5",
         "backend/src/services/referralService.relations.test.ts:5",
@@ -21218,6 +21231,7 @@
         "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
         "backend/src/services/integrations/userProviderKeys.test.ts",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+        "backend/src/services/notificationService.receipt.test.ts",
         "backend/src/services/referralService.failure.test.ts",
         "backend/src/services/referralService.relations.test.ts",
         "backend/src/services/responseCache.receipt.test.ts",
@@ -21265,6 +21279,7 @@
         "backend/src/services/ensureUserRecords.ts:5",
         "backend/src/synthesis/livePreview/store.ts:7",
         "backend/src/synthesis/projectRuntime/projectHistory.ts:4",
+        "backend/src/synthesis/projectRuntime/store.ts:10",
         "backend/src/synthesis/universalPersistence.ts:24"
       ],
       "reachable": true,
@@ -23382,7 +23397,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:598",
+        "backend/src/security/tenantIsolation.local.integration.ts:606",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -23485,7 +23500,7 @@
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:7",
         "backend/src/services/integrations/supabaseProvision.ts:539",
-        "backend/src/services/integrations/userProviderKeys.ts:918"
+        "backend/src/services/integrations/userProviderKeys.ts:928"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23667,8 +23682,8 @@
         "backend/src/security/tenantIsolation.local.integration.ts:42",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
-        "backend/src/services/integrations/userProviderKeys.ts:1139",
-        "backend/src/services/integrations/userProviderKeys.ts:1148"
+        "backend/src/services/integrations/userProviderKeys.ts:1149",
+        "backend/src/services/integrations/userProviderKeys.ts:1158"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -23703,7 +23718,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "56eb9ece6fd68bd4d47266f72a90fa032721081645bea942a0c092067ec19676",
+      "sha256": "f90c43cc89a03f37f4e29abcb77c3f445a09a13797dae4be976e745c11f824a3",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -23728,6 +23743,7 @@
         "active",
         "admission",
         "anon",
+        "assertPrivateCredentialEnv",
         "associated",
         "boundBundle",
         "buckets",
@@ -23794,6 +23810,7 @@
         "meta",
         "metadata",
         "minLen",
+        "name",
         "normalizeProvider",
         "now",
         "oauthConnected",
@@ -23819,6 +23836,7 @@
         "providers",
         "provision",
         "provisioned",
+        "publicSupabase",
         "query",
         "raw",
         "readUserSupabaseBundle",
@@ -23897,6 +23915,7 @@
         "backend/src/services/integrations/supabaseProvision.ts:10",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts:5",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts:3",
+        "backend/src/services/integrations/userProviderKeys.publicEnv.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.readIntegrity.test.ts:4",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:5",
         "backend/src/services/integrations/userProviderKeys.revocation.test.ts:4",
@@ -23921,12 +23940,12 @@
       ],
       "tenantBoundary": [
         "backend/src/services/integrations/userProviderKeys.ts:65 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:434 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:489 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:651 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:672 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:695 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:964 (user_id)"
+        "backend/src/services/integrations/userProviderKeys.ts:443 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:498 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:660 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:681 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:704 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:974 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -23939,6 +23958,7 @@
         "backend/src/services/integrations/supabaseBundle.test.ts",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
+        "backend/src/services/integrations/userProviderKeys.publicEnv.test.ts",
         "backend/src/services/integrations/userProviderKeys.readIntegrity.test.ts",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts",
         "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
@@ -24337,7 +24357,7 @@
       "id": "surface:98ae0b31c2f7847037ba",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/notificationService.ts",
-      "sha256": "082f6cba830061d4a8979d013b8409377ae64f6a610553e5866e0cbea09443f9",
+      "sha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402",
       "symbols": [
         "BuildCompleteNotificationParams",
         "PushNotificationInput",
@@ -24354,10 +24374,12 @@
         "verifiedLive"
       ],
       "imports": [
-        "../config/supabase.js"
+        "../config/supabase.js",
+        "../security/tenantContext.js"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts"
+        "backend/src/config/supabase.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -24365,6 +24387,7 @@
       "callers": [
         "backend/src/routes/swarm.ts:11",
         "backend/src/security/tenantIsolation.local.integration.ts:14",
+        "backend/src/services/notificationService.receipt.test.ts:4",
         "backend/src/services/notificationService.test.ts:3"
       ],
       "reachable": true,
@@ -24382,6 +24405,7 @@
       ],
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/notificationService.receipt.test.ts",
         "backend/src/services/notificationService.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -24777,7 +24801,7 @@
       "id": "surface:ca8c8243f74619a5a835",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/electronSecrets.ts",
-      "sha256": "f7ffd5851707e0073bfaf5acf22e9eeb26712cddddb01bfc6da672b9d0cf835c",
+      "sha256": "d7b7461ee10e925f81cf666e210ef2afd15ff6845d857ee6bc3116108ce52924",
       "symbols": [
         "appleId",
         "applePass",
@@ -24789,17 +24813,20 @@
         "encryptedBytes",
         "err",
         "failed",
+        "imported",
         "keyData",
         "keyRes",
         "messageBytes",
         "ok",
+        "owner",
+        "parseElectronSecretRepository",
         "parsed",
         "parts",
         "put",
         "putRepoSecret",
+        "repo",
         "sodium",
         "sodiumMod",
-        "splitRepo",
         "syncElectronSigningSecretsToGitHub",
         "synced",
         "token",
@@ -24819,7 +24846,8 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:175",
-        "backend/src/routes/publish.ts:361"
+        "backend/src/routes/publish.ts:361",
+        "backend/src/services/publish/electronSecrets.authority.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -24831,7 +24859,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/services/publish/electronSecrets.authority.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -29776,10 +29806,12 @@
       ],
       "callers": [
         "backend/src/synthesis/projectRuntime/capabilities.ts:5",
+        "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts:3",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts:3",
         "backend/src/synthesis/projectRuntime/index.ts:9",
-        "backend/src/synthesis/projectRuntime/manager.ts:13",
-        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:32"
+        "backend/src/synthesis/projectRuntime/manager.ts:14",
+        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:32",
+        "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -29793,8 +29825,10 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts",
-        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts"
+        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+        "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -29862,7 +29896,7 @@
       "id": "surface:ca5b423e9d8cf5e5167b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/manager.ts",
-      "sha256": "250cce1b540a3d9b7f4bac9b4d6b1d8d8b3dcdafd9167cc98c078436d2f90a2d",
+      "sha256": "9d6d1fb373b181d391acd4492dea36fa7d381314fbe69aa5e438e28fcb618d86",
       "symbols": [
         "ProjectRuntimeManager",
         "ProjectRuntimeUnavailableError",
@@ -29895,6 +29929,7 @@
       ],
       "imports": [
         "../../ai/patches.js",
+        "../../lib/truthfulExecution.js",
         "../../sandbox/sandboxEnvironment.js",
         "./flyProvider.js",
         "./secretManager.js",
@@ -29903,6 +29938,7 @@
         "node:crypto"
       ],
       "runtimeImports": [
+        "backend/src/lib/truthfulExecution.ts",
         "backend/src/sandbox/sandboxEnvironment.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.ts",
         "backend/src/synthesis/projectRuntime/secretManager.ts",
@@ -29912,9 +29948,11 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts:4",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts:4",
         "backend/src/synthesis/projectRuntime/index.ts:11",
-        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:56"
+        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:56",
+        "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -29927,8 +29965,10 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts",
-        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts"
+        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+        "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -29954,6 +29994,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts:5",
         "backend/src/synthesis/projectRuntime/index.ts:13"
       ],
       "reachable": true,
@@ -29964,7 +30005,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -30090,8 +30133,9 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/security/runtimeSecretRead.local.integration.ts:6",
         "backend/src/synthesis/projectRuntime/index.ts:7",
-        "backend/src/synthesis/projectRuntime/manager.ts:17",
+        "backend/src/synthesis/projectRuntime/manager.ts:18",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:52"
       ],
       "reachable": true,
@@ -30105,6 +30149,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -30118,7 +30163,7 @@
       "id": "surface:52eacb67555cd24b2de9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "f31290337fa95fb3262be17fd9bd70852f3a653e3264e4ba8ac1bfd7c7045c5f",
+      "sha256": "e8b7c8117dbb14d586da79d0511d38aa93925eee1ae935a013d1554c7deb3fe8",
       "symbols": [
         "EncryptedProjectSecretRecord",
         "InMemoryProjectRuntimeStore",
@@ -30128,10 +30173,13 @@
         "ProjectRuntimeStore",
         "SupabaseProjectRuntimeStore",
         "attempt",
+        "bytes",
         "clone",
         "contract",
         "error",
         "event",
+        "existing",
+        "fail",
         "file",
         "files",
         "fingerprint",
@@ -30139,11 +30187,13 @@
         "identity",
         "key",
         "latest",
+        "parts",
         "persistSoftwareProjectRevision",
         "persistWorkerSoftwareProjectRevision",
         "project",
         "projectWorkspaceFingerprint",
         "record",
+        "restoreOwnerBoundEncryptedSecret",
         "restoreOwnerBoundProjectRevision",
         "restoreOwnerBoundRuntimeSession",
         "result",
@@ -30160,6 +30210,7 @@
         "../../config/supabase.js",
         "../../security/ownedRunPersistence.js",
         "../../security/tenantContext.js",
+        "../../security/tenantErrors.js",
         "../softwareProject.js",
         "./types.js",
         "node:crypto"
@@ -30168,21 +30219,27 @@
         "backend/src/ai/runStore.ts",
         "backend/src/config/supabase.ts",
         "backend/src/security/ownedRunPersistence.ts",
-        "backend/src/security/tenantContext.ts"
+        "backend/src/security/tenantContext.ts",
+        "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:139",
+        "backend/src/security/runtimeSecretRead.local.integration.ts:5",
+        "backend/src/security/runtimeTerminal.local.integration.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:16",
         "backend/src/security/workerRevision.local.integration.ts:9",
         "backend/src/synthesis/livePreview/store.ts:8",
+        "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts:6",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts:5",
         "backend/src/synthesis/projectRuntime/index.ts:3",
-        "backend/src/synthesis/projectRuntime/manager.ts:22",
+        "backend/src/synthesis/projectRuntime/manager.ts:23",
         "backend/src/synthesis/projectRuntime/projectHistory.ts:10",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:48",
+        "backend/src/synthesis/projectRuntime/secretRead.test.ts:3",
+        "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts:5",
         "backend/src/synthesis/projectRuntime/store.owner.test.ts:4",
         "backend/src/synthesis/projectRuntime/store.persistence.test.ts:4",
         "backend/src/synthesis/projectRuntime/store.worker.test.ts:5"
@@ -30201,10 +30258,10 @@
         "backend/src/synthesis/projectRuntime/store.ts#identity"
       ],
       "tenantBoundary": [
-        "backend/src/synthesis/projectRuntime/store.ts:750 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:841 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1024 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1107 (user_id)"
+        "backend/src/synthesis/projectRuntime/store.ts:755 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:846 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:1029 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:1072 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -30213,10 +30270,15 @@
         "backend/src/synthesis/projectRuntime/store.ts#event"
       ],
       "testCoverage": [
+        "backend/src/security/runtimeSecretRead.local.integration.ts",
+        "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
+        "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+        "backend/src/synthesis/projectRuntime/secretRead.test.ts",
+        "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts",
         "backend/src/synthesis/projectRuntime/store.owner.test.ts",
         "backend/src/synthesis/projectRuntime/store.persistence.test.ts",
         "backend/src/synthesis/projectRuntime/store.worker.test.ts"
@@ -30278,10 +30340,13 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/livePreview/access.test.ts",
+        "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts",
-        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts"
+        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+        "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -90103,7 +90168,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f32de77f4704c61e9d2a",
+      "id": "registration:a4f91a9bc7e3feb065fd",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 51,
       "receiver": "router",
@@ -90115,7 +90180,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3c2b93e4196c5727c094",
+      "id": "registration:2251725411ac84a0b9f2",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 350,
       "receiver": "router",
@@ -90127,7 +90192,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:331709698ea7e00ba59a",
+      "id": "registration:f04b72ae60e6691ba1bd",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 366,
       "receiver": "router",
@@ -90139,7 +90204,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4590d6c72880995b3168",
+      "id": "registration:57ea90c0ed7ddc5ebd5f",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 403,
       "receiver": "router",
@@ -90151,7 +90216,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3c3969447b4191e340b6",
+      "id": "registration:2f5014ae6746c43d6138",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 460,
       "receiver": "router",
@@ -90165,7 +90230,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:5881d382b848559bb109",
+      "id": "registration:6ccec7262fd6f6b0a645",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 461,
       "receiver": "router",
@@ -90669,8 +90734,8 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:82238ca5e1b91bf4973e",
-      "registrationId": "registration:f32de77f4704c61e9d2a",
+      "id": "route:6dd6de532c5ba33639e2",
+      "registrationId": "registration:a4f91a9bc7e3feb065fd",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 51,
       "method": "POST",
@@ -90686,8 +90751,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:573c0fa3c70fa8958d5f",
-      "registrationId": "registration:3c2b93e4196c5727c094",
+      "id": "route:ab9e978aaabc96e55968",
+      "registrationId": "registration:2251725411ac84a0b9f2",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 350,
       "method": "GET",
@@ -90703,8 +90768,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e492ed7edfb572781122",
-      "registrationId": "registration:331709698ea7e00ba59a",
+      "id": "route:da81b41c30b3c33d1c9f",
+      "registrationId": "registration:f04b72ae60e6691ba1bd",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 366,
       "method": "GET",
@@ -90720,8 +90785,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:77ba92fd75afd986bf35",
-      "registrationId": "registration:4590d6c72880995b3168",
+      "id": "route:6cd00e1cc27e5bd18d21",
+      "registrationId": "registration:57ea90c0ed7ddc5ebd5f",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 403,
       "method": "POST",
@@ -90737,8 +90802,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:cc560904d856a18e1314",
-      "registrationId": "registration:3c3969447b4191e340b6",
+      "id": "route:88e082aa68bfb44f9d8f",
+      "registrationId": "registration:2f5014ae6746c43d6138",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 460,
       "method": "POST",
@@ -90754,8 +90819,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a2a7ef8ab707f4bc4216",
-      "registrationId": "registration:5881d382b848559bb109",
+      "id": "route:8e9f92cced77bebe6ff8",
+      "registrationId": "registration:6ccec7262fd6f6b0a645",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 461,
       "method": "PATCH",
@@ -95064,6 +95129,20 @@
       "version": "20261016002000",
       "order": 93,
       "sha256": "4116ad648c42ad4d298d4a76951130f328cf1f37d0626c495d9ec8640936d655"
+    },
+    {
+      "id": "migration:162b83cad51ce5f3221e",
+      "sourcePath": "supabase/migrations/20261016002100_runtime_terminal_latch.sql",
+      "version": "20261016002100",
+      "order": 94,
+      "sha256": "f13167137b59c6effca8cb8660be4087911bed34637af7f3da0c8b1400ac139a"
+    },
+    {
+      "id": "migration:9a3bfc574360bc9faab5",
+      "sourcePath": "supabase/migrations/20261016002200_growth_in_app_delivery.sql",
+      "version": "20261016002200",
+      "order": 95,
+      "sha256": "a010489bc3c775337116f80bd36a8195118b4f173993b5cf0982cc51ed794859"
     }
   ],
   "workflows": [
@@ -95482,7 +95561,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:3cce2ddea9851d8f3017",
+      "id": "finding:c4b644cd9274a649a21d",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 451,
       "kind": "STUB",
@@ -102507,6 +102586,27 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:9e05ee3edb85275bb3da",
+      "sourcePath": "backend/src/growth/campaignReceipt.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:816bb1f5eca6889e8cb5",
+      "sourcePath": "backend/src/growth/delivery.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:f10ece1dd3669cdcf897",
+      "sourcePath": "backend/src/growth/deliveryReceipt.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:862911cb0ebf98bd877c",
       "sourcePath": "backend/src/growth/growthEngine.test.ts",
       "declaredTests": 5,
@@ -102524,6 +102624,13 @@
       "id": "test-suite:0f3dad98c31d27f776fb",
       "sourcePath": "backend/src/growth/growthService.boundary.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:0a94006028ca6ea522e2",
+      "sourcePath": "backend/src/growth/growthService.campaignReceipt.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -102643,6 +102750,13 @@
       "id": "test-suite:601d02b4e66ec6a8fcb8",
       "sourcePath": "backend/src/lib/vercelAuthError.test.ts",
       "declaredTests": 12,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:34d78aec92099842e9ff",
+      "sourcePath": "backend/src/lib/vercelEnv.authority.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -103062,6 +103176,20 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:6ea5aa82a1cd019e1a00",
+      "sourcePath": "backend/src/security/runtimeSecretRead.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7e016a92892319a2d2ab",
+      "sourcePath": "backend/src/security/runtimeTerminal.local.integration.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:ac541d563efcbc546c08",
       "sourcePath": "backend/src/security/serviceRoleGuard.test.ts",
       "declaredTests": 1,
@@ -103342,6 +103470,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:f5c986346a65f1752438",
+      "sourcePath": "backend/src/services/integrations/userProviderKeys.publicEnv.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:262969e5ffab301b5269",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.readIntegrity.test.ts",
       "declaredTests": 1,
@@ -103426,6 +103561,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:826fe72877b0bdba1f35",
+      "sourcePath": "backend/src/services/notificationService.receipt.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:7b08ebbf93d127ef0eb2",
       "sourcePath": "backend/src/services/notificationService.test.ts",
       "declaredTests": 5,
@@ -103436,6 +103578,13 @@
       "id": "test-suite:59e281b4485a80cea332",
       "sourcePath": "backend/src/services/publish/easCredentials.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:68aa07a402e941448d58",
+      "sourcePath": "backend/src/services/publish/electronSecrets.authority.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -103741,6 +103890,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:860c7e80a1cf627c3b24",
+      "sourcePath": "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:82cc959615623d6f9fdd",
       "sourcePath": "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts",
       "declaredTests": 1,
@@ -103751,6 +103907,20 @@
       "id": "test-suite:b6dd6164f56ecf050765",
       "sourcePath": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
       "declaredTests": 13,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:517fbfce976a85e56f66",
+      "sourcePath": "backend/src/synthesis/projectRuntime/secretRead.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:2ee54d17cb5bdc387de6",
+      "sourcePath": "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

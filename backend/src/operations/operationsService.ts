@@ -86,9 +86,9 @@ export class OperationsService {
     return { role, ownerId: project.user_id };
   }
 
-  async permissions(userId: string, projectId: string): Promise<{ role: OperationsRole; permissions: OperationsPermission[] }> {
-    const { role } = await this.access(userId, projectId, 'view_product_operations');
-    return { role, permissions: permissionsForRole(role) };
+  async permissions(userId: string, projectId: string): Promise<{ role: OperationsRole; ownerId: string; permissions: OperationsPermission[] }> {
+    const { role, ownerId } = await this.access(userId, projectId, 'view_product_operations');
+    return { role, ownerId, permissions: permissionsForRole(role) };
   }
 
   async portfolio(userId: string, options: { search?: string; status?: string; type?: string; limit: number; offset: number }): Promise<{ products: PortfolioProduct[]; total: number; nextOffset: number | null }> {

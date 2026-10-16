@@ -345,9 +345,18 @@ export async function prepareUserProviderKeyWrite(
 }
 
 export function envVarForProvider(provider: string, override?: string): string {
-  if (override?.trim()) return sanitizeEnvVarName(override);
   const p = normalizeProvider(provider);
-  return ENV_VAR_BY_PROVIDER[p] ?? `${p.toUpperCase()}_API_KEY`;
+  const name = override?.trim() ? sanitizeEnvVarName(override) : ENV_VAR_BY_PROVIDER[p] ?? `${p.toUpperCase()}_API_KEY`;
+  assertPrivateCredentialEnv(p, name);
+  return name;
+}
+
+function assertPrivateCredentialEnv(provider: string, name: string): void {
+  const publicSupabase = (provider === 'supabase_url' && name === 'NEXT_PUBLIC_SUPABASE_URL')
+    || (provider === 'supabase_anon' && name === 'NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  if (!publicSupabase && /^(NEXT_PUBLIC_|VITE_|EXPO_PUBLIC_|REACT_APP_|PUBLIC_|GATSBY_|VUE_APP_|NUXT_PUBLIC_)/.test(name)) {
+    throw new Error('Vault credentials cannot use browser-public environment names. Reconnect with a server-only name.');
+  }
 }
 
 export async function saveUserProviderKey(
@@ -743,6 +752,7 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
     }
     const varName = meta.env_var ?? envVarForProvider(provider);
     if (typeof varName !== 'string' || !/^[A-Z_][A-Z0-9_]{1,63}$/.test(varName)) throw new Error('Credential metadata is invalid. Reconnect before syncing.');
+    assertPrivateCredentialEnv(provider, varName);
     const plain = row.access_token ? decryptApiKey(row.access_token) : null;
     if (plain && varName) out[varName] = plain;
   }

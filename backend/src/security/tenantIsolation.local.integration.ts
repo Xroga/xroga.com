@@ -62,6 +62,10 @@ import { registerCommunityRemainingMutationTests } from '../community/remainingM
 import { registerCommunityReadTests } from '../community/reads.local.integration.js';
 import { registerRepositorySnapshotTests } from './repositorySnapshot.local.integration.js';
 import { registerRunTraceAttemptTests } from './runTraceAttempt.local.integration.js';
+import { registerRuntimeTerminalTests } from './runtimeTerminal.local.integration.js';
+import { registerRuntimeSecretReadTests } from './runtimeSecretRead.local.integration.js';
+import { registerGrowthCampaignReceiptTests } from '../growth/campaignReceipt.local.integration.js';
+import { registerGrowthDeliveryTests } from '../growth/delivery.local.integration.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -89,6 +93,10 @@ registerCommunityRemainingMutationTests(admin);
 registerCommunityReadTests(admin);
 registerRepositorySnapshotTests(admin);
 registerRunTraceAttemptTests(admin, () => users);
+registerRuntimeTerminalTests(admin, () => users);
+registerRuntimeSecretReadTests(admin, () => users);
+registerGrowthCampaignReceiptTests(admin);
+registerGrowthDeliveryTests(admin);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }
@@ -704,7 +712,10 @@ test('profile activity keeps own and project-less entries but redacts a corrupt 
 
 test('real failed-build notification cannot disclose raw backend diagnostic text',async()=>{
   const owner=users[0];
-  await notifyBuildFailed(owner.id,{projectName:'Isolated failure fixture',prompt:'Synthetic request only',error:'RAW_DIAGNOSTIC_PRIVATE_CANARY password=synthetic-not-a-secret SQL internal exception'});
+  const notificationCount=await admin.from('notifications').select('id',{count:'exact',head:true}).eq('user_id',owner.id);assert.equal(notificationCount.error,null);
+  await assert.rejects(notifyBuildFailed({...owner.context} as TenantContext,{projectName:'Rejected notification',prompt:'Synthetic request only',error:'fixture'}),{code:'TENANT_AUTH_REQUIRED'});
+  const rejected=await admin.from('notifications').select('id',{count:'exact',head:true}).eq('user_id',owner.id);assert.equal(rejected.error,null);assert.equal(rejected.count,notificationCount.count);
+  await notifyBuildFailed(createTenantContext({userId:owner.id,via:'persisted_owner'}),{projectName:'Isolated failure fixture',prompt:'Synthetic request only',error:'RAW_DIAGNOSTIC_PRIVATE_CANARY password=synthetic-not-a-secret SQL internal exception'});
   const stored=await admin.from('notifications').select('message,metadata').eq('user_id',owner.id).eq('title','XROGA build needs attention');assert.equal(stored.error,null);assert.ok(stored.data?.length);
   assert.ok(!JSON.stringify(stored.data).includes('RAW_DIAGNOSTIC_PRIVATE_CANARY'));
   assert.ok(stored.data?.some(row=>row.message.includes('could not finish')&&row.message.includes('retry')));

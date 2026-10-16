@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b06c0541618e282a0231490252d846e956ff455f",
+  "source_sha": "7d12bf426118660c9adfe7d6c7447d99c6e4eb24",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -534,6 +534,8 @@
         "backend/src/community/postMutation.local.integration.ts",
         "backend/src/community/reads.local.integration.ts",
         "backend/src/community/remainingMutations.local.integration.ts",
+        "backend/src/growth/campaignReceipt.local.integration.ts",
+        "backend/src/growth/delivery.local.integration.ts",
         "backend/src/routes/github.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
@@ -546,6 +548,8 @@
         "backend/src/security/recoveryMemoryRead.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeSecretRead.local.integration.ts",
+        "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/systemErrorLog.local.integration.ts",
@@ -621,6 +625,8 @@
         "backend/src/community/postMutation.local.integration.ts",
         "backend/src/community/reads.local.integration.ts",
         "backend/src/community/remainingMutations.local.integration.ts",
+        "backend/src/growth/campaignReceipt.local.integration.ts",
+        "backend/src/growth/delivery.local.integration.ts",
         "backend/src/routes/github.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
@@ -633,6 +639,8 @@
         "backend/src/security/recoveryMemoryRead.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeSecretRead.local.integration.ts",
+        "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/systemErrorLog.local.integration.ts",
@@ -6909,6 +6917,8 @@
         "backend/src/community/postMutation.local.integration.ts",
         "backend/src/community/reads.local.integration.ts",
         "backend/src/community/remainingMutations.local.integration.ts",
+        "backend/src/growth/campaignReceipt.local.integration.ts",
+        "backend/src/growth/delivery.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
@@ -6920,6 +6930,8 @@
         "backend/src/security/recoveryMemoryRead.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeSecretRead.local.integration.ts",
+        "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
@@ -9811,6 +9823,8 @@
         "backend/src/community/remainingMutations.local.integration.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/supabase.ts",
+        "backend/src/growth/campaignReceipt.local.integration.ts",
+        "backend/src/growth/delivery.local.integration.ts",
         "backend/src/index.ts",
         "backend/src/lib/capabilityRegistry.ts",
         "backend/src/lib/platformReady.ts",
@@ -9829,6 +9843,8 @@
         "backend/src/security/recoveryMemoryRead.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeSecretRead.local.integration.ts",
+        "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/systemErrorLog.local.integration.ts",
@@ -10449,6 +10465,8 @@
         "backend/src/community/postMutation.local.integration.ts",
         "backend/src/community/reads.local.integration.ts",
         "backend/src/community/remainingMutations.local.integration.ts",
+        "backend/src/growth/campaignReceipt.local.integration.ts",
+        "backend/src/growth/delivery.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
@@ -10460,6 +10478,8 @@
         "backend/src/security/recoveryMemoryRead.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeSecretRead.local.integration.ts",
+        "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/systemErrorLog.local.integration.ts",
@@ -10493,12 +10513,15 @@
         "backend/src/community/postMutation.local.integration.ts",
         "backend/src/community/reads.local.integration.ts",
         "backend/src/community/remainingMutations.local.integration.ts",
+        "backend/src/growth/campaignReceipt.local.integration.ts",
+        "backend/src/growth/delivery.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
@@ -12089,12 +12112,20 @@
       "sha256": "231179f594ca9866269c572e7b47579e2616a38f49140c8219c4a931106396a2"
     },
     {
+      "path": "backend/src/growth/campaignReceipt.local.integration.ts",
+      "sha256": "2b1e547c618b6d4af9d5bfd51f5994476b31e3faa8d088de421bde9af448f48d"
+    },
+    {
+      "path": "backend/src/growth/delivery.local.integration.ts",
+      "sha256": "02d5453cc53c891c844fb220ef7dabc0f9f96c6c12df441edacae6cb18ec0fdf"
+    },
+    {
       "path": "backend/src/growth/growthEngine.ts",
       "sha256": "f6a6b2ae5c12678772ea6e3fbd466bc8e3abc83d11f8850aa561d3846fe969ae"
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sha256": "b6aa970ee2ac560750ef3844277d5e935c64dfc7a69e7a651c0762b38d97f28b"
+      "sha256": "c7659b757ba75b551ff996124eafda87783c62975daa7b014da14cd91d899207"
     },
     {
       "path": "backend/src/index.ts",
@@ -12294,7 +12325,7 @@
     },
     {
       "path": "backend/src/lib/vercelEnv.ts",
-      "sha256": "9a2c3310b77ec621bdeeec8d18a856ba477aaa3e39c2283bd09f98a196e96db0"
+      "sha256": "b7ad8074fd9c03caead5995511518830eae19c7828956296a823ceb0947abaf9"
     },
     {
       "path": "backend/src/lib/vercelStaticConfig.ts",
@@ -12350,7 +12381,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sha256": "d824127d2f17948c1f15b574822bd04c9213b74b3879b786bf0fd817cba38871"
+      "sha256": "9c7614bee2559935f300ed22bc4720c765d0741b0d55e320beb160fc98d494fb"
     },
     {
       "path": "backend/src/operations/permissions.ts",
@@ -12574,7 +12605,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "sha256": "4afd2c0da1fafaf24125af6478bdfc0f08967f762f49f86f76c3286738138d05"
+      "sha256": "eb65b69a7babc3345c348b81c13ad9323a3f385a725f418b3de3b9f9eb7a8793"
     },
     {
       "path": "backend/src/routes/tasks.ts",
@@ -12697,6 +12728,14 @@
       "sha256": "df809feac0b0b2f39f91f8080193c28ec12ad61ed3a0d3bb6f372efffcd2dba1"
     },
     {
+      "path": "backend/src/security/runtimeSecretRead.local.integration.ts",
+      "sha256": "6f858c91c64fb0ea655a36c7e6dd98895ad518f1b1500bfc281cf2a4d4ae3c74"
+    },
+    {
+      "path": "backend/src/security/runtimeTerminal.local.integration.ts",
+      "sha256": "eac28c0b15853f251e2bd9f9cbe1288dcbd051f4a4149f52977f088efac0a13d"
+    },
+    {
       "path": "backend/src/security/serviceRoleGuard.ts",
       "sha256": "64b6347bfc9ff15fe6e423295e1490860a5e1a7bdce02a3b9e90922f533a732e"
     },
@@ -12722,7 +12761,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "3880eab8d0ab443d6fe9445b9e1ba5b4e3fd0a16947a6b7237d4ff79d02d1214"
+      "sha256": "de1aac16c06df1f8ab01fa490a12845de75646fb0e13dd66dedd3365fda1a6cd"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -12838,7 +12877,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "56eb9ece6fd68bd4d47266f72a90fa032721081645bea942a0c092067ec19676"
+      "sha256": "f90c43cc89a03f37f4e29abcb77c3f445a09a13797dae4be976e745c11f824a3"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -12858,7 +12897,7 @@
     },
     {
       "path": "backend/src/services/notificationService.ts",
-      "sha256": "082f6cba830061d4a8979d013b8409377ae64f6a610553e5866e0cbea09443f9"
+      "sha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402"
     },
     {
       "path": "backend/src/services/projectScaffold.ts",
@@ -12878,7 +12917,7 @@
     },
     {
       "path": "backend/src/services/publish/electronSecrets.ts",
-      "sha256": "f7ffd5851707e0073bfaf5acf22e9eeb26712cddddb01bfc6da672b9d0cf835c"
+      "sha256": "d7b7461ee10e925f81cf666e210ef2afd15ff6845d857ee6bc3116108ce52924"
     },
     {
       "path": "backend/src/services/publish/nonWebShip.ts",
@@ -13170,7 +13209,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "sha256": "250cce1b540a3d9b7f4bac9b4d6b1d8d8b3dcdafd9167cc98c078436d2f90a2d"
+      "sha256": "9d6d1fb373b181d391acd4492dea36fa7d381314fbe69aa5e438e28fcb618d86"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/processManager.ts",
@@ -13186,7 +13225,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "f31290337fa95fb3262be17fd9bd70852f3a653e3264e4ba8ac1bfd7c7045c5f"
+      "sha256": "e8b7c8117dbb14d586da79d0511d38aa93925eee1ae935a013d1554c7deb3fe8"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/types.ts",
@@ -17780,6 +17819,20 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/growth/campaignReceipt.local.integration.ts",
+      "line": 12,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/growth/delivery.local.integration.ts",
+      "line": 4,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
@@ -18014,35 +18067,35 @@
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 31,
+      "line": 53,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 39,
+      "line": 61,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 62,
+      "line": 82,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 84,
+      "line": 108,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 98,
+      "line": 122,
       "credentialsInUrl": false
     },
     {
@@ -18335,6 +18388,20 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/runtimeSecretRead.local.integration.ts",
+      "line": 10,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/runtimeTerminal.local.integration.ts",
+      "line": 12,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
       "line": 13,
       "credentialsInUrl": false
@@ -18364,56 +18431,56 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 66,
+      "line": 70,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 66,
+      "line": 70,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 303,
+      "line": 311,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 353,
+      "line": 361,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 442,
+      "line": 450,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 548,
+      "line": 556,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 600,
+      "line": 608,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1249,
+      "line": 1260,
       "credentialsInUrl": false
     },
     {
@@ -18833,14 +18900,14 @@
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/electronSecrets.ts",
-      "line": 34,
+      "line": 35,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/electronSecrets.ts",
-      "line": 51,
+      "line": 52,
       "credentialsInUrl": false
     },
     {
@@ -23593,7 +23660,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "line": 248,
+      "line": 263,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -23726,7 +23793,21 @@
     },
     {
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 149,
+      "line": 41,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/lib/vercelEnv.ts",
+      "line": 89,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/lib/vercelEnv.ts",
+      "line": 180,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24580,7 +24661,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1085,
+      "line": 1096,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24825,49 +24906,49 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 485,
+      "line": 494,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 532,
+      "line": 541,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 533,
+      "line": 542,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 755,
+      "line": 765,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 905,
+      "line": 915,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 972,
+      "line": 982,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 978,
+      "line": 988,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25511,14 +25592,14 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "line": 455,
+      "line": 460,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "line": 546,
+      "line": 551,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25532,21 +25613,21 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 288,
+      "line": 289,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 294,
+      "line": 295,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 304,
+      "line": 305,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

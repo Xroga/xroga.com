@@ -40,7 +40,7 @@ test('Supabase vault saves and final deployment maps reject non-project origins 
       await assert.rejects(resolveProviderEnvForDeploy(owner), /not a verified hosted project origin/);
       rows = [row('apikey_supabase_url', 'NEXT_PUBLIC_SUPABASE_URL', 'https://project.supabase.co'), service,
         row('apikey_custom_next_public_supabase_url', 'NEXT_PUBLIC_SUPABASE_URL', url)];
-      await assert.rejects(resolveProviderEnvForDeploy(owner), /not a verified hosted project origin/);
+      await assert.rejects(resolveProviderEnvForDeploy(owner), /browser-public environment names/);
     }
     rows = [row('apikey_supabase_url', 'NEXT_PUBLIC_SUPABASE_URL', 'https://project.supabase.co'),
       row('apikey_supabase', 'SUPABASE_SERVICE_ROLE_KEY', 'SYNTHETIC_RETAINED_SERVICE'),
