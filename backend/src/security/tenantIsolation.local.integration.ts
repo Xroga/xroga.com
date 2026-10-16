@@ -58,6 +58,10 @@ import { registerProvisioningReceiptTests } from './provisioningReceipt.local.in
 import { registerCommunityCommentUpdateTests } from '../community/commentUpdate.local.integration.js';
 import { registerRecoveryMemoryReadTests } from './recoveryMemoryRead.local.integration.js';
 import { registerCommunityPostMutationTests } from '../community/postMutation.local.integration.js';
+import { registerCommunityRemainingMutationTests } from '../community/remainingMutations.local.integration.js';
+import { registerCommunityReadTests } from '../community/reads.local.integration.js';
+import { registerRepositorySnapshotTests } from './repositorySnapshot.local.integration.js';
+import { registerRunTraceAttemptTests } from './runTraceAttempt.local.integration.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -81,6 +85,10 @@ registerProvisioningReceiptTests(admin);
 registerCommunityCommentUpdateTests(admin);
 registerRecoveryMemoryReadTests(admin);
 registerCommunityPostMutationTests(admin);
+registerCommunityRemainingMutationTests(admin);
+registerCommunityReadTests(admin);
+registerRepositorySnapshotTests(admin);
+registerRunTraceAttemptTests(admin, () => users);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }
@@ -403,10 +411,13 @@ test('real universal spec and plan collision cannot transfer ownership or refere
 test('real repository index cannot be read deleted overwritten or have children removed by another tenant',async()=>{
   const [owner,other]=users,a=new SupabaseUniversalStore(admin,owner.context),b=new SupabaseUniversalStore(admin,other.context);
   const identity={projectId:owner.project,repositoryId:'fixture/local',repositoryOwner:'fixture',repositoryName:'local',branch:'main'};
-  const index={identity,schemaVersion:'1.0.0',indexedCommitSha:'fixture-no-real-commit',treeSha:null,files:[],updatedAt:new Date().toISOString()};
+  const index={identity,schemaVersion:'1.0.0',indexedCommitSha:'fixture-no-real-commit',treeSha:null,files:[{
+    filePath:'private.txt',blobSha:'fixture-no-real-blob',summary:'PRIVATE_INDEX_CANARY',language:null,size:0,binary:false,
+    componentRoot:null,componentAdapterId:null,workspaceRoot:null,symbols:[],imports:[],exports:[],embeddingRef:null,updatedAt:new Date().toISOString(),
+  }],updatedAt:new Date().toISOString()};
   await a.save(index);
   const id=`${identity.projectId}:${identity.repositoryId}:${identity.branch}`;
-  const file=await insert('repository_index_files',{index_id:id,user_id:owner.id,file_path:'private.txt',blob_sha:'fixture-no-real-blob',summary:'PRIVATE_INDEX_CANARY'});
+  const savedFile=await admin.from('repository_index_files').select('id').eq('index_id',id).eq('user_id',owner.id).single();assert.equal(savedFile.error,null);const file=savedFile.data!.id;
   assert.equal(await b.load(identity),null);await b.delete(identity);
   await assert.rejects(b.save({...index,indexedCommitSha:'Forbidden overwrite'}),{status:404});
   const row=await admin.from('repository_indexes').select('user_id,indexed_commit_sha').eq('index_id',id).single();assert.equal(row.error,null);assert.equal(row.data?.user_id,owner.id);assert.equal(row.data?.indexed_commit_sha,'fixture-no-real-commit');
@@ -583,31 +594,37 @@ test('real Vercel refresh persistence cannot overwrite a disconnect or another o
   }
 });
 
-test('real shared OAuth revocation survives delayed mirrors and preserves another owner',async()=>{
-  const [owner,other]=users,bucket='xroga-github-tokens',provider='synthetic_oauth',pkce='supabase_oauth_pkce';
+test('real OAuth policy authority rejects unused generic tokens and isolates issued preference updates',async()=>{
+  const {getUserPluginPermissionMode,setUserPluginPermissionMode}=await import('../services/integrations/pluginPermissionPolicy.js');
+  const [owner,other]=users,bucket='xroga-github-tokens',provider='xroga_plugin_permission_policy__fixture',pkce='supabase_oauth_pkce';
   const session={verifier:'SYNTHETIC_VERIFIER',state:randomUUID(),redirect_uri:'http://127.0.0.1/callback',created_at:new Date().toISOString()};
   try {
-    await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_OWNER',refresh_token:'SYNTHETIC_OLD_REFRESH'});
-    await storeProviderToken(other.id,provider,{access_token:'SYNTHETIC_OTHER'});
+    await assert.rejects(storeProviderToken(owner.id,'synthetic_oauth',{access_token:'SYNTHETIC_OWNER'}),/Unsupported/);
+    await assert.rejects(loadProviderToken(owner.id,'synthetic_oauth'),/Unsupported/);
+    await assert.rejects(clearProviderToken(owner.id,'synthetic_oauth'),/Unsupported/);
+    await setUserPluginPermissionMode(owner.context,'full_access','fixture');
+    await setUserPluginPermissionMode(other.context,'read_only','fixture');
+    assert.equal(await getUserPluginPermissionMode(owner.id,'fixture'),'full_access');
+    assert.equal(await getUserPluginPermissionMode(other.id,'fixture'),'read_only');
+    await assert.rejects(setUserPluginPermissionMode({...owner.context},'full_access','fixture'));
+    await setUserPluginPermissionMode(owner.context,'always_ask','fixture');
+    assert.equal(await getUserPluginPermissionMode(owner.id,'fixture'),'always_ask');
+    assert.equal(await getUserPluginPermissionMode(other.id,'fixture'),'read_only');
     await storePkceSession(owner.context,pkce,session);
-    await clearProviderToken(owner.id,provider);
     await clearPkceSession(owner.context,pkce);
-    for(const [path,payload] of [[`${owner.id}/oauth-${provider}.json`,{access_token:'SYNTHETIC_DELAYED'}],[`${owner.id}/pkce-${pkce}.json`,session]] as const){
+    for(const [path,payload] of [[`${owner.id}/oauth-${provider}.json`,{access_token:'full_access',metadata:{mode:'full_access'}}],[`${owner.id}/pkce-${pkce}.json`,session]] as const){
       const replay=await admin.storage.from(bucket).upload(path,JSON.stringify(payload),{upsert:true,contentType:'application/json'});assert.equal(replay.error,null);
     }
-    assert.equal(await loadProviderToken(owner.id,provider),null);
-    await assert.rejects(storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_LATE_REFRESH'},'SYNTHETIC_OLD_REFRESH'),/changed during refresh/);
-    assert.equal(await loadProviderToken(owner.id,provider),null);
+    assert.equal(await getUserPluginPermissionMode(owner.id,'fixture'),'always_ask');
+    await assert.rejects(storeProviderToken(owner.id,provider,{access_token:'full_access'},'SYNTHETIC_OLD_REFRESH'),/do not support token refresh/);
     assert.equal(await consumePkceSession(owner.context,pkce,session.state),null);
-    assert.equal((await loadProviderToken(other.id,provider))?.access_token,'SYNTHETIC_OTHER');
+    assert.equal((await loadProviderToken(other.id,provider))?.access_token,'read_only');
     await assert.rejects(clearProviderToken(owner.id,`../${other.id}`),/Invalid OAuth storage identity/);
-    await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_RECONNECTED',refresh_token:'SYNTHETIC_NEW_REFRESH'});
-    await assert.rejects(storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_LATE_REFRESH'},'SYNTHETIC_OLD_REFRESH'),/changed during refresh/);
-    assert.equal((await loadProviderToken(owner.id,provider))?.access_token,'SYNTHETIC_RECONNECTED');
-    await storeProviderToken(owner.id,provider,{access_token:'SYNTHETIC_REFRESHED',refresh_token:'SYNTHETIC_ROTATED'},'SYNTHETIC_NEW_REFRESH');
-    assert.equal((await loadProviderToken(owner.id,provider))?.access_token,'SYNTHETIC_REFRESHED');
+    const removed=await admin.from('user_integrations').delete().eq('user_id',owner.id).eq('provider',provider);assert.equal(removed.error,null);
+    assert.equal(await loadProviderToken(owner.id,provider),null,'Absent policy cannot read a permissive legacy mirror');
   } finally {
-    for(const user of users){await clearProviderToken(user.id,provider);await clearPkceSession(user.context,pkce);}
+    for(const user of users){const removed=await admin.from('user_integrations').delete().eq('user_id',user.id).eq('provider',provider);assert.equal(removed.error,null);await clearPkceSession(user.context,pkce);}
+    const cleanup=await admin.storage.from(bucket).remove([`${owner.id}/oauth-${provider}.json`]);assert.equal(cleanup.error,null);
   }
 });
 

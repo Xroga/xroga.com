@@ -1000,7 +1000,7 @@ export class FlyProjectRuntimeProvider
         session,
       );
 
-    await this.fetchImpl(
+    const response = await this.fetchImpl(
       `${this.apiHost}/v1/apps/${this.app}/machines/${machineId}?force=true`,
 
       {
@@ -1010,10 +1010,14 @@ export class FlyProjectRuntimeProvider
         headers:
           this.headers(),
       },
-    ).catch(
-      () =>
-        undefined,
-    );
+    ).catch(() => {
+      throw new Error('Runtime destruction could not be confirmed.');
+    });
+    // An absent machine is already destroyed. An asynchronous acceptance is
+    // not confirmation and must not produce a durable destroyed receipt.
+    if (response.status !== 200 && response.status !== 204 && response.status !== 404) {
+      throw new Error('Runtime destruction could not be confirmed.');
+    }
   }
 
   async writeFiles(

@@ -25,10 +25,10 @@ test('OAuth authority failure or existing rejected state never reads a stale Sto
     process.env.SUPABASE_URL = `http://127.0.0.1:${address.port}`;
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-loopback-only';
     for (mode of ['outage', 'empty', 'revoked']) {
-      assert.equal(await loadProviderToken('fixture', 'fixture_provider'), null);
+      assert.equal(await loadProviderToken('fixture', 'supabase_oauth'), null);
     }
     mode = 'mismatch';
-    assert.equal((await loadProviderToken('fixture', 'fixture_provider'))?.access_token, 'current');
+    assert.equal((await loadProviderToken('fixture', 'supabase_oauth'))?.access_token, 'current');
     assert.equal(paths.length, 4);
     assert.ok(paths.every(path => path.startsWith('/rest/v1/user_integrations')));
   } finally {

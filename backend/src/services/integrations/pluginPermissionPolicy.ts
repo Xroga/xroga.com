@@ -2,6 +2,7 @@ import {
   loadProviderToken,
   storeProviderToken,
 } from './oauthPkceStore.js';
+import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
 
 export type PluginPermissionMode =
   | 'always_ask'
@@ -109,10 +110,12 @@ export async function getUserPluginPermissionMode(
 }
 
 export async function setUserPluginPermissionMode(
-  userId: string,
+  context: TenantContext,
   mode: PluginPermissionMode,
   toolkit?: string,
 ): Promise<PluginPermissionMode> {
+  const { userId } = requireTenantContext(context);
+  if (!isPluginPermissionMode(mode)) throw new Error('Unsupported plugin permission mode.');
   const cleanToolkit = cleanToolkitPermissionKey(toolkit);
   const provider = providerForToolkit(cleanToolkit ?? undefined);
 

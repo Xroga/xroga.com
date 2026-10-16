@@ -20,6 +20,11 @@ test('provisioning requires issued identity and exact durable receipts before ca
     assert.ok(['profiles','user_token_usage'].includes(table));
     if(init?.method==='POST'){
       const row=JSON.parse(String(init.body));assert.equal(row[field],owner);
+      if(table==='profiles'){
+        assert.equal(row.username,'xroga_11111111111');
+        assert.match(row.username,/^[A-Za-z0-9_]{3,32}$/);
+        assert.equal(Object.hasOwn(row,'role'),false);
+      }
       assert.match(String(new Headers(init.headers).get('prefer')),/resolution=ignore-duplicates/);
       return new Response(null,{status:201});
     }

@@ -12,6 +12,7 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
   const calls: Array<{ path: string; method: string; body: Record<string, unknown> }> = [];
   const rows = new Map<string, Record<string, unknown>>();
   let outage = false, cleanupFailure = false, toolkitOutage = false;
+  let receipt: ((row: Record<string, unknown>) => unknown) | undefined;
   const server = createServer((req, res) => {
     let raw = '';
     req.on('data', chunk => { raw += chunk; });
@@ -39,7 +40,7 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
       }
       if (req.method === 'POST') {
         rows.set(`${body.user_id}/${body.provider}`, body);
-        return res.end('null');
+        return res.end(JSON.stringify(url.searchParams.has('select') ? (receipt ? receipt(body) : body) : null));
       }
       const key = `${url.searchParams.get('user_id')?.slice(3)}/${url.searchParams.get('provider')?.slice(3)}`;
       if (req.method === 'PATCH') {
@@ -62,47 +63,82 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-loopback-only';
     await assert.rejects(storeProviderToken('owner', '../foreign', { access_token: 'token' }), /Invalid OAuth storage identity/);
     await assert.rejects(clearPkceSession(context, '../provider'), /Invalid OAuth storage identity/);
+    for (const provider of ['synthetic_oauth','provider','apikey_openai','github','xroga_plugin_permission_policy__','xroga_plugin_permission_policy__../other']) {
+      await assert.rejects(storeProviderToken('owner',provider,{access_token:'token'}));
+      await assert.rejects(loadProviderToken('owner',provider));
+      await assert.rejects(clearProviderToken('owner',provider));
+    }
+    for (const forged of [context.userId,{...context},JSON.parse(JSON.stringify(context)),null]) {
+      await assert.rejects(setUserPluginPermissionMode(forged as Parameters<typeof setUserPluginPermissionMode>[0],'full_access'));
+    }
+    await assert.rejects(setUserPluginPermissionMode(context,'invalid' as never));
+    await assert.rejects(storeProviderToken('owner','xroga_plugin_permission_policy',{access_token:'full_access'},'old-refresh'),/do not support token refresh/);
     assert.equal(calls.length, 0);
     outage = true;
     assert.equal(await getUserPluginPermissionMode('owner', 'github'), 'always_ask');
-    await assert.rejects(storeProviderToken('owner', 'provider', { access_token: 'token' }), /could not be saved/);
+    await assert.rejects(setUserPluginPermissionMode(context, 'full_access'), /could not be saved/);
     await assert.rejects(storePkceSession(context, 'supabase_oauth_pkce', session), /could not be saved/);
-    await assert.rejects(clearProviderToken('owner', 'provider'), /could not be recorded/);
+    await assert.rejects(clearProviderToken('owner', 'supabase_oauth'), /could not be recorded/);
     await assert.rejects(clearPkceSession(context, 'supabase_oauth_pkce'), /could not be recorded/);
     assert.ok(calls.every(call => call.path === '/rest/v1/user_integrations' || call.path === '/rest/v1/rpc/begin_oauth_session'));
     outage = false;
-    assert.equal(await getUserPluginPermissionMode('owner', 'github'), 'low_risk');
-    await setUserPluginPermissionMode('owner', 'full_access');
-    assert.equal(await getUserPluginPermissionMode('owner', 'github'), 'full_access');
+    for (const substitute of [
+      () => null,
+      (row: Record<string, unknown>) => ({...row,user_id:'foreign'}),
+      (row: Record<string, unknown>) => ({...row,provider:'xroga_plugin_permission_policy__other'}),
+      (row: Record<string, unknown>) => ({...row,access_token:'always_ask'}),
+      (row: Record<string, unknown>) => ({...row,refresh_token:'PRIVATE_RECEIPT_CANARY'}),
+      (row: Record<string, unknown>) => ({...row,metadata:{...(row.metadata as object),mode:'always_ask'}}),
+      (row: Record<string, unknown>) => ({...row,metadata:{...(row.metadata as object),type:'other'}}),
+      (row: Record<string, unknown>) => ({...row,metadata:{...(row.metadata as object),scope:'global'}}),
+      (row: Record<string, unknown>) => ({...row,metadata:{...(row.metadata as object),toolkit:'other'}}),
+    ]) {
+      receipt = substitute;
+      await assert.rejects(setUserPluginPermissionMode(context,'full_access','receipt'), error => {
+        assert.equal((error as Error).message,'OAuth connection could not be saved. Retry shortly.');return true;
+      });
+    }
+    receipt = undefined;
+    const mutablePolicy = { access_token:'read_only', metadata:{type:'plugin_permission_policy',mode:'read_only',scope:'toolkit',toolkit:'snapshot'} };
+    receipt = row => {
+      mutablePolicy.access_token = 'full_access';
+      mutablePolicy.metadata.mode = 'full_access';
+      mutablePolicy.metadata.toolkit = 'foreign';
+      return row;
+    };
+    await storeProviderToken(context.userId,'xroga_plugin_permission_policy__snapshot',mutablePolicy);
+    assert.equal(rows.get(`${context.userId}/xroga_plugin_permission_policy__snapshot`)?.access_token,'read_only');
+    receipt = undefined;
+    assert.equal(await getUserPluginPermissionMode(context.userId, 'github'), 'low_risk');
+    await setUserPluginPermissionMode(context, 'full_access');
+    assert.equal(await getUserPluginPermissionMode(context.userId, 'github'), 'full_access');
     toolkitOutage = true;
     calls.length = 0;
-    assert.equal(await getUserPluginPermissionMode('owner', 'github'), 'always_ask');
+    assert.equal(await getUserPluginPermissionMode(context.userId, 'github'), 'always_ask');
     assert.equal(calls.length, 1, 'unavailable toolkit policy cannot fall back to global full access or a mirror');
     toolkitOutage = false;
-    await setUserPluginPermissionMode('owner', 'read_only', 'github');
-    assert.equal(await getUserPluginPermissionMode('owner', 'github'), 'read_only');
+    await setUserPluginPermissionMode(context, 'read_only', 'github');
+    assert.equal(await getUserPluginPermissionMode(context.userId, 'github'), 'read_only');
     outage = true;
-    assert.equal(await getUserPluginPermissionMode('owner', 'github'), 'always_ask');
+    assert.equal(await getUserPluginPermissionMode(context.userId, 'github'), 'always_ask');
     outage = false;
-    await storeProviderToken('owner', 'xroga_plugin_permission_policy__github', { access_token: 'malformed' });
-    assert.equal(await getUserPluginPermissionMode('owner', 'github'), 'always_ask');
-    await clearProviderToken('owner', 'xroga_plugin_permission_policy__github');
-    assert.equal(await getUserPluginPermissionMode('owner', 'github'), 'always_ask');
-    await storeProviderToken('owner', 'provider', { access_token: 'token' });
-    await storeProviderToken('other', 'provider', { access_token: 'other-token' });
+    rows.set(`${context.userId}/xroga_plugin_permission_policy__github`, { access_token: 'malformed' });
+    assert.equal(await getUserPluginPermissionMode(context.userId, 'github'), 'always_ask');
+    rows.set(`${context.userId}/xroga_plugin_permission_policy__github`, { access_token: '', metadata: { revoked: true } });
+    assert.equal(await getUserPluginPermissionMode(context.userId, 'github'), 'always_ask');
+    rows.set('owner/supabase_oauth', { access_token: 'token' });
+    rows.set('other/supabase_oauth', { access_token: 'other-token' });
     await storePkceSession(context, 'supabase_oauth_pkce', session);
     cleanupFailure = true;
-    await assert.rejects(clearProviderToken('owner', 'provider'), /legacy cleanup is pending/);
+    await assert.rejects(clearProviderToken('owner', 'supabase_oauth'), /legacy cleanup is pending/);
     await assert.rejects(clearPkceSession(context, 'supabase_oauth_pkce'), /legacy cleanup is pending/);
     calls.length = 0;
-    assert.equal(await loadProviderToken('owner', 'provider'), null);
-    assert.equal((await loadProviderToken('other', 'provider'))?.access_token, 'other-token');
+    assert.equal(await loadProviderToken('owner', 'supabase_oauth'), null);
+    assert.equal((await loadProviderToken('other', 'supabase_oauth'))?.access_token, 'other-token');
     assert.ok(calls.every(call => call.path === '/rest/v1/user_integrations'));
     cleanupFailure = false;
-    await clearProviderToken('owner', 'provider');
+    await clearProviderToken('owner', 'supabase_oauth');
     await clearPkceSession(context, 'supabase_oauth_pkce');
-    await storeProviderToken('owner', 'provider', { access_token: 'reconnected' });
-    assert.equal((await loadProviderToken('owner', 'provider'))?.access_token, 'reconnected');
     const expired = { access_token: 'EXPIRED', refresh_token: 'ORIGINAL_REFRESH', metadata: { expires_at: '2000-01-01T00:00:00Z' } };
     const seedSupabase=(token:Record<string,unknown>)=>rows.set('owner/supabase_oauth',{
       user_id:'owner',provider:'supabase_oauth',...token,credential_revision:randomUUID()});
@@ -126,7 +162,7 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
     revokeDuringRefresh = true;
     assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
     assert.equal(await loadProviderToken('owner', 'supabase_oauth'), null);
-    assert.equal((await loadProviderToken('other', 'provider'))?.access_token, 'other-token');
+    assert.equal((await loadProviderToken('other', 'supabase_oauth'))?.access_token, 'other-token');
     revokeDuringRefresh = false;
     providerFailure = true;
     seedSupabase(expired);

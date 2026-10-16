@@ -20,11 +20,13 @@ test('privileged universal store requires issued scope and does not cache anothe
 });
 test('foreign repository header denies child read and mutation predicates include server owner',async()=>{
   const requests:URL[]=[];
-  const client=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(input)=>{
-    requests.push(new URL(String(input)));return new Response('null',{headers:{'Content-Type':'application/json'}});
+  const client=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(input,init)=>{
+    requests.push(new URL(String(input)));
+    if(init?.method==='POST')assert.equal(JSON.parse(String(init.body)).p_owner,owner);
+    return new Response('null',{headers:{'Content-Type':'application/json'}});
   }}});
   const store=new SupabaseUniversalStore(client,createTenantContext({userId:owner,via:'persisted_owner'}));
-  assert.equal(await store.load(identity),null);assert.equal(requests.length,1);assert.equal(requests[0].searchParams.get('user_id'),`eq.${owner}`);
+  assert.equal(await store.load(identity),null);assert.equal(requests.length,1);assert.equal(requests[0].pathname,'/rest/v1/rpc/load_repository_index_snapshot');
   await store.delete(identity);assert.equal(requests[1].searchParams.get('user_id'),`eq.${owner}`);
 });
 

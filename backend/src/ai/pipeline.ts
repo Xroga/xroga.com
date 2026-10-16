@@ -1222,6 +1222,7 @@ if (
   );
 }
   if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    trace.bindAttempt(captureAdmittedRunAttempt(runId, opts.userId));
     executionStore = new SupabaseExecutionStateStore(opts.userId, captureAdmittedRunAttempt(runId, opts.userId));
   }
   emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });

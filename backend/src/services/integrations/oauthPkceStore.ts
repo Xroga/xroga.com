@@ -1,11 +1,10 @@
 /**
  * PKCE / OAuth store. The database is authoritative, including revocation.
- * Legacy mirrors are readable only after a successful empty authority lookup.
+ * Legacy mirrors are retained for cleanup, never used as token authority.
  */
 
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { randomUUID } from 'node:crypto';
-import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
 import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 
@@ -35,6 +34,10 @@ export type StoredProviderToken = {
 };
 
 const epochProviders = new Set(['supabase_oauth', 'vercel']);
+const isPolicyProvider = (provider: string) => /^xroga_plugin_permission_policy(?:__[a-z0-9_-]{1,90})?$/.test(provider);
+function requireTokenProvider(provider: string): void {
+  if (!epochProviders.has(provider) && !isPolicyProvider(provider)) throw new Error('Unsupported OAuth token or policy provider.');
+}
 const validRevision = (value: unknown): value is string => typeof value === 'string'
   && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 
@@ -58,48 +61,6 @@ function pkcePath(userId: string, provider: string): string {
 
 function tokenPath(userId: string, provider: string): string {
   return `${userId}/oauth-${provider}.json`;
-}
-
-function isBucketMissingError(message: string): boolean {
-  return /bucket not found|not found|does not exist/i.test(message);
-}
-
-async function uploadJson(path: string, data: unknown): Promise<boolean> {
-  try {
-    if (!(await ensurePrivateOAuthBucket())) return false;
-    const supabase = getSupabaseAdmin();
-    const body = JSON.stringify(data);
-    let { error } = await supabase.storage.from(BUCKET).upload(path, body, {
-      upsert: true,
-      contentType: 'application/json',
-    });
-    if (error && isBucketMissingError(error.message)) {
-      if (!(await ensurePrivateOAuthBucket())) return false;
-      ({ error } = await supabase.storage.from(BUCKET).upload(path, body, {
-        upsert: true,
-        contentType: 'application/json',
-      }));
-    }
-    if (error) {
-      console.warn('[oauthPkceStore] upload failed');
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.warn('[oauthPkceStore] upload failed');
-    return false;
-  }
-}
-
-async function downloadJson<T>(path: string): Promise<T | null> {
-  try {
-    const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase.storage.from(BUCKET).download(path);
-    if (error || !data) return null;
-    return JSON.parse(await data.text()) as T;
-  } catch {
-    return null;
-  }
 }
 
 async function removePath(path: string): Promise<boolean> {
@@ -169,34 +130,37 @@ export async function storeProviderToken(
   revision?: string,
 ): Promise<void> {
   assertStorageIdentity(userId, provider);
-
-  const supabase = getSupabaseAdmin();
+  requireTokenProvider(provider);
   if (epochProviders.has(provider)) {
     await saveOAuthConnection(userId, provider, token, revision, expectedRefreshToken);
     return;
   }
+  if (expectedRefreshToken !== undefined || revision !== undefined) throw new Error('Policy preferences do not support token refresh.');
+  const toolkit = provider.startsWith('xroga_plugin_permission_policy__')
+    ? provider.slice('xroga_plugin_permission_policy__'.length) : undefined;
   const row = {
     user_id: userId,
     provider,
     access_token: token.access_token,
     refresh_token: token.refresh_token ?? null,
-    metadata: token.metadata ?? {},
+    metadata: { ...token.metadata },
   };
-
-  if (expectedRefreshToken !== undefined) {
-    // A refresh can replace only the credential it observed. A disconnect or
-    // reconnect changes that predicate and must never be undone by a late reply.
-    const { data, error } = await supabase.from('user_integrations').update(row)
-      .eq('user_id', userId).eq('provider', provider).eq('refresh_token', expectedRefreshToken)
-      .select('user_id').maybeSingle();
-    if (error || !data) throw new Error('OAuth connection changed during refresh. Reconnect to continue.');
-  } else {
-    const { error } = await supabase.from('user_integrations').upsert(row, {
-      onConflict: 'user_id,provider',
-    });
-    if (error) throw new Error('OAuth connection could not be saved. Retry shortly.');
+  if (!['always_ask','read_only','low_risk','full_access'].includes(row.access_token)
+    || row.refresh_token !== null || row.metadata.mode !== row.access_token
+    || row.metadata.type !== 'plugin_permission_policy'
+    || row.metadata.scope !== (toolkit ? 'toolkit' : 'global')
+    || row.metadata.toolkit !== toolkit) throw new Error('Invalid plugin permission preference.');
+  const { data, error } = await getSupabaseAdmin().from('user_integrations')
+    .upsert(row, { onConflict: 'user_id,provider' })
+    .select('user_id,provider,access_token,refresh_token,metadata').single();
+  if (error || !data || data.user_id !== userId || data.provider !== provider
+    || data.access_token !== row.access_token || data.refresh_token !== null
+    || !data.metadata || Array.isArray(data.metadata)
+    || data.metadata.mode !== row.metadata.mode || data.metadata.type !== row.metadata.type
+    || data.metadata.scope !== row.metadata.scope || data.metadata.toolkit !== toolkit
+    || data.metadata.updated_at !== row.metadata.updated_at) {
+    throw new Error('OAuth connection could not be saved. Retry shortly.');
   }
-  await uploadJson(tokenPath(userId, provider), { ...token, updated_at: new Date().toISOString() });
 }
 
 export async function loadProviderToken(
@@ -205,6 +169,7 @@ export async function loadProviderToken(
   options: { authoritativeOnly?: boolean } = {},
 ): Promise<StoredProviderToken | null> {
   assertStorageIdentity(userId, provider);
+  requireTokenProvider(provider);
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('user_integrations')
@@ -227,20 +192,13 @@ export async function loadProviderToken(
     };
   }
 
-  if (options.authoritativeOnly || epochProviders.has(provider)) return null;
-  const stored = await downloadJson<StoredProviderToken & { updated_at?: string }>(
-    tokenPath(userId, provider),
-  );
-  if (!stored?.access_token?.trim()) return null;
-  return {
-    access_token: stored.access_token.trim(),
-    refresh_token: stored.refresh_token,
-    metadata: stored.metadata ?? {},
-  };
+  // Existing mirrors remain on disk, but are not authority for any live consumer.
+  return null;
 }
 
 export async function clearProviderToken(userId: string, provider: string): Promise<void> {
   assertStorageIdentity(userId, provider);
+  if (!epochProviders.has(provider)) throw new Error('Unsupported OAuth token provider.');
   const supabase = getSupabaseAdmin();
   const { error } = await supabase.from('user_integrations').upsert({ user_id: userId, provider,
     access_token: '', refresh_token: null, credential_revision: randomUUID(), metadata: { revoked: true } }, { onConflict: 'user_id,provider' });

@@ -1139,7 +1139,7 @@ router.patch(
 
     try {
       const mode = await setUserPluginPermissionMode(
-        req.userId!,
+        req.tenantContext!,
         parsed.data.mode,
         parsed.data.toolkit,
       );

@@ -1,18 +1,18 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "d023f941bfdd860502245ff87d1c3225c51d4800700b355715ab6d18a55441bc",
+  "reviewRegistrySha256": "55a9e52e951f776114de2b015de3fb18c904144c3db9051be6212b984be486dc",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 164,
-    "persistenceCandidates": 677,
-    "ownerPredicateCandidates": 165,
+    "privilegedFactorySites": 162,
+    "persistenceCandidates": 663,
+    "ownerPredicateCandidates": 160,
     "reviewRequired": 0,
-    "reviewedCandidates": 677,
-    "unresolvedSafetyCandidates": 461,
+    "reviewedCandidates": 663,
+    "unresolvedSafetyCandidates": 447,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -21,7 +21,7 @@
     "SCOPED_BOUNDARY": 69,
     "NARROW_EXCEPTION": 10,
     "NOT_PERSISTENCE": 137,
-    "REVIEWED_GAP": 461
+    "REVIEWED_GAP": 447
   },
   "callers": [
     {
@@ -487,15 +487,15 @@
       }
     },
     {
-      "id": "fa35081e084aea5dda33",
+      "id": "c945e92962ec2ea9760b",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3768,
+      "line": 3769,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "5038a269bb64191f46e5b19ee881736ace63f3d8c4809d9dfd56c5d5c2221a79",
+      "sourceSha256": "172befea6af83cf46c069b3eee9b0b535a6edf0f952c96ea1bfbd9ce7e97fe82",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -508,15 +508,15 @@
       }
     },
     {
-      "id": "b65fa788d0eea9c8cab2",
+      "id": "bafa89cc7cc29f6d8ffd",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3948,
+      "line": 3949,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "5038a269bb64191f46e5b19ee881736ace63f3d8c4809d9dfd56c5d5c2221a79",
+      "sourceSha256": "172befea6af83cf46c069b3eee9b0b535a6edf0f952c96ea1bfbd9ce7e97fe82",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -1956,22 +1956,43 @@
       }
     },
     {
-      "id": "74e8790c9a3efbb27202",
+      "id": "7dbb6bd045d05fd31261",
       "path": "backend/src/ai/runTrace.ts",
-      "line": 55,
+      "line": 76,
       "enclosing": "persist",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "771a4490226cc4a1fee924d1308f9997ed83704365d0ef925830dcad52084e9f",
+      "sourceSha256": "8380265a805e862f75da51fa105c973c49207ee0cc7c866d63d31873a0140597",
       "semanticReview": {
-        "authority": "Pipeline constructs RunTrace with runId and opts.userId. Persist embeds that identity and delegates to the global-key owner collision helper after schema bootstrap.",
-        "reason": "Helper prevents foreign overwrite. Runtime ship-loop DDL bootstrap is removed; checked-in migrations own this schema. Parent run authorization, constructor provenance, stage/meta secret redaction and swallowed persistence errors remain unresolved. Bootstrap removal still requires final-source integration.",
+        "authority": "Canonical pipeline binds an original issued worker attempt after admission. Immutable redacted diagnostic snapshot uses service-only parent-lock RPC matching owner/run/generation, current running worker or same-generation terminal receipt. Cancellation clears generation and resumption rotates it.",
+        "reason": "Focused attempt and snapshot tests pass. Real current/terminal/foreign/role and observed resume/cancel tests prepared. Diagnostic persistence remains best effort, not durable completion or full worker certification.",
         "evidence": [
           {
-            "path": "backend/src/ai/runTrace.ts",
-            "marker": "persistOwnedRunTrace"
+            "path": "backend/src/security/runTraceAttempt.local.integration.ts",
+            "marker": "registerRunTraceAttemptTests"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d4c19b8c5d3109c4c988",
+      "path": "backend/src/ai/runTrace.ts",
+      "line": 77,
+      "enclosing": "persist",
+      "kind": "RPC_CANDIDATE",
+      "target": "persist_run_trace_attempt",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8380265a805e862f75da51fa105c973c49207ee0cc7c866d63d31873a0140597",
+      "semanticReview": {
+        "authority": "Canonical pipeline binds an original issued worker attempt after admission. Immutable redacted diagnostic snapshot uses service-only parent-lock RPC matching owner/run/generation, current running worker or same-generation terminal receipt. Cancellation clears generation and resumption rotates it.",
+        "reason": "Focused attempt and snapshot tests pass. Real current/terminal/foreign/role and observed resume/cancel tests prepared. Diagnostic persistence remains best effort, not durable completion or full worker certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/runTraceAttempt.local.integration.ts",
+            "marker": "registerRunTraceAttemptTests"
           }
         ]
       }
@@ -2369,15 +2390,15 @@
       }
     },
     {
-      "id": "78935998c35b555e2aae",
+      "id": "52af44ccdadd7a78f012",
       "path": "backend/src/community/service.ts",
-      "line": 61,
+      "line": 60,
       "enclosing": "encodeCursor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
         "authority": "Inspected encodeCursor and decodeCursor: both candidate calls are Buffer.from for base64url encoding/decoding, not Supabase, Storage or a database receiver.",
         "reason": "These two receiver false positives can be excluded from persistence scope. This does not certify cursor filter serialization or the adjacent privileged community queries.",
@@ -2390,15 +2411,15 @@
       }
     },
     {
-      "id": "6a416d1dca693768c1db",
+      "id": "a72d26ed929a51ec8980",
       "path": "backend/src/community/service.ts",
-      "line": 67,
+      "line": 66,
       "enclosing": "decodeCursor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
         "authority": "Inspected encodeCursor and decodeCursor: both candidate calls are Buffer.from for base64url encoding/decoding, not Supabase, Storage or a database receiver.",
         "reason": "These two receiver false positives can be excluded from persistence scope. This does not certify cursor filter serialization or the adjacent privileged community queries.",
@@ -2411,18 +2432,18 @@
       }
     },
     {
-      "id": "e5c6c0c460733db85d41",
+      "id": "01f39061a52818afb131",
       "path": "backend/src/community/service.ts",
-      "line": 86,
+      "line": 85,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
             "path": "backend/src/community/community.test.ts",
@@ -2436,18 +2457,18 @@
       }
     },
     {
-      "id": "09b3af0a7573b5d4ec6e",
+      "id": "13fcdf887a0f3db397f3",
       "path": "backend/src/community/service.ts",
-      "line": 91,
+      "line": 90,
       "enclosing": "role",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
             "path": "backend/src/community/community.test.ts",
@@ -2461,18 +2482,18 @@
       }
     },
     {
-      "id": "e43efef58bd3febea649",
+      "id": "90b6c420425f298724d1",
       "path": "backend/src/community/service.ts",
-      "line": 102,
+      "line": 101,
       "enclosing": "profiles",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
             "path": "backend/src/community/community.test.ts",
@@ -2486,18 +2507,18 @@
       }
     },
     {
-      "id": "b8f7dc34ef3b1dc04eb9",
+      "id": "19ee150c041a2d3b8485",
       "path": "backend/src/community/service.ts",
-      "line": 114,
+      "line": 113,
       "enclosing": "enrichPosts",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_votes",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
             "path": "backend/src/community/community.test.ts",
@@ -2511,18 +2532,18 @@
       }
     },
     {
-      "id": "a728ef8989702e6692ef",
+      "id": "15e0cb8961aed336af9e",
       "path": "backend/src/community/service.ts",
-      "line": 115,
+      "line": 114,
       "enclosing": "enrichPosts",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_comments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
             "path": "backend/src/community/community.test.ts",
@@ -2536,18 +2557,18 @@
       }
     },
     {
-      "id": "21fe1569a1d2c2b133ee",
+      "id": "fbb57a559810d579e9e2",
       "path": "backend/src/community/service.ts",
-      "line": 117,
+      "line": 116,
       "enclosing": "enrichPosts",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_votes",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
             "path": "backend/src/community/community.test.ts",
@@ -2561,118 +2582,118 @@
       }
     },
     {
-      "id": "fd1107b079479aa61627",
+      "id": "a1f235c4996096f9f630",
       "path": "backend/src/community/service.ts",
-      "line": 164,
+      "line": 161,
       "enclosing": "listPosts",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_posts",
+      "kind": "RPC_CANDIDATE",
+      "target": "visible_community_posts",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
+            "path": "backend/src/community/remainingMutations.local.integration.ts",
+            "marker": "registerCommunityRemainingMutationTests"
           },
           {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+            "path": "backend/src/community/reads.local.integration.ts",
+            "marker": "registerCommunityReadTests"
           }
         ]
       }
     },
     {
-      "id": "ae4eb0308e79bd4f2953",
+      "id": "9fbafa99d8291872d697",
+      "path": "backend/src/community/service.ts",
+      "line": 192,
+      "enclosing": "getPost",
+      "kind": "RPC_CANDIDATE",
+      "target": "visible_community_posts",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
+      "semanticReview": {
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
+        "evidence": [
+          {
+            "path": "backend/src/community/remainingMutations.local.integration.ts",
+            "marker": "registerCommunityRemainingMutationTests"
+          },
+          {
+            "path": "backend/src/community/reads.local.integration.ts",
+            "marker": "registerCommunityReadTests"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f4de793ce77a85856ac1",
       "path": "backend/src/community/service.ts",
       "line": 195,
       "enclosing": "getPost",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_posts",
+      "kind": "RPC_CANDIDATE",
+      "target": "visible_community_comments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
+            "path": "backend/src/community/remainingMutations.local.integration.ts",
+            "marker": "registerCommunityRemainingMutationTests"
           },
           {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+            "path": "backend/src/community/reads.local.integration.ts",
+            "marker": "registerCommunityReadTests"
           }
         ]
       }
     },
     {
-      "id": "b91f458dcae515425cd1",
+      "id": "2381005d816509c80cec",
       "path": "backend/src/community/service.ts",
-      "line": 199,
-      "enclosing": "getPost",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_comments",
+      "line": 225,
+      "enclosing": "mutateItem",
+      "kind": "RPC_CANDIDATE",
+      "target": "mutate_community_item_authorized",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
+            "path": "backend/src/community/remainingMutations.local.integration.ts",
+            "marker": "registerCommunityRemainingMutationTests"
           },
           {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+            "path": "backend/src/community/reads.local.integration.ts",
+            "marker": "registerCommunityReadTests"
           }
         ]
       }
     },
     {
-      "id": "838d9b96382603826a12",
+      "id": "45487e7f163cf0e567d7",
       "path": "backend/src/community/service.ts",
-      "line": 224,
-      "enclosing": "createPost",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_posts",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
-      "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
-        "evidence": [
-          {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "1a9f4e41747a88ee6868",
-      "path": "backend/src/community/service.ts",
-      "line": 242,
+      "line": 252,
       "enclosing": "mutatePost",
       "kind": "RPC_CANDIDATE",
       "target": "mutate_community_post_authorized",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Authenticated community routes pass verified actor identity and strict schemas. New service-only comment/post mutation RPC locks current actor profile and target parent/post/comment before evaluating existing per-field author/staff rules, mutation and exact receipt. SQL allowlists operations and fields; no body-selected actor.",
-        "reason": "Thirteen focused community tests and39 local SQL assertions plus reapplication pass. Actual observed role/parent/locked-post concurrency and RPC permission tests prepared, pending final-source CI. Other community CRUD methods remain separate gaps. Existing locked-comment semantics and FK deletion cascades are preserved, not new privileges.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
             "path": "backend/src/community/commentUpdate.local.integration.ts",
@@ -2686,68 +2707,18 @@
       }
     },
     {
-      "id": "374b0b091a998926f7a9",
+      "id": "6553de8af9b459d26b09",
       "path": "backend/src/community/service.ts",
-      "line": 259,
-      "enclosing": "createComment",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_posts",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
-      "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
-        "evidence": [
-          {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "6d2ee898da13e35e68b1",
-      "path": "backend/src/community/service.ts",
-      "line": 265,
-      "enclosing": "createComment",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_comments",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
-      "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
-        "evidence": [
-          {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "d1a2218aa2fd7abf4aa6",
-      "path": "backend/src/community/service.ts",
-      "line": 280,
+      "line": 283,
       "enclosing": "updateComment",
       "kind": "RPC_CANDIDATE",
       "target": "update_community_comment_authorized",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Authenticated community routes pass verified actor identity and strict schemas. New service-only comment/post mutation RPC locks current actor profile and target parent/post/comment before evaluating existing per-field author/staff rules, mutation and exact receipt. SQL allowlists operations and fields; no body-selected actor.",
-        "reason": "Thirteen focused community tests and39 local SQL assertions plus reapplication pass. Actual observed role/parent/locked-post concurrency and RPC permission tests prepared, pending final-source CI. Other community CRUD methods remain separate gaps. Existing locked-comment semantics and FK deletion cascades are preserved, not new privileges.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
             "path": "backend/src/community/commentUpdate.local.integration.ts",
@@ -2761,201 +2732,51 @@
       }
     },
     {
-      "id": "ee61aec22bba099f460b",
+      "id": "26dd943742c4d7b6a62f",
       "path": "backend/src/community/service.ts",
-      "line": 294,
-      "enclosing": "deleteComment",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_comments",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
-      "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
-        "evidence": [
-          {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "b6b01a097d6e393fcdcc",
-      "path": "backend/src/community/service.ts",
-      "line": 297,
-      "enclosing": "deleteComment",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_comments",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
-      "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
-        "evidence": [
-          {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "73b2bf6287d146000df5",
-      "path": "backend/src/community/service.ts",
-      "line": 301,
-      "enclosing": "setVote",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_posts",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
-      "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
-        "evidence": [
-          {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "73b6a4ea74bd9191e898",
-      "path": "backend/src/community/service.ts",
-      "line": 304,
-      "enclosing": "setVote",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_votes",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
-      "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
-        "evidence": [
-          {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "74ed888680b1eb701b5a",
-      "path": "backend/src/community/service.ts",
-      "line": 307,
-      "enclosing": "setVote",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_votes",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
-      "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
-        "evidence": [
-          {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "9dfb4821fa7181968d74",
-      "path": "backend/src/community/service.ts",
-      "line": 325,
-      "enclosing": "addNote",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_admin_notes",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
-      "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
-        "evidence": [
-          {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
-          }
-        ]
-      }
-    },
-    {
-      "id": "7f7a2000a9b3c2e6ae03",
-      "path": "backend/src/community/service.ts",
-      "line": 332,
+      "line": 320,
       "enclosing": "notes",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_admin_notes",
+      "kind": "RPC_CANDIDATE",
+      "target": "read_community_staff_notes",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
+            "path": "backend/src/community/remainingMutations.local.integration.ts",
+            "marker": "registerCommunityRemainingMutationTests"
           },
           {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+            "path": "backend/src/community/reads.local.integration.ts",
+            "marker": "registerCommunityReadTests"
           }
         ]
       }
     },
     {
-      "id": "e831d1cbd5072a61ee8d",
+      "id": "0a827dbb168d8125a85c",
       "path": "backend/src/community/service.ts",
-      "line": 338,
+      "line": 330,
       "enclosing": "summary",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "community_posts",
+      "kind": "RPC_CANDIDATE",
+      "target": "read_community_staff_summary",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
-        "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-        "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+        "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+        "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
         "evidence": [
           {
-            "path": "backend/src/community/community.test.ts",
-            "marker": "accepting an answer never grants body editing or moderation of another author"
+            "path": "backend/src/community/remainingMutations.local.integration.ts",
+            "marker": "registerCommunityRemainingMutationTests"
           },
           {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+            "path": "backend/src/community/reads.local.integration.ts",
+            "marker": "registerCommunityReadTests"
           }
         ]
       }
@@ -8834,10 +8655,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6c31d34f169c633f1eb9085e7c08eda16614af0ee48d1d7833c918f9a86b760d",
+      "sourceSha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852",
       "semanticReview": {
         "authority": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
-        "reason": "Focused missing/foreign/outage/forged-context and same-process coalescing tests pass. Real disposable bootstrap and existing-role/paid-usage preservation test prepared, next-source CI pending. Cached existence is not entitlement. Revoked local-JWT lifecycle, concurrent deletion and complete trigger semantics remain separate.",
+        "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
         "evidence": [
           {
             "path": "backend/src/security/provisioningReceipt.local.integration.ts",
@@ -8855,10 +8676,10 @@
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6c31d34f169c633f1eb9085e7c08eda16614af0ee48d1d7833c918f9a86b760d",
+      "sourceSha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852",
       "semanticReview": {
         "authority": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
-        "reason": "Focused missing/foreign/outage/forged-context and same-process coalescing tests pass. Real disposable bootstrap and existing-role/paid-usage preservation test prepared, next-source CI pending. Cached existence is not entitlement. Revoked local-JWT lifecycle, concurrent deletion and complete trigger semantics remain separate.",
+        "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
         "evidence": [
           {
             "path": "backend/src/security/provisioningReceipt.local.integration.ts",
@@ -8876,10 +8697,10 @@
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6c31d34f169c633f1eb9085e7c08eda16614af0ee48d1d7833c918f9a86b760d",
+      "sourceSha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852",
       "semanticReview": {
         "authority": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
-        "reason": "Focused missing/foreign/outage/forged-context and same-process coalescing tests pass. Real disposable bootstrap and existing-role/paid-usage preservation test prepared, next-source CI pending. Cached existence is not entitlement. Revoked local-JWT lifecycle, concurrent deletion and complete trigger semantics remain separate.",
+        "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
         "evidence": [
           {
             "path": "backend/src/security/provisioningReceipt.local.integration.ts",
@@ -8889,18 +8710,18 @@
       }
     },
     {
-      "id": "6c4081796f4a94be4529",
+      "id": "11ad5fbfe51e297ef01f",
       "path": "backend/src/services/ensureUserRecords.ts",
-      "line": 238,
+      "line": 242,
       "enclosing": "provisionUserRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6c31d34f169c633f1eb9085e7c08eda16614af0ee48d1d7833c918f9a86b760d",
+      "sourceSha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852",
       "semanticReview": {
         "authority": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
-        "reason": "Focused missing/foreign/outage/forged-context and same-process coalescing tests pass. Real disposable bootstrap and existing-role/paid-usage preservation test prepared, next-source CI pending. Cached existence is not entitlement. Revoked local-JWT lifecycle, concurrent deletion and complete trigger semantics remain separate.",
+        "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
         "evidence": [
           {
             "path": "backend/src/security/provisioningReceipt.local.integration.ts",
@@ -8910,18 +8731,18 @@
       }
     },
     {
-      "id": "31d201c58423312d4d7e",
+      "id": "9468aac7c7e2d3afe674",
       "path": "backend/src/services/ensureUserRecords.ts",
-      "line": 260,
+      "line": 264,
       "enclosing": "provisionUserRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_token_usage",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6c31d34f169c633f1eb9085e7c08eda16614af0ee48d1d7833c918f9a86b760d",
+      "sourceSha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852",
       "semanticReview": {
         "authority": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
-        "reason": "Focused missing/foreign/outage/forged-context and same-process coalescing tests pass. Real disposable bootstrap and existing-role/paid-usage preservation test prepared, next-source CI pending. Cached existence is not entitlement. Revoked local-JWT lifecycle, concurrent deletion and complete trigger semantics remain separate.",
+        "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
         "evidence": [
           {
             "path": "backend/src/security/provisioningReceipt.local.integration.ts",
@@ -8931,18 +8752,18 @@
       }
     },
     {
-      "id": "4dc378c53f0b1bd89a06",
+      "id": "a809258d83da1283fc3a",
       "path": "backend/src/services/ensureUserRecords.ts",
-      "line": 317,
+      "line": 321,
       "enclosing": "provisionUserRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_token_usage",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6c31d34f169c633f1eb9085e7c08eda16614af0ee48d1d7833c918f9a86b760d",
+      "sourceSha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852",
       "semanticReview": {
         "authority": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
-        "reason": "Focused missing/foreign/outage/forged-context and same-process coalescing tests pass. Real disposable bootstrap and existing-role/paid-usage preservation test prepared, next-source CI pending. Cached existence is not entitlement. Revoked local-JWT lifecycle, concurrent deletion and complete trigger semantics remain separate.",
+        "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
         "evidence": [
           {
             "path": "backend/src/security/provisioningReceipt.local.integration.ts",
@@ -8952,18 +8773,18 @@
       }
     },
     {
-      "id": "53a78174f4c74c773aaf",
+      "id": "b9522b3f509a2215c4b8",
       "path": "backend/src/services/ensureUserRecords.ts",
-      "line": 388,
+      "line": 392,
       "enclosing": "provisionUserRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_token_usage",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6c31d34f169c633f1eb9085e7c08eda16614af0ee48d1d7833c918f9a86b760d",
+      "sourceSha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852",
       "semanticReview": {
         "authority": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
-        "reason": "Focused missing/foreign/outage/forged-context and same-process coalescing tests pass. Real disposable bootstrap and existing-role/paid-usage preservation test prepared, next-source CI pending. Cached existence is not entitlement. Revoked local-JWT lifecycle, concurrent deletion and complete trigger semantics remain separate.",
+        "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
         "evidence": [
           {
             "path": "backend/src/security/provisioningReceipt.local.integration.ts",
@@ -9942,18 +9763,18 @@
       }
     },
     {
-      "id": "51255553b8e56733b2ae",
+      "id": "b8d0ad5c152e8ec1c565",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 46,
+      "line": 49,
       "enclosing": "saveOAuthConnection",
       "kind": "RPC_CANDIDATE",
       "target": "save_oauth_connection",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -9967,18 +9788,18 @@
       }
     },
     {
-      "id": "53a7090b7a69b0d0408b",
+      "id": "5d90ff0ff5c303419423",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 46,
+      "line": 49,
       "enclosing": "saveOAuthConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -9992,143 +9813,18 @@
       }
     },
     {
-      "id": "74e170c9880fb827e9e2",
+      "id": "71763251ce3650f64a42",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 70,
-      "enclosing": "uploadJson",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "ff47e1160cd795be83fb",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 72,
-      "enclosing": "uploadJson",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "8b2b7781ade504876d75",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 78,
-      "enclosing": "uploadJson",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "1260a0918ac95648bedc",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 96,
-      "enclosing": "downloadJson",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "5896e168c38106d99e5d",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 97,
-      "enclosing": "downloadJson",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "634cf1ff9161ddf0f0a2",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 107,
+      "line": 68,
       "enclosing": "removePath",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10142,18 +9838,18 @@
       }
     },
     {
-      "id": "3caa5c5a58c66617268d",
+      "id": "efdb39bc229d1fb04151",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 108,
+      "line": 69,
       "enclosing": "removePath",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10167,18 +9863,18 @@
       }
     },
     {
-      "id": "8f696b8762ab6414db35",
+      "id": "e7db064acbe958d8fd76",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 124,
+      "line": 85,
       "enclosing": "storePkceSession",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10192,18 +9888,18 @@
       }
     },
     {
-      "id": "3285955b91e80d82d726",
+      "id": "0a50f29a357989f22449",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 125,
+      "line": 86,
       "enclosing": "storePkceSession",
       "kind": "RPC_CANDIDATE",
       "target": "begin_oauth_session",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10217,18 +9913,18 @@
       }
     },
     {
-      "id": "15ed257bef3b6af59b7e",
+      "id": "b2603393f6e57aa8c372",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 136,
+      "line": 97,
       "enclosing": "clearPkceSession",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10242,18 +9938,18 @@
       }
     },
     {
-      "id": "8ba661754335a3324a95",
+      "id": "b94338b6bb001b7e55ce",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 137,
+      "line": 98,
       "enclosing": "clearPkceSession",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10267,18 +9963,18 @@
       }
     },
     {
-      "id": "47db1c9e5645344af67c",
+      "id": "4ed0f34665473f6b62ce",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 149,
+      "line": 110,
       "enclosing": "consumePkceSession",
       "kind": "RPC_CANDIDATE",
       "target": "consume_oauth_session",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10292,18 +9988,18 @@
       }
     },
     {
-      "id": "7306b8b3efc151085e49",
+      "id": "288a27a7d2a5f5cd103e",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 149,
+      "line": 110,
       "enclosing": "consumePkceSession",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10317,93 +10013,68 @@
       }
     },
     {
-      "id": "73e443eb5e8ddea73ebb",
+      "id": "180631f7a6bd706af8d0",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 153,
+      "enclosing": "storeProviderToken",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
+      "semanticReview": {
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "14438be451fcb7f3bbe1",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 153,
+      "enclosing": "storeProviderToken",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
+      "semanticReview": {
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+            "marker": "all OAuth callback entry points"
+          },
+          {
+            "path": "backend/src/security/oauthSession.local.integration.ts",
+            "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c14b0badea7dd2cc312f",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
       "line": 173,
-      "enclosing": "storeProviderToken",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "8c93bb551a45695c611c",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 189,
-      "enclosing": "storeProviderToken",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "3b2fb116be46ebb78d31",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 194,
-      "enclosing": "storeProviderToken",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "user_integrations",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
-      "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-            "marker": "all OAuth callback entry points"
-          },
-          {
-            "path": "backend/src/security/oauthSession.local.integration.ts",
-            "marker": "real two-client OAuth claims"
-          }
-        ]
-      }
-    },
-    {
-      "id": "09503521fa29b24a95fd",
-      "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 208,
       "enclosing": "loadProviderToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10417,18 +10088,18 @@
       }
     },
     {
-      "id": "d704edcaccee35d34545",
+      "id": "4325b87a6699a71f0325",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 209,
+      "line": 174,
       "enclosing": "loadProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10442,18 +10113,18 @@
       }
     },
     {
-      "id": "838e81336fdac24c6af5",
+      "id": "7595558fe3d8cbd76faa",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 244,
+      "line": 202,
       "enclosing": "clearProviderToken",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -10467,18 +10138,18 @@
       }
     },
     {
-      "id": "f783a00232045d6275d4",
+      "id": "3028f7fe3ff9804dd3e6",
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 245,
+      "line": 203,
       "enclosing": "clearProviderToken",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "semanticReview": {
-        "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-        "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+        "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+        "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -13378,7 +13049,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2",
+      "sourceSha256": "adadba7b5d3ba0e4d6e336a624b2a9068aa27f9ef53954196a135eeacb255264",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in create. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -13391,15 +13062,15 @@
       }
     },
     {
-      "id": "acef6a31673efc4a2d67",
+      "id": "8427754f5dcd45751319",
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "line": 1050,
+      "line": 1054,
       "enclosing": "writeFiles",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2",
+      "sourceSha256": "adadba7b5d3ba0e4d6e336a624b2a9068aa27f9ef53954196a135eeacb255264",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in writeFiles. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -13412,15 +13083,15 @@
       }
     },
     {
-      "id": "66a3271a5b10c1e3951b",
+      "id": "464f933c19d46ea8e258",
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "line": 1154,
+      "line": 1158,
       "enclosing": "readFile",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2",
+      "sourceSha256": "adadba7b5d3ba0e4d6e336a624b2a9068aa27f9ef53954196a135eeacb255264",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in readFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -14105,18 +13776,18 @@
       }
     },
     {
-      "id": "64f407d366e10a9dfcd1",
+      "id": "7b91dfaf8225d8e56493",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 199,
+      "line": 200,
       "enclosing": "loadLatestSpec",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_specs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "semanticReview": {
         "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
         "evidence": [
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
@@ -14126,18 +13797,18 @@
       }
     },
     {
-      "id": "021a1053edfc28b60144",
+      "id": "cc45bc751ae8166f15f4",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 214,
+      "line": 215,
       "enclosing": "savePlan",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_specs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "semanticReview": {
         "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
         "evidence": [
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
@@ -14147,18 +13818,18 @@
       }
     },
     {
-      "id": "0a7888531f20b1d27904",
+      "id": "45d1a388e450de3014cc",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 236,
+      "line": 237,
       "enclosing": "loadLatestPlan",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "architecture_plans",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "semanticReview": {
         "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
         "evidence": [
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
@@ -14168,18 +13839,18 @@
       }
     },
     {
-      "id": "2fafb3e98670128c999c",
+      "id": "722894c8c92d40e08b97",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 281,
+      "line": 282,
       "enclosing": "loadMutations",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "plan_mutations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "semanticReview": {
         "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
         "evidence": [
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
@@ -14189,81 +13860,60 @@
       }
     },
     {
-      "id": "899e38d98973b3b770f7",
+      "id": "117955fa99f0ba83ee68",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 346,
+      "line": 349,
       "enclosing": "load",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "repository_indexes",
-      "ownerPredicateCandidate": true,
+      "kind": "RPC_CANDIDATE",
+      "target": "load_repository_index_snapshot",
+      "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "semanticReview": {
-        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "authority": "Existing repository store snapshots exact owner/index/repository identity. Service-only save locks header and atomically replaces validated children with exact receipt. STABLE load reads header and children in one statement, validates all owner/identity/count fields and rejects mixed-owner corruption.",
+        "reason": "Focused index snapshot tests and45 SQL assertions plus replay pass. Real replacement/rollback/owner/browser-role/concurrent writer and held reader tests prepared. Repository HEAD freshness still belongs to the existing caller; no whole repository lifecycle certification.",
         "evidence": [
           {
-            "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
-            "marker": "mutation history binds the requested project"
+            "path": "backend/src/security/repositorySnapshot.local.integration.ts",
+            "marker": "registerRepositorySnapshotTests"
           }
         ]
       }
     },
     {
-      "id": "b3288611c48e89eab675",
+      "id": "12b673818237d517468a",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 354,
-      "enclosing": "load",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "repository_index_files",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
-      "semanticReview": {
-        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
-        "evidence": [
-          {
-            "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
-            "marker": "mutation history binds the requested project"
-          }
-        ]
-      }
-    },
-    {
-      "id": "0a1a64d6016eda7d606f",
-      "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 399,
+      "line": 383,
       "enclosing": "save",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "repository_index_files",
-      "ownerPredicateCandidate": true,
+      "kind": "RPC_CANDIDATE",
+      "target": "save_repository_index_snapshot",
+      "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "semanticReview": {
-        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "authority": "Existing repository store snapshots exact owner/index/repository identity. Service-only save locks header and atomically replaces validated children with exact receipt. STABLE load reads header and children in one statement, validates all owner/identity/count fields and rejects mixed-owner corruption.",
+        "reason": "Focused index snapshot tests and45 SQL assertions plus replay pass. Real replacement/rollback/owner/browser-role/concurrent writer and held reader tests prepared. Repository HEAD freshness still belongs to the existing caller; no whole repository lifecycle certification.",
         "evidence": [
           {
-            "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
-            "marker": "mutation history binds the requested project"
+            "path": "backend/src/security/repositorySnapshot.local.integration.ts",
+            "marker": "registerRepositorySnapshotTests"
           }
         ]
       }
     },
     {
-      "id": "5da4a577b9058f65744d",
+      "id": "71e802345b31b6d2fd5f",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 405,
+      "line": 391,
       "enclosing": "delete",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "repository_indexes",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "semanticReview": {
         "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+        "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
         "evidence": [
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",

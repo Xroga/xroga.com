@@ -25,7 +25,9 @@ export function registerProvisioningReceiptTests(admin:SupabaseClient):void{
     const context=createTenantContext({userId:owner,via:'persisted_owner'});
     await Promise.all([ensureUserRecords(context),ensureUserRecords(context)]);
     assert.equal(isUserProvisioned(owner),true);
-    const ownProfile=await admin.from('profiles').select('id,role').eq('id',owner).single();assert.equal(ownProfile.error,null);assert.equal(ownProfile.data.id,owner);assert.equal(ownProfile.data.role,'member');
+    const ownProfile=await admin.from('profiles').select('id,role,username').eq('id',owner).single();assert.equal(ownProfile.error,null);assert.equal(ownProfile.data.id,owner);assert.equal(ownProfile.data.role,'member');
+    assert.equal(ownProfile.data.username,`xroga_${owner.slice(0,12).replaceAll('-','')}`);
+    assert.match(ownProfile.data.username,/^[A-Za-z0-9_]{3,32}$/);
     const ownUsage=await admin.from('user_token_usage').select('user_id,plan_tier,spent_usd,input_tokens,output_tokens').eq('user_id',owner).single();assert.equal(ownUsage.error,null);
     assert.deepEqual(ownUsage.data,{user_id:owner,plan_tier:'free',spent_usd:0,input_tokens:0,output_tokens:0});
     await ensureUserRecords(createTenantContext({userId:other,via:'persisted_owner'}));

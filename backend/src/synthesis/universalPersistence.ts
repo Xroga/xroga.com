@@ -21,6 +21,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { requireTenantContext,requireResourceOwner,type TenantContext } from '../security/tenantContext.js';
+import { TenantAccessError } from '../security/tenantErrors.js';
 import { persistOwnedUniversalRecord,type OwnedUniversalRecordKind } from '../security/ownedRunPersistence.js';
 import type { ArchitecturePlan } from './architecturePlan.js';
 import type { UniversalProductSpec } from './universalProductSpec.js';
@@ -343,21 +344,21 @@ export class SupabaseUniversalStore implements UniversalStore {
 
   async load(identity: RepositoryIdentity): Promise<RepositoryIndex | null> {
     const scope=this.scope();
-    const { data: header, error } = await this.client
-      .from('repository_indexes')
-      .select('*')
-      .eq('index_id', indexId(identity))
-      .eq('user_id',scope.userId)
-      .maybeSingle();
-    if (error || !header) return null;
-
-    const { data: files } = await this.client
-      .from('repository_index_files')
-      .select('*')
-      .eq('index_id', indexId(identity))
-      .eq('user_id',scope.userId)
-      .order('file_path', { ascending: true });
-
+    identity=structuredClone(identity);
+    const id=indexId(identity);
+    const {data,error}=await this.client.rpc('load_repository_index_snapshot',{p_owner:scope.userId,p_index_id:id});
+    if(error||!data||typeof data!=='object'||Array.isArray(data))return null;
+    const {header,files}=data;
+    if(!header||typeof header!=='object'||Array.isArray(header)||header.user_id!==scope.userId||header.index_id!==id||
+      header.project_id!==identity.projectId||header.repository_id!==identity.repositoryId||header.repository_owner!==identity.repositoryOwner||
+      header.repository_name!==identity.repositoryName||header.branch!==identity.branch||header.schema_version!=='1.0.0'||
+      !(header.tree_sha==null||typeof header.tree_sha==='string')||!Number.isFinite(Date.parse(header.updated_at))||
+      typeof header.indexed_commit_sha!=='string'||!header.indexed_commit_sha||!Array.isArray(files)||header.file_count!==files.length||
+      new Set(files.map(file=>file?.file_path)).size!==files.length||files.some(file=>!file||file.user_id!==scope.userId||file.index_id!==id||
+        typeof file.file_path!=='string'||!file.file_path||typeof file.blob_sha!=='string'||!file.blob_sha||
+        !Number.isSafeInteger(file.size_bytes)||file.size_bytes<0||typeof file.is_binary!=='boolean'||
+        !Number.isFinite(Date.parse(file.updated_at))||!['language','component_root','component_adapter_id','workspace_root','summary','embedding_ref'].every(key=>file[key]==null||typeof file[key]==='string')||
+        !['symbols','imports','exports'].every(key=>Array.isArray(file[key])&&file[key].every((value:unknown)=>typeof value==='string'))))return null;
     const row = header as Record<string, unknown>;
     return {
       schemaVersion: String(row.schema_version),
@@ -377,27 +378,12 @@ export class SupabaseUniversalStore implements UniversalStore {
 
   async save(index: RepositoryIndex): Promise<void> {
     const scope=this.scope();
+    index=structuredClone(index);
     const id = indexId(index.identity);
-    // Establish header ownership before touching child rows. This existing writer
-    // does not yet insert file snapshots; that pre-existing completeness gap is
-    // recorded separately, not represented as atomic/durable full-index storage.
-    await persistOwnedUniversalRecord(this.client,scope,'repository_index',{
-      index_id: id,
-      user_id: scope.userId,
-      project_id: index.identity.projectId,
-      repository_id: index.identity.repositoryId,
-      repository_owner: index.identity.repositoryOwner,
-      repository_name: index.identity.repositoryName,
-      branch: index.identity.branch,
-      indexed_commit_sha: index.indexedCommitSha,
-      tree_sha: index.treeSha,
-      schema_version: index.schemaVersion,
-      file_count: index.files.length,
-      updated_at: index.updatedAt,
-    });
-    // Only after the header is proven owned, and never delete a misbound child.
-    const {error}=await this.client.from('repository_index_files').delete().eq('index_id',id).eq('user_id',scope.userId);
-    if(error)throw new Error('Repository index could not be saved. Retry shortly.');
+    const {data,error}=await this.client.rpc('save_repository_index_snapshot',{p_owner:scope.userId,p_index_id:id,p_index:index});
+    if(error?.code==='42501')throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
+    if(error||!data||data.index_id!==id||data.user_id!==scope.userId||data.indexed_commit_sha!==index.indexedCommitSha||data.file_count!==index.files.length)
+      throw new TenantAccessError(503,'RESOURCE_ACCESS_UNAVAILABLE');
   }
 
   async delete(identity: RepositoryIdentity): Promise<void> {

@@ -296,17 +296,17 @@
     },
     {
       "path": "backend/src/ai/runTrace.ts",
-      "sourceSha256": "771a4490226cc4a1fee924d1308f9997ed83704365d0ef925830dcad52084e9f",
+      "sourceSha256": "8380265a805e862f75da51fa105c973c49207ee0cc7c866d63d31873a0140597",
       "callIds": [
-        "74e8790c9a3efbb27202"
+        "7dbb6bd045d05fd31261"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Pipeline constructs RunTrace with runId and opts.userId. Persist embeds that identity and delegates to the global-key owner collision helper after schema bootstrap.",
-      "reason": "Helper prevents foreign overwrite. Runtime ship-loop DDL bootstrap is removed; checked-in migrations own this schema. Parent run authorization, constructor provenance, stage/meta secret redaction and swallowed persistence errors remain unresolved. Bootstrap removal still requires final-source integration.",
+      "authority": "Canonical pipeline binds an original issued worker attempt after admission. Immutable redacted diagnostic snapshot uses service-only parent-lock RPC matching owner/run/generation, current running worker or same-generation terminal receipt. Cancellation clears generation and resumption rotates it.",
+      "reason": "Focused attempt and snapshot tests pass. Real current/terminal/foreign/role and observed resume/cancel tests prepared. Diagnostic persistence remains best effort, not durable completion or full worker certification.",
       "evidence": [
         {
-          "path": "backend/src/ai/runTrace.ts",
-          "marker": "persistOwnedRunTrace"
+          "path": "backend/src/security/runTraceAttempt.local.integration.ts",
+          "marker": "registerRunTraceAttemptTests"
         }
       ]
     },
@@ -455,20 +455,17 @@
     },
     {
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "sourceSha256": "210e329803a1f75a04750feb2b613e5fef9496870e3792d8f56ca75d143bb594",
+      "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "callIds": [
-        "64f407d366e10a9dfcd1",
-        "021a1053edfc28b60144",
-        "0a7888531f20b1d27904",
-        "2fafb3e98670128c999c",
-        "899e38d98973b3b770f7",
-        "b3288611c48e89eab675",
-        "0a1a64d6016eda7d606f",
-        "5da4a577b9058f65744d"
+        "7b91dfaf8225d8e56493",
+        "cc45bc751ae8166f15f4",
+        "45d1a388e450de3014cc",
+        "722894c8c92d40e08b97",
+        "71e802345b31b6d2fd5f"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-      "reason": "Remaining gaps: parent project/run admission, delimiter-based index identity collisions and mismatched embedded identities, ignored child read error, index save deletes old file snapshots without inserting new ones, multi-write atomicity and global in-memory fallback isolation. Added project-bound mutation negative tests do not certify these lifecycle paths.",
+      "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
       "evidence": [
         {
           "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
@@ -1183,9 +1180,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "5038a269bb64191f46e5b19ee881736ace63f3d8c4809d9dfd56c5d5c2221a79",
+      "sourceSha256": "172befea6af83cf46c069b3eee9b0b535a6edf0f952c96ea1bfbd9ce7e97fe82",
       "callIds": [
-        "fa35081e084aea5dda33"
+        "c945e92962ec2ea9760b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1199,9 +1196,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "5038a269bb64191f46e5b19ee881736ace63f3d8c4809d9dfd56c5d5c2221a79",
+      "sourceSha256": "172befea6af83cf46c069b3eee9b0b535a6edf0f952c96ea1bfbd9ce7e97fe82",
       "callIds": [
-        "b65fa788d0eea9c8cab2"
+        "bafa89cc7cc29f6d8ffd"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1759,7 +1756,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2",
+      "sourceSha256": "adadba7b5d3ba0e4d6e336a624b2a9068aa27f9ef53954196a135eeacb255264",
       "callIds": [
         "1036a72174c51d074c91"
       ],
@@ -1775,9 +1772,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2",
+      "sourceSha256": "adadba7b5d3ba0e4d6e336a624b2a9068aa27f9ef53954196a135eeacb255264",
       "callIds": [
-        "acef6a31673efc4a2d67"
+        "8427754f5dcd45751319"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in writeFiles. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1791,9 +1788,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sourceSha256": "0f9d557c4fac6fcd5fc8e99fe939caec757ee9cc55c8e2875f2ffa0cf28e7ee2",
+      "sourceSha256": "adadba7b5d3ba0e4d6e336a624b2a9068aa27f9ef53954196a135eeacb255264",
       "callIds": [
-        "66a3271a5b10c1e3951b"
+        "464f933c19d46ea8e258"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in readFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2847,10 +2844,10 @@
     },
     {
       "path": "backend/src/community/service.ts",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "callIds": [
-        "78935998c35b555e2aae",
-        "6a416d1dca693768c1db"
+        "52af44ccdadd7a78f012",
+        "a72d26ed929a51ec8980"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected encodeCursor and decodeCursor: both candidate calls are Buffer.from for base64url encoding/decoding, not Supabase, Storage or a database receiver.",
@@ -2864,32 +2861,18 @@
     },
     {
       "path": "backend/src/community/service.ts",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "callIds": [
-        "e5c6c0c460733db85d41",
-        "09b3af0a7573b5d4ec6e",
-        "e43efef58bd3febea649",
-        "b8f7dc34ef3b1dc04eb9",
-        "a728ef8989702e6692ef",
-        "21fe1569a1d2c2b133ee",
-        "fd1107b079479aa61627",
-        "ae4eb0308e79bd4f2953",
-        "b91f458dcae515425cd1",
-        "838d9b96382603826a12",
-        "374b0b091a998926f7a9",
-        "6d2ee898da13e35e68b1",
-        "ee61aec22bba099f460b",
-        "b6b01a097d6e393fcdcc",
-        "73b2bf6287d146000df5",
-        "73b6a4ea74bd9191e898",
-        "74ed888680b1eb701b5a",
-        "9dfb4821fa7181968d74",
-        "7f7a2000a9b3c2e6ae03",
-        "e831d1cbd5072a61ee8d"
+        "01f39061a52818afb131",
+        "13fcdf887a0f3db397f3",
+        "90b6c420425f298724d1",
+        "19ee150c041a2d3b8485",
+        "15e0cb8961aed336af9e",
+        "fbb57a559810d579e9e2"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Read full service, routes, schemas, role helpers, optional-auth middleware and comment write trigger. Public community reads are intentional; hidden posts/comments and notes require server-loaded staff role. Profiles expose identity columns only. Mutations receive verified req.userId and strict parsed fields; database service-role calls bypass the row trigger's user branch.",
-      "reason": "Confirmed accepted-answer mixed-field escalation is corrected with independent field authorization and actual API negative tests. Complete locked-comment behavior, role-change concurrency, all mutation paths, cursor serialization, global admission and real table-policy tests remain unverified. Do not certify broad public/staff access from owner predicates or helper tests alone.",
+      "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+      "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
       "evidence": [
         {
           "path": "backend/src/community/community.test.ts",
@@ -3083,17 +3066,17 @@
     },
     {
       "path": "backend/src/services/ensureUserRecords.ts",
-      "sourceSha256": "6c31d34f169c633f1eb9085e7c08eda16614af0ee48d1d7833c918f9a86b760d",
+      "sourceSha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852",
       "callIds": [
         "d81d114079399f02921b",
         "d46f45e4d48e21c33f23",
         "b400ffbb7ca6a45da97c",
-        "31d201c58423312d4d7e",
-        "4dc378c53f0b1bd89a06"
+        "9468aac7c7e2d3afe674",
+        "a809258d83da1283fc3a"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
-      "reason": "Focused missing/foreign/outage/forged-context and same-process coalescing tests pass. Real disposable bootstrap and existing-role/paid-usage preservation test prepared, next-source CI pending. Cached existence is not entitlement. Revoked local-JWT lifecycle, concurrent deletion and complete trigger semantics remain separate.",
+      "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
       "evidence": [
         {
           "path": "backend/src/security/provisioningReceipt.local.integration.ts",
@@ -3446,34 +3429,28 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "e1c07b76b21c845e98eedc8bfeb8c2e70dd75aa8c0256f8f9d19ca97d05bad55",
+      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
       "callIds": [
-        "51255553b8e56733b2ae",
-        "53a7090b7a69b0d0408b",
-        "74e170c9880fb827e9e2",
-        "ff47e1160cd795be83fb",
-        "8b2b7781ade504876d75",
-        "1260a0918ac95648bedc",
-        "5896e168c38106d99e5d",
-        "634cf1ff9161ddf0f0a2",
-        "3caa5c5a58c66617268d",
-        "8f696b8762ab6414db35",
-        "3285955b91e80d82d726",
-        "15ed257bef3b6af59b7e",
-        "8ba661754335a3324a95",
-        "47db1c9e5645344af67c",
-        "7306b8b3efc151085e49",
-        "73e443eb5e8ddea73ebb",
-        "8c93bb551a45695c611c",
-        "3b2fb116be46ebb78d31",
-        "09503521fa29b24a95fd",
-        "d704edcaccee35d34545",
-        "838e81336fdac24c6af5",
-        "f783a00232045d6275d4"
+        "b8d0ad5c152e8ec1c565",
+        "5d90ff0ff5c303419423",
+        "71763251ce3650f64a42",
+        "efdb39bc229d1fb04151",
+        "e7db064acbe958d8fd76",
+        "0a50f29a357989f22449",
+        "b2603393f6e57aa8c372",
+        "b94338b6bb001b7e55ce",
+        "4ed0f34665473f6b62ce",
+        "288a27a7d2a5f5cd103e",
+        "180631f7a6bd706af8d0",
+        "14438be451fcb7f3bbe1",
+        "c14b0badea7dd2cc312f",
+        "4325b87a6699a71f0325",
+        "7595558fe3d8cbd76faa",
+        "3028f7fe3ff9804dd3e6"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Existing authenticated OAuth callbacks now use service-only consume_oauth_session before token exchange. Database row lock checks exact owner/provider/state, ten-minute server-time TTL, revocation and consumes once. Browser session writes/renames are denied. No legacy mirror is consulted during consumption.",
-      "reason": "All four callback entry points use durable authorization revisions and one-use consumption. Supabase/Vercel f33a4e9f real disposable38802283477 passed64 security tests. Expanded CWS encrypted BYOK and atomic GitHub persistence have19 focused tests and89 local SQL assertions, pending exact-source disposable CI. Remaining primitive caller provenance, generic legacy paths, already-issued external tokens and vault/KMS are not certified. Existing legacy read helper is not callback admission.",
+      "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+      "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -4278,13 +4255,13 @@
     },
     {
       "path": "backend/src/community/service.ts",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "callIds": [
-        "1a9f4e41747a88ee6868"
+        "45487e7f163cf0e567d7"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Authenticated community routes pass verified actor identity and strict schemas. New service-only comment/post mutation RPC locks current actor profile and target parent/post/comment before evaluating existing per-field author/staff rules, mutation and exact receipt. SQL allowlists operations and fields; no body-selected actor.",
-      "reason": "Thirteen focused community tests and39 local SQL assertions plus reapplication pass. Actual observed role/parent/locked-post concurrency and RPC permission tests prepared, pending final-source CI. Other community CRUD methods remain separate gaps. Existing locked-comment semantics and FK deletion cascades are preserved, not new privileges.",
+      "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+      "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
       "evidence": [
         {
           "path": "backend/src/community/commentUpdate.local.integration.ts",
@@ -4298,13 +4275,13 @@
     },
     {
       "path": "backend/src/community/service.ts",
-      "sourceSha256": "591bfc5ce6c11df0e7cf3be68d41b06a87cf4eb41b65ea0f5d1d5834626d80e0",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "callIds": [
-        "d1a2218aa2fd7abf4aa6"
+        "6553de8af9b459d26b09"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Authenticated community routes pass verified actor identity and strict schemas. New service-only comment/post mutation RPC locks current actor profile and target parent/post/comment before evaluating existing per-field author/staff rules, mutation and exact receipt. SQL allowlists operations and fields; no body-selected actor.",
-      "reason": "Thirteen focused community tests and39 local SQL assertions plus reapplication pass. Actual observed role/parent/locked-post concurrency and RPC permission tests prepared, pending final-source CI. Other community CRUD methods remain separate gaps. Existing locked-comment semantics and FK deletion cascades are preserved, not new privileges.",
+      "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+      "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
       "evidence": [
         {
           "path": "backend/src/community/commentUpdate.local.integration.ts",
@@ -4318,13 +4295,13 @@
     },
     {
       "path": "backend/src/services/ensureUserRecords.ts",
-      "sourceSha256": "6c31d34f169c633f1eb9085e7c08eda16614af0ee48d1d7833c918f9a86b760d",
+      "sourceSha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852",
       "callIds": [
-        "6c4081796f4a94be4529"
+        "11ad5fbfe51e297ef01f"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
-      "reason": "Focused missing/foreign/outage/forged-context and same-process coalescing tests pass. Real disposable bootstrap and existing-role/paid-usage preservation test prepared, next-source CI pending. Cached existence is not entitlement. Revoked local-JWT lifecycle, concurrent deletion and complete trigger semantics remain separate.",
+      "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
       "evidence": [
         {
           "path": "backend/src/security/provisioningReceipt.local.integration.ts",
@@ -4334,17 +4311,185 @@
     },
     {
       "path": "backend/src/services/ensureUserRecords.ts",
-      "sourceSha256": "6c31d34f169c633f1eb9085e7c08eda16614af0ee48d1d7833c918f9a86b760d",
+      "sourceSha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852",
       "callIds": [
-        "53a78174f4c74c773aaf"
+        "b9522b3f509a2215c4b8"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
-      "reason": "Focused missing/foreign/outage/forged-context and same-process coalescing tests pass. Real disposable bootstrap and existing-role/paid-usage preservation test prepared, next-source CI pending. Cached existence is not entitlement. Revoked local-JWT lifecycle, concurrent deletion and complete trigger semantics remain separate.",
+      "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
       "evidence": [
         {
           "path": "backend/src/security/provisioningReceipt.local.integration.ts",
           "marker": "registerProvisioningReceiptTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/runTrace.ts",
+      "sourceSha256": "8380265a805e862f75da51fa105c973c49207ee0cc7c866d63d31873a0140597",
+      "callIds": [
+        "d4c19b8c5d3109c4c988"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Canonical pipeline binds an original issued worker attempt after admission. Immutable redacted diagnostic snapshot uses service-only parent-lock RPC matching owner/run/generation, current running worker or same-generation terminal receipt. Cancellation clears generation and resumption rotates it.",
+      "reason": "Focused attempt and snapshot tests pass. Real current/terminal/foreign/role and observed resume/cancel tests prepared. Diagnostic persistence remains best effort, not durable completion or full worker certification.",
+      "evidence": [
+        {
+          "path": "backend/src/security/runTraceAttempt.local.integration.ts",
+          "marker": "registerRunTraceAttemptTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/community/service.ts",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
+      "callIds": [
+        "a1f235c4996096f9f630"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+      "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
+      "evidence": [
+        {
+          "path": "backend/src/community/remainingMutations.local.integration.ts",
+          "marker": "registerCommunityRemainingMutationTests"
+        },
+        {
+          "path": "backend/src/community/reads.local.integration.ts",
+          "marker": "registerCommunityReadTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/community/service.ts",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
+      "callIds": [
+        "9fbafa99d8291872d697"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+      "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
+      "evidence": [
+        {
+          "path": "backend/src/community/remainingMutations.local.integration.ts",
+          "marker": "registerCommunityRemainingMutationTests"
+        },
+        {
+          "path": "backend/src/community/reads.local.integration.ts",
+          "marker": "registerCommunityReadTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/community/service.ts",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
+      "callIds": [
+        "f4de793ce77a85856ac1"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+      "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
+      "evidence": [
+        {
+          "path": "backend/src/community/remainingMutations.local.integration.ts",
+          "marker": "registerCommunityRemainingMutationTests"
+        },
+        {
+          "path": "backend/src/community/reads.local.integration.ts",
+          "marker": "registerCommunityReadTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/community/service.ts",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
+      "callIds": [
+        "2381005d816509c80cec"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+      "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
+      "evidence": [
+        {
+          "path": "backend/src/community/remainingMutations.local.integration.ts",
+          "marker": "registerCommunityRemainingMutationTests"
+        },
+        {
+          "path": "backend/src/community/reads.local.integration.ts",
+          "marker": "registerCommunityReadTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/community/service.ts",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
+      "callIds": [
+        "26dd943742c4d7b6a62f"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+      "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
+      "evidence": [
+        {
+          "path": "backend/src/community/remainingMutations.local.integration.ts",
+          "marker": "registerCommunityRemainingMutationTests"
+        },
+        {
+          "path": "backend/src/community/reads.local.integration.ts",
+          "marker": "registerCommunityReadTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/community/service.ts",
+      "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
+      "callIds": [
+        "0a827dbb168d8125a85c"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+      "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
+      "evidence": [
+        {
+          "path": "backend/src/community/remainingMutations.local.integration.ts",
+          "marker": "registerCommunityRemainingMutationTests"
+        },
+        {
+          "path": "backend/src/community/reads.local.integration.ts",
+          "marker": "registerCommunityReadTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/universalPersistence.ts",
+      "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
+      "callIds": [
+        "117955fa99f0ba83ee68"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Existing repository store snapshots exact owner/index/repository identity. Service-only save locks header and atomically replaces validated children with exact receipt. STABLE load reads header and children in one statement, validates all owner/identity/count fields and rejects mixed-owner corruption.",
+      "reason": "Focused index snapshot tests and45 SQL assertions plus replay pass. Real replacement/rollback/owner/browser-role/concurrent writer and held reader tests prepared. Repository HEAD freshness still belongs to the existing caller; no whole repository lifecycle certification.",
+      "evidence": [
+        {
+          "path": "backend/src/security/repositorySnapshot.local.integration.ts",
+          "marker": "registerRepositorySnapshotTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/universalPersistence.ts",
+      "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
+      "callIds": [
+        "12b673818237d517468a"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Existing repository store snapshots exact owner/index/repository identity. Service-only save locks header and atomically replaces validated children with exact receipt. STABLE load reads header and children in one statement, validates all owner/identity/count fields and rejects mixed-owner corruption.",
+      "reason": "Focused index snapshot tests and45 SQL assertions plus replay pass. Real replacement/rollback/owner/browser-role/concurrent writer and held reader tests prepared. Repository HEAD freshness still belongs to the existing caller; no whole repository lifecycle certification.",
+      "evidence": [
+        {
+          "path": "backend/src/security/repositorySnapshot.local.integration.ts",
+          "marker": "registerRepositorySnapshotTests"
         }
       ]
     }

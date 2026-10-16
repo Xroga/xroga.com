@@ -197,6 +197,10 @@ async function provisionUserRecords(
             id:
               userId,
 
+            // Match the auth-user trigger's required public identity fallback.
+            // Conflict-ignore preserves any existing username and staff role.
+            username: `xroga_${userId.slice(0, 12).replaceAll('-', '')}`,
+
             display_name:
               email
                 ?.split(
