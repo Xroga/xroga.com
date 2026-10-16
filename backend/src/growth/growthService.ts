@@ -85,8 +85,17 @@ export class GrowthService {
 
   async linkIdentity(userId: string, input: { projectId: string; anonymousId: string; evidenceReference: string }): Promise<Row> {
     const { tenantId } = await this.access(userId, input.projectId);
-    const rows = await query<Row[]>(this.db.from('growth_identity_links').upsert({ tenant_id: tenantId, project_id: input.projectId, anonymous_id: input.anonymousId, user_id: userId, evidence_reference: input.evidenceReference }, { onConflict: 'tenant_id,project_id,anonymous_id' }).select('*'), 'Identity link failed');
-    return rows[0];
+    const binding = { tenant_id: tenantId, project_id: input.projectId, anonymous_id: input.anonymousId, user_id: userId };
+    // The unique tuple chooses the first binding. A project viewer must not
+    // overwrite another user's identity, even after a concurrent first insert.
+    await query(this.db.from('growth_identity_links').upsert({ ...binding, evidence_reference: input.evidenceReference }, { onConflict: 'tenant_id,project_id,anonymous_id', ignoreDuplicates: true }), 'Identity link failed');
+    const rows = await query<Row[]>(this.db.from('growth_identity_links').update({ evidence_reference: input.evidenceReference })
+      .eq('tenant_id', tenantId).eq('project_id', input.projectId).eq('anonymous_id', input.anonymousId).eq('user_id', userId).select('*'), 'Identity link failed');
+    if (!rows.length) throw new GrowthServiceError('identity_conflict', 'Identity binding could not be claimed', 409);
+    const row = rows[0];
+    if (rows.length !== 1 || typeof row.id !== 'string' || !row.id || Object.entries(binding).some(([key, value]) => row[key] !== value)
+      || row.evidence_reference !== input.evidenceReference) throw new GrowthServiceError('storage_unavailable', 'Identity link receipt could not be verified', 503);
+    return row;
   }
 
   async defineActivation(userId: string, input: { projectId: string; name: string; version: number; requiredEvents: string[] }): Promise<Row> {

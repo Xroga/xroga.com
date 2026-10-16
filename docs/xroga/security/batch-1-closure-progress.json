@@ -92,12 +92,14 @@
       "diagnosticsAndCache": "Next source: platform logger stores fixed categories/known labels only, discards arbitrary metadata and unverified attribution, registers exact global scope. Three focused tests and actual persistence test prepared. Inactive tenant cache now validates bounded payload, exact digest/expiry and acknowledged writes, three focused tests pass. Cache project/context variation and lifecycle remain open.",
       "benchmarkEvidence": "Next source: strict finite numeric/boolean/time evidence validation before aggregate routing/storage, safe errors and truthful partial persistence count. Missing storage acknowledgement returns failed/benchmark_persistence_unverified because operationsService otherwise stamps verified durable action evidence.55 focused tests pass after correction. No paid benchmarks executed, actual producer provenance/budget/replay and real DB acceptance remain open.",
       "previewDrain": "Next source: adapter closes and drains its existing preview queue before final revision/completion. Typed authority loss and timeout fail closed; subsequent events cannot save or emit. Sixteen focused tests pass. Already-started physical provider work is not undone or certified.",
-      "localVerification": "Current fifth-source local backend2988 tests/2970 pass/0 fail/18 registered skips.95 migrations parse and skip governance20registered/0focused pass. Final-source real concurrency and repeated CI remain required.",
+      "localVerification": "Current sixth-source local backend3010 tests/2992 pass/0 fail/18 registered skips. Backend typecheck passes.96 migrations inventoried. Final-source real concurrency and repeated CI remain required.",
       "secondBatchVerification": "VERIFIED54abe997 disposable38824268139:87 migrations/100 security/3 browser,zero failures/skips. Five exact unchanged caller candidates closed: software checkpoint RPC, worker revision RPC/factory, diagnostic factory/insert. Other reviewed callers remain unresolved where lifecycle/provider/complete recovery evidence is absent.",
       "thirdBatch": "READY FOR CI: existing community comment and post update/delete/moderation now use service-only transactional current-role/parent locks and exact receipts, existing permissions unchanged.13 focused tests,39 PGlite assertions/reapply pass, two real concurrent-role/parent/lock modules prepared. Canonical recovery compares durable columns and executable control data; project/session reads bind returned identity and immutable snapshots, delayed-read/write mutation tests pass and three real tests prepared. Generic credential decoding rejects malformed envelopes, immutable provider row identity controls deployment egress, manual provisioning tuple now uses one snapshot. Provisioning requires issued context plus exact inserted-row readback; one real bootstrap/paid-row preservation test prepared. Shared record writers validate exact returned IDs. Completed provider reservation settlement failure keeps hold and returns non-retryable typed uncertainty. No full caller certification from focused or simulated tests.",
       "fourthBatch": "READY FOR CI: repository index header+children now transactional full replacement and single-snapshot load,45 local SQL assertions/replay. Community remaining mutation RPC23 assertions and read visibility RPC24 assertions/replay with focused tests and prepared real races. Trace binds original admitted worker generation including terminal state, redacts immutable diagnostics,18 SQL assertions/replay; best effort remains explicit. Removed unused generic OAuth fallback/upload/refresh, issued policy setter and exact receipt retained. Provisioning missing username repaired. Fly delete network/nonconfirmed HTTP responses now reject before destroyed state/event,21 focused mock-provider tests pass. No real provider calls or whole-caller security certification.",
       "fourthBatchVerification": "VERIFIED7d12bf42,93 migrations fresh/upgrade,112 security and3 browser tests,zero failures/skips. Repeated branch/integrated21 stages each twice passes.21 exact narrow boundaries closed: runtime read identity4, community public/self projections5, visibility/private reads5, mutationRPCs3, repository snapshotRPCs2, admitted trace persistence2. No whole caller or whole Command007 certification.",
-      "fifthBatch": "READY FOR CI: existing runtime session terminal latch, encrypted row/envelope validation and event-only known-secret redaction; process command state remains functional and unresolved. Existing growth owner admission reused, campaign action exact tuple+saved receipt, atomic in-app delivery under canonical approval and bounded consent snapshot,15 SQL assertions/replay and real rollback/concurrency tests prepared. Issued-context notification persistence and fixed logs. Exact-target Vercel sync and schema-backed per-variable acknowledgements preserve partial results, no live calls. Browser-public private credential aliases denied while canonical public Supabase fields retained. Electron exact repository target plus actual installed libsodium ESM seal fix tested with mock HTTP. No production changes or spend."
+      "fifthBatch": "READY FOR CI: existing runtime session terminal latch, encrypted row/envelope validation and event-only known-secret redaction; process command state remains functional and unresolved. Existing growth owner admission reused, campaign action exact tuple+saved receipt, atomic in-app delivery under canonical approval and bounded consent snapshot,15 SQL assertions/replay and real rollback/concurrency tests prepared. Issued-context notification persistence and fixed logs. Exact-target Vercel sync and schema-backed per-variable acknowledgements preserve partial results, no live calls. Browser-public private credential aliases denied while canonical public Supabase fields retained. Electron exact repository target plus actual installed libsodium ESM seal fix tested with mock HTTP. No production changes or spend.",
+      "fifthBatchVerification": "FAILED at574a6f1 disposable38828799022:116/117 security tests pass, zero skips. Campaign canonical setup blocked by missing adapter capability. Runtime terminal/encrypted-read and campaign creation checks passed individually, full delivery rollback/concurrency/browser acceptance not yet verified. Keep7d12 as latest fully verified baseline.",
+      "sixthBatch": "READY FOR CI: runtime immutable session identity and exact requested-project preflight, Fly restore exact machine/app/state acknowledgement, growth anonymous identity first-claim protection, missing internal campaign capability correction, EAS exact project/package credential attachment and pinned artifact polling with primary-source GraphQL corrections. Canonical billing cycle budget preserved on old membership deactivation, safe budget acknowledgement, immutable build/file inputs and exact persistence receipts. Focused tests and typecheck pass. Real disposable and repeated final-source CI required. No new provider effects, spend, production merge or deployment."
     }
   },
   "replayCorrection": {
@@ -127,7 +129,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:418 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:419 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -158,11 +160,11 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
-    "persistenceCandidates": 656,
-    "ownerPredicateCandidates": 159,
+    "persistenceCandidates": 658,
+    "ownerPredicateCandidates": 160,
     "reviewRequired": 0,
-    "reviewedCandidates": 656,
-    "unresolvedSafetyCandidates": 418,
+    "reviewedCandidates": 658,
+    "unresolvedSafetyCandidates": 419,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -226,7 +228,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Push95-migration fifth-source batch and verify registered real runtime terminal/secret, campaign receipt/delivery tests plus repeated branch/integrated CI. Continue next exact Fly restore machine/app response validation and other independently executable root groups. Preserve provider R2/schema/KMS and original008-010 gates separately; do not treat scoped closures as complete tenant certification.",
+  "nextTask": "Finish sixth-source tests, regenerate source-bound caller register, commit/push to draft803, verify real campaign canonical approval/delivery and new runtime/identity integration plus repeated branch/integrated regression. Continue independent root groups. Preserve strict007 and dependent008-010 gates, R2/provider schema/KMS proof and original source limitations.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
@@ -514,11 +516,11 @@
           "e7b9dbdcf629027dc864",
           "d25e2a7bfb9c46b63136",
           "22f42a26e3ba5039379f",
-          "aa292515b336efa98092",
-          "63a6800a547d149e963d",
-          "20abcd5b1c109c8a31ab",
-          "de843e620bbc4282ef23",
-          "9ab1c2977596ae4e732a"
+          "b039cedc2100eee34314",
+          "880000a353e70a87ea07",
+          "cc13349e4162619b57c0",
+          "27541abc3a19a508e2e8",
+          "a3dcfe39e30e5a606328"
         ]
       }
     },
@@ -591,22 +593,22 @@
           "13083e0ecb46eb0d8700"
         ],
         "backend/src/services/memory/buildProjectStore.ts": [
-          "d0f7e4c9e9f483e973f0",
-          "0ba83f6f12ac6b4dffe6",
-          "8e3c3aafa8aeeed846ba",
-          "9aff76584a5e0ce88eef",
-          "f326cca61907d3f01ee9",
-          "c266d3b0a7a00ace084f",
-          "cd0c0aee663b63ebee17",
-          "0b2a636096961bea8143",
-          "de3a9a65186f844a2b18",
-          "c7ff68ea4f453fc9fb53",
-          "d67588ea57cd59e03c7d",
-          "730680f90d1443f560f2"
+          "59fc6590fac35ccb2965",
+          "e85bf3fa018cd1e5f137",
+          "9dcd762bbd944736b141",
+          "a5afeb0fc9eb8097fe8b",
+          "d9d4a29d564517515c7b",
+          "28fc6f63cb6916deb4b0",
+          "3deb87c3dcfeb857648d",
+          "2634692c2734611690d4",
+          "1c2d9ab16cffe4e444c3",
+          "09c2c6ce5cdcb280c15a",
+          "c46c59f2f8955ace4f40",
+          "2be3e9c5ec180ef9feaa"
         ],
         "backend/src/services/storage/projectFiles.ts": [
-          "ca360ce30bbca9f581ce",
-          "87afe3452e6cb04201a6"
+          "9358ee1a46bdb9583705",
+          "be0bd23390f54b5c19b6"
         ],
         "backend/src/synthesis/delivery/projectDeliveryService.ts": [
           "371f13126c4ab7aab2dc",
@@ -621,17 +623,17 @@
           "73ab17f7a209cc26cc6b"
         ],
         "backend/src/synthesis/projectRuntime/store.ts": [
-          "8c5fb5d4daef1e7f3137",
-          "83cf627b4f9d0b32ed0f",
-          "f99c581f6f7411a8e7c1",
-          "f0ca5c284b5001ca5128",
-          "3cd97dffd8d2e3d9bb64",
-          "21bd8a1d97376528545e",
-          "5fee285edec145c03e4b",
-          "6bd459f0d315f528bfb4",
-          "691fd45392959bbeac80",
-          "70e8bc798e1be6ab74a4",
-          "85ea530fb329af3ad4fc"
+          "8fc7cf5dd562db7dcd3a",
+          "ed5cdf592a4a0494dc20",
+          "530ec12058ab9d32794b",
+          "419bf279075e606b8b1f",
+          "8da826b4f1382152e9e9",
+          "05696d559ec8d6305a1f",
+          "3fbff43474088305493a",
+          "7abc56c35732ad79279a",
+          "b9522163f553d5a418ed",
+          "1d714d1647e2c5f6a436",
+          "2a229397c50f1425b1b5"
         ],
         "backend/src/synthesis/universalEntrypoint.ts": [
           "10b5e279dd241e2f40ec"
@@ -651,7 +653,7 @@
       "existingImplementation": "Existing community roles and growth owner filters",
       "missingBehavior": "Remaining role/parent lineage, replay and external publishing authority",
       "acceptanceTest": "Mixed-field escalation, foreign parents, retry races and no unauthorized provider effects",
-      "pendingCandidates": 50,
+      "pendingCandidates": 51,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/community/service.ts": [
@@ -672,41 +674,42 @@
           "8ab9e28db774ed09d39b",
           "d9646ad5ee63c0d08511",
           "de19dba90e69980a8f6b",
-          "a64b31286b93079ea7e6",
-          "4fa705c6f3b21686c1be",
-          "9567a17b0ec26bcc92a4",
-          "fb1d9057171d097b39ab",
-          "15295493dd32176d874d",
-          "1a199a3274833d700a98",
-          "ebe43293334c43fe8f39",
-          "8751b966d6b78abda22f",
-          "f683230846ea3517b54a",
-          "d0bfa3251c1080e5aa18",
-          "0a9354f8178e3b20171b",
-          "1b0142f70b17ae046e57",
-          "a13fb1484117e865acb1",
-          "5745527af3d8d9951729",
-          "201cdc746f3298ee6142",
-          "560f787870425a2d1c1c",
-          "d82df323a9ebd9316866",
-          "3817efc2d46fe825bd77",
-          "1253ae2792b613368b9c",
-          "6257ee7aec05d045e5e1",
-          "08138b29f1c3bb88172a",
-          "ae22a7ff928ccd182588",
-          "493d4520cebb9c9ef1b3",
-          "9e2240cbb00369ac2fda",
-          "7f3b6cfbfb76651db664",
-          "b6d4be5be6aa390a297e",
-          "c6c798059b70767010df",
-          "a3eba355dffb086e6a17",
-          "36701538ec8ea747f3be",
-          "f9aee9d2ff1419657c05",
-          "a01d0760620f5b1121c7",
-          "9d5e0fe57bbd20c99171",
-          "83a38554f8dce711c82c",
-          "c4af5a831037a20ab7ed",
-          "f36990eaa8b0e96f3296"
+          "972c1c52c4d47d15c2fa",
+          "6dd2f80e9d9eb28dd020",
+          "f83a42c3217cd980b139",
+          "2dcbf6c0284f31d34f34",
+          "ae4bdec79d55b81c9d78",
+          "bccb66f69f96ffeb440b",
+          "d4c27b6d832f52338b8f",
+          "fd80d91e82da03a0ce9d",
+          "a6833e5d18180ed8f394",
+          "dab05c268640dbba1ed2",
+          "02ca9fe3eb1fc2694171",
+          "14c8f848eee2a5c4381e",
+          "e1c231a329a209b4edf1",
+          "d6e1a1d58fc11d59eac1",
+          "7a1a920e077dc5f61449",
+          "a319592d1fa3d3f4ba63",
+          "1668f2b7f61895e682e7",
+          "b30a023c1c64bdc10118",
+          "e1152b4b2e7e937eb20f",
+          "8f52aae01e7c224b73e8",
+          "25141ffe57c2f499816a",
+          "f9cfe3deb9ac84a4184c",
+          "bd9707d0d7e43ec695b7",
+          "6fded99e752fc2aee7e3",
+          "3eee6cc5e1fd823e8b28",
+          "bdc419f578e0846ef971",
+          "733b01838d4b497cc8c7",
+          "9d7734b46eb2f7f54f5f",
+          "b69517314f6c53f3f497",
+          "1756f4add1b20cff0325",
+          "8f422e35504ccd98df5e",
+          "8fa58828635dbdd5c406",
+          "d6861ac8abf4d84934a8",
+          "ad22d520190293663289",
+          "99b3ebe5bd475ab1b341",
+          "f53cc46bba81ec63fbdf"
         ]
       }
     },
@@ -733,12 +736,12 @@
           "fe7e6e4fe911ed9a75e1"
         ],
         "backend/src/ai/quota.ts": [
-          "9c24629d02c4cc6ff46e",
-          "4e15e83fa030b0549a15",
-          "b6dc5487deaef7059310",
-          "c9e32ad98134083e4318",
-          "313209300bd6c30b4157",
-          "998fbd939f34507081d0"
+          "3faa7ece6a312b431802",
+          "09c18505660bd25e7f05",
+          "ab1702a45a7ccb57ac8f",
+          "1990f5c97beb40b8b783",
+          "e27b9abaf3fe02c61229",
+          "f1aaacc8e5daf32fdba1"
         ],
         "backend/src/ai/routingOutcomes.ts": [
           "8c57a0debf51a7a340f8",
@@ -848,5 +851,18 @@
     "skipped": 0,
     "failure": "ensureUserRecords recovery profile insert omits NOT NULL username. Fixed using existing auth-trigger fallback, original assertions retained, rerun required.",
     "resolution": "VERIFIED repaired provisioning at7d12bf42 disposable38827153400; bootstrap inserts required username, existing admin/paid usage bytes remain unchanged. Original failure retained for history."
-  }
+  },
+  "disposableFailureHistory": [
+    {
+      "source": "574a6f1c019157fa0ca53eb2fed5702367432a10",
+      "run": "38828799022",
+      "result": "FAILED",
+      "securityTests": 117,
+      "passed": 116,
+      "failed": 1,
+      "skipped": 0,
+      "rootCause": "Canonical execute_growth_campaign executor was omitted from internal adapter supportedCapabilities, so approval execution returned blocked before delivery tests. No delivery acceptance asserted.",
+      "resolution": "Next-source adds existing capability and focused exact delegation test. Original verified assertion retained with status reason diagnostic. Actual rerun required."
+    }
+  ]
 }

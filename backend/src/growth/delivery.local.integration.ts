@@ -18,7 +18,8 @@ export function registerGrowthDeliveryTests(admin:SupabaseClient):void{
   const seed=async()=>{
     const created=await service.createCampaign(owner,{projectId:project,segmentId:segment.id,name:`Delivery ${randomUUID()}`,channel:'in_app',templateKey:'fixture',idempotencyKey:randomUUID()});
     await operations.approveAction(approver,created.action.id,'approved','Disposable approval fixture');
-    assert.equal((await operations.executeAction(owner,created.action.id)).status,'verified');
+    const executed=await operations.executeAction(owner,created.action.id);
+    assert.equal(executed.status,'verified',`Canonical campaign approval must complete: ${executed.status_reason}`);
     return created;
   };
   const fixture=await seed();

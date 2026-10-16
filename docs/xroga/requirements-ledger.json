@@ -3436,6 +3436,7 @@
         "backend/src/security/ownedRunPersistence.ts",
         "backend/src/security/ownedTerminalPersistence.ts",
         "backend/src/security/ownership.ts",
+        "backend/src/security/runtimeProjectBinding.ts",
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/security/tenantErrors.ts",

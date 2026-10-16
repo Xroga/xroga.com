@@ -462,6 +462,12 @@ export class FlyProjectRuntimeProvider
     session:
       ProjectRuntimeSession,
   ): string {
+    // Legacy records without an app retain the existing configured-app behavior.
+    // An explicit durable app must never silently follow configuration changes.
+    const savedApp = session.providerState?.app;
+    if (savedApp !== undefined && savedApp !== this.app) {
+      throw new Error('Runtime provider identity does not match the saved session.');
+    }
     const machineId =
       session
         .providerState
@@ -956,27 +962,11 @@ export class FlyProjectRuntimeProvider
       );
     }
 
-    const machine =
-      await response.json() as
-        Record<
-          string,
-          unknown
-        >;
-
-    const state =
-      typeof machine.state ===
-        'string'
-        ? machine.state
-        : null;
-
-    if (
-      state &&
-      state !==
-        'started'
-    ) {
-      throw new Error(
-        `Persisted runtime machine is not running (${state}).`,
-      );
+    const machine: unknown = await response.json().catch(() => null);
+    if (!machine || typeof machine !== 'object' || Array.isArray(machine) ||
+      (machine as Record<string, unknown>).id !== machineId ||
+      (machine as Record<string, unknown>).state !== 'started') {
+      throw new Error('Runtime restore could not be confirmed.');
     }
 
     return {

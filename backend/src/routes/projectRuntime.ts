@@ -6,7 +6,8 @@ import type {
   AuthRequest,
 } from '../middleware/auth.js';
 import { requireTenantContext } from '../security/tenantContext.js';
-import { runtimeAccessFailure } from '../security/tenantErrors.js';
+import { runtimeAccessFailure, resourceNotFound } from '../security/tenantErrors.js';
+import { loadProjectRuntimeSession } from '../security/runtimeProjectBinding.js';
 
 import {
   createProjectRuntimeManager,
@@ -94,15 +95,7 @@ router.get(
           });
       }
 
-      const session =
-        await store
-          .loadSession(
-            userId,
-            revision
-              .project
-              .runtime
-              .sessionId,
-          );
+      const session = await loadProjectRuntimeSession(store,userId,projectId,revision.project.runtime.sessionId);
 
       if (
         !session
@@ -210,6 +203,9 @@ router.post(
           });
       }
 
+      if (revision.project.runtime) {
+        await loadProjectRuntimeSession(store,userId,projectId,revision.project.runtime.sessionId);
+      }
       const result =
         await startOrRefreshLivePreview({
           userId,
@@ -290,6 +286,7 @@ router.post(
           userId,
         );
 
+      if(!await loadProjectRuntimeSession(store,userId,projectId,revision.project.runtime.sessionId))resourceNotFound();
       await runtime
         .destroy(
           revision
@@ -385,15 +382,12 @@ router.get(
           });
       }
 
+      const binding = revision.project.runtime;
+      let session = binding ? await loadProjectRuntimeSession(store,userId,projectId,binding.sessionId) : null;
       const plan =
         planLivePreview(
           revision.project,
         );
-
-      const binding =
-        revision
-          .project
-          .runtime;
 
       const runnable =
   Boolean(
@@ -405,15 +399,6 @@ router.get(
         createProjectRuntimeManager(
           userId,
         );
-
-      let session =
-        binding
-          ? await store
-              .loadSession(
-                userId,
-                binding.sessionId,
-              )
-          : null;
 
       let runtimeRunning =
         false;

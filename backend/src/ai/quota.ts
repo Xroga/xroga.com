@@ -254,6 +254,16 @@ export async function getUsage(userId: string): Promise<UsageSnapshot> {
 
 export async function syncPlanBudget(userId: string, planTier: string): Promise<void> {
   const budget = getApiBudgetUsd(planTier);
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    try {
+      const { error } = await getSupabaseAdmin().rpc('set_user_ai_plan_budget', {
+        p_user_id: userId, p_plan_tier: planTier, p_plan_budget_usd: budget,
+      });
+      if (error) throw unavailable();
+    } catch { throw unavailable(); }
+  }
+  // Preserve the explicit no-database test fallback, but never mutate the
+  // process cache ahead of a failed configured durable write.
   const key = memKey(userId);
   const prev = memUsage.get(key);
   if (prev) {
@@ -262,17 +272,6 @@ export async function syncPlanBudget(userId: string, planTier: string): Promise<
     memUsage.set(key, prev);
   }
 
-  try {
-    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
-    const supabase = getSupabaseAdmin();
-    await supabase.rpc('set_user_ai_plan_budget', {
-      p_user_id: userId,
-      p_plan_tier: planTier,
-      p_plan_budget_usd: budget,
-    });
-  } catch (err) {
-    console.warn('[quota] syncPlanBudget skipped:', (err as Error).message);
-  }
 }
 
 export async function recordUsage(

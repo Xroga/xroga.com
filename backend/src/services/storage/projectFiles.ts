@@ -7,6 +7,7 @@ import { FileDeliveryError,digestBytes,privateFileUrl,storageMetadataSchema,MAX_
 
 export interface StoredFile {id:string;fileName:string;fileUrl:string;fileType:'code'|'video'|'image'|'audio'|'pdf'|'other';projectId?:string}
 export async function storeProjectFile(userId:string,projectId:string,filename:string,content:Buffer|string,contentType:string,fileType:StoredFile['fileType']): Promise<StoredFile> {
+  content=Buffer.isBuffer(content)?Buffer.from(content):content;
   const context=createTenantContext({userId,via:'persisted_owner'});
   await requireOwnedProject(context,projectId);
   const id=randomUUID(),bytes=Buffer.isBuffer(content)?content:Buffer.from(content);
@@ -23,7 +24,7 @@ export async function storeProjectFile(userId:string,projectId:string,filename:s
   metadata=storageMetadataSchema.parse(metadata);
   const fileUrl=privateFileUrl(projectId,id);
   const {data,error}=await getSupabaseAdmin().from('project_files').insert({id,project_id:projectId,file_name:filename,file_path:metadata.key??filename,file_type:fileType,file_url:fileUrl,content:inline,storage_metadata:metadata}).select('id').single();
-  if(error || !data) {
+  if(error || !data || typeof data!=='object' || Array.isArray(data) || data.id!==id) {
     if(metadata.provider==='private_r2') {
       try{await removeNewR2Object(metadata.key!,userId,metadata.bucket!);}catch{console.warn('[private-files] newly uploaded object needs authorized cleanup; no file receipt issued');}
     }

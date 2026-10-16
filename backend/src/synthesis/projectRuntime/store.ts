@@ -454,6 +454,9 @@ export class InMemoryProjectRuntimeStore
       ProjectRuntimeSession,
   ): Promise<void> {
     const existing = this.sessions.get(this.sessionKey(session.userId, session.sessionId));
+    if (existing && (existing.projectId !== session.projectId || existing.providerId !== session.providerId || existing.runtimeClass !== session.runtimeClass)) {
+      throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
+    }
     if (existing?.status === 'destroyed' && session.status !== 'destroyed') {
       throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
     }

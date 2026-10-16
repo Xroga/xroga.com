@@ -476,7 +476,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "c7659b757ba75b551ff996124eafda87783c62975daa7b014da14cd91d899207",
+      "sourceSha256": "ba5fdbb3d15b9add7640606c1ca1ee42e662a2320ba8de43aa212f7f32b32f39",
       "callIds": [
         "807ae5c447bc2d1d4f2e",
         "e6e2c7f6719f76581b45",
@@ -491,44 +491,44 @@
         "a9bea74dca4773be06e3",
         "8ab9e28db774ed09d39b",
         "de19dba90e69980a8f6b",
-        "a64b31286b93079ea7e6",
-        "4fa705c6f3b21686c1be",
-        "9567a17b0ec26bcc92a4",
-        "fb1d9057171d097b39ab",
-        "15295493dd32176d874d",
-        "1a199a3274833d700a98",
-        "ebe43293334c43fe8f39",
-        "8751b966d6b78abda22f",
-        "f683230846ea3517b54a",
-        "d0bfa3251c1080e5aa18",
-        "0a9354f8178e3b20171b",
-        "1b0142f70b17ae046e57",
-        "a13fb1484117e865acb1",
-        "5745527af3d8d9951729",
-        "201cdc746f3298ee6142",
-        "560f787870425a2d1c1c",
-        "d82df323a9ebd9316866",
-        "3817efc2d46fe825bd77",
-        "1253ae2792b613368b9c",
-        "6257ee7aec05d045e5e1",
-        "08138b29f1c3bb88172a",
-        "493d4520cebb9c9ef1b3",
-        "9e2240cbb00369ac2fda",
-        "7f3b6cfbfb76651db664",
-        "b6d4be5be6aa390a297e",
-        "c6c798059b70767010df",
-        "a3eba355dffb086e6a17",
-        "36701538ec8ea747f3be",
-        "f9aee9d2ff1419657c05",
-        "a01d0760620f5b1121c7",
-        "9d5e0fe57bbd20c99171",
-        "83a38554f8dce711c82c",
-        "c4af5a831037a20ab7ed",
-        "f36990eaa8b0e96f3296"
+        "972c1c52c4d47d15c2fa",
+        "f83a42c3217cd980b139",
+        "2dcbf6c0284f31d34f34",
+        "ae4bdec79d55b81c9d78",
+        "bccb66f69f96ffeb440b",
+        "d4c27b6d832f52338b8f",
+        "fd80d91e82da03a0ce9d",
+        "a6833e5d18180ed8f394",
+        "dab05c268640dbba1ed2",
+        "02ca9fe3eb1fc2694171",
+        "14c8f848eee2a5c4381e",
+        "e1c231a329a209b4edf1",
+        "d6e1a1d58fc11d59eac1",
+        "7a1a920e077dc5f61449",
+        "a319592d1fa3d3f4ba63",
+        "1668f2b7f61895e682e7",
+        "b30a023c1c64bdc10118",
+        "e1152b4b2e7e937eb20f",
+        "8f52aae01e7c224b73e8",
+        "25141ffe57c2f499816a",
+        "f9cfe3deb9ac84a4184c",
+        "6fded99e752fc2aee7e3",
+        "3eee6cc5e1fd823e8b28",
+        "bdc419f578e0846ef971",
+        "733b01838d4b497cc8c7",
+        "9d7734b46eb2f7f54f5f",
+        "b69517314f6c53f3f497",
+        "1756f4add1b20cff0325",
+        "8f422e35504ccd98df5e",
+        "8fa58828635dbdd5c406",
+        "d6861ac8abf4d84934a8",
+        "ad22d520190293663289",
+        "99b3ebe5bd475ab1b341",
+        "f53cc46bba81ec63fbdf"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-      "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified.",
+      "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval.",
       "evidence": [
         {
           "path": "backend/src/growth/growthService.boundary.test.ts",
@@ -621,18 +621,18 @@
     },
     {
       "path": "backend/src/ai/quota.ts",
-      "sourceSha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
+      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
       "callIds": [
-        "9c24629d02c4cc6ff46e",
-        "4e15e83fa030b0549a15",
-        "b6dc5487deaef7059310",
-        "c9e32ad98134083e4318",
-        "313209300bd6c30b4157",
-        "998fbd939f34507081d0"
+        "3faa7ece6a312b431802",
+        "09c18505660bd25e7f05",
+        "ab1702a45a7ccb57ac8f",
+        "1990f5c97beb40b8b783",
+        "e27b9abaf3fe02c61229",
+        "f1aaacc8e5daf32fdba1"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
-      "reason": "Read evidence now fails closed and preserves zero entitlement, verified at01bd0716. These six remaining legacy sync/meter callers still omit RPC result checks and update local counters before split durable accounting. New atomic wrapper affects only three separately reviewed consumers. Full payment admission and concurrent spending remain unresolved. No credit or tenant acceptance is granted.",
+      "reason": "Read evidence now fails closed and preserves zero entitlement, verified at01bd0716. These six remaining legacy sync/meter callers still omit RPC result checks and update local counters before split durable accounting. New atomic wrapper affects only three separately reviewed consumers. Full payment admission and concurrent spending remain unresolved. No credit or tenant acceptance is granted. Sixth-source syncPlanBudget checks durable RPC acknowledgement before memory update and rejects returned/thrown errors with a fixed safe error. Existing explicit no-database test behavior retained. Durable billing consumers no longer issue redundant nontransactional budget changes. Complete usage writer provenance and concurrency remain separate gaps.",
       "evidence": [
         {
           "path": "backend/src/ai/quota.ts",
@@ -695,24 +695,24 @@
     },
     {
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "sourceSha256": "455b7262e1b6400bf55c5468b687ac4dfed0526efdab73e0282aa28181146e4c",
+      "sourceSha256": "a6104410b96bb8cc6848c1f6be166ebb9bb46c62d75662c3c4fe61f373a71cac",
       "callIds": [
-        "d0f7e4c9e9f483e973f0",
-        "0ba83f6f12ac6b4dffe6",
-        "8e3c3aafa8aeeed846ba",
-        "9aff76584a5e0ce88eef",
-        "f326cca61907d3f01ee9",
-        "c266d3b0a7a00ace084f",
-        "cd0c0aee663b63ebee17",
-        "0b2a636096961bea8143",
-        "de3a9a65186f844a2b18",
-        "c7ff68ea4f453fc9fb53",
-        "d67588ea57cd59e03c7d",
-        "730680f90d1443f560f2"
+        "59fc6590fac35ccb2965",
+        "e85bf3fa018cd1e5f137",
+        "9dcd762bbd944736b141",
+        "a5afeb0fc9eb8097fe8b",
+        "d9d4a29d564517515c7b",
+        "28fc6f63cb6916deb4b0",
+        "3deb87c3dcfeb857648d",
+        "2634692c2734611690d4",
+        "1c2d9ab16cffe4e444c3",
+        "09c2c6ce5cdcb280c15a",
+        "c46c59f2f8955ace4f40",
+        "2be3e9c5ec180ef9feaa"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
-      "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance.",
+      "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance. Sixth-source build persistence snapshots input before asynchronous lookup, generates exact new project ID and rejects substituted create/update/completion receipts. Deterministic ensure rejects mismatched insert/readback ID. Six focused tests pass and real owner/project/inline-file path prepared. Full lookup provenance, worker freshness, concurrent snapshot replacement and optional message durability remain open.",
       "evidence": [
         {
           "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
@@ -757,14 +757,14 @@
     },
     {
       "path": "backend/src/services/storage/projectFiles.ts",
-      "sourceSha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168",
+      "sourceSha256": "b04aa220706bd4d4a218c846115f37eb7277878b48ef88603197f16ba7c1bc8d",
       "callIds": [
-        "ca360ce30bbca9f581ce",
-        "87afe3452e6cb04201a6"
+        "9358ee1a46bdb9583705",
+        "be0bd23390f54b5c19b6"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "storeProjectFile creates an internal context from supplied userId, checks the owned project before R2 or database persistence, embeds owner-bound private storage metadata and returns an application-private URL. Retired unscoped helpers throw. Current source references are the build helper and security fixtures.",
-      "reason": "The real disposable test proves owner-only database file delivery and foreign project denial precedes upload in transport tests. Remaining gaps: caller identity provenance, transaction separation between parent lookup and privileged insert, post-upload orphan cleanup/retry, live R2 privacy and application-backed provider verification. The already classified Buffer.from expression is excluded from this record.",
+      "reason": "The real disposable test proves owner-only database file delivery and foreign project denial precedes upload in transport tests. Remaining gaps: caller identity provenance, transaction separation between parent lookup and privileged insert, post-upload orphan cleanup/retry, live R2 privacy and application-backed provider verification. The already classified Buffer.from expression is excluded from this record. Sixth-source file insert success requires exact generated ID. Buffer copied before ownership await, mocked storage tests confirm immutable upload bytes and cleanup on unverified receipt. Current production consumer uses strings. Real inline DB path prepared, actual R2 acceptance, ambiguous commit cleanup and ownership revocation across provider awaits remain unresolved.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -1155,7 +1155,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "172befea6af83cf46c069b3eee9b0b535a6edf0f952c96ea1bfbd9ce7e97fe82",
+      "sourceSha256": "154148cdad882b77e1d0a30cdd87864e25c06a3c333796c07317b43e6a6909ce",
       "callIds": [
         "c945e92962ec2ea9760b"
       ],
@@ -1171,7 +1171,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "172befea6af83cf46c069b3eee9b0b535a6edf0f952c96ea1bfbd9ce7e97fe82",
+      "sourceSha256": "154148cdad882b77e1d0a30cdd87864e25c06a3c333796c07317b43e6a6909ce",
       "callIds": [
         "bafa89cc7cc29f6d8ffd"
       ],
@@ -1635,9 +1635,9 @@
     },
     {
       "path": "backend/src/services/storage/projectFiles.ts",
-      "sourceSha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168",
+      "sourceSha256": "b04aa220706bd4d4a218c846115f37eb7277878b48ef88603197f16ba7c1bc8d",
       "callIds": [
-        "5412ca439707c9e344a2"
+        "ab2b733ee43e7e80859e"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in storeProjectFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1731,9 +1731,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sourceSha256": "adadba7b5d3ba0e4d6e336a624b2a9068aa27f9ef53954196a135eeacb255264",
+      "sourceSha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63",
       "callIds": [
-        "1036a72174c51d074c91"
+        "b60d7d17a4b3923a0093"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in create. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1747,9 +1747,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sourceSha256": "adadba7b5d3ba0e4d6e336a624b2a9068aa27f9ef53954196a135eeacb255264",
+      "sourceSha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63",
       "callIds": [
-        "8427754f5dcd45751319"
+        "7e77a9e9c61c1c49cb12"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in writeFiles. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -1763,9 +1763,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sourceSha256": "adadba7b5d3ba0e4d6e336a624b2a9068aa27f9ef53954196a135eeacb255264",
+      "sourceSha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63",
       "callIds": [
-        "464f933c19d46ea8e258"
+        "f783b8237adeb061973a"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in readFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2856,23 +2856,23 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e8b7c8117dbb14d586da79d0511d38aa93925eee1ae935a013d1554c7deb3fe8",
+      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
       "callIds": [
-        "8c5fb5d4daef1e7f3137",
-        "83cf627b4f9d0b32ed0f",
-        "f99c581f6f7411a8e7c1",
-        "f0ca5c284b5001ca5128",
-        "3cd97dffd8d2e3d9bb64",
-        "21bd8a1d97376528545e",
-        "5fee285edec145c03e4b",
-        "6bd459f0d315f528bfb4",
-        "691fd45392959bbeac80",
-        "70e8bc798e1be6ab74a4",
-        "85ea530fb329af3ad4fc"
+        "8fc7cf5dd562db7dcd3a",
+        "ed5cdf592a4a0494dc20",
+        "530ec12058ab9d32794b",
+        "419bf279075e606b8b1f",
+        "8da826b4f1382152e9e9",
+        "05696d559ec8d6305a1f",
+        "3fbff43474088305493a",
+        "7abc56c35732ad79279a",
+        "b9522163f553d5a418ed",
+        "1d714d1647e2c5f6a436",
+        "2a229397c50f1425b1b5"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-      "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI.",
+      "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -3305,7 +3305,7 @@
     },
     {
       "path": "backend/src/services/BillingService.ts",
-      "sourceSha256": "5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
+      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
       "callIds": [
         "286bc857714c82f17839",
         "47650e2cf3cc7a9cb97a",
@@ -3323,7 +3323,7 @@
     },
     {
       "path": "backend/src/services/BillingService.ts",
-      "sourceSha256": "5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
+      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
       "callIds": [
         "bcf1e04eaa94fcd2b425",
         "45eeadd879c4d719c11d",
@@ -3346,21 +3346,21 @@
     },
     {
       "path": "backend/src/services/BillingService.ts",
-      "sourceSha256": "5201cc78c5a6f98e4f889576623da2edd8099ee2e7519584200710b77122ab30",
+      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
       "callIds": [
         "b05e41f8f6ba770ee40c",
         "e7b9dbdcf629027dc864",
         "d25e2a7bfb9c46b63136",
         "22f42a26e3ba5039379f",
-        "aa292515b336efa98092",
-        "63a6800a547d149e963d",
-        "20abcd5b1c109c8a31ab",
-        "de843e620bbc4282ef23",
-        "9ab1c2977596ae4e732a"
+        "b039cedc2100eee34314",
+        "880000a353e70a87ea07",
+        "cc13349e4162619b57c0",
+        "27541abc3a19a508e2e8",
+        "a3dcfe39e30e5a606328"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-      "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used.",
+      "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved.",
       "evidence": [
         {
           "path": "backend/src/services/BillingService.test.ts",
@@ -3777,13 +3777,13 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "c7659b757ba75b551ff996124eafda87783c62975daa7b014da14cd91d899207",
+      "sourceSha256": "ba5fdbb3d15b9add7640606c1ca1ee42e662a2320ba8de43aa212f7f32b32f39",
       "callIds": [
         "d9646ad5ee63c0d08511"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Growth event admission derives tenant/project through existing access policy, then requires the exact existing growth_referral_attribution tuple. The database trigger repeats that tuple predicate under a row lock through event commit, including direct service-role writes. Null-referral events are unchanged.",
-      "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+      "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval.",
       "evidence": [
         {
           "path": "backend/src/security/growthReferral.local.integration.ts",
@@ -4015,7 +4015,7 @@
     },
     {
       "path": "backend/src/ai/quota.ts",
-      "sourceSha256": "2d2844eb50362efa5f8cf48c4dd78408eb68a20cac45425704f23de60ca0eb8d",
+      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
       "callIds": [
         "52edc4559577671284c2",
         "39d17e6c2a9120f50030"
@@ -4193,9 +4193,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e8b7c8117dbb14d586da79d0511d38aa93925eee1ae935a013d1554c7deb3fe8",
+      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
       "callIds": [
-        "3d498bd5d7ed0b01e7aa"
+        "4405d6096d2e71e981b2"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Worker-only revision writer requires an original issued attempt matching immutable owner/run snapshot. Service-only RPC locks swarm parent, requires current running worker generation and existing same-owner canonical project lineage, then returns exact revision receipt. Authenticated nonworker restore/delivery retains separate existing paths.",
@@ -4209,9 +4209,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e8b7c8117dbb14d586da79d0511d38aa93925eee1ae935a013d1554c7deb3fe8",
+      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
       "callIds": [
-        "10d3f24ebf3320a2130d"
+        "98d184ab88f7ab61318b"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Worker-only revision writer requires an original issued attempt matching immutable owner/run snapshot. Service-only RPC locks swarm parent, requires current running worker generation and existing same-owner canonical project lineage, then returns exact revision receipt. Authenticated nonworker restore/delivery retains separate existing paths.",
@@ -4257,9 +4257,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e8b7c8117dbb14d586da79d0511d38aa93925eee1ae935a013d1554c7deb3fe8",
+      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
       "callIds": [
-        "cd0f801a5d2f4170f107"
+        "60631ccec69849a4ead7"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Fixed project revision read binds requested owner/project in SQL and verifies returned row owner/project/run against SoftwareProject and contract identities before returning a clone. No persistence or provider action occurs in this read.",
@@ -4273,9 +4273,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e8b7c8117dbb14d586da79d0511d38aa93925eee1ae935a013d1554c7deb3fe8",
+      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
       "callIds": [
-        "155b244c066f2c4449e9"
+        "56973b18bffeba04db38"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Fixed project revision read binds requested owner/project in SQL and verifies returned row owner/project/run against SoftwareProject and contract identities before returning a clone. No persistence or provider action occurs in this read.",
@@ -4289,9 +4289,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e8b7c8117dbb14d586da79d0511d38aa93925eee1ae935a013d1554c7deb3fe8",
+      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
       "callIds": [
-        "89e045b1be64d365e2e8"
+        "0aa7bcbcf75b4fc1eceb"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Fixed runtime session read selects state and owner/session/project columns, filters exact requested owner/session, and binds returned row identity to JSON before returning a clone. It does not mutate or call a provider.",
@@ -4305,9 +4305,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e8b7c8117dbb14d586da79d0511d38aa93925eee1ae935a013d1554c7deb3fe8",
+      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
       "callIds": [
-        "8b0f929767d4cac8e41a"
+        "b5d3e5c94e9160b42afb"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Fixed runtime session read selects state and owner/session/project columns, filters exact requested owner/session, and binds returned row identity to JSON before returning a clone. It does not mutate or call a provider.",
@@ -4617,13 +4617,13 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "c7659b757ba75b551ff996124eafda87783c62975daa7b014da14cd91d899207",
+      "sourceSha256": "ba5fdbb3d15b9add7640606c1ca1ee42e662a2320ba8de43aa212f7f32b32f39",
       "callIds": [
-        "ae22a7ff928ccd182588"
+        "bd9707d0d7e43ec695b7"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Existing operations authority supplies its admitted project owner. Campaign creation validates exact action tuple and durable link receipt. In-app delivery service-only RPC locks current actor/project/member/campaign/action/approval, requires canonical verified action and matching approval digest/version, admits bounded consent/suppression cohort in one snapshot and atomically commits messages, notifications and completed receipt.",
-      "reason": "Focused receipt and local SQL tests pass, actual canonical approval/rollback/two-client delivery/replay/foreign/stale/role tests prepared. Email remains unsupported. Legacy uncertain deliveries fail closed for recovery; no retroactive consent revocation or external provider delivery certification.",
+      "reason": "Focused receipt and local SQL tests pass, actual canonical approval/rollback/two-client delivery/replay/foreign/stale/role tests prepared. Email remains unsupported. Legacy uncertain deliveries fail closed for recovery; no retroactive consent revocation or external provider delivery certification. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval.",
       "evidence": [
         {
           "path": "backend/src/growth/delivery.local.integration.ts",
@@ -4633,9 +4633,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e8b7c8117dbb14d586da79d0511d38aa93925eee1ae935a013d1554c7deb3fe8",
+      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
       "callIds": [
-        "63ace9ff27157fe11b10"
+        "4dbeec5086c5b8a28996"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Exact receiver is Node Buffer.from, decoding canonical base64 segments of an encrypted envelope in memory. It performs no database or Storage action and does not decrypt or authenticate ciphertext.",
@@ -4644,6 +4644,38 @@
         {
           "path": "backend/src/synthesis/projectRuntime/store.ts",
           "marker": "function restoreOwnerBoundEncryptedSecret"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/growth/growthService.ts",
+      "sourceSha256": "ba5fdbb3d15b9add7640606c1ca1ee42e662a2320ba8de43aa212f7f32b32f39",
+      "callIds": [
+        "6dd2f80e9d9eb28dd020"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Authenticated project member passes existing project access check. Insert-ignore chooses the unique tenant/project/anonymous identity winner. Subsequent evidence refresh matches that tuple and exact authenticated user, with exact receipt validation. A competing actor cannot overwrite the winning binding.",
+      "reason": "Three focused identity tests pass. Actual same-project competing users and two independent blocked claims prepared for disposable CI. Anonymous identifier possession and atomic membership revocation remain unresolved, no attribution or reward certification. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval.",
+      "evidence": [
+        {
+          "path": "backend/src/growth/identity.local.integration.ts",
+          "marker": "registerGrowthIdentityTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/storage/projectFiles.ts",
+      "sourceSha256": "b04aa220706bd4d4a218c846115f37eb7277878b48ef88603197f16ba7c1bc8d",
+      "callIds": [
+        "96d4cf005d08ca0b32c0"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Exact receiver is Node Buffer.from. This copies the input bytes or converts a string to UTF-8 in memory before asynchronous ownership and storage work. It does not itself access database, Storage or a provider.",
+      "reason": "Conservative from-method false positive. Actual ownership, file insert and R2 upload remain independently reviewed and unresolved where provider/lifecycle evidence is missing.",
+      "evidence": [
+        {
+          "path": "backend/src/services/storage/projectFiles.ts",
+          "marker": "content=Buffer.isBuffer(content)?Buffer.from(content):content"
         }
       ]
     }

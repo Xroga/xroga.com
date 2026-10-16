@@ -87,7 +87,7 @@ export function createInternalAdapter(
       'acknowledge_incident', 'resolve_incident', 'retry_job', 'retry_webhook',
       'emergency_stop', 'resume_automation', 'prepare_repair', 'refresh_state',
       'schedule_maintenance', 'cancel_maintenance',
-      'enable_automation', 'disable_automation',
+      'enable_automation', 'disable_automation', 'execute_growth_campaign',
     ],
     authenticationRequirements: ['server-side service role'],
     environmentSupport: ['local','test','preview','development','staging','production','sandbox','testnet','mainnet'],

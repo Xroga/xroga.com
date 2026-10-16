@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { HACKATHON_MAX_STORED_FILES } from '../../config/modelRegistry.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 
@@ -118,7 +118,8 @@ export async function ensureProjectIdByRepo(
       }, { onConflict: 'id', ignoreDuplicates: true })
       .select('id')
       .maybeSingle();
-    if (!error && typeof data?.id === 'string') return data.id;
+    if (error || (data && data.id !== id)) return null;
+    if (data?.id === id) return id;
 
     // `ignoreDuplicates` may return no row. Re-read the deterministic id so concurrent
     // first requests converge on the same project rather than falling back to legacy.
@@ -128,7 +129,7 @@ export async function ensureProjectIdByRepo(
       .eq('id', id)
       .eq('user_id', userId)
       .maybeSingle();
-    if (!readError && typeof persisted?.id === 'string') return persisted.id;
+    if (!readError && persisted?.id === id) return id;
     console.warn('[buildProjectStore] project identity unavailable');
     return null;
   } catch {
@@ -162,6 +163,9 @@ const CORE_FILES = new Set([
 
 /** Upsert a project row and store core build files for later restore. */
 export async function upsertBuildProject(input: UpsertBuildProjectInput): Promise<string | null> {
+  // A delayed ownership lookup must not let a caller replace the admitted owner,
+  // repository or file contents while this persistence operation is underway.
+  input = { ...input, projectFiles: input.projectFiles.map(file => ({ ...file })) };
   const supabase = getSupabaseAdmin();
   const repoName = input.githubRepoName?.trim();
 
@@ -175,6 +179,7 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
       .eq('github_repo_name', repoName)
       .maybeSingle();
     if (lookupError) return null;
+    if (existing && (typeof existing.id !== 'string' || !existing.id)) return null;
     projectId = existing?.id ?? null;
   }
 
@@ -189,17 +194,18 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
 
   if (projectId) {
     const { data, error } = await supabase.from('projects').update(row).eq('id', projectId).eq('user_id', input.userId).select('id').maybeSingle();
-    if (error || !data) {
+    if (error || data?.id !== projectId) {
       console.warn('[buildProjectStore] project update unavailable');
       return null;
     }
   } else {
+    const newId = randomUUID();
     const { data, error } = await supabase
       .from('projects')
-      .insert({ user_id: input.userId, ...row })
+      .insert({ id: newId, user_id: input.userId, ...row })
       .select('id')
       .single();
-    if (error || !data) {
+    if (error || data?.id !== newId) {
       console.warn('[buildProjectStore] project insert unavailable');
       return null;
     }
@@ -265,6 +271,6 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
   }
 
   const completed=await supabase.from('projects').update({status:'completed'}).eq('id',projectId).eq('user_id',input.userId).select('id').maybeSingle();
-  if(completed.error || !completed.data)return null;
+  if(completed.error || completed.data?.id!==projectId)return null;
   return projectId;
 }

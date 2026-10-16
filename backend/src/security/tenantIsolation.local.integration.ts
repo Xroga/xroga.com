@@ -66,6 +66,11 @@ import { registerRuntimeTerminalTests } from './runtimeTerminal.local.integratio
 import { registerRuntimeSecretReadTests } from './runtimeSecretRead.local.integration.js';
 import { registerGrowthCampaignReceiptTests } from '../growth/campaignReceipt.local.integration.js';
 import { registerGrowthDeliveryTests } from '../growth/delivery.local.integration.js';
+import { registerRuntimeIdentityTests } from './runtimeIdentity.local.integration.js';
+import { registerRuntimeProjectBindingTests } from './runtimeProjectBinding.local.integration.js';
+import { registerGrowthIdentityTests } from '../growth/identity.local.integration.js';
+import { registerBillingBudgetTests } from '../services/billingBudget.local.integration.js';
+import { registerBuildProjectReceiptTests } from './buildProjectReceipt.local.integration.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -97,6 +102,11 @@ registerRuntimeTerminalTests(admin, () => users);
 registerRuntimeSecretReadTests(admin, () => users);
 registerGrowthCampaignReceiptTests(admin);
 registerGrowthDeliveryTests(admin);
+registerRuntimeIdentityTests(admin, () => users);
+registerRuntimeProjectBindingTests(admin, () => users, request);
+registerGrowthIdentityTests(admin);
+registerBillingBudgetTests(admin);
+registerBuildProjectReceiptTests(admin, () => users);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }

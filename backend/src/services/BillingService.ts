@@ -1802,18 +1802,8 @@ export class BillingService {
       }
 
 
-      /*
-       * Make the real usage system canonical.
-       * No action balance is applied here.
-       */
-      if (
-        fulfilled
-      ) {
-        await syncPlanBudget(
-          userId,
-          'spark',
-        );
-      }
+      // The fulfillment transaction already updates the canonical usage budget.
+      // A second write could race a newer cycle and cannot be repaired by replay.
 
 
       return Boolean(
@@ -2087,10 +2077,9 @@ export class BillingService {
         userId,
       );
 
-      await syncPlanBudget(
-        userId,
-        'free',
-      );
+      // The canonical cycle refresh preserves an unexpired paid cycle or
+      // atomically establishes a free cycle when needed. An old membership's
+      // deactivation must not overwrite a newer payment's budget.
     }
   }
 }

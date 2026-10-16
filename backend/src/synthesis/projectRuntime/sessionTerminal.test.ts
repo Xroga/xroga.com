@@ -12,7 +12,7 @@ test('delayed actual provider restore cannot resurrect a concurrently destroyed 
   const events=t.mock.method(store,'appendEvent');let release!:()=>void,started!:()=>void;
   const entered=new Promise<void>(resolve=>{started=resolve;});const held=new Promise<void>(resolve=>{release=resolve;});let requests=0;
   const provider=new FlyProjectRuntimeProvider({app:'synthetic',token:'synthetic',fetchImpl:async(_input,init)=>{
-    requests++;if(init?.method==='GET'){started();await held;return Response.json({state:'started'});}
+    requests++;if(init?.method==='GET'){started();await held;return Response.json({id:'machine',state:'started'});}
     assert.equal(init?.method,'DELETE');return new Response(null,{status:204});
   }});
   const manager=new ProjectRuntimeManager('owner',store,[provider]);

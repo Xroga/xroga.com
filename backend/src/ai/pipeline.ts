@@ -4525,6 +4525,7 @@ publicationReason:
 
           const waited = await waitForEasBuildArtifact({
             userId: opts.userId,
+            projectId: eas.projectId,
             platform: 'android',
             timeoutMs: 8 * 60 * 1000,
             ignoreBuildIds,
@@ -4598,6 +4599,7 @@ publicationReason:
             });
             const waitedIos = await waitForEasBuildArtifact({
               userId: opts.userId,
+              projectId: easIos.projectId,
               platform: 'ios',
               timeoutMs: 6 * 60 * 1000,
               ignoreBuildIds,
