@@ -1,157 +1,242 @@
 /**
- * S04 · Publish with Xroga: copy, the three release stories and their timelines.
+ * S04 · Release Studio (V10): copy, the three release scenarios and their timelines.
  *
- * One scene state machine drives everything (S04Publish.tsx):
- *   idle → use → inspect → verified → extract → compose → package → ready
- * Each destination has its own beat times because each product does something different: Arcset logs a set,
- * Ridgeline jumps a gate, MerchantLens opens its panel and fills it, so the acts take different lengths.
- * Every value is illustrative: no store, account, payment or build is connected and nothing is shown as
- * submitted, approved, paid or live. No coding-tool brand appears as a source.
+ * Each destination is one scenario played as a list of beats. A beat belongs to a phase:
+ *   idle → use → inspect → finding → produce → compose → ready
+ * use      the product does its own thing (Arcset logs a set, Ridgeline flies through a ring, MerchantLens reads a page);
+ * inspect  Xroga locks onto the control that was used and the state it changed;
+ * finding  a platform-specific release finding (screenshot sizes, a feature graphic, a permission that is too broad);
+ * produce  store assets are rendered from the product itself;
+ * compose  the listing and package assemble around those assets;
+ * ready    the owner's decisions are laid out; nothing is submitted for them.
+ *
+ * Truth: the scenes are illustrative and every product is fictional. The owner steps mirror what the backend really
+ * does (backend/src/services/publish/*): Chrome Web Store submission through the owner's own Google connection
+ * (Google still reviews); Expo builds on the owner's own account for iOS and Android; store accounts, fees, signing
+ * and final submission stay with the owner. No coding-tool brand appears as a source.
  */
 import type { StoreId } from './storeMarks';
 
 export type Dest = 'ios' | 'android' | 'chrome';
-export type Origin = 'existing' | 'xroga';
 export const DESTS: Dest[] = ['ios', 'android', 'chrome'];
 
-/* ------------------------------------------------------------------ product geometry (natural pixels) */
-export const NATURAL: Record<Dest, { w: number; h: number }> = {
-  ios: { w: 214, h: 432 },
-  android: { w: 520, h: 244 },
-  chrome: { w: 548, h: 318 },
-};
-
-/** the region that becomes the store asset, in the product's own pixels, at the store's aspect ratio */
-export const CROP: Record<Dest, { x: number; y: number; w: number; h: number }> = {
-  ios: { x: 7, y: 0, w: 200, h: 432 }, // portrait screenshot, 1320 × 2868 (≈ 0.46)
-  android: { x: 10, y: 0, w: 500, h: 244 }, // feature graphic, 1024 × 500 (≈ 2.05)
-  chrome: { x: 0, y: 0, w: 548, h: 318 }, // the browser window, set on a 1280 × 800 (1.6) backdrop in the listing
-};
-/** MerchantLens's second asset: its own side panel, lifted into the promo tile */
-export const PANEL = { x: 352, y: 66, w: 196, h: 252 };
-
-/** the scene's phases, in order; a phase shows everything up to and including itself */
-export type Phase = 'idle' | 'use' | 'inspect' | 'verified' | 'extract' | 'compose' | 'package' | 'ready';
-export const PHASES: Phase[] = ['idle', 'use', 'inspect', 'verified', 'extract', 'compose', 'package', 'ready'];
-export const reached = (now: Phase, p: Phase) => PHASES.indexOf(now) >= PHASES.indexOf(p);
+export type Phase = 'idle' | 'use' | 'inspect' | 'finding' | 'produce' | 'compose' | 'ready';
+export const PHASES: Phase[] = ['idle', 'use', 'inspect', 'finding', 'produce', 'compose', 'ready'];
+export const phaseReached = (now: Phase, p: Phase) => PHASES.indexOf(now) >= PHASES.indexOf(p);
 export const isPhase = (v: unknown): v is Phase => typeof v === 'string' && (PHASES as string[]).includes(v);
 
-/** when each phase begins (ms from the start of the scene); `end` is when the scene settles */
-export type Beats = Record<Exclude<Phase, 'idle'>, number> & { end: number };
-export const BEATS: Record<Dest, Beats> = {
-  // the set is logged quickly; inspection and the portrait capture carry the scene
-  ios: { use: 700, inspect: 2300, verified: 3300, extract: 4300, compose: 6000, package: 7300, ready: 8600, end: 10000 },
-  // the glide over the gate takes a moment, so inspection waits for the landing
-  android: { use: 600, inspect: 2500, verified: 3400, extract: 4300, compose: 6000, package: 7200, ready: 8400, end: 9800 },
-  // the panel opens and fills field by field; two captures (viewport, then the panel itself)
-  chrome: { use: 600, inspect: 2600, verified: 3500, extract: 4400, compose: 6400, package: 7500, ready: 8700, end: 10100 },
-};
-/** MerchantLens lifts a second asset (its own panel → the promo tile) this long after the first capture */
-export const SECOND_CAPTURE_DELAY = 700;
-export const CAPTURE_MS = 1150;
+export interface Beat {
+  id: string;
+  phase: Phase;
+  at: number;
+}
 
-/** the process map under the theater: six positions, each pointing at the phase it seeks to */
-export const STEPS: { key: string; label: string; phase: Phase }[] = [
-  { key: 'use', label: 'Use', phase: 'use' },
-  { key: 'test', label: 'Test', phase: 'inspect' },
-  { key: 'verify', label: 'Verify', phase: 'verified' },
-  { key: 'capture', label: 'Capture', phase: 'extract' },
-  { key: 'package', label: 'Package', phase: 'package' },
-  { key: 'review', label: 'Review', phase: 'ready' },
-];
-export const stepIndex = (p: Phase) => {
-  let i = -1;
-  STEPS.forEach((s, k) => {
-    if (reached(p, s.phase)) i = k;
-  });
-  return i;
+/** each scenario's beats, in order; `end` is when it settles */
+export const SCENES: Record<Dest, { beats: Beat[]; end: number }> = {
+  // a quick tap, then the long part of an App Store release: three screens captured and art-directed
+  ios: {
+    beats: [
+      { id: 'idle', phase: 'idle', at: 0 },
+      { id: 'tap', phase: 'use', at: 700 },
+      { id: 'inspect', phase: 'inspect', at: 2100 },
+      { id: 'finding', phase: 'finding', at: 3200 },
+      { id: 'shot1', phase: 'produce', at: 4300 },
+      { id: 'shot2', phase: 'produce', at: 5150 },
+      { id: 'shot3', phase: 'produce', at: 6000 },
+      { id: 'compose', phase: 'compose', at: 6950 },
+      { id: 'ready', phase: 'ready', at: 8400 },
+    ],
+    end: 9800,
+  },
+  // gameplay carries the scene; the feature graphic is cropped, rendered and then art-directed
+  android: {
+    beats: [
+      { id: 'idle', phase: 'idle', at: 0 },
+      { id: 'lift', phase: 'use', at: 900 },
+      { id: 'inspect', phase: 'inspect', at: 2500 },
+      { id: 'finding', phase: 'finding', at: 3500 },
+      { id: 'crop', phase: 'produce', at: 4500 },
+      { id: 'render', phase: 'produce', at: 5300 },
+      { id: 'grade', phase: 'produce', at: 6200 },
+      { id: 'compose', phase: 'compose', at: 7100 },
+      { id: 'ready', phase: 'ready', at: 8500 },
+    ],
+    end: 10000,
+  },
+  // the panel opens and reads the page; the permission finding is the heart of an extension review
+  chrome: {
+    beats: [
+      { id: 'idle', phase: 'idle', at: 0 },
+      { id: 'open', phase: 'use', at: 700 },
+      { id: 'inspect', phase: 'inspect', at: 2600 },
+      { id: 'finding', phase: 'finding', at: 3600 },
+      { id: 'narrow', phase: 'finding', at: 4400 },
+      { id: 'screenshot', phase: 'produce', at: 5300 },
+      { id: 'tile', phase: 'produce', at: 6100 },
+      { id: 'compose', phase: 'compose', at: 7000 },
+      { id: 'ready', phase: 'ready', at: 8500 },
+    ],
+    end: 10000,
+  },
 };
+export const RENDER_MS = 760;
+export const beatIndex = (d: Dest, id: string) => SCENES[d].beats.findIndex((b) => b.id === id);
+export const beatOf = (d: Dest, id: string) => SCENES[d].beats[Math.max(0, beatIndex(d, id))];
+export const lastBeat = (d: Dest) => SCENES[d].beats[SCENES[d].beats.length - 1].id;
+
+/** readiness: what a release to this store actually needs, and when the scene settles each item */
+export type ItemState = 'pending' | 'working' | 'done' | 'owner';
+export interface Item {
+  key: string;
+  label: string;
+  /** the beat at which Xroga starts on it, and the beat at which it is done (or handed to the owner) */
+  starts: string;
+  settles: string;
+  owner?: boolean;
+  doneNote: string;
+}
+export const READINESS: Record<Dest, Item[]> = {
+  ios: [
+    { key: 'behavior', label: 'App behavior', starts: 'inspect', settles: 'finding', doneNote: 'Checked in preview' },
+    { key: 'shots', label: 'Screenshots', starts: 'shot1', settles: 'compose', doneNote: '3 art-directed, 6.9″' },
+    { key: 'meta', label: 'Listing text', starts: 'compose', settles: 'ready', doneNote: 'Drafted' },
+    { key: 'build', label: 'Build', starts: 'compose', settles: 'ready', doneNote: 'On your Expo account' },
+    { key: 'privacy', label: 'App Privacy', starts: 'ready', settles: 'ready', owner: true, doneNote: 'Your answers' },
+    { key: 'submit', label: 'Signing & submission', starts: 'ready', settles: 'ready', owner: true, doneNote: 'You submit' },
+  ],
+  android: [
+    { key: 'play', label: 'Gameplay check', starts: 'inspect', settles: 'finding', doneNote: 'Checked in preview' },
+    { key: 'graphic', label: 'Feature graphic', starts: 'crop', settles: 'compose', doneNote: '1024 × 500 composed' },
+    { key: 'listing', label: 'Store listing', starts: 'compose', settles: 'ready', doneNote: 'Drafted' },
+    { key: 'bundle', label: 'App bundle', starts: 'compose', settles: 'ready', doneNote: 'On your Expo account' },
+    { key: 'safety', label: 'Data safety', starts: 'ready', settles: 'ready', owner: true, doneNote: 'Your answers' },
+    { key: 'track', label: 'Testing track', starts: 'ready', settles: 'ready', owner: true, doneNote: 'You roll out' },
+  ],
+  chrome: [
+    { key: 'behavior', label: 'Extension behavior', starts: 'inspect', settles: 'finding', doneNote: 'Checked in preview' },
+    { key: 'perms', label: 'Permissions', starts: 'finding', settles: 'screenshot', doneNote: 'Narrowed to activeTab' },
+    { key: 'assets', label: 'Store images', starts: 'screenshot', settles: 'compose', doneNote: 'Screenshot + promo tile' },
+    { key: 'package', label: 'Package', starts: 'compose', settles: 'ready', doneNote: 'MV3 .zip checked' },
+    { key: 'privacy', label: 'Privacy practices', starts: 'ready', settles: 'ready', owner: true, doneNote: 'You certify' },
+    { key: 'submit', label: 'Submit for review', starts: 'ready', settles: 'ready', owner: true, doneNote: 'With your approval' },
+  ],
+};
+export function itemState(d: Dest, item: Item, beatId: string): ItemState {
+  const now = beatIndex(d, beatId);
+  if (now < beatIndex(d, item.starts)) return 'pending';
+  if (now < beatIndex(d, item.settles)) return 'working';
+  return item.owner ? 'owner' : 'done';
+}
 
 export const COPY = {
   eyebrow: 'Publish & distribute',
-  title: 'Build anywhere. Publish with Xroga.',
-  lede: 'From a working product to a release ready for review, in one workspace. App Store, Google Play and Chrome Web Store.',
-  navLabel: 'Publishing to',
-  origin: { existing: 'Bring an existing project', xroga: 'Built with Xroga' } as Record<Origin, string>,
-  cta: 'Prepare a release in Xroga',
+  titleA: 'Build anywhere.',
+  titleB: 'Publish with Xroga.',
+  lede: 'Xroga tests your app, produces the store assets, drafts the listing and prepares the package for each store. You approve what ships.',
+  cta: 'Prepare a release',
+  studio: 'Release Studio',
+  preview: 'Illustrative preview',
   replay: 'Replay',
-  note: 'Product walkthrough. No store accounts are connected and nothing is submitted or charged.',
+  note: 'Illustrative walkthrough with fictional products. No store account is connected here and nothing is submitted.',
 };
 
 export interface Story {
   store: StoreId;
   storeName: string;
-  purpose: string;
+  kind: string;
   product: string;
   maker: string;
-  tagline: string;
-  ask: string;
-  originNote: Record<Origin, string>;
-  /** what the visitor sees the product do, and the button that does it */
-  action: string;
-  /** the evidence Xroga writes once it has watched the action */
-  evidence: { title: string; line: string; meta: string };
-  /** what the captured region becomes in the store */
-  capture: { label: string; spec: string };
-  pkg: { name: string; type: string; state: string };
-  owner: { title: string; step: string; pending: string };
+  version: string;
+  /** the studio's single line of narration, phase by phase */
+  say: Record<Phase, string>;
+  finding: { kicker: string; title: string; detail: string };
+  owner: { title: string; steps: string[] };
 }
 
 export const STORY: Record<Dest, Story> = {
   ios: {
     store: 'appstore',
     storeName: 'App Store',
-    purpose: 'iPhone app',
+    kind: 'iPhone app',
     product: 'Arcset',
     maker: 'Arcset Labs',
-    tagline: 'Strength training, set by set',
-    ask: 'Publish my workout app.',
-    originNote: { existing: 'Existing project', xroga: 'Built with Xroga' },
-    action: 'Complete set',
-    evidence: { title: 'Action confirmed', line: 'Complete set logged set 3 and closed the ring at 3/3.', meta: 'tap target 48 pt · clear of home indicator' },
-    capture: { label: 'Screenshot 1', spec: '6.9" display · 1320 × 2868' },
-    pkg: { name: 'Arcset 1.0 (12)', type: 'iOS build', state: 'Prepared for signing' },
-    owner: { title: 'Connect your Apple Developer account', step: 'Signing, privacy answers and submission stay with you.', pending: 'App privacy answers drafted · you confirm' },
+    version: '1.0 (12)',
+    say: {
+      idle: 'Ready to test Arcset',
+      use: 'Logging set 3 in Arcset',
+      inspect: 'Checking what changed',
+      finding: 'App Store needs 6.9″ screenshots',
+      produce: 'Capturing and art-directing screens',
+      compose: 'Composing the App Store page',
+      ready: 'Waiting for your review',
+    },
+    finding: {
+      kicker: 'App Store requirement',
+      title: 'Screenshots for the 6.9″ display',
+      detail: '1320 × 2868 px. Captured from real app screens, captions set to match.',
+    },
+    owner: {
+      title: 'Ready for your review',
+      steps: ['Connect your Apple Developer account', 'Confirm the App Privacy answers', 'Sign and submit in App Store Connect'],
+    },
   },
   android: {
     store: 'googleplay',
     storeName: 'Google Play',
-    purpose: 'Android game',
+    kind: 'Android game',
     product: 'Ridgeline',
     maker: 'Ridgeline Studio',
-    tagline: 'Glide the ridges at dusk',
-    ask: 'Get my game on Google Play.',
-    originNote: { existing: 'Existing project', xroga: 'Built with Xroga' },
-    action: 'Jump',
-    evidence: { title: 'Control responds', line: 'Jump lifted the glider over the gate on the next frame.', meta: 'touch 64 dp · clear of gesture bar' },
-    capture: { label: 'Feature graphic', spec: '1024 × 500 · from the tested gameplay' },
-    pkg: { name: 'Ridgeline 1.0 (7)', type: 'Android App Bundle', state: 'Ready for a testing track' },
-    owner: { title: 'Open your Play Console', step: 'You upload the bundle and choose the track.', pending: 'Data safety answers drafted · you confirm' },
+    version: '1.0 (7)',
+    say: {
+      idle: 'Ready to test Ridgeline',
+      use: 'Playing: lift through the ring',
+      inspect: 'Checking the control response',
+      finding: 'Google Play needs a feature graphic',
+      produce: 'Composing the feature graphic',
+      compose: 'Drafting the Google Play listing',
+      ready: 'Waiting for your review',
+    },
+    finding: {
+      kicker: 'Google Play requirement',
+      title: 'A 1024 × 500 feature graphic',
+      detail: 'Key art clear of the edges. Composed from your own gameplay, not a screen grab.',
+    },
+    owner: {
+      title: 'Ready for your review',
+      steps: ['Answer the Data safety form', 'Upload the bundle in Play Console', 'Choose the testing track'],
+    },
   },
   chrome: {
     store: 'chromewebstore',
     storeName: 'Chrome Web Store',
-    purpose: 'Browser extension',
+    kind: 'Browser extension',
     product: 'MerchantLens',
     maker: 'MerchantLens',
-    tagline: 'Research products as you browse',
-    ask: 'Launch my extension.',
-    originNote: { existing: 'Existing project', xroga: 'Built with Xroga' },
-    action: 'Open MerchantLens',
-    evidence: { title: 'Panel populated', line: 'Read this product page and compared three prices, from this tab only.', meta: 'activeTab · no host permissions' },
-    capture: { label: 'Screenshot 1', spec: '1280 × 800 · plus promo tile 440 × 280' },
-    pkg: { name: 'MerchantLens 1.0', type: 'Extension package', state: 'Manifest V3 · permissions justified' },
-    owner: { title: 'Open your developer dashboard', step: 'You submit the package for Chrome Web Store review.', pending: 'Permission justification drafted · you confirm' },
+    version: '1.0.0',
+    say: {
+      idle: 'Ready to test MerchantLens',
+      use: 'Opening MerchantLens on a product page',
+      inspect: 'Checking what the extension reads',
+      finding: 'Host access is broader than needed',
+      produce: 'Rendering the store images',
+      compose: 'Assembling the submission package',
+      ready: 'Waiting for your approval',
+    },
+    finding: {
+      kicker: 'Chrome Web Store review',
+      title: 'Broad host access slows review',
+      detail: 'MerchantLens reads only the open tab after a click, so <all_urls> becomes activeTab.',
+    },
+    owner: {
+      title: 'Ready for your approval',
+      steps: ['Certify the privacy practices', 'Approve the submission', 'Google reviews it before it goes live'],
+    },
   },
 };
 
-export const RELEASE = {
-  xroga: 'Xroga',
-  service: 'Release preparation and store coordination',
-  price: 'Price shown before payment',
-  action: 'Review in Xroga',
-  owner: 'Owner action required',
-  illustrative: 'Illustrative',
-  evidenceChecked: 'Evidence checked',
-  prepared: 'Package prepared',
+/** product geometry, in the products' own pixels */
+export const NATURAL: Record<Dest, { w: number; h: number }> = {
+  ios: { w: 280, h: 600 },
+  android: { w: 880, h: 406 },
+  chrome: { w: 900, h: 552 },
 };
