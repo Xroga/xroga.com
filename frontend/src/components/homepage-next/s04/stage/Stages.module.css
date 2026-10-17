@@ -1,0 +1,1073 @@
+/* The three stage compositions. Section tokens (--pearl, --silver, --blue, --jade, --amber, …) come from S04.module.css.
+   App Store: three vertical objects. Google Play: two bands (gameplay → key art, then the listing).
+   Chrome Web Store: the browser dominant, the submission package beside it. */
+.objLabel {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--steel);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================================================================== the Xroga card */
+.xcard {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-height: 196px;
+  padding: 16px 18px 16px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(30, 40, 58, 0.92), rgba(17, 23, 35, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(236, 233, 226, 0.08),
+    inset 0 0 0 1px var(--hair-2),
+    0 24px 44px -30px rgba(0, 0, 0, 0.9);
+}
+.xKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9fb6d9;
+}
+.xKicker i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--steel);
+}
+.xcard[data-state='testing'] .xKicker i,
+.xcard[data-state='finding'] .xKicker i {
+  background: var(--blue);
+  box-shadow: 0 0 0 3px rgba(77, 134, 255, 0.22);
+}
+.xcard[data-state='owner'] {
+  box-shadow:
+    inset 0 1px 0 rgba(236, 233, 226, 0.08),
+    inset 0 0 0 1px rgba(210, 162, 101, 0.45),
+    0 24px 44px -30px rgba(0, 0, 0, 0.9);
+}
+.xcard[data-state='owner'] .xKicker {
+  color: var(--amber);
+}
+.xcard[data-state='owner'] .xKicker i {
+  background: var(--amber);
+}
+.xTitle {
+  font-size: 18px;
+  font-weight: 640;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--pearl);
+}
+.xDetail {
+  font-size: 14px;
+  line-height: 1.45;
+  color: #c3ccd7;
+}
+.xProgress {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--steel);
+}
+.xProgress::before {
+  content: '';
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+.xProgress[data-on] {
+  color: #b8cdf5;
+}
+.xSteps {
+  display: grid;
+  gap: 5px;
+  margin: 2px 0 6px;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.xSteps li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: baseline;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #d6dde6;
+  counter-increment: step;
+}
+.xSteps li::before {
+  content: counter(step);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+}
+.xCta {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 11px;
+  background: linear-gradient(180deg, #5a8fff, #3a72f2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 10px 24px -12px rgba(58, 114, 242, 0.9);
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+/* ================================================================== App Store */
+.ios {
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr) minmax(0, 290px);
+  align-items: start;
+  column-gap: 36px;
+}
+.iosLive,
+.iosStore {
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+}
+.iosStudio {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+}
+.shotHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+}
+.shotHead b {
+  font-size: 15px;
+  font-weight: 640;
+  color: var(--pearl);
+}
+.shotHead span {
+  font-size: 12.5px;
+  color: var(--steel);
+  font-variant-numeric: tabular-nums;
+}
+.shots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.shot {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  justify-items: center;
+  margin: 0;
+  height: 258px;
+  padding: 14px 12px 0;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 20px 34px -24px rgba(0, 0, 0, 0.9);
+}
+.shot[data-tone='teal'] {
+  background: linear-gradient(170deg, #1b4a44 0%, #0d201f 100%);
+}
+.shot[data-tone='indigo'] {
+  background: linear-gradient(170deg, #233a63 0%, #0f1a2e 100%);
+}
+.shot[data-tone='plum'] {
+  background: linear-gradient(170deg, #4a2a4c 0%, #1d1222 100%);
+}
+.shot figcaption {
+  min-height: 40px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  text-align: center;
+  color: #fff;
+  text-wrap: balance;
+}
+.shot[data-state='empty'] figcaption {
+  opacity: 0.4;
+}
+.shotDevice {
+  position: relative;
+  display: block;
+  width: min(100%, 112px);
+  aspect-ratio: 280 / 600;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 0 0 4px #0a0d12,
+    0 0 0 5px rgba(255, 255, 255, 0.16);
+}
+.shot[data-state='empty'] .shotDevice {
+  background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 6px, transparent 6px 12px);
+  box-shadow:
+    0 0 0 4px rgba(10, 13, 18, 0.6),
+    0 0 0 5px rgba(169, 200, 255, 0.3);
+}
+.shotSrc {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(6, 10, 16, 0.78);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  font-weight: 600;
+  color: #dbe6f3;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.shot[data-state='done'] .shotSrc {
+  opacity: 1;
+}
+
+/* the App Store page as it reads on iPhone (light, assembled around the screenshots) */
+.asp {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  width: 280px;
+  height: 600px;
+  padding: 0 16px;
+  overflow: hidden;
+  background: #fff;
+  color: #000;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  text-align: left;
+}
+.asp :is(b, small, span, em, i, dt, dd) {
+  font-style: normal;
+}
+.aspStatus {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 40px;
+  padding: 0 6px 0 12px;
+  font-size: 13px;
+  font-weight: 650;
+}
+.aspStatus i {
+  width: 22px;
+  height: 10px;
+  border-radius: 3px;
+  background: #000;
+}
+.aspBack {
+  margin-top: -6px;
+  font-size: 15px;
+  color: #0a7cff;
+}
+.aspHead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+.aspIcon {
+  display: block;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+.aspIcon svg {
+  display: block;
+}
+.aspTitle {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.aspTitle b {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.aspTitle small {
+  display: block;
+  font-size: 13px;
+  color: #6b6b70;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.aspGet {
+  justify-self: start;
+  margin-top: 6px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: #eef0f3;
+  color: #0a7cff;
+  font-size: 13px;
+  font-weight: 700;
+}
+.aspSkel {
+  display: block;
+}
+.aspSkel small {
+  display: inline-block;
+  transition:
+    color 360ms ease,
+    background-color 360ms ease;
+}
+.aspSkel:not([data-on]) small {
+  color: transparent;
+  background: #ececf0;
+  border-radius: 5px;
+}
+.aspFacts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: 10px 0;
+  border-top: 1px solid #ececf0;
+  border-bottom: 1px solid #ececf0;
+}
+.aspFacts div {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  border-left: 1px solid #ececf0;
+}
+.aspFacts div:first-child {
+  border-left: 0;
+}
+.aspFacts dt {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8e8e93;
+}
+.aspFacts dd {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #4a4a4f;
+}
+.aspShots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+.aspShot {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  height: 172px;
+  padding: 8px 5px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ececf0;
+  transition:
+    opacity 360ms ease calc(var(--i) * 90ms),
+    transform 460ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * 90ms);
+}
+.aspShot b {
+  font-size: 8.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  color: #fff;
+  opacity: 0;
+}
+.aspShotScreen {
+  display: block;
+  width: 58px;
+  border-radius: 9px 9px 0 0;
+  overflow: hidden;
+  opacity: 0;
+  box-shadow: 0 0 0 2px #0a0d12;
+}
+.aspShot[data-on] b,
+.aspShot[data-on] .aspShotScreen {
+  opacity: 1;
+}
+.aspShot[data-on][data-tone='teal'] {
+  background: linear-gradient(170deg, #1b4a44 0%, #0d201f 100%);
+}
+.aspShot[data-on][data-tone='indigo'] {
+  background: linear-gradient(170deg, #233a63 0%, #0f1a2e 100%);
+}
+.aspShot[data-on][data-tone='plum'] {
+  background: linear-gradient(170deg, #4a2a4c 0%, #1d1222 100%);
+}
+.aspNew,
+.aspPrivacy {
+  display: grid;
+  gap: 3px;
+}
+.aspNew b,
+.aspPrivacy b {
+  font-size: 16px;
+  font-weight: 700;
+}
+.aspNew small {
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: #3c3c43;
+}
+.aspPrivacy small {
+  font-size: 12.5px;
+  color: #8e8e93;
+}
+.aspPrivacy[data-ready] small {
+  color: #a35d07;
+}
+
+/* ================================================================== Google Play */
+.android {
+  display: grid;
+  grid-template-columns: minmax(0, 1.36fr) minmax(0, 1fr);
+  grid-template-areas:
+    'game composer'
+    'card listing';
+  align-items: start;
+  column-gap: 32px;
+  row-gap: 24px;
+}
+.anGame {
+  grid-area: game;
+  min-width: 0;
+}
+.anGame .objLabel,
+.anComposer .objLabel,
+.anListing .objLabel,
+.chBrowser .objLabel {
+  text-align: left;
+}
+.anComposer {
+  grid-area: composer;
+  min-width: 0;
+}
+.anCard {
+  grid-area: card;
+  min-width: 0;
+}
+.anListing {
+  grid-area: listing;
+  min-width: 0;
+}
+.crop {
+  position: absolute;
+  z-index: 4;
+  box-shadow:
+    0 0 0 1.5px rgba(222, 236, 255, 0.95),
+    0 0 0 2000px rgba(6, 4, 20, 0.45);
+  animation: stCrop 760ms cubic-bezier(0.65, 0, 0.25, 1) both;
+  pointer-events: none;
+}
+.crop[data-moving] {
+  animation: stCropFrame 800ms cubic-bezier(0.65, 0, 0.25, 1) both;
+}
+.cropCorners {
+  position: absolute;
+  inset: -5px;
+  --c: #ffffff;
+  background:
+    linear-gradient(var(--c), var(--c)) 0 0 / 26px 4px,
+    linear-gradient(var(--c), var(--c)) 0 0 / 4px 26px,
+    linear-gradient(var(--c), var(--c)) 100% 0 / 26px 4px,
+    linear-gradient(var(--c), var(--c)) 100% 0 / 4px 26px,
+    linear-gradient(var(--c), var(--c)) 0 100% / 26px 4px,
+    linear-gradient(var(--c), var(--c)) 0 100% / 4px 26px,
+    linear-gradient(var(--c), var(--c)) 100% 100% / 26px 4px,
+    linear-gradient(var(--c), var(--c)) 100% 100% / 4px 26px;
+  background-repeat: no-repeat;
+}
+.crop em {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(8, 6, 20, 0.78);
+  color: #fff;
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.cropScan {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.cropScan::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(120, 170, 255, 0) 0%, rgba(120, 170, 255, 0.14) 92%, rgba(210, 228, 255, 0.95) 99%, rgba(210, 228, 255, 0) 100%);
+  transform: translateY(-100%);
+  animation: stPass 760ms cubic-bezier(0.55, 0, 0.35, 1) both;
+}
+.feature {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 1024 / 500;
+  border-radius: 14px;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 7px, transparent 7px 14px),
+    #121827;
+  box-shadow:
+    inset 0 0 0 1px var(--hair-2),
+    0 30px 50px -30px rgba(0, 0, 0, 0.9);
+}
+.feature[data-state='empty'] {
+  box-shadow:
+    inset 0 0 0 1px rgba(169, 200, 255, 0.35),
+    0 30px 50px -30px rgba(0, 0, 0, 0.9);
+}
+.featureEmpty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 4px;
+  text-align: center;
+}
+.featureEmpty b {
+  font-size: 15px;
+  font-weight: 620;
+  color: #c3ccd7;
+}
+.featureEmpty small {
+  font-size: 12.5px;
+  color: var(--steel);
+}
+/* Google Play guidance: keep key art and text clear of the outer edges */
+.safe {
+  position: absolute;
+  inset: 9% 8%;
+  border: 1px dashed rgba(222, 236, 255, 0);
+  border-radius: 6px;
+  pointer-events: none;
+  transition: border-color 400ms ease;
+}
+.safe[data-on] {
+  border-color: rgba(222, 236, 255, 0.55);
+}
+.play {
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f7f8fa 0%, #eceff3 100%);
+  color: #1c1f24;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 1px rgba(160, 178, 198, 0.4),
+    0 30px 50px -30px rgba(0, 0, 0, 0.9);
+}
+.playHead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+.playHead svg {
+  border-radius: 12px;
+}
+.playHead > span {
+  display: grid;
+  gap: 1px;
+}
+.playHead b {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.playHead small {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #137a4f;
+}
+.playTags {
+  display: flex;
+  gap: 5px;
+  margin-top: 4px;
+}
+.playTags em {
+  padding: 3px 9px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px #cfd5dd;
+  font-size: 11.5px;
+  font-style: normal;
+  font-weight: 600;
+  color: #444b55;
+}
+.playRows {
+  display: grid;
+  margin: 0;
+}
+.playRows div {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid #dde2e8;
+  opacity: 0.35;
+  transition: opacity 360ms ease calc(var(--i) * 120ms);
+}
+.anListing[data-composed] .playRows div {
+  opacity: 1;
+}
+.playRows dt {
+  font-size: 12px;
+  font-weight: 650;
+  color: #5d6570;
+}
+.playRows dd {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #1c1f24;
+}
+.playRows div[data-owner] dd {
+  color: #8a5208;
+}
+.anListing:not([data-composed]) .playHead small,
+.anListing:not([data-composed]) .playTags {
+  opacity: 0.3;
+}
+
+/* ================================================================== Chrome Web Store */
+.chrome {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 372px);
+  align-items: start;
+  column-gap: 32px;
+}
+.chBrowser {
+  min-width: 0;
+}
+.passNat {
+  position: absolute;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: none;
+}
+.passNat::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(47, 111, 214, 0) 0%, rgba(47, 111, 214, 0.1) 92%, rgba(120, 170, 255, 0.95) 99%, rgba(120, 170, 255, 0) 100%);
+  transform: translateY(-100%);
+  animation: stPass 760ms cubic-bezier(0.55, 0, 0.35, 1) both;
+}
+.chPackage {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+}
+.manifest {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #0b1018;
+  box-shadow: inset 0 0 0 1px var(--hair-2);
+}
+.fileHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.fileHead b {
+  font: 600 12.5px/1.2 ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+  color: #dbe4ee;
+}
+.fileHead em {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(236, 233, 226, 0.06);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 650;
+  color: var(--steel);
+}
+.manifest[data-flagged] .fileHead em {
+  background: rgba(210, 162, 101, 0.14);
+  color: var(--amber);
+}
+.manifest[data-narrowed] .fileHead em {
+  background: rgba(122, 214, 188, 0.12);
+  color: var(--jade);
+}
+.code {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  font: 12px/1.6 ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+  color: #c3cfdf;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.code > span {
+  padding: 0 6px;
+  border-radius: 5px;
+  transition:
+    background-color 300ms ease,
+    color 300ms ease,
+    opacity 300ms ease;
+}
+.code i {
+  display: inline-block;
+  width: 18px;
+  font-style: normal;
+  color: #4f5b70;
+}
+.manifest[data-flagged] .code span[data-k='host'] {
+  background: rgba(210, 162, 101, 0.14);
+  color: #f0cf9e;
+}
+.manifest[data-narrowed] .code span[data-k='host'] {
+  background: rgba(208, 103, 92, 0.12);
+  color: #e19a91;
+  text-decoration: line-through;
+  text-decoration-color: rgba(225, 154, 145, 0.7);
+}
+.added {
+  color: var(--jade);
+  animation: stIn 400ms ease both;
+}
+.chBrowser {
+  display: grid;
+  gap: 0;
+}
+.assets {
+  display: grid;
+  grid-template-columns: auto minmax(0, 196px) minmax(0, 188px);
+  align-items: end;
+  justify-content: start;
+  gap: 16px;
+  margin-top: 18px;
+}
+.assetsHead {
+  align-self: center;
+  width: 110px;
+  font-size: 15px;
+  font-weight: 640;
+  color: var(--pearl);
+}
+.assets figure {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  min-width: 0;
+}
+.assets figcaption {
+  font-size: 11.5px;
+  color: var(--steel);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+.assetFrame {
+  position: relative;
+  display: block;
+  border-radius: 9px;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 6px, transparent 6px 12px),
+    #121827;
+  box-shadow: inset 0 0 0 1px rgba(169, 200, 255, 0.3);
+}
+.cwsShot .assetFrame {
+  aspect-ratio: 1280 / 800;
+}
+.cwsTile .assetFrame {
+  aspect-ratio: 440 / 280;
+}
+.assetFrame[data-state='done'],
+.assetFrame[data-state='rendering'] {
+  box-shadow: 0 0 0 1px var(--hair-2);
+}
+.tileArt {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: end;
+  width: 100%;
+  height: 100%;
+  padding-left: 8px;
+  background:
+    radial-gradient(100% 90% at 100% 100%, rgba(244, 184, 96, 0.35), transparent 60%),
+    linear-gradient(140deg, #1f4d8a 0%, #12305c 100%);
+  color: #fff;
+}
+.tileText {
+  display: grid;
+  align-self: center;
+  gap: 2px;
+}
+.tileText b {
+  font-size: 11px;
+  font-weight: 750;
+}
+.tileText small {
+  font-size: 8.5px;
+  line-height: 1.25;
+  color: #cddcf2;
+}
+.tilePanel {
+  display: block;
+  height: 88%;
+  border-radius: 5px 0 0 0;
+  overflow: hidden;
+  box-shadow: -6px 0 14px -8px rgba(0, 0, 0, 0.6);
+}
+.pkg {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: 14px;
+  background: rgba(236, 233, 226, 0.03);
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+.pkg li {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  grid-template-areas:
+    'dot name'
+    'dot note';
+  column-gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--hair);
+}
+.pkg li:first-child {
+  border-top: 0;
+}
+.pkg li::before {
+  content: '';
+  grid-area: dot;
+  align-self: start;
+  width: 8px;
+  height: 8px;
+  margin-top: 5px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--steel);
+}
+.pkg li[data-state='done']::before {
+  box-shadow: none;
+  background: var(--jade);
+}
+.pkg li[data-state='owner']::before {
+  box-shadow: none;
+  background: var(--amber);
+}
+.pkg b {
+  grid-area: name;
+  font: 600 13px/1.3 var(--font-inter), system-ui, sans-serif;
+  color: var(--pearl);
+}
+.pkg li:first-child b {
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+  font-size: 12.5px;
+}
+.pkg span {
+  grid-area: note;
+  font-size: 12.5px;
+  color: var(--silver);
+}
+.pkg li[data-state='owner'] span {
+  color: #e3bf8e;
+}
+
+@keyframes stIn {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes stPass {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes stCrop {
+  from {
+    box-shadow:
+      0 0 0 1.5px rgba(222, 236, 255, 0),
+      0 0 0 2000px rgba(6, 4, 20, 0);
+  }
+}
+/* the frame closes in from the full screen onto the chosen composition */
+@keyframes stCropFrame {
+  from {
+    clip-path: inset(-20% -24% -20% -24%);
+    opacity: 0.4;
+  }
+}
+
+/* ================================================================== laptop and tablet */
+@media (max-width: 1240px) {
+  .ios {
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr) minmax(0, 250px);
+    column-gap: 26px;
+  }
+  .shot {
+    height: 268px;
+  }
+  .chrome {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 330px);
+    column-gap: 24px;
+  }
+}
+@media (max-width: 1080px) {
+  .ios {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    grid-template-areas: 'live studio';
+    row-gap: 24px;
+  }
+  .iosLive {
+    grid-area: live;
+  }
+  .iosStudio {
+    grid-area: studio;
+  }
+  .iosStore {
+    display: none;
+  }
+  .android {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'game game'
+      'composer card'
+      'listing listing';
+  }
+  .chrome {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 22px;
+  }
+  .chPackage {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+  .pkg {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ================================================================== phones: one vertical story */
+@media (max-width: 760px) {
+  .ios,
+  .android {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: none;
+    row-gap: 18px;
+  }
+  .iosStore {
+    display: grid;
+  }
+  .iosLive,
+  .iosStudio,
+  .anGame,
+  .anComposer,
+  .anCard,
+  .anListing {
+    grid-area: auto;
+  }
+  .shots {
+    gap: 8px;
+  }
+  .shot {
+    height: 220px;
+    padding: 10px 6px 0;
+    border-radius: 14px;
+  }
+  .shot figcaption {
+    min-height: 34px;
+    font-size: 12px;
+  }
+  .shotDevice {
+    width: min(100%, 92px);
+    border-radius: 14px 14px 0 0;
+  }
+  .shotSrc {
+    display: none;
+  }
+  .xTitle {
+    font-size: 17px;
+  }
+  .xcard {
+    min-height: 0;
+  }
+  .chPackage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .assets {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .assetsHead {
+    grid-column: 1 / -1;
+    width: auto;
+  }
+  .playRows div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+  .crop em {
+    font-size: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crop,
+  .cropScan::after,
+  .passNat,
+  .added,
+  .aspShot,
+  .playRows div,
+  .shotSrc {
+    animation: none !important;
+    transition: none !important;
+  }
+  .cropScan,
+  .passNat {
+    display: none;
+  }
+}
