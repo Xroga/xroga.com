@@ -129,7 +129,7 @@ export function S04Publish({ loggedIn = false }: { loggedIn?: boolean }) {
           </div>
 
           {/* ---------------------------------------------------------------- readiness: what this release needs */}
-          <div className={s.rail}>
+          <div className={s.rail} data-controls={!reduced && sc.playing ? 2 : 1}>
             <ol className={s.items} aria-label={`What a ${S.storeName} release needs`}>
               {READINESS[dest].map((it) => {
                 const st = itemState(dest, it, beat);
@@ -146,6 +146,14 @@ export function S04Publish({ loggedIn = false }: { loggedIn?: boolean }) {
                 );
               })}
             </ol>
+            {!reduced && sc.playing && (
+              <button type="button" className={s.replay} onClick={sc.togglePause} aria-pressed={sc.paused} aria-label={sc.paused ? 'Play the walkthrough' : 'Pause the walkthrough'}>
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  {sc.paused ? <path d="M5 3.5v9l7-4.5z" /> : <path d="M5.5 3.5v9M10.5 3.5v9" />}
+                </svg>
+                <span>{sc.paused ? 'Play' : 'Pause'}</span>
+              </button>
+            )}
             {!reduced && (
               <button type="button" className={s.replay} onClick={sc.replay} aria-label={`${COPY.replay} the ${S.storeName} walkthrough`}>
                 <svg viewBox="0 0 16 16" aria-hidden="true">

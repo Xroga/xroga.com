@@ -13,6 +13,20 @@ import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type 
 import type { Phase } from '../publish';
 import k from './kit.module.css';
 
+/** the window's height (900 before mount): devices size themselves so a whole scene fits one desktop screen */
+export function useViewportHeight() {
+  const [h, setH] = useState(900);
+  useEffect(() => {
+    const on = () => setH(window.innerHeight);
+    on();
+    window.addEventListener('resize', on);
+    return () => window.removeEventListener('resize', on);
+  }, []);
+  return h;
+}
+const clamp = (min: number, v: number, max: number) => Math.max(min, Math.min(max, v));
+export { clamp };
+
 export function useWidth(ref: RefObject<HTMLElement | null>, guess: number) {
   const [w, setW] = useState(guess);
   useLayoutEffect(() => {

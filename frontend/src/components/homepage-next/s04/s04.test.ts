@@ -14,7 +14,7 @@ const sources = walk(dir)
 const src = (name: string) => sources.find(([f]) => f.replace(/\\/g, '/') === name)![1];
 const strings = JSON.stringify({ COPY: { ...COPY, note: '' }, STORY, READINESS });
 
-test('each store has its own scene: beats in phase order, within a 9 to 11 second budget, all different', () => {
+test('each store has its own scene: beats in phase order, within a calm 11.5 to 14.5 second budget, all different', () => {
   const shapes = new Set<string>();
   for (const d of DESTS) {
     const { beats, end } = SCENES[d];
@@ -26,7 +26,7 @@ test('each store has its own scene: beats in phase order, within a 9 to 11 secon
     }
     for (const p of PHASES) assert.ok(beats.some((b) => b.phase === p), `${d} visits ${p}`);
     assert.equal(lastBeat(d), 'ready');
-    assert.ok(end >= 9000 && end <= 11000, `${d} ends at ${end}`);
+    assert.ok(end >= 11500 && end <= 14500, `${d} ends at ${end}`);
     shapes.add(beats.map((b) => `${b.id}@${b.at}`).join());
   }
   assert.equal(shapes.size, DESTS.length);
@@ -95,11 +95,41 @@ test('every store ends on a named release handoff: what Xroga prepared, what the
     assert.match(H.next, /review/i, `${d} names the store's own review`);
     assert.match(STORY[d].intro.title, /^Launch your /);
   }
-  assert.match(STORY.chrome.handoff.yours.join(' '), /developer dashboard/i, 'first listing is created in the dashboard (Chrome Web Store API docs)');
+  // the first listing is completed in the dashboard (Chrome Web Store API docs)
+  assert.match(STORY.chrome.handoff.yours.join(' '), /listing and privacy tabs/i);
+  assert.match(src('stage/Handoff.tsx'), /Chrome developer dashboard/);
+  for (const d of DESTS) assert.match(STORY[d].handoff.headline, new RegExp(`^${STORY[d].product} is ready for your ${STORY[d].storeName} review$`));
   assert.match(src('stage/Handoff.tsx'), /<Link href=\{href\}/);
   assert.match(src('stage/StageAndroid.tsx'), /not published/);
   assert.match(src('stage/StageChrome.tsx'), /not submitted/);
   assert.match(src('stage/StageChrome.tsx'), /<details/, 'technical detail is on request');
+});
+
+test('the work panel says what Xroga is accomplishing; tasks settle with the scene and specs stay quiet metadata', () => {
+  for (const d of DESTS) {
+    const W = STORY[d].work;
+    assert.match(W.title, new RegExp(`^Preparing your ${STORY[d].storeName}`));
+    assert.equal(W.tasks.length, 3, d);
+    for (const t of W.tasks) {
+      assert.ok(beatIndex(d, t.from) >= 0 && beatIndex(d, t.to) > beatIndex(d, t.from), `${d}: ${t.label} spans real beats`);
+      assert.ok(beatIndex(d, t.to) <= beatIndex(d, 'ready'), `${d}: ${t.label} settles by the handoff`);
+    }
+    assert.ok(W.spec.length > 0 && W.spec.length < 80, `${d} spec stays short`);
+  }
+  assert.equal(STORY.ios.work.title, 'Preparing your App Store presentation');
+  const card = src('stage/Xcard.tsx');
+  assert.match(card, /className=\{s\.tasks\}/);
+  assert.match(card, /className=\{s\.spec\}/);
+});
+
+test('the visitor can pause and resume the walkthrough', () => {
+  const main = src('S04Publish.tsx');
+  assert.match(main, /aria-pressed=\{sc\.paused\}/);
+  assert.match(main, /Pause the walkthrough/);
+  assert.match(main, /Play the walkthrough/);
+  const clock = src('useScene.ts');
+  assert.match(clock, /const togglePause = /);
+  assert.match(clock, /c\.playing && !c\.paused/, 'leaving the viewport never overrides a visitor pause');
 });
 
 test('store marks stay out until brand approval is recorded; no generic icon stands in for them', () => {
