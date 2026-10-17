@@ -5,7 +5,8 @@
  *  A (idle → inspect)   the browser leads; beside it, the Chrome Web Store listing in outline (the destination first);
  *  B (finding → produce) a plain-language access check under the browser (technical detail on request), while the
  *                         store images render from the extension itself;
- *  C (compose → ready)   the browser steps back and the Chrome Web Store listing preview leads, with the handoff.
+ *  C (compose → ready)   the browser steps back (Xroga's work list under it) and the Chrome Web Store listing
+ *                         preview leads, then the handoff spans the stage.
  * The extension's own action: the toolbar button docks its side panel, the page reflows and the panel fills.
  */
 import { useRef } from 'react';
@@ -58,6 +59,11 @@ export function StageChrome({ beat, phase, playing, acted, act, href }: { beat: 
             <small>Illustrative preview: shown as a recommendation. Nothing in your package changes without you.</small>
           </details>
         </div>
+        {layout === 'c' && phase !== 'ready' && (
+          <div className={s.chCard}>
+            <Xcard dest="chrome" journey phase={phase} beat={beat} href={href} />
+          </div>
+        )}
       </div>
 
       <div className={s.chRight}>
@@ -94,7 +100,7 @@ export function StageChrome({ beat, phase, playing, acted, act, href }: { beat: 
             <CwsListing />
           </div>
         </div>
-        {phase !== 'ready' && (
+        {layout !== 'c' && (
           <div className={s.chCard}>
             <Xcard dest="chrome" journey phase={phase} beat={beat} href={href} />
           </div>
@@ -130,9 +136,10 @@ function PromoTile() {
 function CwsListing({ ghost = false }: { ghost?: boolean }) {
   return (
     <div className={s.cws} data-ghost={ghost || undefined}>
-      <div className={s.cwsBar} aria-hidden="true">
-        <b>Chrome Web Store</b>
-        <span>Search extensions</span>
+      <div className={s.cwsBar}>
+        <b aria-hidden="true">Chrome Web Store</b>
+        <span aria-hidden="true">Search extensions</span>
+        <em className={s.cwsAdd}>Preview · not submitted</em>
       </div>
       <header className={s.cwsHead}>
         <LensIcon size={44} />
@@ -142,7 +149,6 @@ function CwsListing({ ghost = false }: { ghost?: boolean }) {
             merchantlens.example · Shopping · <em>No ratings yet</em>
           </small>
         </span>
-        <span className={s.cwsAdd}>Preview · not submitted</span>
       </header>
       <div className={s.cwsMedia}>
         <div className={s.cwsMain}>

@@ -30,8 +30,10 @@ export function StageAndroid({ beat, phase, playing, acted, act, href }: { beat:
   const at = (id: string) => now >= beatIndex('android', id);
   const layout = at('listing') ? 'c' : at('finding') ? 'b' : 'a';
   const shots = !at('shots') ? 'empty' : beat === 'shots' && playing ? 'rendering' : 'done';
+  // short screens: the finished handoff spans the stage under the phone and the listing, so all of it fits one screen
+  const wideHandoff = phase === 'ready' && vh < 860;
   return (
-    <div className={s.android} data-layout={layout}>
+    <div className={s.android} data-layout={layout} data-wide={wideHandoff || undefined}>
       <div className={s.anPhone}>
         <span className={s.objLabel}>Your Android app · Fernway</span>
         <Device natural={NATURAL.android} maxH={clamp(340, vh - 420, 486)} kind="android" boxRef={box} overlay={<Inspector box={box} phase={phase} cause={['btn']} effect={['map']} tick={acted} round={20} />}>
@@ -82,10 +84,17 @@ export function StageAndroid({ beat, phase, playing, acted, act, href }: { beat:
             <PlayListing />
           </div>
         </div>
-        <div className={s.anCard}>
-          <Xcard dest="android" journey phase={phase} beat={beat} href={href} />
-        </div>
+        {!wideHandoff && (
+          <div className={s.anCard}>
+            <Xcard dest="android" journey phase={phase} beat={beat} href={href} />
+          </div>
+        )}
       </div>
+      {wideHandoff && (
+        <div className={s.anHandoff}>
+          <Xcard dest="android" phase={phase} beat={beat} href={href} />
+        </div>
+      )}
     </div>
   );
 }

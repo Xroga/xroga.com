@@ -132,6 +132,19 @@ test('the visitor can pause and resume the walkthrough', () => {
   assert.match(clock, /c\.playing && !c\.paused/, 'leaving the viewport never overrides a visitor pause');
 });
 
+test('frame cost: the render pass and stage changes never animate layout or repaint product copies per frame', () => {
+  const kit = src('stage/kit.module.css');
+  // the reveal is a transform wipe and the scan line moves with transform (measured: clip-path and top repainted each frame)
+  assert.doesNotMatch(kit, /clip-path:\s*inset\(0 0 100% 0\)/);
+  assert.match(kit, /@keyframes kitWipe \{/);
+  const edge = kit.slice(kit.indexOf('@keyframes kitEdge'), kit.indexOf('@keyframes kitEdge') + 220);
+  assert.doesNotMatch(edge, /\btop:/, 'the scan line moves with transform, not top');
+  const stages = src('stage/Stages.module.css');
+  // animated track widths made every scaled product copy re-measure, re-render and re-raster (measured ~1 s GPU raster)
+  assert.doesNotMatch(stages, /transition:\s*grid-template-columns/);
+  assert.match(stages, /\.shotDevice \{[^}]*contain: layout paint;/);
+});
+
 test('store marks stay out until brand approval is recorded; no generic icon stands in for them', () => {
   assert.equal(STORE_MARKS_CLEARED, false);
   const mark = src('StoreMark.tsx');

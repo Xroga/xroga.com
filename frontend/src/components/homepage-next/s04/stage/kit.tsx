@@ -184,7 +184,13 @@ export function Render({ state, delay = 0, children, className }: { state: 'empt
   }, [mounted, state]);
   return (
     <span className={`${k.render} ${className ?? ''}`} data-state={state} style={{ ['--delay' as string]: `${delay}ms` }}>
-      {mounted ? children : <span />}
+      {mounted ? (
+        <span className={k.wipe}>
+          <span className={k.wipeIn}>{children}</span>
+        </span>
+      ) : (
+        <span />
+      )}
       {state === 'rendering' && <i className={k.renderEdge} />}
     </span>
   );
