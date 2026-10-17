@@ -40,7 +40,7 @@ export function StageIOS({ beat, phase, playing, acted, act, href }: { beat: str
   return (
     <div className={s.ios}>
       <div className={s.iosLive}>
-        <span className={s.objLabel}>Your app</span>
+        <span className={s.objLabel}>Your iPhone app · Arcset</span>
         <Device
           natural={NATURAL.ios}
           maxH={452}

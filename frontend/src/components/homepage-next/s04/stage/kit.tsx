@@ -38,7 +38,7 @@ export function Device({
 }: {
   natural: { w: number; h: number };
   maxH: number;
-  kind: 'phone' | 'landscape' | 'browser';
+  kind: 'phone' | 'android' | 'landscape' | 'browser';
   children: ReactNode;
   boxRef?: RefObject<HTMLDivElement>;
   overlay?: ReactNode;
@@ -46,7 +46,7 @@ export function Device({
 }) {
   const host = useRef<HTMLDivElement>(null);
   const w = useWidth(host, natural.w);
-  const frame = kind === 'phone' ? 18 : kind === 'landscape' ? 20 : 2;
+  const frame = kind === 'phone' ? 18 : kind === 'android' ? 16 : kind === 'landscape' ? 20 : 2;
   const scale = Math.max(0.2, Math.min((w - frame) / natural.w, (maxH - frame) / natural.h, 1.25));
   return (
     <div ref={host} className={`${k.host} ${className ?? ''}`}>

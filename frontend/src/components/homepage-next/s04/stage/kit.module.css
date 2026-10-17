@@ -20,6 +20,17 @@
     0 60px 80px -40px rgba(0, 0, 0, 0.95),
     0 30px 50px -36px rgba(40, 80, 160, 0.35);
 }
+/* a Pixel-class Android phone: flat sides, even slim bezel, softer corners than the iPhone */
+.device[data-kind='android'] {
+  border-radius: 34px;
+  box-shadow:
+    0 0 0 7px #0f1211,
+    0 0 0 8px #4a5250,
+    0 0 0 9px #0b0d0c,
+    0 1px 0 9px rgba(255, 255, 255, 0.08),
+    0 60px 80px -40px rgba(0, 0, 0, 0.95),
+    0 30px 50px -36px rgba(60, 160, 100, 0.3);
+}
 .device[data-kind='landscape'] {
   border-radius: 34px;
   box-shadow:
@@ -45,6 +56,9 @@
 }
 .screen[data-kind='phone'] {
   border-radius: 38px;
+}
+.screen[data-kind='android'] {
+  border-radius: 28px;
 }
 .screen[data-kind='landscape'] {
   border-radius: 26px;

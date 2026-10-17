@@ -1,103 +1,174 @@
 'use client';
 
 /**
- * Google Play · Ridgeline. Two bands: gameplay becoming key art (top), and the listing taking shape (bottom).
- * - use: Lift; the glider climbs through the ring, the ring bursts, score, combo and altitude rise;
- * - inspect: Lift is bracketed, the glider's pass through the ring is inspected;
- * - finding: Google Play needs a 1024 × 500 feature graphic;
- * - produce: a crop frame chooses the composition on the game itself (crop), that region is scanned into the composer
- *   (render) and then art-directed: colour grade, vignette and the title lockup (grade);
- * - compose: the Google Play listing and the bundle; ready: the owner's steps.
+ * Google Play · Fernway (an Android trail-map app). The phone holds the left; the right evolves with the release:
+ *  A (idle → inspect)   the destination first: the Google Play listing in outline, waiting to be filled;
+ *  B (finding → produce) the release workbench: what Xroga prepares, and the feature graphic composed layer by layer
+ *                         from the app's own map and Explore screen, then phone screenshots rendered from the app;
+ *  C (compose → ready)   the Google Play listing preview built from those assets, and the release handoff.
+ * The app's own action: Save offline downloads the trail map (progress, badge, snackbar).
  */
 import { useRef } from 'react';
-import { Ridgeline, RidgelineIcon, RidgelineKeyArt } from '../apps/Ridgeline';
-import { NATURAL, beatIndex, phaseReached, type Phase } from '../publish';
+import { Fernway, FernwayFeature, FernwayIcon, type FernwayScreen } from '../apps/Fernway';
+import { NATURAL, beatIndex, type Phase } from '../publish';
 import { Device, Fill, Inspector, Render } from './kit';
 import { Xcard } from './Xcard';
 import s from './Stages.module.css';
 
-const ART = { x: 0, y: 0, w: 1024, h: 500 };
-// the key-art crop, in the game's own pixels (the same view RidgelineKeyArt draws)
-const CROP = { x: 140, y: 60, w: 600, h: 293 };
+const FEATURE = { x: 0, y: 0, w: 1024, h: 500 };
+const SCREEN = { x: 0, y: 0, w: 300, h: 640 };
+const SHOTS: { screen: FernwayScreen; caption: string }[] = [
+  { screen: 'explore', caption: 'Find trails near you' },
+  { screen: 'detail', caption: 'Know the climb before you go' },
+  { screen: 'offline', caption: 'Maps that work offline' },
+];
 
 export function StageAndroid({ beat, phase, playing, acted, act, href }: { beat: string; phase: Phase; playing: boolean; acted: boolean; act: () => void; href: string }) {
   const box = useRef<HTMLDivElement>(null);
-  const at = (id: string) => beatIndex('android', beat) >= beatIndex('android', id);
-  const rendering = beat === 'render' && playing;
-  const art = !at('render') ? 'empty' : rendering ? 'rendering' : 'done';
-  const graded = at('grade');
-  const composed = phaseReached(phase, 'compose');
-  const cropping = phase === 'produce' && !composed;
+  const now = beatIndex('android', beat);
+  const at = (id: string) => now >= beatIndex('android', id);
+  const layout = at('listing') ? 'c' : at('finding') ? 'b' : 'a';
+  const shots = !at('shots') ? 'empty' : beat === 'shots' && playing ? 'rendering' : 'done';
+  const prep: { label: string; done: boolean; working: boolean }[] = [
+    { label: 'App tested in preview', done: at('finding'), working: false },
+    { label: 'Feature graphic', done: at('shots'), working: beat === 'visuals' },
+    { label: 'Phone screenshots', done: at('listing'), working: beat === 'shots' },
+    { label: 'Listing text', done: at('listing'), working: false },
+    { label: 'Android build on your Expo account', done: at('listing'), working: false },
+  ];
   return (
-    <div className={s.android}>
-      <div className={s.anGame}>
-        <span className={s.objLabel}>Your game · live preview</span>
-        <Device
-          natural={NATURAL.android}
-          maxH={300}
-          kind="landscape"
-          boxRef={box}
-          overlay={<Inspector box={box} phase={phase} cause={['btn']} effect={['flight']} tick={acted} round={44} />}
-        >
-          <Ridgeline lifted={acted} live onAction={act} />
-          {cropping && (
-            <span className={s.crop} data-moving={(beat === 'crop' && playing) || undefined} style={{ left: CROP.x, top: CROP.y, width: CROP.w, height: CROP.h }}>
-              <i className={s.cropCorners} />
-              <em>1024 × 500</em>
-              {rendering && <i className={s.cropScan} />}
-            </span>
-          )}
+    <div className={s.android} data-layout={layout}>
+      <div className={s.anPhone}>
+        <span className={s.objLabel}>Your Android app · Fernway</span>
+        <Device natural={NATURAL.android} maxH={486} kind="android" boxRef={box} overlay={<Inspector box={box} phase={phase} cause={['btn']} effect={['map']} tick={acted} round={20} />}>
+          <Fernway saved={acted} live onAction={act} />
         </Device>
       </div>
 
-      <div className={s.anComposer}>
-        <span className={s.objLabel}>Feature graphic · 1024 × 500</span>
-        <figure className={s.feature} data-state={art} data-graded={graded || undefined}>
-          <Render state={art}>
-            <Fill region={ART} guess={520}>
-              <RidgelineKeyArt graded={graded} />
+      <div className={s.anRight}>
+        <div className={s.anMain}>
+          {/* A: the destination, in outline */}
+          <div className={s.anPanel} data-on={layout === 'a' || undefined} aria-hidden={layout !== 'a' || undefined}>
+            <span className={s.objLabel}>Google Play listing · prepared by Xroga</span>
+            <PlayListing ghost />
+          </div>
+
+          {/* B: the release workbench */}
+          <div className={s.anPanel} data-on={layout === 'b' || undefined} aria-hidden={layout !== 'b' || undefined}>
+            <span className={s.objLabel}>Preparing your Google Play release</span>
+            <div className={s.bench}>
+              <ul className={s.prep}>
+                {prep.map((p) => (
+                  <li key={p.label} data-state={p.done ? 'done' : p.working ? 'working' : 'pending'}>
+                    <i aria-hidden="true" />
+                    {p.label}
+                  </li>
+                ))}
+                <li data-state="owner">
+                  <i aria-hidden="true" />
+                  Data safety and release track: yours
+                </li>
+              </ul>
+              <div className={s.artboard}>
+                <figure className={s.fg}>
+                  <Fill region={FEATURE} guess={420}>
+                    <FernwayFeature step={at('visuals') ? 4 : 0} />
+                  </Fill>
+                  <figcaption>
+                    <b>Feature graphic</b> · 1024 × 500 · composed from your app’s map and Explore screen
+                  </figcaption>
+                </figure>
+                <div className={s.fgShots}>
+                  {SHOTS.map((x) => (
+                    <span key={x.screen} className={s.fgShot}>
+                      <Render state={shots}>
+                        <Fill region={SCREEN} guess={60}>
+                          <Fernway screen={x.screen} saved />
+                        </Fill>
+                      </Render>
+                    </span>
+                  ))}
+                  <small>Phone screenshots from the tested app</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* C: the Google Play listing preview */}
+          <div className={s.anPanel} data-on={layout === 'c' || undefined} aria-hidden={layout !== 'c' || undefined}>
+            <span className={s.objLabel}>Google Play listing · preview, not published</span>
+            <PlayListing />
+          </div>
+        </div>
+        <div className={s.anCard}>
+          <Xcard dest="android" journey phase={phase} href={href} progress={beat === 'visuals' ? 'Composing the feature graphic' : beat === 'shots' ? 'Rendering phone screenshots' : beat === 'listing' ? 'Drafting the listing text' : undefined} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** a Google Play listing as it would read, built from the prepared assets (or in outline before they exist) */
+function PlayListing({ ghost = false }: { ghost?: boolean }) {
+  return (
+    <div className={s.play} data-ghost={ghost || undefined}>
+      <div className={s.playLeft}>
+        <span className={s.playHero}>
+          {ghost ? (
+            <em>Feature graphic</em>
+          ) : (
+            <Fill region={FEATURE} guess={360}>
+              <FernwayFeature />
             </Fill>
-          </Render>
-          {/* Google Play's guidance: keep key art and text clear of the edges */}
-          <span className={s.safe} data-on={(phase === 'produce' || (phase === 'finding' && at('finding'))) || undefined} aria-hidden="true" />
-          {art === 'empty' && (
-            <span className={s.featureEmpty}>
-              <b>Waiting for key art</b>
-              <small>Composed from gameplay, not a screenshot</small>
-            </span>
           )}
-        </figure>
+        </span>
+        <header className={s.playHead}>
+          <FernwayIcon size={56} />
+          <span>
+            <b>Fernway</b>
+            <small>Fernway Labs</small>
+          </span>
+        </header>
+        <dl className={s.playMeta}>
+          <div>
+            <dt>New</dt>
+            <dd>No reviews yet</dd>
+          </div>
+          <div>
+            <dt>Everyone</dt>
+            <dd>Content rating</dd>
+          </div>
+          <div>
+            <dt>Free</dt>
+            <dd>Maps & navigation</dd>
+          </div>
+        </dl>
+        <span className={s.playInstall}>Preview · not on Google Play yet</span>
       </div>
-
-      <div className={s.anCard}>
-        <Xcard dest="android" phase={phase} href={href} progress={phase === 'produce' ? (beat === 'crop' ? 'Choosing the frame' : beat === 'render' ? 'Rendering from gameplay' : 'Colour grade and title') : undefined} />
-      </div>
-
-      <div className={s.anListing} data-composed={composed || undefined}>
-        <span className={s.objLabel}>Google Play listing · draft</span>
-        <div className={s.play}>
-          <header className={s.playHead}>
-            <RidgelineIcon size={52} />
-            <span>
-              <b>Ridgeline</b>
-              <small>Ridgeline Studio</small>
-              <span className={s.playTags}>
-                <em>Arcade</em>
-                <em>Offline</em>
-                <em>No ads</em>
-              </span>
+      <div className={s.playRight}>
+        <div className={s.playShots}>
+          {SHOTS.map((x) => (
+            <span key={x.screen} className={s.playShot}>
+              {ghost ? (
+                <em />
+              ) : (
+                <>
+                  <Fill region={SCREEN} guess={96}>
+                    <Fernway screen={x.screen} saved />
+                  </Fill>
+                  <small>{x.caption}</small>
+                </>
+              )}
             </span>
-          </header>
-          <dl className={s.playRows}>
-            <div style={{ ['--i' as string]: 0 }}>
-              <dt>App bundle</dt>
-              <dd>ridgeline-1.0.7.aab · built on your Expo account</dd>
-            </div>
-            <div style={{ ['--i' as string]: 1 }} data-owner="">
-              <dt>Data safety</dt>
-              <dd>Drafted from the code · you answer the form</dd>
-            </div>
-          </dl>
+          ))}
+        </div>
+        <div className={s.playAbout}>
+          <b>About this app</b>
+          <span>{ghost ? ' ' : 'Trail maps that work without signal. Save a route, see the climb and keep your place offline.'}</span>
+        </div>
+        <div className={s.playSafety}>
+          <b>Data safety</b>
+          <span>{ghost ? ' ' : 'Drafted from the app · you confirm in Play Console'}</span>
         </div>
       </div>
     </div>

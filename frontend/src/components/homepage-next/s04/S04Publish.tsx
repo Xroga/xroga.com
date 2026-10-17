@@ -105,9 +105,7 @@ export function S04Publish({ loggedIn = false }: { loggedIn?: boolean }) {
                   <StoreMark id={STORY[d].store} />
                   <span className={s.tabText}>
                     <b>{STORY[d].storeName}</b>
-                    <small>
-                      {STORY[d].kind} · {STORY[d].product}
-                    </small>
+                    <small>{STORY[d].kind}</small>
                   </span>
                 </button>
               ))}
@@ -119,6 +117,12 @@ export function S04Publish({ loggedIn = false }: { loggedIn?: boolean }) {
           </div>
 
           <div id="s04-stage" role="tabpanel" aria-labelledby={`s04-tab-${dest}`} className={s.stage}>
+            {/* the outcome first: what this destination is for, in plain language */}
+            <div className={s.intro} key={`intro-${dest}`}>
+              <p>
+                <b>{S.intro.title}</b> {S.intro.line}
+              </p>
+            </div>
             {dest === 'ios' && <StageIOS key="ios" {...stage} />}
             {dest === 'android' && <StageAndroid key="android" {...stage} />}
             {dest === 'chrome' && <StageChrome key="chrome" {...stage} />}

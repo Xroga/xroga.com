@@ -312,8 +312,36 @@
 }
 .stage {
   position: relative;
-  padding: 24px 28px 28px;
+  padding: 18px 28px 28px;
   animation: s04Swap 420ms var(--ease) both;
+}
+.intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 24px;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--hair);
+}
+.intro p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--silver);
+}
+.intro b {
+  font-size: 20px;
+  font-weight: 640;
+  letter-spacing: -0.015em;
+  color: var(--pearl);
+}
+.intro em {
+  font-size: 13px;
+  font-style: normal;
+  color: var(--steel);
+  white-space: nowrap;
 }
 
 /* ------------------------------------------------------------------ readiness */
@@ -536,7 +564,17 @@
     display: none;
   }
   .stage {
-    padding: 18px 14px 20px;
+    padding: 16px 14px 20px;
+  }
+  .intro b {
+    display: block;
+    font-size: 18px;
+  }
+  .intro p {
+    font-size: 14.5px;
+  }
+  .intro em {
+    white-space: normal;
   }
   .rail {
     grid-template-columns: minmax(0, 1fr);

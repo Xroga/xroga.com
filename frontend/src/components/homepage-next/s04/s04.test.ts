@@ -50,12 +50,14 @@ test('readiness: every item settles in order and owner items stay with the owner
 
 test('the three stages are different compositions with their own products', () => {
   assert.match(src('stage/StageIOS.tsx'), /kind="phone"/);
-  assert.match(src('stage/StageAndroid.tsx'), /kind="landscape"/);
+  assert.match(src('stage/StageAndroid.tsx'), /kind="android"/);
   assert.match(src('stage/StageChrome.tsx'), /kind="browser"/);
   assert.match(src('stage/StageIOS.tsx'), /AppStorePage/);
-  assert.match(src('stage/StageAndroid.tsx'), /RidgelineKeyArt/);
-  assert.match(src('stage/StageChrome.tsx'), /manifest\.json/);
-  assert.notEqual(NATURAL.ios.w / NATURAL.ios.h < 1, NATURAL.android.w / NATURAL.android.h < 1, 'portrait vs landscape');
+  assert.match(src('stage/StageAndroid.tsx'), /FernwayFeature/);
+  assert.match(src('stage/StageAndroid.tsx'), /PlayListing/);
+  assert.match(src('stage/StageChrome.tsx'), /CwsListing/);
+  assert.match(src('stage/StageChrome.tsx'), /What MerchantLens can access/);
+  assert.ok(NATURAL.chrome.w > NATURAL.chrome.h, 'the browser is landscape');
   // assets are rendered from the product itself (a scan pass), not flown across the page
   for (const f of ['stage/StageIOS.tsx', 'stage/StageAndroid.tsx', 'stage/StageChrome.tsx']) {
     assert.match(src(f), /<Render /, `${f} renders its assets`);
@@ -67,7 +69,7 @@ test('copy follows the brief: headline, one action, no em or en dashes', () => {
   assert.equal(`${COPY.titleA} ${COPY.titleB}`, 'Build anywhere. Publish with Xroga.');
   assert.equal(COPY.cta, 'Prepare a release');
   assert.deepEqual(DESTS.map((d) => STORY[d].storeName), ['App Store', 'Google Play', 'Chrome Web Store']);
-  assert.deepEqual(DESTS.map((d) => STORY[d].product), ['Arcset', 'Ridgeline', 'MerchantLens']);
+  assert.deepEqual(DESTS.map((d) => STORY[d].product), ['Arcset', 'Fernway', 'MerchantLens']);
   assert.doesNotMatch(strings, /[–—]/);
   for (const [f, s] of sources) if (f.endsWith('.tsx')) assert.doesNotMatch(s.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, ''), /[–—]/, f);
 });
@@ -79,7 +81,25 @@ test('truth: nothing is shown as submitted, approved, live or paid, and Apple na
   assert.match(COPY.preview, /Illustrative/);
   for (const d of DESTS) assert.ok(STORY[d].owner.steps.length === 3);
   assert.match(STORY.chrome.owner.steps.join(' '), /Google reviews it/);
-  assert.match(STORY.android.owner.steps.join(' '), /Upload the bundle/);
+  assert.match(STORY.android.owner.steps.join(' '), /Play Console/);
+});
+
+test('every store ends on a named release handoff: what Xroga prepared, what the owner does, a real action', () => {
+  const kinds = DESTS.map((d) => STORY[d].kind);
+  assert.deepEqual(kinds, ['iPhone apps & games', 'Android apps & games', 'Browser extensions']);
+  for (const d of DESTS) {
+    const H = STORY[d].handoff;
+    assert.match(H.title, new RegExp(`^${STORY[d].storeName} release prepared$`));
+    assert.match(H.cta, new RegExp(`^Review ${STORY[d].storeName} release$`));
+    assert.ok(H.prepared.length >= 3 && H.yours.length >= 2, d);
+    assert.match(H.next, /review/i, `${d} names the store's own review`);
+    assert.match(STORY[d].intro.title, /^Launch your /);
+  }
+  assert.match(STORY.chrome.handoff.yours.join(' '), /developer dashboard/i, 'first listing is created in the dashboard (Chrome Web Store API docs)');
+  assert.match(src('stage/Handoff.tsx'), /<Link href=\{href\}/);
+  assert.match(src('stage/StageAndroid.tsx'), /not published/);
+  assert.match(src('stage/StageChrome.tsx'), /not submitted/);
+  assert.match(src('stage/StageChrome.tsx'), /<details/, 'technical detail is on request');
 });
 
 test('store marks stay out until brand approval is recorded; no generic icon stands in for them', () => {
@@ -111,7 +131,7 @@ test('one section, one h2, accessible tabs and controls, real routes, preview-on
   assert.match(clock, /NEXT_PUBLIC_VERCEL_ENV !== 'production'/);
   // the products' own controls are real buttons with names
   assert.match(src('apps/Arcset.tsx'), /aria-label="Complete set 3"/);
-  assert.match(src('apps/Ridgeline.tsx'), /aria-label="Lift: climb through the ring"/);
+  assert.match(src('apps/Fernway.tsx'), /aria-label="Save Cascade Loop for offline use"/);
   assert.match(src('apps/MerchantLens.tsx'), /aria-label="Open MerchantLens on this page"/);
 });
 

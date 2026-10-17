@@ -1,22 +1,21 @@
 'use client';
 
 /**
- * Chrome Web Store · MerchantLens. The browser is the dominant surface; beside it, Xroga's submission package.
- * - use: the toolbar action docks MerchantLens as a side panel; the page reflows; the fields it reads are marked;
- * - inspect: the action is bracketed, the panel is inspected;
- * - finding: host access to <all_urls> is broader than the extension needs (it reads only the open tab after a click);
- *   narrow: the manifest diff replaces it with activeTab;
- * - produce: the browser view renders into the 1280 × 800 screenshot, then the panel itself into the 440 × 280 tile;
- * - compose: the package (.zip, Manifest V3) and listing are assembled; ready: the owner certifies and approves.
+ * Chrome Web Store · MerchantLens. The composition evolves with the release:
+ *  A (idle → inspect)   the browser leads; beside it, the Chrome Web Store listing in outline (the destination first);
+ *  B (finding → produce) a plain-language access check under the browser (technical detail on request), while the
+ *                         store images render from the extension itself;
+ *  C (compose → ready)   the browser steps back and the Chrome Web Store listing preview leads, with the handoff.
+ * The extension's own action: the toolbar button docks its side panel, the page reflows and the panel fills.
  */
 import { useRef } from 'react';
 import { LensIcon, MerchantLens } from '../apps/MerchantLens';
-import { NATURAL, beatIndex, phaseReached, type Phase } from '../publish';
+import { NATURAL, beatIndex, type Phase } from '../publish';
 import { Device, Fill, Inspector, Render } from './kit';
 import { Xcard } from './Xcard';
 import s from './Stages.module.css';
 
-const SHOT = { x: 0, y: 0, w: 880, h: 550 };
+const SHOT = { x: 0, y: 0, w: 900, h: 552 };
 const PANEL = { x: 600, y: 80, w: 300, h: 472 };
 
 export function StageChrome({ beat, phase, playing, acted, act, href }: { beat: string; phase: Phase; playing: boolean; acted: boolean; act: () => void; href: string }) {
@@ -24,97 +23,140 @@ export function StageChrome({ beat, phase, playing, acted, act, href }: { beat: 
   const now = beatIndex('chrome', beat);
   const at = (id: string) => now >= beatIndex('chrome', id);
   const asset = (id: string) => (!at(id) ? ('empty' as const) : beat === id && playing ? ('rendering' as const) : ('done' as const));
-  const shot = asset('screenshot');
-  const tile = asset('tile');
-  const flagged = at('finding');
+  const layout = at('compose') ? 'c' : at('finding') ? 'b' : 'a';
   const narrowed = at('narrow');
-  const composed = phaseReached(phase, 'compose');
   return (
-    <div className={s.chrome}>
-      <div className={s.chBrowser}>
-        <span className={s.objLabel}>Your extension · running on a product page</span>
-        <Device
-          natural={NATURAL.chrome}
-          maxH={372}
-          kind="browser"
-          boxRef={box}
-          overlay={<Inspector box={box} phase={phase} cause={['btn']} effect={['panel']} tick={acted} round={9} />}
-        >
+    <div className={s.chrome} data-layout={layout}>
+      <div className={s.chLeft}>
+        <span className={s.objLabel}>Your Chrome extension · MerchantLens</span>
+        <Device natural={NATURAL.chrome} maxH={480} kind="browser" boxRef={box} overlay={<Inspector box={box} phase={phase} cause={['btn']} effect={['panel']} tick={acted} round={9} />}>
           <MerchantLens open={acted} live onAction={act} />
-          {shot === 'rendering' && <span className={s.passNat} style={{ left: SHOT.x, top: SHOT.y, width: SHOT.w, height: SHOT.h }} />}
-          {tile === 'rendering' && <span className={s.passNat} style={{ left: PANEL.x, top: PANEL.y, width: PANEL.w, height: PANEL.h }} />}
         </Device>
-        <div className={s.assets}>
-          <span className={s.assetsHead}>Store images</span>
-          <figure className={s.cwsShot}>
-            <span className={s.assetFrame} data-state={shot}>
-              <Render state={shot}>
-                <Fill region={SHOT} guess={190}>
-                  <MerchantLens open />
-                </Fill>
-              </Render>
-            </span>
-            <figcaption>Screenshot · 1280 × 800</figcaption>
-          </figure>
-          <figure className={s.cwsTile}>
-            <span className={s.assetFrame} data-state={tile}>
-              <Render state={tile}>
-                <span className={s.tileArt}>
-                  <span className={s.tileText}>
-                    <LensIcon size={22} />
-                    <b>MerchantLens</b>
-                    <small>Know the price before you buy</small>
-                  </span>
-                  <span className={s.tilePanel}>
-                    <Fill region={PANEL} guess={56}>
-                      <MerchantLens open />
-                    </Fill>
-                  </span>
-                </span>
-              </Render>
-            </span>
-            <figcaption>Promo tile · 440 × 280</figcaption>
-          </figure>
-        </div>
 
+        {/* the access check, in plain language; the manifest lives behind "Technical detail" */}
+        <div className={s.access} data-on={layout !== 'a' || undefined} data-narrowed={narrowed || undefined} aria-hidden={layout === 'a' || undefined}>
+          <span className={s.accessHead}>
+            <b>What MerchantLens can access</b>
+            <em>{narrowed ? 'Narrowed' : 'Too broad'}</em>
+          </span>
+          <ul className={s.accessRows}>
+            <li data-k="before">
+              <i aria-hidden="true" />
+              Read and change data on every website you visit
+            </li>
+            <li data-k="after">
+              <i aria-hidden="true" />
+              Only the tab you click it on, when you click
+            </li>
+          </ul>
+          <details className={s.tech}>
+            <summary>Technical detail</summary>
+            <code>
+              host_permissions: <s>&quot;&lt;all_urls&gt;&quot;</s> → permissions: &quot;activeTab&quot;
+            </code>
+            <small>Illustrative preview: shown as a recommendation. Nothing in your package changes without you.</small>
+          </details>
+        </div>
       </div>
 
-      <div className={s.chPackage}>
-        <Xcard dest="chrome" phase={phase} href={href} progress={phase === 'produce' ? (beat === 'screenshot' ? 'Screenshot · 1280 × 800' : 'Promo tile · 440 × 280') : undefined} />
-
-        <div className={s.manifest} data-flagged={flagged || undefined} data-narrowed={narrowed || undefined}>
-          <span className={s.fileHead}>
-            <b>manifest.json</b>
-            <em>{narrowed ? 'Narrowed' : flagged ? 'Review risk' : 'Manifest V3'}</em>
-          </span>
-          <pre className={s.code}>
-            <span>
-              <i>3</i>&quot;manifest_version&quot;: 3,
-            </span>
-            <span data-k="perm">
-              <i>4</i>&quot;permissions&quot;: [&quot;sidePanel&quot;, &quot;storage&quot;
-              {narrowed && <span className={s.added}>, &quot;activeTab&quot;</span>}],
-            </span>
-            <span data-k="host">
-              <i>5</i>&quot;host_permissions&quot;: [&quot;&lt;all_urls&gt;&quot;]
-            </span>
-          </pre>
+      <div className={s.chRight}>
+        <div className={s.chMain}>
+          <div className={s.chPanel} data-on={layout === 'a' || undefined} aria-hidden={layout !== 'a' || undefined}>
+            <span className={s.objLabel}>Chrome Web Store listing · prepared by Xroga</span>
+            <CwsListing ghost />
+          </div>
+          <div className={s.chPanel} data-on={layout === 'b' || undefined} aria-hidden={layout !== 'b' || undefined}>
+            <span className={s.objLabel}>Store images · from your extension</span>
+            <div className={s.chAssets}>
+              <figure className={s.chShot}>
+                <span className={s.assetFrame} data-state={asset('screenshot')}>
+                  <Render state={asset('screenshot')}>
+                    <Fill region={SHOT} guess={360}>
+                      <MerchantLens open />
+                    </Fill>
+                  </Render>
+                </span>
+                <figcaption>Screenshot · 1280 × 800</figcaption>
+              </figure>
+              <figure className={s.chTile}>
+                <span className={s.assetFrame} data-state={asset('tile')}>
+                  <Render state={asset('tile')}>
+                    <PromoTile />
+                  </Render>
+                </span>
+                <figcaption>Promo tile · 440 × 280</figcaption>
+              </figure>
+              <p className={s.chNote}>Rendered from the extension running on a real-looking product page, so the listing shows exactly what people will install.</p>
+            </div>
+          </div>
+          <div className={s.chPanel} data-on={layout === 'c' || undefined} aria-hidden={layout !== 'c' || undefined}>
+            <span className={s.objLabel}>Chrome Web Store listing · preview, not submitted</span>
+            <CwsListing />
+          </div>
         </div>
+        <div className={s.chCard}>
+          <Xcard dest="chrome" journey phase={phase} href={href} progress={beat === 'narrow' ? 'Access narrowed to the open tab' : beat === 'screenshot' ? 'Rendering the screenshot' : beat === 'tile' ? 'Rendering the promo tile' : beat === 'compose' ? 'Writing the listing' : undefined} />
+        </div>
+      </div>
+    </div>
+  );
+}
 
-        <ul className={s.pkg} data-composed={composed || undefined}>
-          <li data-state={composed ? 'done' : 'pending'}>
-            <b>merchantlens-1.0.0.zip</b>
-            <span>{composed ? '212 KB · Manifest V3 checked' : 'Waiting for assets'}</span>
-          </li>
-          <li data-state={composed ? 'done' : 'pending'}>
-            <b>Store listing</b>
-            <span>{composed ? 'Summary, description and category drafted' : 'Not started'}</span>
-          </li>
-          <li data-state={phase === 'ready' ? 'owner' : 'pending'}>
-            <b>Privacy practices</b>
-            <span>{phase === 'ready' ? 'Drafted · you certify' : 'Not started'}</span>
-          </li>
-        </ul>
+function PromoTile() {
+  return (
+    <span className={s.tileArt}>
+      <span className={s.tileText}>
+        <LensIcon size={22} />
+        <b>MerchantLens</b>
+        <small>Know the price before you buy</small>
+      </span>
+      <span className={s.tilePanel}>
+        <Fill region={PANEL} guess={56}>
+          <MerchantLens open />
+        </Fill>
+      </span>
+    </span>
+  );
+}
+
+/** a Chrome Web Store listing as it would read (or in outline before its parts exist) */
+function CwsListing({ ghost = false }: { ghost?: boolean }) {
+  return (
+    <div className={s.cws} data-ghost={ghost || undefined}>
+      <div className={s.cwsBar} aria-hidden="true">
+        <b>Chrome Web Store</b>
+        <span>Search extensions</span>
+      </div>
+      <header className={s.cwsHead}>
+        <LensIcon size={52} />
+        <span className={s.cwsName}>
+          <b>MerchantLens</b>
+          <small>merchantlens.example · Shopping</small>
+          <em>No ratings yet</em>
+        </span>
+        <span className={s.cwsAdd}>Preview · not submitted</span>
+      </header>
+      <div className={s.cwsMedia}>
+        <span className={s.cwsShot}>
+          {ghost ? (
+            <em>Screenshot</em>
+          ) : (
+            <Fill region={SHOT} guess={300}>
+              <MerchantLens open />
+            </Fill>
+          )}
+        </span>
+        <span className={s.cwsTileWrap}>{ghost ? <em>Promo tile</em> : <PromoTile />}</span>
+      </div>
+      <div className={s.cwsInfo}>
+        <div>
+          <b>Overview</b>
+          <span>{ghost ? ' ' : 'See price history and nearby prices for the product you are looking at, in a side panel.'}</span>
+        </div>
+        <div>
+          <b>Privacy</b>
+          <span data-owner={!ghost || undefined}>{ghost ? ' ' : 'Practices drafted · you certify them'}</span>
+        </div>
       </div>
     </div>
   );

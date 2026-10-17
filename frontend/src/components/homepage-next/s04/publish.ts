@@ -3,7 +3,7 @@
  *
  * Each destination is one scenario played as a list of beats. A beat belongs to a phase:
  *   idle → use → inspect → finding → produce → compose → ready
- * use      the product does its own thing (Arcset logs a set, Ridgeline flies through a ring, MerchantLens reads a page);
+ * use      the product does its own thing (Arcset logs a set, Fernway saves a trail map offline, MerchantLens reads a page);
  * inspect  Xroga locks onto the control that was used and the state it changed;
  * finding  a platform-specific release finding (screenshot sizes, a feature graphic, a permission that is too broad);
  * produce  store assets are rendered from the product itself;
@@ -48,18 +48,17 @@ export const SCENES: Record<Dest, { beats: Beat[]; end: number }> = {
     ],
     end: 9800,
   },
-  // gameplay carries the scene; the feature graphic is cropped, rendered and then art-directed
+  // the app's own action, a release check, then the store presentation is built and the Play listing takes the stage
   android: {
     beats: [
       { id: 'idle', phase: 'idle', at: 0 },
-      { id: 'lift', phase: 'use', at: 900 },
-      { id: 'inspect', phase: 'inspect', at: 2500 },
-      { id: 'finding', phase: 'finding', at: 3500 },
-      { id: 'crop', phase: 'produce', at: 4500 },
-      { id: 'render', phase: 'produce', at: 5300 },
-      { id: 'grade', phase: 'produce', at: 6200 },
-      { id: 'compose', phase: 'compose', at: 7100 },
-      { id: 'ready', phase: 'ready', at: 8500 },
+      { id: 'save', phase: 'use', at: 800 },
+      { id: 'inspect', phase: 'inspect', at: 2600 },
+      { id: 'finding', phase: 'finding', at: 3700 },
+      { id: 'visuals', phase: 'produce', at: 4700 },
+      { id: 'shots', phase: 'produce', at: 6100 },
+      { id: 'listing', phase: 'compose', at: 7100 },
+      { id: 'ready', phase: 'ready', at: 8600 },
     ],
     end: 10000,
   },
@@ -97,27 +96,27 @@ export interface Item {
 }
 export const READINESS: Record<Dest, Item[]> = {
   ios: [
-    { key: 'behavior', label: 'App behavior', starts: 'inspect', settles: 'finding', doneNote: 'Checked in preview' },
-    { key: 'shots', label: 'Screenshots', starts: 'shot1', settles: 'compose', doneNote: '3 art-directed, 6.9″' },
+    { key: 'behavior', label: 'App tested', starts: 'inspect', settles: 'finding', doneNote: 'In preview' },
+    { key: 'shots', label: 'Screenshots', starts: 'shot1', settles: 'compose', doneNote: '3 art-directed' },
     { key: 'meta', label: 'Listing text', starts: 'compose', settles: 'ready', doneNote: 'Drafted' },
-    { key: 'build', label: 'Build', starts: 'compose', settles: 'ready', doneNote: 'On your Expo account' },
-    { key: 'privacy', label: 'App Privacy', starts: 'ready', settles: 'ready', owner: true, doneNote: 'Your answers' },
-    { key: 'submit', label: 'Signing & submission', starts: 'ready', settles: 'ready', owner: true, doneNote: 'You submit' },
+    { key: 'build', label: 'iOS build', starts: 'compose', settles: 'ready', doneNote: 'On your Expo account' },
+    { key: 'privacy', label: 'App Privacy', starts: 'ready', settles: 'ready', owner: true, doneNote: 'You confirm' },
+    { key: 'submit', label: 'Submit for review', starts: 'ready', settles: 'ready', owner: true, doneNote: 'In App Store Connect' },
   ],
   android: [
-    { key: 'play', label: 'Gameplay check', starts: 'inspect', settles: 'finding', doneNote: 'Checked in preview' },
-    { key: 'graphic', label: 'Feature graphic', starts: 'crop', settles: 'compose', doneNote: '1024 × 500 composed' },
-    { key: 'listing', label: 'Store listing', starts: 'compose', settles: 'ready', doneNote: 'Drafted' },
-    { key: 'bundle', label: 'App bundle', starts: 'compose', settles: 'ready', doneNote: 'On your Expo account' },
-    { key: 'safety', label: 'Data safety', starts: 'ready', settles: 'ready', owner: true, doneNote: 'Your answers' },
-    { key: 'track', label: 'Testing track', starts: 'ready', settles: 'ready', owner: true, doneNote: 'You roll out' },
+    { key: 'play', label: 'App tested', starts: 'inspect', settles: 'finding', doneNote: 'In preview' },
+    { key: 'graphic', label: 'Store visuals', starts: 'visuals', settles: 'listing', doneNote: 'Graphic + screenshots' },
+    { key: 'listing', label: 'Listing text', starts: 'listing', settles: 'ready', doneNote: 'Drafted' },
+    { key: 'bundle', label: 'Android build', starts: 'listing', settles: 'ready', doneNote: 'On your Expo account' },
+    { key: 'safety', label: 'Data safety', starts: 'ready', settles: 'ready', owner: true, doneNote: 'You confirm' },
+    { key: 'track', label: 'Testing & release', starts: 'ready', settles: 'ready', owner: true, doneNote: 'In Play Console' },
   ],
   chrome: [
-    { key: 'behavior', label: 'Extension behavior', starts: 'inspect', settles: 'finding', doneNote: 'Checked in preview' },
-    { key: 'perms', label: 'Permissions', starts: 'finding', settles: 'screenshot', doneNote: 'Narrowed to activeTab' },
-    { key: 'assets', label: 'Store images', starts: 'screenshot', settles: 'compose', doneNote: 'Screenshot + promo tile' },
-    { key: 'package', label: 'Package', starts: 'compose', settles: 'ready', doneNote: 'MV3 .zip checked' },
-    { key: 'privacy', label: 'Privacy practices', starts: 'ready', settles: 'ready', owner: true, doneNote: 'You certify' },
+    { key: 'behavior', label: 'Extension tested', starts: 'inspect', settles: 'finding', doneNote: 'In preview' },
+    { key: 'perms', label: 'Access reviewed', starts: 'finding', settles: 'screenshot', doneNote: 'Only the open tab' },
+    { key: 'assets', label: 'Store images', starts: 'screenshot', settles: 'compose', doneNote: 'Screenshot + tile' },
+    { key: 'package', label: 'Package', starts: 'compose', settles: 'ready', doneNote: 'Checked' },
+    { key: 'privacy', label: 'Privacy', starts: 'ready', settles: 'ready', owner: true, doneNote: 'You certify' },
     { key: 'submit', label: 'Submit for review', starts: 'ready', settles: 'ready', owner: true, doneNote: 'With your approval' },
   ],
 };
@@ -132,7 +131,7 @@ export const COPY = {
   eyebrow: 'Publish & distribute',
   titleA: 'Build anywhere.',
   titleB: 'Publish with Xroga.',
-  lede: 'Xroga tests your app, produces the store assets, drafts the listing and prepares the package for each store. You approve what ships.',
+  lede: 'Bring your app, game or Chrome extension, built in Xroga or brought from an existing project. Xroga helps prepare it for the App Store, Google Play or Chrome Web Store. You approve what ships.',
   cta: 'Prepare a release',
   studio: 'Release Studio',
   preview: 'Illustrative preview',
@@ -151,13 +150,17 @@ export interface Story {
   say: Record<Phase, string>;
   finding: { kicker: string; title: string; detail: string };
   owner: { title: string; steps: string[] };
+  /** the scene's opening statement, in plain language */
+  intro: { title: string; line: string; example: string };
+  /** the handoff: what Xroga prepared, what the owner does, and where it goes next */
+  handoff: { title: string; prepared: string[]; yours: string[]; next: string; cta: string };
 }
 
 export const STORY: Record<Dest, Story> = {
   ios: {
     store: 'appstore',
     storeName: 'App Store',
-    kind: 'iPhone app',
+    kind: 'iPhone apps & games',
     product: 'Arcset',
     maker: 'Arcset Labs',
     version: '1.0 (12)',
@@ -179,57 +182,81 @@ export const STORY: Record<Dest, Story> = {
       title: 'Ready for your review',
       steps: ['Connect your Apple Developer account', 'Confirm the App Privacy answers', 'Sign and submit in App Store Connect'],
     },
+    intro: { title: 'Launch your iPhone app.', line: 'Xroga tests it, prepares screenshots and the listing, and gets it ready for App Store review.', example: 'Example: Arcset, a fitness app' },
+    handoff: {
+      title: 'App Store release prepared',
+      prepared: ['App tested in preview', 'Screenshots art-directed', 'Listing text drafted', 'iOS build on your Expo account'],
+      yours: ['Connect your Apple Developer account', 'Confirm the App Privacy answers', 'Submit for App Review'],
+      next: 'Next: you submit in App Store Connect, then Apple reviews it.',
+      cta: 'Review App Store release',
+    },
   },
   android: {
     store: 'googleplay',
     storeName: 'Google Play',
-    kind: 'Android game',
-    product: 'Ridgeline',
-    maker: 'Ridgeline Studio',
-    version: '1.0 (7)',
+    kind: 'Android apps & games',
+    product: 'Fernway',
+    maker: 'Fernway Labs',
+    version: '1.0 (4)',
     say: {
-      idle: 'Ready to test Ridgeline',
-      use: 'Playing: lift through the ring',
-      inspect: 'Checking the control response',
-      finding: 'Google Play needs a feature graphic',
-      produce: 'Composing the feature graphic',
-      compose: 'Drafting the Google Play listing',
+      idle: 'Ready to test Fernway',
+      use: 'Saving a trail map for offline use',
+      inspect: 'Checking the offline map works',
+      finding: 'Preparing your Google Play release',
+      produce: 'Building the store visuals',
+      compose: 'Your Google Play listing',
       ready: 'Waiting for your review',
     },
     finding: {
-      kicker: 'Google Play requirement',
-      title: 'A 1024 × 500 feature graphic',
-      detail: 'Key art clear of the edges. Composed from your own gameplay, not a screen grab.',
+      kicker: 'Google Play release',
+      title: 'Preparing your Google Play release',
+      detail: 'Store visuals and listing text come from your own app screens. The build runs on your Expo account.',
     },
     owner: {
       title: 'Ready for your review',
-      steps: ['Answer the Data safety form', 'Upload the bundle in Play Console', 'Choose the testing track'],
+      steps: ['Confirm the Data safety answers', 'Upload the build in Play Console', 'Choose a testing or production track'],
+    },
+    intro: { title: 'Launch your Android app or game.', line: 'Xroga helps prepare your app, store visuals, listing and release steps for Google Play.', example: 'Example: Fernway, a trail-map app' },
+    handoff: {
+      title: 'Google Play release prepared',
+      prepared: ['App tested in preview', 'Feature graphic and screenshots', 'Listing text drafted', 'Android build on your Expo account'],
+      yours: ['Confirm the Data safety answers', 'Upload the build in Play Console', 'Choose a testing or production track'],
+      next: 'Next: you release it in Play Console, then Google reviews it.',
+      cta: 'Review Google Play release',
     },
   },
   chrome: {
     store: 'chromewebstore',
     storeName: 'Chrome Web Store',
-    kind: 'Browser extension',
+    kind: 'Browser extensions',
     product: 'MerchantLens',
     maker: 'MerchantLens',
     version: '1.0.0',
     say: {
       idle: 'Ready to test MerchantLens',
       use: 'Opening MerchantLens on a product page',
-      inspect: 'Checking what the extension reads',
-      finding: 'Host access is broader than needed',
+      inspect: 'Checking what your extension can access',
+      finding: 'Access narrowed to what it needs',
       produce: 'Rendering the store images',
-      compose: 'Assembling the submission package',
+      compose: 'Your Chrome Web Store listing',
       ready: 'Waiting for your approval',
     },
     finding: {
-      kicker: 'Chrome Web Store review',
-      title: 'Broad host access slows review',
-      detail: 'MerchantLens reads only the open tab after a click, so <all_urls> becomes activeTab.',
+      kicker: 'Release check',
+      title: 'It asked to read every website',
+      detail: 'MerchantLens only needs the tab you click on. Asking for less keeps review simpler and makes people more comfortable installing it.',
     },
     owner: {
       title: 'Ready for your approval',
       steps: ['Certify the privacy practices', 'Approve the submission', 'Google reviews it before it goes live'],
+    },
+    intro: { title: 'Launch your Chrome extension.', line: 'Xroga helps prepare the extension package, store listing, permissions and review steps.', example: 'Example: MerchantLens, a shopping extension' },
+    handoff: {
+      title: 'Chrome Web Store release prepared',
+      prepared: ['Extension tested in preview', 'Access narrowed to the open tab', 'Store images and description', 'Package checked'],
+      yours: ['Fill the listing and privacy tabs once, in your developer dashboard', 'Certify the privacy practices', 'Approve the submission'],
+      next: 'Next: Google reviews it before anyone can install it.',
+      cta: 'Review Chrome Web Store release',
     },
   },
 };
@@ -237,6 +264,6 @@ export const STORY: Record<Dest, Story> = {
 /** product geometry, in the products' own pixels */
 export const NATURAL: Record<Dest, { w: number; h: number }> = {
   ios: { w: 280, h: 600 },
-  android: { w: 880, h: 406 },
+  android: { w: 300, h: 640 },
   chrome: { w: 900, h: 552 },
 };
