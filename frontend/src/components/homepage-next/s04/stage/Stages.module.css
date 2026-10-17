@@ -189,6 +189,15 @@
     inset 0 0 0 1px rgba(255, 255, 255, 0.08),
     0 20px 34px -24px rgba(0, 0, 0, 0.9);
 }
+.ios[data-ready] .shot {
+  height: 212px;
+  transition: height 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ios[data-ready] .shot figcaption {
+  min-height: 34px;
+  margin-bottom: 6px;
+  font-size: 13.5px;
+}
 .shot[data-tone='teal'] {
   background: linear-gradient(170deg, #1b4a44 0%, #0d201f 100%);
 }
@@ -219,6 +228,10 @@
   aspect-ratio: 280 / 600;
   border-radius: 20px 20px 0 0;
   overflow: hidden;
+  /* the screen's size never depends on the card's height: when the cards settle (height transition at the handoff),
+     the rendered screen is neither laid out nor repainted again, only clipped (measured: per-frame paint + raster) */
+  contain: layout paint;
+  will-change: transform;
   background: rgba(255, 255, 255, 0.04);
   box-shadow:
     0 0 0 4px #0a0d12,
@@ -313,12 +326,13 @@
   letter-spacing: -0.02em;
 }
 .aspTitle small {
-  display: block;
+  display: -webkit-box;
   font-size: 13px;
+  line-height: 1.25;
   color: #6b6b70;
-  white-space: nowrap;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 .aspGet {
   justify-self: start;
@@ -432,6 +446,11 @@
   font-size: 16px;
   font-weight: 700;
 }
+.aspNew em {
+  font-size: 12px;
+  font-style: normal;
+  color: #8e8e93;
+}
 .aspNew small {
   font-size: 12.5px;
   line-height: 1.4;
@@ -492,143 +511,393 @@
   background: var(--blue);
 }
 
-/* ================================================================== the destination handoff */
+/* ================================================================== the work panel (inside the Xroga card) */
+.xcard[data-state='working'] .xKicker i {
+  background: var(--blue);
+  box-shadow: 0 0 0 3px rgba(77, 134, 255, 0.22);
+}
+.tasks {
+  display: grid;
+  gap: 2px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.tasks li {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  margin: 0 -8px;
+  border-radius: 9px;
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--steel);
+  transition:
+    color 360ms ease,
+    background-color 360ms ease;
+}
+.tasks li i {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px #4f5a6b;
+  transition:
+    background-color 360ms ease,
+    box-shadow 360ms ease;
+}
+.tasks li[data-state='working'] {
+  color: #e3ebff;
+  background: rgba(77, 134, 255, 0.1);
+}
+.tasks li[data-state='working'] i {
+  box-shadow: inset 0 0 0 1.5px var(--blue);
+}
+/* one quiet sweep while a task is under way (finite: it runs for the task's own duration) */
+.tasks li[data-state='working'] i::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--blue);
+  animation: stPulse 1200ms ease-in-out 2 both;
+}
+.tasks li[data-state='done'] {
+  color: var(--pearl);
+}
+.tasks li[data-state='done'] i {
+  box-shadow: none;
+  background: rgba(120, 214, 184, 0.2);
+}
+.tasks li[data-state='done'] i::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 3.6px;
+  width: 6px;
+  height: 3.5px;
+  border-left: 1.6px solid var(--jade);
+  border-bottom: 1.6px solid var(--jade);
+  transform: rotate(-45deg);
+  animation: none;
+  background: none;
+  inset: auto;
+  border-radius: 0;
+}
+.spec {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--steel);
+  font-variant-numeric: tabular-nums;
+}
+/* on a wide stage the work panel reads across: what Xroga is doing on the left, its live tasks on the right */
+.anCard,
+.chCard {
+  container-type: inline-size;
+  min-width: 0;
+}
+@container (min-width: 600px) {
+  .xcard[data-state='working'] {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    grid-template-areas:
+      'kicker tasks'
+      'title tasks'
+      'spec tasks';
+    grid-template-rows: auto auto 1fr;
+    column-gap: 24px;
+    min-height: 0;
+    padding: 14px 18px;
+  }
+  .xcard[data-state='working'] > .xTitle {
+    font-size: 17px;
+  }
+  .xcard[data-state='working'] .tasks li {
+    font-size: 14px;
+  }
+  .xcard[data-state='working'] > .xKicker {
+    grid-area: kicker;
+  }
+  .xcard[data-state='working'] > .xTitle {
+    grid-area: title;
+  }
+  .xcard[data-state='working'] > .tasks {
+    grid-area: tasks;
+    margin: 0;
+    align-self: center;
+  }
+  .xcard[data-state='working'] > .spec {
+    grid-area: spec;
+    align-self: end;
+  }
+}
+
+/* ================================================================== the release handoff */
+.handoffWrap {
+  container-type: inline-size;
+  min-width: 0;
+}
 .handoff {
   display: grid;
-  gap: 10px;
-  padding: 14px 18px;
-  border-radius: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    'top top'
+    'prepared yours'
+    'foot foot';
+  gap: 10px 22px;
+  padding: 14px 20px;
+  border-radius: 18px;
   background:
-    radial-gradient(90% 120% at 100% 0%, rgba(214, 168, 104, 0.1), transparent 60%),
-    linear-gradient(180deg, rgba(30, 40, 58, 0.95), rgba(17, 23, 35, 0.95));
+    radial-gradient(70% 120% at 100% 0%, rgba(77, 134, 255, 0.12), transparent 60%),
+    radial-gradient(60% 100% at 0% 100%, rgba(214, 168, 104, 0.08), transparent 60%),
+    linear-gradient(180deg, rgba(28, 37, 54, 0.97), rgba(16, 22, 34, 0.97));
   box-shadow:
-    inset 0 1px 0 rgba(236, 233, 226, 0.08),
-    inset 0 0 0 1px rgba(214, 168, 104, 0.38),
-    0 24px 44px -30px rgba(0, 0, 0, 0.9);
-  animation: stRise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    inset 0 1px 0 rgba(236, 233, 226, 0.09),
+    inset 0 0 0 1px rgba(150, 175, 220, 0.18),
+    0 30px 60px -34px rgba(0, 0, 0, 0.95);
+  animation: stRise 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.hoHead {
+.hoTop {
+  grid-area: top;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 .hoIcon {
   display: block;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 0 0 1px var(--hair-2);
+  box-shadow:
+    0 0 0 1px var(--hair-2),
+    0 10px 20px -12px rgba(0, 0, 0, 0.8);
 }
 .hoIcon :global(svg) {
   display: block;
 }
 .hoTitle {
   display: grid;
-  gap: 1px;
+  gap: 2px;
   min-width: 0;
-}
-.hoTitle b {
-  font-size: 18px;
-  font-weight: 650;
-  letter-spacing: -0.015em;
-  color: var(--pearl);
 }
 .hoTitle small {
   font-size: 13px;
+  font-weight: 600;
+  color: var(--jade);
+}
+.hoTitle b {
+  font-size: 20px;
+  font-weight: 640;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--pearl);
+  text-wrap: balance;
+}
+.hoLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 620;
   color: var(--silver);
 }
-.hoCols {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 6px 18px;
+.hoPrepared {
+  grid-area: prepared;
+  min-width: 0;
 }
-.hoDone,
 .hoYours {
-  display: grid;
-  align-content: start;
-  gap: 3px;
+  grid-area: yours;
+  min-width: 0;
+}
+.hoChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.hoDone li,
-.hoYours li {
-  position: relative;
-  padding-left: 22px;
-  font-size: 13.5px;
-  line-height: 1.35;
-  color: #d6dde6;
+.hoChips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px 5px 8px;
+  border-radius: 999px;
+  background: rgba(120, 214, 184, 0.09);
+  box-shadow: inset 0 0 0 1px rgba(120, 214, 184, 0.24);
+  font-size: 13px;
+  font-weight: 560;
+  color: #d4f3e8;
+  white-space: nowrap;
+  animation: stRise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.hoDone li::before {
+.hoChips li:nth-child(2) {
+  animation-delay: 70ms;
+}
+.hoChips li:nth-child(3) {
+  animation-delay: 140ms;
+}
+.hoChips li:nth-child(4) {
+  animation-delay: 210ms;
+}
+.hoChips li:nth-child(5) {
+  animation-delay: 280ms;
+}
+.hoChips li::before {
   content: '';
-  position: absolute;
-  left: 3px;
-  top: 3px;
-  width: 9px;
-  height: 5px;
-  border-left: 1.8px solid var(--jade);
-  border-bottom: 1.8px solid var(--jade);
+  width: 7px;
+  height: 4px;
+  margin-top: -2px;
+  border-left: 1.6px solid var(--jade);
+  border-bottom: 1.6px solid var(--jade);
   transform: rotate(-45deg);
 }
-.hoYours li::before {
-  content: '';
-  position: absolute;
-  left: 3px;
-  top: 5px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--amber);
+.hoSteps {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: s;
 }
-.hoYours li {
-  color: #ecd6b3;
+.hoSteps li {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.35;
+  color: #ecdcc2;
+  counter-increment: s;
+}
+.hoSteps li::before {
+  content: counter(s);
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(214, 168, 104, 0.16);
+  color: var(--amber);
+  font-size: 11.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  transform: translateY(4px);
 }
 .hoFoot {
+  grid-area: foot;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px 16px;
-  padding-top: 10px;
+  gap: 12px 18px;
+  padding-top: 14px;
   border-top: 1px solid var(--hair);
 }
-.hoNext {
+.hoDest {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   min-width: 0;
-  font-size: 13px;
+}
+.hoDest i {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: rgba(236, 240, 246, 0.06);
+  box-shadow: inset 0 0 0 1px var(--hair-2);
+  color: var(--ice);
+}
+.hoDest > span {
+  display: grid;
+  gap: 1px;
+  font-size: 14px;
   color: var(--silver);
 }
-.hoNext i {
-  flex: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 7px;
-  background:
-    linear-gradient(135deg, transparent 45%, var(--amber) 45% 55%, transparent 55%) center / 10px 10px no-repeat,
-    rgba(214, 168, 104, 0.14);
-}
-.hoNext b {
+.hoDest b {
+  font-weight: 640;
   color: var(--pearl);
-  font-weight: 620;
+}
+.hoDest small {
+  font-size: 12.5px;
+  color: var(--steel);
 }
 .hoCta {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 42px;
-  padding: 0 18px;
-  border-radius: 11px;
-  background: linear-gradient(180deg, #5a8fff, #3a72f2);
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #5f93ff, #3a72f2);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 10px 24px -12px rgba(58, 114, 242, 0.9);
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 14px 28px -14px rgba(58, 114, 242, 0.95);
   color: #fff !important;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 650;
+  text-align: center;
   text-decoration: none;
-  white-space: nowrap;
+  transition: box-shadow 200ms ease;
+}
+.hoCta:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 16px 32px -12px rgba(58, 114, 242, 1);
+}
+.hoCta span {
+  transition: transform 200ms ease;
+}
+.hoCta:hover span {
+  transform: translateX(3px);
+}
+/* narrow handoffs (phones): one column, in reading order */
+@container (max-width: 459px) {
+  .handoff {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'top' 'prepared' 'yours' 'foot';
+  }
+}
+@container (min-width: 470px) and (max-width: 759px) {
+  .hoFoot {
+    flex-wrap: nowrap;
+  }
+  .hoDest {
+    flex: 1 1 auto;
+  }
+  .hoCta {
+    flex: none;
+    padding: 0 18px;
+  }
+}
+/* wide stages: identity and action share the top row; the two groups and the destination share the second */
+@container (min-width: 760px) {
+  .handoff {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) auto;
+    grid-template-areas:
+      'top top foot'
+      'prepared yours foot';
+    align-items: start;
+  }
+  .hoFoot {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    align-self: stretch;
+    padding: 0 0 0 22px;
+    border-top: 0;
+    border-left: 1px solid var(--hair);
+  }
+  .hoDest > span {
+    max-width: 250px;
+  }
+  .hoCta {
+    white-space: nowrap;
+  }
 }
 
 /* ================================================================== shared: evolving panels */
@@ -692,6 +961,8 @@
   display: grid;
   align-self: center;
   gap: 3px;
+  min-width: 0;
+  padding-right: 10px;
 }
 .tileText b {
   font-size: 12px;
@@ -745,7 +1016,7 @@
 /* the release workbench */
 .bench {
   display: grid;
-  grid-template-columns: minmax(0, 230px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   padding: 14px;
   border-radius: 16px;
@@ -778,7 +1049,7 @@
   position: relative;
   width: 14px;
   height: 14px;
-  margin-top: 2px;
+  margin-top: 0;
   border-radius: 50%;
   box-shadow: inset 0 0 0 1.5px #4f5a6b;
 }
@@ -821,10 +1092,14 @@
   gap: 12px;
   min-width: 0;
 }
+.artboard {
+  grid-template-columns: minmax(0, 500px) auto;
+  align-items: start;
+  column-gap: 18px;
+}
 .fg {
   display: grid;
   gap: 8px;
-  max-width: 500px;
   margin: 0;
 }
 .fg > span {
@@ -844,9 +1119,13 @@
 }
 .fgShots {
   display: grid;
-  grid-template-columns: repeat(3, 56px) minmax(0, 1fr);
-  align-items: end;
-  gap: 10px;
+  grid-template-columns: repeat(3, 76px);
+  align-content: start;
+  gap: 8px 8px;
+}
+.fgShots small {
+  grid-column: 1 / -1;
+  max-width: 202px;
 }
 .fgShot {
   display: block;
@@ -862,9 +1141,9 @@
 /* the Google Play listing preview (light) */
 .play {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
-  gap: 18px;
-  padding: 16px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 14px 16px;
+  padding: 14px;
   border-radius: 18px;
   background: linear-gradient(180deg, #fbfcfb 0%, #f1f4f0 100%);
   color: #1b1d1b;
@@ -877,7 +1156,7 @@
 .playRight {
   display: grid;
   align-content: start;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 .playHero {
@@ -902,7 +1181,7 @@
 }
 .playHead {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
 }
@@ -948,19 +1227,19 @@
   color: #5f665e;
 }
 .playInstall {
-  display: grid;
-  place-items: center;
-  height: 40px;
+  padding: 6px 12px;
   border-radius: 999px;
   background: #e0e7df;
   color: #3f4a3e;
-  font-size: 13px;
+  font-size: 12px;
+  font-style: normal;
   font-weight: 650;
+  white-space: nowrap;
 }
 .playShots {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  max-width: 380px;
+  max-width: 270px;
   gap: 10px;
 }
 .playShot {
@@ -984,8 +1263,10 @@
 }
 .playAbout,
 .playSafety {
-  display: grid;
-  gap: 3px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
 }
 .playAbout b,
 .playSafety b {
@@ -997,6 +1278,12 @@
   font-size: 13px;
   line-height: 1.45;
   color: #3c433b;
+}
+.playAbout span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .playSafety span {
   color: #8a5208;
@@ -1018,10 +1305,34 @@
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
   align-items: start;
   column-gap: 32px;
-  transition: grid-template-columns 760ms cubic-bezier(0.65, 0, 0.25, 1);
+  /* the columns re-balance in one step, under the panels' own cross-fade and rise: animating the track widths made every
+     scaled copy of the product re-measure, re-render and re-raster on each frame (measured: GPU raster ~1 s at compose) */
+}
+.chrome[data-layout='b'] {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
 }
 .chrome[data-layout='c'] {
-  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.android[data-wide] .anPhone {
+  /* the finished phone is scaled back (0.94); give its unused layout height to the handoff below */
+  margin-bottom: -22px;
+}
+.anHandoff {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin-top: 14px;
+}
+.chHandoff {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+.chrome[data-layout='c'] .accessRows,
+.chrome[data-layout='c'] .tech {
+  display: none;
+}
+.chrome[data-layout='c'] .access {
+  padding: 12px 16px;
 }
 .chLeft,
 .chRight {
@@ -1035,8 +1346,8 @@
 }
 .access {
   display: grid;
-  gap: 10px;
-  padding: 14px 16px;
+  gap: 8px;
+  padding: 12px 16px;
   border-radius: 16px;
   background: rgba(8, 12, 20, 0.45);
   box-shadow: inset 0 0 0 1px var(--hair-2);
@@ -1089,7 +1400,7 @@
   grid-template-columns: 14px minmax(0, 1fr);
   align-items: center;
   gap: 10px;
-  padding: 9px 12px;
+  padding: 6px 12px;
   border-radius: 10px;
   font-size: 14px;
   line-height: 1.35;
@@ -1143,7 +1454,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 32px;
+  min-height: 28px;
   cursor: pointer;
   list-style: none;
   font-weight: 600;
@@ -1183,7 +1494,7 @@
 }
 .chAssets {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.62fr);
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
   align-items: end;
   gap: 12px;
   padding: 14px;
@@ -1200,9 +1511,6 @@
 .chAssets figcaption {
   font-size: 12.5px;
   color: var(--steel);
-}
-.chShot {
-  grid-column: 1 / -1;
 }
 .chShot .assetFrame {
   aspect-ratio: 1280 / 800;
@@ -1221,8 +1529,8 @@
 /* the Chrome Web Store listing preview (light) */
 .cws {
   display: grid;
-  gap: 14px;
-  padding: 0 0 16px;
+  gap: 9px;
+  padding: 0 0 12px;
   border-radius: 18px;
   overflow: hidden;
   background: #fff;
@@ -1235,7 +1543,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 10px 16px;
+  padding: 5px 16px;
   border-bottom: 1px solid #e6e9ef;
 }
 .cwsBar b {
@@ -1254,7 +1562,7 @@
 }
 .cwsHead {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: 14px;
   padding: 0 18px;
@@ -1273,7 +1581,7 @@
   letter-spacing: -0.01em;
 }
 .cwsName small {
-  font-size: 12.5px;
+  font-size: 12px;
   color: #5f6368;
 }
 .cwsName em {
@@ -1282,20 +1590,28 @@
   color: #5f6368;
 }
 .cwsAdd {
-  padding: 9px 16px;
+  margin-left: auto;
+  padding: 5px 12px;
+  font-style: normal;
   border-radius: 999px;
   background: #e8edf5;
   color: #3c4a60;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   white-space: nowrap;
 }
 .cwsMedia {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
-  align-items: end;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1.38fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 14px;
   padding: 0 18px;
+}
+.cwsSide {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
 }
 .cwsShot,
 .cwsTileWrap {
@@ -1313,9 +1629,13 @@
 }
 .cwsInfo {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-  gap: 18px;
-  padding: 0 18px;
+  gap: 8px;
+}
+.cwsMain {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
 }
 .cwsInfo div {
   display: grid;
@@ -1327,7 +1647,7 @@
 }
 .cwsInfo span {
   font-size: 13px;
-  line-height: 1.45;
+  line-height: 1.4;
   color: #444746;
 }
 .cwsInfo span[data-owner] {
@@ -1344,6 +1664,17 @@
   opacity: 0.45;
 }
 
+@keyframes stPulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 @keyframes stRise {
   from {
     opacity: 0;
@@ -1390,9 +1721,6 @@
   .chrome[data-layout='c'] {
     grid-template-columns: minmax(0, 1fr);
     row-gap: 22px;
-  }
-  .hoCols {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1441,12 +1769,14 @@
     min-height: 0;
   }
   .handoff {
-    padding: 14px;
+    padding: 16px;
+    gap: 14px;
+  }
+  .hoTitle b {
+    font-size: 19px;
   }
   .hoCta {
     flex: 1 1 100%;
-    justify-content: center;
-    min-height: 46px;
   }
   .fgShots {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1455,16 +1785,30 @@
     grid-column: 1 / -1;
   }
   .chAssets,
-  .cwsMedia,
-  .cwsInfo {
+  .cwsMedia {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .artboard {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .fgShots {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .fgShots small {
+    max-width: none;
   }
   .cwsHead {
     grid-template-columns: auto minmax(0, 1fr);
   }
-  .cwsAdd {
-    grid-column: 1 / -1;
-    text-align: center;
+  .cwsBar {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  .cwsBar span {
+    display: none;
+  }
+  .cwsBar b {
+    white-space: nowrap;
   }
 }
 
@@ -1481,5 +1825,24 @@
   .prep li {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* ================================================================== short desktop screens (laptops around 800 px tall) */
+@media (min-width: 1025px) and (max-height: 860px) {
+  .ios[data-ready] .shot {
+    height: 196px;
+  }
+  .handoff {
+    padding: 10px 18px;
+  }
+  .hoChips li {
+    padding: 4px 10px 4px 8px;
+  }
+  .play {
+    padding: 12px;
+  }
+  .cws {
+    gap: 7px;
   }
 }

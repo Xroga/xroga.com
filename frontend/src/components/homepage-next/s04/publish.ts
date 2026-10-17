@@ -33,49 +33,49 @@ export interface Beat {
 
 /** each scenario's beats, in order; `end` is when it settles */
 export const SCENES: Record<Dest, { beats: Beat[]; end: number }> = {
-  // a quick tap, then the long part of an App Store release: three screens captured and art-directed
+  // timed by what the visitor must take in: the tap and its result, then each captured screen, then the page
   ios: {
     beats: [
       { id: 'idle', phase: 'idle', at: 0 },
-      { id: 'tap', phase: 'use', at: 700 },
-      { id: 'inspect', phase: 'inspect', at: 2100 },
-      { id: 'finding', phase: 'finding', at: 3200 },
-      { id: 'shot1', phase: 'produce', at: 4300 },
-      { id: 'shot2', phase: 'produce', at: 5150 },
-      { id: 'shot3', phase: 'produce', at: 6000 },
-      { id: 'compose', phase: 'compose', at: 6950 },
-      { id: 'ready', phase: 'ready', at: 8400 },
+      { id: 'tap', phase: 'use', at: 900 },
+      { id: 'inspect', phase: 'inspect', at: 2600 },
+      { id: 'finding', phase: 'finding', at: 3900 },
+      { id: 'shot1', phase: 'produce', at: 5100 },
+      { id: 'shot2', phase: 'produce', at: 6300 },
+      { id: 'shot3', phase: 'produce', at: 7500 },
+      { id: 'compose', phase: 'compose', at: 8800 },
+      { id: 'ready', phase: 'ready', at: 10600 },
     ],
-    end: 9800,
+    end: 12000,
   },
-  // the app's own action, a release check, then the store presentation is built and the Play listing takes the stage
+  // the app's own reaction needs time (progress, badge, snackbar); the graphic composes over two seconds
   android: {
     beats: [
       { id: 'idle', phase: 'idle', at: 0 },
-      { id: 'save', phase: 'use', at: 800 },
-      { id: 'inspect', phase: 'inspect', at: 2600 },
-      { id: 'finding', phase: 'finding', at: 3700 },
-      { id: 'visuals', phase: 'produce', at: 4700 },
-      { id: 'shots', phase: 'produce', at: 6100 },
-      { id: 'listing', phase: 'compose', at: 7100 },
-      { id: 'ready', phase: 'ready', at: 8600 },
+      { id: 'save', phase: 'use', at: 1000 },
+      { id: 'inspect', phase: 'inspect', at: 3700 },
+      { id: 'finding', phase: 'finding', at: 5100 },
+      { id: 'visuals', phase: 'produce', at: 6400 },
+      { id: 'shots', phase: 'produce', at: 8700 },
+      { id: 'listing', phase: 'compose', at: 10100 },
+      { id: 'ready', phase: 'ready', at: 12200 },
     ],
-    end: 10000,
+    end: 13800,
   },
-  // the panel opens and reads the page; the permission finding is the heart of an extension review
+  // the panel opens and fills; the access check is read, then narrowed; the listing gets its own entrance
   chrome: {
     beats: [
       { id: 'idle', phase: 'idle', at: 0 },
-      { id: 'open', phase: 'use', at: 700 },
-      { id: 'inspect', phase: 'inspect', at: 2600 },
-      { id: 'finding', phase: 'finding', at: 3600 },
-      { id: 'narrow', phase: 'finding', at: 4400 },
-      { id: 'screenshot', phase: 'produce', at: 5300 },
-      { id: 'tile', phase: 'produce', at: 6100 },
-      { id: 'compose', phase: 'compose', at: 7000 },
-      { id: 'ready', phase: 'ready', at: 8500 },
+      { id: 'open', phase: 'use', at: 1000 },
+      { id: 'inspect', phase: 'inspect', at: 3900 },
+      { id: 'finding', phase: 'finding', at: 5200 },
+      { id: 'narrow', phase: 'finding', at: 6700 },
+      { id: 'screenshot', phase: 'produce', at: 8000 },
+      { id: 'tile', phase: 'produce', at: 9200 },
+      { id: 'compose', phase: 'compose', at: 10400 },
+      { id: 'ready', phase: 'ready', at: 12400 },
     ],
-    end: 10000,
+    end: 13900,
   },
 };
 export const RENDER_MS = 760;
@@ -149,11 +149,13 @@ export interface Story {
   /** the studio's single line of narration, phase by phase */
   say: Record<Phase, string>;
   finding: { kicker: string; title: string; detail: string };
+  /** the work panel during preparation: the accomplishment, its tasks (each settles at a beat) and the spec, quietly */
+  work: { title: string; tasks: { label: string; from: string; to: string }[]; spec: string };
   owner: { title: string; steps: string[] };
   /** the scene's opening statement, in plain language */
   intro: { title: string; line: string; example: string };
   /** the handoff: what Xroga prepared, what the owner does, and where it goes next */
-  handoff: { title: string; prepared: string[]; yours: string[]; next: string; cta: string };
+  handoff: { title: string; headline: string; prepared: string[]; yours: string[]; next: string; cta: string };
 }
 
 export const STORY: Record<Dest, Story> = {
@@ -182,11 +184,21 @@ export const STORY: Record<Dest, Story> = {
       title: 'Ready for your review',
       steps: ['Connect your Apple Developer account', 'Confirm the App Privacy answers', 'Sign and submit in App Store Connect'],
     },
+    work: {
+      title: 'Preparing your App Store presentation',
+      tasks: [
+        { label: 'Capturing the app’s real screens', from: 'shot1', to: 'shot3' },
+        { label: 'Composing the screenshots', from: 'shot2', to: 'compose' },
+        { label: 'Preparing the listing', from: 'compose', to: 'ready' },
+      ],
+      spec: 'Screenshots sized for 6.9″ iPhone · 1320 × 2868',
+    },
     intro: { title: 'Launch your iPhone app.', line: 'Xroga tests it, prepares screenshots and the listing, and gets it ready for App Store review.', example: 'Example: Arcset, a fitness app' },
     handoff: {
       title: 'App Store release prepared',
-      prepared: ['App tested in preview', 'Screenshots art-directed', 'Listing text drafted', 'iOS build on your Expo account'],
-      yours: ['Connect your Apple Developer account', 'Confirm the App Privacy answers', 'Submit for App Review'],
+      headline: 'Arcset is ready for your App Store review',
+      prepared: ['App tested', 'Screenshots', 'Listing', 'iOS build'],
+      yours: ['Connect your Apple Developer account', 'Confirm App Privacy', 'Submit for App Review'],
       next: 'Next: you submit in App Store Connect, then Apple reviews it.',
       cta: 'Review App Store release',
     },
@@ -216,11 +228,21 @@ export const STORY: Record<Dest, Story> = {
       title: 'Ready for your review',
       steps: ['Confirm the Data safety answers', 'Upload the build in Play Console', 'Choose a testing or production track'],
     },
+    work: {
+      title: 'Preparing your Google Play release',
+      tasks: [
+        { label: 'Composing the feature graphic from your app', from: 'visuals', to: 'shots' },
+        { label: 'Rendering phone screenshots', from: 'shots', to: 'listing' },
+        { label: 'Drafting the listing', from: 'listing', to: 'ready' },
+      ],
+      spec: 'Feature graphic 1024 × 500 · Android build on your Expo account',
+    },
     intro: { title: 'Launch your Android app or game.', line: 'Xroga helps prepare your app, store visuals, listing and release steps for Google Play.', example: 'Example: Fernway, a trail-map app' },
     handoff: {
       title: 'Google Play release prepared',
-      prepared: ['App tested in preview', 'Feature graphic and screenshots', 'Listing text drafted', 'Android build on your Expo account'],
-      yours: ['Confirm the Data safety answers', 'Upload the build in Play Console', 'Choose a testing or production track'],
+      headline: 'Fernway is ready for your Google Play review',
+      prepared: ['App tested', 'Feature graphic', 'Screenshots', 'Listing', 'Android build'],
+      yours: ['Confirm Data safety', 'Review the build in Play Console', 'Choose a testing or release track'],
       next: 'Next: you release it in Play Console, then Google reviews it.',
       cta: 'Review Google Play release',
     },
@@ -250,11 +272,21 @@ export const STORY: Record<Dest, Story> = {
       title: 'Ready for your approval',
       steps: ['Certify the privacy practices', 'Approve the submission', 'Google reviews it before it goes live'],
     },
+    work: {
+      title: 'Preparing your Chrome Web Store release',
+      tasks: [
+        { label: 'Narrowing the extension’s access', from: 'finding', to: 'screenshot' },
+        { label: 'Rendering the store images', from: 'screenshot', to: 'compose' },
+        { label: 'Writing the listing', from: 'compose', to: 'ready' },
+      ],
+      spec: 'Screenshot 1280 × 800 · promo tile 440 × 280 · Manifest V3',
+    },
     intro: { title: 'Launch your Chrome extension.', line: 'Xroga helps prepare the extension package, store listing, permissions and review steps.', example: 'Example: MerchantLens, a shopping extension' },
     handoff: {
       title: 'Chrome Web Store release prepared',
-      prepared: ['Extension tested in preview', 'Access narrowed to the open tab', 'Store images and description', 'Package checked'],
-      yours: ['Fill the listing and privacy tabs once, in your developer dashboard', 'Certify the privacy practices', 'Approve the submission'],
+      headline: 'MerchantLens is ready for your Chrome Web Store review',
+      prepared: ['Extension tested', 'Access narrowed', 'Store images', 'Listing', 'Package'],
+      yours: ['Complete the listing and privacy tabs once', 'Certify the privacy practices', 'Approve the submission'],
       next: 'Next: Google reviews it before anyone can install it.',
       cta: 'Review Chrome Web Store release',
     },

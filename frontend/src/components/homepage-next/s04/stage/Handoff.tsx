@@ -1,54 +1,71 @@
 'use client';
 
 /**
- * The destination handoff: the release Xroga prepared for one store, what is done, what stays with the owner, where it
- * goes next, and one action that opens the real release workspace (/dashboard/publish, or sign-up when signed out).
- * Nothing here says submitted, approved or live; the next line names the store's own review.
+ * The release handoff: the culmination of a store's scene.
+ * One headline sentence (the product is ready for the owner's review), what Xroga prepared, the owner's next steps,
+ * where the release continues (App Store Connect / Play Console / developer dashboard, then the store's own review)
+ * and one action into the real release workspace (/dashboard/publish, or sign-up when signed out).
+ * Nothing here says submitted, approved or live.
  */
 import Link from 'next/link';
 import { STORY, type Dest } from '../publish';
 import s from './Stages.module.css';
 
-const STORE_HOME: Record<Dest, string> = { ios: 'App Store Connect', android: 'Play Console', chrome: 'Developer Dashboard' };
-const UNIT: Record<Dest, string> = { ios: 'iPhone app', android: 'Android app', chrome: 'Browser extension' };
+const CONTINUES: Record<Dest, { place: string; then: string }> = {
+  ios: { place: 'App Store Connect', then: 'Apple reviews it before release' },
+  android: { place: 'Play Console', then: 'Google reviews it before release' },
+  chrome: { place: 'Chrome developer dashboard', then: 'Google reviews it before anyone can install it' },
+};
 
-export function Handoff({ dest, href, product, compact = false }: { dest: Dest; href: string; product: React.ReactNode; compact?: boolean }) {
+export function Handoff({ dest, href, product }: { dest: Dest; href: string; product: React.ReactNode }) {
   const S = STORY[dest];
   const H = S.handoff;
+  const C = CONTINUES[dest];
   return (
-    <div className={s.handoff} data-compact={compact || undefined} aria-live="polite">
-      <div className={s.hoHead}>
-        <span className={s.hoIcon}>{product}</span>
-        <span className={s.hoTitle}>
-          <b>{H.title}</b>
-          <small>
-            {S.product} · {UNIT[dest]} · Version {S.version}
-          </small>
-        </span>
-      </div>
-      <div className={s.hoCols}>
-        <ul className={s.hoDone} aria-label="Prepared by Xroga">
-          {H.prepared.map((t) => (
-            <li key={t}>{t}</li>
-          ))}
-        </ul>
-        <ul className={s.hoYours} aria-label="Your steps">
-          {H.yours.map((t) => (
-            <li key={t}>{t}</li>
-          ))}
-        </ul>
-      </div>
-      <div className={s.hoFoot}>
-        <span className={s.hoNext}>
-          <i aria-hidden="true" />
-          <span>
-            <b>{STORE_HOME[dest]}</b> {H.next.replace(/^Next: /, '· ')}
+    <div className={s.handoffWrap}>
+      <div className={s.handoff} data-dest={dest} aria-live="polite">
+        <div className={s.hoTop}>
+          <span className={s.hoIcon}>{product}</span>
+          <span className={s.hoTitle}>
+            <small>
+              {H.title} · v{S.version}
+            </small>
+            <b>{H.headline}</b>
           </span>
-        </span>
-        <Link href={href} className={s.hoCta}>
-          {H.cta}
-          <span aria-hidden="true">→</span>
-        </Link>
+        </div>
+        <div className={s.hoPrepared}>
+          <span className={s.hoLabel}>Prepared with Xroga</span>
+          <ul className={s.hoChips}>
+            {H.prepared.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        </div>
+        <div className={s.hoYours}>
+          <span className={s.hoLabel}>Your next steps</span>
+          <ol className={s.hoSteps}>
+            {H.yours.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ol>
+        </div>
+        <div className={s.hoFoot}>
+          <span className={s.hoDest}>
+            <i aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="14" height="14">
+                <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </i>
+            <span>
+              Continues in <b>{C.place}</b>
+              <small>{C.then}</small>
+            </span>
+          </span>
+          <Link href={href} className={s.hoCta}>
+            {H.cta}
+            <span aria-hidden="true">→</span>
+          </Link>
+        </div>
       </div>
     </div>
   );
