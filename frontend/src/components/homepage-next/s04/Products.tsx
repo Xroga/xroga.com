@@ -61,10 +61,14 @@ function SetRing({ done }: { done: number }) {
     const a1 = ((-90 + i * 120 + 110) * Math.PI) / 180;
     return `M${r2(44 + r * Math.cos(a0))} ${r2(44 + r * Math.sin(a0))} A${r} ${r} 0 0 1 ${r2(44 + r * Math.cos(a1))} ${r2(44 + r * Math.sin(a1))}`;
   };
+  // the track is always drawn; each completed set draws its segment over it (the third one animates when logged)
   return (
     <svg className={p.ring} viewBox="0 0 88 88" aria-hidden="true">
       {[0, 1, 2].map((i) => (
-        <path key={i} d={seg(i)} fill="none" stroke={i < done ? '#5fd4c4' : '#22303a'} strokeWidth="7" strokeLinecap="round" />
+        <path key={`t${i}`} d={seg(i)} fill="none" stroke="#22303a" strokeWidth="7" strokeLinecap="round" />
+      ))}
+      {[0, 1, 2].map((i) => (
+        <path key={`d${i}`} className={p.ringSeg} d={seg(i)} pathLength={1} data-on={i < done || undefined} fill="none" stroke="#5fd4c4" strokeWidth="7" strokeLinecap="round" />
       ))}
     </svg>
   );
@@ -173,7 +177,7 @@ export function ArcsetScreen({
         <small>Upper body · Week 6</small>
         <b>Incline press</b>
       </header>
-      <div className={p.aHero}>
+      <div className={p.aHero} data-r="ring">
         <SetRing done={sets} />
         <span className={p.aCount}>
           <b>{sets}/3</b>
@@ -194,7 +198,7 @@ export function ArcsetScreen({
           </div>
         </dl>
       </div>
-      <ol className={p.aSets}>
+      <ol className={p.aSets} data-r="sets">
         {[1, 2, 3].map((n) => (
           <li key={n} data-done={n <= sets || undefined} data-now={(!done && n === 3) || undefined}>
             <span>Set {n}</span>
@@ -203,7 +207,7 @@ export function ArcsetScreen({
           </li>
         ))}
       </ol>
-      <span className={p.aBtnWrap}>
+      <span className={p.aBtnWrap} data-r="btn">
         {live ? (
           <button ref={btnRef} type="button" className={p.aBtn} data-done={done || undefined} aria-pressed={done} onClick={onAction}>
             {done ? 'Set logged · Rest 0:45' : 'Complete set'}
@@ -247,45 +251,38 @@ export function RidgelineScene({ jumped }: { jumped: boolean }) {
         </linearGradient>
       </defs>
       <rect width="640" height="300" fill={`url(#sky${id})`} />
+      {/* the world scrolls with the glide: each ridge layer by its own depth (parallax), the sun not at all */}
       <circle cx="430" cy="150" r="70" fill={`url(#sun${id})`} />
       <circle cx="430" cy="150" r="26" fill="#fff4e3" />
-      {/* far ridges */}
-      <path d="M0 176 70 140 130 160 210 118 290 150 360 126 440 160 520 132 640 168V300H0z" fill="#8f7a91" opacity="0.75" />
-      {/* middle ridges */}
-      <path d="M0 206 90 168 160 190 250 150 330 186 420 160 500 196 580 170 640 186V300H0z" fill="#4e5f78" />
-      {/* near ridge and path */}
-      <path d="M0 240 120 214 240 228 360 206 480 226 640 210V300H0z" fill="#26364a" />
-      <path d="M0 262C140 246 260 254 400 244S600 236 640 240V300H0z" fill="#1a2737" />
-      <path d="M0 262C140 246 260 254 400 244S600 236 640 240" fill="none" stroke="#f6d3ad" strokeOpacity="0.55" strokeWidth="2" />
-      {/* light orbs along the path */}
-      {[[150, 228], [196, 214], [242, 206]].map(([x, y], i) => (
-        <g key={i}>
-          <circle cx={x} cy={y} r="9" fill="#fff1dc" opacity="0.25" />
-          <circle cx={x} cy={y} r="4" fill="#fff1dc" />
-        </g>
-      ))}
-      {/* stone gate */}
-      <g>
-        <path d="M352 246V200a20 20 0 0 1 40 0v46h-10v-44a10 10 0 0 0-20 0v44z" fill="#14202c" />
-        <path d="M352 246V200a20 20 0 0 1 20-20" fill="none" stroke="#f6d3ad" strokeOpacity="0.4" strokeWidth="1.5" />
+      <g className={p.rLayer} data-depth="far" data-jumped={jumped || undefined}>
+        <path d="M0 176 70 140 130 160 210 118 290 150 360 126 440 160 520 132 640 168 700 150V300H0z" fill="#8f7a91" opacity="0.75" />
       </g>
-      {/* the glider: on the path, or over the gate with its trail */}
-      {jumped ? (
-        <g>
-          <path d="M250 232C290 196 330 168 370 156" stroke={`url(#trail${id})`} strokeWidth="3" fill="none" strokeLinecap="round" />
-          <g transform="translate(378 152) rotate(-14)">
-            <path d="M-16 0 16 -3 22 0 16 3z" fill="#fff" />
-            <path d="M-6 0 6 -14 10 -14 4 0z" fill="#ffe2bf" />
-            <path d="M-6 0 6 12 10 12 4 0z" fill="#f2b483" />
+      <g className={p.rLayer} data-depth="mid" data-jumped={jumped || undefined}>
+        <path d="M0 206 90 168 160 190 250 150 330 186 420 160 500 196 580 170 640 186 720 172V300H0z" fill="#4e5f78" />
+      </g>
+      <g className={p.rLayer} data-depth="near" data-jumped={jumped || undefined}>
+        <path d="M0 240 120 214 240 228 360 206 480 226 640 210 740 222V300H0z" fill="#26364a" />
+        <path d="M0 262C140 246 260 254 400 244S600 236 640 240 720 244 760 242V300H0z" fill="#1a2737" />
+        <path d="M0 262C140 246 260 254 400 244S600 236 640 240 720 244 760 242" fill="none" stroke="#f6d3ad" strokeOpacity="0.55" strokeWidth="2" />
+        {/* light orbs above the path: collected (one after another) as the glider passes through them */}
+        {[[308, 205], [328, 192], [349, 179]].map(([x, y], i) => (
+          <g key={i} className={p.rOrb} data-taken={jumped || undefined} style={{ ['--i' as string]: i, transformOrigin: `${x}px ${y}px` }}>
+            <circle cx={x} cy={y} r="9" fill="#fff1dc" opacity="0.25" />
+            <circle cx={x} cy={y} r="4" fill="#fff1dc" />
           </g>
-        </g>
-      ) : (
-        <g transform="translate(288 236) rotate(-4)">
-          <path d="M-16 0 16 -3 22 0 16 3z" fill="#fff" />
-          <path d="M-6 0 6 -14 10 -14 4 0z" fill="#ffe2bf" />
-          <path d="M-6 0 6 12 10 12 4 0z" fill="#f2b483" />
-        </g>
-      )}
+        ))}
+        {/* stone gate */}
+        <path d="M402 246V200a20 20 0 0 1 40 0v46h-10v-44a10 10 0 0 0-20 0v44z" fill="#14202c" />
+        <path d="M402 246V200a20 20 0 0 1 20-20" fill="none" stroke="#f6d3ad" strokeOpacity="0.4" strokeWidth="1.5" />
+      </g>
+      {/* the jump trail draws behind the glider as it flies */}
+      <path className={p.rTrail} data-on={jumped || undefined} pathLength={1} d="M260 236C300 214 336 182 400 150" stroke={`url(#trail${id})`} strokeWidth="3" fill="none" strokeLinecap="round" />
+      {/* the glider: one element, flown along its arc when Jump is pressed */}
+      <g className={p.glider} data-jumped={jumped || undefined}>
+        <path d="M-16 0 16 -3 22 0 16 3z" fill="#fff" />
+        <path d="M-6 0 6 -14 10 -14 4 0z" fill="#ffe2bf" />
+        <path d="M-6 0 6 12 10 12 4 0z" fill="#f2b483" />
+      </g>
     </svg>
   );
 }
@@ -320,7 +317,8 @@ export function RidgelineGame({
           <i />
         </span>
       </div>
-      <span className={p.rBtnWrap} data-inspect={inspect || undefined}>
+      <span className={p.rFlight} data-r="flight" aria-hidden="true" />
+      <span className={p.rBtnWrap} data-r="btn" data-inspect={inspect || undefined}>
         {live ? (
           <button ref={btnRef} type="button" className={p.rBtn} aria-pressed={jumped} onClick={onAction}>
             Jump
@@ -335,7 +333,7 @@ export function RidgelineGame({
           </>
         )}
       </span>
-      <i className={p.gesture} aria-hidden="true" />
+      <i className={p.gesture} data-r="gesture" aria-hidden="true" />
     </div>
   );
 }
@@ -382,7 +380,7 @@ export function MerchantLensBrowser({
         <span className={p.omni} aria-hidden="true">
           hearthandhold.example<span>/everwell-bottle</span>
         </span>
-        <span className={p.extWrap}>
+        <span className={p.extWrap} data-r="btn">
           {live ? (
             <button ref={btnRef} type="button" className={p.ext} aria-pressed={open} aria-label="MerchantLens: research this product" onClick={onAction}>
               <LensIcon size={20} />
@@ -402,7 +400,7 @@ export function MerchantLensBrowser({
             <span className={p.prodImg}>
               <Bottle />
             </span>
-            <span className={p.prodText}>
+            <span className={p.prodText} data-r="read">
               <small>Outdoors · Bottles</small>
               <b data-picked={open || undefined}>Everwell Bottle 24oz</b>
               <span data-picked={open || undefined}>$34.00</span>
@@ -411,35 +409,36 @@ export function MerchantLensBrowser({
             </span>
           </div>
         </div>
-        {open && (
-          <aside className={p.panel} aria-label="MerchantLens">
-            <header>
-              <LensIcon size={16} />
-              <b>MerchantLens</b>
-            </header>
-            <span className={p.picked}>
-              <b>Everwell Bottle 24oz</b>
-              <small>$34.00 · this page</small>
-            </span>
-            <ul>
-              <li data-me="">
-                <span>This bottle</span>
-                <b>$34</b>
+        {/* the side panel slides in over the page and fills field by field from what it read on this tab */}
+        <aside className={p.panel} data-r="panel" data-open={open || undefined} aria-label="MerchantLens" aria-hidden={!open || undefined}>
+          <header>
+            <LensIcon size={16} />
+            <b>MerchantLens</b>
+          </header>
+          <span className={p.picked} style={{ ['--i' as string]: 0 }}>
+            <b>Everwell Bottle 24oz</b>
+            <small>$34.00 · read from this page</small>
+          </span>
+          <ul>
+            {[
+              ['This bottle', '$34', true],
+              ['Steel tumbler', '$28', false],
+              ['Glass bottle', '$31', false],
+            ].map(([n, v, me], i) => (
+              <li key={n as string} data-me={me || undefined} style={{ ['--i' as string]: i + 1 }}>
+                <span>{n}</span>
+                <b>{v}</b>
               </li>
-              <li>
-                <span>Steel tumbler</span>
-                <b>$28</b>
-              </li>
-              <li>
-                <span>Glass bottle</span>
-                <b>$31</b>
-              </li>
-            </ul>
-            <span className={p.save} data-on={saved || undefined}>
-              {saved ? 'Saved to shortlist' : 'Save to shortlist'}
-            </span>
-          </aside>
-        )}
+            ))}
+          </ul>
+          <span className={p.verdict} style={{ ['--i' as string]: 4 }}>
+            <span>Lowest nearby</span>
+            <b>$28</b>
+          </span>
+          <span className={p.save} data-on={saved || undefined} style={{ ['--i' as string]: 5 }}>
+            {saved ? 'Saved to shortlist' : 'Save to shortlist'}
+          </span>
+        </aside>
       </div>
     </div>
   );

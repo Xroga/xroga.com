@@ -407,12 +407,11 @@
   background: #e3edff !important;
 }
 .bBody {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   min-height: 0;
-}
-.browser[data-open] .bBody {
-  grid-template-columns: minmax(0, 1fr) 196px;
+  overflow: hidden;
 }
 .page {
   display: grid;
@@ -487,13 +486,51 @@
   font-weight: 650;
 }
 .panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 196px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
   padding: 10px 12px;
   border-left: 1px solid #dfe4ea;
   background: #fff;
   color: #102038;
+  box-shadow: -18px 0 30px -24px rgba(16, 32, 56, 0.45);
+  transform: translateX(102%);
+  transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.panel[data-open] {
+  transform: none;
+}
+/* the panel's fields arrive in reading order once it has opened */
+.panel > :not(header),
+.panel li {
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 260ms ease calc(380ms + var(--i, 0) * 190ms),
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1) calc(380ms + var(--i, 0) * 190ms);
+}
+.panel[data-open] > :not(header),
+.panel[data-open] li {
+  opacity: 1;
+  transform: none;
+}
+.verdict {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: #fff5e6;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #7a4d0f;
+}
+.verdict b {
+  font-weight: 750;
 }
 .panel header {
   display: flex;
@@ -602,4 +639,121 @@
   content: '';
   position: absolute;
   inset: -8px;
+}
+
+/* ------------------------------------------------------------------ in-product motion (live only; stills render the end state) */
+.ringSeg {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 760ms cubic-bezier(0.45, 0, 0.2, 1) 120ms;
+}
+.ringSeg[data-on] {
+  stroke-dashoffset: 0;
+}
+.aSets li i {
+  transition: background-color 240ms ease 520ms, box-shadow 240ms ease 520ms;
+}
+.aBtn {
+  transition:
+    transform 120ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 260ms ease,
+    color 260ms ease;
+}
+/* Ridgeline: parallax by depth while the glider flies, then the world holds */
+.rLayer {
+  transition: transform 1300ms cubic-bezier(0.3, 0, 0.2, 1);
+}
+.rLayer[data-depth='far'][data-jumped] {
+  transform: translateX(-6px);
+}
+.rLayer[data-depth='mid'][data-jumped] {
+  transform: translateX(-11px);
+}
+.rLayer[data-depth='near'][data-jumped] {
+  transform: translateX(-18px);
+}
+.glider {
+  transform: translate(262px, 240px) rotate(-4deg);
+}
+.glider[data-jumped] {
+  transform: translate(406px, 148px) rotate(-14deg);
+  animation: rGlide 1250ms cubic-bezier(0.3, 0, 0.25, 1) both;
+}
+@keyframes rGlide {
+  0% {
+    transform: translate(262px, 240px) rotate(-4deg);
+  }
+  12% {
+    transform: translate(268px, 243px) rotate(2deg);
+  }
+  45% {
+    transform: translate(318px, 200px) rotate(-26deg);
+  }
+  75% {
+    transform: translate(372px, 160px) rotate(-18deg);
+  }
+  100% {
+    transform: translate(406px, 148px) rotate(-14deg);
+  }
+}
+.rTrail {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+}
+.rTrail[data-on] {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1100ms cubic-bezier(0.3, 0, 0.25, 1) 120ms;
+}
+.rOrb {
+  transition:
+    opacity 220ms ease calc(420ms + var(--i) * 170ms),
+    transform 320ms cubic-bezier(0.3, 0, 0.2, 1) calc(420ms + var(--i) * 170ms);
+}
+.rOrb[data-taken] {
+  opacity: 0;
+  transform: scale(1.8);
+}
+.rScore b,
+.rOrbs {
+  transition: color 300ms ease;
+}
+
+/* inert copies (lens, slots, captures) show the settled frame: no motion inside them */
+:global([data-still]) .ringSeg,
+:global([data-still]) .rLayer,
+:global([data-still]) .rTrail,
+:global([data-still]) .rOrb,
+:global([data-still]) .panel,
+:global([data-still]) .panel > *,
+:global([data-still]) .panel li,
+:global([data-still]) .aSets li i {
+  transition: none !important;
+}
+:global([data-still]) .glider[data-jumped] {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ringSeg,
+  .rLayer,
+  .rTrail,
+  .rOrb,
+  .panel,
+  .panel > *,
+  .panel li,
+  .aSets li i {
+    transition: none !important;
+  }
+  .glider[data-jumped] {
+    animation: none;
+  }
+}
+
+/* where the glider clears the gate: the region Xroga inspects after Jump */
+.rFlight {
+  position: absolute;
+  left: 262px;
+  top: 92px;
+  width: 112px;
+  height: 116px;
+  pointer-events: none;
 }
