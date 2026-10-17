@@ -487,7 +487,7 @@ router.post(
         provision,
       } =
         await connectUserSupabase(
-          req.userId!,
+          req.tenantContext!,
           {
             projectUrl:
               parsed.data
@@ -634,7 +634,7 @@ router.post(
 
     try {
       const {
-        getUserProviderKey,
+        readUserSupabaseBundle,
       } = await import(
         '../services/integrations/userProviderKeys.js'
       );
@@ -645,27 +645,8 @@ router.post(
         '../services/integrations/supabaseProvision.js'
       );
 
-      const [
-        url,
-        service,
-        dbPass,
-      ] =
-        await Promise.all([
-          getUserProviderKey(
-            req.userId!,
-            'supabase_url',
-          ),
-
-          getUserProviderKey(
-            req.userId!,
-            'supabase',
-          ),
-
-          getUserProviderKey(
-            req.userId!,
-            'supabase_db_password',
-          ),
-        ]);
+      const bundle = await readUserSupabaseBundle(req.userId!);
+      const url = bundle?.projectUrl, service = bundle?.serviceRoleKey, dbPass = bundle?.dbPassword;
 
       const {
         getUserSupabaseManagementToken,
@@ -750,13 +731,7 @@ router.get(
           'aes-256-gcm',
       });
     } catch (err) {
-      res.status(500).json({
-        error:
-          (err as Error)
-            .message,
-
-        keys: [],
-      });
+      res.status(503).json({ error: 'Connected keys could not be loaded. Retry shortly.', keys: [] });
     }
   },
 );
@@ -927,7 +902,7 @@ router.delete(
   ) => {
     try {
       await deleteUserProviderKey(
-        req.userId!,
+        req.tenantContext!,
         String(
           req.params
             .provider,
@@ -1164,7 +1139,7 @@ router.patch(
 
     try {
       const mode = await setUserPluginPermissionMode(
-        req.userId!,
+        req.tenantContext!,
         parsed.data.mode,
         parsed.data.toolkit,
       );

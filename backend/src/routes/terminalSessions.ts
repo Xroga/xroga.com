@@ -12,10 +12,16 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from '../middleware/auth.js';
-import { ensureTerminalSessionsSchema } from '../db/ensureTerminalSessionsSchema.js';
 import { approximateBytes, recordSupabaseCall } from '../lib/supabaseCallCounters.js';
+import { requireTenantContext } from '../security/tenantContext.js';
+import { persistOwnedTerminal } from '../security/ownedTerminalPersistence.js';
+import { TenantAccessError } from '../security/tenantErrors.js';
 
 const router = Router();
+router.use((req: AuthRequest,res,next) => {
+  try { req.userId=requireTenantContext(req.tenantContext).userId;next(); }
+  catch { res.status(401).json({error:'Sign in again and retry.'}); }
+});
 
 /** Columns the sidebar needs. Excludes `messages` and `prompt` by construction. */
 export const SUMMARY_COLUMNS =
@@ -102,7 +108,7 @@ async function nextTerminalNumber(
   repo: string
 ): Promise<number> {
   const supabase = getSupabaseAdmin();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('terminal_sessions')
     .select('terminal_number')
     .eq('user_id', userId)
@@ -110,13 +116,13 @@ async function nextTerminalNumber(
     .order('terminal_number', { ascending: false })
     .limit(1)
     .maybeSingle();
+  if (error) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
   return Number(data?.terminal_number ?? 0) + 1;
 }
 
 /** GET /api/terminal-sessions?repo=owner/name&limit=&offset= — metadata only */
 router.get('/', async (req: AuthRequest, res) => {
   const userId = req.userId!;
-  await ensureTerminalSessionsSchema().catch(() => false);
 
   const repo =
     typeof req.query.repo === 'string' && req.query.repo.includes('/')
@@ -145,7 +151,7 @@ router.get('/', async (req: AuthRequest, res) => {
     const { data, error } = await query;
     if (error) {
       recordSupabaseCall({ table: 'terminal_sessions', operation: 'select', outcome: 'error' });
-      res.status(500).json({ error: error.message });
+      res.status(503).json({ error: 'Session could not be updated or loaded. Retry shortly.' });
       return;
     }
 
@@ -164,7 +170,7 @@ router.get('/', async (req: AuthRequest, res) => {
       pagination: { limit, offset, hasMore, nextOffset: hasMore ? offset + limit : null },
     });
   } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
+    res.status(503).json({ error: 'Session could not be updated or loaded. Retry shortly.' });
   }
 });
 
@@ -187,7 +193,7 @@ router.get('/:id', async (req: AuthRequest, res) => {
       .maybeSingle();
 
     if (error) {
-      res.status(500).json({ error: error.message });
+      res.status(503).json({ error: 'Session could not be updated or loaded. Retry shortly.' });
       return;
     }
     if (!data) {
@@ -196,7 +202,7 @@ router.get('/:id', async (req: AuthRequest, res) => {
     }
     res.json({ session: toFull(data as SessionRow) });
   } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
+    res.status(503).json({ error: 'Session could not be updated or loaded. Retry shortly.' });
   }
 });
 
@@ -204,7 +210,6 @@ router.get('/:id', async (req: AuthRequest, res) => {
 router.put('/:id', async (req: AuthRequest, res) => {
   const userId = req.userId!;
   const id = String(req.params.id || '').trim();
-  await ensureTerminalSessionsSchema().catch(() => false);
 
   const parsed = upsertSchema.safeParse({ ...req.body, id });
   if (!parsed.success) {
@@ -227,12 +232,13 @@ router.put('/:id', async (req: AuthRequest, res) => {
 
   try {
     const supabase = getSupabaseAdmin();
-    const { data: existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
       .from('terminal_sessions')
       .select('id, terminal_number, created_at, github_repo_name')
       .eq('user_id', userId)
       .eq('id', id)
       .maybeSingle();
+    if (existingError) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
 
     // Sticky: once a terminal is under a repo, never relocate it on upsert.
     const githubRepoName =
@@ -260,14 +266,8 @@ router.put('/:id', async (req: AuthRequest, res) => {
       created_at: existing?.created_at ?? new Date().toISOString(),
     };
 
-    let { data, error } = await supabase
-      .from('terminal_sessions')
-      .upsert(row, { onConflict: 'id' })
-      // Return metadata only. This used to be `select('*')`, which echoed all 300
-      // messages back on every autosave — the request paid for the payload twice,
-      // once up and once down, and the client discarded the copy it got back.
-      .select(WRITE_RETURN_COLUMNS)
-      .single();
+    // Preserve metadata-only response; never merge over a different user's id.
+    let { data, error } = await persistOwnedTerminal(supabase,requireTenantContext(req.tenantContext),row,WRITE_RETURN_COLUMNS);
 
     // Unique (user, repo, terminal_number) race — reallocate and retry once.
     if (error && /terminal_number|uq_terminal_sessions|duplicate key/i.test(error.message || '')) {
@@ -277,18 +277,14 @@ router.put('/:id', async (req: AuthRequest, res) => {
         terminal_number: retryNumber,
         title: (body.title || `Terminal #${retryNumber}`).slice(0, 120),
       };
-      const retry = await supabase
-        .from('terminal_sessions')
-        .upsert(retryRow, { onConflict: 'id' })
-        .select(WRITE_RETURN_COLUMNS)
-        .single();
+      const retry = await persistOwnedTerminal(supabase,requireTenantContext(req.tenantContext),retryRow,WRITE_RETURN_COLUMNS);
       data = retry.data;
       error = retry.error;
     }
 
     if (error) {
       recordSupabaseCall({ table: 'terminal_sessions', operation: 'upsert', outcome: 'error' });
-      res.status(500).json({ error: error.message });
+      res.status(503).json({ error: 'Session could not be updated or loaded. Retry shortly.' });
       return;
     }
 
@@ -299,7 +295,8 @@ router.put('/:id', async (req: AuthRequest, res) => {
     );
     res.json({ session });
   } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
+    if(err instanceof TenantAccessError) {res.status(err.status).json({error:err.message,code:err.code});return;}
+    res.status(503).json({ error: 'Session could not be saved. Retry shortly.' });
   }
 });
 
@@ -315,12 +312,12 @@ router.delete('/:id', async (req: AuthRequest, res) => {
       .eq('user_id', userId)
       .eq('id', id);
     if (error) {
-      res.status(500).json({ error: error.message });
+      res.status(503).json({ error: 'Session could not be updated or loaded. Retry shortly.' });
       return;
     }
     res.json({ success: true, id });
   } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
+    res.status(503).json({ error: 'Session could not be updated or loaded. Retry shortly.' });
   }
 });
 

@@ -1,4 +1,8 @@
 import { nextRedirects } from './redirects.mjs';
+import { readFileSync } from 'node:fs';
+import { resolveAuthBuildConfiguration } from './src/lib/supabase/authBuildRealm.mjs';
+const stagingManifest=process.env.XROGA_STAGING_AUTH_BUILD==='1'?JSON.parse(readFileSync(process.env.XROGA_STAGING_MANIFEST_PATH??'', 'utf8')):undefined;
+const authBuildConfiguration = resolveAuthBuildConfiguration(process.env,stagingManifest);
 
 const configuredApiOrigin = (() => {
   try {
@@ -11,7 +15,10 @@ const configuredApiOrigin = (() => {
   }
 })();
 
-const connectSources = [
+const connectSources = (authBuildConfiguration.projectRef==='self-hosted-staging' ? [
+  "'self'", configuredApiOrigin, authBuildConfiguration.url,
+  authBuildConfiguration.url.replace(/^https:/,'wss:'),
+] : [
   "'self'",
   'https://xroga-api.fly.dev',
   'wss://xroga-api.fly.dev',
@@ -26,7 +33,8 @@ const connectSources = [
   'https://c.bing.com',
   'https://analytics.ahrefs.com',
   configuredApiOrigin,
-].filter(Boolean).join(' ');
+  ...(authBuildConfiguration.projectRef === 'local-disposable' ? ['http://127.0.0.1:54321', 'ws://127.0.0.1:54321'] : []),
+]).filter(Boolean).join(' ');
 
 const scriptSources = [
   "'self'",
@@ -87,6 +95,9 @@ const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|showcase/[^/]+/preview$|showcase/bl
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Next inlines this validated public issuer in both server and browser builds.
+  // Runtime hosting URLs/body/query parameters cannot redirect credentials.
+  env: { NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF: authBuildConfiguration.projectRef,NEXT_PUBLIC_XROGA_AUTH_BASE_URL:authBuildConfiguration.url },
   webpack(config, { isServer, webpack }) {
     if (!isServer) {
       // PptxGenJS guards these Node-only imports at runtime, but webpack still

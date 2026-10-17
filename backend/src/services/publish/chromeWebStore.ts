@@ -9,13 +9,15 @@
  */
 
 import { randomBytes } from 'crypto';
+import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
 import {
   getUserProviderKey,
   saveUserProviderKey,
+  prepareUserProviderKeyWrite,
+  type ProviderKeyWriteAdmission,
 } from '../integrations/userProviderKeys.js';
 import {
-  clearPkceSession,
-  loadPkceSession,
+  consumePkceSession,
   storePkceSession,
 } from '../integrations/oauthPkceStore.js';
 
@@ -108,6 +110,7 @@ export async function getCwsCredentials(userId: string): Promise<CwsCredentials 
 export async function saveCwsCredentials(
   userId: string,
   creds: CwsCredentials,
+  writeAdmission?: ProviderKeyWriteAdmission,
 ): Promise<void> {
   await saveUserProviderKey(
     userId,
@@ -119,6 +122,7 @@ export async function saveCwsCredentials(
       extensionId: creds.extensionId.trim(),
       publisherId: creds.publisherId.trim().replace(/^publishers\//, ''),
     }),
+    { writeAdmission },
   );
 }
 
@@ -170,13 +174,14 @@ function itemName(creds: CwsCredentials): string {
  * User must add the returned redirectUri on their Google Cloud OAuth client.
  */
 export async function startCwsOAuth(opts: {
-  userId: string;
+  tenantContext: TenantContext;
   clientId: string;
   clientSecret: string;
   extensionId: string;
   publisherId: string;
   redirectUri: string;
 }): Promise<{ url: string; state: string; redirectUri: string }> {
+  const context = requireTenantContext(opts.tenantContext);
   const redirectUri = getCwsOAuthCallbackUrl(opts.redirectUri);
   if (!isAllowedCwsCallbackUrl(redirectUri)) {
     throw new Error('Invalid CWS OAuth redirect URI');
@@ -197,7 +202,7 @@ export async function startCwsOAuth(opts: {
     throw new Error('clientId, clientSecret, extensionId, and publisherId are required');
   }
 
-  await storePkceSession(opts.userId, PKCE_PROVIDER, {
+  await storePkceSession(context, PKCE_PROVIDER, {
     verifier: pending.clientSecret,
     state,
     redirect_uri: redirectUri,
@@ -229,13 +234,15 @@ export async function startCwsOAuth(opts: {
 
 /** Exchange Google auth code → refresh token and save CWS credentials. */
 export async function completeCwsOAuth(opts: {
-  userId: string;
+  tenantContext: TenantContext;
   code: string;
   state: string;
   redirectUri?: string;
 }): Promise<{ ok: true; message: string } | { ok: false; error: string }> {
-  const pkce = await loadPkceSession(opts.userId, PKCE_PROVIDER, opts.state);
-  if (!pkce) {
+  const context = requireTenantContext(opts.tenantContext);
+  const { userId } = context;
+  const pkce = await consumePkceSession(context, PKCE_PROVIDER, opts.state);
+  if (!pkce?.authorization_revision) {
     return {
       ok: false,
       error: 'CWS OAuth session expired — start Authorize again from Publish',
@@ -258,9 +265,12 @@ export async function completeCwsOAuth(opts: {
   const extensionId = String(meta.extensionId || '').trim();
   const publisherId = String(meta.publisherId || '').trim();
   if (!clientId || !clientSecret || !extensionId || !publisherId) {
-    await clearPkceSession(opts.userId, PKCE_PROVIDER);
     return { ok: false, error: 'CWS OAuth session missing client fields — start again' };
   }
+
+  const writeAdmission = await prepareUserProviderKeyWrite(userId, 'cws_oauth', {
+    cwsAuthorizationRevision: pkce.authorization_revision,
+  });
 
   const body = new URLSearchParams({
     code: opts.code,
@@ -280,7 +290,6 @@ export async function completeCwsOAuth(opts: {
     error?: string;
     error_description?: string;
   };
-  await clearPkceSession(opts.userId, PKCE_PROVIDER);
 
   if (!res.ok || !json.refresh_token) {
     return {
@@ -301,7 +310,7 @@ export async function completeCwsOAuth(opts: {
     extensionId,
     publisherId,
   };
-  await saveCwsCredentials(opts.userId, creds);
+  await saveCwsCredentials(userId, creds, writeAdmission);
 
   return {
     ok: true,

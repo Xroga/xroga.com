@@ -1,0 +1,32 @@
+{
+  "command": "003",
+  "status": "VERIFIED_CREDENTIAL_FREE_BASELINE",
+  "result": "PASS",
+  "branchCodeSha": "9c4fc0a5fa64760c8dbf5dbc1d6a41f0856af3ab",
+  "testedCiMergeSha": "6d4cfeb0392b131dcdfb08283a5dc02fa7ac9438",
+  "ciUrl": "https://github.com/Xroga/xroga.com/actions/runs/38389954256",
+  "pullRequest": "https://github.com/Xroga/xroga.com/pull/803",
+  "toolchain": { "node": "22.21.1", "npm": "10.9.4", "backendTypeScript": "5.9.3", "frontendTypeScript": "5.9.3" },
+  "cleanRunManifests": ["ci-run-a.json", "ci-run-b.json"],
+  "stagesPerRun": 17,
+  "suiteResultsPerRun": [
+    { "name": "backend-unit-tests", "exitCode": 0, "tests": 2717, "pass": 2717, "fail": 0, "skipped": 0 },
+    { "name": "frontend-unit-tests", "exitCode": 0, "tests": 987, "pass": 987, "fail": 0, "skipped": 0 },
+    { "name": "baseline-negative-fixtures", "exitCode": 0, "tests": 12, "pass": 12, "fail": 0, "skipped": 0 },
+    { "name": "inventory-and-ledger-fixtures", "exitCode": 0, "tests": 18, "pass": 18, "fail": 0, "skipped": 0 }
+  ],
+  "installedLockIndex": { "packages": 1144, "sha256": "5ecdde70804b5ef055d7d58ded18b23690f30774e8e153332956949bae064e34" },
+  "lockfiles": [
+    { "path": "package-lock.json", "sha256": "25db1eb64d2922003687d616dd98b7296eb7bc9a60a8cc62e8b471bd5739a01d" },
+    { "path": "backend/package-lock.json", "sha256": "8b67b0666a89c51adf5561bab92dd164dcdabe5bbf11f5071c7dde9a1beffe22" },
+    { "path": "frontend/package-lock.json", "sha256": "cb476c26c447dbcd09df20412e99dcd3c24bb7430bd007b93aa054bbeac6c513" }
+  ],
+  "registeredPreExistingSkipSites": 19,
+  "newRuntimeSkips": 0,
+  "sourceTreeMutated": false,
+  "ciVerified": true,
+  "migrationsParsed": 67,
+  "databaseExecuted": false,
+  "productionDeployed": false,
+  "releaseBlockers": ["Authenticated-browser E2E: BLOCKED_PENDING_TEST_CONFIGURATION", "Commands 007–010 isolated/staging security proof", "Existing dependency advisory classification", "Commands 004–010 not yet verified"]
+}

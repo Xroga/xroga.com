@@ -7,6 +7,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { randomBytes } from 'crypto';
 import type { AuthRequest } from '../middleware/auth.js';
+import { requireTenantContext, requireResourceOwner, type TenantContext } from '../security/tenantContext.js';
 import {
   buildSupabaseAuthorizeUrl,
   clearSupabaseOAuth,
@@ -21,12 +22,14 @@ import {
   fetchProjectApiKeys,
   listSupabaseProjects,
   oneClickConnectSupabase,
+  prepareSupabaseConnectionWrite,
   provisionUserSupabase,
 } from '../services/integrations/supabaseProvision.js';
 import {
   deleteUserProviderKey,
   getUserProviderKey,
   getUserSupabaseStatus,
+  saveSupabaseBundle,
   saveUserProviderKey,
 } from '../services/integrations/userProviderKeys.js';
 import {
@@ -60,7 +63,7 @@ router.get('/oauth', async (req: AuthRequest, res) => {
   const requested = typeof req.query.redirect_uri === 'string' ? req.query.redirect_uri : undefined;
   const redirectUri = getSupabaseOAuthCallbackUrl(requested);
   try {
-    const built = await buildSupabaseAuthorizeUrl(req.userId!, redirectUri);
+    const built = await buildSupabaseAuthorizeUrl(req.tenantContext!, redirectUri);
     res.json({
       url: built?.url ?? null,
       redirectUri,
@@ -136,8 +139,13 @@ router.post('/connect', async (req: AuthRequest, res) => {
 
   try {
     const redirectUri = getSupabaseOAuthCallbackUrl(parsed.data.redirectUri);
+    const context = requireTenantContext(req.tenantContext);
+    requireResourceOwner(context, req.userId);
+    // This callback may never acquire fresh authority after a disconnect while
+    // exchanging the code or listing projects. Carry the original CAS receipts.
+    const writeAdmissions = await prepareSupabaseConnectionWrite(req.userId!);
     await exchangeSupabaseOAuthCode({
-      userId: req.userId!,
+      tenantContext: context,
       code: parsed.data.code,
       state: parsed.data.state,
       redirectUri,
@@ -148,9 +156,6 @@ router.post('/connect', async (req: AuthRequest, res) => {
       res.status(502).json({ error: 'Authorized but no access token stored' });
       return;
     }
-
-    // Persist PAT best-effort (table may be missing; OAuth token is already in store)
-    await saveUserProviderKey(req.userId!, 'supabase_pat', accessToken).catch(() => undefined);
 
     let projects: Array<{ id: string; ref: string; name: string; region?: string }> = [];
     let projectsError: string | undefined;
@@ -175,14 +180,23 @@ router.post('/connect', async (req: AuthRequest, res) => {
           accessToken,
           projectRef: p.ref,
           projectName: p.name,
+          writeAdmissions,
         });
         provision = result.provision;
         status = result.status;
         envSync = await maybeSyncVaultToVercel(req.userId!);
       } catch (err) {
+        if ((err as { code?: string }).code === 'CREDENTIAL_WRITE_CONFLICT') {
+          res.status(409).json({ ok: false, error: 'Supabase connection changed during authorization. Authorize again.' });
+          return;
+        }
         console.warn('[supabaseOAuth] auto-provision failed:', (err as Error).message);
         provision = { ok: false, message: (err as Error).message };
       }
+    } else {
+      // Single-project setup saves this once with the same original admission.
+      await saveUserProviderKey(req.userId!, 'supabase_pat', accessToken, { writeAdmission: writeAdmissions.pat });
+      status = await getUserSupabaseStatus(req.userId!);
     }
 
     res.json({
@@ -251,6 +265,7 @@ router.post('/select-project', async (req: AuthRequest, res) => {
   }
 
   try {
+    const writeAdmissions = await prepareSupabaseConnectionWrite(req.userId!);
     let accessToken = await getSupabaseOAuthAccessToken(req.userId!);
     if (!accessToken) {
       accessToken = await getUserProviderKey(req.userId!, 'supabase_pat');
@@ -260,14 +275,13 @@ router.post('/select-project', async (req: AuthRequest, res) => {
       return;
     }
 
-    await saveUserProviderKey(req.userId!, 'supabase_pat', accessToken).catch(() => undefined);
-
     const result = await oneClickConnectSupabase({
       userId: req.userId!,
       accessToken,
       projectRef: parsed.data.projectRef,
       projectName: parsed.data.projectName,
       vercelProject: parsed.data.vercelProject,
+      writeAdmissions,
     });
 
     const envSync = await maybeSyncVaultToVercel(
@@ -302,7 +316,11 @@ router.post('/create-project', async (req: AuthRequest, res) => {
   }
 
   try {
-    const accessToken = await getSupabaseOAuthAccessToken(req.userId!);
+    const context = requireTenantContext(req.tenantContext);
+    requireResourceOwner(context, req.userId);
+    const { userId } = context;
+    const writeAdmissions = await prepareSupabaseConnectionWrite(userId);
+    const accessToken = await getSupabaseOAuthAccessToken(userId);
     if (!accessToken) {
       res.status(403).json({ error: 'Authorize Supabase first' });
       return;
@@ -339,9 +357,6 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     // Wait briefly for project to become active before keys/SQL
     await new Promise((r) => setTimeout(r, 4000));
 
-    await saveUserProviderKey(req.userId!, 'supabase_db_password', dbPass);
-    await saveUserProviderKey(req.userId!, 'supabase_pat', accessToken);
-
     // Retry key fetch — new projects may need a moment
     let keys: { url: string; anonKey: string; serviceRoleKey: string } | null = null;
     for (let i = 0; i < 8; i++) {
@@ -354,9 +369,8 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     }
     if (!keys) throw new Error('Project created but API keys not ready yet — click the project in a minute');
 
-    await saveUserProviderKey(req.userId!, 'supabase_url', keys.url);
-    await saveUserProviderKey(req.userId!, 'supabase_anon', keys.anonKey);
-    await saveUserProviderKey(req.userId!, 'supabase', keys.serviceRoleKey);
+    await saveSupabaseBundle(writeAdmissions.bundle, { projectUrl: keys.url, anonKey: keys.anonKey, serviceRoleKey: keys.serviceRoleKey, dbPassword: dbPass });
+    await saveUserProviderKey(userId, 'supabase_pat', accessToken, { writeAdmission: writeAdmissions.pat });
 
     const provision = await provisionUserSupabase({
       projectUrl: keys.url,
@@ -376,7 +390,7 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     res.json({
       ok: true,
       projectRef: ref,
-      status: { ...status, provisioned: provision.schemaApplied || status.provisioned },
+      status: { ...status, provisioned: provision.ok && provision.schemaApplied && provision.memoryTablesReady },
       provision,
       envSync,
       message: provision.message || `Created and provisioned ${parsed.data.name}`,
@@ -407,8 +421,11 @@ router.get('/organizations', async (req: AuthRequest, res) => {
 });
 
 router.delete('/disconnect', async (req: AuthRequest, res) => {
-  try {
-    await clearSupabaseOAuth(req.userId!);
+    let context: TenantContext;
+    try { context = requireTenantContext(req.tenantContext); requireResourceOwner(context, req.userId); }
+    catch { res.status(401).json({ ok: false, error: 'Sign in before disconnecting Supabase.' }); return; }
+    let failed = false;
+    try { await clearSupabaseOAuth(context); } catch { failed = true; }
     // Also clear vault Supabase keys so status does not stay "connected" via leftover URL/keys
     const vaultProviders = [
       'supabase_url',
@@ -420,15 +437,18 @@ router.delete('/disconnect', async (req: AuthRequest, res) => {
     ];
     for (const p of vaultProviders) {
       try {
-        await deleteUserProviderKey(req.userId!, p);
+        await deleteUserProviderKey(context, p);
       } catch {
-        /* ignore missing */
+        // Missing keys are handled by the durable tombstone operation. Any
+        // thrown error means revocation or legacy cleanup remains unconfirmed.
+        failed = true;
       }
     }
+    if (failed) {
+      res.status(503).json({ ok: false, error: 'Supabase disconnect is incomplete. Retry shortly.' });
+      return;
+    }
     res.json({ ok: true });
-  } catch (err) {
-    res.status(400).json({ error: (err as Error).message });
-  }
 });
 
 export default router;

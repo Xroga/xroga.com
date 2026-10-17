@@ -53,3 +53,20 @@ test('internal adapter delegates supported operations and blocks unsupported one
   assert.equal((await adapter.execute('retry_job', {})).status, 'verified');
   assert.equal((await adapter.execute('restore_backup', {})).status, 'unsupported');
 });
+
+test('internal adapter routes the implemented campaign capability without changing its outcome', async () => {
+  const input = { userId: 'owner', projectId: 'project', targetId: 'campaign', targetVersion: 1, actionId: 'approved-action' };
+  let calls = 0;
+  const result = { status: 'verified' as const, safeSummary: 'Canonical campaign transition persisted' };
+  const adapter = createInternalAdapter(async (capability, received) => {
+    calls++;
+    assert.equal(capability, 'execute_growth_campaign');
+    assert.deepEqual(received, input);
+    return result;
+  });
+  assert.ok(adapter.supportedCapabilities.includes('execute_growth_campaign'));
+  assert.equal(await adapter.execute('execute_growth_campaign', input), result);
+  assert.equal(calls, 1);
+  assert.equal((await adapter.execute('unimplemented_campaign_send', input)).status, 'unsupported');
+  assert.equal(calls, 1);
+});

@@ -2032,7 +2032,7 @@ router.get(
             ),
         },
       );
-    } catch {
+    } catch (error) {
       console.error(
         '[phase1/usage]',
         {
@@ -2043,7 +2043,7 @@ router.get(
 
       return res
         .status(
-          500,
+          (error as { code?: string })?.code === 'QUOTA_UNAVAILABLE' ? 503 : 500,
         )
         .json(
           {
@@ -2218,7 +2218,7 @@ router.get(
 
       res
         .status(
-          402,
+          error.code === 'QUOTA_UNAVAILABLE' ? 503 : 402,
         )
         .json(
           {

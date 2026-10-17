@@ -4,7 +4,6 @@
  */
 
 import { getSupabaseAdmin } from '../config/supabase.js';
-import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
 import { getUserSupabaseAdmin } from '../services/integrations/supabaseProvision.js';
 import type { ProjectFile } from './patches.js';
 
@@ -107,6 +106,13 @@ function fromUserRow(row: Record<string, unknown>): ProjectMemory {
   };
 }
 
+function restoreProjectMemory(row: Record<string,unknown>, userId:string, repo:string|null, branch:string, external=false): ProjectMemory|null {
+  if (row[external ? 'xroga_user_id' : 'user_id'] !== userId || row.repo !== normalizeRepo(repo) || row.branch !== (branch || 'main') ||
+      !Array.isArray(row.files) || !row.files.every(file => file && typeof file.path === 'string' && typeof file.content === 'string') ||
+      (row.paths !== undefined && (!Array.isArray(row.paths) || !row.paths.every(path => typeof path === 'string')))) return null;
+  return structuredClone(external ? fromUserRow(row) : fromRow(row));
+}
+
 async function loadFromDb(
   userId: string,
   repo: string | null,
@@ -122,15 +128,14 @@ async function loadFromDb(
         .eq('branch', branch || 'main')
         .eq('repo', normalizeRepo(repo))
         .maybeSingle();
-      if (!error && data) return fromUserRow(data as Record<string, unknown>);
+      if (!error && data) return restoreProjectMemory(data as Record<string, unknown>,userId,repo,branch,true);
     }
   } catch (err) {
-    console.warn('[projectMemory] user project load:', (err as Error).message);
+    console.warn('[projectMemory] user project load unavailable');
   }
 
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
   try {
-    await ensureShipLoopSchema();
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from('project_memory')
@@ -140,14 +145,15 @@ async function loadFromDb(
       .eq('repo', normalizeRepo(repo))
       .maybeSingle();
     if (error || !data) return null;
-    return fromRow(data as Record<string, unknown>);
+    return restoreProjectMemory(data as Record<string, unknown>,userId,repo,branch);
   } catch (err) {
-    console.warn('[projectMemory] load failed:', (err as Error).message);
+    console.warn('[projectMemory] platform load unavailable');
     return null;
   }
 }
 
 async function saveToDb(mem: ProjectMemory): Promise<ProjectMemoryPersistence> {
+  mem = structuredClone(mem);
   try {
     const userClient = await getUserSupabaseAdmin(mem.userId);
     if (userClient) {
@@ -168,15 +174,14 @@ async function saveToDb(mem: ProjectMemory): Promise<ProjectMemoryPersistence> {
         { onConflict: 'xroga_user_id,repo,branch' },
       );
       if (!error) return 'user_project';
-      console.warn('[projectMemory] user project save:', error.message);
+      console.warn('[projectMemory] user project save unavailable');
     }
   } catch (err) {
-    console.warn('[projectMemory] user project save:', (err as Error).message);
+    console.warn('[projectMemory] user project save unavailable');
   }
 
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return 'memory_only';
 
-  await ensureShipLoopSchema();
   const supabase = getSupabaseAdmin();
   const { error } = await supabase.from('project_memory').upsert(
     {
@@ -195,7 +200,7 @@ async function saveToDb(mem: ProjectMemory): Promise<ProjectMemoryPersistence> {
     { onConflict: 'user_id,repo,branch' },
   );
   if (error) {
-    throw new Error(`Platform project-memory write failed: ${error.message}`);
+    throw new Error('Platform project-memory write unavailable.');
   }
   return 'platform';
 }
@@ -213,7 +218,7 @@ export function getProjectMemory(
     return null;
   }
   mem.hits += 1;
-  return mem;
+  return structuredClone(mem);
 }
 
 /** Hot cache first, then Supabase — use in hydratePriorFiles. */
@@ -226,10 +231,14 @@ export async function getProjectMemoryAsync(
   if (hot?.files?.length) return hot;
 
   const b = branch || 'main';
+  const observed = store.get(key(userId, repo ?? null, b));
   const db = await loadFromDb(userId, repo ?? null, b);
+  // A build may have published a newer snapshot while this read was in flight.
+  const current = getProjectMemory(userId, repo, b);
+  if (current && store.get(key(userId, repo ?? null, b)) !== observed) return current;
   if (!db?.files?.length) return null;
   store.set(key(userId, repo ?? null, b), db);
-  return db;
+  return structuredClone(db);
 }
 
 export function resolveProjectMemoryCommitSha(
@@ -264,13 +273,13 @@ function setProjectMemoryHot(input: SetProjectMemoryInput): ProjectMemory {
     hits: (prev?.hits ?? 0) + 1,
   };
   store.set(key(input.userId, repo, branch), mem);
-  return mem;
+  return structuredClone(mem);
 }
 
 export function setProjectMemory(input: SetProjectMemoryInput): ProjectMemory {
   const mem = setProjectMemoryHot(input);
   void saveToDb(mem).catch((err) => {
-    console.warn('[projectMemory] background save failed:', (err as Error).message);
+    console.warn('[projectMemory] background save unavailable');
   });
   return mem;
 }

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "license": "SIL Open Font License 1.1",
+  "conversion": "FontTools 4.60.2, Brotli 1.2.0; format-only WOFF2 roundtrip checked for family, axes, glyph order, cmap and advance metrics",
+  "fonts": [
+    {"family":"Manrope","sourceCommit":"b31870aff700ab7a1d74fa0c6887d95beb9e0037","source":"https://github.com/google/fonts/blob/b31870aff700ab7a1d74fa0c6887d95beb9e0037/ofl/manrope/Manrope%5Bwght%5D.ttf","sourceSha256":"3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6","file":"ManropeVariable.woff2","sha256":"30b83738add8c9edd9e3450b98036a9a8fb5668d0cbd4eb0ce5fe6761197f21f","bytes":53892,"weight":[200,800],"style":"normal","notice":"frontend/public/font-licenses/Manrope-OFL.txt"},
+    {"family":"Cormorant Garamond","sourceCommit":"3dd78844021e948ceb633d1dcee3f7885561b5d9","source":"https://github.com/google/fonts/blob/3dd78844021e948ceb633d1dcee3f7885561b5d9/ofl/cormorantgaramond/CormorantGaramond%5Bwght%5D.ttf","sourceSha256":"b20b7d9626dd956b2c5e558692ad328b1f19e3275e2782db4fa07670d83f35e0","file":"CormorantGaramondVariable.woff2","sha256":"1c7136dcfe2ba0c22bd2e4ab48467813cb6dd7b5728a73920dd9eb6452b8a558","bytes":209428,"weight":[300,700],"style":"normal","notice":"frontend/public/font-licenses/Cormorant-Garamond-OFL.txt"},
+    {"family":"Cormorant Garamond","sourceCommit":"3dd78844021e948ceb633d1dcee3f7885561b5d9","source":"https://github.com/google/fonts/blob/3dd78844021e948ceb633d1dcee3f7885561b5d9/ofl/cormorantgaramond/CormorantGaramond-Italic%5Bwght%5D.ttf","sourceSha256":"0f48ea6abb2084537854f7174c470991a463b13036309e3b50a81511611c530d","file":"CormorantGaramondVariable-Italic.woff2","sha256":"b25fd6a66314122257980ac9fd0fa56c2cfb73970b09acdce214e1b18fb2f51d","bytes":143644,"weight":[300,700],"style":"italic","notice":"frontend/public/font-licenses/Cormorant-Garamond-OFL.txt"}
+  ],
+  "scope":"Crypto route only; root fonts and approved homepage modules unchanged",
+  "productionNetworkFontDependencies":0
+}

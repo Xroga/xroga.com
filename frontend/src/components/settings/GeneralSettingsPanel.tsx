@@ -89,7 +89,8 @@ export function GeneralSettingsPanel({ email }: { email: string }) {
 
   async function handleAvatarPick(url: string) {
     await setAvatarUrl(url);
-    update({ avatar_url: url });
+    const p = useAppStore.getState().profile;
+    if (p) update({ avatar_url: p.avatar_url });
   }
 
   if (loading || !profile) {

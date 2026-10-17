@@ -26,6 +26,7 @@ import {
 import {
   getLivePreviewGrant,
 } from '../synthesis/livePreview/store.js';
+import { authorizedPreviewTarget } from '../synthesis/livePreview/access.js';
 
 import {
   parseLivePreviewHost,
@@ -102,43 +103,12 @@ async function resolveTarget(
         grant.sessionId,
       );
 
-  if (
-    !session ||
-    session.status !==
-      'running' ||
-    session.runtimeClass !==
-      'interactive'
-  ) {
-    return null;
-  }
-
-  const machineId =
-    session
-      .providerState
-      .machineId;
-
-  const app =
-    session
-      .providerState
-      .app;
-
-  if (
-    typeof machineId !==
-      'string' ||
-    !machineId ||
-    typeof app !==
-      'string' ||
-    !app
-  ) {
-    return null;
-  }
+  const target = authorizedPreviewTarget(grant, session);
+  if (!target) return null;
 
   return {
-    host:
-      `${machineId}.vm.${app}.internal`,
-
-    port:
-      grant.port,
+    host: target.host,
+    port: target.port,
 
     publicHost:
       hostname,

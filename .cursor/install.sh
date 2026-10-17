@@ -3,7 +3,7 @@
 set -euo pipefail
 
 echo "==> Installing workspace dependencies"
-npm install
+npm ci
 
 echo "==> Ensuring local env files exist"
 if [ ! -f backend/.env ]; then

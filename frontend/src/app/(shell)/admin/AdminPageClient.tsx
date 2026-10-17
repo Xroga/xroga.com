@@ -25,6 +25,7 @@ export default function AdminPageClient() {
   const [filter, setFilter] = useState('');
   const [severity, setSeverity] = useState('');
   const [loading, setLoading] = useState(true);
+  const [errorsError, setErrorsError] = useState<string | null>(null);
   const [readiness, setReadiness] = useState<OperationsReadiness | null>(null);
   const [readinessError, setReadinessError] = useState<string | null>(null);
 
@@ -45,12 +46,14 @@ export default function AdminPageClient() {
         fetch(`${API_URL}/api/operations/readiness`, { headers }),
       ]);
       const data = (await res.json()) as { errors: SystemError[] };
-      setErrors(data.errors ?? []);
+      setErrors(res.ok && Array.isArray(data.errors) ? data.errors : []);
+      setErrorsError(res.ok && Array.isArray(data.errors) ? null : 'System error records unavailable');
       const readinessData = (await readinessRes.json()) as { readiness?: OperationsReadiness; blocker?: string };
       setReadiness(readinessData.readiness ?? null);
       setReadinessError(readinessRes.ok ? null : readinessData.blocker ?? 'Readiness evidence unavailable');
     } catch {
       setErrors([]);
+      setErrorsError('System error records request failed');
       setReadiness(null);
       setReadinessError('Readiness request failed');
     } finally {
@@ -125,6 +128,8 @@ export default function AdminPageClient() {
 
       {loading ? (
         <p className="text-[var(--muted)]">Loading…</p>
+      ) : errorsError ? (
+        <p role="alert" className="text-sm text-red-400">{errorsError}</p>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-[var(--card-border)]">
           <table className="w-full text-sm">

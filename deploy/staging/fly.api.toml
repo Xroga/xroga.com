@@ -1,0 +1,32 @@
+# PROPOSED ONLY. Owner approval and isolation review required. Not used by production CI.
+# Runtime secrets come from the separately approved staging app; never copy xroga-api secrets.
+app = 'xroga-api-staging'
+primary_region = 'iad'
+[build]
+  dockerfile = 'Dockerfile.api'
+  ignorefile = '.dockerignore'
+[env]
+  PORT = '8080'
+  NODE_ENV = 'production'
+  XROGA_DEPLOYMENT_ENVIRONMENT = 'staging'
+  # No billing/provider/OAuth/sandbox tokens, production callback URLs or workers.
+  RUN_SWARM_WORKER = 'false'
+[processes]
+  app = 'node dist/index.js'
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+  [[http_service.checks]]
+    grace_period = '30s'
+    interval = '15s'
+    method = 'GET'
+    timeout = '10s'
+    path = '/health'
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

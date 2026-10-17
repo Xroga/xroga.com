@@ -1,4 +1,4 @@
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { getGlobalSupabaseAdmin } from '../security/serviceRoleGuard.js';
 
 /**
  * Orphaned-run reconciliation.
@@ -72,10 +72,10 @@ export function orphanLeaseFilter(
  */
 export async function reconcileOrphanedRuns(opts: { graceMs?: number } = {}): Promise<number> {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return 0;
-  const graceMs = opts.graceMs ?? ORPHAN_GRACE_MS;
+  const graceMs = Number.isFinite(opts.graceMs) ? Math.max(ORPHAN_GRACE_MS, opts.graceMs!) : ORPHAN_GRACE_MS;
   const cutoff = new Date(Date.now() - graceMs).toISOString();
 
-  const supabase = getSupabaseAdmin();
+  const supabase = getGlobalSupabaseAdmin('stale_run_reconcile');
   const { data, error } = await supabase
     .from('swarm_runs')
     .update({
@@ -83,6 +83,7 @@ export async function reconcileOrphanedRuns(opts: { graceMs?: number } = {}): Pr
       output: reconcileOutput('worker_restarted'),
       completed_at: new Date().toISOString(),
       worker_id: null,
+      lease_generation: null,
       heartbeat_at: null,
     })
     .in('status', ACTIVE_RUN_STATUSES as unknown as string[])
@@ -121,8 +122,9 @@ export async function failInFlightRuns(
   } = {},
 ): Promise<number> {
   if (!runIds.length || !process.env.SUPABASE_SERVICE_ROLE_KEY) return 0;
+  if (!opts.workerId?.trim()) throw new Error('Worker lease identity required for shutdown reconciliation');
   const timeoutMs = opts.timeoutMs ?? 3_000;
-  const supabase = getSupabaseAdmin();
+  const supabase = getGlobalSupabaseAdmin('leased_worker_shutdown');
 
   let update = supabase
     .from('swarm_runs')
@@ -131,20 +133,12 @@ export async function failInFlightRuns(
       output: reconcileOutput(reason),
       completed_at: new Date().toISOString(),
       worker_id: null,
+      lease_generation: null,
       heartbeat_at: null,
     })
     .in('id', [...runIds])
+    .eq('worker_id', opts.workerId)
     .in('status', ACTIVE_RUN_STATUSES as unknown as string[]);
-
-  if (
-    opts.workerId
-  ) {
-    update =
-      update.eq(
-        'worker_id',
-        opts.workerId,
-      );
-  }
 
   const request =
     update.select(

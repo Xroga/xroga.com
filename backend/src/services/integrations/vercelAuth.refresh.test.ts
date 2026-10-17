@@ -23,8 +23,8 @@ describe('Vercel OAuth token expiry', () => {
     assert.equal(isVercelAccessTokenExpiring(undefined, now), false);
   });
 
-  it('does not classify malformed metadata as a known-expired token', () => {
-    assert.equal(isVercelAccessTokenExpiring('not-a-date', now), false);
+  it('refuses to treat malformed expiry metadata as a usable token', () => {
+    assert.equal(isVercelAccessTokenExpiring('not-a-date', now), true);
   });
 });
 

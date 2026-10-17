@@ -1,13 +1,17 @@
 /**
  * User BYOK / product API keys — AES-256-GCM in user_integrations.
  * Secrets never go into GitHub; synced to the user's Vercel project env on deploy.
- * When user_integrations is missing, fall back to private Storage (same as OAuth PKCE).
+ * The database is authoritative for revocation. Legacy private Storage reads
+ * require a successful database lookup, never an unavailable authority store.
  */
 
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
+import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
+import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { isMissingTableError } from './githubTokenStore.js';
+import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
+import { projectRefFromUrl } from './supabaseProjectUrl.js';
 
 const PROVIDER_PREFIX = 'apikey_';
 const KEY_BUCKET = 'xroga-github-tokens';
@@ -16,29 +20,13 @@ function keyStoragePath(userId: string, providerRow: string): string {
   return `${userId}/vault-${providerRow}.json`;
 }
 
-async function ensureKeyBucket(): Promise<boolean> {
-  const supabase = getSupabaseAdmin();
-  const { data: buckets, error: listErr } = await supabase.storage.listBuckets();
-  if (!listErr && buckets?.some((b) => b.id === KEY_BUCKET || b.name === KEY_BUCKET)) {
-    return true;
-  }
-  const { error: createErr } = await supabase.storage.createBucket(KEY_BUCKET, {
-    public: false,
-    fileSizeLimit: 65536,
-  });
-  if (!createErr) return true;
-  if (/already exists|duplicate/i.test(createErr.message)) return true;
-  console.warn('[userProviderKeys] createBucket:', createErr.message);
-  return false;
-}
-
 async function saveKeyToStorage(
   userId: string,
   providerRow: string,
   payload: { access_token: string; metadata: Record<string, unknown> },
 ): Promise<boolean> {
   try {
-    if (!(await ensureKeyBucket())) return false;
+    if (!(await ensurePrivateOAuthBucket())) return false;
     const supabase = getSupabaseAdmin();
     const { error } = await supabase.storage
       .from(KEY_BUCKET)
@@ -71,7 +59,16 @@ async function loadKeyFromStorage(
       access_token?: string;
       metadata?: Record<string, unknown>;
     };
-    if (!parsed?.access_token) return null;
+    if (typeof parsed?.access_token !== 'string' || !parsed.access_token) return null;
+    // A revocation or rotation may commit while the legacy download is pending.
+    // Re-read authority after the bytes arrive, not only before the fallback.
+    const { data: current, error: authorityError } = await supabase.from('user_integrations')
+      .select('access_token, metadata').eq('user_id', userId).eq('provider', providerRow).maybeSingle();
+    if (authorityError) return null;
+    if (current) {
+      if (current.metadata?.revoked === true || typeof current.access_token !== 'string' || !current.access_token) return null;
+      return { access_token: current.access_token, metadata: current.metadata ?? {} };
+    }
     return { access_token: parsed.access_token, metadata: parsed.metadata ?? {} };
   } catch {
     return null;
@@ -212,6 +209,18 @@ function normalizeProvider(provider: string): string {
   return p;
 }
 
+/** Only admitted providers or custom rows produced by sanitizeEnvVarName.
+ * Reject before query/path construction; a caller's string is not a scope.
+ */
+function credentialProviderSelection(provider: string): string {
+  if (typeof provider !== 'string') throw new Error('Unsupported credential provider.');
+  const p = normalizeProvider(provider);
+  if (!ALLOWED_SET.has(p) && !/^custom_[a-z_][a-z0-9_]{1,63}$/.test(p)) {
+    throw new Error('Unsupported credential provider.');
+  }
+  return p;
+}
+
 function encryptionKey(): Buffer {
   const secret =
     process.env.USER_SECRETS_ENCRYPTION_KEY ||
@@ -241,24 +250,33 @@ function encryptApiKey(plain: string): string {
 }
 
 function decryptApiKey(stored: string): string | null {
+  if (typeof stored !== 'string' || !stored.length || stored.length > 70000) return null;
+  const decode = (value: string): Buffer | null => {
+    if (!value || !/^[A-Za-z0-9+/]+={0,2}$/.test(value)) return null;
+    const bytes = Buffer.from(value, 'base64');
+    return bytes.toString('base64') === value ? bytes : null;
+  };
+  const utf8 = (bytes: Buffer): string | null => {
+    const text = bytes.toString('utf8');
+    return Buffer.from(text, 'utf8').equals(bytes) ? text : null;
+  };
   if (!stored.startsWith('v1:')) {
-    try {
-      const raw = Buffer.from(stored.replace(/^enc:/, ''), 'base64').toString('utf8');
-      const idx = raw.indexOf(':');
-      return idx >= 0 ? raw.slice(idx + 1) : raw;
-    } catch {
-      return null;
-    }
+    // Keep known legacy enc:/bare-base64 records, never interpret unknown
+    // versioned envelopes or malformed bytes as credentials.
+    const bytes = decode(stored.startsWith('enc:') ? stored.slice(4) : stored);
+    const raw = bytes && utf8(bytes);
+    if (!raw) return null;
+    const idx = raw.indexOf(':');
+    return (idx >= 0 ? raw.slice(idx + 1) : raw) || null;
   }
   const parts = stored.split(':');
-  if (parts.length < 4) return null;
+  if (parts.length !== 4) return null;
   try {
-    const iv = Buffer.from(parts[1]!, 'base64');
-    const tag = Buffer.from(parts[2]!, 'base64');
-    const data = Buffer.from(parts.slice(3).join(':'), 'base64');
+    const iv = decode(parts[1]!), tag = decode(parts[2]!), data = decode(parts[3]!);
+    if (!iv || iv.length !== 12 || !tag || tag.length !== 16 || !data) return null;
     const decipher = createDecipheriv('aes-256-gcm', encryptionKey(), iv);
     decipher.setAuthTag(tag);
-    return Buffer.concat([decipher.update(data), decipher.final()]).toString('utf8');
+    return utf8(Buffer.concat([decipher.update(data), decipher.final()]));
   } catch {
     return null;
   }
@@ -288,12 +306,57 @@ export interface UserProviderKeyStatus {
 export interface SaveKeyOptions {
   /** Required when provider is `custom`; optional override for others. */
   envVarName?: string;
+  /** Server-issued before upstream async work, never accepted from request JSON. */
+  writeAdmission?: ProviderKeyWriteAdmission;
+}
+
+export interface ProviderKeyWriteAdmission {
+  readonly userId: string;
+  readonly providerRow: string;
+  readonly envVar: string;
+}
+const issuedWriteAdmissions = new WeakMap<ProviderKeyWriteAdmission, { revision: string; oauthReceipt: boolean }>();
+
+/** Carry the existing database CAS admission across this process's async work. */
+export async function prepareUserProviderKeyWrite(
+  userId: string,
+  provider: string,
+  opts?: { envVarName?: string; cwsAuthorizationRevision?: string },
+): Promise<ProviderKeyWriteAdmission> {
+  const p = normalizeProvider(provider);
+  if (!ALLOWED_SET.has(p)) throw new Error('Unsupported credential provider.');
+  if (p === 'custom' && !opts?.envVarName?.trim()) throw new Error('Custom keys require an env var name (e.g. MY_SERVICE_API_KEY)');
+  const envVar = envVarForProvider(p, opts?.envVarName);
+  const providerRow = `${PROVIDER_PREFIX}${p === 'custom' ? `custom_${envVar.toLowerCase()}` : p}`;
+  if (opts?.cwsAuthorizationRevision !== undefined && (p !== 'cws_oauth'
+    || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(opts.cwsAuthorizationRevision))) {
+    throw new Error('Invalid CWS authorization revision. Authorize again.');
+  }
+  const prepared = await getSupabaseAdmin().rpc('prepare_provider_key_write', { p_owner_id: userId, p_provider: providerRow });
+  if (prepared.error || typeof prepared.data !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(prepared.data)) {
+    throw new Error('Credential could not be saved. Retry shortly.');
+  }
+  if (opts?.cwsAuthorizationRevision !== undefined && prepared.data !== opts.cwsAuthorizationRevision) {
+    throw new Error('CWS connection changed during authorization. Authorize again.');
+  }
+  const admission = Object.freeze({ userId, providerRow, envVar });
+  issuedWriteAdmissions.set(admission, { revision: prepared.data, oauthReceipt: opts?.cwsAuthorizationRevision !== undefined });
+  return admission;
 }
 
 export function envVarForProvider(provider: string, override?: string): string {
-  if (override?.trim()) return sanitizeEnvVarName(override);
   const p = normalizeProvider(provider);
-  return ENV_VAR_BY_PROVIDER[p] ?? `${p.toUpperCase()}_API_KEY`;
+  const name = override?.trim() ? sanitizeEnvVarName(override) : ENV_VAR_BY_PROVIDER[p] ?? `${p.toUpperCase()}_API_KEY`;
+  assertPrivateCredentialEnv(p, name);
+  return name;
+}
+
+function assertPrivateCredentialEnv(provider: string, name: string): void {
+  const publicSupabase = (provider === 'supabase_url' && name === 'NEXT_PUBLIC_SUPABASE_URL')
+    || (provider === 'supabase_anon' && name === 'NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  if (!publicSupabase && /^(NEXT_PUBLIC_|VITE_|EXPO_PUBLIC_|REACT_APP_|PUBLIC_|GATSBY_|VUE_APP_|NUXT_PUBLIC_)/.test(name)) {
+    throw new Error('Vault credentials cannot use browser-public environment names. Reconnect with a server-only name.');
+  }
 }
 
 export async function saveUserProviderKey(
@@ -324,15 +387,7 @@ export async function saveUserProviderKey(
   if (trimmed.length > 48_000) throw new Error('Credential too long (max ~48KB)');
 
   if (p === 'supabase_url') {
-    let parsed: URL;
-    try {
-      parsed = new URL(trimmed);
-    } catch {
-      throw new Error('Supabase URL must be a valid https URL (e.g. https://xxxx.supabase.co)');
-    }
-    if (parsed.protocol !== 'https:') {
-      throw new Error('Supabase URL must use https://');
-    }
+    if (!projectRefFromUrl(trimmed)) throw new Error('Supabase URL must be a hosted https://PROJECT.supabase.co origin.');
   }
 
   const envVar = envVarForProvider(p, opts?.envVarName);
@@ -344,6 +399,13 @@ export async function saveUserProviderKey(
       ? 'xroga_server'
       : 'vercel';
   const providerRow = `${PROVIDER_PREFIX}${p === 'custom' ? `custom_${envVar.toLowerCase()}` : p}`;
+  // Capture before asynchronous bootstrap or persistence. A concurrent revoke or
+  // newer save invalidates this exact attempt, including an initially absent row.
+  const admission = opts?.writeAdmission ?? await prepareUserProviderKeyWrite(userId, p, { envVarName: envVar });
+  const issued = issuedWriteAdmissions.get(admission);
+  if (!issued || admission.userId !== userId || admission.providerRow !== providerRow || admission.envVar !== envVar) {
+    throw Object.assign(new Error('Credential write admission does not match this request.'), { code: 'CREDENTIAL_WRITE_CONFLICT' });
+  }
   const metadata = {
     type: PUBLISH_ONLY_PROVIDERS.has(p)
       ? 'user_publish_credential'
@@ -358,49 +420,15 @@ export async function saveUserProviderKey(
   };
   const encrypted = encryptApiKey(trimmed);
 
-  if (githubSchemaAutoBootstrapEnabled()) {
-    await ensureGithubSchema();
-  }
 
-  let { error } = await supabase.from('user_integrations').upsert(
-    {
-      user_id: userId,
-      provider: providerRow,
-      access_token: encrypted,
-      metadata,
-    },
-    { onConflict: 'user_id,provider' },
-  );
-
-  if (error && isMissingTableError(error.message)) {
-    await ensureGithubSchema();
-    await new Promise((r) => setTimeout(r, 400));
-    ({ error } = await supabase.from('user_integrations').upsert(
-      {
-        user_id: userId,
-        provider: providerRow,
-        access_token: encrypted,
-        metadata,
-      },
-      { onConflict: 'user_id,provider' },
-    ));
-  }
-
-  if (error && isMissingTableError(error.message)) {
-    const ok = await saveKeyToStorage(userId, providerRow, {
-      access_token: encrypted,
-      metadata,
-    });
-    if (!ok) {
-      throw new Error(
-        'Could not save credentials — user_integrations table missing and storage fallback failed. Apply migration 036 or set SUPABASE_DB_PASSWORD on Fly.',
-      );
-    }
-    console.warn('[userProviderKeys] saved via storage fallback:', providerRow);
-    return { provider: p, connected: true, masked: maskKey(trimmed), envVar, connectedAt: now };
-  }
-
-  if (error) throw new Error(error.message);
+  const saveArgs = {
+    p_owner_id:userId,p_provider:providerRow,p_revision:issued.revision,p_access_token:encrypted,p_metadata:metadata,
+  };
+  const { data:saved,error } = issued.oauthReceipt
+    ? await supabase.rpc('save_cws_oauth_key_if_current', saveArgs)
+    : await supabase.rpc('save_provider_key_if_current', saveArgs);
+  if (error) throw new Error('Credential could not be saved. Retry shortly.');
+  if (saved !== true) throw Object.assign(new Error('Credential changed while saving. Reconnect explicitly and retry.'), {code:'CREDENTIAL_WRITE_CONFLICT'});
 
   void saveKeyToStorage(userId, providerRow, {
     access_token: encrypted,
@@ -414,7 +442,7 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('user_integrations')
-    .select('provider, metadata, updated_at')
+    .select('provider, metadata, created_at')
     .eq('user_id', userId)
     .like('provider', `${PROVIDER_PREFIX}%`);
 
@@ -422,20 +450,18 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
     provider: string;
     metadata: Record<string, unknown> | null;
     updated_at?: string | null;
+    created_at?: string | null;
   };
   let rows: KeyRow[] = (data ?? []) as KeyRow[];
   if (error) {
-    if (!isMissingTableError(error.message)) {
-      throw new Error(error.message);
-    }
-    rows = await listKeysFromStorage(userId);
+    throw new Error('Credential lookup unavailable. Retry shortly.');
   } else if (!rows.length) {
     // Also merge storage fallback keys (table empty but vault files exist)
     const stored = await listKeysFromStorage(userId);
     if (stored.length) rows = stored;
   }
 
-  return rows.map((row) => {
+  return rows.filter((row) => row.metadata?.revoked !== true).map((row) => {
     const meta = (row.metadata ?? {}) as {
       provider?: string;
       masked?: string;
@@ -448,47 +474,110 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
       connected: true,
       masked: meta.masked,
       envVar: meta.env_var ?? envVarForProvider(provider),
-      connectedAt: meta.connected_at ?? row.updated_at ?? undefined,
+      connectedAt: meta.connected_at ?? row.created_at ?? row.updated_at ?? undefined,
     };
   });
 }
 
-export async function deleteUserProviderKey(userId: string, provider: string): Promise<void> {
-  const p = normalizeProvider(provider);
-  const supabase = getSupabaseAdmin();
-  // custom_* rows: delete by prefix match when provider is custom_FOO
-  if (p.startsWith('custom_') || p === 'custom') {
-    const { data, error } = await supabase
-      .from('user_integrations')
-      .select('provider')
-      .eq('user_id', userId)
-      .like('provider', `${PROVIDER_PREFIX}custom%`);
-    if (!error) {
-      for (const row of data ?? []) {
-        await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', row.provider);
-        await supabase.storage.from(KEY_BUCKET).remove([keyStoragePath(userId, row.provider)]).catch(() => undefined);
+export async function deleteUserProviderKey(context: TenantContext, provider: string): Promise<void> {
+  const { userId } = requireTenantContext(context);
+  // Historical disconnect alias is delete-only, never a supported save/read key.
+  if (provider === 'supabase_service') {
+    await revokeProviderRow(context, 'apikey_supabase_service');
+    return;
+  }
+  const p = credentialProviderSelection(provider);
+  const supabase = getTenantSupabaseAdmin(context);
+  // Only the legacy category-level request selects all custom keys. A named
+  // custom credential must take the exact provider-row path below.
+  if (p === 'custom') {
+    const providers = new Set<string>();
+    let expectedCount: number | undefined;
+    for (let page = 0; page < 100; page++) {
+      const offset = page * 100;
+      const { data, error, count } = await supabase.from('user_integrations')
+        .select('user_id,provider', { count: 'exact' })
+        .eq('user_id', userId).like('provider', `${PROVIDER_PREFIX}custom%`)
+        .order('provider', { ascending: true }).range(offset, offset + 99);
+      if (error) throw new Error('Credential revocation could not be recorded. Retry shortly.');
+      if (!Array.isArray(data) || !Number.isSafeInteger(count) || count === null || count < 0 || count > 10000
+        || (expectedCount !== undefined && count !== expectedCount)
+        || data.length !== Math.min(100, Math.max(0, count - offset))) {
+        throw new Error('Custom credential database enumeration could not be completed. Retry shortly.');
       }
-    } else if (!isMissingTableError(error.message)) {
-      throw new Error(error.message);
+      expectedCount = count;
+      for (const row of data) {
+        if (!row || row.user_id !== userId || !isCustomProviderRow(row.provider) || providers.has(row.provider)) {
+          throw new Error('Custom credential database enumeration changed. Retry shortly.');
+        }
+        providers.add(row.provider);
+      }
+      if (providers.size === count) break;
     }
-    const stored = await listKeysFromStorage(userId);
-    for (const row of stored) {
-      if (String(row.provider).includes('custom')) {
-        await supabase.storage.from(KEY_BUCKET).remove([keyStoragePath(userId, row.provider)]).catch(() => undefined);
-      }
+    if (expectedCount === undefined || providers.size !== expectedCount) {
+      throw new Error('Custom credential database enumeration exceeds the verified limit. Retry shortly.');
+    }
+    // Complete both inventories before the first mutation. Pagination is not a
+    // transaction snapshot, so concurrent new-key creation remains separate.
+    const stored = await listCustomRowsForRevocation(context);
+    for (const providerRow of stored) providers.add(providerRow);
+    for (const providerRow of providers) {
+      await revokeProviderRow(context, providerRow);
     }
     return;
   }
   const providerRow = `${PROVIDER_PREFIX}${p}`;
-  const { error } = await supabase
-    .from('user_integrations')
-    .delete()
-    .eq('user_id', userId)
-    .eq('provider', providerRow);
-  if (error && !isMissingTableError(error.message)) {
-    throw new Error(error.message);
+  await revokeProviderRow(context, providerRow);
+}
+
+function isCustomProviderRow(value: unknown): value is string {
+  return typeof value === 'string' && /^apikey_custom(?:_[a-z_][a-z0-9_]{1,63})?$/.test(value);
+}
+
+/** Revocation must prove enumeration, unlike optional display-only discovery. */
+async function listCustomRowsForRevocation(context: TenantContext): Promise<string[]> {
+  const { userId } = requireTenantContext(context);
+  const supabase = getTenantSupabaseAdmin(context);
+  const providers = new Set<string>();
+  const seenNames = new Set<string>();
+  const pageSize = 100;
+  for (let page = 0; page < 100; page++) {
+    const { data, error } = await supabase.storage.from(KEY_BUCKET).list(userId, {
+      limit: pageSize, offset: page * pageSize, sortBy: { column: 'name', order: 'asc' },
+    }).catch(() => ({ data: null, error: true }));
+    if (error || !Array.isArray(data) || data.length > pageSize) {
+      throw new Error('Custom credential cleanup could not be enumerated. Retry shortly.');
+    }
+    for (const file of data) {
+      if (!file || typeof file.name !== 'string' || !file.name || seenNames.has(file.name)) {
+        throw new Error('Custom credential cleanup enumeration changed. Retry shortly.');
+      }
+      seenNames.add(file.name);
+      if (!file.name.startsWith('vault-apikey_custom') || !file.name.endsWith('.json')) continue;
+      const providerRow = file.name.slice('vault-'.length, -'.json'.length);
+      if (!isCustomProviderRow(providerRow)) throw new Error('Custom credential cleanup name is invalid. Retry shortly.');
+      providers.add(providerRow);
+    }
+    if (data.length < pageSize) return [...providers];
   }
-  await supabase.storage.from(KEY_BUCKET).remove([keyStoragePath(userId, providerRow)]).catch(() => undefined);
+  throw new Error('Custom credential cleanup exceeds the verified enumeration limit. Retry shortly.');
+}
+
+/** Keep an authoritative denial even when a legacy mirror cannot be removed.
+ * A missing database cannot safely certify revocation through Storage alone.
+ */
+async function revokeProviderRow(context: TenantContext, providerRow: string): Promise<void> {
+  const { userId } = requireTenantContext(context);
+  if (providerRow !== 'apikey_supabase_service') credentialProviderSelection(providerRow);
+  const supabase = getTenantSupabaseAdmin(context);
+  const { data,error } = await supabase.rpc('revoke_provider_key', {p_owner_id:userId,p_provider:providerRow});
+  if (error || data !== true) throw new Error('Credential revocation could not be recorded. Retry shortly.');
+  try {
+    const result = await supabase.storage.from(KEY_BUCKET).remove([keyStoragePath(userId, providerRow)]);
+    if (result.error) throw new Error('cleanup failed');
+  } catch {
+    throw new Error('Credential revoked, but legacy copy cleanup is pending. Retry shortly.');
+  }
 }
 
 /** Placeholders only for GitHub — never plaintext secrets. */
@@ -560,18 +649,25 @@ ${
 }
 
 export async function getUserProviderKey(userId: string, provider: string): Promise<string | null> {
-  const p = normalizeProvider(provider);
+  const p = credentialProviderSelection(provider);
+  if (SUPABASE_BUNDLE_PROVIDERS.includes(p as BundleProvider)) {
+    const bundle = await readUserSupabaseBundle(userId);
+    const field = { supabase_url: 'projectUrl', supabase_anon: 'anonKey', supabase: 'serviceRoleKey', supabase_db_password: 'dbPassword' } as const;
+    return bundle?.[field[p as BundleProvider]] ?? null;
+  }
   const supabase = getSupabaseAdmin();
-  if (p === 'custom' || p.startsWith('custom_')) {
+  if (p === 'custom') {
     const { data, error } = await supabase
       .from('user_integrations')
-      .select('access_token, provider')
+      .select('access_token, provider, metadata')
       .eq('user_id', userId)
       .like('provider', `${PROVIDER_PREFIX}custom%`);
     if (!error) {
-      const row = (data ?? [])[0];
-      if (row?.access_token) return decryptApiKey(row.access_token);
+      const row = (data ?? []).find((item) => item.metadata?.revoked !== true && item.access_token);
+      if (row) return decryptApiKey(row.access_token);
+      if (data?.length) return null;
     }
+    if (error) return null;
     const storedList = await listKeysFromStorage(userId);
     const custom = storedList.find((r) => String(r.provider).includes('custom'));
     if (custom) {
@@ -584,16 +680,16 @@ export async function getUserProviderKey(userId: string, provider: string): Prom
   const providerRow = `${PROVIDER_PREFIX}${p}`;
   const { data, error } = await supabase
     .from('user_integrations')
-    .select('access_token')
+    .select('access_token, metadata')
     .eq('user_id', userId)
     .eq('provider', providerRow)
     .maybeSingle();
 
-  if (!error && data?.access_token) {
-    return decryptApiKey(data.access_token);
+  if (!error && data) {
+    return data.metadata?.revoked === true || !data.access_token ? null : decryptApiKey(data.access_token);
   }
 
-  if (error && !isMissingTableError(error.message)) {
+  if (error) {
     return null;
   }
 
@@ -619,9 +715,7 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
   let rows: Row[] = (!error && data?.length ? data : []) as Row[];
 
   if (error || !rows.length) {
-    if (error && !isMissingTableError(error.message)) {
-      console.warn('[userProviderKeys] resolve for deploy:', error.message);
-    }
+    if (error) throw new Error('Credential lookup unavailable. Retry shortly.');
     const stored = await listKeysFromStorage(userId);
     rows = [];
     for (const s of stored) {
@@ -637,17 +731,48 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
 
   const out: Record<string, string> = {};
   for (const row of rows) {
+    if (!row || (row.metadata != null && (typeof row.metadata !== 'object' || Array.isArray(row.metadata)))) {
+      throw new Error('Credential metadata is invalid. Reconnect before syncing.');
+    }
+    if (row.metadata?.revoked === true) continue;
     const meta = (row.metadata ?? {}) as {
       env_var?: string;
       provider?: string;
       sync_target?: string;
     };
-    const provider = meta.provider ?? String(row.provider).replace(PROVIDER_PREFIX, '');
+    // Row identity, not display metadata, determines where a secret may go.
+    if (typeof row.provider !== 'string' || !row.provider.startsWith(PROVIDER_PREFIX)) throw new Error('Credential metadata is invalid. Reconnect before syncing.');
+    let provider: string;
+    try { provider = credentialProviderSelection(row.provider); }
+    catch { throw new Error('Credential metadata is invalid. Reconnect before syncing.'); }
     if (PUBLISH_ONLY_PROVIDERS.has(provider) || meta.sync_target === 'eas') continue;
     if (SUPABASE_SERVER_ONLY_PROVIDERS.has(provider) || meta.sync_target === 'xroga_server') continue;
+    if (meta.provider !== undefined && meta.provider !== provider && !(provider.startsWith('custom_') && meta.provider === 'custom')) {
+      throw new Error('Credential metadata is invalid. Reconnect before syncing.');
+    }
     const varName = meta.env_var ?? envVarForProvider(provider);
+    if (typeof varName !== 'string' || !/^[A-Z_][A-Z0-9_]{1,63}$/.test(varName)) throw new Error('Credential metadata is invalid. Reconnect before syncing.');
+    assertPrivateCredentialEnv(provider, varName);
     const plain = row.access_token ? decryptApiKey(row.access_token) : null;
     if (plain && varName) out[varName] = plain;
+  }
+  // Validate the final map too, including historical values and custom env
+  // overrides. Generated server clients send the retained service key here.
+  if (out.NEXT_PUBLIC_SUPABASE_URL && !projectRefFromUrl(out.NEXT_PUBLIC_SUPABASE_URL)) {
+    throw new Error('Supabase deploy URL is not a verified hosted project origin. Reconnect before syncing credentials.');
+  }
+  if (out.NEXT_PUBLIC_SUPABASE_URL || out.NEXT_PUBLIC_SUPABASE_ANON_KEY || out.SUPABASE_SERVICE_ROLE_KEY) {
+    const projectRows = new Map<BundleProvider, BundleRow>();
+    for (const provider of SUPABASE_BUNDLE_PROVIDERS) {
+      const row = rows.find(item => item.provider === `apikey_${provider}`);
+      projectRows.set(provider, { provider: `apikey_${provider}`, access_token: row?.access_token ?? '', metadata: row?.metadata ?? { revoked: true }, credential_revision: null });
+    }
+    const values = bundleValues(projectRows);
+    if (!boundBundle(projectRows) || out.NEXT_PUBLIC_SUPABASE_URL !== values.projectUrl
+      || out.NEXT_PUBLIC_SUPABASE_ANON_KEY !== values.anonKey
+      || (out.SUPABASE_SERVICE_ROLE_KEY ?? null) !== values.serviceRoleKey) {
+      throw new Error('Supabase credentials are not associated with one project. Reconnect before syncing credentials.');
+    }
   }
   return out;
 }
@@ -805,8 +930,11 @@ export async function getUserSupabaseStatus(userId: string): Promise<UserSupabas
   } catch {
     /* ignore */
   }
-  const ready = hasUrl && hasAnonKey && hasServiceRole;
-  const provisioned = ready && (hasAccessToken || hasDbPassword || oauthConnected);
+  let associated = false;
+  try { associated = Boolean((await readUserSupabaseBundle(userId))?.serviceRoleKey); } catch { /* fail closed */ }
+  const ready = hasUrl && hasAnonKey && hasServiceRole && associated;
+  // Credential presence is not evidence that schema or storage was provisioned.
+  const provisioned = false;
   return {
     connected: hasUrl || hasAnonKey || hasServiceRole || hasAccessToken || oauthConnected,
     ready,
@@ -817,12 +945,10 @@ export async function getUserSupabaseStatus(userId: string): Promise<UserSupabas
     hasAccessToken: hasAccessToken || oauthConnected,
     hasDbPassword,
     urlMasked: url?.masked,
-    message: provisioned
-      ? 'Your Supabase is connected and auto-provisioned — AI memory & storage live in YOUR project.'
+    message: ready
+      ? 'Keys configured. Schema and private storage setup have not been verified by this status check.'
       : oauthConnected
         ? 'Authorized — pick a project and Xroga sets up schema, memory & storage automatically.'
-        : ready
-          ? 'Keys saved. Authorize Supabase OAuth so Xroga can auto-run SQL on your project.'
           : 'Click Authorize Supabase — no keys to paste. Xroga handles keys, SQL, memory & storage.',
   };
 }
@@ -836,30 +962,187 @@ export interface ConnectUserSupabaseInput {
   projectName?: string;
 }
 
+const SUPABASE_BUNDLE_PROVIDERS = ['supabase', 'supabase_anon', 'supabase_db_password', 'supabase_url'] as const;
+type BundleProvider = typeof SUPABASE_BUNDLE_PROVIDERS[number];
+type BundleRow = { provider: string; access_token: string; metadata: Record<string, unknown>; credential_revision: string | null };
+export type SupabaseBundleAdmission = Readonly<{ userId: string }>;
+const bundleAdmissions = new WeakMap<SupabaseBundleAdmission, Map<BundleProvider, BundleRow>>();
+const bundleConflict = () => Object.assign(new Error('Supabase connection changed. Reconnect explicitly.'), { code: 'CREDENTIAL_WRITE_CONFLICT' });
+
+async function snapshotSupabaseRows(userId: string): Promise<Map<BundleProvider, BundleRow>> {
+  const db = getSupabaseAdmin();
+  const query = () => db.from('user_integrations').select('user_id,provider,access_token,metadata,credential_revision')
+    .eq('user_id', userId).in('provider', SUPABASE_BUNDLE_PROVIDERS.map(p => `apikey_${p}`));
+  const first = await query();
+  const validate = (result: typeof first) => {
+    if (result.error || !Array.isArray(result.data) || result.data.some(row => !row || row.user_id !== userId
+      || !SUPABASE_BUNDLE_PROVIDERS.some(p => row.provider === `apikey_${p}`)
+      || typeof row.access_token !== 'string' || typeof row.credential_revision !== 'string'
+      || !row.metadata || typeof row.metadata !== 'object' || Array.isArray(row.metadata))
+      || new Set(result.data.map(row => row.provider)).size !== result.data.length) {
+      throw new Error('Supabase credential authority is unavailable. Retry before reconnecting.');
+    }
+    return result.data;
+  };
+  const rows = validate(first);
+  const result = new Map<BundleProvider, BundleRow>();
+  for (const provider of SUPABASE_BUNDLE_PROVIDERS) {
+    const row = rows.find(r => r.provider === `apikey_${provider}`);
+    if (row) { result.set(provider, row as BundleRow); continue; }
+    // Preserve legacy records, but distinguish absence from an unavailable mirror.
+    const downloaded = await db.storage.from(KEY_BUCKET).download(keyStoragePath(userId, `apikey_${provider}`));
+    if (downloaded.error) {
+      // Pinned storage-js maps body.statusCode, then body.code, into statusCode.
+      // Storage may return HTTP 400 with a precise missing-object/bucket code.
+      if (!['404', 'NoSuchKey', 'NoSuchBucket'].includes(String(downloaded.error.statusCode))) {
+        throw new Error('Legacy Supabase credentials could not be checked. Retry before reconnecting.');
+      }
+      result.set(provider, { provider: `apikey_${provider}`, access_token: '', metadata: { revoked: true }, credential_revision: null });
+    } else {
+      let legacy: { access_token?: unknown; metadata?: unknown };
+      try { legacy = JSON.parse(await downloaded.data.text()); } catch { throw new Error('Legacy Supabase credentials require explicit reconnection.'); }
+      if (typeof legacy.access_token !== 'string' || !legacy.metadata || typeof legacy.metadata !== 'object' || Array.isArray(legacy.metadata)) {
+        throw new Error('Legacy Supabase credentials require explicit reconnection.');
+      }
+      // A mirror cannot assert an authoritative bundle generation.
+      const metadata = { ...legacy.metadata } as Record<string, unknown>;
+      delete metadata.supabase_bundle_id; delete metadata.supabase_project_ref;
+      result.set(provider, { provider: `apikey_${provider}`, access_token: legacy.access_token, metadata, credential_revision: null });
+    }
+  }
+  if (rows.length !== SUPABASE_BUNDLE_PROVIDERS.length) {
+    const second = validate(await query());
+    const fingerprint = (items: typeof rows) => JSON.stringify(items.map(r => [r.provider, r.credential_revision]).sort());
+    if (fingerprint(rows) !== fingerprint(second)) throw bundleConflict();
+  }
+  return result;
+}
+
+export async function prepareSupabaseBundleWrite(userId: string): Promise<SupabaseBundleAdmission> {
+  const rows = await snapshotSupabaseRows(userId);
+  const admission = Object.freeze({ userId });
+  bundleAdmissions.set(admission, rows);
+  return admission;
+}
+
+function legacyJwtMatches(key: string, ref: string, role: string): boolean {
+  try {
+    const parts = key.split('.');
+    if (parts.length !== 3) return false;
+    const payload = JSON.parse(Buffer.from(parts[1]!, 'base64url').toString('utf8'));
+    return payload.ref === ref && payload.role === role;
+  } catch { return false; }
+}
+
+function bundleValues(rows: Map<BundleProvider, BundleRow>) {
+  const value = (provider: BundleProvider) => {
+    const row = rows.get(provider);
+    return row?.metadata.revoked === true || !row?.access_token ? null : decryptApiKey(row.access_token);
+  };
+  return { projectUrl: value('supabase_url'), anonKey: value('supabase_anon'), serviceRoleKey: value('supabase'), dbPassword: value('supabase_db_password') };
+}
+
+function boundBundle(rows: Map<BundleProvider, BundleRow>): boolean {
+  const values = bundleValues(rows), ref = projectRefFromUrl(values.projectUrl ?? '');
+  if (!ref || !values.anonKey) return false;
+  const active = [...rows.values()].filter(row => row.access_token && row.metadata.revoked !== true);
+  const generation = rows.get('supabase_url')?.metadata.supabase_bundle_id;
+  if (generation) return typeof generation === 'string' && active.every(row => row.metadata.supabase_bundle_id === generation && row.metadata.supabase_project_ref === ref);
+  if (active.some(row => row.metadata.supabase_bundle_id) || values.dbPassword) return false;
+  return legacyJwtMatches(values.anonKey, ref, 'anon') && (!values.serviceRoleKey || legacyJwtMatches(values.serviceRoleKey, ref, 'service_role'));
+}
+
+/** One authority snapshot. Legacy JWT consistency is not provider verification. */
+export async function readUserSupabaseBundle(userId: string) {
+  const rows = await snapshotSupabaseRows(userId);
+  if (!boundBundle(rows)) return null;
+  return bundleValues(rows);
+}
+
+export async function saveSupabaseBundle(admission: SupabaseBundleAdmission, input: ConnectUserSupabaseInput): Promise<UserProviderKeyStatus[]> {
+  const rows = bundleAdmissions.get(admission);
+  if (!rows) throw bundleConflict();
+  const ref = projectRefFromUrl(input.projectUrl);
+  if (!ref) throw new Error('Invalid Supabase project URL.');
+  const previous = bundleValues(rows);
+  const values = { projectUrl: input.projectUrl.trim(), anonKey: input.anonKey.trim(), serviceRoleKey: input.serviceRoleKey?.trim(), dbPassword: input.dbPassword?.trim() };
+  for (const [key, role] of [[values.anonKey, 'anon'], [values.serviceRoleKey, 'service_role']] as const) {
+    if (!key || key.split('.').length !== 3) continue;
+    let claim: Record<string, unknown>;
+    try { claim = JSON.parse(Buffer.from(key.split('.')[1]!, 'base64url').toString('utf8')); } catch { continue; }
+    if (claim && typeof claim === 'object' && (('ref' in claim && claim.ref !== ref) || ('role' in claim && claim.role !== role))) {
+      throw new Error('Supabase credential project or role does not match the supplied bundle.');
+    }
+  }
+  if (!values.anonKey || values.anonKey.length < 8 || (values.serviceRoleKey && values.serviceRoleKey.length < 8)
+    || (values.dbPassword && values.dbPassword.length < 4) || Object.values(values).some(v => v && v.length > 48000)) throw new Error('Invalid Supabase credentials.');
+  // Omitted active credentials may only survive an already-consistent same-project bundle.
+  for (const key of ['serviceRoleKey', 'dbPassword'] as const) {
+    if (!values[key] && previous[key]) {
+      if (!boundBundle(rows) || projectRefFromUrl(previous.projectUrl ?? '') !== ref) {
+        throw new Error('Disconnect the existing Supabase project before reconnecting with omitted service credentials or database password.');
+      }
+      values[key] = previous[key];
+    }
+  }
+  const keys: Record<BundleProvider, string | undefined> = { supabase_url: values.projectUrl, supabase_anon: values.anonKey, supabase: values.serviceRoleKey, supabase_db_password: values.dbPassword };
+  const now = new Date().toISOString();
+  const statuses: UserProviderKeyStatus[] = [];
+  const payload = SUPABASE_BUNDLE_PROVIDERS.map(provider => {
+    const value = keys[provider], envVar = envVarForProvider(provider);
+    if (value) statuses.push({ provider, connected: true, masked: maskKey(value), envVar, connectedAt: now });
+    return { provider: `apikey_${provider}`, revision: rows.get(provider)!.credential_revision,
+      access_token: value ? encryptApiKey(value) : '', metadata: value ? {
+        type: SUPABASE_SERVER_ONLY_PROVIDERS.has(provider) ? 'supabase_provision' : 'user_api_key', provider, env_var: envVar,
+        sync_target: SUPABASE_SERVER_ONLY_PROVIDERS.has(provider) ? 'xroga_server' : 'vercel', connected_at: now, masked: maskKey(value),
+      } : { revoked: true } };
+  });
+  const saved = await getSupabaseAdmin().rpc('save_supabase_bundle_if_current', { p_owner_id: admission.userId, p_project_ref: ref, p_rows: payload });
+  if (saved.error) throw new Error('Supabase bundle could not be saved. Retry shortly.');
+  if (saved.data !== true) throw bundleConflict();
+  bundleAdmissions.delete(admission);
+  return statuses;
+}
+
 /** Save URL + anon (+ optional service role) and auto-provision when possible. */
 export async function connectUserSupabase(
-  userId: string,
+  context: TenantContext,
   input: ConnectUserSupabaseInput,
 ): Promise<{
   status: UserSupabaseStatus;
   saved: UserProviderKeyStatus[];
   provision?: import('./supabaseProvision.js').ProvisionResult;
 }> {
-  const saved: UserProviderKeyStatus[] = [];
-  saved.push(await saveUserProviderKey(userId, 'supabase_url', input.projectUrl.trim()));
-  saved.push(await saveUserProviderKey(userId, 'supabase_anon', input.anonKey.trim()));
+  const { userId } = requireTenantContext(context);
+  // Snapshot the whole request before admission or persistence can yield.
+  input = {
+    projectUrl: input.projectUrl.trim(), anonKey: input.anonKey.trim(),
+    serviceRoleKey: input.serviceRoleKey?.trim(), accessToken: input.accessToken?.trim(),
+    dbPassword: input.dbPassword?.trim(), projectName: input.projectName,
+  };
+  const projectRef = projectRefFromUrl(input.projectUrl);
+  if (!projectRef) throw new Error('Supabase URL must be a hosted https://PROJECT.supabase.co origin.');
+  // Legacy JWT claims are only a negative mismatch check, not verified identity.
+  // Opaque publishable/secret formats remain supported.
+  for (const key of [input.anonKey, input.serviceRoleKey]) {
+    if (!key || key.split('.').length !== 3) continue;
+    let payload: unknown;
+    try { payload = JSON.parse(Buffer.from(key.split('.')[1]!, 'base64url').toString('utf8')); }
+    catch { continue; }
+    if (payload && typeof payload === 'object' && 'ref' in payload
+      && (payload as { ref: unknown }).ref !== projectRef) {
+      throw new Error('Supabase credential project does not match the supplied URL.');
+    }
+  }
+  const [admission, patAdmission] = await Promise.all([
+    prepareSupabaseBundleWrite(userId),
+    input.accessToken ? prepareUserProviderKeyWrite(userId, 'supabase_pat') : Promise.resolve(undefined),
+  ]);
+  const saved = await saveSupabaseBundle(admission, input);
+  if (input.accessToken) saved.push(await saveUserProviderKey(userId, 'supabase_pat', input.accessToken, { writeAdmission: patAdmission }));
   const service = input.serviceRoleKey?.trim();
-  if (service) {
-    saved.push(await saveUserProviderKey(userId, 'supabase', service));
-  }
   const accessToken = input.accessToken?.trim();
-  if (accessToken) {
-    saved.push(await saveUserProviderKey(userId, 'supabase_pat', accessToken));
-  }
   const dbPassword = input.dbPassword?.trim();
-  if (dbPassword) {
-    saved.push(await saveUserProviderKey(userId, 'supabase_db_password', dbPassword));
-  }
 
   let provision: import('./supabaseProvision.js').ProvisionResult | undefined;
   if (service && (accessToken || dbPassword)) {
@@ -892,7 +1175,7 @@ export async function connectUserSupabase(
   const status = await getUserSupabaseStatus(userId);
   if (provision?.message) {
     status.message = provision.message;
-    if (provision.schemaApplied) status.provisioned = true;
+    status.provisioned = provision.ok && provision.schemaApplied && provision.memoryTablesReady;
   }
   return { status, saved, provision };
 }

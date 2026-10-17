@@ -1,0 +1,35 @@
+{
+  "command": "001",
+  "title": "Repository Truth Map and Architecture Inventory",
+  "source_sha": "3b2bad21561e8abcb9a4a3bd0e98a7241d0efc3d",
+  "branch": "codex/xroga-batch-01",
+  "assessment": "PASS_WITH_BLOCKERS",
+  "application_behavior_changed": false,
+  "production_operations": false,
+  "inventory_tooling_overlay": true,
+  "counts": {
+    "surfaces": 1308,
+    "route_registrations": 258,
+    "endpoint_paths": 219,
+    "queues": 4,
+    "migrations": 67,
+    "workflows": 14,
+    "test_suites": 402,
+    "declared_test_or_suite_calls": 4041,
+    "classified_markers": 351,
+    "reachable_markers": 301,
+    "absent_required_paths": 5,
+    "duplicate_ids": 0
+  },
+  "verification": [
+    { "command": "node scripts/xroga/inventory.mjs --check", "exit_code": 0, "result": "PASS" },
+    { "command": "node --test scripts/xroga/inventory.test.mjs", "exit_code": 0, "passed": 9, "failed": 0, "skipped": 0 }
+  ],
+  "schema_boundary": "scripts/xroga/inventory-schema.mjs",
+  "inventory": "docs/xroga/current-state.json",
+  "call_paths": "docs/xroga/current-call-paths.md",
+  "blockers": "docs/xroga/blockers.md",
+  "ci_workflow": ".github/workflows/unit-tests.yml",
+  "rollback": "Revert Command 001 tooling/documentation/CI additions; no database/runtime operation to reverse.",
+  "implementation_commit": "Recorded in docs/implementation/batch-01/STATUS.md after the verified commit is created"
+}

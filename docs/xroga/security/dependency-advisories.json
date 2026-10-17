@@ -1,0 +1,2506 @@
+{
+  "version": 1,
+  "observedAt": "2026-10-15T18:36:51.015Z",
+  "result": "ADVISORY_INVENTORY_NOT_RELEASE_APPROVAL",
+  "graphs": [
+    {
+      "scope": "workspace-aggregate",
+      "command": "npm audit --json",
+      "cwd": ".",
+      "exitCode": 1,
+      "lockSha256": "e58dacd8b9d6fc91b6052f48ea5c1441153c9849f1fbef48efd54e2da65cbf93",
+      "counts": {
+        "info": 0,
+        "low": 7,
+        "moderate": 16,
+        "high": 20,
+        "critical": 0,
+        "total": 43
+      },
+      "findings": [
+        {
+          "name": "@ai-sdk/gateway",
+          "severity": "low",
+          "direct": false,
+          "affectedRange": "4.0.0-beta.0 - 4.0.3",
+          "installed": [
+            {
+              "path": "node_modules/@cline/llms/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/gateway",
+              "version": "4.0.2"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@ai-sdk/provider-utils"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@ai-sdk/otel",
+          "severity": "low",
+          "direct": false,
+          "affectedRange": "<=1.0.3",
+          "installed": [
+            {
+              "path": "node_modules/@cline/llms/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/otel",
+              "version": "1.0.2"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "ai"
+            }
+          ],
+          "effects": [
+            "@langfuse/vercel-ai-sdk"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@ai-sdk/provider-utils",
+          "severity": "low",
+          "direct": false,
+          "affectedRange": "5.0.0-beta.0 - 5.0.0",
+          "installed": [
+            {
+              "path": "node_modules/@cline/llms/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/provider-utils",
+              "version": "5.0.0"
+            }
+          ],
+          "via": [
+            {
+              "title": "@ai-sdk/provider-utils has an Uncontrolled Resource Consumption issue",
+              "url": "https://github.com/advisories/GHSA-866g-f22w-33x8",
+              "severity": "low",
+              "range": ">=5.0.0-beta.0 <5.0.1"
+            }
+          ],
+          "effects": [
+            "@ai-sdk/gateway",
+            "ai"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@cline/agents",
+          "severity": "low",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/@cline/agents",
+              "version": "0.0.82"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@cline/llms"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@cline/core",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/@cline/core",
+              "version": "0.0.82"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@cline/agents"
+            },
+            {
+              "dependency": "@cline/llms"
+            },
+            {
+              "dependency": "@opentelemetry/exporter-logs-otlp-http"
+            },
+            {
+              "dependency": "@opentelemetry/exporter-metrics-otlp-http"
+            },
+            {
+              "dependency": "@opentelemetry/exporter-trace-otlp-http"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-logs"
+            }
+          ],
+          "effects": [
+            "@cline/sdk"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@cline/llms",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "0.0.42-nightly.1779506103 - 0.0.42-nightly.1780514867 || >=0.0.43-nightly.1780629505",
+          "installed": [
+            {
+              "path": "node_modules/@cline/llms",
+              "version": "0.0.82"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@jerome-benoit/sap-ai-provider"
+            },
+            {
+              "dependency": "@langfuse/vercel-ai-sdk"
+            }
+          ],
+          "effects": [
+            "@cline/agents"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@cline/sdk",
+          "severity": "moderate",
+          "direct": true,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/@cline/sdk",
+              "version": "0.0.82"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@cline/core"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@jerome-benoit/sap-ai-provider",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/@jerome-benoit/sap-ai-provider",
+              "version": "4.8.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-ai-sdk/foundation-models"
+            },
+            {
+              "dependency": "@sap-ai-sdk/orchestration"
+            }
+          ],
+          "effects": [
+            "@cline/llms"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@langfuse/vercel-ai-sdk",
+          "severity": "low",
+          "direct": false,
+          "affectedRange": "<=5.9.1",
+          "installed": [
+            {
+              "path": "node_modules/@cline/llms/node_modules/@langfuse/vercel-ai-sdk",
+              "version": "5.9.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@ai-sdk/otel"
+            }
+          ],
+          "effects": [
+            "@cline/llms"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@next/eslint-plugin-next",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=14.3.0-canary.0",
+          "installed": [
+            {
+              "path": "node_modules/@next/eslint-plugin-next",
+              "version": "15.5.27"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "fast-glob"
+            }
+          ],
+          "effects": [
+            "eslint-config-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/core",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<2.8.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-logs-otlp-http/node_modules/@opentelemetry/core",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/exporter-metrics-otlp-http/node_modules/@opentelemetry/core",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/exporter-trace-otlp-http/node_modules/@opentelemetry/core",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/otlp-exporter-base/node_modules/@opentelemetry/core",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/core",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/sdk-logs/node_modules/@opentelemetry/core",
+              "version": "2.6.1"
+            }
+          ],
+          "via": [
+            {
+              "title": "OpenTelemetry Core: Unbounded memory allocation in W3C Baggage propagation",
+              "url": "https://github.com/advisories/GHSA-8988-4f7v-96qf",
+              "severity": "moderate",
+              "range": "<2.8.0"
+            }
+          ],
+          "effects": [
+            "@opentelemetry/exporter-logs-otlp-http",
+            "@opentelemetry/exporter-metrics-otlp-http",
+            "@opentelemetry/exporter-trace-otlp-http",
+            "@opentelemetry/otlp-exporter-base",
+            "@opentelemetry/otlp-transformer",
+            "@opentelemetry/resources",
+            "@opentelemetry/sdk-logs",
+            "@opentelemetry/sdk-metrics",
+            "@opentelemetry/sdk-trace-base"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/exporter-logs-otlp-http",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=0.218.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-logs-otlp-http",
+              "version": "0.214.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-exporter-base"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-transformer"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-logs"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/exporter-metrics-otlp-http",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=0.218.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-metrics-otlp-http",
+              "version": "0.214.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-exporter-base"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-transformer"
+            },
+            {
+              "dependency": "@opentelemetry/resources"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-metrics"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/exporter-trace-otlp-http",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=0.218.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-trace-otlp-http",
+              "version": "0.214.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-exporter-base"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-transformer"
+            },
+            {
+              "dependency": "@opentelemetry/resources"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-trace-base"
+            }
+          ],
+          "effects": [
+            "@cline/core"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/otlp-exporter-base",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=0.218.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/otlp-exporter-base",
+              "version": "0.214.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-transformer"
+            }
+          ],
+          "effects": [
+            "@opentelemetry/exporter-metrics-otlp-http",
+            "@opentelemetry/exporter-trace-otlp-http"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/otlp-transformer",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=0.218.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/otlp-transformer",
+              "version": "0.214.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/resources"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-logs"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-metrics"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-trace-base"
+            }
+          ],
+          "effects": [
+            "@opentelemetry/exporter-metrics-otlp-http",
+            "@opentelemetry/exporter-trace-otlp-http",
+            "@opentelemetry/otlp-exporter-base"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/resources",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "0.8.0 - 2.7.1",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-metrics-otlp-http/node_modules/@opentelemetry/resources",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/exporter-trace-otlp-http/node_modules/@opentelemetry/resources",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/resources",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/sdk-logs/node_modules/@opentelemetry/resources",
+              "version": "2.6.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/sdk-logs",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=0.218.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/sdk-logs",
+              "version": "0.214.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/resources"
+            }
+          ],
+          "effects": [
+            "@opentelemetry/otlp-transformer"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/sdk-metrics",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=2.7.1",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-metrics-otlp-http/node_modules/@opentelemetry/sdk-metrics",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/sdk-metrics",
+              "version": "2.6.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/resources"
+            }
+          ],
+          "effects": [
+            "@opentelemetry/exporter-metrics-otlp-http",
+            "@opentelemetry/otlp-transformer"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/sdk-trace-base",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=2.7.1",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-trace-otlp-http/node_modules/@opentelemetry/sdk-trace-base",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/sdk-trace-base",
+              "version": "2.6.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/resources"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-ai-sdk/ai-api",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=2.4.1-20251224013338.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-ai-sdk/ai-api",
+              "version": "2.15.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-ai-sdk/core"
+            },
+            {
+              "dependency": "@sap-cloud-sdk/connectivity"
+            }
+          ],
+          "effects": [
+            "@sap-ai-sdk/orchestration"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-ai-sdk/core",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=2.4.1-20251224013338.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-ai-sdk/core",
+              "version": "2.15.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-cloud-sdk/connectivity"
+            },
+            {
+              "dependency": "@sap-cloud-sdk/http-client"
+            },
+            {
+              "dependency": "@sap-cloud-sdk/openapi"
+            }
+          ],
+          "effects": [
+            "@sap-ai-sdk/prompt-registry"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-ai-sdk/foundation-models",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=2.4.1-20251224013338.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-ai-sdk/foundation-models",
+              "version": "2.15.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-ai-sdk/ai-api"
+            },
+            {
+              "dependency": "@sap-ai-sdk/core"
+            },
+            {
+              "dependency": "@sap-cloud-sdk/connectivity"
+            },
+            {
+              "dependency": "@sap-cloud-sdk/http-client"
+            }
+          ],
+          "effects": [
+            "@jerome-benoit/sap-ai-provider"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-ai-sdk/orchestration",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=2.4.1-20251224013338.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-ai-sdk/orchestration",
+              "version": "2.15.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-ai-sdk/ai-api"
+            },
+            {
+              "dependency": "@sap-ai-sdk/core"
+            },
+            {
+              "dependency": "@sap-ai-sdk/prompt-registry"
+            }
+          ],
+          "effects": [
+            "@jerome-benoit/sap-ai-provider"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-ai-sdk/prompt-registry",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=2.4.1-20251224013338.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-ai-sdk/prompt-registry",
+              "version": "2.15.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-ai-sdk/core"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-cloud-sdk/connectivity",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "4.1.3-20250919013909.0 - 4.1.3-20251201125815.0 || >=4.2.1-20251128014424.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-cloud-sdk/connectivity",
+              "version": "4.9.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "jks-js"
+            }
+          ],
+          "effects": [
+            "@sap-ai-sdk/ai-api",
+            "@sap-ai-sdk/core",
+            "@sap-ai-sdk/foundation-models",
+            "@sap-cloud-sdk/http-client",
+            "@sap-cloud-sdk/openapi"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-cloud-sdk/http-client",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=4.2.1-20251128014424.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-cloud-sdk/http-client",
+              "version": "4.9.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-cloud-sdk/connectivity"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-cloud-sdk/openapi",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=4.2.1-20251128014424.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-cloud-sdk/openapi",
+              "version": "4.9.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-cloud-sdk/connectivity"
+            },
+            {
+              "dependency": "@sap-cloud-sdk/http-client"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "ai",
+          "severity": "low",
+          "direct": false,
+          "affectedRange": "7.0.0-beta.0 - 7.0.3",
+          "installed": [
+            {
+              "path": "node_modules/@cline/llms/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/otel/node_modules/ai",
+              "version": "7.0.2"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@ai-sdk/gateway"
+            },
+            {
+              "dependency": "@ai-sdk/provider-utils"
+            }
+          ],
+          "effects": [
+            "@ai-sdk/otel"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "braces",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/braces",
+              "version": "3.0.3"
+            }
+          ],
+          "via": [
+            {
+              "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+              "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+              "severity": "high",
+              "range": "<=3.0.3"
+            }
+          ],
+          "effects": [
+            "chokidar",
+            "micromatch"
+          ],
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "chokidar",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "2.0.0 - 3.6.0",
+          "installed": [
+            {
+              "path": "backend/node_modules/chokidar",
+              "version": "3.6.0"
+            },
+            {
+              "path": "frontend/node_modules/chokidar",
+              "version": "3.6.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "braces"
+            }
+          ],
+          "effects": [
+            "nodemon",
+            "tailwindcss"
+          ],
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "eslint-config-next",
+          "severity": "high",
+          "direct": true,
+          "affectedRange": ">=14.3.0-canary.0",
+          "installed": [
+            {
+              "path": "node_modules/eslint-config-next",
+              "version": "15.5.27"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@next/eslint-plugin-next"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "exceljs",
+          "severity": "moderate",
+          "direct": true,
+          "affectedRange": ">=3.5.0",
+          "installed": [
+            {
+              "path": "node_modules/exceljs",
+              "version": "4.4.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "uuid"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": {
+            "name": "exceljs",
+            "version": "3.4.0",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "fast-glob",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "frontend/node_modules/fast-glob",
+              "version": "3.3.3"
+            },
+            {
+              "path": "node_modules/fast-glob",
+              "version": "3.3.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "micromatch"
+            }
+          ],
+          "effects": [
+            "@next/eslint-plugin-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "jks-js",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=1.0.0",
+          "installed": [
+            {
+              "path": "node_modules/jks-js",
+              "version": "1.1.7"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "node-forge"
+            }
+          ],
+          "effects": [
+            "@sap-cloud-sdk/connectivity"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "katex",
+          "severity": "low",
+          "direct": true,
+          "affectedRange": "0.11.0 - 0.18.1",
+          "installed": [
+            {
+              "path": "node_modules/katex",
+              "version": "0.17.0"
+            }
+          ],
+          "via": [
+            {
+              "title": "KaTeX: Existing prototype pollution can bypass trust restrictions",
+              "url": "https://github.com/advisories/GHSA-238p-pmpm-9mq7",
+              "severity": "low",
+              "range": ">=0.11.0 <0.18.2"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": {
+            "name": "katex",
+            "version": "0.19.0",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "micromatch",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=0.2.0",
+          "installed": [
+            {
+              "path": "node_modules/micromatch",
+              "version": "4.0.8"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "braces"
+            }
+          ],
+          "effects": [
+            "fast-glob",
+            "tailwindcss"
+          ],
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "node-forge",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/node-forge",
+              "version": "1.4.0"
+            }
+          ],
+          "via": [
+            {
+              "title": "node-forge RSA PKCS#1 v1.5 signature verification accepts extra nested DigestAlgorithm elements",
+              "url": "https://github.com/advisories/GHSA-86w9-cpqp-85rv",
+              "severity": "high",
+              "range": "<=1.4.0"
+            }
+          ],
+          "effects": [
+            "jks-js"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "nodemon",
+          "severity": "high",
+          "direct": true,
+          "affectedRange": "0.0.0-development || >=1.14.11",
+          "installed": [
+            {
+              "path": "backend/node_modules/nodemon",
+              "version": "3.1.14"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "chokidar"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": {
+            "name": "nodemon",
+            "version": "1.14.10",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "postcss-nested",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "2.0.3 - 6.2.0",
+          "installed": [
+            {
+              "path": "frontend/node_modules/postcss-nested",
+              "version": "6.2.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "postcss-selector-parser"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "postcss-selector-parser",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<7.1.6",
+          "installed": [
+            {
+              "path": "frontend/node_modules/postcss-selector-parser",
+              "version": "6.1.4"
+            }
+          ],
+          "via": [
+            {
+              "title": "PostCSS: Quadratic complexity in flat selector parsing allows CPU exhaustion",
+              "url": "https://github.com/advisories/GHSA-rj75-hqrm-r3gf",
+              "severity": "moderate",
+              "range": "<7.1.6"
+            }
+          ],
+          "effects": [
+            "postcss-nested",
+            "tailwindcss"
+          ],
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "tailwindcss",
+          "severity": "high",
+          "direct": true,
+          "affectedRange": "<=0.0.0-oxide-insiders.ff2c25f || 0.5.0 - 3.4.19",
+          "installed": [
+            {
+              "path": "frontend/node_modules/tailwindcss",
+              "version": "3.4.19"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "chokidar"
+            },
+            {
+              "dependency": "fast-glob"
+            },
+            {
+              "dependency": "micromatch"
+            },
+            {
+              "dependency": "postcss-nested"
+            },
+            {
+              "dependency": "postcss-selector-parser"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "uuid",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<11.1.1",
+          "installed": [
+            {
+              "path": "node_modules/uuid",
+              "version": "8.3.2"
+            }
+          ],
+          "via": [
+            {
+              "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+              "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+              "severity": "moderate",
+              "range": "<11.1.1"
+            }
+          ],
+          "effects": [
+            "exceljs"
+          ],
+          "fixAvailable": {
+            "name": "exceljs",
+            "version": "3.4.0",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        }
+      ]
+    },
+    {
+      "scope": "frontend-standalone",
+      "command": "npm audit --json --workspaces=false",
+      "cwd": "frontend",
+      "exitCode": 1,
+      "lockSha256": "a40d55c1b6cdbab6cbee333734d57e275ef2e5d98a3de476d35aeef8a8274d44",
+      "counts": {
+        "info": 0,
+        "low": 1,
+        "moderate": 4,
+        "high": 7,
+        "critical": 0,
+        "total": 12
+      },
+      "findings": [
+        {
+          "name": "@next/eslint-plugin-next",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=14.3.0-canary.0",
+          "installed": [
+            {
+              "path": "node_modules/@next/eslint-plugin-next",
+              "version": "15.5.27"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "fast-glob"
+            }
+          ],
+          "effects": [
+            "eslint-config-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "braces",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/braces",
+              "version": "3.0.3"
+            }
+          ],
+          "via": [
+            {
+              "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+              "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+              "severity": "high",
+              "range": "<=3.0.3"
+            }
+          ],
+          "effects": [
+            "chokidar",
+            "micromatch"
+          ],
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "chokidar",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "2.0.0 - 3.6.0",
+          "installed": [
+            {
+              "path": "node_modules/chokidar",
+              "version": "3.6.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "braces"
+            }
+          ],
+          "effects": [
+            "tailwindcss"
+          ],
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "eslint-config-next",
+          "severity": "high",
+          "direct": true,
+          "affectedRange": ">=14.3.0-canary.0",
+          "installed": [
+            {
+              "path": "node_modules/eslint-config-next",
+              "version": "15.5.27"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@next/eslint-plugin-next"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "exceljs",
+          "severity": "moderate",
+          "direct": true,
+          "affectedRange": ">=3.5.0",
+          "installed": [
+            {
+              "path": "node_modules/exceljs",
+              "version": "4.4.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "uuid"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": {
+            "name": "exceljs",
+            "version": "3.4.0",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "fast-glob",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/@next/eslint-plugin-next/node_modules/fast-glob",
+              "version": "3.3.1"
+            },
+            {
+              "path": "node_modules/fast-glob",
+              "version": "3.3.3"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "micromatch"
+            }
+          ],
+          "effects": [
+            "@next/eslint-plugin-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "katex",
+          "severity": "low",
+          "direct": true,
+          "affectedRange": "0.11.0 - 0.18.1",
+          "installed": [
+            {
+              "path": "node_modules/katex",
+              "version": "0.17.0"
+            }
+          ],
+          "via": [
+            {
+              "title": "KaTeX: Existing prototype pollution can bypass trust restrictions",
+              "url": "https://github.com/advisories/GHSA-238p-pmpm-9mq7",
+              "severity": "low",
+              "range": ">=0.11.0 <0.18.2"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": {
+            "name": "katex",
+            "version": "0.19.0",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "micromatch",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=0.2.0",
+          "installed": [
+            {
+              "path": "node_modules/micromatch",
+              "version": "4.0.8"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "braces"
+            }
+          ],
+          "effects": [
+            "fast-glob",
+            "tailwindcss"
+          ],
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "postcss-nested",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "2.0.3 - 6.2.0",
+          "installed": [
+            {
+              "path": "node_modules/postcss-nested",
+              "version": "6.2.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "postcss-selector-parser"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "postcss-selector-parser",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<7.1.6",
+          "installed": [
+            {
+              "path": "node_modules/postcss-selector-parser",
+              "version": "6.1.4"
+            }
+          ],
+          "via": [
+            {
+              "title": "PostCSS: Quadratic complexity in flat selector parsing allows CPU exhaustion",
+              "url": "https://github.com/advisories/GHSA-rj75-hqrm-r3gf",
+              "severity": "moderate",
+              "range": "<7.1.6"
+            }
+          ],
+          "effects": [
+            "postcss-nested",
+            "tailwindcss"
+          ],
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "tailwindcss",
+          "severity": "high",
+          "direct": true,
+          "affectedRange": "<=0.0.0-oxide-insiders.ff2c25f || 0.5.0 - 3.4.19",
+          "installed": [
+            {
+              "path": "node_modules/tailwindcss",
+              "version": "3.4.19"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "chokidar"
+            },
+            {
+              "dependency": "fast-glob"
+            },
+            {
+              "dependency": "micromatch"
+            },
+            {
+              "dependency": "postcss-nested"
+            },
+            {
+              "dependency": "postcss-selector-parser"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "uuid",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<11.1.1",
+          "installed": [
+            {
+              "path": "node_modules/uuid",
+              "version": "8.3.2"
+            }
+          ],
+          "via": [
+            {
+              "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+              "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+              "severity": "moderate",
+              "range": "<11.1.1"
+            }
+          ],
+          "effects": [
+            "exceljs"
+          ],
+          "fixAvailable": {
+            "name": "exceljs",
+            "version": "3.4.0",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        }
+      ]
+    },
+    {
+      "scope": "backend-standalone",
+      "command": "npm audit --json --workspaces=false",
+      "cwd": "backend",
+      "exitCode": 1,
+      "lockSha256": "d1fdbe9fdb4feec48b702dd6975e09b89a92c06ec6c05e3d6919e1fd4aeea2b8",
+      "counts": {
+        "info": 0,
+        "low": 6,
+        "moderate": 14,
+        "high": 15,
+        "critical": 0,
+        "total": 35
+      },
+      "findings": [
+        {
+          "name": "@ai-sdk/gateway",
+          "severity": "low",
+          "direct": false,
+          "affectedRange": "4.0.0-beta.0 - 4.0.3",
+          "installed": [
+            {
+              "path": "node_modules/@cline/agents/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/gateway",
+              "version": "4.0.2"
+            },
+            {
+              "path": "node_modules/@cline/core/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/gateway",
+              "version": "4.0.2"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@ai-sdk/provider-utils"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@ai-sdk/otel",
+          "severity": "low",
+          "direct": false,
+          "affectedRange": "<=1.0.3",
+          "installed": [
+            {
+              "path": "node_modules/@cline/agents/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/otel",
+              "version": "1.0.2"
+            },
+            {
+              "path": "node_modules/@cline/core/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/otel",
+              "version": "1.0.2"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "ai"
+            }
+          ],
+          "effects": [
+            "@langfuse/vercel-ai-sdk"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@ai-sdk/provider-utils",
+          "severity": "low",
+          "direct": false,
+          "affectedRange": "5.0.0-beta.0 - 5.0.0",
+          "installed": [
+            {
+              "path": "node_modules/@cline/agents/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/provider-utils",
+              "version": "5.0.0"
+            },
+            {
+              "path": "node_modules/@cline/core/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/provider-utils",
+              "version": "5.0.0"
+            }
+          ],
+          "via": [
+            {
+              "title": "@ai-sdk/provider-utils has an Uncontrolled Resource Consumption issue",
+              "url": "https://github.com/advisories/GHSA-866g-f22w-33x8",
+              "severity": "low",
+              "range": ">=5.0.0-beta.0 <5.0.1"
+            }
+          ],
+          "effects": [
+            "@ai-sdk/gateway",
+            "ai"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@cline/agents",
+          "severity": "low",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/@cline/agents",
+              "version": "0.0.82"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@cline/llms"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@cline/core",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/@cline/core",
+              "version": "0.0.82"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@cline/agents"
+            },
+            {
+              "dependency": "@cline/llms"
+            },
+            {
+              "dependency": "@opentelemetry/exporter-logs-otlp-http"
+            },
+            {
+              "dependency": "@opentelemetry/exporter-metrics-otlp-http"
+            },
+            {
+              "dependency": "@opentelemetry/exporter-trace-otlp-http"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-logs"
+            }
+          ],
+          "effects": [
+            "@cline/sdk"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@cline/llms",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "0.0.42-nightly.1779506103 - 0.0.42-nightly.1780514867 || >=0.0.43-nightly.1780629505",
+          "installed": [
+            {
+              "path": "node_modules/@cline/agents/node_modules/@cline/llms",
+              "version": "0.0.82"
+            },
+            {
+              "path": "node_modules/@cline/core/node_modules/@cline/llms",
+              "version": "0.0.82"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@jerome-benoit/sap-ai-provider"
+            },
+            {
+              "dependency": "@langfuse/vercel-ai-sdk"
+            }
+          ],
+          "effects": [
+            "@cline/agents"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@cline/sdk",
+          "severity": "moderate",
+          "direct": true,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/@cline/sdk",
+              "version": "0.0.82"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@cline/core"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@jerome-benoit/sap-ai-provider",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/@jerome-benoit/sap-ai-provider",
+              "version": "4.8.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-ai-sdk/foundation-models"
+            },
+            {
+              "dependency": "@sap-ai-sdk/orchestration"
+            }
+          ],
+          "effects": [
+            "@cline/llms"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@langfuse/vercel-ai-sdk",
+          "severity": "low",
+          "direct": false,
+          "affectedRange": "<=5.9.1",
+          "installed": [
+            {
+              "path": "node_modules/@cline/agents/node_modules/@langfuse/vercel-ai-sdk",
+              "version": "5.9.1"
+            },
+            {
+              "path": "node_modules/@cline/core/node_modules/@langfuse/vercel-ai-sdk",
+              "version": "5.9.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@ai-sdk/otel"
+            }
+          ],
+          "effects": [
+            "@cline/llms"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/core",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<2.8.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/core",
+              "version": "2.6.1"
+            }
+          ],
+          "via": [
+            {
+              "title": "OpenTelemetry Core: Unbounded memory allocation in W3C Baggage propagation",
+              "url": "https://github.com/advisories/GHSA-8988-4f7v-96qf",
+              "severity": "moderate",
+              "range": "<2.8.0"
+            }
+          ],
+          "effects": [
+            "@opentelemetry/exporter-logs-otlp-http",
+            "@opentelemetry/exporter-metrics-otlp-http",
+            "@opentelemetry/exporter-trace-otlp-http",
+            "@opentelemetry/otlp-exporter-base",
+            "@opentelemetry/otlp-transformer",
+            "@opentelemetry/resources",
+            "@opentelemetry/sdk-logs",
+            "@opentelemetry/sdk-metrics",
+            "@opentelemetry/sdk-trace-base"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/exporter-logs-otlp-http",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=0.218.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-logs-otlp-http",
+              "version": "0.214.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-exporter-base"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-transformer"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-logs"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/exporter-metrics-otlp-http",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=0.218.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-metrics-otlp-http",
+              "version": "0.214.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-exporter-base"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-transformer"
+            },
+            {
+              "dependency": "@opentelemetry/resources"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-metrics"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/exporter-trace-otlp-http",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=0.218.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-trace-otlp-http",
+              "version": "0.214.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-exporter-base"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-transformer"
+            },
+            {
+              "dependency": "@opentelemetry/resources"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-trace-base"
+            }
+          ],
+          "effects": [
+            "@cline/core"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/otlp-exporter-base",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=0.218.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/otlp-exporter-base",
+              "version": "0.214.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/otlp-transformer"
+            }
+          ],
+          "effects": [
+            "@opentelemetry/exporter-metrics-otlp-http",
+            "@opentelemetry/exporter-trace-otlp-http"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/otlp-transformer",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=0.218.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/otlp-transformer",
+              "version": "0.214.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/resources"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-logs"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-metrics"
+            },
+            {
+              "dependency": "@opentelemetry/sdk-trace-base"
+            }
+          ],
+          "effects": [
+            "@opentelemetry/exporter-metrics-otlp-http",
+            "@opentelemetry/exporter-trace-otlp-http",
+            "@opentelemetry/otlp-exporter-base"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/resources",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "0.8.0 - 2.7.1",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-metrics-otlp-http/node_modules/@opentelemetry/resources",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/exporter-trace-otlp-http/node_modules/@opentelemetry/resources",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/resources",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/sdk-logs/node_modules/@opentelemetry/resources",
+              "version": "2.6.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/sdk-logs",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=0.218.0",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/sdk-logs",
+              "version": "0.214.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/resources"
+            }
+          ],
+          "effects": [
+            "@opentelemetry/otlp-transformer"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/sdk-metrics",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=2.7.1",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-metrics-otlp-http/node_modules/@opentelemetry/sdk-metrics",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/sdk-metrics",
+              "version": "2.6.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/resources"
+            }
+          ],
+          "effects": [
+            "@opentelemetry/exporter-metrics-otlp-http",
+            "@opentelemetry/otlp-transformer"
+          ],
+          "fixAvailable": false,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@opentelemetry/sdk-trace-base",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "<=2.7.1",
+          "installed": [
+            {
+              "path": "node_modules/@opentelemetry/exporter-trace-otlp-http/node_modules/@opentelemetry/sdk-trace-base",
+              "version": "2.6.1"
+            },
+            {
+              "path": "node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/sdk-trace-base",
+              "version": "2.6.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@opentelemetry/core"
+            },
+            {
+              "dependency": "@opentelemetry/resources"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-ai-sdk/ai-api",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=2.4.1-20251224013338.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-ai-sdk/ai-api",
+              "version": "2.15.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-ai-sdk/core"
+            },
+            {
+              "dependency": "@sap-cloud-sdk/connectivity"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-ai-sdk/core",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=2.4.1-20251224013338.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-ai-sdk/core",
+              "version": "2.15.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-cloud-sdk/connectivity"
+            },
+            {
+              "dependency": "@sap-cloud-sdk/http-client"
+            },
+            {
+              "dependency": "@sap-cloud-sdk/openapi"
+            }
+          ],
+          "effects": [
+            "@sap-ai-sdk/orchestration",
+            "@sap-ai-sdk/prompt-registry"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-ai-sdk/foundation-models",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=2.4.1-20251224013338.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-ai-sdk/foundation-models",
+              "version": "2.15.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-ai-sdk/ai-api"
+            },
+            {
+              "dependency": "@sap-ai-sdk/core"
+            },
+            {
+              "dependency": "@sap-cloud-sdk/connectivity"
+            },
+            {
+              "dependency": "@sap-cloud-sdk/http-client"
+            }
+          ],
+          "effects": [
+            "@jerome-benoit/sap-ai-provider"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-ai-sdk/orchestration",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=2.4.1-20251224013338.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-ai-sdk/orchestration",
+              "version": "2.15.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-ai-sdk/ai-api"
+            },
+            {
+              "dependency": "@sap-ai-sdk/core"
+            },
+            {
+              "dependency": "@sap-ai-sdk/prompt-registry"
+            }
+          ],
+          "effects": [
+            "@jerome-benoit/sap-ai-provider"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-ai-sdk/prompt-registry",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=2.4.1-20251224013338.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-ai-sdk/prompt-registry",
+              "version": "2.15.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-ai-sdk/core"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-cloud-sdk/connectivity",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "4.1.3-20250919013909.0 - 4.1.3-20251201125815.0 || >=4.2.1-20251128014424.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-cloud-sdk/connectivity",
+              "version": "4.9.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "jks-js"
+            }
+          ],
+          "effects": [
+            "@sap-ai-sdk/ai-api",
+            "@sap-ai-sdk/core",
+            "@sap-ai-sdk/foundation-models",
+            "@sap-cloud-sdk/http-client",
+            "@sap-cloud-sdk/openapi"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-cloud-sdk/http-client",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=4.2.1-20251128014424.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-cloud-sdk/http-client",
+              "version": "4.9.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-cloud-sdk/connectivity"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "@sap-cloud-sdk/openapi",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=4.2.1-20251128014424.0",
+          "installed": [
+            {
+              "path": "node_modules/@sap-cloud-sdk/openapi",
+              "version": "4.9.1"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@sap-cloud-sdk/connectivity"
+            },
+            {
+              "dependency": "@sap-cloud-sdk/http-client"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "ai",
+          "severity": "low",
+          "direct": false,
+          "affectedRange": "7.0.0-beta.0 - 7.0.3",
+          "installed": [
+            {
+              "path": "node_modules/@cline/agents/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/otel/node_modules/ai",
+              "version": "7.0.2"
+            },
+            {
+              "path": "node_modules/@cline/core/node_modules/@langfuse/vercel-ai-sdk/node_modules/@ai-sdk/otel/node_modules/ai",
+              "version": "7.0.2"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "@ai-sdk/gateway"
+            },
+            {
+              "dependency": "@ai-sdk/provider-utils"
+            }
+          ],
+          "effects": [
+            "@ai-sdk/otel"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "body-parser",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "1.20.5 - 1.20.6",
+          "installed": [
+            {
+              "path": "node_modules/body-parser",
+              "version": "1.20.6"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "qs"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "braces",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/braces",
+              "version": "3.0.3"
+            }
+          ],
+          "via": [
+            {
+              "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+              "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+              "severity": "high",
+              "range": "<=3.0.3"
+            }
+          ],
+          "effects": [
+            "chokidar"
+          ],
+          "fixAvailable": {
+            "name": "nodemon",
+            "version": "1.14.10",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "chokidar",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "2.0.0 - 3.6.0",
+          "installed": [
+            {
+              "path": "node_modules/chokidar",
+              "version": "3.6.0"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "braces"
+            }
+          ],
+          "effects": [
+            "nodemon"
+          ],
+          "fixAvailable": {
+            "name": "nodemon",
+            "version": "1.14.10",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "jks-js",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": ">=1.0.0",
+          "installed": [
+            {
+              "path": "node_modules/jks-js",
+              "version": "1.1.7"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "node-forge"
+            }
+          ],
+          "effects": [
+            "@sap-cloud-sdk/connectivity"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "node-forge",
+          "severity": "high",
+          "direct": false,
+          "affectedRange": "*",
+          "installed": [
+            {
+              "path": "node_modules/node-forge",
+              "version": "1.4.0"
+            }
+          ],
+          "via": [
+            {
+              "title": "node-forge RSA PKCS#1 v1.5 signature verification accepts extra nested DigestAlgorithm elements",
+              "url": "https://github.com/advisories/GHSA-86w9-cpqp-85rv",
+              "severity": "high",
+              "range": "<=1.4.0"
+            }
+          ],
+          "effects": [
+            "jks-js"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "nodemon",
+          "severity": "high",
+          "direct": true,
+          "affectedRange": "0.0.0-development || >=1.14.11",
+          "installed": [
+            {
+              "path": "node_modules/nodemon",
+              "version": "3.1.14"
+            }
+          ],
+          "via": [
+            {
+              "dependency": "chokidar"
+            }
+          ],
+          "effects": [],
+          "fixAvailable": {
+            "name": "nodemon",
+            "version": "1.14.10",
+            "isSemVerMajor": true
+          },
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        },
+        {
+          "name": "qs",
+          "severity": "moderate",
+          "direct": false,
+          "affectedRange": "2.2.5 - 6.15.3",
+          "installed": [
+            {
+              "path": "node_modules/qs",
+              "version": "6.15.3"
+            }
+          ],
+          "via": [
+            {
+              "title": "qs array-limit bypass via bracket-key comma parsing",
+              "url": "https://github.com/advisories/GHSA-x5fp-wj9c-mxmx",
+              "severity": "moderate",
+              "range": ">=6.14.2 <=6.15.3"
+            },
+            {
+              "title": "qs: Denial of Service via Attacker Controlled isBuffer",
+              "url": "https://github.com/advisories/GHSA-4mjr-xmp4-gh2g",
+              "severity": "moderate",
+              "range": ">=2.2.5 <6.16.0"
+            }
+          ],
+          "effects": [
+            "body-parser"
+          ],
+          "fixAvailable": true,
+          "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
+        }
+      ]
+    }
+  ]
+}

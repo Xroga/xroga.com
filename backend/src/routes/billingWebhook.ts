@@ -24,6 +24,7 @@ router.post('/whop', express.raw({ type: 'application/json', limit: '1mb' }), as
   let event: WhopWebhookEvent;
   try {
     event = JSON.parse(rawBody) as WhopWebhookEvent;
+    if (!event || typeof event !== 'object' || Array.isArray(event)) throw new Error('Invalid event');
   } catch {
     res.status(400).json({ error: 'Invalid webhook payload' });
     return;
@@ -37,21 +38,33 @@ router.post('/whop', express.raw({ type: 'application/json', limit: '1mb' }), as
     status: 'processing', event_type: eventType, signature_verified: true, response_status: null,
   });
   if (claimError?.code === '23505') {
-    const { data: existing } = await supabase.from('webhook_deliveries')
+    const { data: existing, error: readError } = await supabase.from('webhook_deliveries')
       .select('status,payload_digest').eq('provider', 'whop').eq('delivery_id', webhookId).maybeSingle();
+    if (readError) {
+      res.status(503).json({ error: 'Webhook delivery store unavailable' });
+      return;
+    }
     if (!existing || existing.payload_digest !== payloadDigest) {
       res.status(409).json({ error: 'Webhook identity conflict' });
       return;
     }
-    if (existing.status !== 'failed') {
+    if (existing.status === 'completed') {
       res.status(200).json({ received: true, duplicate: true });
       return;
     }
-    const { error: retryError } = await supabase.from('webhook_deliveries').update({
+    if (existing.status !== 'failed') {
+      res.status(503).json({ error: 'Webhook processing is not yet confirmed' });
+      return;
+    }
+    const { data: retryClaim, error: retryError } = await supabase.from('webhook_deliveries').update({
       status: 'processing', safe_error: null, response_status: null, updated_at: new Date().toISOString(),
-    }).eq('provider', 'whop').eq('delivery_id', webhookId).eq('status', 'failed');
+    }).eq('provider', 'whop').eq('delivery_id', webhookId).eq('payload_digest', payloadDigest).eq('status', 'failed').select('delivery_id');
     if (retryError) {
       res.status(503).json({ error: 'Webhook delivery store unavailable' });
+      return;
+    }
+    if (retryClaim?.length !== 1 || retryClaim[0].delivery_id !== webhookId) {
+      res.status(503).json({ error: 'Webhook processing is not yet confirmed' });
       return;
     }
   } else if (claimError) {
@@ -61,18 +74,25 @@ router.post('/whop', express.raw({ type: 'application/json', limit: '1mb' }), as
 
   try {
     const result = await BillingService.handleWebhookEvent(event, webhookId);
-    await supabase.from('webhook_deliveries').update({
+    const completion = await supabase.from('webhook_deliveries').update({
       status: 'completed', response_status: 200, completed_at: new Date().toISOString(), updated_at: new Date().toISOString(),
       related_object: event.data && typeof event.data.id === 'string' ? event.data.id : null,
-    }).eq('provider', 'whop').eq('delivery_id', webhookId);
+    }).eq('provider', 'whop').eq('delivery_id', webhookId).eq('payload_digest', payloadDigest).eq('status', 'processing').select('delivery_id').then(result => result, () => null);
+    if (!completion || completion.error || completion.data?.length !== 1 || completion.data[0].delivery_id !== webhookId) {
+      // Fulfillment may already be durable. Do not mark it failed or acknowledge
+      // completion without a receipt, and never replay an uncertain active claim.
+      res.status(503).json({ error: 'Webhook completion could not be confirmed' });
+      return;
+    }
     console.info(JSON.stringify({ level: 'info', event: 'whop_webhook_processed', webhookId, eventType, fulfilled: result.fulfilled }));
     res.status(200).json({ received: true, fulfilled: result.fulfilled });
   } catch (error) {
-    const safeError = error instanceof Error ? error.message.slice(0, 80) : 'processing_failed';
+    const knownCodes = new Set(['wrong_account', 'membership_owner_mismatch', 'payment_owner_mismatch', 'membership_sync_failed']);
+    const safeError = error instanceof Error && knownCodes.has(error.message) ? error.message : 'processing_failed';
     await supabase.from('webhook_deliveries').update({
       status: 'failed', safe_error: safeError, response_status: 500,
       completed_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-    }).eq('provider', 'whop').eq('delivery_id', webhookId);
+    }).eq('provider', 'whop').eq('delivery_id', webhookId).eq('payload_digest', payloadDigest).eq('status', 'processing');
     console.error(JSON.stringify({ level: 'error', event: 'whop_webhook_failed', webhookId, eventType, reason: safeError }));
     res.status(500).json({ error: 'Webhook processing failed' });
   }

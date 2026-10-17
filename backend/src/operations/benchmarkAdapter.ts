@@ -164,16 +164,19 @@ export function createBenchmarkAdapter(deps: BenchmarkAdapterDeps = {}): Provide
 
       const report = await runBenchmarks({ selection, models, execute: executor, store, caps });
 
-      // `verified` means the run happened and produced measurements, not that the models
-      // passed. A suite where every model fails is a valid, useful measurement.
+      // The operations service promotes `verified` to durable action evidence. A completed
+      // measurement with uncertain storage must retain its output but cannot be promoted.
+      const persisted = Boolean(deps.store) && report.attempted > 0 && report.recorded === report.attempted;
       return {
-        status: report.attempted > 0 ? 'verified' : 'failed',
+        status: persisted ? 'verified' : 'failed',
+        ...(!persisted ? { errorCategory: 'benchmark_persistence_unverified' } : {}),
         safeSummary:
           `Measured ${report.attempted} case${report.attempted === 1 ? '' : 's'}: ` +
           `${report.succeeded} passed, ${report.failed} failed, $${report.actualCostUsd.toFixed(2)} of the ` +
           `$${caps.maximumCostUsd} budget spent` +
           (report.stoppedEarly ? `; stopped early because ${report.stoppedEarly}` : '') +
-          (deps.store ? '' : ' (results not persisted: no durable store was configured)'),
+          (!deps.store ? ' (results not persisted: no durable store was configured)'
+            : report.recordingFailures ? ' (results not fully persisted: storage acknowledgement failed)' : ''),
         observedState: {
           attempted: report.attempted,
           succeeded: report.succeeded,
@@ -183,7 +186,9 @@ export function createBenchmarkAdapter(deps: BenchmarkAdapterDeps = {}): Provide
           plannedCases: planned.cases.length,
           skippedCases: planned.skipped.length,
           modelsMeasured: [...new Set(planned.cases.map((entry) => entry.modelId))].length,
-          persisted: Boolean(deps.store),
+          persisted,
+          recorded: report.recorded,
+          recordingFailures: report.recordingFailures,
         },
       };
     },

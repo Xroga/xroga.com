@@ -14,7 +14,7 @@ const password = `C3!${randomUUID()}aA9`;
 const ownerEmail = `command3-owner-${run}@example.com`;
 const outsiderEmail = `command3-outsider-${run}@example.invalid`;
 const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
-let ownerId = ''; let outsiderId = ''; let ownerProjectId = ''; let outsiderProjectId = '';
+let ownerId = ''; let outsiderId = ''; let ownerProjectId = ''; let outsiderProjectId = ''; let privateFileId=''; let foreignFileId='';
 
 test.setTimeout(180_000);
 
@@ -39,7 +39,8 @@ async function browserSession(page: import('@playwright/test').Page): Promise<{ 
 test.beforeAll(async () => {
   const isolatedRef = process.env.E2E_ISOLATED_PROJECT_REF?.trim();
   const actualHost = new URL(supabaseUrl).hostname;
-  if (!isolatedRef || isolatedRef === 'nzenxdfumxrnsmybazmo' || actualHost !== `${isolatedRef}.supabase.co`) {
+  const disposableLocal = process.env.CI === 'true' && process.env.XB01_DISPOSABLE_SUPABASE === '1' && isolatedRef === 'local-disposable' && supabaseUrl === 'http://127.0.0.1:54321' && process.env.SUPABASE_URL === supabaseUrl && backendUrl === 'http://127.0.0.1:4000' && !launchBillingApiUrl;
+  if (!disposableLocal && (!isolatedRef || ['nzenxdfumxrnsmybazmo', 'lztqfktsahpzitybthld', 'local-disposable'].includes(isolatedRef) || actualHost !== `${isolatedRef}.supabase.co`)) {
     throw new Error('Authenticated fixture tests require a dedicated isolated TEST Supabase project; production is forbidden.');
   }
   const owner = await admin.auth.admin.createUser({ email: ownerEmail, password, email_confirm: true, user_metadata: { fixture: 'command3_isolated_demo' } });
@@ -76,22 +77,32 @@ test.beforeAll(async () => {
   if (projects.error || !projects.data) throw new Error('Isolated tenant fixtures could not be created');
   ownerProjectId = projects.data.find((item) => item.user_id === ownerId)!.id;
   outsiderProjectId = projects.data.find((item) => item.user_id === outsiderId)!.id;
+  const files=await admin.from('project_files').insert([
+    {project_id:ownerProjectId,file_name:'private-browser-fixture.txt',content:'PRIVATE_BROWSER_FIXTURE_ONLY'},
+    {project_id:outsiderProjectId,file_name:'foreign-browser-fixture.txt',content:'FOREIGN_BROWSER_CANARY'},
+  ]).select('id,project_id');
+  if(files.error || files.data?.length!==2)throw new Error('Private file browser fixtures could not be created');
+  privateFileId=files.data.find(item=>item.project_id===ownerProjectId)!.id;
+  foreignFileId=files.data.find(item=>item.project_id===outsiderProjectId)!.id;
 });
 
 test.afterAll(async () => {
-  if (ownerId) await admin.auth.admin.deleteUser(ownerId);
-  if (outsiderId) await admin.auth.admin.deleteUser(outsiderId);
+  if (ownerId) expect((await admin.auth.admin.deleteUser(ownerId)).error).toBeNull();
+  if (outsiderId) expect((await admin.auth.admin.deleteUser(outsiderId)).error).toBeNull();
 });
 
 test('real Supabase login persists, Operations works, cross-tenant access is denied, and logout clears the session', async ({ page }) => {
   let browserBearer = '';
+  let productionTelemetryRequests=0;
   page.on('request', (request) => {
     if (request.url().includes('/api/operations/') && request.headers().authorization?.startsWith('Bearer ')) browserBearer = request.headers().authorization;
+    if(/(?:clarity\.ms|google-analytics\.com|googletagmanager\.com|analytics\.google\.com|analytics\.ahrefs\.com)/.test(new URL(request.url()).hostname))productionTelemetryRequests++;
   });
   // The sign-in shell is interactive at DOMContentLoaded. Do not let a slow third-party
   // font request consume the entire authenticated-flow budget while waiting for `load`;
   // the locators and API assertions below still prove the rendered app is usable.
   await page.goto('/auth/login', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('script#xroga-microsoft-clarity,script#xroga-google-tag,script[src*="analytics.ahrefs.com"],script[src*="googletagmanager.com"]')).toHaveCount(0);
   const webRelease = await page.evaluate(async () => {
     const response = await fetch('/api/release', { cache: 'no-store' });
     return { status: response.status, body: await response.json() as { release?: string; environment?: string } };
@@ -790,6 +801,34 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const allowed = await fetch(`${backendUrl}/api/operations/products/${ownerProjectId}`, { headers: { Authorization: browserBearer } });
   const denied = await fetch(`${backendUrl}/api/operations/products/${outsiderProjectId}`, { headers: { Authorization: browserBearer } });
   expect(allowed.status).toBe(200); expect(denied.status).toBe(403);
+  // Real SSR cookie authentication -> canonical API owner boundary -> durable local PG text.
+  // No mocked transport and no R2 writes. Signed links do not authorize a different account.
+  const privateDelivery=await page.evaluate(async({project,file,foreignProject,foreignFile})=>{
+    const own=await fetch(`/api/private-files/${project}/${file}`,{cache:'no-store'});
+    const denied=await fetch(`/api/private-files/${foreignProject}/${foreignFile}`,{cache:'no-store'});
+    return {own:own.status,body:await own.text(),cache:own.headers.get('cache-control'),foreign:denied.status,foreignBody:await denied.text()};
+  },{project:ownerProjectId,file:privateFileId,foreignProject:outsiderProjectId,foreignFile:foreignFileId});
+  expect(privateDelivery.own).toBe(200);expect(privateDelivery.body).toBe('PRIVATE_BROWSER_FIXTURE_ONLY');
+  expect(privateDelivery.cache).toContain('no-store');expect(privateDelivery.foreign).toBe(404);
+  expect(privateDelivery.foreignBody).not.toContain('FOREIGN_BROWSER_CANARY');
+  const signedResponse=await fetch(`${backendUrl}/api/projects/${ownerProjectId}/files/${privateFileId}/link`,{method:'POST',headers:{Authorization:browserBearer,'Content-Type':'application/json'},body:JSON.stringify({expiresIn:60})});
+  expect(signedResponse.status).toBe(200);const signed=await signedResponse.json() as {url:string};
+  expect((await page.request.get(signed.url)).status()).toBe(200);
+  const anonymous=await page.context().browser()!.newContext();
+  try{expect((await anonymous.request.get(new URL(signed.url,page.url()).href)).status()).toBe(401);}finally{await anonymous.close();}
+  expect((await fetch(`${backendUrl}/api/projects/${ownerProjectId}/files/${privateFileId}/links`,{method:'DELETE',headers:{Authorization:browserBearer}})).status).toBe(200);
+  expect((await page.request.get(signed.url)).status()).toBe(404);
+  await page.goto(`/dashboard/projects/${ownerProjectId}`);
+  await expect(page.getByRole('link',{name:'Download selected file'})).toHaveAttribute('href',`/api/private-files/${ownerProjectId}/${privateFileId}`);
+  await expect(page.getByRole('button',{name:'Download All'})).toHaveCount(0);
+  await page.getByRole('button',{name:'Copy 60-second link'}).click();
+  const timedLink=page.getByLabel('Temporary owner-only link');await expect(timedLink).toBeVisible();
+  const copied=await timedLink.inputValue();expect(new URL(copied).pathname).toBe(`/api/private-files/${ownerProjectId}/${privateFileId}`);
+  expect((await page.request.get(copied)).status()).toBe(200);
+  await page.getByRole('button',{name:'Revoke timed links'}).click();
+  await expect(page.getByRole('status')).toContainText('Timed links revoked');
+  expect((await page.request.get(copied)).status()).toBe(404);
+  await page.goto('/dashboard/operations');
   const notifications = await fetch(`${backendUrl}/api/notifications`, { headers: { Authorization: browserBearer } });
   const unreadNotifications = await fetch(`${backendUrl}/api/notifications/unread-count`, { headers: { Authorization: browserBearer } });
   expect(notifications.status).toBe(200);
@@ -887,5 +926,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
+  expect(productionTelemetryRequests).toBe(0);
+  await writeFile('test-results/batch01-private-delivery-evidence.json',JSON.stringify({expectedRelease,privateCookieDelivery:privateDelivery.own,crossTenantDenial:privateDelivery.foreign,signedOwnerAccess:200,anonymousSignedAccess:401,revokedLinkAccess:404,renderedCopyAndRevoke:'PASS',productionTelemetryRequests,realR2:'NOT_EXECUTED',observedAt:new Date().toISOString()},null,2));
   await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, persistentWorkspaceShell: 'verified', workspaceMetrics, hardRefreshDraftRestore: 'verified', offlineShellContinuity: 'verified', userCacheIsolation: 'verified', prepaintTheme: 'verified', companionComposer: 'verified', canonicalComposerProductChips: 'removed', canonicalComposerVoice: 'wake_word_icon_verified', companionProfilePersistence, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction: 'not_submitted', initialRealCharge: 0, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, billing cycles, and companion preferences cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });

@@ -37,13 +37,17 @@ test('messaging, referrals and experiments enforce truthful state', () => {
   assert.match(migration, /uq_growth_message_campaign_recipient/);
 });
 
-test('authenticated workflow uses isolated TEST secrets, fails closed, and deletes temporary users', () => {
-  assert.match(workflow, /secrets\.E2E_SUPABASE_URL/);
-  assert.match(workflow, /secrets\.E2E_SUPABASE_ANON_KEY/);
-  assert.match(workflow, /secrets\.E2E_SUPABASE_SERVICE_ROLE_KEY/);
-  assert.match(workflow, /vars\.E2E_ISOLATED_PROJECT_REF/);
-  assert.match(workflow, /missing_required_variable/);
-  assert.doesNotMatch(workflow, /secrets\.SUPABASE_SERVICE_ROLE_KEY/);
+test('authenticated workflow uses disposable real Supabase, fails closed, and deletes temporary users', () => {
+  assert.match(workflow, /XB01_DISPOSABLE_SUPABASE: '1'/);
+  assert.match(workflow, /node scripts\/security\/disposable-supabase\.mjs/);
+  assert.match(workflow, /node scripts\/security\/full-supabase-history\.mjs/);
+  assert.match(workflow, /tenantIsolation\.local\.integration\.ts/);
+  assert.match(workflow, /stop --no-backup/);
+  assert.doesNotMatch(workflow, /secrets\.|continue-on-error: true|--ignore-health-check/);
+  const bootstrap=readText('scripts/security/disposable-supabase.mjs');
+  assert.match(bootstrap,/Forbidden inherited configuration/);
+  assert.match(bootstrap,/generateKeyPairSync/);
+  assert.match(bootstrap,/randomBytes/);
   assert.doesNotMatch(workflow, /--request PATCH/);
   assert.match(browserTest, /dedicated isolated TEST Supabase project/);
   assert.match(browserTest, /deleteUser/);

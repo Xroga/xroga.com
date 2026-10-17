@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { HACKATHON_MAX_STORED_FILES } from '../../config/modelRegistry.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 
@@ -37,17 +37,23 @@ export async function findProjectIdByRepo(
   const repoName = githubRepoName ? normalizeRepoIdentity(githubRepoName) : null;
   if (!repoName || !userId) return null;
   try {
+    return await lookupProjectIdByRepo(userId, repoName);
+  } catch {
+    return null;
+  }
+}
+
+/** Mutation callers must distinguish an absent row from unavailable authority. */
+async function lookupProjectIdByRepo(userId: string, repoName: string): Promise<string | null> {
     const { data, error } = await getSupabaseAdmin()
       .from('projects')
       .select('id')
       .eq('user_id', userId)
-      .ilike('github_repo_name', repoName)
+      .ilike('github_repo_name', repoName.replace(/[\\%_]/g, '\\$&'))
       .maybeSingle();
-    if (error || !data) return null;
+    if (error) throw new Error('Project identity lookup unavailable');
+    if (!data) return null;
     return typeof data.id === 'string' ? data.id : null;
-  } catch {
-    return null;
-  }
 }
 
 function normalizeRepoIdentity(value: string): string | null {
@@ -88,7 +94,9 @@ export async function ensureProjectIdByRepo(
   const repoName = githubRepoName ? normalizeRepoIdentity(githubRepoName) : null;
   if (!repoName || !userId.trim()) return null;
 
-  const existing = await findProjectIdByRepo(userId, repoName);
+  let existing: string | null;
+  try { existing = await lookupProjectIdByRepo(userId, repoName); }
+  catch { return null; }
   if (existing) return existing;
 
   const id = projectIdentityId(userId, repoName);
@@ -110,7 +118,8 @@ export async function ensureProjectIdByRepo(
       }, { onConflict: 'id', ignoreDuplicates: true })
       .select('id')
       .maybeSingle();
-    if (!error && typeof data?.id === 'string') return data.id;
+    if (error || (data && data.id !== id)) return null;
+    if (data?.id === id) return id;
 
     // `ignoreDuplicates` may return no row. Re-read the deterministic id so concurrent
     // first requests converge on the same project rather than falling back to legacy.
@@ -120,11 +129,11 @@ export async function ensureProjectIdByRepo(
       .eq('id', id)
       .eq('user_id', userId)
       .maybeSingle();
-    if (!readError && typeof persisted?.id === 'string') return persisted.id;
-    console.warn('[buildProjectStore] ensure project identity:', error?.message ?? readError?.message ?? 'row unavailable');
+    if (!readError && persisted?.id === id) return id;
+    console.warn('[buildProjectStore] project identity unavailable');
     return null;
-  } catch (error) {
-    console.warn('[buildProjectStore] ensure project identity:', error instanceof Error ? error.message : 'unknown error');
+  } catch {
+    console.warn('[buildProjectStore] project identity unavailable');
     return null;
   }
 }
@@ -154,44 +163,50 @@ const CORE_FILES = new Set([
 
 /** Upsert a project row and store core build files for later restore. */
 export async function upsertBuildProject(input: UpsertBuildProjectInput): Promise<string | null> {
+  // A delayed ownership lookup must not let a caller replace the admitted owner,
+  // repository or file contents while this persistence operation is underway.
+  input = { ...input, projectFiles: input.projectFiles.map(file => ({ ...file })) };
   const supabase = getSupabaseAdmin();
   const repoName = input.githubRepoName?.trim();
 
   let projectId: string | null = null;
 
   if (repoName) {
-    const { data: existing } = await supabase
+    const { data: existing, error: lookupError } = await supabase
       .from('projects')
       .select('id')
       .eq('user_id', input.userId)
       .eq('github_repo_name', repoName)
       .maybeSingle();
+    if (lookupError) return null;
+    if (existing && (typeof existing.id !== 'string' || !existing.id)) return null;
     projectId = existing?.id ?? null;
   }
 
   const row = {
     name: input.name.slice(0, 200),
     type: input.type ?? 'website',
-    status: 'completed',
+    status: 'in_progress',
     github_repo_url: input.githubRepoUrl ?? (repoName ? `https://github.com/${repoName}` : null),
     github_repo_name: repoName ?? null,
     updated_at: new Date().toISOString(),
   };
 
   if (projectId) {
-    const { error } = await supabase.from('projects').update(row).eq('id', projectId).eq('user_id', input.userId);
-    if (error) {
-      console.warn('[buildProjectStore] update:', error.message);
+    const { data, error } = await supabase.from('projects').update(row).eq('id', projectId).eq('user_id', input.userId).select('id').maybeSingle();
+    if (error || data?.id !== projectId) {
+      console.warn('[buildProjectStore] project update unavailable');
       return null;
     }
   } else {
+    const newId = randomUUID();
     const { data, error } = await supabase
       .from('projects')
-      .insert({ user_id: input.userId, ...row })
+      .insert({ id: newId, user_id: input.userId, ...row })
       .select('id')
       .single();
-    if (error || !data) {
-      console.warn('[buildProjectStore] insert:', error?.message);
+    if (error || data?.id !== newId) {
+      console.warn('[buildProjectStore] project insert unavailable');
       return null;
     }
     projectId = data.id;
@@ -222,8 +237,11 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
         file.path.endsWith('.json') ? 'application/json' : 'text/plain',
         'code'
       );
-    } catch (err) {
-      console.warn('[buildProjectStore] file', file.path, (err as Error).message);
+    } catch {
+      // A partial metadata row is not a completed/durable artifact receipt.
+      // Preserve any successful rows for owner recovery; do not claim all files saved.
+      console.warn('[buildProjectStore] private file persistence incomplete; no completed receipt');
+      return null;
     }
   }
 
@@ -252,5 +270,7 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
     /* optional */
   }
 
+  const completed=await supabase.from('projects').update({status:'completed'}).eq('id',projectId).eq('user_id',input.userId).select('id').maybeSingle();
+  if(completed.error || completed.data?.id!==projectId)return null;
   return projectId;
 }

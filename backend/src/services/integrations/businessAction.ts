@@ -13,8 +13,9 @@ import {
 } from '../../ai/providerBudget.js';
 
 import {
-  recordUsage,
-} from '../../ai/quota.js';
+  recordCompletedProviderUsage as recordUsage,
+  isPostCompletionAccountingError,
+} from '../../ai/postCompletionAccounting.js';
 
 import {
   generateStructured,
@@ -508,6 +509,9 @@ function actionPlanDigest(
       arguments:
         input.arguments,
 
+      summary:
+        input.summary,
+
       risk:
         input.risk,
 
@@ -536,20 +540,20 @@ function actionPlanDigest(
     );
 }
 
-function verifyPlanDigest(
+export function verifyPlanDigest(
   plan: BusinessActionPlan,
 ): boolean {
+  if (!validateArguments(plan.arguments)) return false;
   const {
     planDigest,
     ...unsigned
   } = plan;
 
-  return (
-    actionPlanDigest(
-      unsigned,
-    ) ===
-    planDigest
-  );
+  try {
+    return actionPlanDigest(unsigned) === planDigest;
+  } catch {
+    return false;
+  }
 }
 
 function buildCandidatePayload(
@@ -849,7 +853,8 @@ async function selectActionToolAndArguments(
       ) {
         return structured.value;
       }
-    } catch {
+    } catch (error) {
+      if (isPostCompletionAccountingError(error)) throw error;
       /*
        * Try the bounded fallback route.
        */
@@ -1450,12 +1455,15 @@ export async function executePreparedBusinessAction(
       .confirmedHighRisk !==
       true
   ) {
+    // A current policy or metadata change can require confirmation even when
+    // preparation did not. Bind that requirement into the same immutable plan
+    // before storing/displaying it, without granting execution authority.
+    const confirmationPlan = { ...input.plan, requiresConfirmation: true };
     return {
       status:
         'confirmation_required',
 
-      plan:
-        input.plan,
+      plan: { ...confirmationPlan, planDigest: actionPlanDigest(confirmationPlan) },
 
       message:
         permissionMode === 'low_risk'

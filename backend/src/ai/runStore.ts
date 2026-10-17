@@ -5,13 +5,16 @@
 import {
   randomUUID,
 } from 'node:crypto';
+import { AsyncLocalStorage } from 'node:async_hooks';
 
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { createTenantContext } from '../security/tenantContext.js';
+import { persistOwnedRunAttempt } from '../security/ownedRunPersistence.js';
 import { isEngineeringArtifact } from './engineeringArtifact.js';
-import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
 import { redactOperationsValue } from '../operations/operationsEngine.js';
 import {
   recordTerminalBuildOutcomeFailOpen,
+  SupabaseBuildOutcomeStore,
 } from './buildOutcomeMemory.js';
 
 export interface SwarmRunEvent {
@@ -42,6 +45,51 @@ const userIndex = new Map<string, string[]>();
 const MAX_PER_USER = 40;
 const MAX_EVENTS_PER_RUN = 1000;
 const persistTimers = new Map<string, ReturnType<typeof setTimeout>>();
+const pendingCreations = new Set<string>();
+const terminalPersistence = new WeakMap<SwarmRunRecord, Promise<void>>();
+// Internal attempt authority never appears in the public run record.
+const attemptGenerations = new WeakMap<SwarmRunRecord, string>();
+const observedGenerations = new WeakMap<SwarmRunRecord, string | null>();
+const attemptScope = new AsyncLocalStorage<{ record?: SwarmRunRecord }>();
+
+/** Keep asynchronous callbacks bound to the attempt created by this request. */
+export function withRunAttempt<T>(work: () => T): T {
+  return attemptScope.run({}, work);
+}
+
+export function hasAdmittedRunAttempt(runId: string): boolean {
+  const record = attemptScope.getStore()?.record;
+  return Boolean(record && record.id === runId && !pendingCreations.has(runId));
+}
+
+export interface AdmittedRunAttempt { readonly runId: string; readonly userId: string; readonly workerId: string; readonly generation: string }
+const issuedRunAttempts = new WeakSet<object>();
+
+export function requireAdmittedRunAttempt(attempt: AdmittedRunAttempt): AdmittedRunAttempt {
+  if (!attempt || !issuedRunAttempts.has(attempt)) {
+    throw Object.assign(new Error('Execution attempt authority was not issued.'), { code: 'RUN_STATE_CONFLICT' });
+  }
+  return attempt;
+}
+
+/** Capture authority once, never let a later callback borrow a resumed generation. */
+export function captureAdmittedRunAttempt(runId: string, userId: string): AdmittedRunAttempt {
+  const record = attemptScope.getStore()?.record;
+  const generation = record && attemptGenerations.get(record);
+  if (!record || runs.get(runId) !== record || record.id !== runId || record.userId !== userId ||
+      record.status !== 'running' || pendingCreations.has(runId) || !generation) {
+    throw Object.assign(new Error('Execution attempt authority is missing.'), { code: 'RUN_STATE_CONFLICT' });
+  }
+  const attempt = Object.freeze({ runId, userId, workerId: RUN_WORKER_ID, generation });
+  issuedRunAttempts.add(attempt);
+  return attempt;
+}
+
+function mutableAttempt(runId: string): SwarmRunRecord | undefined {
+  const record = runs.get(runId);
+  const scope = attemptScope.getStore();
+  return scope && scope.record !== record ? undefined : record;
+}
 
 const RUN_WORKER_ID =
   randomUUID();
@@ -68,6 +116,9 @@ async function persistRunHeartbeat(
   runId:
     string,
 ): Promise<void> {
+  const rec = runs.get(runId);
+  const generation = rec && attemptGenerations.get(rec);
+  if (!rec || !generation) return;
   if (
     !process.env
       .SUPABASE_SERVICE_ROLE_KEY ||
@@ -102,7 +153,7 @@ async function persistRunHeartbeat(
       .eq(
         'worker_id',
         RUN_WORKER_ID,
-      );
+      ).eq('user_id', rec.userId).eq('lease_generation', generation);
 
   if (
     error
@@ -177,10 +228,11 @@ function releaseLocalRun(
   );
 }
 
-function rememberTerminalOutcome(
+async function rememberTerminalOutcome(
   rec:
     SwarmRunRecord,
-): void {
+  generation: string,
+): Promise<void> {
   if (
     rec.status ===
     'running'
@@ -188,7 +240,7 @@ function rememberTerminalOutcome(
     return;
   }
 
-  void recordTerminalBuildOutcomeFailOpen({
+  await recordTerminalBuildOutcomeFailOpen({
     runId:
       rec.id,
 
@@ -212,7 +264,7 @@ function rememberTerminalOutcome(
 
     output:
       rec.output,
-  });
+  }, new SupabaseBuildOutcomeStore({ generation, completedAt: rec.completed_at!, output: rec.output }));
 }
 
 function schedulePersist(rec: SwarmRunRecord) {
@@ -233,7 +285,20 @@ function flushPersist(rec: SwarmRunRecord) {
   if (timer) clearTimeout(timer);
 
   persistTimers.delete(rec.id);
-  void persistToSupabase(rec).catch(() => {});
+  const snapshot = structuredClone(rec);
+  const generation = attemptGenerations.get(rec);
+  const pending = persistToSupabase(rec).then(async () => {
+    // Learning is a side effect of an acknowledged terminal write, not of a
+    // local status change. A rejected worker fence must never create evidence.
+    // Also discard callbacks superseded by a correction or same-process resume.
+    if (generation && process.env.SUPABASE_SERVICE_ROLE_KEY && terminalPersistence.get(rec) === pending && runs.get(rec.id) === rec) {
+      await rememberTerminalOutcome(snapshot, generation);
+    }
+  });
+  terminalPersistence.set(rec, pending);
+  // Synchronous callers remain compatible, while persistRunState observes the
+  // original rejection before a route can acknowledge durable completion.
+  void pending.catch(() => console.warn('[runStore] terminal persistence unavailable'));
 }
 
 function touchUser(userId: string, runId: string) {
@@ -275,6 +340,10 @@ function createRunHot(
   prompt: string,
   runId: string,
 ): SwarmRunRecord {
+  const existing = runs.get(runId);
+  if (existing && existing.userId !== userId) {
+    throw Object.assign(new Error('Run not found.'), { code: 'RUN_NOT_FOUND' });
+  }
   const rec: SwarmRunRecord = {
     id: runId,
     userId,
@@ -289,6 +358,9 @@ function createRunHot(
   };
 
   runs.set(runId, rec);
+  attemptGenerations.set(rec, randomUUID());
+  const scope = attemptScope.getStore();
+  if (scope) scope.record = rec;
   touchUser(userId, runId);
   claimLocalRun(
     runId,
@@ -308,7 +380,7 @@ export function createRun(
     runId,
   );
 
-  flushPersist(rec);
+  void persistToSupabase(rec, true).catch(() => {});
 
   return rec;
 }
@@ -319,15 +391,27 @@ export async function createRunDurable(
   prompt: string,
   runId: string,
 ): Promise<SwarmRunRecord> {
-  const rec = createRunHot(
-    userId,
-    prompt,
-    runId,
-  );
-
-  await persistToSupabase(rec);
-
-  return rec;
+  if (pendingCreations.has(runId) || runs.has(runId)) {
+    throw Object.assign(new Error('This run cannot be created again. Reconnect or use its recovery action.'), { code: 'RUN_ALREADY_EXISTS' });
+  }
+  pendingCreations.add(runId);
+  let rec: SwarmRunRecord | undefined;
+  try {
+    rec = createRunHot(userId, prompt, runId);
+    // Creation must never use the update-capable persistence path. The unique
+    // database key, not a preceding read, arbitrates competing API processes.
+    await persistToSupabase(rec, true);
+    return rec;
+  } catch (error) {
+    if (rec && runs.get(runId) === rec) {
+      releaseLocalRun(runId);
+      runs.delete(runId);
+      userIndex.set(userId, (userIndex.get(userId) ?? []).filter(id => id !== runId));
+    }
+    throw error;
+  } finally {
+    pendingCreations.delete(runId);
+  }
 }
 
 /**
@@ -350,7 +434,10 @@ export async function resumeRunDurable(
     return error;
   };
 
-  const existing = await getRunAsync(runId);
+  if (process.env.NODE_ENV === 'production' && !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw codedError('RUN_AUTHORITY_UNAVAILABLE', 'Durable run storage is unavailable.');
+  }
+  const existing = await getRunAsync(runId, userId, Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY));
 
   if (!existing || existing.userId !== userId) {
     throw codedError(
@@ -387,6 +474,7 @@ export async function resumeRunDurable(
   const canonicalOutput = isEngineeringArtifact(existing.output)
     ? existing.output
     : null;
+  const generation = randomUUID();
 
   /*
    * In production this UPDATE is the worker claim.
@@ -395,16 +483,15 @@ export async function resumeRunDurable(
    * error/cancelled -> running. Only one process can win.
    */
   if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    await ensureShipLoopSchema();
-
     const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase
+    let claim = supabase
       .from('swarm_runs')
       .update({
         status: 'running',
         prompt: canonicalPrompt,
         output: canonicalOutput,
         completed_at: null,
+        lease_generation: generation,
         worker_id:
           RUN_WORKER_ID,
         heartbeat_at:
@@ -414,19 +501,23 @@ export async function resumeRunDurable(
       .eq('id', runId)
       .eq('user_id', userId)
       .in('status', ['error', 'cancelled'])
-      .select('id');
+      .eq('iteration_count', existing.iteration_count)
+      .eq('last_sequence', existing.lastSequence);
+    const observedGeneration = observedGenerations.get(existing);
+    claim = observedGeneration ? claim.eq('lease_generation', observedGeneration) : claim.is('lease_generation', null);
+    claim = existing.completed_at ? claim.eq('completed_at', existing.completed_at) : claim.is('completed_at', null);
+    const { data, error } = await claim.select('id');
 
     if (error) {
-      throw new Error(`Platform run-resume claim failed: ${error.message}`);
+      throw new Error('Platform run-resume claim is unavailable.');
     }
 
     if (!data?.length) {
       /*
        * Another API process may have won the claim between our read and conditional
-       * UPDATE. Clear the local cache before checking the authoritative row.
+       * UPDATE. Read authority without evicting a locally resumed winner.
        */
-      runs.delete(runId);
-      const latest = await getRunAsync(runId);
+      const latest = await getRunAsync(runId, userId, true);
 
       if (!latest || latest.userId !== userId) {
         throw codedError(
@@ -465,6 +556,9 @@ export async function resumeRunDurable(
   };
 
   runs.set(runId, resumed);
+  attemptGenerations.set(resumed, generation);
+  const scope = attemptScope.getStore();
+  if (scope) scope.record = resumed;
   touchUser(userId, runId);
   claimLocalRun(
     runId,
@@ -489,7 +583,7 @@ export function completeRun(
     success?: boolean;
   },
 ): SwarmRunRecord | null {
-  const rec = runs.get(runId);
+  const rec = mutableAttempt(runId);
 
   if (!rec) return null;
 
@@ -530,10 +624,6 @@ export function completeRun(
     rec,
   );
 
-  rememberTerminalOutcome(
-    rec,
-  );
-
   return rec;
 }
 
@@ -550,7 +640,7 @@ export function failRun(
     nextUnlockAt?: string | null;
   } = {},
 ): SwarmRunRecord | null {
-  const rec = runs.get(runId);
+  const rec = mutableAttempt(runId);
 
   if (!rec) return null;
 
@@ -648,28 +738,29 @@ export function failRun(
     rec,
   );
 
-  rememberTerminalOutcome(
-    rec,
-  );
-
   return rec;
 }
 
-export function saveConversation(
+export async function saveConversation(
   runId: string,
   messages: unknown[],
-): boolean {
+): Promise<boolean> {
   const rec = runs.get(runId);
 
   if (!rec) return false;
+  let snapshot: unknown[];
+  try {
+    snapshot = structuredClone(Array.isArray(messages) ? messages.slice(-80) : []);
+  } catch {
+    return false;
+  }
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NODE_ENV === 'production') {
+    if (!(await persistConversationOnly(runId, rec.userId, snapshot))) return false;
+  }
 
-  rec.messages =
-    Array.isArray(messages)
-      ? messages.slice(-80)
-      : [];
-
-  runs.set(runId, rec);
-  schedulePersist(rec);
+  // A resumed attempt may replace this cache entry while persistence is pending.
+  // Never write the old request's snapshot into that newer attempt.
+  if (runs.get(runId) === rec) rec.messages = snapshot;
 
   return true;
 }
@@ -700,12 +791,8 @@ export async function persistConversationOnly(
     return false;
   }
 
-  const trimmed =
-    Array.isArray(messages)
-      ? messages.slice(-80)
-      : [];
-
   try {
+    const trimmed = structuredClone(Array.isArray(messages) ? messages.slice(-80) : []);
     const supabase =
       getSupabaseAdmin();
 
@@ -730,26 +817,14 @@ export async function persistConversationOnly(
         .select('id');
 
     if (error) {
-      console.warn(
-        '[runStore] conversation-only persist failed:',
-        error.message,
-      );
+      console.warn('[runStore] conversation-only persistence unavailable');
 
       return false;
     }
 
-    return (
-      (
-        data?.length ??
-        0
-      ) >
-      0
-    );
-  } catch (error) {
-    console.warn(
-      '[runStore] conversation-only persist threw:',
-      (error as Error).message,
-    );
+    return Array.isArray(data) && data.length === 1 && data[0]?.id === runId;
+  } catch {
+    console.warn('[runStore] conversation-only persistence unavailable');
 
     return false;
   }
@@ -760,7 +835,7 @@ export function appendRunEvent(
   type: SwarmRunEvent['type'],
   data: Record<string, unknown>,
 ): SwarmRunEvent | null {
-  const rec = runs.get(runId);
+  const rec = mutableAttempt(runId);
 
   if (!rec) return null;
 
@@ -807,12 +882,14 @@ export function getRun(
 /** Hot cache first; fall back to Supabase for cold starts / other instances. */
 export async function getRunAsync(
   runId: string,
+  ownerId: string,
+  fresh = false,
 ): Promise<SwarmRunRecord | null> {
   const hot =
     runs.get(runId);
 
-  if (hot) {
-    return hot;
+  if (hot && !fresh) {
+    return hot.userId === ownerId ? hot : null;
   }
 
   if (
@@ -825,25 +902,18 @@ export async function getRunAsync(
     const supabase =
       getSupabaseAdmin();
 
+    const query = supabase.from('swarm_runs').select('*').eq('id', runId).eq('user_id', ownerId);
     const {
       data,
       error,
     } =
-      await supabase
-        .from('swarm_runs')
-        .select('*')
-        .eq(
-          'id',
-          runId,
-        )
-        .maybeSingle();
+      await query.maybeSingle();
 
-    if (
-      error ||
-      !data
-    ) {
+    if (error && fresh) throw new Error('Run authority is unavailable.');
+    if (error || !data) {
       return null;
     }
+    if (data.id !== runId || data.user_id !== ownerId) return null;
 
     const rec: SwarmRunRecord = {
       id:
@@ -928,6 +998,12 @@ export async function getRunAsync(
         ),
     };
 
+    observedGenerations.set(rec, typeof data.lease_generation === 'string' ? data.lease_generation : null);
+    if (fresh) return rec;
+    // A worker may have been admitted while the cold read was awaiting IO.
+    // Hydration must never replace the object carrying that attempt's authority.
+    const current = runs.get(runId);
+    if (current) return current.userId === ownerId ? current : null;
     runs.set(
       runId,
       rec,
@@ -940,6 +1016,7 @@ export async function getRunAsync(
 
     return rec;
   } catch {
+    if (fresh) throw new Error('Run authority is unavailable.');
     return null;
   }
 }
@@ -953,6 +1030,9 @@ export async function requestRunCancellation(
   runId: string,
   userId: string,
 ): Promise<boolean> {
+  if (process.env.NODE_ENV === 'production' && !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error('Platform cancellation write is unavailable.');
+  }
   const hot =
     runs.get(runId);
 
@@ -979,8 +1059,11 @@ export async function requestRunCancellation(
     return false;
   }
 
-  const cancelledAt =
+  let cancelledAt =
     new Date().toISOString();
+  let iterationCount = (hot?.iteration_count ?? 0) + 1;
+  let featureCategory = hot?.featureCategory;
+  let createdAt = hot?.created_at;
 
   const cancelledOutput = {
     type: 'error',
@@ -998,56 +1081,34 @@ export async function requestRunCancellation(
       data,
       error,
     } =
-      await supabase
-        .from('swarm_runs')
-        .update({
-          status:
-            'cancelled',
-
-          output:
-            cancelledOutput,
-
-          completed_at:
-            cancelledAt,
-
-          worker_id:
-            null,
-
-          heartbeat_at:
-            null,
-        })
-        .eq(
-          'id',
-          runId,
-        )
-        .eq(
-          'user_id',
-          userId,
-        )
-        .eq(
-          'status',
-          'running',
-        )
-        .select('id');
+      await supabase.rpc('cancel_swarm_run_owned', { p_run_id: runId, p_owner_id: userId });
 
     if (error) {
       throw new Error(
-        `Platform cancellation write failed: ${error.message}`,
+        'Platform cancellation write is unavailable.',
       );
     }
 
-    if (
-      !data?.length
-    ) {
-      return false;
+    if (data === null) return false;
+    if (!data || typeof data !== 'object' || Array.isArray(data) || data.id !== runId || data.user_id !== userId ||
+        data.status !== 'cancelled' || data.lease_generation !== null ||
+        typeof data.completed_at !== 'string' || !Number.isFinite(Date.parse(data.completed_at)) ||
+        typeof data.created_at !== 'string' || !Number.isFinite(Date.parse(data.created_at)) ||
+        !Number.isSafeInteger(data.iteration_count) || data.iteration_count < 1 ||
+        !(data.feature_category === null || typeof data.feature_category === 'string') ||
+        data.output?.type !== cancelledOutput.type || data.output?.code !== cancelledOutput.code || data.output?.error !== cancelledOutput.error) {
+      throw new Error('Platform cancellation receipt is invalid.');
     }
+    cancelledAt = data.completed_at;
+    iterationCount = data.iteration_count;
+    featureCategory = data.feature_category ?? undefined;
+    createdAt = data.created_at;
   } else if (!hot) {
     return false;
   }
 
   if (
-    hot?.status ===
-    'running'
+    hot?.status === 'running' && runs.get(runId) === hot
   ) {
     hot.status =
       'cancelled';
@@ -1058,7 +1119,7 @@ export async function requestRunCancellation(
     hot.completed_at =
       cancelledAt;
 
-    hot.iteration_count += 1;
+    hot.iteration_count = iterationCount;
 
     runs.set(
       runId,
@@ -1070,7 +1131,7 @@ export async function requestRunCancellation(
     );
   }
 
-  void recordTerminalBuildOutcomeFailOpen({
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) await recordTerminalBuildOutcomeFailOpen({
     runId,
 
     userId,
@@ -1079,21 +1140,20 @@ export async function requestRunCancellation(
       'cancelled',
 
     featureCategory:
-      hot?.featureCategory,
+      featureCategory,
 
     iterationCount:
-      hot?.iteration_count ??
-      0,
+      iterationCount,
 
     createdAt:
-      hot?.created_at,
+      createdAt,
 
     completedAt:
       cancelledAt,
 
     output:
       cancelledOutput,
-  });
+  }, new SupabaseBuildOutcomeStore({ kind: 'cancellation', completedAt: cancelledAt, output: cancelledOutput }));
 
   return true;
 }
@@ -1101,12 +1161,15 @@ export async function requestRunCancellation(
 /** Read the durable cancellation flag without accepting a potentially stale hot row. */
 export async function isRunCancellationRequested(
   runId: string,
+  userId: string,
 ): Promise<boolean> {
   const hot =
     runs.get(runId);
+  const scope = attemptScope.getStore();
+  if (scope && scope.record !== hot) throw new Error('Run authority is unavailable.');
 
   if (
-    hot?.status ===
+    hot?.userId === userId && hot.status ===
     'cancelled'
   ) {
     return true;
@@ -1115,6 +1178,7 @@ export async function isRunCancellationRequested(
   if (
     !process.env.SUPABASE_SERVICE_ROLE_KEY
   ) {
+    if (process.env.NODE_ENV === 'production') throw new Error('Run authority is unavailable.');
     return false;
   }
 
@@ -1128,20 +1192,23 @@ export async function isRunCancellationRequested(
     } =
       await supabase
         .from('swarm_runs')
-        .select('status')
+        .select('status,lease_generation,worker_id')
         .eq(
           'id',
           runId,
         )
+        .eq('user_id', userId)
         .maybeSingle();
 
-    return (
-      !error &&
-      data?.status ===
-        'cancelled'
-    );
+    if (error || !data) throw new Error('Run authority is unavailable.');
+    const generation = hot && attemptGenerations.get(hot);
+    if (data.status !== 'cancelled' && generation &&
+      (data.lease_generation !== generation || (data.status === 'running' && data.worker_id !== RUN_WORKER_ID))) {
+      throw new Error('Run authority is unavailable.');
+    }
+    return data.status === 'cancelled';
   } catch {
-    return false;
+    throw new Error('Run authority is unavailable.');
   }
 }
 
@@ -1191,7 +1258,7 @@ export function listRunsForUser(
       (
         r,
       ): r is SwarmRunRecord =>
-        Boolean(r),
+        Boolean(r && r.userId === userId),
     )
     .slice(
       0,
@@ -1302,8 +1369,12 @@ export async function listRunsForUserAsync(
     }
 
     const persisted =
-      data.map(
+      data.flatMap(
         (row) => {
+          if (row.user_id !== userId || typeof row.id !== 'string' || !row.id) return [];
+          const current = runs.get(row.id);
+          if (current && current.userId !== userId) return [];
+          if (current && attemptGenerations.has(current)) return [current];
           const rec: SwarmRunRecord = {
             id:
               String(
@@ -1405,7 +1476,7 @@ export async function listRunsForUserAsync(
             rec.id,
           );
 
-          return rec;
+          return [rec];
         },
       );
 
@@ -1415,7 +1486,7 @@ export async function listRunsForUserAsync(
     // sources, preferring the live record for an ID that exists in each.
     return mergeRunHistory(
       persisted,
-      hot,
+      hot.map(rec => runs.get(rec.id) ?? rec),
       limit,
     );
   } catch {
@@ -1427,13 +1498,15 @@ export async function persistRunState(
   runId: string,
 ): Promise<void> {
   const rec =
-    runs.get(runId);
+    mutableAttempt(runId);
 
   if (!rec) {
     throw new Error(
       'Cannot persist an unknown swarm run',
     );
   }
+
+  await terminalPersistence.get(rec);
 
   await persistToSupabase(
     rec,
@@ -1442,25 +1515,24 @@ export async function persistRunState(
 
 async function persistToSupabase(
   rec: SwarmRunRecord,
+  createOnly = false,
 ): Promise<void> {
+  const generation = attemptGenerations.get(rec);
+  // Capture before any await so late callbacks cannot borrow a resumed attempt.
+  rec = structuredClone(rec);
   if (
     !process.env.SUPABASE_SERVICE_ROLE_KEY
   ) {
+    if (process.env.NODE_ENV === 'production') throw new Error('Durable run storage is unavailable.');
     return;
   }
-
-  await ensureShipLoopSchema();
 
   const supabase =
     getSupabaseAdmin();
 
-  const {
-    error,
-  } =
-    await supabase
-      .from('swarm_runs')
-      .upsert(
-        {
+  const context = createTenantContext({ userId: rec.userId, via: 'persisted_owner' });
+  if (!generation) throw Object.assign(new Error('Execution attempt authority is missing.'), { code: 'RUN_STATE_CONFLICT' });
+  const row = {
           id:
             rec.id,
 
@@ -1527,17 +1599,15 @@ async function persistToSupabase(
                   }
                 : {}
           ),
-        },
-
-        {
-          onConflict:
-            'id',
-        },
-      );
-
-  if (error) {
-    throw new Error(
-      `Platform swarm-run write failed: ${error.message}`,
-    );
+        };
+  if (createOnly) {
+    const { error } = await supabase.from('swarm_runs').insert({ ...row, lease_generation: generation });
+    if (error) {
+      if (error.code === '23505') throw Object.assign(new Error('This run already exists.'), { code: 'RUN_ALREADY_EXISTS' });
+      throw new Error('Durable run creation failed.');
+    }
+  } else {
+    const { id, user_id, messages, created_at, worker_id, heartbeat_at, ...state } = { worker_id: null as string | null, heartbeat_at: null as string | null, ...row };
+    await persistOwnedRunAttempt(supabase, context, id, RUN_WORKER_ID, generation, state);
   }
 }

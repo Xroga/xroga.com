@@ -1802,18 +1802,8 @@ export class BillingService {
       }
 
 
-      /*
-       * Make the real usage system canonical.
-       * No action balance is applied here.
-       */
-      if (
-        fulfilled
-      ) {
-        await syncPlanBudget(
-          userId,
-          'spark',
-        );
-      }
+      // The fulfillment transaction already updates the canonical usage budget.
+      // A second write could race a newer cycle and cannot be repaired by replay.
 
 
       return Boolean(
@@ -1917,13 +1907,13 @@ export class BillingService {
       );
 
 
-    if (
-      !userId &&
-      membershipId
-    ) {
+    // The signed provider event establishes its source, not permission to move
+    // an existing membership to the actor named in its metadata.
+    if (membershipId) {
       const {
         data:
           existing,
+        error: ownershipError,
       } =
         await getSupabaseAdmin()
           .from(
@@ -1939,10 +1929,11 @@ export class BillingService {
           .maybeSingle();
 
 
-      userId =
-        existing
-          ?.user_id ??
-        '';
+      if (ownershipError) throw new Error('membership_sync_failed');
+      if (existing?.user_id) {
+        if (userId && userId !== existing.user_id) throw new Error('membership_owner_mismatch');
+        userId = existing.user_id;
+      }
     }
 
 
@@ -2064,29 +2055,18 @@ export class BillingService {
     };
 
 
-    const {
-      error,
-    } =
-      await getSupabaseAdmin()
-        .from(
-          'whop_memberships',
-        )
-        .upsert(
-          row,
-          {
-            onConflict:
-              'whop_membership_id',
-          },
-        );
-
-
-    if (
-      error
-    ) {
-      throw new Error(
-        'membership_sync_failed',
-      );
-    }
+    // Insert-ignore closes the lookup/insert race. The following mutation must
+    // match both the provider ID and its persisted owner and return one row.
+    const db = getSupabaseAdmin();
+    const inserted = await db.from('whop_memberships').upsert(row, {
+      onConflict: 'whop_membership_id', ignoreDuplicates: true,
+    });
+    if (inserted.error) throw new Error('membership_sync_failed');
+    const updated = await db.from('whop_memberships').update(row)
+      .eq('whop_membership_id', membershipId).eq('user_id', userId)
+      .select('whop_membership_id').maybeSingle();
+    if (updated.error) throw new Error('membership_sync_failed');
+    if (!updated.data) throw new Error('membership_owner_mismatch');
 
 
     if (
@@ -2097,10 +2077,9 @@ export class BillingService {
         userId,
       );
 
-      await syncPlanBudget(
-        userId,
-        'free',
-      );
+      // The canonical cycle refresh preserves an unexpired paid cycle or
+      // atomically establishes a free cycle when needed. An old membership's
+      // deactivation must not overwrite a newer payment's budget.
     }
   }
 }

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
+import { requireTenantContext, requireResourceOwner } from '../security/tenantContext.js';
 import {
   buildVercelAuthorizeUrl,
   clearVercelConnection,
@@ -35,7 +36,7 @@ router.get('/oauth', async (req: AuthRequest, res) => {
   const requested = typeof req.query.redirect_uri === 'string' ? req.query.redirect_uri : undefined;
   const redirectUri = getVercelOAuthCallbackUrl(requested);
   try {
-    const built = await buildVercelAuthorizeUrl(req.userId!, redirectUri);
+    const built = await buildVercelAuthorizeUrl(req.tenantContext!, redirectUri);
     res.json({
       url: built?.url ?? null,
       redirectUri,
@@ -73,8 +74,10 @@ router.post('/connect', async (req: AuthRequest, res) => {
 
   try {
     const redirectUri = getVercelOAuthCallbackUrl(parsed.data.redirectUri);
+    const context = requireTenantContext(req.tenantContext);
+    requireResourceOwner(context, req.userId);
     const tokens = await exchangeVercelOAuthCode({
-      userId: req.userId!,
+      tenantContext: context,
       code: parsed.data.code,
       state: parsed.data.state,
       redirectUri,
@@ -118,7 +121,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
       refreshToken: tokens.refresh_token,
       expiresIn: tokens.expires_in,
       authKind: 'sign_in_with_vercel',
-    });
+    }, undefined, tokens.authorizationRevision);
 
     res.json({
       connected: true,
@@ -168,8 +171,12 @@ router.get('/status', async (req: AuthRequest, res) => {
 });
 
 router.delete('/disconnect', async (req: AuthRequest, res) => {
-  await clearVercelConnection(req.userId!);
-  res.json({ ok: true });
+  try {
+    await clearVercelConnection(req.tenantContext!);
+    res.json({ ok: true });
+  } catch {
+    res.status(503).json({ error: 'Vercel disconnect could not be fully completed. Retry shortly.' });
+  }
 });
 
 /** List Vercel projects for Change project UI (personal + team accounts). */

@@ -1,4 +1,4 @@
-name: Command 3 authenticated browser verification
+name: Isolated Supabase authenticated browser verification
 
 on:
   workflow_dispatch:
@@ -19,11 +19,7 @@ jobs:
     # that download finish once and seed the cache rather than to bound a healthy run.
     timeout-minutes: 45
     env:
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.E2E_SUPABASE_URL }}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.E2E_SUPABASE_ANON_KEY }}
-      SUPABASE_URL: ${{ secrets.E2E_SUPABASE_URL }}
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.E2E_SUPABASE_SERVICE_ROLE_KEY }}
-      E2E_ISOLATED_PROJECT_REF: ${{ vars.E2E_ISOLATED_PROJECT_REF }}
+      XB01_DISPOSABLE_SUPABASE: '1'
       NEXT_PUBLIC_API_URL: http://127.0.0.1:4000
       E2E_BACKEND_URL: http://127.0.0.1:4000
       # Production billing is verified by launch-production-verification.yml
@@ -31,31 +27,28 @@ jobs:
       # not couple branch validation to the configuration of an older release.
       FRONTEND_URL: http://127.0.0.1:3000
       NODE_ENV: test
+      XROGA_RELEASE_SHA: ${{ github.sha }}
+      EXPECTED_RELEASE_SHA: ${{ github.sha }}
+      EXPECTED_WEB_RELEASE_SHA: ${{ github.sha }}
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
-          node-version: 22
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: '.node-version'
           cache: npm
-      - name: Safe configuration preflight
-        shell: bash
-        run: |
-          set -euo pipefail
-          for name in NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY E2E_ISOLATED_PROJECT_REF; do
-            if [ -z "${!name:-}" ]; then echo "missing_required_variable=$name"; exit 1; fi
-          done
-          test "$E2E_ISOLATED_PROJECT_REF" != "nzenxdfumxrnsmybazmo"
-          test "$NEXT_PUBLIC_SUPABASE_URL" = "https://${E2E_ISOLATED_PROJECT_REF}.supabase.co"
-          test "$SUPABASE_URL" = "$NEXT_PUBLIC_SUPABASE_URL"
-          case "$NEXT_PUBLIC_SUPABASE_ANON_KEY" in sb_secret_*|"") echo "invalid_public_key_category"; exit 1;; esac
-          echo "isolated_test_project_confirmed=true"
-          echo "public_key_present=true"
-          echo "service_key_present=true"
       - name: Install isolated workspace dependencies
         run: |
           npm ci --workspaces=false
           npm ci --prefix backend --workspaces=false
           npm ci --prefix frontend --workspaces=false
+      - name: Test disposable environment admission
+        run: node --test scripts/security/disposable-supabase.test.mjs
+      - name: Start disposable Supabase with per-run keys
+        run: node scripts/security/disposable-supabase.mjs
+      - name: Full migration history and sanitized upgrade compatibility
+        run: node scripts/security/full-supabase-history.mjs
       # A spec that does not parse is currently only discovered *after* two production
       # builds and a browser download — several minutes to learn that a file has a
       # syntax error. `--list` compiles every spec and runs none of them, so it reports
@@ -108,6 +101,7 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ms-playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - name: Start isolated application
+        id: start-application
         shell: bash
         run: |
           PORT=4000 node backend/dist/index.js > backend.log 2>&1 & echo $! > backend.pid
@@ -116,12 +110,21 @@ jobs:
             curl --silent --fail http://127.0.0.1:4000/ready >/dev/null && curl --silent --fail http://127.0.0.1:3000/auth/login >/dev/null && exit 0
             sleep 2
           done
-          echo "application_start_failed"; tail -n 40 backend.log; tail -n 40 frontend.log; exit 1
+          echo "application_start_failed; raw application logs withheld"; exit 1
       - name: Authenticated browser and tenant isolation
         working-directory: frontend
         # Invoke the test package's own CLI so npm's nested workspace install
         # cannot select the transitive playwright binary from another copy.
-        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/companion-public.spec.ts
+        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/companion-public.spec.ts e2e/batch01-founder-local.spec.ts
+      - name: Real tenant authorization and concurrency integration
+        # Independent evidence still runs after a browser assertion fails, but
+        # never against an app that failed readiness; failures remain fatal.
+        if: ${{ !cancelled() && steps.start-application.outcome == 'success' }}
+        working-directory: backend
+        run: node --import tsx --test src/security/tenantIsolation.local.integration.ts
+      - name: Collect bounded redacted local application logs
+        if: always()
+        run: node scripts/security/collect-local-security-logs.mjs
       - name: Upload redacted verification evidence
         if: always()
         uses: actions/upload-artifact@v5
@@ -129,7 +132,12 @@ jobs:
           name: command3-auth-browser-evidence
           path: |
             frontend/test-results/command3-auth-evidence.json
+            frontend/test-results/batch01-founder-evidence.json
+            frontend/test-results/batch01-private-delivery-evidence.json
             frontend/test-results/**/test-failed-*.png
+            artifacts/batch-01-local-security/migration-history.json
+            artifacts/batch-01-local-security/supabase-start-redacted.log
+            artifacts/batch-01-local-security/*.redacted
           if-no-files-found: warn
           retention-days: 14
       - name: Cleanup processes
@@ -138,3 +146,7 @@ jobs:
         run: |
           test -f frontend.pid && kill "$(cat frontend.pid)" || true
           test -f backend.pid && kill "$(cat backend.pid)" || true
+          if [ -n "${XB01_SUPABASE_WORKDIR:-}" ]; then
+            npx --yes --package=supabase@2.120.0 --package=@supabase/cli-linux-x64@2.120.0 supabase --workdir "$XB01_SUPABASE_WORKDIR" stop --no-backup > /dev/null 2>&1
+            node scripts/security/disposable-supabase.mjs --verify-teardown
+          fi

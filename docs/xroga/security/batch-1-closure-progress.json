@@ -1,0 +1,868 @@
+{
+  "version": "1.0",
+  "status": "IN_PROGRESS",
+  "acceptanceStatus": "BLOCKED",
+  "oauthEpoch": {
+    "status": "IN PROGRESS",
+    "lifecycle": "INTEGRATION VERIFIED",
+    "baseline": "b4d1b817027878358a94147c2e2315a87ee6fc9d",
+    "scope": "Supabase, Vercel, CWS and GitHub authorization start through consumed state and conditional callback save, plus revision-bound Supabase/Vercel refresh",
+    "rootCause": "Unconditional callback upsert could resurrect a disconnected credential after provider exchange. Refresh-token equality alone did not distinguish reused provider token values.",
+    "fix": "Reuse credential_revision, serialize start/consume/save on the token row, require unexpired consumed receipt for callback saves, rotate revision on disconnect and every successful save. No absent-authority mirror fallback for these providers.",
+    "focusedTests": 19,
+    "localSqlAssertions": 89,
+    "integration": "VERIFIED c659262feab9f7ad2a24a685ddefef516aa1df41, run38804182317 attempt2:76 migrations,64 security tests,3 browser tests,zero failures/skips. Attempt1 failed before migration/tests because the optional Linux CLI binary was missing.",
+    "remaining": "Complete caller provenance, issued external credentials and production vault/KMS remain open. No full caller or command certified.",
+    "precedingIntegration": {
+      "source": "f33a4e9f9cdbff619c030f1ea514aedf6dfc6b4f",
+      "run": "38802283477",
+      "status": "VERIFIED",
+      "migrations": 75,
+      "securityTests": 64,
+      "failures": 0,
+      "skips": 0,
+      "scope": "Supabase/Vercel epoch, before CWS/GitHub extension"
+    }
+  },
+  "workQueue": [
+    {
+      "item": "Supabase/Vercel epoch integration",
+      "status": "VERIFIED"
+    },
+    {
+      "item": "CWS epoch and BYOK admission",
+      "status": "VERIFIED"
+    },
+    {
+      "item": "GitHub authorization and connection persistence",
+      "status": "VERIFIED"
+    },
+    {
+      "item": "Remaining caller root-cause groups",
+      "status": "READY"
+    },
+    {
+      "item": "Original Commands008-010 dependent acceptance",
+      "status": "BLOCKED",
+      "dependency": "Command007 strict acceptance"
+    },
+    {
+      "item": "R2 and production schema/KMS proof",
+      "status": "BLOCKED",
+      "dependency": "Separately authorized isolated provider acceptance and production evidence"
+    }
+  ],
+  "additionalSpend": 0,
+  "latestDisposable": {
+    "source": "7d12bf426118660c9adfe7d6c7447d99c6e4eb24",
+    "run": "38827153400",
+    "result": "VERIFIED",
+    "migrations": 93,
+    "securityTests": 112,
+    "browserTests": 3,
+    "failures": 0,
+    "skips": 0,
+    "aggregate": "PASS38827153531: branch7d12bf426118660c9adfe7d6c7447d99c6e4eb24 and integratedfcbddfd42373081a6751b326e9bfa6dfbb56b091 each21 stages twice, sourceTreeMutated=false. All11 workflows pass."
+  },
+  "overnightEngineering": {
+    "status": "IN PROGRESS",
+    "baseline": "c22bd6a48d6fb263df5c228daf938b34dc254cbd: all11 workflows pass; branch and integrated13db522c149bbdd074fd05457091439778c0cd81 each pass twice with sourceTreeMutated=false; disposable38815412927 passes77 migrations,70 security tests and3 browser tests,zero failures/skips.",
+    "projectDeletion": "VERIFIED at f4b7acf4 disposable38817558178: service-only delete_owned_project_atomic locks exact owner/project and commits deletion plus retained activity atomically. Real concurrent deletion, foreign denial, browser-role denial and forced audit-failure rollback pass. This does not establish provider object cleanup.",
+    "workerLearning": "VERIFIED at f4b7acf4 disposable38817558178: complete/fail learning waits for canonical state, snapshots evidence and uses existing attempt generation under a parent-row lock. Actual two-session stale-worker race and role/owner negatives pass. New cancellation RPC and separate DB-clock learning receipt pass focused tests and37 local SQL assertions, actual concurrency verification pending. No whole worker certification.",
+    "notificationsAndBilling": "Terminal acknowledgement and digest-bound webhook completion fixes verified at f4b7acf4. Actual signed unsupported-event concurrent retry passes without provider fulfillment. Cross-process notification delivery and billing crash recovery/initial account binding remain open.",
+    "oauthAdmission": "Issued-context PKCE start/consume and explicit OAuth disconnect verified at f4b7acf4. Removed stale automatic Vercel revokes and unused PKCE loader, preserving token compatibility. New removal of unsupported generic PKCE writer and issued-context BYOK deletion have focused evidence, exact-source CI pending.",
+    "supabaseCallback": "Four-key callback/select admissions verified at f4b7acf4, including real stale-admission tombstones. New create-project path captures five admissions before provider work, with mocked conflict tests passing. Multi-key atomicity and already-issued provider effects remain open.",
+    "projectCreationAndReads": "READY FOR CI: service-only transaction serializes this API's same-owner repository saves and commits required project/message/activity together. Twenty local SQL assertions and migration replay pass. Real two-client concurrency, role denial and child-write rollback tests prepared. File/code queries now join the current owner in the read statement and validate returned parent identity, focused substituted-receipt/outage tests pass.",
+    "accountDeletion": "READY FOR CI: fresh Auth getUser must match the issued owner immediately before admin deletion. Eleven focused tests and backend typecheck pass. Dedicated disposable Auth integration prepared. This is not atomic logout revocation, recent MFA or complete cascade/storage cleanup proof.",
+    "customCredentialRevocation": "READY FOR CI: issued-context custom deletion gathers complete bounded DB and Storage inventories before mutation. Stable exact-count DB pagination, Storage pagination, deduplication and15 failure scenarios pass focused tests. Concurrent new keys or same-count replacement across snapshot remain unresolved.",
+    "manualSupabaseConnect": "READY FOR CI: sole authenticated helper caller now passes issued context. All supplied2-5 keys are snapshotted and admitted before any save. Deferred disconnect conflict test prevents later key resurrection, no provider calls. Provisioned no longer inferred from credential presence. Partial bundles, mixed-project omitted keys and external cancellation remain open.",
+    "resumeLineageAndHistory": "READY FOR CI: resumed repository/branch/root and separate database project UUID are bound to existing canonical JSON evidence before worker/provider IO. Unverifiable legacy UUID binding fails closed. History cannot replace admitted authority-bearing objects, non-admitted history still refreshes.19 focused tests plus extra history-refresh run pass. Canonical checkpoint save generation race remains open.",
+    "growthReferralBoundary": "READY FOR CI: service requires existing exact tenant/project/referral attribution and insert/update trigger locks that same tuple through event commit.14 focused tests and tsc pass. Actual service-role denial and observed two-client removal race prepared. No qualification/reward implementation claimed.",
+    "sourceSemantics": "32 families and203 historical records have source-specific planning ownership, not implementation certification. Eight specialized chain/hackathon owners remain unresolved,80 evidence-only records still lack original normative acceptance, and two private transcripts remain unanalyzed. All211 historical identities retained.22 mapping/private-source/golden tests pass. All12 product journeys remain BLOCKED with actual later mission owners.",
+    "integration": "5fa74cd4 disposable38820218030 PASS82 migrations/83 security/3 browser/zero failures or skips, all11 workflows pass. This verifies the preceding creation, cancellation, account-deletion, enumeration, manual-connect, resume-lineage and growth-referral changes described above as READY FOR CI. It does not certify their explicitly remaining limitations. Repeated branch/integrated38820217998 passes21 stages twice on each source with no mutation.",
+    "nextSource": {
+      "status": "IN PROGRESS",
+      "canonicalCheckpoint": "VERIFIED at01bd0716 disposable38822065088. Issued attempt identity, serialized immutable saves and service-only parent-row-locked RPC bind canonical state to worker generation and immutable lineage. Database project identity precedes first foundation save. Actual two-session stale-resume/cancel, owner/lineage/role negatives pass. Two exact write candidates now SCOPED_BOUNDARY, no full worker certification.",
+      "quota": "VERIFIED at01bd0716 disposable38822065088: missing/mismatched/malformed quota evidence fails503, explicit zero remains zero, exact owner rows yield different balances and missing row cannot invent paid fallback. Two exact read candidates now SCOPED_BOUNDARY, not concurrent spending acceptance.",
+      "terminalIdentity": "VERIFIED at01bd0716 disposable38822065088: simultaneous same-ID saves retain winning repository/number/creation identity, foreign attempt leaves unchanged row, exact ID/projection negatives pass. Content revision CAS and lifecycle remain open.",
+      "credentialDestination": "Next source: four-key Supabase bundle uses issued immutable admission, sorted row locks, revision CAS and transactional rollback. Reads require one bound project/generation, including final deployment overrides. Missing legacy objects are recognized narrowly without mutating read state.22 focused tests and local SQL probe pass; three real role, concurrent writer, revoke and rollback tests prepared. PAT is separate and already-issued provider effects, legacy opaque-key reconnect and production KMS remain open.",
+      "atomicUsagePreparation": "Primitive VERIFIED at01bd0716 disposable38822065088: concurrent same/distinct receipts, payload conflicts, role denial, rollover and four-stage rollback pass. Next source wires only three reviewed post-completion business/planner consumers, preserves accounting for malformed outputs, and prevents fallback/repair on uncertain accounting. Six focused wrapper/consumer tests pass, final-source real consumer test pending. Other legacy recordUsage callers, output recovery, cross-request provider deduplication and Command008 remain open.",
+      "softwareCheckpoint": "Next source: issued attempt and parent-row-locked write, immutable serialized queue, typed conflict/outage abort at Service and Executor even if tool catches the error. Central load validates row/embedded identity; shared immutable recovery binding reaches service and preview. Focused13 tests plus earlier34,18 local SQL assertions/replay pass. Three updated real tests await final-source CI.",
+      "workerRevision": "Next source: worker-specific project revision RPC locks same admitted parent, requires canonical project lineage, denies stale generation. Failed revision now throws before pipeline delivery-ready/completion instead of returning a truthy failure object. Legitimate post-build authenticated restore/delivery retain separate paths. Eleven focused tests and15 local SQL assertions/replay pass, three real role/lineage/lock-race tests prepared. Preview provider side effects remain independent.",
+      "diagnosticsAndCache": "Next source: platform logger stores fixed categories/known labels only, discards arbitrary metadata and unverified attribution, registers exact global scope. Three focused tests and actual persistence test prepared. Inactive tenant cache now validates bounded payload, exact digest/expiry and acknowledged writes, three focused tests pass. Cache project/context variation and lifecycle remain open.",
+      "benchmarkEvidence": "Next source: strict finite numeric/boolean/time evidence validation before aggregate routing/storage, safe errors and truthful partial persistence count. Missing storage acknowledgement returns failed/benchmark_persistence_unverified because operationsService otherwise stamps verified durable action evidence.55 focused tests pass after correction. No paid benchmarks executed, actual producer provenance/budget/replay and real DB acceptance remain open.",
+      "previewDrain": "Next source: adapter closes and drains its existing preview queue before final revision/completion. Typed authority loss and timeout fail closed; subsequent events cannot save or emit. Sixteen focused tests pass. Already-started physical provider work is not undone or certified.",
+      "localVerification": "Current sixth-source local backend3010 tests/2992 pass/0 fail/18 registered skips. Backend typecheck passes.96 migrations inventoried. Final-source real concurrency and repeated CI remain required.",
+      "secondBatchVerification": "VERIFIED54abe997 disposable38824268139:87 migrations/100 security/3 browser,zero failures/skips. Five exact unchanged caller candidates closed: software checkpoint RPC, worker revision RPC/factory, diagnostic factory/insert. Other reviewed callers remain unresolved where lifecycle/provider/complete recovery evidence is absent.",
+      "thirdBatch": "READY FOR CI: existing community comment and post update/delete/moderation now use service-only transactional current-role/parent locks and exact receipts, existing permissions unchanged.13 focused tests,39 PGlite assertions/reapply pass, two real concurrent-role/parent/lock modules prepared. Canonical recovery compares durable columns and executable control data; project/session reads bind returned identity and immutable snapshots, delayed-read/write mutation tests pass and three real tests prepared. Generic credential decoding rejects malformed envelopes, immutable provider row identity controls deployment egress, manual provisioning tuple now uses one snapshot. Provisioning requires issued context plus exact inserted-row readback; one real bootstrap/paid-row preservation test prepared. Shared record writers validate exact returned IDs. Completed provider reservation settlement failure keeps hold and returns non-retryable typed uncertainty. No full caller certification from focused or simulated tests.",
+      "fourthBatch": "READY FOR CI: repository index header+children now transactional full replacement and single-snapshot load,45 local SQL assertions/replay. Community remaining mutation RPC23 assertions and read visibility RPC24 assertions/replay with focused tests and prepared real races. Trace binds original admitted worker generation including terminal state, redacts immutable diagnostics,18 SQL assertions/replay; best effort remains explicit. Removed unused generic OAuth fallback/upload/refresh, issued policy setter and exact receipt retained. Provisioning missing username repaired. Fly delete network/nonconfirmed HTTP responses now reject before destroyed state/event,21 focused mock-provider tests pass. No real provider calls or whole-caller security certification.",
+      "fourthBatchVerification": "VERIFIED7d12bf42,93 migrations fresh/upgrade,112 security and3 browser tests,zero failures/skips. Repeated branch/integrated21 stages each twice passes.21 exact narrow boundaries closed: runtime read identity4, community public/self projections5, visibility/private reads5, mutationRPCs3, repository snapshotRPCs2, admitted trace persistence2. No whole caller or whole Command007 certification.",
+      "fifthBatch": "READY FOR CI: existing runtime session terminal latch, encrypted row/envelope validation and event-only known-secret redaction; process command state remains functional and unresolved. Existing growth owner admission reused, campaign action exact tuple+saved receipt, atomic in-app delivery under canonical approval and bounded consent snapshot,15 SQL assertions/replay and real rollback/concurrency tests prepared. Issued-context notification persistence and fixed logs. Exact-target Vercel sync and schema-backed per-variable acknowledgements preserve partial results, no live calls. Browser-public private credential aliases denied while canonical public Supabase fields retained. Electron exact repository target plus actual installed libsodium ESM seal fix tested with mock HTTP. No production changes or spend.",
+      "fifthBatchVerification": "FAILED at574a6f1 disposable38828799022:116/117 security tests pass, zero skips. Campaign canonical setup blocked by missing adapter capability. Runtime terminal/encrypted-read and campaign creation checks passed individually, full delivery rollback/concurrency/browser acceptance not yet verified. Keep7d12 as latest fully verified baseline.",
+      "sixthBatch": "READY FOR CI: runtime immutable session identity and exact requested-project preflight, Fly restore exact machine/app/state acknowledgement, growth anonymous identity first-claim protection, missing internal campaign capability correction, EAS exact project/package credential attachment and pinned artifact polling with primary-source GraphQL corrections. Canonical billing cycle budget preserved on old membership deactivation, safe budget acknowledgement, immutable build/file inputs and exact persistence receipts. Focused tests and typecheck pass. Real disposable and repeated final-source CI required. No new provider effects, spend, production merge or deployment."
+    }
+  },
+  "replayCorrection": {
+    "source": "470666cf",
+    "failedSource": "96a7b5d3265bbda4c3d31ccaccf11b5c5462fed8",
+    "failedRun": "38794388848",
+    "failure": "SQLSTATE42710 duplicate OAuth policies on upgrade-reapply",
+    "fix": "Idempotent recreation with unchanged restrictive predicates",
+    "localSqlAssertions": 120,
+    "finalSupabase": "PASS at b4d1b817, run38795480831"
+  },
+  "credentialCodec": {
+    "source": "d2c6cb53",
+    "status": "INACTIVE_SYNTHETIC_PREPARATION",
+    "tests": 4,
+    "productionImports": 0,
+    "migrationWrites": 0,
+    "remaining": "Dedicated key custody, explicit legacy dispatch/migration CAS, runtime concurrency, managed KMS and complete009 acceptance remain gated."
+  },
+  "interimIntegration": {
+    "source": "421a6b1061f430d3cd1a5b29e8eca2a63183f297",
+    "run": "38791937032",
+    "migrations": 73,
+    "browser": "PASS",
+    "realSecurityPassed": 61,
+    "realSecurityFailed": 1,
+    "skipped": 0,
+    "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
+  },
+  "strictAcceptance": "FAIL:419 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "scopedClosure": {
+    "count": 2,
+    "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
+    "evidence": "Real421 disposable tests and unchanged SQL semantics, plus final-source focused tests. No full caller or command certification."
+  },
+  "latestCorrections": {
+    "source": "e477bf10",
+    "snapshot": "Owner/key/nested content immutable across awaits in existing generic and terminal writers",
+    "disconnect": "All six BYOK and both OAuth revocation attempts proceed independently; safe503 on failure, delete-only exact legacy alias",
+    "focusedTests": 11
+  },
+  "intermediateBaseline": {
+    "branch": "421a6b1061f430d3cd1a5b29e8eca2a63183f297",
+    "integrated": "62544db6ff5f4ad01104861dfae0993759038b43",
+    "run": "38791936939",
+    "result": "PASS twice on both branch and integrated candidate"
+  },
+  "verifiedBaseline": {
+    "branch": "7d12bf426118660c9adfe7d6c7447d99c6e4eb24",
+    "integrated": "fcbddfd42373081a6751b326e9bfa6dfbb56b091",
+    "aggregateCi": "38827153531",
+    "isolatedCi": "38827153400",
+    "workflows": 11,
+    "securityTests": 112,
+    "newSourceCertified": false
+  },
+  "counts": {
+    "observedTables": 118,
+    "rlsEnabled": 118,
+    "privilegedFactorySites": 162,
+    "persistenceCandidates": 658,
+    "ownerPredicateCandidates": 160,
+    "reviewRequired": 0,
+    "reviewedCandidates": 658,
+    "unresolvedSafetyCandidates": 419,
+    "certifiedScopedPrivilegedCallers": 0,
+    "registeredNarrowGlobalExceptions": 10
+  },
+  "dependency": {
+    "downstreamPatchStatus": "VERIFIED_SCOPE at4f8c56acdf6b9c90a5ea1147dfd79151bffe6c46: four targeted fixtures and18 combined dependency/Cline tests, frozen workspace/standalone38806776199, Docker38806776574 and repeated branch/integrated21-stage baseline38806776471 pass. Integrated7377b5a5ffc76d49c7dcb4094ddc9055c4062eeb. Versions/audit findings retained, no waiver. Current later-source CI still required.",
+    "aggregateHigh": 20,
+    "backendHigh": 15,
+    "frontendHigh": 7,
+    "critical": 0,
+    "frozenWorkspace": "PASS",
+    "frozenStandalone": "PASS",
+    "remainingPrimitiveFamilies": [
+      "braces",
+      "node-forge"
+    ],
+    "waived": false
+  },
+  "precedingCandidate": {
+    "branch": "376b462f2f5cf837734c7c9bb6426983dbacd8a7",
+    "aggregateCi": "38789657289",
+    "branchAndIntegrated": "PASS",
+    "isolatedCi": "38789657349",
+    "isolatedResult": "FAIL SQLSTATE42601 before tests in migration003. CASE expression corrected at319ccde5, new source CI required."
+  },
+  "newWork": {
+    "overnightMigrationHarness": "IN PROGRESS: run38812981803 at67644e2c failed before upgrade execution with ENOENT for removed ensureMessageSharesSchema.ts. Full historical SQL now lives in a CI-only fixture with pinned original4472cc0e source and SHA256 integrity. Retained-row, upgrade/reapply and fresh assertions unchanged. Eight focused harness tests pass. Reset now uses the already pinned required Linux CLI binary packages. Corrected actual disposable run required. Repeated branch/integrated38812981879 passed21 stages twice for67644e2c and integratedb5916345850ab706a12a280b057bbb4e931669ac, no source mutation.",
+    "overnightReferralRelations": "IN PROGRESS: exact owner/code backlinks must independently establish referred-account relation before label lookup. Focused negative matrix and real DB test implemented; final-source execution pending. One new read is explicitly REVIEWED_GAP, not counted as certified.",
+    "overnightConversationReceipts": "IN PROGRESS: conversation persistence requires exactly one matching run receipt and captures nested input before awaits. Hot-cache acknowledgement cannot adopt later caller mutation or overwrite a replacement attempt. Nine worker/conversation/resume focused tests pass. Existing owner predicates preserved; complete worker admission/side-effect semantics remain open.",
+    "runtimeSchemaBootstrapRemoval": "IN PROGRESS: follows ship-loop removal by deleting phase1, GitHub, terminal and share runtime DDL helpers and all their imports/calls. This prevents startup redefinition of billing functions and request-driven policy/grant recreation. Checked-in foundation/integration/token/ledger/terminal/security-baseline migrations retain required schema. Nine focused schema-boundary/OAuth/BYOK tests pass. Deleted code is recoverable in Git. No production schema write, no replacement infrastructure, no migration change. Real final-source integration pending. Existing inert Dashboard/Phase3/Phase4 helper definitions have no imports and are not certified.",
+    "shipLoopSchemaAuthority": "IN PROGRESS: removed ensureShipLoopSchema runtime DDL/policy/grant helper and all seven persistence plus startup calls. Existing migrations030,031,20260801000000,20260802000000 already contain the definitions. Seven focused migration-boundary, run creation, resume and worker-authority tests pass. No schema migration changed or production operation performed. Exact-source integration pending. Other phase1/GitHub/terminal/share bootstraps remain separate ready work, as do worker provenance and side-effect receipts.",
+    "adminReadFailures": "IN PROGRESS: strict bounded integer limits, fixed column projections, existing operations redactor and explicit503 failure responses. UI distinguishes log retrieval failure from empty success. Four focused HTTP/middleware tests and backend typecheck pass. No role expansion. Comprehensive arbitrary diagnostic secret handling and final-source regression remain open.",
+    "referralCallerReconciliation": "CALLERS RECONCILED: eight exact profile/link/owner-read/factory sites now SCOPED_BOUNDARY from source tracing and disposable run38810704207 at88036057743aa3abbcee2ae85b80db18342e701f:77 migrations,69 security/concurrency tests,3 authenticated browser tests,zero failures/skips. Two label-relation/summary factory sites remain REVIEWED_GAP. Not whole-service certification or reward qualification acceptance.",
+    "groupedIntegration": "VERIFIED_SCOPE at468bd2f98cd41148664b0c8cc453d2c14f11ae3a, disposable run38809008023:69 security/concurrency tests,3 authenticated browser tests,zero failures/skips. Includes GitHub receipt correction, ambiguous chat confirmation denial, referral atomic rollback/race and growth parent relation negatives. Later issued referral-context and foreign summary canary extension still requires exact-source CI.",
+    "growthRelations": "IN PROGRESS: segment scope at campaign creation/processing, experiment/assignment tenant consistency, scoped outcome event and event campaign/experiment references. Three focused tests pass. Actual misbound-row and foreign relation negatives plus valid outcome fixture pending disposable CI. Mutable-parent TOCTOU, recipient/approval/lease/idempotency and other parent links remain open.",
+    "referrals": "IN PROGRESS: atomic pending referral/profile linking, existing unique referred_id constraint and owner row lock, exact receipt, concurrent profile creation recovery. Local receipt/outage matrix and backend typecheck pass. Two real tests cover concurrent authenticated requests, forged identity, browser RPC denial, no rewards and transaction rollback after profile failure. Fresh/upgrade/exact-source CI pending. No reward or financial account changes.",
+    "githubSettingsFixtureCorrection": "Run38806776561 at4f8c56ac:64 security tests passed,1 new GitHub metadata case failed during fixture setup with23505 because upsert omitted onConflict:user_id. Fixed the explicit conflict target, no production criteria relaxed. Case requires corrected-source CI before verification.",
+    "ambiguousConfirmation": "IN PROGRESS: removed latest-pending-action lookup and execution/cancellation from conversational preflight. Existing exact-ID Review UI and persisted claim remain unchanged. Four focused route/claim tests pass, including concurrent conversation phrases without action lookup, mutation or paid provider calls. Removed AST sites a4bd236f9d86c07f2ffc andcce0ff1b94d71f3be8f0 are eliminated code, not certified live callers. Full CI pending.",
+    "githubSettings": "IN PROGRESS: metadata-only owner updates require exact single-row receipt and active token, no credential mirror rewrite. Three focused GitHub tests and backend typecheck pass. Added real foreign-owner and concurrent disconnect case, pending final-source CI. Reconnect target-selection lifecycle remains open.",
+    "worker": "Implemented; five actual DB cases await corrected-source disposable CI. Ten local SQL assertions pass, not Supabase acceptance.",
+    "credentialMirrors": "Ten loopback negative tests pass; full lifecycle remains open",
+    "byokRevision": "Eleven focused tests and45 local SQL assertions pass; four real cases pending. Upstream admission and bulk enumeration gaps remain.",
+    "budget": "Fourteen focused tests pass for exact replay/settlement evidence and uncertain-hold retention. Extended real replay assertions pending.",
+    "approvals": "Sixteen focused/golden fixtures pass; canonical command acceptance incomplete",
+    "egress": "Seven synthetic transport tests pass; inactive, no runtime integration"
+  },
+  "commands": {
+    "001": "Existing reproducible inventory; regenerate for changed source",
+    "002": "Available-source ledger verified; historical reconciliation separate, not future-product implementation",
+    "003": "Existing credential-free baseline, new-source CI pending",
+    "004": "Read-only runtime inventory; regenerate for changed source",
+    "005": "Harness verified, product journeys retain individual blocked states",
+    "006": "Scoped storage foundation; mandatory provider R2 acceptance unverified",
+    "007": "BLOCKED, reviewed gaps remain",
+    "008": "Existing approval integrity improved, canonical grant/account/spend/receipt acceptance incomplete and gated",
+    "009": "Credential read revocation hardened, encrypted server vault/rotation/one-use PKCE cutover incomplete and gated",
+    "010": "Inactive bounded public GET prepared; authority/egress integration and original negatives incomplete and gated"
+  },
+  "providerBlockers": [
+    "Actual R2 acceptance NOT_EXECUTED",
+    "Production schema parity NOT_CERTIFIED",
+    "Production KMS NOT_VERIFIED",
+    "Commercial hosting eligibility remains separate launch issue"
+  ],
+  "nextTask": "Finish sixth-source tests, regenerate source-bound caller register, commit/push to draft803, verify real campaign canonical approval/delivery and new runtime/identity integration plus repeated branch/integrated regression. Continue independent root groups. Preserve strict007 and dependent008-010 gates, R2/provider schema/KMS proof and original source limitations.",
+  "additionalWork": {
+    "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
+    "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
+    "runtimeRevision": "Identity-bound immutable snapshot and exact durable receipt. Seventeen focused tests pass; existing real revision save/read test extended."
+  },
+  "matrix": [
+    {
+      "rootCause": "worker-state",
+      "requirement": "XB01-C007",
+      "existingImplementation": "Existing run store, worker leases and owner persistence",
+      "missingBehavior": "Project lineage and full callback/side-effect lifecycle; execute new DB races",
+      "acceptanceTest": "Run row-lock races, same-process delayed callbacks, resume/cancel/outage negatives",
+      "pendingCandidates": 16,
+      "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
+      "callersByPath": {
+        "backend/src/ai/runStore.ts": [
+          "895a61d6a49f1cfdee31",
+          "50edc8bae8f27dacf910",
+          "a4bce2e2c16c58ec90ed",
+          "eeecad9a21d8290f2cd2",
+          "d870b789568c8679b1db",
+          "a761046ffcd795c11469",
+          "b6307e91cbe4456df72e",
+          "9068cc3c3a3d43572339",
+          "c15d549616080c99b045",
+          "8c10c4794ee82ad23d08",
+          "281fa5f0b0e2578a4413",
+          "802f509bd4e2869a5584",
+          "fbb883c6ec93bb927082",
+          "6f7915fc18e24fb190f7",
+          "6e8604e226f545e3bbda",
+          "1ab496a614183176fa46"
+        ]
+      }
+    },
+    {
+      "rootCause": "credentials-oauth",
+      "requirement": "XB01-C007",
+      "existingImplementation": "Existing OAuth, BYOK and credential mirrors",
+      "missingBehavior": "Atomic save/revoke ordering, one-use PKCE, encrypted vault migration and KMS boundary",
+      "acceptanceTest": "Wrong owner, revocation during read/write, replay, rotation and tampering",
+      "pendingCandidates": 81,
+      "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
+      "callersByPath": {
+        "backend/src/services/integrations/credentialStorageBucket.ts": [
+          "36f74cf393d92fc17a74"
+        ],
+        "backend/src/services/integrations/githubAuth.ts": [
+          "d5146ca43cf901817c09",
+          "8bbc1aefc2e270847934",
+          "ff751d80f168344fe806",
+          "7f998fefa7c4a4af4629",
+          "4e72ed7e46664a864fcd",
+          "d8c7d0bde0dddf656d0c",
+          "8a200819c73b59f40fe6",
+          "9cfcc5a519e6e0cda19a",
+          "2c1e9775b28e4419ca8c"
+        ],
+        "backend/src/services/integrations/githubDeploy.ts": [
+          "b4b2b91f3280a140691a",
+          "48c115e3fcc79a824240"
+        ],
+        "backend/src/services/integrations/githubTokenStore.ts": [
+          "3606e6e2a2c84f5d37fd",
+          "8ea0355a7a40e6d35fef",
+          "0be2ba1bb19f870be5da",
+          "5af0dfecb133879330e2",
+          "2aa98c887631896938dc",
+          "e8a7ea96116a374773c0",
+          "55573ca462209ab422c3",
+          "36464f94938ad7240220",
+          "8a8f49466dccccc652af",
+          "08adc22ee116d34993ce"
+        ],
+        "backend/src/services/integrations/oauthPkceStore.ts": [
+          "b8d0ad5c152e8ec1c565",
+          "5d90ff0ff5c303419423",
+          "71763251ce3650f64a42",
+          "efdb39bc229d1fb04151",
+          "e7db064acbe958d8fd76",
+          "0a50f29a357989f22449",
+          "b2603393f6e57aa8c372",
+          "b94338b6bb001b7e55ce",
+          "4ed0f34665473f6b62ce",
+          "288a27a7d2a5f5cd103e",
+          "180631f7a6bd706af8d0",
+          "14438be451fcb7f3bbe1",
+          "c14b0badea7dd2cc312f",
+          "4325b87a6699a71f0325",
+          "7595558fe3d8cbd76faa",
+          "3028f7fe3ff9804dd3e6"
+        ],
+        "backend/src/services/integrations/userProviderKeys.ts": [
+          "c3f2ca136ccab92884f3",
+          "8466decbcb9ca41d5da8",
+          "945c1743c499e90155c7",
+          "30c947b4c1a108a17b92",
+          "00329f071464b8e43b18",
+          "9dee422de25d294a7357",
+          "c5490d9431dfdae9ca6a",
+          "a9a5b0016875607c18d6",
+          "e8734242a4326adb80b9",
+          "aad6224f275c7da17b55",
+          "3fd4baa9d381d8e8ebdb",
+          "bb35f622bdc5f8723e47",
+          "c8806caee1b6dcf5dffe",
+          "8a0eb63ebffa141243f3",
+          "e6d9a5693ccddad6699b",
+          "6de4d56764f41d3a11bc",
+          "bffd24f4371afe0068ce",
+          "c0a660520b23bcf21065",
+          "57c1b65d21f7ad3e10e9",
+          "dceb9a28d0e6cf3e0163",
+          "66faab8392a58be8ebaa",
+          "4fd45320f2922de4093b",
+          "e24569ab9a41af1806a7",
+          "daa98fe8de4afd945ac5",
+          "219ebcffd2df24f5d96c",
+          "616340b0d7522ddd6992",
+          "20831c35d677b0bb0980",
+          "f18023f7a692ccdd61fe",
+          "b175a5edffc9890a554f",
+          "b1578eeaa39ed0b3affa"
+        ],
+        "backend/src/services/integrations/vercelAuth.ts": [
+          "c47cd353f14ba5046be8",
+          "2d2eae5cbd895d303fc1",
+          "2ae451e4fa2142cb3d3b",
+          "533babcf253a3df300ac",
+          "50cfec47a00c8f934d4c",
+          "9536d36325c5502652c0",
+          "ff1b1bd1a685d5e751ee",
+          "47c7ebecb62681738d31",
+          "1e8333f9bd44c6fd05c9",
+          "305fd58c0a7af15af239",
+          "307321f23e7727be36c8",
+          "bf911ba6ff5494563807",
+          "6a995df3c50a346f6d81"
+        ]
+      }
+    },
+    {
+      "rootCause": "approvals-external-actions",
+      "requirement": "XB01-C007",
+      "existingImplementation": "Existing prepared plan, confirmation, operations services and scheduler",
+      "missingBehavior": "Account/target/digest/spend/receipt integration and complete caller provenance",
+      "acceptanceTest": "Changed plan/target, expired/revoked approval, duplicate claims, unauthorized spend",
+      "pendingCandidates": 89,
+      "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
+      "callersByPath": {
+        "backend/src/operations/operationsService.ts": [
+          "c623ba33a954faaa842f",
+          "d5c677bbfa123515d728",
+          "a8f2ee03d8ed3a1dbf38",
+          "32946ee98e3128a887f3",
+          "c0b40b7e4b46849a2015",
+          "416a5aea03d2d8c14415",
+          "5bfa92d271067d1d57cc",
+          "05852579fc38a34c0672",
+          "055645b8cdea28df88e9",
+          "7334646c3d5db35c9fb2",
+          "f848b86f54d1dcf49e8d",
+          "58d02354966c55345fb3",
+          "9707e462d8191643cd22",
+          "1b61e04da41f2fe47caf",
+          "f5df5ddf04cc4be39e65",
+          "8ac1f3131f63749a4d25",
+          "661d5d4a1709d8a8faee",
+          "ba7b25d3ed2518cbfdce",
+          "ab4db227afd76ab57f5a",
+          "6f2dfea65fbf7229e278",
+          "b17c8ccb545e948c5661",
+          "8bfd21569769f71a315a",
+          "65428c6a92b038bb7e46",
+          "1b942b9d3362f4e11a87",
+          "ed1a4fc5e29c11811be0",
+          "01a29192ff62dd597a6d",
+          "cb9fc1736302849940de",
+          "458ba4cf2671db1ea4af",
+          "32b1956e06588b580029",
+          "fc4366a6676616c77204",
+          "16f75296f0d6cc91b49f",
+          "6f2162ce63e39959dd21",
+          "968b625511bdeedb38fc",
+          "0f90dd090aa0482e1897",
+          "af3c56ee55bcdbab56f2",
+          "4eaa616056f97d533c6a",
+          "451a4b746e0bc6ff36f0",
+          "3bb3527ad281ee76cb03",
+          "488e8a2a4697f0292cd9",
+          "c04805e20324811aa2fd",
+          "ad600dda5cbd0e8e0e4f",
+          "f7f09e2792a92016e99b",
+          "4a9f5cead02e6fa8a3db",
+          "c906cf5257b85bfa280f",
+          "4426bdec46bfc3d7b577",
+          "62a581bb204b2c63cd8d",
+          "7a2ccd52d9d06974e511",
+          "9dfb74675741405c386c",
+          "e2b8b9b74391f4f0c06a",
+          "75103d6d7ae401c5e22e",
+          "413657125f2bf0b60cd0",
+          "d25d6b1129258527da68",
+          "54442ca7431c53e5d1db",
+          "01561b093261974ef264",
+          "a96989074674537f849b",
+          "5a86564f9f137f7a03f9",
+          "ba41ce196826c66abf6c",
+          "aa21d7d81fb597eb76b1",
+          "1c353ba28c76ea3879bb",
+          "60fca9854c953e92038f",
+          "14d6666ea391c567a794",
+          "533bab7ba762eeff4736",
+          "b1402cf228df53667f06",
+          "07d1d30426970578f18f",
+          "2b69189f052b272c59b8",
+          "72d1eec40f92b1ca43d7",
+          "e61449039ebe29da7954",
+          "131b0d8721a2642d049e",
+          "8c1c0f78760c0cf3ca0c",
+          "aca7fe3f90ab97eee7ab",
+          "08c0a8bfaf40173903a8",
+          "dc3969c6d781aa9922f5",
+          "35f86c08deb0022bdf61"
+        ],
+        "backend/src/routes/operations.ts": [
+          "e23a6715863cc22fbccf",
+          "6ac8a018f3c309f7f133"
+        ],
+        "backend/src/services/integrations/businessActionConfirmations.ts": [
+          "54d7881d096799f0bbbc",
+          "8498af01e3ea93df075c",
+          "37cdea800bc3a61640e5",
+          "ceb778e84973feb93a46",
+          "fdcd67b3b3f41d8b79d9",
+          "5b4af0b6dfcc46eab1a0",
+          "21d1e6a391c087be536f",
+          "134d721e6f9615596c9c",
+          "406dc3bc9886c695d266",
+          "0ffad26428a284894b4b",
+          "4a8ad3298a6845cef73d",
+          "0e22a55cfea376535195",
+          "b9fb76e8b1209d52b5bb",
+          "a069ca2973370ece67d9"
+        ]
+      }
+    },
+    {
+      "rootCause": "billing-budget",
+      "requirement": "XB01-C007",
+      "existingImplementation": "Existing billing functions and provider reservations",
+      "missingBehavior": "Remaining source-bound billing/budget replay, numeric and caller authority gaps",
+      "acceptanceTest": "Concurrent replay, foreign account, failed reservation/settlement and compensation",
+      "pendingCandidates": 31,
+      "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
+      "callersByPath": {
+        "backend/src/ai/providerBudget.ts": [
+          "00d351afbe045a136c66",
+          "254a91383e3a8af0310b",
+          "590df28cdc2b297e03b6",
+          "39a1f4163240597da04d",
+          "613d8e71ddafb0d6bd0c",
+          "a80e4804742dfd6bcc0a",
+          "6285818c6e8220770b29",
+          "090fe734dc5d1d3dc6e3",
+          "3f66673813dee0d85b85",
+          "746985044f7d3ee62aff",
+          "e030677c7ecb6b0dd90e",
+          "e35278adbe80b78c8d41",
+          "b5a82155e981259a207e",
+          "564673e6f6b21c690fce",
+          "5ed8ef26b72e26561f26",
+          "3fc72ec34d884b871909"
+        ],
+        "backend/src/routes/billingWebhook.ts": [
+          "05bb1afcf9e554e379ee",
+          "0868dd015f782d0afe48",
+          "abb420bd0c2f1dd23e61",
+          "a726074753588be4d961",
+          "b46650b51c072e1a3771",
+          "8d7582310ee0460ac163"
+        ],
+        "backend/src/services/BillingService.ts": [
+          "b05e41f8f6ba770ee40c",
+          "e7b9dbdcf629027dc864",
+          "d25e2a7bfb9c46b63136",
+          "22f42a26e3ba5039379f",
+          "b039cedc2100eee34314",
+          "880000a353e70a87ea07",
+          "cc13349e4162619b57c0",
+          "27541abc3a19a508e2e8",
+          "a3dcfe39e30e5a606328"
+        ]
+      }
+    },
+    {
+      "rootCause": "projects-files-runtime",
+      "requirement": "XB01-C007",
+      "existingImplementation": "Existing owner checks, project/file stores and runtime",
+      "missingBehavior": "Inherited parent identity, durable receipt, revision and runtime ownership gaps",
+      "acceptanceTest": "Wrong parent, orphan, stale revision, failed persistence and cross-tenant download",
+      "pendingCandidates": 78,
+      "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
+      "callersByPath": {
+        "backend/src/ai/buildImprovementMemory.ts": [
+          "cf1ee4207ba21ac496ac",
+          "b85bc952750476ba5d75"
+        ],
+        "backend/src/ai/buildOutcomeMemory.ts": [
+          "ac2f35d56a05405802e3",
+          "c64306eccc74a6509be2",
+          "f10d68e99b6b086d0ded"
+        ],
+        "backend/src/ai/buildOutcomeRoutingMemory.ts": [
+          "5e75a66eaa35941a01e5",
+          "23ab29cbd5073a2cb088"
+        ],
+        "backend/src/ai/buildStrategyMemory.ts": [
+          "c0288e26c844107ebca9",
+          "51e187f3cd0b99673791"
+        ],
+        "backend/src/ai/executionRuntime.ts": [
+          "6cb302dec6a7d693df42",
+          "09b6dc142ebd7f16df10"
+        ],
+        "backend/src/ai/projectMemory.ts": [
+          "278f199f6ac90620ad7f",
+          "f4b4398d7c1562f69f44",
+          "2ee02eb3c8608df30614",
+          "162926698a1e1b553196",
+          "3dae213a685f6a044dad",
+          "014baaf3ebb696f48dd4"
+        ],
+        "backend/src/ai/sessionMemory.ts": [
+          "d30b589aad03f57a5e34",
+          "7b2ab76ab16f67d4bc3f",
+          "c5dfa39288196ad28fb9",
+          "9645b6cbe302cd3fd49a",
+          "ab26b537916b9c6dae85",
+          "9a21725abae3843c4e12"
+        ],
+        "backend/src/routes/projects.ts": [
+          "a1602e2131ac55ae41f2",
+          "b0fcef8a6524e67436e8",
+          "3e189d48b17db98a088f",
+          "7305a5f03336a229a8ac",
+          "99fbb1f3e5395b85b5b3",
+          "e83d9ad87d86fa040e65",
+          "3f1a0da9608e9aca5b55",
+          "a54bea8420a398ba79d6",
+          "b6a9fecfb2865406fae7",
+          "5d3d469f5d8690de76d4",
+          "9531cc94128f41d7f873",
+          "9971c1ad86935d8ef2f2"
+        ],
+        "backend/src/services/memory/buildMemory.ts": [
+          "661ce57ea5e40d34292d",
+          "76af868afcec7d3a5059"
+        ],
+        "backend/src/services/memory/buildPersistence.ts": [
+          "4fd6df1420b596f63cae",
+          "13083e0ecb46eb0d8700"
+        ],
+        "backend/src/services/memory/buildProjectStore.ts": [
+          "59fc6590fac35ccb2965",
+          "e85bf3fa018cd1e5f137",
+          "9dcd762bbd944736b141",
+          "a5afeb0fc9eb8097fe8b",
+          "d9d4a29d564517515c7b",
+          "28fc6f63cb6916deb4b0",
+          "3deb87c3dcfeb857648d",
+          "2634692c2734611690d4",
+          "1c2d9ab16cffe4e444c3",
+          "09c2c6ce5cdcb280c15a",
+          "c46c59f2f8955ace4f40",
+          "2be3e9c5ec180ef9feaa"
+        ],
+        "backend/src/services/storage/projectFiles.ts": [
+          "9358ee1a46bdb9583705",
+          "be0bd23390f54b5c19b6"
+        ],
+        "backend/src/synthesis/delivery/projectDeliveryService.ts": [
+          "371f13126c4ab7aab2dc",
+          "74cc6545383bea8e320f"
+        ],
+        "backend/src/synthesis/projectRuntime/projectHistory.ts": [
+          "949efba83cbbfbfc99ca",
+          "372d392279bd2762ded0",
+          "1920604a889551eb4f02",
+          "60655c54ecbb30292812",
+          "f163510c6f5c4132c05f",
+          "73ab17f7a209cc26cc6b"
+        ],
+        "backend/src/synthesis/projectRuntime/store.ts": [
+          "8fc7cf5dd562db7dcd3a",
+          "ed5cdf592a4a0494dc20",
+          "530ec12058ab9d32794b",
+          "419bf279075e606b8b1f",
+          "8da826b4f1382152e9e9",
+          "05696d559ec8d6305a1f",
+          "3fbff43474088305493a",
+          "7abc56c35732ad79279a",
+          "b9522163f553d5a418ed",
+          "1d714d1647e2c5f6a436",
+          "2a229397c50f1425b1b5"
+        ],
+        "backend/src/synthesis/universalEntrypoint.ts": [
+          "10b5e279dd241e2f40ec"
+        ],
+        "backend/src/synthesis/universalPersistence.ts": [
+          "7b91dfaf8225d8e56493",
+          "cc45bc751ae8166f15f4",
+          "45d1a388e450de3014cc",
+          "722894c8c92d40e08b97",
+          "71e802345b31b6d2fd5f"
+        ]
+      }
+    },
+    {
+      "rootCause": "growth-community",
+      "requirement": "XB01-C007",
+      "existingImplementation": "Existing community roles and growth owner filters",
+      "missingBehavior": "Remaining role/parent lineage, replay and external publishing authority",
+      "acceptanceTest": "Mixed-field escalation, foreign parents, retry races and no unauthorized provider effects",
+      "pendingCandidates": 51,
+      "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
+      "callersByPath": {
+        "backend/src/community/service.ts": [
+          "01f39061a52818afb131"
+        ],
+        "backend/src/growth/growthService.ts": [
+          "807ae5c447bc2d1d4f2e",
+          "e6e2c7f6719f76581b45",
+          "51d879c5c61d64e0bcdc",
+          "e6eb51e5466cf1e46517",
+          "5eab97158bd0ce0e0b79",
+          "d0661713ef8ec7b26634",
+          "b75308a742a72e8c1dd3",
+          "624a9db44a1b8dfeeff2",
+          "e5158e24684dae842823",
+          "19645a14631de044d074",
+          "a9bea74dca4773be06e3",
+          "8ab9e28db774ed09d39b",
+          "d9646ad5ee63c0d08511",
+          "de19dba90e69980a8f6b",
+          "972c1c52c4d47d15c2fa",
+          "6dd2f80e9d9eb28dd020",
+          "f83a42c3217cd980b139",
+          "2dcbf6c0284f31d34f34",
+          "ae4bdec79d55b81c9d78",
+          "bccb66f69f96ffeb440b",
+          "d4c27b6d832f52338b8f",
+          "fd80d91e82da03a0ce9d",
+          "a6833e5d18180ed8f394",
+          "dab05c268640dbba1ed2",
+          "02ca9fe3eb1fc2694171",
+          "14c8f848eee2a5c4381e",
+          "e1c231a329a209b4edf1",
+          "d6e1a1d58fc11d59eac1",
+          "7a1a920e077dc5f61449",
+          "a319592d1fa3d3f4ba63",
+          "1668f2b7f61895e682e7",
+          "b30a023c1c64bdc10118",
+          "e1152b4b2e7e937eb20f",
+          "8f52aae01e7c224b73e8",
+          "25141ffe57c2f499816a",
+          "f9cfe3deb9ac84a4184c",
+          "bd9707d0d7e43ec695b7",
+          "6fded99e752fc2aee7e3",
+          "3eee6cc5e1fd823e8b28",
+          "bdc419f578e0846ef971",
+          "733b01838d4b497cc8c7",
+          "9d7734b46eb2f7f54f5f",
+          "b69517314f6c53f3f497",
+          "1756f4add1b20cff0325",
+          "8f422e35504ccd98df5e",
+          "8fa58828635dbdd5c406",
+          "d6861ac8abf4d84934a8",
+          "ad22d520190293663289",
+          "99b3ebe5bd475ab1b341",
+          "f53cc46bba81ec63fbdf"
+        ]
+      }
+    },
+    {
+      "rootCause": "other-source-bound-boundaries",
+      "requirement": "XB01-C007",
+      "existingImplementation": "Existing services and source-bound register",
+      "missingBehavior": "Inspect the exact remaining reason for each listed caller, grouping shared helpers",
+      "acceptanceTest": "Per-caller negative verification proportional to risk",
+      "pendingCandidates": 73,
+      "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
+      "callersByPath": {
+        "backend/src/ai/benchmarkRunner.ts": [
+          "9506c72ea0f341c2a492"
+        ],
+        "backend/src/ai/measuredEvidence.ts": [
+          "c663e216c5611944484e",
+          "5a64876f70c81d99e294"
+        ],
+        "backend/src/ai/providerHealthStore.ts": [
+          "b7e87dfbceb281533b94",
+          "80f1202165fac508ccee",
+          "05bb5458554f43b160c1",
+          "fe7e6e4fe911ed9a75e1"
+        ],
+        "backend/src/ai/quota.ts": [
+          "3faa7ece6a312b431802",
+          "09c18505660bd25e7f05",
+          "ab1702a45a7ccb57ac8f",
+          "1990f5c97beb40b8b783",
+          "e27b9abaf3fe02c61229",
+          "f1aaacc8e5daf32fdba1"
+        ],
+        "backend/src/ai/routingOutcomes.ts": [
+          "8c57a0debf51a7a340f8",
+          "1740e151510be65ae1da",
+          "a11bf3e4f0c999a36b58",
+          "952ba0881d01437685bf"
+        ],
+        "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts": [
+          "b5df26e09290b7336e88",
+          "cf3bf4daeb128ba98911",
+          "d1853a0190149ebf0ef1"
+        ],
+        "backend/src/ai/usageAccounting.ts": [
+          "8c7615ae94f3ecbfe8ed",
+          "224d992ddd99b8389fed"
+        ],
+        "backend/src/ai/webBudget.ts": [
+          "6d55007bf3ddd2edc540",
+          "d97bbed18063d9cc41d7",
+          "5a8e3957447bad08faa1"
+        ],
+        "backend/src/lib/resolveIdentity.ts": [
+          "6d485d911da834f03448"
+        ],
+        "backend/src/routes/admin.ts": [
+          "900b714de6b6407ee20d",
+          "8f0a6deb321279d0013d",
+          "e433173f7cb36532848e",
+          "ad80bf6a15ca34880fe0"
+        ],
+        "backend/src/routes/dashboard.ts": [
+          "2a2b04bfcdf9721a6f51",
+          "2c2f746e6c99a355ea8c"
+        ],
+        "backend/src/routes/github.ts": [
+          "8a4f5a61a698f969e941",
+          "7ea068acaab899c1c99e",
+          "b4f7c7e759ffc010fe2f"
+        ],
+        "backend/src/routes/profile.ts": [
+          "f060c7afeb1437072a23"
+        ],
+        "backend/src/routes/terminalSessions.ts": [
+          "353aa869f7c46574b7a6",
+          "a44351534b1e472fcc1b",
+          "5f85e2c8fe1c1bcc806a",
+          "32194de7f306b25c263e",
+          "fe2b40928ccad9e7722c",
+          "6a8fca079e604babba7e",
+          "9057963d67ac418166aa",
+          "29ab82dab73ce027acf1",
+          "41c10cc00083a0678ee1",
+          "c9362c0020f645f8eada"
+        ],
+        "backend/src/security/ownedTerminalPersistence.ts": [
+          "ca2e291f7b6ac805445e",
+          "aa68762dad5ac84c6092"
+        ],
+        "backend/src/security/serviceRoleGuard.ts": [
+          "d84df34ff692e4fb31c1",
+          "bda2ddc16c7864ef18d8"
+        ],
+        "backend/src/services/ensureUserRecords.ts": [
+          "d81d114079399f02921b",
+          "d46f45e4d48e21c33f23",
+          "b400ffbb7ca6a45da97c",
+          "11ad5fbfe51e297ef01f",
+          "9468aac7c7e2d3afe674",
+          "a809258d83da1283fc3a",
+          "b9522b3f509a2215c4b8"
+        ],
+        "backend/src/services/integrations/supabaseProvision.ts": [
+          "b1d69d6354dd94af3c3e"
+        ],
+        "backend/src/services/notificationService.ts": [
+          "988c4217a8b8b781b43c",
+          "30281b1cf819bb604048"
+        ],
+        "backend/src/services/responseCache.ts": [
+          "7c567b2757768a6b3070",
+          "eae08a12333a1ad49fc8",
+          "2f640cfaedce8074a9e5",
+          "f67653e309c9b2076efa"
+        ],
+        "backend/src/synthesis/livePreview/store.ts": [
+          "610553bef3df77a2b464",
+          "a0319ec25ccf91fd45de",
+          "0916cab9d5ede773407d",
+          "ed34254260ea85f46bfd",
+          "a536c7931f40a8a285c1",
+          "22480beb8bed5b2e6942",
+          "da67044df80932a8d0d1",
+          "6866cee4a6a6cf41dcd0"
+        ],
+        "frontend/src/lib/avatarPersistence.ts": [
+          "3056dc2554f54604f101"
+        ]
+      }
+    }
+  ],
+  "latestFailedDisposable": {
+    "aggregate": "PASS38825649220: branchb06c0541618e282a0231490252d846e956ff455f and integrateddd58d95bfb954f9fad457285499f14e3a570fdb7 each21 stages twice, no source mutation. Nine other workflows pass, disposable remains failed.",
+    "source": "b06c0541618e282a0231490252d846e956ff455f",
+    "run": "38825649174",
+    "passed": 105,
+    "failed": 1,
+    "skipped": 0,
+    "failure": "ensureUserRecords recovery profile insert omits NOT NULL username. Fixed using existing auth-trigger fallback, original assertions retained, rerun required.",
+    "resolution": "VERIFIED repaired provisioning at7d12bf42 disposable38827153400; bootstrap inserts required username, existing admin/paid usage bytes remain unchanged. Original failure retained for history."
+  },
+  "disposableFailureHistory": [
+    {
+      "source": "574a6f1c019157fa0ca53eb2fed5702367432a10",
+      "run": "38828799022",
+      "result": "FAILED",
+      "securityTests": 117,
+      "passed": 116,
+      "failed": 1,
+      "skipped": 0,
+      "rootCause": "Canonical execute_growth_campaign executor was omitted from internal adapter supportedCapabilities, so approval execution returned blocked before delivery tests. No delivery acceptance asserted.",
+      "resolution": "Next-source adds existing capability and focused exact delegation test. Original verified assertion retained with status reason diagnostic. Actual rerun required."
+    }
+  ]
+}

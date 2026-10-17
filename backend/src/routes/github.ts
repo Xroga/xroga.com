@@ -2,12 +2,15 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from '../middleware/auth.js';
+import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
 import { createOAuthState, verifyOAuthState } from '../lib/oauthState.js';
+import { storePkceSession, consumePkceSession } from '../services/integrations/oauthPkceStore.js';
 import {
   getGitHubToken,
   saveGitHubConnection,
   clearGitHubConnection,
   getGitHubStorageMeta,
+  saveGitHubSettings,
 } from '../services/integrations/githubAuth.js';
 
 const router = Router();
@@ -79,17 +82,24 @@ async function ghApi<T>(token: string, path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-function buildGitHubAuthorizeUrl(userId: string, redirectUri: string): string | null {
+async function buildGitHubAuthorizeUrl(context: TenantContext, redirectUri: string): Promise<string | null> {
+  const { userId } = requireTenantContext(context);
   if (!GITHUB_CLIENT_ID) return null;
   if (!GITHUB_CLIENT_SECRET) return null;
   const state = createOAuthState(userId, GITHUB_CLIENT_SECRET);
+  // GitHub's current flow uses a signed state, not a PKCE verifier. Reuse the
+  // existing one-use server session with an explicit non-secret flow marker.
+  await storePkceSession(context, 'github_oauth_pkce', {verifier:'github-signed-state',state,
+    redirect_uri:redirectUri,created_at:new Date().toISOString()});
   return `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=repo,user:email&state=${state}`;
 }
 
-router.get('/oauth', (req: AuthRequest, res) => {
+router.get('/oauth', async (req: AuthRequest, res) => {
   const requested = typeof req.query.redirect_uri === 'string' ? req.query.redirect_uri : undefined;
   const redirectUri = getGitHubOAuthCallbackUrl(requested);
-  const url = buildGitHubAuthorizeUrl(req.userId!, redirectUri);
+  let url: string | null;
+  try { url = await buildGitHubAuthorizeUrl(req.tenantContext!, redirectUri); }
+  catch { res.status(503).json({error:'GitHub authorization could not be started. Retry shortly.'});return; }
   if (!url) {
     res.status(503).json({ error: 'GitHub OAuth not configured' });
     return;
@@ -111,10 +121,12 @@ router.get('/oauth-config', (_req: AuthRequest, res) => {
 });
 
 /** GET /auth/github — redirect straight to GitHub OAuth (alias mount) */
-router.get('/redirect', (req: AuthRequest, res) => {
+router.get('/redirect', async (req: AuthRequest, res) => {
   const requested = typeof req.query.redirect_uri === 'string' ? req.query.redirect_uri : undefined;
   const redirectUri = getGitHubOAuthCallbackUrl(requested);
-  const url = buildGitHubAuthorizeUrl(req.userId!, redirectUri);
+  let url: string | null;
+  try { url = await buildGitHubAuthorizeUrl(req.tenantContext!, redirectUri); }
+  catch { res.status(503).json({error:'GitHub authorization could not be started. Retry shortly.'});return; }
   if (!url) {
     res.status(503).json({ error: 'GitHub OAuth not configured' });
     return;
@@ -147,7 +159,13 @@ router.post('/connect', async (req: AuthRequest, res) => {
     return;
   }
 
-  const redirectUri = getGitHubOAuthCallbackUrl(parsed.data.redirectUri);
+  try {
+  const context = requireTenantContext(req.tenantContext);
+  const session = await consumePkceSession(context, 'github_oauth_pkce', parsed.data.state);
+  if (!session?.authorization_revision) {
+    res.status(400).json({error:'Invalid or expired GitHub authorization state'});return;
+  }
+  const redirectUri = session.redirect_uri;
 
   const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
     method: 'POST',
@@ -166,8 +184,8 @@ router.post('/connect', async (req: AuthRequest, res) => {
     error_description?: string;
   };
 
-  if (!tokenData.access_token) {
-    res.status(400).json({ error: tokenData.error_description ?? 'Failed to exchange code' });
+  if (!tokenRes.ok || typeof tokenData.access_token !== 'string' || !tokenData.access_token.trim()) {
+    res.status(400).json({ error: 'Failed to exchange GitHub authorization code. Authorize again.' });
     return;
   }
 
@@ -175,13 +193,17 @@ router.post('/connect', async (req: AuthRequest, res) => {
     headers: { Authorization: `Bearer ${tokenData.access_token}`, Accept: 'application/vnd.github+json' },
   });
   const ghUser = (await userRes.json()) as { login: string; id: number };
+  if (!userRes.ok || typeof ghUser.login !== 'string' || !ghUser.login.trim() || !Number.isSafeInteger(ghUser.id) || ghUser.id<=0) {
+    res.status(502).json({error:'GitHub account verification failed. Authorize again.'});return;
+  }
 
   try {
-    await saveGitHubConnection(req.userId!, tokenData.access_token, {
+    await saveGitHubConnection(context.userId, tokenData.access_token, {
       providerUserId: String(ghUser.id),
       username: ghUser.login,
       repoStrategy: parsed.data.repoStrategy ?? 'auto',
       defaultRepo: parsed.data.defaultRepo ?? null,
+      authorizationRevision: session.authorization_revision,
     });
   } catch (saveErr) {
     console.error('[github/connect] save failed:', (saveErr as Error).message);
@@ -190,6 +212,9 @@ router.post('/connect', async (req: AuthRequest, res) => {
   }
 
   res.json({ connected: true, username: ghUser.login });
+  } catch {
+    res.status(503).json({error:'GitHub authorization could not be completed. Authorize again.'});
+  }
 });
 
 router.get('/status', async (req: AuthRequest, res) => {
@@ -298,7 +323,7 @@ router.get('/repos/:owner/:repo/branches', async (req: AuthRequest, res) => {
 router.patch('/settings', async (req: AuthRequest, res) => {
   const schema = z.object({
     repoStrategy: z.enum(['auto', 'monorepo', 'manual']),
-    defaultRepo: z.string().optional(),
+    defaultRepo: z.string().trim().regex(/^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9_.-]{1,100}$/).or(z.literal('')).optional(),
   });
 
   const parsed = schema.safeParse(req.body);
@@ -307,26 +332,25 @@ router.patch('/settings', async (req: AuthRequest, res) => {
     return;
   }
 
-  const supabase = getSupabaseAdmin();
-  const { error } = await supabase
-    .from('github_integrations')
-    .update({
-      repo_strategy: parsed.data.repoStrategy,
-      default_repo: parsed.data.defaultRepo ?? null,
-    })
-    .eq('user_id', req.userId!);
-
-  if (error) {
-    res.status(500).json({ error: error.message });
-    return;
+  try {
+    const saved = await saveGitHubSettings(req.userId!, parsed.data.repoStrategy, parsed.data.defaultRepo || null);
+    if (!saved) {
+      res.status(409).json({ error: 'GitHub connection is unavailable. Connect again before saving settings.' });
+      return;
+    }
+    res.json({ success: true });
+  } catch {
+    res.status(503).json({ error: 'GitHub settings could not be saved. Retry shortly.' });
   }
-
-  res.json({ success: true });
 });
 
 router.delete('/disconnect', async (req: AuthRequest, res) => {
-  await clearGitHubConnection(req.userId!);
-  res.json({ disconnected: true });
+  try {
+    await clearGitHubConnection(req.userId!);
+    res.json({ disconnected: true });
+  } catch {
+    res.status(503).json({ error: 'GitHub disconnect could not be fully completed. Retry shortly.' });
+  }
 });
 
 /** Full repository analysis before builds — tree, languages, and core site files. */

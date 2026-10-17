@@ -10,20 +10,15 @@ import pg from 'pg';
 import {
   getUserProviderKey,
   getUserSupabaseStatus,
+  prepareUserProviderKeyWrite,
   saveUserProviderKey,
+  type ProviderKeyWriteAdmission,
+  prepareSupabaseBundleWrite, saveSupabaseBundle, readUserSupabaseBundle, type SupabaseBundleAdmission,
 } from './userProviderKeys.js';
 
 const MGMT = 'https://api.supabase.com/v1';
-
-export function projectRefFromUrl(projectUrl: string): string | null {
-  try {
-    const host = new URL(projectUrl.trim()).hostname;
-    const m = host.match(/^([a-z0-9]+)\.supabase\.co$/i);
-    return m?.[1] ?? null;
-  } catch {
-    return null;
-  }
-}
+import { projectRefFromUrl } from './supabaseProjectUrl.js';
+export { projectRefFromUrl } from './supabaseProjectUrl.js';
 
 /** SQL applied to the user's project — app data + Xroga memory/storage. */
 export function buildUserSupabaseProvisionSql(opts?: {
@@ -139,6 +134,18 @@ create table if not exists public.xroga_session_memory (
 );
 create index if not exists xroga_session_memory_user_idx on public.xroga_session_memory (xroga_user_id);
 
+-- Platform identities do not identify users in this separately owned project.
+-- Only the server credential may access AI memory; never grant its app users access.
+alter table public.xroga_project_memory enable row level security;
+alter table public.xroga_session_memory enable row level security;
+revoke all on table public.xroga_project_memory from public, anon, authenticated;
+revoke all on table public.xroga_session_memory from public, anon, authenticated;
+drop policy if exists xroga_memory_server_only on public.xroga_project_memory;
+create policy xroga_memory_server_only on public.xroga_project_memory as restrictive
+  for all to anon, authenticated using (false) with check (false);
+drop policy if exists xroga_memory_server_only on public.xroga_session_memory;
+create policy xroga_memory_server_only on public.xroga_session_memory as restrictive
+  for all to anon, authenticated using (false) with check (false);
 grant all on table public.xroga_project_memory to service_role;
 grant all on table public.xroga_session_memory to service_role;
 `;
@@ -206,11 +213,7 @@ async function mgmtFetch<T>(
     body = { message: text };
   }
   if (!res.ok) {
-    const msg =
-      (body as { message?: string })?.message ||
-      (body as { error?: string })?.error ||
-      `Supabase Management API ${res.status}`;
-    throw new Error(msg);
+    throw new Error('Supabase could not complete this request. Check your connection permissions and retry.');
   }
   return body as T;
 }
@@ -334,13 +337,18 @@ export async function ensureStorageBuckets(
   serviceRoleKey: string,
   bucketIds: string[] = ['xroga-uploads'],
 ): Promise<string[]> {
+  if (!projectRefFromUrl(url)) throw new Error('Invalid Supabase project URL');
+  if (bucketIds.some(id => !/^[a-z0-9][a-z0-9-]{0,62}$/.test(id))) throw new Error('Invalid storage bucket name');
   const supabase = createClient(url, serviceRoleKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
   const created: string[] = [];
   for (const id of bucketIds) {
-    const { data: existing } = await supabase.storage.getBucket(id);
+    const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+    if (listError || !Array.isArray(buckets)) throw new Error('Storage access could not be verified. Check your connection and retry.');
+    const existing = buckets.find(bucket => bucket.id === id);
     if (existing) {
+      if (existing.public !== false) throw new Error('Storage privacy could not be verified. Review the bucket settings before retrying.');
       created.push(id);
       continue;
     }
@@ -349,10 +357,13 @@ export async function ensureStorageBuckets(
       fileSizeLimit: 52_428_800,
     });
     if (error && !/already exists|duplicate/i.test(error.message)) {
-      console.warn(`[supabaseProvision] bucket ${id}:`, error.message);
-    } else {
-      created.push(id);
+      throw new Error('Storage setup failed. Check your connection permissions and retry.');
     }
+    const { data: confirmed, error: confirmError } = await supabase.storage.listBuckets();
+    if (confirmError || !Array.isArray(confirmed) || confirmed.find(bucket => bucket.id === id)?.public !== false) {
+      throw new Error('Storage privacy could not be verified. Review the bucket settings before retrying.');
+    }
+    created.push(id);
   }
   return created;
 }
@@ -406,8 +417,8 @@ export async function provisionUserSupabase(opts: {
       await runSqlViaManagementApi(opts.accessToken.trim(), ref, sql);
       schemaApplied = true;
       method = 'management_api';
-    } catch (err) {
-      lastError = (err as Error).message;
+    } catch {
+      lastError = 'Schema setup was not confirmed. Check your connection permissions and retry.';
     }
   }
 
@@ -416,8 +427,8 @@ export async function provisionUserSupabase(opts: {
       await runSqlViaDatabasePassword(ref, opts.dbPassword, sql, opts.region);
       schemaApplied = true;
       method = 'database_password';
-    } catch (err) {
-      lastError = (err as Error).message;
+    } catch {
+      lastError = 'Schema setup was not confirmed. Check your database connection and retry.';
     }
   }
 
@@ -427,11 +438,11 @@ export async function provisionUserSupabase(opts: {
       'xroga-uploads',
       `${(opts.projectName || ref).toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24)}-uploads`,
     ]);
-  } catch (err) {
-    lastError = lastError || (err as Error).message;
+  } catch {
+    lastError = 'Private storage setup was not confirmed. Review your connection and bucket privacy before retrying.';
   }
 
-  const ok = schemaApplied || buckets.length > 0;
+  const ok = schemaApplied && buckets.length > 0;
   return {
     ok,
     method,
@@ -440,13 +451,35 @@ export async function provisionUserSupabase(opts: {
     buckets,
     schemaApplied,
     memoryTablesReady: schemaApplied,
-    message: schemaApplied
-      ? `Provisioned on your Supabase (${method}): schema + memory tables + storage.`
+    message: ok
+      ? 'Schema, memory tables and private storage setup completed on your Supabase project.'
+      : schemaApplied
+        ? `Schema and memory tables were saved, but private storage is not ready. ${lastError}`
       : buckets.length
-        ? `Storage ready on your Supabase. Schema needs Access Token or DB password for full auto-setup. ${lastError || ''}`
-        : `Could not provision automatically. ${lastError || 'Add Access Token or DB password.'}`,
+        ? 'Private storage is ready, but schema setup was not confirmed. Review your connection permissions and retry.'
+        : `Setup was not confirmed. ${lastError || 'Connect an account with schema and storage permissions, then retry.'}`,
     error: ok ? undefined : lastError,
   };
+}
+
+export type SupabaseWriteAdmissions = Readonly<{
+  url: ProviderKeyWriteAdmission;
+  anon: ProviderKeyWriteAdmission;
+  service: ProviderKeyWriteAdmission;
+  pat: ProviderKeyWriteAdmission;
+}>;
+
+/** Capture before OAuth exchange or other asynchronous credential acquisition. */
+export async function prepareSupabaseWriteAdmissions(userId: string): Promise<SupabaseWriteAdmissions> {
+  const [url, anon, service, pat] = await Promise.all(
+    ['supabase_url', 'supabase_anon', 'supabase', 'supabase_pat'].map(provider => prepareUserProviderKeyWrite(userId, provider)),
+  );
+  return Object.freeze({ url: url!, anon: anon!, service: service!, pat: pat! });
+}
+
+export async function prepareSupabaseConnectionWrite(userId: string) {
+  const [bundle, pat] = await Promise.all([prepareSupabaseBundleWrite(userId), prepareUserProviderKeyWrite(userId, 'supabase_pat')]);
+  return Object.freeze({ bundle, pat });
 }
 
 /** One-click: PAT + project ref → save keys + provision everything. */
@@ -456,32 +489,34 @@ export async function oneClickConnectSupabase(opts: {
   projectRef: string;
   vercelProject?: string;
   projectName?: string;
+  writeAdmissions?: { bundle: SupabaseBundleAdmission; pat: ProviderKeyWriteAdmission };
 }): Promise<{
   status: Awaited<ReturnType<typeof getUserSupabaseStatus>>;
   provision: ProvisionResult;
   keysSaved: boolean;
 }> {
+  const { userId, projectRef, projectName, writeAdmissions } = opts;
   const accessToken = opts.accessToken.trim();
-  const keys = await fetchProjectApiKeys(accessToken, opts.projectRef);
-  await saveUserProviderKey(opts.userId, 'supabase_url', keys.url);
-  await saveUserProviderKey(opts.userId, 'supabase_anon', keys.anonKey);
-  await saveUserProviderKey(opts.userId, 'supabase', keys.serviceRoleKey);
-  await saveUserProviderKey(opts.userId, 'supabase_pat', accessToken);
+  const {bundle, pat} = writeAdmissions ?? await prepareSupabaseConnectionWrite(userId);
+  const keys = await fetchProjectApiKeys(accessToken, projectRef);
+  await saveSupabaseBundle(bundle, { projectUrl: keys.url, anonKey: keys.anonKey, serviceRoleKey: keys.serviceRoleKey });
+  await saveUserProviderKey(userId, 'supabase_pat', accessToken,{writeAdmission:pat});
 
   const provision = await provisionUserSupabase({
     projectUrl: keys.url,
     serviceRoleKey: keys.serviceRoleKey,
     accessToken,
-    projectName: opts.projectName || opts.projectRef,
+    projectName: projectName || projectRef,
   });
 
   // Mark provision metadata on status via a lightweight custom key note — stored in PAT metadata already
-  const status = await getUserSupabaseStatus(opts.userId);
+  const status = await getUserSupabaseStatus(userId);
   return {
     status: {
       ...status,
       message: provision.message,
-      ready: status.ready && (provision.schemaApplied || provision.buckets.length > 0),
+      ready: status.ready && provision.ok,
+      provisioned: provision.ok && provision.schemaApplied && provision.memoryTablesReady,
     },
     provision,
     keysSaved: true,
@@ -490,11 +525,9 @@ export async function oneClickConnectSupabase(opts: {
 
 /** Client for the user's project (service role) — for AI memory/storage. */
 export async function getUserSupabaseAdmin(userId: string): Promise<SupabaseClient | null> {
-  const [url, service] = await Promise.all([
-    getUserProviderKey(userId, 'supabase_url'),
-    getUserProviderKey(userId, 'supabase'),
-  ]);
-  if (!url || !service) return null;
+  const bundle = await readUserSupabaseBundle(userId);
+  const url = bundle?.projectUrl, service = bundle?.serviceRoleKey;
+  if (!url || !service || !projectRefFromUrl(url)) return null;
   return createClient(url, service, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
@@ -515,6 +548,6 @@ export async function getUserSupabaseManagementToken(userId: string): Promise<st
 export async function userSupabaseMemoryReady(userId: string): Promise<boolean> {
   const client = await getUserSupabaseAdmin(userId);
   if (!client) return false;
-  const { error } = await client.from('xroga_session_memory').select('id').limit(1);
+  const { error } = await client.from('xroga_session_memory').select('id').eq('xroga_user_id', userId).limit(1);
   return !error;
 }

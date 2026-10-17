@@ -17,7 +17,7 @@ test('current public S00 homepage, themes and reduced-motion accessibility are c
     }
     (window as typeof window & { SpeechRecognition?: typeof TestSpeechRecognition }).SpeechRecognition = TestSpeechRecognition;
   });
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#s00-title')).toBeVisible();
 
   // The "Capacity designed to finish work" plan section was removed from the homepage
@@ -25,11 +25,22 @@ test('current public S00 homepage, themes and reduced-motion accessibility are c
   // inside the homepage FAQ accordion; this spec covers the companion, themes, and
   // accessibility instead.
 
+  // Main intentionally removed the public header theme control. Exercise the
+  // real guest workspace selector and its persistence. Public marketing pages
+  // deliberately force MARKETING_THEME=black without changing user preferences.
+  await expect(page.getByRole('button', { name: 'Change website theme' })).toHaveCount(0);
   for (const theme of ['Beige', 'White', 'Gray', 'Black']) {
-    await page.getByRole('button', { name: 'Change website theme' }).click();
-    await page.getByRole('radio', { name: new RegExp(`^${theme}`) }).click();
+    await page.goto('/workspace', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: 'Change theme', exact: true }).first().click();
+    await page.getByRole('menuitemradio', { name: new RegExp(`^${theme}`) }).click();
+    await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('body')).toHaveClass(/theme-black/);
+    await page.goto('/workspace', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
   }
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
 
   // The public homepage now renders S00Hero rather than the retired
   // HomepageCompanionStage. Assert actual public interactions without restoring
@@ -42,6 +53,6 @@ test('current public S00 homepage, themes and reduced-motion accessibility are c
     stored.state = { ...(stored.state ?? {}), reducedMotion: true };
     localStorage.setItem('xroga-theme', JSON.stringify(stored));
   });
-  await page.reload();
+  await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-reduced-motion', 'true');
 });

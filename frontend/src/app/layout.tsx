@@ -11,6 +11,7 @@ import { StorageBootstrap } from '@/components/bootstrap/StorageBootstrap';
 import { rootFontVariables } from '@/lib/fonts';
 import { GoogleTag } from '@/components/analytics/GoogleTag';
 import { MicrosoftClarity } from '@/components/analytics/MicrosoftClarity';
+import { isProductionAuthBuild } from '@/lib/supabase/config';
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -50,27 +51,28 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const productionTelemetry=isProductionAuthBuild();
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <StorageBootstrap />
-         <script
+         {productionTelemetry&&<script
     src="https://analytics.ahrefs.com/analytics.js"
     data-key="vxPNnAmUvdWc+ePnPvZZ5w"
     async
-  ></script>
+  ></script>}
         <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
         <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="512x512" />
         <link rel="shortcut icon" href="/favicon-32.png" />
-        <link rel="preconnect" href="https://xroga-api.fly.dev" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
+        {productionTelemetry&&<link rel="preconnect" href="https://xroga-api.fly.dev" crossOrigin="anonymous" />}
+        {productionTelemetry&&<link rel="dns-prefetch" href="https://xroga-api.fly.dev" />}
       </head>
       <body suppressHydrationWarning className={`theme-black ${rootFontVariables} font-sans antialiased`}>
         <SiteJsonLd />
         <RootProviders>{children}</RootProviders>
-        <GoogleTag />
-        <MicrosoftClarity />
+        {productionTelemetry&&<GoogleTag />}
+        {productionTelemetry&&<MicrosoftClarity />}
       </body>
     </html>
   );

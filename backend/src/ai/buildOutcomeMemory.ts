@@ -1,6 +1,6 @@
-import {
-  getSupabaseAdmin,
-} from '../config/supabase.js';
+import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import { createTenantContext } from '../security/tenantContext.js';
+import { persistOwnedUniversalRecord } from '../security/ownedRunPersistence.js';
 
 import {
   recentRoutingOutcomes,
@@ -1891,24 +1891,36 @@ export interface BuildOutcomeStore {
   ): Promise<void>;
 }
 
+/** Captured from the admitted worker, never from a client/model outcome. */
+export interface BuildOutcomeAttempt {
+  kind?: 'worker';
+  generation: string;
+  completedAt: string;
+  output: Record<string, unknown> | null;
+}
+
+/** Exact receipt returned by the canonical cancellation transaction. */
+export interface BuildOutcomeCancellation {
+  kind: 'cancellation';
+  completedAt: string;
+  output: Record<string, unknown>;
+}
+
 export class SupabaseBuildOutcomeStore
 implements BuildOutcomeStore {
+  private readonly attempt?: Readonly<BuildOutcomeAttempt | BuildOutcomeCancellation>;
+
+  constructor(attempt?: BuildOutcomeAttempt | BuildOutcomeCancellation) {
+    this.attempt = attempt ? Object.freeze(structuredClone(attempt)) : undefined;
+  }
+
   async upsert(
     outcome:
       BuildOutcomeRecord,
   ): Promise<void> {
-    const supabase =
-      getSupabaseAdmin();
-
-    const {
-      error,
-    } =
-      await supabase
-        .from(
-          'build_outcomes',
-        )
-        .upsert(
-          {
+    const context=createTenantContext({userId:outcome.userId,via:'persisted_owner'});
+    const supabase = getTenantSupabaseAdmin(context);
+    const row = {
             run_id:
               outcome.runId,
 
@@ -2032,20 +2044,22 @@ implements BuildOutcomeStore {
             updated_at:
               new Date()
                 .toISOString(),
-          },
-
-          {
-            onConflict:
-              'run_id',
-          },
-        );
-
-    if (
-      error
-    ) {
-      throw new Error(
-        'BuildOutcome persistence failed',
-      );
+          };
+    if (this.attempt) {
+      const cancellation = this.attempt.kind === 'cancellation';
+      const { data, error } = await supabase.rpc(cancellation ? 'persist_cancelled_build_outcome' : 'persist_build_outcome_attempt', {
+        p_run_id: outcome.runId,
+        p_owner_id: context.userId,
+        ...(this.attempt.kind === 'cancellation' ? {} : { p_generation: this.attempt.generation }),
+        p_completed_at: this.attempt.completedAt,
+        p_output: this.attempt.output,
+        p_outcome: row,
+      });
+      if (error || data !== true) throw new Error('Build outcome attempt is no longer authoritative.');
+    } else {
+      // Preserve the existing API for non-worker import/reconciliation callers.
+      // These do not acquire worker-generation certification from this adapter.
+      await persistOwnedUniversalRecord(supabase,context,'build_outcome',row);
     }
 
     /*
@@ -2074,7 +2088,7 @@ implements BuildOutcomeStore {
         .delete()
         .eq(
           'user_id',
-          outcome.userId,
+          context.userId,
         )
         .lt(
           'updated_at',

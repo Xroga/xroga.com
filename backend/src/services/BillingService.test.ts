@@ -219,3 +219,39 @@ test('wrong Whop account is rejected before fulfillment', async (t) => {
   withWhopEnv(t);
   await assert.rejects(BillingService.handleWebhookEvent({ type: 'payment.succeeded', account_id: 'biz_wrong', data: {} }, 'msg_1'), /wrong_account/);
 });
+
+test('membership callback denies a foreign owner and closes a concurrent insert collision', async (t) => {
+  withWhopEnv(t);
+  const owner='11111111-1111-4111-8111-111111111111', other='22222222-2222-4222-8222-222222222222';
+  const previousUrl=process.env.SUPABASE_URL, previousKey=process.env.SUPABASE_SERVICE_ROLE_KEY;
+  process.env.SUPABASE_URL='http://127.0.0.1:1'; process.env.SUPABASE_SERVICE_ROLE_KEY='fixture-only';
+  const originalFetch=globalThis.fetch;
+  let mode:'foreign'|'race'|'own'='foreign';
+  const requests:{method:string;url:URL;headers:Headers}[]=[];
+  globalThis.fetch=async(input,init)=>{
+    const url=new URL(String(input));
+    assert.equal(url.origin,'http://127.0.0.1:1');
+    assert.equal(url.pathname,'/rest/v1/whop_memberships');
+    const method=init?.method??'GET';
+    requests.push({method,url,headers:new Headers(init?.headers)});
+    const data=method==='GET'?(mode==='foreign'?{user_id:other}:mode==='own'?{user_id:owner}:null)
+      :method==='PATCH'?(mode==='own'?{whop_membership_id:'mem_fixture'}:null):null;
+    return Response.json(data);
+  };
+  t.after(()=>{
+    globalThis.fetch=originalFetch;
+    previousUrl===undefined?delete process.env.SUPABASE_URL:process.env.SUPABASE_URL=previousUrl;
+    previousKey===undefined?delete process.env.SUPABASE_SERVICE_ROLE_KEY:process.env.SUPABASE_SERVICE_ROLE_KEY=previousKey;
+  });
+  const event={type:'membership.activated' as const,account_id:'biz_qhYONL4RebGX96',data:{id:'mem_fixture',plan_id:'plan_hlV1A10I5QfSP',metadata:{xroga_user_id:owner,source:'xroga',plan_tier:'spark'}}};
+  await assert.rejects(BillingService.handleWebhookEvent(event,'msg_fixture'),/membership_owner_mismatch/);
+  assert.deepEqual(requests.map(r=>r.method),['GET']);
+  requests.length=0;mode='race';
+  await assert.rejects(BillingService.handleWebhookEvent(event,'msg_fixture'),/membership_owner_mismatch/);
+  assert.deepEqual(requests.map(r=>r.method),['GET','POST','PATCH']);
+  assert.match(requests[1].headers.get('Prefer')??'',/resolution=ignore-duplicates/);
+  assert.equal(requests[2].url.searchParams.get('whop_membership_id'),'eq.mem_fixture');
+  assert.equal(requests[2].url.searchParams.get('user_id'),`eq.${owner}`);
+  mode='own';
+  assert.deepEqual(await BillingService.handleWebhookEvent(event,'msg_fixture'),{fulfilled:false});
+});

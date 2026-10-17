@@ -7,11 +7,30 @@ on:
     paths:
       - 'package.json'
       - 'backend/package.json'
+      - 'backend/scripts/cline-git-compat.mjs'
+      - 'backend/scripts/security-dependency-patches.mjs'
+      - 'scripts/security/dependency-patches.test.mjs'
+      - 'backend/vendor/cline/**'
+      - 'backend/src/security/clineGitDependency.test.ts'
       - '.github/workflows/agent-v2-dependency-lock.yml'
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'backend/package.json'
+      - 'backend/package-lock.json'
+      - 'backend/scripts/cline-git-compat.mjs'
+      - 'backend/scripts/security-dependency-patches.mjs'
+      - 'scripts/security/dependency-patches.test.mjs'
+      - 'backend/vendor/cline/**'
+      - 'backend/src/security/clineGitDependency.test.ts'
+      - 'frontend/package-lock.json'
+      - 'scripts/ci/**'
+      - '.github/workflows/agent-v2-dependency-lock.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: agent-v2-dependency-lock-main
@@ -31,22 +50,11 @@ jobs:
       - name: Use Node 22
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version-file: '.node-version'
           cache: npm
 
-      - name: Refresh workspace lockfile
-        run: |
-          set -euo pipefail
-          npm install --package-lock-only --ignore-scripts
-
-      - name: Refresh standalone backend lockfile
-        run: |
-          set -euo pipefail
-          npm install \
-            --package-lock-only \
-            --ignore-scripts \
-            --workspaces=false \
-            --prefix backend
+      - name: Verify committed lockfiles without rewriting them
+        run: node scripts/ci/check-lockfile-integrity.mjs
 
       - name: Verify Agent V2 dependency graph
         run: |
@@ -159,8 +167,13 @@ jobs:
             frontend/node_modules
 
           npm ci --ignore-scripts
+          node backend/scripts/cline-git-compat.mjs --apply
+          node backend/scripts/security-dependency-patches.mjs --apply
+          node backend/scripts/security-dependency-patches.mjs --check
 
           cd backend
+
+          node --import tsx --test src/security/clineGitDependency.test.ts src/security/mcpDependency.test.ts
 
           node <<'NODE'
           const fs = require('node:fs');
@@ -332,7 +345,14 @@ jobs:
             --workspaces=false \
             --prefix backend
 
+          node backend/scripts/cline-git-compat.mjs --apply
+
+          node backend/scripts/security-dependency-patches.mjs --apply
+          node backend/scripts/security-dependency-patches.mjs --check
+
           cd backend
+
+          node --import tsx --test src/security/clineGitDependency.test.ts src/security/mcpDependency.test.ts
 
           node <<'NODE'
           const fs = require('node:fs');
@@ -490,7 +510,7 @@ jobs:
             );
           NODE
 
-      - name: Upload generated lockfiles
+      - name: Upload verified committed lockfiles
         uses: actions/upload-artifact@v4
         with:
           name: agent-v2-lockfiles
@@ -499,24 +519,3 @@ jobs:
             backend/package-lock.json
           if-no-files-found: error
           retention-days: 7
-
-      - name: Commit generated lockfiles
-        run: |
-          set -euo pipefail
-
-          if git diff --quiet -- package-lock.json backend/package-lock.json; then
-            echo "Lockfiles are already current."
-            exit 0
-          fi
-
-          git config user.name "xroga-actions"
-          git config user.email "actions@users.noreply.github.com"
-
-          git add \
-            package-lock.json \
-            backend/package-lock.json
-
-          git commit \
-            -m "Refresh Agent V2 dependency lockfiles"
-
-          git push origin HEAD:main

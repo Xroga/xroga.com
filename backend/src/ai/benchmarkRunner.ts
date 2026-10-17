@@ -104,6 +104,20 @@ export interface BenchmarkResultStore {
   record(result: BenchmarkResult): Promise<void>;
 }
 
+/** Storage and executor payloads are runtime data, not trusted TypeScript values. */
+export function assertBenchmarkResult(value: unknown): asserts value is BenchmarkResult {
+  const row = value as Record<string, unknown> | null;
+  if (!row || typeof row !== 'object'
+    || ['schemaVersion', 'benchmarkId', 'modelId'].some((key) => typeof row[key] !== 'string' || !(row[key] as string).trim() || (row[key] as string).length > 256)
+    || typeof row.succeeded !== 'boolean'
+    || ['buildPassed', 'testsPassed', 'patchApplied'].some((key) => row[key] !== null && typeof row[key] !== 'boolean')
+    || ['regressionCount', 'securityFindings', 'repairAttempts', 'inputTokens', 'outputTokens'].some((key) => !Number.isSafeInteger(row[key]) || (row[key] as number) < 0)
+    || ['latencyMs', 'estimatedCostUsd'].some((key) => typeof row[key] !== 'number' || !Number.isFinite(row[key]) || (row[key] as number) < 0)
+    || typeof row.at !== 'string' || !Number.isFinite(Date.parse(row.at))) {
+    throw new Error('Invalid benchmark measurement');
+  }
+}
+
 /**
  * Whether a model may be measured against a benchmark.
  *
@@ -203,6 +217,12 @@ export function plan(
   models: readonly ModelId[],
   caps: BenchmarkCaps = DEFAULT_CAPS,
 ): BenchmarkPlan {
+  if (!Number.isSafeInteger(caps.maximumCases) || caps.maximumCases < 0
+    || !Number.isFinite(caps.maximumCostUsd) || caps.maximumCostUsd < 0
+    || !Number.isSafeInteger(caps.perCaseTimeoutMs) || caps.perCaseTimeoutMs <= 0
+    || (caps.consecutiveFailureLimit !== undefined && (!Number.isSafeInteger(caps.consecutiveFailureLimit) || caps.consecutiveFailureLimit <= 0))) {
+    throw new Error('Invalid benchmark caps');
+  }
   const candidates = selectCases(selection, models);
   const cases: BenchmarkCase[] = [];
   const skipped: { benchmarkCase: BenchmarkCase; reason: string }[] = [];
@@ -229,6 +249,8 @@ export function plan(
 }
 
 export interface BenchmarkRunReport {
+  readonly recorded: number;
+  readonly recordingFailures: number;
   readonly results: readonly BenchmarkResult[];
   readonly attempted: number;
   readonly succeeded: number;
@@ -263,6 +285,8 @@ export async function runBenchmarks(input: {
 
   const results: BenchmarkResult[] = [];
   let actualCostUsd = 0;
+  let recorded = 0;
+  let recordingFailures = 0;
   let consecutiveFailures = 0;
   let stoppedEarly: string | null = null;
 
@@ -294,6 +318,9 @@ export async function runBenchmarks(input: {
     let outcome: CaseOutcome | null = null;
     try {
       outcome = await input.execute(benchmarkCase, controller.signal);
+      assertBenchmarkResult({ ...outcome, schemaVersion: BENCHMARK_SCHEMA_VERSION,
+        benchmarkId: benchmarkCase.benchmark.id, modelId: benchmarkCase.modelId,
+        succeeded: false, estimatedCostUsd: 0, at: new Date().toISOString() });
     } catch {
       // A failed case is a measurement about that model on that task. Recorded, not thrown.
       outcome = null;
@@ -334,7 +361,8 @@ export async function runBenchmarks(input: {
     // crashes halfway has still bought the measurements it made, and losing them means
     // paying for them twice.
     if (input.store) {
-      await input.store.record(result).catch(() => {
+      await input.store.record(result).then(() => { recorded += 1; }).catch(() => {
+        recordingFailures += 1;
         // A recording failure must not lose the remaining cases. The result stays in the
         // returned report either way, so the caller can still see what was measured.
       });
@@ -343,6 +371,8 @@ export async function runBenchmarks(input: {
   }
 
   return {
+    recorded,
+    recordingFailures,
     results,
     attempted: results.length,
     succeeded: results.filter((result) => result.succeeded).length,
@@ -362,6 +392,7 @@ export class SupabaseBenchmarkResultStore implements BenchmarkResultStore {
   constructor(private readonly client: { from: (table: string) => { insert: (row: unknown) => Promise<{ error: unknown }> } }) {}
 
   async record(result: BenchmarkResult): Promise<void> {
+    assertBenchmarkResult(result);
     const { error } = await this.client.from('model_benchmark_runs').insert({
       benchmark_id: result.benchmarkId,
       model_id: result.modelId,
