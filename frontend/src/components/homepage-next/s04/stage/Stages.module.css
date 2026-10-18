@@ -189,9 +189,10 @@
     inset 0 0 0 1px rgba(255, 255, 255, 0.08),
     0 20px 34px -24px rgba(0, 0, 0, 0.9);
 }
+/* the cards compact in the same frame the handoff replaces the Xroga card; easing their height left the studio taller
+   than its settled size for a moment, past the fold on short screens */
 .ios[data-ready] .shot {
   height: 212px;
-  transition: height 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .ios[data-ready] .shot figcaption {
   min-height: 34px;
@@ -228,8 +229,8 @@
   aspect-ratio: 280 / 600;
   border-radius: 20px 20px 0 0;
   overflow: hidden;
-  /* the screen's size never depends on the card's height: when the cards settle (height transition at the handoff),
-     the rendered screen is neither laid out nor repainted again, only clipped (measured: per-frame paint + raster) */
+  /* the screen's size never depends on the card's height: when the cards compact at the handoff, the rendered screen
+     is neither laid out nor repainted again, only clipped (measured: paint + raster) */
   contain: layout paint;
   will-change: transform;
   background: rgba(255, 255, 255, 0.04);

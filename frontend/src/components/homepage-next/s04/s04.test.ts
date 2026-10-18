@@ -145,6 +145,13 @@ test('frame cost: the render pass and stage changes never animate layout or repa
   assert.match(stages, /\.shotDevice \{[^}]*contain: layout paint;/);
 });
 
+test('the App Store handoff never makes the studio taller than its settled size', () => {
+  const stages = src('stage/Stages.module.css');
+  // easing the cards' height while the handoff appeared at full size pushed the rail past the fold at 1280 × 800
+  assert.doesNotMatch(stages, /transition:\s*height/);
+  for (const rule of stages.match(/\.ios\[data-ready\] \.shot \{[^}]*\}/g) ?? []) assert.doesNotMatch(rule, /transition/);
+});
+
 test('store marks stay out until brand approval is recorded; no generic icon stands in for them', () => {
   assert.equal(STORE_MARKS_CLEARED, false);
   const mark = src('StoreMark.tsx');
