@@ -53,6 +53,13 @@
     }
   ],
   "additionalSpend": 0,
+  "automationCreation": {
+    "status": "IN PROGRESS",
+    "fix": "Existing rule creation retains canonical action/approval policies and redaction. Service-only transaction locks current actor/project/member, validates owner/project/rule/limits, and commits rule plus mandatory immutable audit together. Exactly one returned row must match every submitted field. No action or provider executes during creation.",
+    "localEvidence": "Eleven focused creation/intent/admission tests and42 local SQL shape/current-role/owner/duplicate/two-write rollback/replay assertions pass. Actual held-member revocation and owner mutation, competing same-key creation, exact audit, rollback and browser-role denial prepared. SQL CASE expression parenthesized after local parser caught42601, before push. Fixture DDL correctly remains database-owner-only.",
+    "regression": "Backend typecheck and full3048-test regression PASS:3030 pass,zero failures,18 registered Windows skips.",
+    "remaining": "Exact-source disposable CI required. Project-wide stop versus new-rule creation, later rule mutations and full automation lifecycle remain unresolved. No whole caller certification."
+  },
   "automationAdmission": {
     "status": "IN PROGRESS",
     "fix": "Service-only admission locks current actor/project/member and exact rule, binds owner/evidence replay, serializes rule-level database-time quota, and commits durable run plus immutable admission audit. Fresh missing dedup no longer becomes a truthy empty-array replay. Existing action creator uses stable run UUID as key. Conditional exact pending-run linking never marks uncertain action outcomes failed or retries, including4xx after possible queued-action persistence.",
@@ -411,7 +418,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Finish full regression and push atomic automation admission, then verify107 migrations and actual competing trigger quota/replay, current-rule/member races, rollback and browser denial. Continue worker lifecycle, growth parent mutation and operations rule/action recovery groups.645 reviewed/387 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
+  "nextTask": "Verify25295230 automation admission CI: aggregate39121745923 and disposable39121745945. Push locally verified atomic rule creation after those finish, then verify108 migrations and actual current-member/owner changes, competing key and rollback. Fix preview grant input/receipt binding next, then continue worker lifecycle, growth parent mutation and operations recovery groups.645 reviewed/387 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
@@ -606,11 +613,11 @@
           "8403dc825e391fd03fe2",
           "055e928c92131f65ebed",
           "ad0d994bbac26afddf8b",
-          "0842197be6faf25e37fb",
-          "e5cd1c31025282db85a6",
-          "ce73439a131ba741d906",
-          "8ff27acb70b177dbac91",
-          "c5718b6fd27487351420"
+          "4da515a7c30d64d8c984",
+          "2dcf0eb881a38ba77375",
+          "4058d1783848b91d9f27",
+          "f3d0a5f2a161a0bf8b52",
+          "f9577ff86262c65a8764"
         ],
         "backend/src/routes/operations.ts": [
           "e23a6715863cc22fbccf",

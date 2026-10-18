@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "eb73e9e7ffe5181d7417beb6a8145e2ad39831fa",
+  "source_sha": "25295230cc26995d56e6717b9afc7c431795212a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -547,6 +547,7 @@
         "backend/src/operations/actionCreation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
+        "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/routes/github.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -655,6 +656,7 @@
         "backend/src/operations/actionCreation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
+        "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/routes/github.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -6964,6 +6966,7 @@
         "backend/src/operations/actionCreation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
+        "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -9594,6 +9597,7 @@
         "backend/src/operations/actionCreation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
+        "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
@@ -9905,6 +9909,7 @@
         "backend/src/operations/actionCreation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
+        "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -10558,6 +10563,7 @@
         "backend/src/operations/actionCreation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
+        "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -10623,6 +10629,7 @@
         "backend/src/operations/actionCreation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
+        "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
@@ -12523,6 +12530,10 @@
       "sha256": "3ebc7a08e6e04f2586f7f29e7583bbc5d70604639556a2715ba7a28b4ea06fd0"
     },
     {
+      "path": "backend/src/operations/automationCreation.local.integration.ts",
+      "sha256": "1ceb2456cf5fb610c8ee223669a06d4a763349744a575f2535341541eb103b85"
+    },
+    {
       "path": "backend/src/operations/benchmarkAdapter.ts",
       "sha256": "a6280fde96f08e74caee526e87317d23fad4f013cc5b21323f11ba59fe304ade"
     },
@@ -12536,7 +12547,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8"
+      "sha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d"
     },
     {
       "path": "backend/src/operations/permissions.ts",
@@ -12940,7 +12951,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "1e4cc196a5540790773923e2d7f1bad56ecebe3414855a43c99010d20830e360"
+      "sha256": "5b6290a93fd6e7392bc46ffc99f66a9a0a9966e6c73b6285f6c4ea9f70425390"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -18401,6 +18412,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/operations/automationCreation.local.integration.ts",
+      "line": 13,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/organicIntelligence/authority/engine.ts",
@@ -18754,56 +18772,56 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 87,
+      "line": 88,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 87,
+      "line": 88,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 345,
+      "line": 347,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 395,
+      "line": 397,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 484,
+      "line": 486,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 590,
+      "line": 592,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 642,
+      "line": 644,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1310,
+      "line": 1312,
       "credentialsInUrl": false
     },
     {
@@ -24984,14 +25002,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 809,
+      "line": 811,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1146,
+      "line": 1148,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

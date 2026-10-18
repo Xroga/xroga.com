@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "eb73e9e7ffe5181d7417beb6a8145e2ad39831fa",
-    "sourceTimestampUtc": "2026-10-18T15:42:38+05:00",
-    "auditStartedUtc": "2026-10-18T11:01:40.641Z",
+    "sha": "25295230cc26995d56e6717b9afc7c431795212a",
+    "sourceTimestampUtc": "2026-10-18T16:04:03+05:00",
+    "auditStartedUtc": "2026-10-18T11:08:23.987Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -15639,7 +15639,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "sha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -15761,6 +15761,8 @@
         "backend/src/operations/actionIntent.test.ts:4",
         "backend/src/operations/automationAdmission.local.integration.ts:7",
         "backend/src/operations/automationAdmission.test.ts:4",
+        "backend/src/operations/automationCreation.local.integration.ts:8",
+        "backend/src/operations/automationCreation.test.ts:4",
         "backend/src/operations/internalControlReceipt.test.ts:4",
         "backend/src/operations/operationsService.owner.test.ts:4",
         "backend/src/routes/operations.ts:9"
@@ -15835,8 +15837,8 @@
         "backend/src/operations/operationsService.ts:511 (user_id)",
         "backend/src/operations/operationsService.ts:517 (user_id)",
         "backend/src/operations/operationsService.ts:518 (user_id)",
-        "backend/src/operations/operationsService.ts:543 (user_id)",
-        "backend/src/operations/operationsService.ts:589 (user_id)"
+        "backend/src/operations/operationsService.ts:556 (user_id)",
+        "backend/src/operations/operationsService.ts:602 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/operations/operationsService.ts#OperationsPermission",
@@ -15870,6 +15872,8 @@
         "backend/src/operations/actionIntent.test.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
         "backend/src/operations/automationAdmission.test.ts",
+        "backend/src/operations/automationCreation.local.integration.ts",
+        "backend/src/operations/automationCreation.test.ts",
         "backend/src/operations/internalControlReceipt.test.ts",
         "backend/src/operations/operationsService.owner.test.ts"
       ],
@@ -23535,7 +23539,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:640",
+        "backend/src/security/tenantIsolation.local.integration.ts:642",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -95432,6 +95436,13 @@
       "version": "20261018001100",
       "order": 107,
       "sha256": "307fbe8cdad30d1562979bc1f7c91234f6819e9141a97b783aba4e441f405c2d"
+    },
+    {
+      "id": "migration:d3114ceefe7f026381a9",
+      "sourcePath": "supabase/migrations/20261018001200_operations_automation_creation.sql",
+      "version": "20261018001200",
+      "order": 108,
+      "sha256": "86e5531b02564a0eecc9f1cd3ac92f50e18dfde16c8963d6f51aa9130f67a7b3"
     }
   ],
   "workflows": [
@@ -103222,6 +103233,20 @@
       "id": "test-suite:70247d028f04b4f535e8",
       "sourcePath": "backend/src/operations/automationAdmission.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4cec453f60320d163b63",
+      "sourcePath": "backend/src/operations/automationCreation.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:2b73597be8f2af942b49",
+      "sourcePath": "backend/src/operations/automationCreation.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

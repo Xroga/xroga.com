@@ -24,6 +24,10 @@ function fixture() {
       then(resolve: (value: unknown) => unknown) { return Promise.resolve(resolve({ data: [], error: null })); },
     }; return q;
   },async rpc(name:string,args:Record<string,unknown>){
+    if(name==='create_operations_automation_rule'){
+      state.onInsert('operations_automation_rules',args.p_rule as Record<string,unknown>);
+      return {data:[args.p_rule],error:null};
+    }
     assert.equal(name,'create_operations_action');assert.equal(args.p_actor,'actor');
     assert.deepEqual(args.p_allowed_roles,['operator','release_manager','recovery_manager','admin']);
     assert.equal(args.p_approval_role,null);assert.equal(args.p_confirmation_required,true);

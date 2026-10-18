@@ -529,8 +529,21 @@ export class OperationsService {
     const definition = ACTION_DEFINITIONS[input.actionType];
     if (!definition) throw new OperationsServiceError('precondition_failed', 'Automation action is unsupported', 400);
     if (['high','critical'].includes(input.riskLevel) && !definition.approvalRole) throw new OperationsServiceError('precondition_failed', 'High-risk automation requires an action with independent approval', 400);
-    const rows = await queryOrThrow<DbRow[]>(this.db.from('operations_automation_rules').insert({ user_id: access.ownerId, project_id: projectId, rule_key: input.ruleKey, name: input.name, trigger_type: input.triggerType, risk_level: input.riskLevel, action_type: input.actionType, conditions: redactOperationsValue(input.conditions), exclusions: redactOperationsValue(input.exclusions), rate_limit: { maxRuns: input.maxRuns, windowSeconds: input.windowSeconds }, enabled: input.enabled, approval_policy: definition.approvalRole ? { requiredRole: definition.approvalRole } : {}, verification_plan: { required: true } }).select('*'), 'Automation rule write failed');
-    await this.audit({ userId: access.ownerId, actorId: userId, projectId, action: 'operations.automation.created', targetType: 'automation_rule', targetId: rows[0].id, outcome: input.enabled ? 'enabled' : 'disabled', correlationId: randomUUID() });
+    const row = { id: randomUUID(), user_id: access.ownerId, project_id: projectId, environment_id: null, version: 1,
+      rule_key: input.ruleKey, name: input.name, trigger_type: input.triggerType, risk_level: input.riskLevel, action_type: input.actionType,
+      conditions: redactOperationsValue(input.conditions), exclusions: redactOperationsValue(input.exclusions),
+      rate_limit: { maxRuns: input.maxRuns, windowSeconds: input.windowSeconds }, enabled: input.enabled, emergency_stopped: false,
+      approval_policy: definition.approvalRole ? { requiredRole: definition.approvalRole } : {}, verification_plan: { required: true } };
+    const { data: rows, error } = await this.db.rpc('create_operations_automation_rule', {
+      p_actor: userId, p_owner: access.ownerId, p_project: projectId, p_rule: row, p_approval_role: definition.approvalRole ?? null,
+    });
+    if (error?.code === '42501') throw new OperationsServiceError('forbidden', 'Automation is not permitted', 403);
+    if (error?.code === '23505') throw new OperationsServiceError('conflict', 'Automation rule key already exists', 409);
+    if (error?.code === '22023') throw new OperationsServiceError('precondition_failed', 'Automation rule is invalid', 400);
+    if (error || !Array.isArray(rows) || rows.length !== 1 || !rows[0]
+      || !Object.entries(row).every(([key,value]) => isDeepStrictEqual(rows[0][key],value))) {
+      throw new OperationsServiceError('unknown', 'Automation rule persistence could not be verified', 503);
+    }
     return rows[0];
   }
 

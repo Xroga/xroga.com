@@ -3107,7 +3107,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
       "callIds": [
         "dd0917f84f2764fd0472",
         "c841bcae277927c0b193",
@@ -3129,7 +3129,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
       "callIds": [
         "cd8790e39c3283f05482",
         "e99258e8fe888ab954f2",
@@ -3178,7 +3178,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
       "callIds": [
         "58357b840ab8890eba45",
         "9ea21ff62008b510bd7f",
@@ -3198,9 +3198,8 @@
         "e95deab22b0719881f7d",
         "9673b56b7cf239040228",
         "75a4e4d0dcbac3fbadc0",
-        "0842197be6faf25e37fb",
-        "e5cd1c31025282db85a6",
-        "c5718b6fd27487351420"
+        "2dcf0eb881a38ba77375",
+        "f9577ff86262c65a8764"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
@@ -4754,7 +4753,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
       "callIds": [
         "5174d95d4b9405bca096"
       ],
@@ -4774,7 +4773,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
       "callIds": [
         "f175f84e5afd902c17c0"
       ],
@@ -4814,7 +4813,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
       "callIds": [
         "ed0903282a7144871281"
       ],
@@ -4834,7 +4833,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
       "callIds": [
         "00aea7c9a2f2d60601a1"
       ],
@@ -4850,7 +4849,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
       "callIds": [
         "e1b151df5a5cc43046f5"
       ],
@@ -4866,7 +4865,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
       "callIds": [
         "eaf9d6130529cf9e1281"
       ],
@@ -4918,7 +4917,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
       "callIds": [
         "6abbcd4bdc2a8835113a"
       ],
@@ -4938,9 +4937,9 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
       "callIds": [
-        "ce73439a131ba741d906"
+        "4058d1783848b91d9f27"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Existing authenticated signal endpoint supplies server actor and admitted owner/project. Service-only transaction locks current profile/project/member and exact current rule, verifies dedup owner/evidence, computes canonical condition/stop/maintenance/risk decisions and serializes database-time rate admission. Run and immutable admission audit commit together; caller validates exact receipt against existing decision engine before creating any action with the stable run UUID as key.",
@@ -4958,12 +4957,43 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
-      "callIds": ["8ff27acb70b177dbac91"],
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
+      "callIds": [
+        "f3d0a5f2a161a0bf8b52"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "After exact service-only admission, the existing action creator receives the stable run UUID key. Linking updates only the admitted owner/rule/digest/run in evaluating state with no action, then verifies its returned identity and action/status. No replay executes another action.",
       "reason": "Eight focused admission/intent tests pass. Empty or substituted link receipts and every unreturned action outcome, including4xx after possible queued-action persistence, preserve pending admission and return typed503 without falsely recording failure or retrying. Link remains separate from action creation and final audit. Crash reconciliation, post-admission current-rule/actor authority and parent lifecycle races remain unresolved. This write is reviewed but not security-certified.",
-      "evidence": [{"path":"backend/src/operations/automationAdmission.test.ts","marker":"uncertain action creation or linking preserves admission"},{"path":"backend/src/operations/automationAdmission.test.ts","marker":"a 4xx after action persistence"}]
+      "evidence": [
+        {
+          "path": "backend/src/operations/automationAdmission.test.ts",
+          "marker": "uncertain action creation or linking preserves admission"
+        },
+        {
+          "path": "backend/src/operations/automationAdmission.test.ts",
+          "marker": "a 4xx after action persistence"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/operations/operationsService.ts",
+      "sourceSha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
+      "callIds": [
+        "4da515a7c30d64d8c984"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Authenticated existing rule endpoint supplies server actor and project. Canonical action definitions still derive approval policy and validate high-risk compatibility. Service-only creation locks current actor/project/member, verifies owner/project and bounded rule shape, then commits the rule and mandatory immutable audit together. Caller checks every submitted field in exactly one returned row. No action executes during creation.",
+      "reason": "Eleven focused creation/intent/admission tests and42 local SQL shape/owner/role/duplicate/two-write rollback/replay assertions pass. Actual held-member revocation and project owner mutation, two-client same-key exclusion, write rollbacks, exact audit and browser denial prepared for disposable CI. Later rule mutation, project-wide stop/create concurrency and full automation lifecycle remain unresolved. No whole caller certification.",
+      "evidence": [
+        {
+          "path": "backend/src/operations/automationCreation.local.integration.ts",
+          "marker": "registerAutomationCreationTests"
+        },
+        {
+          "path": "backend/src/operations/automationCreation.test.ts",
+          "marker": "automation creation rejects substituted missing and duplicate receipts"
+        }
+      ]
     }
   ]
 }
