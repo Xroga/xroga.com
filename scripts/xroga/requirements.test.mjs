@@ -9,7 +9,9 @@ import { validateRepositoryLedger } from './validate-requirements-ledger.mjs';
 function fixture() { return buildRequirements(); }
 test('reviewed family ownership preserves unresolved history, private transcripts and unverified journeys', () => {
   const { ledger, sources } = fixture();
-  assert.equal(ledger.requirements.filter(row => row.implementation_owner_command === 'LATER_SOURCE_MAPPING_REVIEW').length, 8);
+  assert.equal(ledger.requirements.filter(row => row.implementation_owner_command === 'LATER_SOURCE_MAPPING_REVIEW').length, 0);
+  assert.equal(ledger.requirements.filter(row => row.implementation_owner_command.startsWith('SUPP-')).length, 8);
+  assert.ok(ledger.requirements.filter(row => row.implementation_owner_command.startsWith('SUPP-')).every(row=>row.current_state==='UNKNOWN_BLOCKED'&&row.source_reported_states.includes('SUPPLEMENTAL_PLANNING_ONLY_NOT_IMPLEMENTED')));
   assert.equal(ledger.requirements.filter(row => row.unresolved_questions.some(question=>question.startsWith('Original normative requirement title'))).length,80);
   assert.equal(ledger.requirements.filter(row => row.requirement_id.startsWith('XR-HIST-')).length, 211);
   assert.ok(ledger.requirements.filter(row => row.requirement_id.startsWith('XR-HIST-')).every(row => row.current_state !== 'IMPLEMENTED_AND_REACHABLE'));
@@ -91,6 +93,10 @@ test('implemented-without-evidence and missing ownership fail', () => {
   assert.throws(() => validateLedger(unsupported, sources, repositories), /lacks repository evidence/);
   const unowned = structuredClone(ledger); unowned.requirements[0].implementation_owner_command = '';
   assert.throws(() => validateLedger(unowned, sources, repositories));
+  const deferred=structuredClone(ledger);deferred.requirements.find(r=>r.disposition==='EXTEND').implementation_owner_command='LATER_SOURCE_MAPPING_REVIEW';
+  assert.throws(()=>validateLedger(deferred,sources,repositories),/Unassigned implementation command owner/);
+  const invented=structuredClone(ledger);invented.requirements.find(r=>r.implementation_owner_command.startsWith('SUPP-')).implementation_owner_command='SUPP-INVENTED';
+  assert.throws(()=>validateLedger(invented,sources,repositories),/Unknown supplemental/);
 });
 test('unmapped imported row fails even if someone edits the declared coverage counts', () => {
   const { ledger, sources, repositories } = fixture();

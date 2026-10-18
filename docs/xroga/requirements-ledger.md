@@ -1,6 +1,6 @@
 # Canonical Xroga requirements ledger
 
-Application source SHA: `cb27adefb8a8ffec7136aedc8207f82260e0646e`. Original row coverage is **119/119 features and 72/72 missions**; this is requirements mapping, NOT implemented-product or fully verified Batch One status. All original features remain UNVERIFIED/NOT_RUN. Full original-transcript semantic review remains pending. Private originals are not committed; pinned hashes and derived planning records are retained.
+Application source SHA: `42c4e71b9d964be1c049480735a8cf7ba653a314`. Original row coverage is **119/119 features and 72/72 missions**; this is requirements mapping, NOT implemented-product or fully verified Batch One status. All original features remain UNVERIFIED/NOT_RUN. Full original-transcript semantic review remains pending. Private originals are not committed; pinned hashes and derived planning records are retained.
 
 445 requirements; 527 source rows mapped; 43 mandatory capability families; 23 independently registered external candidates; zero newly adopted runtime dependencies. Original research lists additional candidates without granting adoption rights.
 
@@ -125,19 +125,19 @@ Application source SHA: `cb27adefb8a8ffec7136aedc8207f82260e0646e`. Original row
 | XR-HIST-d226b77640583f47 | Domain Autopilot Capability | IMPLEMENTED_BUT_UNVERIFIED | MISSION-058 | EXTEND |
 | XR-HIST-eb5d352c6c9de725 | Email, Communication and AI Capability Families | IMPLEMENTED_BUT_UNVERIFIED | MISSION-064 | EXTEND |
 | XR-HIST-f0706fa7ff432dc5 | Real-Time Web and X Research Engine | IMPLEMENTED_BUT_UNVERIFIED | MISSION-020 | EXTEND |
-| XR-HIST-5bc95bbfdbb6b145 | Blockchain Foundations through RPC Resilience | IMPLEMENTED_BUT_UNVERIFIED | LATER_SOURCE_MAPPING_REVIEW | EXTEND |
+| XR-HIST-5bc95bbfdbb6b145 | Blockchain Foundations through RPC Resilience | UNKNOWN_BLOCKED | SUPP-CHAIN-RPC-FOUNDATIONS | EXTEND |
 | XR-HIST-a453b8f7bd64f1db | Generated-Product Operations Manifest | IMPLEMENTED_BUT_UNVERIFIED | MISSION-057 | EXTEND |
 | XR-HIST-70e273c4b949e986 | Commerce, Media, Data, Device, Repository Evolution, Multi-Output and Quality | IMPLEMENTED_BUT_UNVERIFIED | MISSION-036 | EXTEND |
 | XR-HIST-1b4cc2a6e9865f62 | Persistent State, Versioning and Migration | IMPLEMENTED_BUT_UNVERIFIED | MISSION-014 | EXTEND |
 | XR-HIST-0bede91e7b09ca49 | Part B acceptance gate | PROPOSED_ONLY | 003 | NEW |
-| XR-HIST-bb8aa938b3856864 | Advanced Web3 capability graph | IMPLEMENTED_BUT_UNVERIFIED | LATER_SOURCE_MAPPING_REVIEW | EXTEND |
+| XR-HIST-bb8aa938b3856864 | Advanced Web3 capability graph | UNKNOWN_BLOCKED | SUPP-WEB3-CAPABILITY-GRAPH | EXTEND |
 | XR-HIST-0802b645aa8f7454 | Universal verification compiler | IMPLEMENTED_BUT_UNVERIFIED | MISSION-020 | EXTEND |
-| XR-HIST-d172de608a4b0a13 | EVM meaningful fixture | IMPLEMENTED_BUT_UNVERIFIED | LATER_SOURCE_MAPPING_REVIEW | EXTEND |
-| XR-HIST-7e289f1d6201825d | Solana meaningful fixture | IMPLEMENTED_BUT_UNVERIFIED | LATER_SOURCE_MAPPING_REVIEW | EXTEND |
-| XR-HIST-c34e9c5b2a6e4e0b | Additional non-EVM adapter | IMPLEMENTED_BUT_UNVERIFIED | LATER_SOURCE_MAPPING_REVIEW | EXTEND |
-| XR-HIST-86b2af497a797263 | Wallet, RPC, indexer and signing security | IMPLEMENTED_BUT_UNVERIFIED | LATER_SOURCE_MAPPING_REVIEW | EXTEND |
-| XR-HIST-0da071f652d107b1 | Hackathon execution and evidence | IMPLEMENTED_BUT_UNVERIFIED | LATER_SOURCE_MAPPING_REVIEW | EXTEND |
-| XR-HIST-4115116ecedc20a7 | Deployment evidence and mainnet safety | IMPLEMENTED_BUT_UNVERIFIED | LATER_SOURCE_MAPPING_REVIEW | EXTEND |
+| XR-HIST-d172de608a4b0a13 | EVM meaningful fixture | UNKNOWN_BLOCKED | SUPP-EVM-INTEGRATION | EXTEND |
+| XR-HIST-7e289f1d6201825d | Solana meaningful fixture | UNKNOWN_BLOCKED | SUPP-SOLANA-INTEGRATION | EXTEND |
+| XR-HIST-c34e9c5b2a6e4e0b | Additional non-EVM adapter | UNKNOWN_BLOCKED | SUPP-NON-EVM-ADAPTERS | EXTEND |
+| XR-HIST-86b2af497a797263 | Wallet, RPC, indexer and signing security | UNKNOWN_BLOCKED | SUPP-WALLET-SIGNING-SECURITY | EXTEND |
+| XR-HIST-0da071f652d107b1 | Hackathon execution and evidence | UNKNOWN_BLOCKED | SUPP-HACKATHON-EXECUTION | EXTEND |
+| XR-HIST-4115116ecedc20a7 | Deployment evidence and mainnet safety | UNKNOWN_BLOCKED | SUPP-MAINNET-DEPLOYMENT-EVIDENCE | EXTEND |
 | XR-HIST-cd37476f2771cd51 | Versioning, migration and documentation | IMPLEMENTED_BUT_UNVERIFIED | MISSION-017 | EXTEND |
 | XR-HIST-b364a7c3a841229a | Command 2 final acceptance | PROPOSED_ONLY | MISSION-068 | NEW |
 | XR-HIST-46988e896580b465 | Open-ended UniversalProductSpec persisted and versioned | IMPLEMENTED_BUT_UNVERIFIED | MISSION-017 | EXTEND |

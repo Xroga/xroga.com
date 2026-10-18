@@ -1,5 +1,11 @@
 # Current implementation status — scoped evidence, not marketing claims
 
+## Founder-approved four-phase recovery, Phase1 only
+
+Current Phase1 work is indexed in `batch-1/phases/PHASE-1-ACCEPTANCE.md`, the104-criterion original-wording scoreboard and frozen371-record/73-packet Phase2 worklist. Original005 certifies the harness, not twelve unbuilt future products. Original006 is the engineering operating contract. Eight supplemental specialty owners are founder-approved PLANNED/NOT_IMPLEMENTED traceability entries, with original72 missions unchanged and roadmap placement pending. No Web3 execution is authorized.
+
+Last independently verified source is `ea2305700ae5c46ea24f612f9a09fbfcba4161cd`, integrated `36c4529fa88ef9558b71b5766c2ea239f35f0f01`:all11 workflows pass,21-stage branch/integrated baselines twice each,113 fresh/upgrade migrations,148 real security tests and3 browser tests,zero failures/skips. Current Phase1 source and the preserved115-migration growth overlay require their own verification. Exact final-source artifacts and source-hash bindings supersede the older chronological notes below without deleting failure evidence. Actual007 remains incomplete. Phase2 admission requires founder review after Phase1.
+
 ## Active mission checkpoint, zero additional spending
 
 CWS/GitHub continuation extends the existing OAuth epoch to all four callback flows. CWS preserves encrypted BYOK persistence and its issued admission, with a conditional adapter enforcing the consumed session lifetime. GitHub now persists and consumes signed state once, binds the original redirect, and saves/revokes primary and legacy authority atomically. Nineteen focused tests and89 local SQL assertions pass, including transactional rollback after a forced primary-table failure. Exact-source disposable concurrency and full branch/integrated checks remain mandatory. Earlier f33a4e9f disposable38802283477 passed75 fresh/upgrade/reapply migrations,64 real security tests with zero failures/skips and authenticated browser checks, but does not certify these later edits. Full007 remains blocked with no new whole-caller certification. External revocation, complete caller provenance, provider acceptance and vault/KMS remain separate.

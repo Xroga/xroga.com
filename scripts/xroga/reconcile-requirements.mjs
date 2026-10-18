@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { candidates as expectedCandidates } from './research-candidates.mjs';
 import { ledgerJsonSchema, validateLedger } from './requirements-schema.mjs';
 import { validateDerivedResearch } from './import-private-research.mjs';
+import { validateSupplementalOwners } from './supplemental-owners.mjs';
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -21,6 +22,7 @@ const reportPath = 'docs/xroga/research/inputs/batch-one-report.txt';
 const sourceManifestPath = 'docs/xroga/research/source-manifest.json';
 const familyReviewPath = 'docs/xroga/research/family-ownership-review.json';
 const historicalReviewPath = 'docs/xroga/research/historical-ownership-review.json';
+const supplementalPath = 'docs/xroga/research/supplemental-planning-owners.json';
 export const missingSources = [
   'https://chatgpt.com/share/6acd319b-8244-83ec-ae3f-dfe13f414569',
 ];
@@ -97,7 +99,7 @@ export function buildRequirements() {
   const paths = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' }).trim().split(/\r?\n/).sort();
   const previous = existsSync(resolve(root, sourceManifestPath)) ? JSON.parse(read(sourceManifestPath)) : null;
   const previousById = new Map((previous?.sources ?? []).map(item => [item.source_id, item]));
-  const sourcePaths = sorted([reportPath, familyReviewPath, historicalReviewPath, 'docs/xroga/current-state.json', 'docs/xroga/research/repository-candidates.json', 'docs/xroga/research/derived-original-requirements.json',
+  const sourcePaths = sorted([reportPath, familyReviewPath, historicalReviewPath, supplementalPath, 'docs/xroga/current-state.json', 'docs/xroga/research/repository-candidates.json', 'docs/xroga/research/derived-original-requirements.json',
     ...paths.filter(path => /^docs\//.test(path) && !path.startsWith('docs/xroga/') && !path.startsWith('docs/implementation/batch-01/') && /\.(?:md|json|csv)$/.test(path)),
     ...['AGENTS.md', 'README.md', 'CONTRIBUTING.md', 'DEPLOY.md', 'ROUTING.md', 'SECURITY.md', 'SHIP_COMPLETENESS.md', 'OWNER_SETUP.md'].filter(path => paths.includes(path))]);
   const sources = [], parsedDocuments = new Map();
@@ -250,6 +252,20 @@ export function buildRequirements() {
     const record=requirements.find(item=>item.requirement_id===`XR-HIST-${hash(`${source.path}:${row}`).slice(0,16)}`);
     record.source_refs.push({source_id:sourceId(historicalReviewPath),locator:`sources[path=${source.path}].unreviewed.rows[${row}]`});
     record.unresolved_questions.push(gap.reason);
+  }
+  const supplemental=validateSupplementalOwners(JSON.parse(read(supplementalPath)),parsedDocuments.get('docs/command-2/parts-abc/requirements-ledger.json'),original.missions);
+  for(const owner of supplemental.owners){
+    const record=requirements.find(item=>item.requirement_id===`XR-HIST-${hash(`${owner.sourcePath}:${owner.sourceRowId}`).slice(0,16)}`);
+    if(!record||record.implementation_owner_command!=='LATER_SOURCE_MAPPING_REVIEW')throw new Error('Supplemental owner would replace genuine existing ownership');
+    record.implementation_owner_command=owner.id;
+    record.dependencies=sorted([...record.dependencies,...owner.dependencies]);
+    record.source_refs.push({source_id:sourceId(supplementalPath),locator:`owners[id=${owner.id}]; founder-approved planning only`});
+    record.acceptance_criteria=sorted([...record.acceptance_criteria,...owner.acceptanceCriteria]);
+    record.current_state='UNKNOWN_BLOCKED';
+    record.source_reported_states.push('SUPPLEMENTAL_PLANNING_ONLY_NOT_IMPLEMENTED');
+    record.rationale+=`; Founder approved supplemental owner ${owner.id}. Original72 unchanged; dedicated scope is not covered by broader missions. Roadmap placement pending. No Web3 implementation, transaction, contract deployment or mainnet action authorized.`;
+    record.unresolved_questions=record.unresolved_questions.filter(q=>!q.startsWith('These specific chain transaction/signing/reorg'));
+    record.unresolved_questions.push('Supplemental command is PLANNED/NOT_IMPLEMENTED. Future roadmap placement and actual implementation/evidence remain pending. Historical code claims are not independently accepted.');
   }
   const ledger = { version: '1.0', source_sha: inventory.identity.sha, assessment: 'AVAILABLE_SOURCE_RECONCILIATION', requirements,
     source_mappings, coverage: { imported_available_rows: source_mappings.length, mapped_available_rows: source_mappings.length,

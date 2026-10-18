@@ -1,0 +1,63 @@
+{
+  "version": "1.0",
+  "missionId": "XB01-P1",
+  "baseSha": "ea2305700ae5c46ea24f612f9a09fbfcba4161cd",
+  "requirementIds": ["XB01-C001", "XB01-C002", "XB01-C003", "XB01-C004", "XB01-C005", "XB01-C006", "XB01-C007"],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Founder-approved Phase1 only: original001-006 proof, computed007 evaluator, frozen371 baseline mappings, supplemental planning ownership and recovery of the existing assignment/exposure overlay. No Phase2 tenant programme or008-010 runtime implementation.",
+  "changedFiles": [
+    "backend/src/growth/growthService.ts",
+    "backend/src/growth/experimentAdmission.test.ts",
+    "backend/src/growth/experimentAdmission.local.integration.ts",
+    "backend/src/security/tenantIsolation.local.integration.ts",
+    "supabase/migrations/20261018001800_growth_experiment_assignment.sql",
+    "supabase/migrations/20261018001900_growth_experiment_exposure.sql",
+    "scripts/security/audit-tenant-policies.mjs",
+    "scripts/security/tenant-acceptance.mjs",
+    "scripts/security/tenant-acceptance.test.mjs",
+    "scripts/xroga/phase-one.mjs",
+    "scripts/xroga/phase-one.test.mjs",
+    "scripts/xroga/verify-phase-one.mjs",
+    "scripts/xroga/supplemental-owners.mjs",
+    "scripts/xroga/supplemental-owners.test.mjs",
+    "docs/xroga/research/supplemental-planning-owners.json",
+    "docs/xroga/batch-1/phases/PHASE-1-ACCEPTANCE.md"
+  ],
+  "decisions": {
+    "keep": ["Existing scheduler, execution graph, tenant context, owner checks, budget ledger, authority stores, Supabase clients, Cline/MCP/Git compatibility and original72 missions"],
+    "extend": ["Existing audit and baseline with source-bound criterion evaluation and negative fixtures", "Existing requirements converter with founder-approved supplemental planning owners"],
+    "replace": ["Impossible hardcoded007 acceptance outcome with deterministic proof-based computation"],
+    "deprecate": ["Treating review counters or synthetic evaluator fixtures as actual tenant or full Batch1 acceptance"]
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": ["supabase/migrations/20261018001800_growth_experiment_assignment.sql", "supabase/migrations/20261018001900_growth_experiment_exposure.sql"],
+    "rollout": "Existing additive service-only functions in disposable CI only. No production SQL or new tables. Full fresh/upgrade/reapply required.",
+    "rollback": "Revert recovered growth entry-point commit before any production rollout. Functions can remain unused. Never remove customer state or restore an authorization bypass."
+  },
+  "securityImpact": {
+    "auth": {"changed": false, "description": "Existing authenticated growth endpoints and operations roles preserved. No login, MFA or role bypass."},
+    "tenant": {"changed": true, "description": "Recovered growth transactions check current actor/project/member/parent and durable assignment/exposure. Evaluator is evidence-only, never issues runtime authority."},
+    "approval": {"changed": false, "description": "No new grant or consequential operation. Existing authority mechanisms retained for Phase3."},
+    "credentials": {"changed": false, "description": "No live secret, vault or key change. Supplemental Web3 planning is not execution authorization."},
+    "egress": {"changed": false, "description": "No new external effect or active network adapter. Egress runtime work remains Phase4."},
+    "cost": {"changed": false, "description": "Zero additional spend, standard public-repository CI and local/disposable fixtures only."},
+    "billing": {"changed": false, "description": "No payment, subscription, account plan or production hosting change."}
+  },
+  "tests": [
+    {"command": "node --test scripts/security/tenant-acceptance.test.mjs scripts/security/audit-tenant-policies.test.mjs", "scope": "Valid complete proof and stale/forged/incomplete/credential/exemption/partial-closure denials", "negative": true, "reference": "scripts/security/tenant-acceptance.test.mjs"},
+    {"command": "node --test scripts/xroga/phase-one.test.mjs scripts/xroga/supplemental-owners.test.mjs scripts/xroga/verify-phase-one.test.mjs", "scope": "Frozen exact mappings, planning-only supplemental scope and source-bound receipt integrity", "negative": true, "reference": "scripts/xroga/phase-one.test.mjs"},
+    {"command": "node --import tsx --test src/security/tenantIsolation.local.integration.ts", "scope": "Disposable real assignment/exposure concurrent winners, authority/parent changes, rollback and browser denial", "negative": true, "reference": "backend/src/growth/experimentAdmission.local.integration.ts"},
+    {"command": "npm run verify:baseline", "scope": "Complete canonical baseline twice on branch and integrated candidate", "negative": false, "reference": "scripts/ci/run-baseline.mjs"}
+  ],
+  "architecture": {"change": "extends_canonical", "reason": "Acceptance tooling and existing transaction boundaries only. No new orchestration, policy runtime, vault or event system.", "rfc": null},
+  "rollout": "Existing draft PR803 only. Founder review required after Phase1. No merge or deployment.",
+  "rollback": "Revert scoped Phase1 commits, preserve baseline, source evidence and unrelated changes. Existing additive functions stay unused if necessary. No data deletion or destructive credential rollback.",
+  "knownGaps": ["Final-source Phase1 CI pending", "Actual007 acceptance remains Phase2", "008/009 Phase3 and010/final GO Phase4 remain mandatory", "ActualR2, production schema parity, managedKMS and commercial hosting are unverified external/activation gates"],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": ["docs/xroga/batch-1/phases/PHASE-1-BASELINE.json", "docs/xroga/batch-1/phases/PHASE-1-ACCEPTANCE.md", "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Remaining original007-010 and provider/activation acceptance, no production approval"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
+}

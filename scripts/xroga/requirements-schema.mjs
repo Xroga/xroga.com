@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { states } from './inventory-schema.mjs';
+import { supplementalOwnerIds } from './supplemental-owners.mjs';
 
 const strings = z.array(z.string());
 export const sourceSchema = z.object({ source_id: z.string(), filename: z.string(), path_or_url: z.string(),
@@ -44,6 +45,8 @@ export function validateLedger(ledger, sources, candidates, pathExists = () => t
   for (const requirement of parsed.requirements) {
     if (requirements.has(requirement.requirement_id)) throw new Error(`Duplicate requirement: ${requirement.requirement_id}`);
     requirements.set(requirement.requirement_id, requirement);
+    if(['NEW','EXTEND','REPLACE'].includes(requirement.disposition)&&requirement.implementation_owner_command.startsWith('LATER_'))throw new Error(`Unassigned implementation command owner: ${requirement.requirement_id}`);
+    if(requirement.implementation_owner_command.startsWith('SUPP-')&&!Object.values(supplementalOwnerIds).includes(requirement.implementation_owner_command))throw new Error('Unknown supplemental planning owner');
     for (const ref of requirement.source_refs) if (!sourceIds.has(ref.source_id)) throw new Error(`Unknown source: ${ref.source_id}`);
     for (const path of requirement.current_paths) if (!pathExists(path)) throw new Error(`Missing repository evidence: ${path}`);
     if (requirement.current_state === 'IMPLEMENTED_AND_REACHABLE' && !requirement.current_paths.length) throw new Error(`Implemented requirement lacks repository evidence: ${requirement.requirement_id}`);

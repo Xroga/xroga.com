@@ -6,6 +6,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { root } from '../ci/toolchain.mjs';
 import { applyCallerReviews } from './caller-reviews.mjs';
+import { evaluateTenantAcceptance } from './tenant-acceptance.mjs';
 const ts = createRequire(import.meta.url)('typescript');
 const hash = value => createHash('sha256').update(value).digest('hex');
 const normalized = value => value.replace(/\r\n/g,'\n');
@@ -42,7 +43,7 @@ export function discoverPersistenceCalls(path,content) {
   };visit(source);return calls;
 }
 
-export function buildTenantAudit() {
+export function buildTenantAudit({admissionOverride,observationOverride}={}) {
   const observation=JSON.parse(read(metadataPath));
   if(observation.scope!=='READ_ONLY_SCHEMA_METADATA_NO_CUSTOMER_ROWS'||observation.securityCertification!=='NOT_CERTIFIED'||!observation.tables.length)throw new Error('Unapproved schema observation');
   const paths=execFileSync('git',['ls-files'],{cwd:root,encoding:'utf8'}).trim().split(/\r?\n/).filter(path=>/^(?:backend|frontend)\/src\/.*\.[jt]sx?$/.test(path)&&!/(?:\.test\.|\.spec\.|\.local\.integration\.|\/e2e\/|\/tests?\/)/.test(path));
@@ -53,12 +54,28 @@ export function buildTenantAudit() {
   const tableNames=new Set(observation.tables.map(row=>`${row.schema}.${row.table_name}`));
   if(tableNames.size!==observation.tables.length)throw new Error('Duplicate schema table');
   const guard=ts.createSourceFile('serviceRoleGuard.ts',read('backend/src/security/serviceRoleGuard.ts'),ts.ScriptTarget.Latest,true);
-  let exceptions=0;
-  const inspect=node=>{if(ts.isVariableDeclaration(node)&&node.name.getText(guard)==='globalServiceExceptions'&&ts.isCallExpression(node.initializer)&&ts.isObjectLiteralExpression(node.initializer.arguments[0])) exceptions=node.initializer.arguments[0].properties.length;ts.forEachChild(node,inspect);};inspect(guard);
+  let exceptions=0;const registeredExceptions=new Map();
+  const inspect=node=>{if(ts.isVariableDeclaration(node)&&node.name.getText(guard)==='globalServiceExceptions'&&ts.isCallExpression(node.initializer)&&ts.isObjectLiteralExpression(node.initializer.arguments[0])) {
+    exceptions=node.initializer.arguments[0].properties.length;
+    for(const property of node.initializer.arguments[0].properties)if(ts.isPropertyAssignment(property)&&ts.isCallExpression(property.initializer)&&ts.isObjectLiteralExpression(property.initializer.arguments[0])){
+      const fields=Object.fromEntries(property.initializer.arguments[0].properties.filter(p=>ts.isPropertyAssignment(p)&&ts.isStringLiteral(p.initializer)).map(p=>[p.name.getText(guard),p.initializer.text]));
+      registeredExceptions.set(property.name.getText(guard),fields);
+    }
+  }ts.forEachChild(node,inspect);};inspect(guard);
   if(!exceptions) throw new Error('Missing explicit global service exception registry');
   const outcomes=Object.fromEntries(['REVIEW_REQUIRED','SCOPED_BOUNDARY','NARROW_EXCEPTION','NOT_PERSISTENCE','REVIEWED_GAP'].map(value=>[value,callers.filter(row=>row.review===value).length]));
-  const counts={observedTables:tableNames.size,rlsEnabled:observation.tables.filter(row=>row.rls_enabled).length,privilegedFactorySites:callers.filter(row=>row.kind==='PRIVILEGED_FACTORY').length,persistenceCandidates:callers.length,ownerPredicateCandidates:callers.filter(row=>row.ownerPredicateCandidate).length,reviewRequired:outcomes.REVIEW_REQUIRED,reviewedCandidates:callers.length-outcomes.REVIEW_REQUIRED,unresolvedSafetyCandidates:outcomes.REVIEW_REQUIRED+outcomes.REVIEWED_GAP,certifiedScopedPrivilegedCallers:0,registeredNarrowGlobalExceptions:exceptions};
-  const report={version:'1.1',schemaObservationSha256:hash(read(metadataPath)),reviewRegistrySha256:hash(read(registryPath)),scope:'STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION',releaseGate:'BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF',counts,outcomes,callers};
+  const obligationPath='docs/xroga/security/tenant-invariant-obligations.json';
+  const proofPath='docs/xroga/security/tenant-proof-observations.json';
+  const admission=admissionOverride??(existsSync(join(root,obligationPath))?JSON.parse(read(obligationPath)):{version:1,sourceSha:observation.sourceSha??'0'.repeat(40),obligations:[],criteria:[],proofs:[]});
+  const observed=observationOverride??(existsSync(join(root,proofPath))?JSON.parse(read(proofPath)):{receipts:[],exceptions:[]});
+  const sourceSha=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
+  if(admissionOverride&&admissionOverride.sourceSha!==sourceSha)throw new Error('External acceptance snapshot does not match current HEAD');
+  const approvedExceptions=(observed.exceptions??[]).filter(e=>{const actual=registeredExceptions.get(e.id);return actual&&actual.source===e.path
+    &&Array.isArray(e.operations)&&e.operations.length&&e.operations.every(op=>actual.action.split('/').includes(op));});
+  const evaluated=evaluateTenantAcceptance({...admission,sourceSha,callers},{readAsset:path=>existsSync(join(root,path))?read(path):null,receipts:observed.receipts,exceptions:approvedExceptions,expectedSourceSha:sourceSha});
+  const {callers:boundaryResults,...acceptance}=evaluated;
+  const counts={observedTables:tableNames.size,rlsEnabled:observation.tables.filter(row=>row.rls_enabled).length,privilegedFactorySites:callers.filter(row=>row.kind==='PRIVILEGED_FACTORY').length,persistenceCandidates:callers.length,ownerPredicateCandidates:callers.filter(row=>row.ownerPredicateCandidate).length,reviewRequired:outcomes.REVIEW_REQUIRED,reviewedCandidates:callers.length-outcomes.REVIEW_REQUIRED,unresolvedSafetyCandidates:outcomes.REVIEW_REQUIRED+outcomes.REVIEWED_GAP,certifiedScopedPrivilegedCallers:evaluated.certifiedScopedPrivilegedCallers,registeredNarrowGlobalExceptions:exceptions};
+  const report={version:'1.1',schemaObservationSha256:hash(read(metadataPath)),reviewRegistrySha256:hash(read(registryPath)),scope:'STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION',releaseGate:evaluated.result==='PASS'?'PASS':'BLOCKED_CRITERION_EVIDENCE',counts,outcomes,acceptance,callers};
   const escape=value=>String(value??'none').replaceAll('|','/').replaceAll('\n',' ');
   const tableRows=observation.tables.map(row=>{
     const owners=row.columns.filter(column=>['user_id','tenant_id','owner_id','author_id','member_user_id'].includes(column.name)||(row.table_name==='profiles'&&column.name==='id'));
@@ -73,15 +90,44 @@ export function buildTenantAudit() {
 }
 
 export function main(args=process.argv.slice(2)) {
-  const outputs=buildTenantAudit();
+  const external=args.includes('--evidence')||args.includes('--observations');
+  if(external&&(!args.includes('--evidence')||!args.includes('--observations')||args.includes('--write')))throw new Error('Exact-source evidence and independent observations are both required; external proof must not overwrite canonical source');
+  const externalJson=flag=>{const path=args[args.indexOf(flag)+1];if(!/^artifacts\/[a-zA-Z0-9_./-]+\.json$/.test(path??'')||path.split('/').includes('..'))throw new Error('External acceptance proof must be a local artifact JSON');return JSON.parse(read(path));};
+  const overrides=external?{admissionOverride:externalJson('--evidence'),observationOverride:externalJson('--observations')}:{};
+  if(external)authenticateObservedReceipts(overrides.observationOverride.receipts??[],overrides.admissionOverride.sourceSha);
+  else if(args.includes('--require-complete')){
+    const path='docs/xroga/security/tenant-proof-observations.json';
+    const receipts=existsSync(join(root,path))?JSON.parse(read(path)).receipts??[]:[];
+    authenticateObservedReceipts(receipts,execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim());
+  }
+  const outputs=buildTenantAudit(overrides);
   for(const[path,content]of outputs) {
     if(args.includes('--write')){mkdirSync(dirname(join(root,path)),{recursive:true});writeFileSync(join(root,path),content);}
-    else if(!existsSync(join(root,path))||read(path)!==content)throw new Error(`Tenant audit drift: ${path}`);
+    else if(!external&&(!existsSync(join(root,path))||read(path)!==content))throw new Error(`Tenant audit drift: ${path}`);
   }
   const report=JSON.parse(outputs.get('docs/xroga/security/privileged-callers.json'));
-  // Finishing a manual candidate register cannot satisfy separate staging,
-  // orphan, end-to-end and full original acceptance criteria.
+  // Review completion alone is insufficient. All original criteria and their
+  // independently observed source-bound proof must pass the computed gate.
   if(args.includes('--require-complete')&&(report.counts.unresolvedSafetyCandidates>0||report.releaseGate!=='PASS'))throw new Error('Tenant security acceptance BLOCKED: unresolved caller review and integration gates');
   console.log(JSON.stringify({result:'PASS_AUDIT_INTEGRITY_NOT_TENANT_SECURITY_ACCEPTANCE',counts:report.counts,releaseGate:report.releaseGate}));
+}
+
+/** Exact-source acceptance cannot trust a locally fabricated CI receipt. Normal
+ * inventory checks need no network. External acceptance re-reads authenticated
+ * GitHub metadata and logs, including LOCAL tests originally executed in CI. */
+export function authenticateObservedReceipts(receipts,sourceSha,loadRun=runId=>{
+  const gh=args=>execFileSync('gh',args,{cwd:root,encoding:'utf8',maxBuffer:30*1024*1024,stdio:['ignore','pipe','ignore']});
+  return {metadata:JSON.parse(gh(['run','view',runId,'--json','headSha,status,conclusion'])),log:normalized(gh(['run','view',runId,'--log']))};
+}) {
+  const runs=new Map();
+  for(const receipt of receipts){
+    if(!/^\d+$/.test(receipt.runId??''))throw new Error('Independent CI run identity required');
+    if(!runs.has(receipt.runId))runs.set(receipt.runId,loadRun(receipt.runId));
+    const {metadata,log}=runs.get(receipt.runId);
+    if(metadata.headSha!==sourceSha||metadata.status!=='completed'||metadata.conclusion!=='success'
+      ||hash(log)!==receipt.artifactSha256||receipt.sourceSha!==sourceSha)throw new Error('CI observation does not match independently retrieved exact-source log');
+    if(!Array.isArray(receipt.passedTests)||receipt.passedTests.some(name=>!log.split(/\r?\n/).some(line=>/\bok \d+ - /.test(line)&&line.endsWith(name))))throw new Error('Claimed test was not observed passing in CI');
+  }
+  return receipts;
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))main();

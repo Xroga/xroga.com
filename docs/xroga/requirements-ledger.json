@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "cb27adefb8a8ffec7136aedc8207f82260e0646e",
+  "source_sha": "42c4e71b9d964be1c049480735a8cf7ba653a314",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -990,7 +990,8 @@
         "backend/src/middleware/phase1Auth.ts",
         "backend/src/security/ownership.ts",
         "backend/src/security/tenantContext.ts",
-        "backend/src/security/tenantErrors.ts"
+        "backend/src/security/tenantErrors.ts",
+        "scripts/security/tenant-acceptance.mjs"
       ],
       "implementation_owner_command": "007",
       "priority": "P0",
@@ -3452,7 +3453,8 @@
         "scripts/security/full-supabase-history.mjs",
         "scripts/security/historical-share-fixture.mjs",
         "scripts/security/r2-private-check.mjs",
-        "scripts/security/staging-preflight.mjs"
+        "scripts/security/staging-preflight.mjs",
+        "scripts/security/tenant-acceptance.mjs"
       ],
       "implementation_owner_command": "010",
       "priority": "P0",
@@ -8534,17 +8536,26 @@
         {
           "source_id": "SRC-cf5d8df2e32208a9",
           "locator": "sources[path=docs/command-2/parts-abc/requirements-ledger.json].unreviewed.rows[C2B-005]"
+        },
+        {
+          "source_id": "SRC-70f683942bc0ba21",
+          "locator": "owners[id=SUPP-CHAIN-RPC-FOUNDATIONS]; founder-approved planning only"
         }
       ],
       "feature_category": "historical-repository-requirement",
       "classification": "backend",
-      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [
         "backend/src/synthesis/chain/chainRuntime.ts"
       ],
-      "implementation_owner_command": "LATER_SOURCE_MAPPING_REVIEW",
+      "implementation_owner_command": "SUPP-CHAIN-RPC-FOUNDATIONS",
       "priority": "P1",
-      "dependencies": [],
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
       "provider_dependencies": [],
       "security_implications": [
         "Tenant, authority, secret and egress boundaries must pass the applicable negative tests"
@@ -8560,19 +8571,23 @@
       ],
       "verification_method": "Execute the requirement acceptance criteria against current source; source filenames and historical status labels alone do not prove completion",
       "acceptance_criteria": [
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Independently verify source-described evidence: wallet replay, signer, transaction, reorg and same-chain failover tests",
         "Source-required verification: chainRuntime.test.ts"
       ],
       "external_repo_candidates": [],
       "disposition": "EXTEND",
-      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
+      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; Founder approved supplemental owner SUPP-CHAIN-RPC-FOUNDATIONS. Original72 unchanged; dedicated scope is not covered by broader missions. Roadmap placement pending. No Web3 implementation, transaction, contract deployment or mainnet action authorized.",
       "confidence": "LOW",
       "unresolved_questions": [
         "Original sources are now supplied; precise mapping of this earlier record still requires semantic review, not a guessed mission assignment",
-        "These specific chain transaction/signing/reorg, EVM/Solana/Soroban and hackathon submission contracts have no exact dedicated implementation mission in the supplied72. Broad app/evaluation missions alone do not prove ownership of their specialized acceptance. Retain explicit mapping gap rather than inventing a mission or authorizing financial/organizer actions."
+        "Supplemental command is PLANNED/NOT_IMPLEMENTED. Future roadmap placement and actual implementation/evidence remain pending. Historical code claims are not independently accepted."
       ],
       "source_reported_states": [
         "implemented",
-        "verified_local"
+        "verified_local",
+        "SUPPLEMENTAL_PLANNING_ONLY_NOT_IMPLEMENTED"
       ]
     },
     {
@@ -8881,19 +8896,28 @@
         {
           "source_id": "SRC-cf5d8df2e32208a9",
           "locator": "sources[path=docs/command-2/parts-abc/requirements-ledger.json].unreviewed.rows[C2C-001]"
+        },
+        {
+          "source_id": "SRC-70f683942bc0ba21",
+          "locator": "owners[id=SUPP-WEB3-CAPABILITY-GRAPH]; founder-approved planning only"
         }
       ],
       "feature_category": "historical-repository-requirement",
       "classification": "backend",
-      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [
         "backend/src/synthesis/capabilityGraph.ts",
         "backend/src/synthesis/chain/advancedWeb3.ts",
         "backend/src/synthesis/productDefinition.ts"
       ],
-      "implementation_owner_command": "LATER_SOURCE_MAPPING_REVIEW",
+      "implementation_owner_command": "SUPP-WEB3-CAPABILITY-GRAPH",
       "priority": "P1",
-      "dependencies": [],
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
       "provider_dependencies": [],
       "security_implications": [
         "Tenant, authority, secret and egress boundaries must pass the applicable negative tests"
@@ -8909,20 +8933,24 @@
       ],
       "verification_method": "Execute the requirement acceptance criteria against current source; source filenames and historical status labels alone do not prove completion",
       "acceptance_criteria": [
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Independently verify source-described evidence: nine explicit advanced chain nodes and deterministic runtime checks",
         "Source-required verification: advancedWeb3.test.ts",
         "Source-required verification: foundation.fixture.test.ts"
       ],
       "external_repo_candidates": [],
       "disposition": "EXTEND",
-      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
+      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; Founder approved supplemental owner SUPP-WEB3-CAPABILITY-GRAPH. Original72 unchanged; dedicated scope is not covered by broader missions. Roadmap placement pending. No Web3 implementation, transaction, contract deployment or mainnet action authorized.",
       "confidence": "LOW",
       "unresolved_questions": [
         "Original sources are now supplied; precise mapping of this earlier record still requires semantic review, not a guessed mission assignment",
-        "These specific chain transaction/signing/reorg, EVM/Solana/Soroban and hackathon submission contracts have no exact dedicated implementation mission in the supplied72. Broad app/evaluation missions alone do not prove ownership of their specialized acceptance. Retain explicit mapping gap rather than inventing a mission or authorizing financial/organizer actions."
+        "Supplemental command is PLANNED/NOT_IMPLEMENTED. Future roadmap placement and actual implementation/evidence remain pending. Historical code claims are not independently accepted."
       ],
       "source_reported_states": [
         "implemented",
-        "verified_local"
+        "verified_local",
+        "SUPPLEMENTAL_PLANNING_ONLY_NOT_IMPLEMENTED"
       ]
     },
     {
@@ -9009,18 +9037,27 @@
         {
           "source_id": "SRC-cf5d8df2e32208a9",
           "locator": "sources[path=docs/command-2/parts-abc/requirements-ledger.json].unreviewed.rows[C2C-003]"
+        },
+        {
+          "source_id": "SRC-70f683942bc0ba21",
+          "locator": "owners[id=SUPP-EVM-INTEGRATION]; founder-approved planning only"
         }
       ],
       "feature_category": "historical-repository-requirement",
       "classification": "backend",
-      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [
         "backend/fixtures/contracts/MilestoneEscrow.sol",
         "backend/src/synthesis/fixtures/web3Fixtures.ts"
       ],
-      "implementation_owner_command": "LATER_SOURCE_MAPPING_REVIEW",
+      "implementation_owner_command": "SUPP-EVM-INTEGRATION",
       "priority": "P1",
-      "dependencies": [],
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
       "provider_dependencies": [],
       "security_implications": [
         "Tenant, authority, secret and egress boundaries must pass the applicable negative tests"
@@ -9036,20 +9073,24 @@
       ],
       "verification_method": "Execute the requirement acceptance criteria against current source; source filenames and historical status labels alone do not prove completion",
       "acceptance_criteria": [
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Independently verify source-described evidence: ABI and bytecode generated; authority, terminal-state, conservation, static security and 1000 deterministic fuzz cases passed",
         "Source-required verification: advancedWeb3.test.ts",
         "Source-required verification: solc 0.8.30 compile"
       ],
       "external_repo_candidates": [],
       "disposition": "EXTEND",
-      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
+      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; Founder approved supplemental owner SUPP-EVM-INTEGRATION. Original72 unchanged; dedicated scope is not covered by broader missions. Roadmap placement pending. No Web3 implementation, transaction, contract deployment or mainnet action authorized.",
       "confidence": "LOW",
       "unresolved_questions": [
         "Original sources are now supplied; precise mapping of this earlier record still requires semantic review, not a guessed mission assignment",
-        "These specific chain transaction/signing/reorg, EVM/Solana/Soroban and hackathon submission contracts have no exact dedicated implementation mission in the supplied72. Broad app/evaluation missions alone do not prove ownership of their specialized acceptance. Retain explicit mapping gap rather than inventing a mission or authorizing financial/organizer actions."
+        "Supplemental command is PLANNED/NOT_IMPLEMENTED. Future roadmap placement and actual implementation/evidence remain pending. Historical code claims are not independently accepted."
       ],
       "source_reported_states": [
         "implemented",
-        "verified_local"
+        "verified_local",
+        "SUPPLEMENTAL_PLANNING_ONLY_NOT_IMPLEMENTED"
       ]
     },
     {
@@ -9065,19 +9106,28 @@
         {
           "source_id": "SRC-cf5d8df2e32208a9",
           "locator": "sources[path=docs/command-2/parts-abc/requirements-ledger.json].unreviewed.rows[C2C-004]"
+        },
+        {
+          "source_id": "SRC-70f683942bc0ba21",
+          "locator": "owners[id=SUPP-SOLANA-INTEGRATION]; founder-approved planning only"
         }
       ],
       "feature_category": "historical-repository-requirement",
       "classification": "backend",
-      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [
         "backend/fixtures/solana-registry/Cargo.toml",
         "backend/fixtures/solana-registry/src/lib.rs",
         "backend/src/synthesis/fixtures/web3Fixtures.ts"
       ],
-      "implementation_owner_command": "LATER_SOURCE_MAPPING_REVIEW",
+      "implementation_owner_command": "SUPP-SOLANA-INTEGRATION",
       "priority": "P1",
-      "dependencies": [],
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
       "provider_dependencies": [],
       "security_implications": [
         "Tenant, authority, secret and egress boundaries must pass the applicable negative tests"
@@ -9093,19 +9143,23 @@
       ],
       "verification_method": "Execute the requirement acceptance criteria against current source; source filenames and historical status labels alone do not prove completion",
       "acceptance_criteria": [
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Independently verify source-described evidence: signer, PDA, content-hash and account-substitution behavior passed in the compiled backend fixture",
         "Source-required verification: advancedWeb3.test.ts"
       ],
       "external_repo_candidates": [],
       "disposition": "EXTEND",
-      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
+      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; Founder approved supplemental owner SUPP-SOLANA-INTEGRATION. Original72 unchanged; dedicated scope is not covered by broader missions. Roadmap placement pending. No Web3 implementation, transaction, contract deployment or mainnet action authorized.",
       "confidence": "LOW",
       "unresolved_questions": [
         "Original sources are now supplied; precise mapping of this earlier record still requires semantic review, not a guessed mission assignment",
-        "These specific chain transaction/signing/reorg, EVM/Solana/Soroban and hackathon submission contracts have no exact dedicated implementation mission in the supplied72. Broad app/evaluation missions alone do not prove ownership of their specialized acceptance. Retain explicit mapping gap rather than inventing a mission or authorizing financial/organizer actions."
+        "Supplemental command is PLANNED/NOT_IMPLEMENTED. Future roadmap placement and actual implementation/evidence remain pending. Historical code claims are not independently accepted."
       ],
       "source_reported_states": [
         "implemented",
-        "external_validation_pending"
+        "external_validation_pending",
+        "SUPPLEMENTAL_PLANNING_ONLY_NOT_IMPLEMENTED"
       ]
     },
     {
@@ -9121,19 +9175,28 @@
         {
           "source_id": "SRC-cf5d8df2e32208a9",
           "locator": "sources[path=docs/command-2/parts-abc/requirements-ledger.json].unreviewed.rows[C2C-005]"
+        },
+        {
+          "source_id": "SRC-70f683942bc0ba21",
+          "locator": "owners[id=SUPP-NON-EVM-ADAPTERS]; founder-approved planning only"
         }
       ],
       "feature_category": "historical-repository-requirement",
       "classification": "backend",
-      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [
         "backend/fixtures/soroban-escrow/Cargo.toml",
         "backend/fixtures/soroban-escrow/src/lib.rs",
         "backend/src/synthesis/fixtures/web3Fixtures.ts"
       ],
-      "implementation_owner_command": "LATER_SOURCE_MAPPING_REVIEW",
+      "implementation_owner_command": "SUPP-NON-EVM-ADAPTERS",
       "priority": "P1",
-      "dependencies": [],
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
       "provider_dependencies": [],
       "security_implications": [
         "Tenant, authority, secret and egress boundaries must pass the applicable negative tests"
@@ -9149,19 +9212,23 @@
       ],
       "verification_method": "Execute the requirement acceptance criteria against current source; source filenames and historical status labels alone do not prove completion",
       "acceptance_criteria": [
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Independently verify source-described evidence: Soroban authorization and conservation behavior passed in the compiled backend adapter",
         "Source-required verification: advancedWeb3.test.ts"
       ],
       "external_repo_candidates": [],
       "disposition": "EXTEND",
-      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
+      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; Founder approved supplemental owner SUPP-NON-EVM-ADAPTERS. Original72 unchanged; dedicated scope is not covered by broader missions. Roadmap placement pending. No Web3 implementation, transaction, contract deployment or mainnet action authorized.",
       "confidence": "LOW",
       "unresolved_questions": [
         "Original sources are now supplied; precise mapping of this earlier record still requires semantic review, not a guessed mission assignment",
-        "These specific chain transaction/signing/reorg, EVM/Solana/Soroban and hackathon submission contracts have no exact dedicated implementation mission in the supplied72. Broad app/evaluation missions alone do not prove ownership of their specialized acceptance. Retain explicit mapping gap rather than inventing a mission or authorizing financial/organizer actions."
+        "Supplemental command is PLANNED/NOT_IMPLEMENTED. Future roadmap placement and actual implementation/evidence remain pending. Historical code claims are not independently accepted."
       ],
       "source_reported_states": [
         "implemented",
-        "external_validation_pending"
+        "external_validation_pending",
+        "SUPPLEMENTAL_PLANNING_ONLY_NOT_IMPLEMENTED"
       ]
     },
     {
@@ -9177,17 +9244,26 @@
         {
           "source_id": "SRC-cf5d8df2e32208a9",
           "locator": "sources[path=docs/command-2/parts-abc/requirements-ledger.json].unreviewed.rows[C2C-006]"
+        },
+        {
+          "source_id": "SRC-70f683942bc0ba21",
+          "locator": "owners[id=SUPP-WALLET-SIGNING-SECURITY]; founder-approved planning only"
         }
       ],
       "feature_category": "historical-repository-requirement",
       "classification": "backend",
-      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [
         "backend/src/synthesis/chain/chainRuntime.ts"
       ],
-      "implementation_owner_command": "LATER_SOURCE_MAPPING_REVIEW",
+      "implementation_owner_command": "SUPP-WALLET-SIGNING-SECURITY",
       "priority": "P1",
-      "dependencies": [],
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
       "provider_dependencies": [],
       "security_implications": [
         "Tenant, authority, secret and egress boundaries must pass the applicable negative tests"
@@ -9203,19 +9279,23 @@
       ],
       "verification_method": "Execute the requirement acceptance criteria against current source; source filenames and historical status labels alone do not prove completion",
       "acceptance_criteria": [
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Independently verify source-described evidence: challenge expiry/replay/domain/chain binding, signer policy, same-chain failover and reorg/idempotency tests",
         "Source-required verification: chainRuntime.test.ts"
       ],
       "external_repo_candidates": [],
       "disposition": "EXTEND",
-      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
+      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; Founder approved supplemental owner SUPP-WALLET-SIGNING-SECURITY. Original72 unchanged; dedicated scope is not covered by broader missions. Roadmap placement pending. No Web3 implementation, transaction, contract deployment or mainnet action authorized.",
       "confidence": "LOW",
       "unresolved_questions": [
         "Original sources are now supplied; precise mapping of this earlier record still requires semantic review, not a guessed mission assignment",
-        "These specific chain transaction/signing/reorg, EVM/Solana/Soroban and hackathon submission contracts have no exact dedicated implementation mission in the supplied72. Broad app/evaluation missions alone do not prove ownership of their specialized acceptance. Retain explicit mapping gap rather than inventing a mission or authorizing financial/organizer actions."
+        "Supplemental command is PLANNED/NOT_IMPLEMENTED. Future roadmap placement and actual implementation/evidence remain pending. Historical code claims are not independently accepted."
       ],
       "source_reported_states": [
         "implemented",
-        "verified_local"
+        "verified_local",
+        "SUPPLEMENTAL_PLANNING_ONLY_NOT_IMPLEMENTED"
       ]
     },
     {
@@ -9231,17 +9311,26 @@
         {
           "source_id": "SRC-cf5d8df2e32208a9",
           "locator": "sources[path=docs/command-2/parts-abc/requirements-ledger.json].unreviewed.rows[C2C-007]"
+        },
+        {
+          "source_id": "SRC-70f683942bc0ba21",
+          "locator": "owners[id=SUPP-HACKATHON-EXECUTION]; founder-approved planning only"
         }
       ],
       "feature_category": "historical-repository-requirement",
       "classification": "backend",
-      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [
         "backend/src/synthesis/hackathon/hackathonRuntime.ts"
       ],
-      "implementation_owner_command": "LATER_SOURCE_MAPPING_REVIEW",
+      "implementation_owner_command": "SUPP-HACKATHON-EXECUTION",
       "priority": "P1",
-      "dependencies": [],
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
       "provider_dependencies": [],
       "security_implications": [
         "Tenant, authority, secret and egress boundaries must pass the applicable negative tests"
@@ -9257,19 +9346,23 @@
       ],
       "verification_method": "Execute the requirement acceptance criteria against current source; source filenames and historical status labels alone do not prove completion",
       "acceptance_criteria": [
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Independently verify source-described evidence: official-rule compilation, candidate ranking, timeboxing, sponsor matrix, two-run golden demo and submission validation",
         "Source-required verification: hackathonRuntime.test.ts"
       ],
       "external_repo_candidates": [],
       "disposition": "EXTEND",
-      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
+      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; Founder approved supplemental owner SUPP-HACKATHON-EXECUTION. Original72 unchanged; dedicated scope is not covered by broader missions. Roadmap placement pending. No Web3 implementation, transaction, contract deployment or mainnet action authorized.",
       "confidence": "LOW",
       "unresolved_questions": [
         "Original sources are now supplied; precise mapping of this earlier record still requires semantic review, not a guessed mission assignment",
-        "These specific chain transaction/signing/reorg, EVM/Solana/Soroban and hackathon submission contracts have no exact dedicated implementation mission in the supplied72. Broad app/evaluation missions alone do not prove ownership of their specialized acceptance. Retain explicit mapping gap rather than inventing a mission or authorizing financial/organizer actions."
+        "Supplemental command is PLANNED/NOT_IMPLEMENTED. Future roadmap placement and actual implementation/evidence remain pending. Historical code claims are not independently accepted."
       ],
       "source_reported_states": [
         "implemented",
-        "verified_local"
+        "verified_local",
+        "SUPPLEMENTAL_PLANNING_ONLY_NOT_IMPLEMENTED"
       ]
     },
     {
@@ -9285,18 +9378,27 @@
         {
           "source_id": "SRC-cf5d8df2e32208a9",
           "locator": "sources[path=docs/command-2/parts-abc/requirements-ledger.json].unreviewed.rows[C2C-008]"
+        },
+        {
+          "source_id": "SRC-70f683942bc0ba21",
+          "locator": "owners[id=SUPP-MAINNET-DEPLOYMENT-EVIDENCE]; founder-approved planning only"
         }
       ],
       "feature_category": "historical-repository-requirement",
       "classification": "backend",
-      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_state": "UNKNOWN_BLOCKED",
       "current_paths": [
         "backend/src/synthesis/chain/advancedWeb3.ts",
         "backend/src/synthesis/operationsManifest.ts"
       ],
-      "implementation_owner_command": "LATER_SOURCE_MAPPING_REVIEW",
+      "implementation_owner_command": "SUPP-MAINNET-DEPLOYMENT-EVIDENCE",
       "priority": "P1",
-      "dependencies": [],
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
       "provider_dependencies": [],
       "security_implications": [
         "Tenant, authority, secret and egress boundaries must pass the applicable negative tests"
@@ -9312,20 +9414,24 @@
       ],
       "verification_method": "Execute the requirement acceptance criteria against current source; source filenames and historical status labels alone do not prove completion",
       "acceptance_criteria": [
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Independently verify source-described evidence: fake evidence rejected; deployment receipt fields and separate mainnet gate enforced",
         "Source-required verification: advancedWeb3.test.ts",
         "Source-required verification: operationsManifest.test.ts"
       ],
       "external_repo_candidates": [],
       "disposition": "EXTEND",
-      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
+      "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; Founder approved supplemental owner SUPP-MAINNET-DEPLOYMENT-EVIDENCE. Original72 unchanged; dedicated scope is not covered by broader missions. Roadmap placement pending. No Web3 implementation, transaction, contract deployment or mainnet action authorized.",
       "confidence": "LOW",
       "unresolved_questions": [
         "Original sources are now supplied; precise mapping of this earlier record still requires semantic review, not a guessed mission assignment",
-        "These specific chain transaction/signing/reorg, EVM/Solana/Soroban and hackathon submission contracts have no exact dedicated implementation mission in the supplied72. Broad app/evaluation missions alone do not prove ownership of their specialized acceptance. Retain explicit mapping gap rather than inventing a mission or authorizing financial/organizer actions."
+        "Supplemental command is PLANNED/NOT_IMPLEMENTED. Future roadmap placement and actual implementation/evidence remain pending. Historical code claims are not independently accepted."
       ],
       "source_reported_states": [
         "implemented",
-        "verified_local"
+        "verified_local",
+        "SUPPLEMENTAL_PLANNING_ONLY_NOT_IMPLEMENTED"
       ]
     },
     {

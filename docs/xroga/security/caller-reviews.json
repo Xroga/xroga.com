@@ -518,7 +518,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
       "callIds": [
         "5d2b5832658fd3299a4b",
         "10f3c1b47a240d3e5eec",
@@ -546,17 +546,14 @@
         "1afffc078cd2692a93a7",
         "4d9efaae919de1cb3899",
         "b8e271c2d4b8b3f99af0",
-        "9e916878c523feacb73e",
-        "601cc202c94a6d74155b",
-        "30bd964098cb53dd25b9",
-        "ed69b922f1cfcb088ee7",
-        "78a1c1ea46ddd084b5c1",
-        "2767db95f48926527f61",
-        "96289f945e08ba3cd07a",
-        "97d13a82464a8eb511f8",
-        "5d297da3b78d02625a08",
-        "fb46c685a95d26e36595",
-        "a7ccd90a654c92e3c6c0"
+        "c3b1ab8b8ad66ccf2eb7",
+        "840afe96dcc7ba2e706b",
+        "36bd33a787b3fb27844f",
+        "9b940c60a7083113b712",
+        "39474ef84de156bc3a93",
+        "1bdc5657e2774f51f3e9",
+        "9ed745c10218cd1d87d0",
+        "a7a63e08869fdbe09394"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
@@ -4602,7 +4599,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
       "callIds": [
         "1bbf9fc4a4d64e0ceaf2"
       ],
@@ -4634,7 +4631,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
       "callIds": [
         "fe39e67000ca4c823db9"
       ],
@@ -4682,7 +4679,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
       "callIds": [
         "ea8b430421923fa7f064"
       ],
@@ -4698,7 +4695,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
       "callIds": [
         "88507e6640248f4470fc"
       ],
@@ -4714,7 +4711,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
       "callIds": [
         "6fe29938495992b03de5"
       ],
@@ -4730,7 +4727,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
       "callIds": [
         "a16a5d06c352a7901267"
       ],
@@ -4874,9 +4871,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
       "callIds": [
-        "0130aafeb04e8da2aa3e"
+        "bcd646690de2b8ab33d8"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Auth-mounted growth route supplies verified server actor. Existing project-view permission is rechecked against current locked profile/project/member. Service-only outcome transaction locks experiment, exposed assignment and event and verifies exact current owner/project/experiment relations before an insert-or-verified-replay. Service validates returned immutable outcome tuple.",
@@ -5050,7 +5047,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
       "callIds": [
         "e663024bbb805232e4aa"
       ],
@@ -5070,13 +5067,13 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
       "callIds": [
         "f06c7a10e85186933e84"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing authenticated activation endpoint supplies server actor, admitted tenant/project and validated subject UUID. View roles derive from the existing operations permission map, preserving viewer evaluation. Service-only transaction locks current actor/project/member and the chosen owned definition/deployment/event rows, applies the existing activationSatisfied membership and verification-state policy, then conditionally upserts lifecycle only for the same tenant. Exact returned owner/project/subject/definition/evidence/time receipt is required; internal source basis is not added to the public API.",
-      "reason": "Seven focused activation/engine tests and23 local SQL owned/missing/foreign evidence, viewer compatibility, lifecycle conflict, role/rollback/replay assertions pass. Actual held definition/deployment/event/member changes, competing lifecycle replay, foreign lifecycle mutation while waiting and browser denial prepared. Event/provider provenance, later evidence supersession, subject history and full growth lifecycle remain unresolved. No live provider proof or whole caller certification.",
+      "reason": "Verified narrow transaction at ea2305700ae5c46ea24f612f9a09fbfcba4161cd disposable39126345772:113 fresh/upgrade migrations,148 security tests and3 browser tests,zero failures/skips. Actual held definition/deployment/event/member changes, competing lifecycle replay, foreign lifecycle mutation while waiting, rollback and browser denial pass. Invocation, SQL and fixture are unchanged in current source. Seven focused tests and23 local SQL assertions also pass. Event/provider provenance, later evidence supersession, subject history and full growth lifecycle remain unresolved. No live provider proof or whole caller certification.",
       "evidence": [
         {
           "path": "backend/src/growth/activationEvaluation.local.integration.ts",
@@ -5114,13 +5111,13 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
       "callIds": [
         "fba3ec246993cb38ab8d"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing authenticated managed lifecycle route supplies the server actor and validated project/subject/state/evidence. Canonical manage roles derive from the existing operations permission map. Service-only transaction locks current actor/project/member and conditionally upserts only the same tenant. Existing-row version increments atomically and uses database update time after conflict locking; retained activation lineage is not erased. Caller validates exact returned identity/state/evidence/version/time.",
-      "reason": "Eleven focused lifecycle/evaluation/input-snapshot tests and22 local SQL owner/current-role/foreign-conflict/version/overflow/rollback/replay assertions pass. Actual two-writer versions, current member/owner revocation, foreign tenant mutation during row wait, lineage retention and browser denial prepared. Valid state transition policy and evidence attestation are unchanged, complete source/subject lifecycle remains unresolved. No provider action or whole-caller certification.",
+      "reason": "Verified narrow transaction at ea2305700ae5c46ea24f612f9a09fbfcba4161cd disposable39126345772:113 fresh/upgrade migrations,148 security tests and3 browser tests,zero failures/skips. Actual two-writer versions6/7 and DB clock, current member/owner revocation, foreign tenant mutation during row wait, lineage retention, rollback and browser denial pass. Invocation, SQL and fixture unchanged in current source. Eleven focused tests and22 local SQL assertions also pass. Valid state transition policy and evidence attestation are unchanged, complete source/subject lifecycle remains unresolved. No provider action or whole-caller certification.",
       "evidence": [
         {
           "path": "backend/src/growth/lifecycleTransition.local.integration.ts",
@@ -5129,6 +5126,46 @@
         {
           "path": "backend/src/growth/lifecycleTransition.test.ts",
           "marker": "managed lifecycle transitions require an exact owned versioned receipt"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/growth/growthService.ts",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
+      "callIds": [
+        "9931df870dfeaf282bef"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Authenticated growth endpoints retain the server actor and snapshot the loaded experiment or assignment before authority awaits. Existing canonical project-view roles are rechecked under current profile/project/member locks. Assignment locks and compares the complete experiment snapshot, then inserts or reads the unique owned cohort winner. Exposure locks the current owned experiment and exact immutable assignment tuple, writes first exposure once and returns the durable winning row on retries. Exact receipt checks reject substituted identity, variant, timestamps or evidence.",
+      "reason": "Ten focused admission/boundary/engine tests and31 local SQL owner/parent/role/replay/receipt/rollback assertions pass. Actual two-client cohort and exposure winners, held authority/parent/configuration/assignment mutations, both write rollbacks and browser-role denial prepared for disposable CI. Subject identity, experiment status policy, event provenance and complete growth lifecycle remain unresolved. No provider calls or whole-caller certification.",
+      "evidence": [
+        {
+          "path": "backend/src/growth/experimentAdmission.local.integration.ts",
+          "marker": "registerGrowthExperimentAdmissionTests"
+        },
+        {
+          "path": "backend/src/growth/experimentAdmission.test.ts",
+          "marker": "experiment assignment and exposure require owned exact receipts"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/growth/growthService.ts",
+      "sourceSha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
+      "callIds": [
+        "6d6d75f704dca25ce395"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Authenticated growth endpoints retain the server actor and snapshot the loaded experiment or assignment before authority awaits. Existing canonical project-view roles are rechecked under current profile/project/member locks. Assignment locks and compares the complete experiment snapshot, then inserts or reads the unique owned cohort winner. Exposure locks the current owned experiment and exact immutable assignment tuple, writes first exposure once and returns the durable winning row on retries. Exact receipt checks reject substituted identity, variant, timestamps or evidence.",
+      "reason": "Ten focused admission/boundary/engine tests and31 local SQL owner/parent/role/replay/receipt/rollback assertions pass. Actual two-client cohort and exposure winners, held authority/parent/configuration/assignment mutations, both write rollbacks and browser-role denial prepared for disposable CI. Subject identity, experiment status policy, event provenance and complete growth lifecycle remain unresolved. No provider calls or whole-caller certification.",
+      "evidence": [
+        {
+          "path": "backend/src/growth/experimentAdmission.local.integration.ts",
+          "marker": "registerGrowthExperimentAdmissionTests"
+        },
+        {
+          "path": "backend/src/growth/experimentAdmission.test.ts",
+          "marker": "experiment assignment and exposure require owned exact receipts"
         }
       ]
     }

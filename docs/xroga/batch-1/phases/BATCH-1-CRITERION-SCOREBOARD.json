@@ -1,0 +1,1415 @@
+{
+  "version": 1,
+  "contractSha256": "a0926f4e47149450c3f9fc33c59782eac31d19be57789f11950b20b03c01b499",
+  "scope": "ORIGINAL_WORDING_NO_REQUIREMENT_REMOVED",
+  "criteria": [
+    {
+      "id": "XB01-C001-AC01",
+      "command": "001",
+      "originalText": "100% of backend route mounts are represented.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/inventory.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C001-AC02",
+      "command": "001",
+      "originalText": "100% of discovered queues have producer/consumer status recorded.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/inventory.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C001-AC03",
+      "command": "001",
+      "originalText": "100% of migrations are listed in order.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/inventory.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C001-AC04",
+      "command": "001",
+      "originalText": "Every named subsystem above is represented or explicitly ABSENT.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/inventory.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C001-AC05",
+      "command": "001",
+      "originalText": "Every production-facing TODO/mock/placeholder found by the audit is classified.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/inventory.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C001-AC06",
+      "command": "001",
+      "originalText": "There are zero duplicate inventory IDs.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/inventory.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C001-AC07",
+      "command": "001",
+      "originalText": "Re-running inventory against the same SHA creates no diff.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/inventory.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C001-AC08",
+      "command": "001",
+      "originalText": "current-state.md names the exact SHA it describes.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/inventory.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C001-AC09",
+      "command": "001",
+      "originalText": "UNKNOWN_BLOCKED entries each contain a reason and next evidence needed.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/inventory.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C001-AC10",
+      "command": "001",
+      "originalText": "No architecture replacement occurs in this command.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/inventory.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C002-AC01",
+      "command": "002",
+      "originalText": "Every row from the supplied 119-item feature-coverage file is mapped.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/requirements.test.mjs",
+        "scripts/xroga/private-research.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C002-AC02",
+      "command": "002",
+      "originalText": "Every prior mission in the supplied 72-mission manifest is mapped.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/requirements.test.mjs",
+        "scripts/xroga/private-research.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C002-AC03",
+      "command": "002",
+      "originalText": "Every external repository listed above appears in the candidate register.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/requirements.test.mjs",
+        "scripts/xroga/private-research.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C002-AC04",
+      "command": "002",
+      "originalText": "All local source artefacts have SHA-256 hashes.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/requirements.test.mjs",
+        "scripts/xroga/private-research.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C002-AC05",
+      "command": "002",
+      "originalText": "No canonical requirement has an ambiguous state.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/requirements.test.mjs",
+        "scripts/xroga/private-research.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C002-AC06",
+      "command": "002",
+      "originalText": "No IMPLEMENTED requirement lacks repository evidence.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/requirements.test.mjs",
+        "scripts/xroga/private-research.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C002-AC07",
+      "command": "002",
+      "originalText": "No inaccessible source is represented as read.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/requirements.test.mjs",
+        "scripts/xroga/private-research.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C002-AC08",
+      "command": "002",
+      "originalText": "Every NEW/EXTEND/REPLACE requirement has an implementation command owner.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/requirements.test.mjs",
+        "scripts/xroga/private-research.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C002-AC09",
+      "command": "002",
+      "originalText": "Requirements-ledger JSON validates deterministically.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/requirements.test.mjs",
+        "scripts/xroga/private-research.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C002-AC10",
+      "command": "002",
+      "originalText": "Re-running the converter causes zero semantic diff.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/requirements.test.mjs",
+        "scripts/xroga/private-research.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C003-AC01",
+      "command": "003",
+      "originalText": "One documented baseline command exists.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/ci/baseline.test.mjs",
+        "scripts/ci/prepare-pr-integration.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C003-AC02",
+      "command": "003",
+      "originalText": "It returns non-zero on any mandatory build/test failure.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/ci/baseline.test.mjs",
+        "scripts/ci/prepare-pr-integration.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C003-AC03",
+      "command": "003",
+      "originalText": "Frozen dependency install is enforced.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/ci/baseline.test.mjs",
+        "scripts/ci/prepare-pr-integration.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C003-AC04",
+      "command": "003",
+      "originalText": "Runtime version is explicit.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/ci/baseline.test.mjs",
+        "scripts/ci/prepare-pr-integration.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C003-AC05",
+      "command": "003",
+      "originalText": "Accidental focused tests are blocked.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/ci/baseline.test.mjs",
+        "scripts/ci/prepare-pr-integration.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C003-AC06",
+      "command": "003",
+      "originalText": "New unexplained skipped tests are blocked.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/ci/baseline.test.mjs",
+        "scripts/ci/prepare-pr-integration.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C003-AC07",
+      "command": "003",
+      "originalText": "Migration identifiers/order are validated.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/ci/baseline.test.mjs",
+        "scripts/ci/prepare-pr-integration.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C003-AC08",
+      "command": "003",
+      "originalText": "Backend and frontend both build in CI.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/ci/baseline.test.mjs",
+        "scripts/ci/prepare-pr-integration.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C003-AC09",
+      "command": "003",
+      "originalText": "CI can run without production credentials.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/ci/baseline.test.mjs",
+        "scripts/ci/prepare-pr-integration.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C003-AC10",
+      "command": "003",
+      "originalText": "The same clean checkout can execute the baseline twice without source-tree mutation.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/ci/baseline.test.mjs",
+        "scripts/ci/prepare-pr-integration.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C004-AC01",
+      "command": "004",
+      "originalText": "Every active deployment manifest appears in inventory.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/runtime-discovery.test.mjs",
+        "scripts/xroga/runtime-config.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C004-AC02",
+      "command": "004",
+      "originalText": "Every external infrastructure dependency used by application code is represented.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/runtime-discovery.test.mjs",
+        "scripts/xroga/runtime-config.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C004-AC03",
+      "command": "004",
+      "originalText": "Every environment variable consumed by production code is classified by name.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/runtime-discovery.test.mjs",
+        "scripts/xroga/runtime-config.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C004-AC04",
+      "command": "004",
+      "originalText": "No secret values appear in committed outputs.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/runtime-discovery.test.mjs",
+        "scripts/xroga/runtime-config.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C004-AC05",
+      "command": "004",
+      "originalText": "Actual vs proposed infrastructure is explicitly separated.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/runtime-discovery.test.mjs",
+        "scripts/xroga/runtime-config.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C004-AC06",
+      "command": "004",
+      "originalText": "Every service has a health/readiness strategy or an explicit gap.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/runtime-discovery.test.mjs",
+        "scripts/xroga/runtime-config.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C004-AC07",
+      "command": "004",
+      "originalText": "Every production fallback to memory/local disk is identified.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/runtime-discovery.test.mjs",
+        "scripts/xroga/runtime-config.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C004-AC08",
+      "command": "004",
+      "originalText": "Runtime validator runs in CI.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/runtime-discovery.test.mjs",
+        "scripts/xroga/runtime-config.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C004-AC09",
+      "command": "004",
+      "originalText": "Topology diagram is generated from or checked against inventory.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/runtime-discovery.test.mjs",
+        "scripts/xroga/runtime-config.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C004-AC10",
+      "command": "004",
+      "originalText": "Documentation names the source SHA.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/runtime-discovery.test.mjs",
+        "scripts/xroga/runtime-config.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C005-AC01",
+      "command": "005",
+      "originalText": "All mandatory journeys above exist in the matrix.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/golden-journeys.test.mjs",
+        "frontend/e2e/xroga-golden/"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C005-AC02",
+      "command": "005",
+      "originalText": "Every journey maps to requirements.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/golden-journeys.test.mjs",
+        "frontend/e2e/xroga-golden/"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C005-AC03",
+      "command": "005",
+      "originalText": "Every journey declares its authority boundary.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/golden-journeys.test.mjs",
+        "frontend/e2e/xroga-golden/"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C005-AC04",
+      "command": "005",
+      "originalText": "Every journey declares completion evidence.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/golden-journeys.test.mjs",
+        "frontend/e2e/xroga-golden/"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C005-AC05",
+      "command": "005",
+      "originalText": "No BLOCKED_KNOWN_GAP is counted as PASS.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/golden-journeys.test.mjs",
+        "frontend/e2e/xroga-golden/"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C005-AC06",
+      "command": "005",
+      "originalText": "Playwright or the existing browser framework can execute at least the currently implemented frontend journeys.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/golden-journeys.test.mjs",
+        "frontend/e2e/xroga-golden/"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C005-AC07",
+      "command": "005",
+      "originalText": "Negative security paths are represented.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/golden-journeys.test.mjs",
+        "frontend/e2e/xroga-golden/"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C005-AC08",
+      "command": "005",
+      "originalText": "Provider-dependent journeys have safe sandbox/stub strategies.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/golden-journeys.test.mjs",
+        "frontend/e2e/xroga-golden/"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C005-AC09",
+      "command": "005",
+      "originalText": "Failing tests preserve diagnostics without secrets.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/golden-journeys.test.mjs",
+        "frontend/e2e/xroga-golden/"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C005-AC10",
+      "command": "005",
+      "originalText": "Later commands can reference stable journey IDs.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "scripts/xroga/golden-journeys.test.mjs",
+        "frontend/e2e/xroga-golden/"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C006-AC01",
+      "command": "006",
+      "originalText": "AGENTS.md clearly encodes the twelve invariants.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "tests/mission-policy/mission-policy.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C006-AC02",
+      "command": "006",
+      "originalText": "Definition of Done distinguishes code-complete from verified-outcome complete.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "tests/mission-policy/mission-policy.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C006-AC03",
+      "command": "006",
+      "originalText": "PR evidence template exists.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "tests/mission-policy/mission-policy.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C006-AC04",
+      "command": "006",
+      "originalText": "Mission checker has positive and negative tests.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "tests/mission-policy/mission-policy.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C006-AC05",
+      "command": "006",
+      "originalText": "Implementation status links subsystems to evidence/SHA.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "tests/mission-policy/mission-policy.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C006-AC06",
+      "command": "006",
+      "originalText": "Adding a duplicate orchestration control plane requires explicit architecture exception.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "tests/mission-policy/mission-policy.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C006-AC07",
+      "command": "006",
+      "originalText": "Security-impact declarations are mandatory.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "tests/mission-policy/mission-policy.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C006-AC08",
+      "command": "006",
+      "originalText": "Rollback is mandatory for high-risk changes.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "tests/mission-policy/mission-policy.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C006-AC09",
+      "command": "006",
+      "originalText": "No test claims full Xroga completion based on UI-only evidence.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "tests/mission-policy/mission-policy.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C006-AC10",
+      "command": "006",
+      "originalText": "CI policy check passes.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 1,
+      "status": "BLOCKED",
+      "reason": "Final-source criterion verification is collected by the phase handoff, not inferred from file presence",
+      "implementationEvidence": [
+        "tests/mission-policy/mission-policy.test.mjs"
+      ],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C007-AC01",
+      "command": "007",
+      "originalText": "Every tenant-bearing table is in rls-audit.md.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 2,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C007-AC02",
+      "command": "007",
+      "originalText": "Every privileged caller is scoped or explicitly exempt.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 2,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C007-AC03",
+      "command": "007",
+      "originalText": "Cross-tenant negative tests cover all high-risk resource classes.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 2,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C007-AC04",
+      "command": "007",
+      "originalText": "No protected endpoint trusts client-supplied ownership without verification.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 2,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C007-AC05",
+      "command": "007",
+      "originalText": "Background run ownership survives queue/job boundaries.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 2,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C007-AC06",
+      "command": "007",
+      "originalText": "Provider connection selection is owner scoped.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 2,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C007-AC07",
+      "command": "007",
+      "originalText": "CI executes tenant isolation tests.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 2,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C007-AC08",
+      "command": "007",
+      "originalText": "Migration passes fresh DB and upgrade-path tests.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 2,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C007-AC09",
+      "command": "007",
+      "originalText": "No existing legitimate same-tenant journey is broken.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 2,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C007-AC10",
+      "command": "007",
+      "originalText": "Security review contains zero unexplained service-role bypasses.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 2,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C008-AC01",
+      "command": "008",
+      "originalText": "One canonical authority API exists.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C008-AC02",
+      "command": "008",
+      "originalText": "businessAction consequential writes use it.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C008-AC03",
+      "command": "008",
+      "originalText": "operationsEngine high-risk operations use it or a documented compatibility adapter.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C008-AC04",
+      "command": "008",
+      "originalText": "Grant binds tenant, user, action, target and digest.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C008-AC05",
+      "command": "008",
+      "originalText": "Replay tests pass.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C008-AC06",
+      "command": "008",
+      "originalText": "Mutation-after-confirmation tests pass.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C008-AC07",
+      "command": "008",
+      "originalText": "Expiry/revocation tests pass.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C008-AC08",
+      "command": "008",
+      "originalText": "Spend-bound tests pass.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C008-AC09",
+      "command": "008",
+      "originalText": "LLM text alone cannot create authority.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C008-AC10",
+      "command": "008",
+      "originalText": "Every canonical consequential action class has a policy entry.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C009-AC01",
+      "command": "009",
+      "originalText": "All newly stored OAuth/provider secrets use CredentialVault.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C009-AC02",
+      "command": "009",
+      "originalText": "No frontend endpoint returns raw secrets.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C009-AC03",
+      "command": "009",
+      "originalText": "No LLM/task prompt receives raw provider credential.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C009-AC04",
+      "command": "009",
+      "originalText": "Wrong-tenant retrieval test passes.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C009-AC05",
+      "command": "009",
+      "originalText": "Ciphertext tamper test passes.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C009-AC06",
+      "command": "009",
+      "originalText": "Rotation test passes.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C009-AC07",
+      "command": "009",
+      "originalText": "Revocation test passes.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C009-AC08",
+      "command": "009",
+      "originalText": "PKCE has TTL + one-time semantics.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C009-AC09",
+      "command": "009",
+      "originalText": "Legacy migration is idempotent.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C009-AC10",
+      "command": "009",
+      "originalText": "Production cannot use development crypto provider.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C009-AC11",
+      "command": "009",
+      "originalText": "Credential audit reports remaining direct storage callers.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C009-AC12",
+      "command": "009",
+      "originalText": "Remaining legacy callers are zero or explicitly blocked from production cutover.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C010-AC01",
+      "command": "010",
+      "originalText": "All arbitrary outbound URL callers are inventoried.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 4,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C010-AC02",
+      "command": "010",
+      "originalText": "High-risk URL callers use central URL policy.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 4,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C010-AC03",
+      "command": "010",
+      "originalText": "All consequential external data egress passes egressPolicy.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 4,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C010-AC04",
+      "command": "010",
+      "originalText": "businessAction integrates authority + egress before provider execution.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 4,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C010-AC05",
+      "command": "010",
+      "originalText": "Tool descriptions cannot create authority.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 4,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C010-AC06",
+      "command": "010",
+      "originalText": "Malicious document/web/tool-output tests cannot override policy.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 4,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C010-AC07",
+      "command": "010",
+      "originalText": "Loopback/private/link-local/metadata SSRF tests pass.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 4,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C010-AC08",
+      "command": "010",
+      "originalText": "Redirect-to-private test passes.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 4,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C010-AC09",
+      "command": "010",
+      "originalText": "Cross-tenant external upload test passes.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 4,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C010-AC10",
+      "command": "010",
+      "originalText": "Credential-secret egress test passes.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 4,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C010-AC11",
+      "command": "010",
+      "originalText": "Security decision evidence contains no raw credential.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 4,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    },
+    {
+      "id": "XB01-C010-AC12",
+      "command": "010",
+      "originalText": "audit-egress-callers reports zero unexplained high-risk bypasses.",
+      "contractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 4,
+      "status": "BLOCKED",
+      "reason": "Later phase original requirement remains mandatory",
+      "implementationEvidence": [],
+      "testType": "FINAL_SOURCE_CI_REQUIRED",
+      "proofIds": []
+    }
+  ]
+}

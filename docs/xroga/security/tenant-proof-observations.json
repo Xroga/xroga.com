@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "scope": "INDEPENDENT_VERIFICATION_RECEIPTS_NOT_SELF_ASSERTED_PASS",
+  "receipts": [],
+  "exceptions": [],
+  "historicalCI": {
+    "source": "ea2305700ae5c46ea24f612f9a09fbfcba4161cd",
+    "integrated": "36c4529fa88ef9558b71b5766c2ea239f35f0f01",
+    "aggregateRun": "39126345755",
+    "disposableRun": "39126345772",
+    "workflowCategoriesPassed": 11,
+    "migrationsFreshUpgrade": 113,
+    "securityTestsPassed": 148,
+    "browserTestsPassed": 3,
+    "failures": 0,
+    "skips": 0,
+    "provenance": "Independently read GitHub run metadata, disposable logs and four downloaded baseline manifests. Baseline manifest records artifact hashes.",
+    "limitation": "This historical aggregate does not automatically attest every current invariant. Phase2 must bind exact test identities, polarity, boundary, artifact hash and unchanged source semantics before issuing acceptance receipts. No live R2, production schema parity or production KMS proof exists."
+  }
+}

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "observedAt": "2026-10-18T07:43:45.704Z",
+  "observedAt": "2026-10-18T15:22:41.672Z",
   "result": "ADVISORY_INVENTORY_NOT_RELEASE_APPROVAL",
   "graphs": [
     {
@@ -1848,8 +1848,10 @@
               "dependency": "@opentelemetry/sdk-logs"
             }
           ],
-          "effects": [],
-          "fixAvailable": true,
+          "effects": [
+            "@cline/core"
+          ],
+          "fixAvailable": false,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -1880,10 +1882,8 @@
               "dependency": "@opentelemetry/sdk-metrics"
             }
           ],
-          "effects": [
-            "@cline/core"
-          ],
-          "fixAvailable": false,
+          "effects": [],
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -1941,7 +1941,7 @@
             "@opentelemetry/exporter-metrics-otlp-http",
             "@opentelemetry/exporter-trace-otlp-http"
           ],
-          "fixAvailable": false,
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -1977,7 +1977,7 @@
             "@opentelemetry/exporter-trace-otlp-http",
             "@opentelemetry/otlp-exporter-base"
           ],
-          "fixAvailable": false,
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2034,7 +2034,7 @@
           "effects": [
             "@opentelemetry/otlp-transformer"
           ],
-          "fixAvailable": false,
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {
@@ -2064,7 +2064,7 @@
             "@opentelemetry/exporter-metrics-otlp-http",
             "@opentelemetry/otlp-transformer"
           ],
-          "fixAvailable": false,
+          "fixAvailable": true,
           "exposure": "REQUIRES_SEMANTIC_RUNTIME_REVIEW_NOT_WAIVED"
         },
         {

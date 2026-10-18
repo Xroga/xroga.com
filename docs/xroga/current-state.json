@@ -3,10 +3,10 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "cb27adefb8a8ffec7136aedc8207f82260e0646e",
-    "sourceTimestampUtc": "2026-10-18T16:58:45+05:00",
-    "auditStartedUtc": "2026-10-18T12:03:42.122Z",
-    "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
+    "sha": "42c4e71b9d964be1c049480735a8cf7ba653a314",
+    "sourceTimestampUtc": "2026-10-18T20:48:26+05:00",
+    "auditStartedUtc": "2026-10-18T15:51:26.145Z",
+    "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
     "npm": "11.16.0",
@@ -12222,7 +12222,7 @@
       "id": "surface:4cd464f7016cf52503dd",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "sha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
       "symbols": [
         "GrowthService",
         "GrowthServiceError",
@@ -12245,6 +12245,7 @@
         "experiment",
         "hash",
         "linked",
+        "loaded",
         "matches",
         "outcome",
         "payload",
@@ -12289,6 +12290,8 @@
         "backend/src/growth/deliveryReceipt.test.ts:1",
         "backend/src/growth/eventReplay.local.integration.ts:7",
         "backend/src/growth/eventReplay.test.ts:4",
+        "backend/src/growth/experimentAdmission.local.integration.ts:7",
+        "backend/src/growth/experimentAdmission.test.ts:4",
         "backend/src/growth/growthService.boundary.test.ts:4",
         "backend/src/growth/growthService.campaignReceipt.test.ts:4",
         "backend/src/growth/growthService.identity.test.ts:4",
@@ -12352,11 +12355,9 @@
         "backend/src/growth/growthService.ts:232 (tenant_id)",
         "backend/src/growth/growthService.ts:258 (tenant_id)",
         "backend/src/growth/growthService.ts:278 (tenant_id)",
-        "backend/src/growth/growthService.ts:306 (tenant_id)",
-        "backend/src/growth/growthService.ts:318 (tenant_id)",
-        "backend/src/growth/growthService.ts:329 (tenant_id)",
-        "backend/src/growth/growthService.ts:331 (tenant_id)",
-        "backend/src/growth/growthService.ts:356 (tenant_id)"
+        "backend/src/growth/growthService.ts:364 (tenant_id)",
+        "backend/src/growth/growthService.ts:366 (tenant_id)",
+        "backend/src/growth/growthService.ts:391 (tenant_id)"
       ],
       "approvalBoundary": [
         "backend/src/growth/growthService.ts#hasOperationsPermission"
@@ -12379,6 +12380,8 @@
         "backend/src/growth/deliveryReceipt.test.ts",
         "backend/src/growth/eventReplay.local.integration.ts",
         "backend/src/growth/eventReplay.test.ts",
+        "backend/src/growth/experimentAdmission.local.integration.ts",
+        "backend/src/growth/experimentAdmission.test.ts",
         "backend/src/growth/growthService.boundary.test.ts",
         "backend/src/growth/growthService.campaignReceipt.test.ts",
         "backend/src/growth/growthService.identity.test.ts",
@@ -23574,7 +23577,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:669",
+        "backend/src/security/tenantIsolation.local.integration.ts:671",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -83846,7 +83849,8 @@
         "scripts/ci/compare-baseline-runs.mjs"
       ],
       "callers": [
-        "scripts/ci/baseline.test.mjs:13"
+        "scripts/ci/baseline.test.mjs:13",
+        "scripts/xroga/verify-phase-one.mjs:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -84027,7 +84031,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "e88fdb10193a8350106da79670c69cc0f3b3f3c5df1c269e7fb2dbd5556b4e4c",
+      "sha256": "7e11610f49445b4470003110e285db9835b74421645fd0a4edc9b5cd10cba5b5",
       "symbols": [
         "after",
         "append",
@@ -84947,9 +84951,13 @@
       "id": "surface:df5a69bd66236469cf20",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/audit-tenant-policies.mjs",
-      "sha256": "6ba81ce965a35555acfa220978e544e27e42efb08cc71382133ab7d3b73ca18d",
+      "sha256": "5805cfe6f41cc78bf857aeb581c1885c06cfcae3cb68a8717451483189577a9a",
       "symbols": [
+        "actual",
         "adminNames",
+        "admission",
+        "approvedExceptions",
+        "authenticateObservedReceipts",
         "binding",
         "buildTenantAudit",
         "callers",
@@ -84960,10 +84968,15 @@
         "discoverPersistenceCalls",
         "enclosing",
         "escape",
+        "evaluated",
         "exceptions",
+        "external",
+        "externalJson",
         "factory",
+        "fields",
         "finalMarkdown",
         "foreign",
+        "gh",
         "guard",
         "hash",
         "inspect",
@@ -84975,21 +84988,31 @@
         "markdown",
         "metadataPath",
         "normalized",
+        "obligationPath",
         "observation",
+        "observed",
         "outcomes",
         "outputs",
+        "overrides",
         "ownerPredicate",
         "owners",
         "parent",
+        "path",
         "paths",
         "policy",
+        "proofPath",
         "property",
         "read",
+        "receipt",
+        "receipts",
+        "registeredExceptions",
         "registry",
         "registryPath",
         "report",
         "reviewedMarkdown",
+        "runs",
         "source",
+        "sourceSha",
         "statement",
         "tableNames",
         "tableRows",
@@ -84999,6 +85022,7 @@
       "imports": [
         "../ci/toolchain.mjs",
         "./caller-reviews.mjs",
+        "./tenant-acceptance.mjs",
         "node:child_process",
         "node:crypto",
         "node:fs",
@@ -85008,7 +85032,8 @@
       ],
       "runtimeImports": [
         "scripts/ci/toolchain.mjs",
-        "scripts/security/caller-reviews.mjs"
+        "scripts/security/caller-reviews.mjs",
+        "scripts/security/tenant-acceptance.mjs"
       ],
       "entryPoints": [
         "scripts/security/audit-tenant-policies.mjs"
@@ -85026,11 +85051,17 @@
         "node:path",
         "node:url"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "scripts/security/audit-tenant-policies.mjs#authenticateObservedReceipts"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "scripts/security/audit-tenant-policies.mjs#authenticateObservedReceipts",
+        "scripts/security/audit-tenant-policies.mjs#receipt",
+        "scripts/security/audit-tenant-policies.mjs#receipts"
+      ],
       "testCoverage": [
         "scripts/security/audit-tenant-policies.test.mjs"
       ],
@@ -85065,7 +85096,7 @@
       ],
       "callers": [
         "scripts/security/audit-tenant-policies.mjs:8",
-        "scripts/security/audit-tenant-policies.test.mjs:4"
+        "scripts/security/audit-tenant-policies.test.mjs:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85517,6 +85548,91 @@
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:b231975c29de0819be37",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/tenant-acceptance.mjs",
+      "sha256": "f2287cd03670c00fd7b0a1c648d40ea8239148b05a570993ce4f8d434da78a25",
+      "symbols": [
+        "allScoped",
+        "byCaller",
+        "bytes",
+        "caller",
+        "callerId",
+        "callerResults",
+        "candidates",
+        "certified",
+        "criteria",
+        "criterionId",
+        "digest",
+        "entry",
+        "evaluateTenantAcceptance",
+        "exception",
+        "fail",
+        "failures",
+        "highRiskClasses",
+        "id",
+        "ids",
+        "invariantStates",
+        "list",
+        "n",
+        "obligation",
+        "obligations",
+        "proof",
+        "proofValid",
+        "proofs",
+        "reasons",
+        "receipt",
+        "receiptMap",
+        "records",
+        "reject",
+        "resource",
+        "safePath",
+        "secretBearing",
+        "seenProofs",
+        "source",
+        "tenantCriteria",
+        "testsFor",
+        "text",
+        "valid"
+      ],
+      "imports": [
+        "node:crypto"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/security/audit-tenant-policies.mjs"
+      ],
+      "callers": [
+        "scripts/security/audit-tenant-policies.mjs:9",
+        "scripts/security/tenant-acceptance.test.mjs:4",
+        "scripts/xroga/phase-one.mjs:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "scripts/security/tenant-acceptance.mjs#digest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/security/tenant-acceptance.mjs#receipt",
+        "scripts/security/tenant-acceptance.mjs#receiptMap"
+      ],
+      "testCoverage": [
+        "scripts/security/tenant-acceptance.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -86090,7 +86206,7 @@
       "id": "surface:21fe5fadd2668f300c7a",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "sha256": "97e1a62beed5b86683426a99fa7142bdc4dcbca6dc964ac4c955e977c7e6aa3c",
+      "sha256": "880f761db62b33976d158f1defcab1c411452321a080b70a1f56e416cdbac12c",
       "symbols": [
         "allRegistrations",
         "analyzeSource",
@@ -86238,7 +86354,8 @@
       ],
       "entryPoints": [],
       "callers": [
-        "scripts/xroga/inventory.test.mjs:3"
+        "scripts/xroga/inventory.test.mjs:3",
+        "scripts/xroga/verify-phase-one.mjs:8"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -86419,10 +86536,108 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:4aa5a1c1163a2875d77b",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/phase-one.mjs",
+      "sha256": "61b8b13396f971f8840ccb9b59d31c39b82d7f117e3f5e6ff19518d58782ad0d",
+      "symbols": [
+        "basePath",
+        "baseline",
+        "before",
+        "buildPhaseOne",
+        "c",
+        "cid",
+        "commands",
+        "criterionScoreboard",
+        "current",
+        "currentIds",
+        "family",
+        "fixtures",
+        "git",
+        "group",
+        "groupFamily",
+        "groups",
+        "hash",
+        "historical",
+        "id",
+        "ids",
+        "invariants",
+        "json",
+        "main",
+        "mapping",
+        "next",
+        "obligations",
+        "old",
+        "oldLedger",
+        "oldReviews",
+        "outputs",
+        "packets",
+        "pending",
+        "phase2",
+        "read",
+        "recorded",
+        "reviews",
+        "root",
+        "text",
+        "verified"
+      ],
+      "imports": [
+        "../security/tenant-acceptance.mjs",
+        "./reconcile-requirements.mjs",
+        "./verify-phase-one.mjs",
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/security/tenant-acceptance.mjs",
+        "scripts/xroga/reconcile-requirements.mjs",
+        "scripts/xroga/verify-phase-one.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "scripts/xroga/phase-one.test.mjs:4",
+        "scripts/xroga/verify-phase-one.mjs:10",
+        "scripts/xroga/verify-phase-one.test.mjs:4"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/xroga/phase-one.mjs#evidencePath",
+        "scripts/xroga/phase-one.mjs#validatePhaseReceipt",
+        "scripts/xroga/phase-one.mjs#verified"
+      ],
+      "testCoverage": [
+        "scripts/xroga/phase-one.test.mjs",
+        "scripts/xroga/verify-phase-one.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:877bc278c500a2b4cc54",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/reconcile-requirements.mjs",
-      "sha256": "9dea3bd09f782d0aeafb9c256a0c28b893ac2379b7b532f18b54f81f31582099",
+      "sha256": "dbe444728ce22ce7080fcfd003187407ffc5aa974148dd95fe30e76342216952",
       "symbols": [
         "acceptance",
         "archive",
@@ -86512,6 +86727,8 @@
         "source_id",
         "source_mappings",
         "sources",
+        "supplemental",
+        "supplementalPath",
         "surface",
         "title",
         "validateFamilyOwnershipReview",
@@ -86522,6 +86739,7 @@
         "./import-private-research.mjs",
         "./requirements-schema.mjs",
         "./research-candidates.mjs",
+        "./supplemental-owners.mjs",
         "node:child_process",
         "node:crypto",
         "node:fs",
@@ -86531,12 +86749,15 @@
       "runtimeImports": [
         "scripts/xroga/import-private-research.mjs",
         "scripts/xroga/requirements-schema.mjs",
-        "scripts/xroga/research-candidates.mjs"
+        "scripts/xroga/research-candidates.mjs",
+        "scripts/xroga/supplemental-owners.mjs"
       ],
       "entryPoints": [],
       "callers": [
+        "scripts/xroga/phase-one.mjs:7",
         "scripts/xroga/requirements.test.mjs:5",
-        "scripts/xroga/validate-requirements-ledger.mjs:4"
+        "scripts/xroga/validate-requirements-ledger.mjs:4",
+        "scripts/xroga/verify-phase-one.mjs:11"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -86571,7 +86792,7 @@
       "id": "surface:7ca097ead6f3f5853b27",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/requirements-schema.mjs",
-      "sha256": "98f18d82282e4e37cee10504fa0f0cbab8e02b5494de69753b766cc8d478ee1e",
+      "sha256": "6cab814e0eb1908a70566581d2001148832b87f3cb8f53d36af880c5a800fb8e",
       "symbols": [
         "candidate",
         "candidateNames",
@@ -86599,10 +86820,12 @@
       ],
       "imports": [
         "./inventory-schema.mjs",
+        "./supplemental-owners.mjs",
         "zod"
       ],
       "runtimeImports": [
-        "scripts/xroga/inventory-schema.mjs"
+        "scripts/xroga/inventory-schema.mjs",
+        "scripts/xroga/supplemental-owners.mjs"
       ],
       "entryPoints": [],
       "callers": [
@@ -86951,7 +87174,8 @@
       "entryPoints": [],
       "callers": [
         "scripts/xroga/check-runtime-config.mjs:8",
-        "scripts/xroga/runtime-config.test.mjs:3"
+        "scripts/xroga/runtime-config.test.mjs:3",
+        "scripts/xroga/verify-phase-one.mjs:9"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -87020,6 +87244,54 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:a41819abc6f11bf7bd1c",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/supplemental-owners.mjs",
+      "sha256": "46d4751720030b14b1b6153b69016d05ba5ec1f73b3b461c6dcfd41fb62c84c6",
+      "symbols": [
+        "mission",
+        "name",
+        "owner",
+        "review",
+        "row",
+        "seen",
+        "sourceRowHash",
+        "supplementalOwnerIds",
+        "validateSupplementalOwners"
+      ],
+      "imports": [
+        "node:assert/strict",
+        "node:crypto"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "scripts/xroga/reconcile-requirements.mjs:9",
+        "scripts/xroga/requirements-schema.mjs:3",
+        "scripts/xroga/supplemental-owners.test.mjs:4"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/xroga/supplemental-owners.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:cbe3dce25f41f9a3a240",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/validate-golden-journeys.mjs",
@@ -87072,17 +87344,21 @@
       "id": "surface:82e40683bea60ec09a19",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/validate-requirements-ledger.mjs",
-      "sha256": "66ae78510a20f985082094f265ac22c520967d5c764ccba94c094640f09c46e8",
+      "sha256": "c33016ce0b4ab3c55184f1bb79647ff5b3cb83384537b3c1b82798543df102bb",
       "symbols": [
         "actual",
         "actualHashes",
         "candidates",
+        "deferredOwners",
         "expected",
         "fresh",
         "ledger",
         "main",
+        "originalAcceptanceComplete",
+        "owners",
         "read",
         "received",
+        "requirement",
         "source",
         "sources",
         "validateRepositoryLedger"
@@ -87116,6 +87392,117 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "scripts/xroga/requirements.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:57ac0568ca77895c0177",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/verify-phase-one.mjs",
+      "sha256": "ec2b95407fc4dfc39cb2b1a850caf5798040b91c2dedd05a4d9d126d6f29fd4b",
+      "symbols": [
+        "arg",
+        "browser",
+        "c",
+        "collectPhaseEvidence",
+        "count",
+        "criteria",
+        "end",
+        "evidencePath",
+        "experimentAdmission",
+        "files",
+        "fixtureLog",
+        "gh",
+        "git",
+        "grouped",
+        "hash",
+        "header",
+        "historicalBindings",
+        "implementationBindings",
+        "implementationBindingsAtSource",
+        "integratedSha",
+        "inventory",
+        "isBoundPath",
+        "ledger",
+        "log",
+        "m",
+        "main",
+        "manifests",
+        "migration",
+        "name",
+        "objects",
+        "offset",
+        "original",
+        "out",
+        "paths",
+        "r",
+        "read",
+        "receipt",
+        "result",
+        "row",
+        "rows",
+        "run",
+        "scoreboard",
+        "security",
+        "size",
+        "stage",
+        "testIds",
+        "text",
+        "validatePhaseReceipt",
+        "workflows"
+      ],
+      "imports": [
+        "../ci/compare-baseline-runs.mjs",
+        "./inventory.mjs",
+        "./phase-one.mjs",
+        "./reconcile-requirements.mjs",
+        "./runtime-inventory.mjs",
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/compare-baseline-runs.mjs",
+        "scripts/xroga/inventory.mjs",
+        "scripts/xroga/phase-one.mjs",
+        "scripts/xroga/reconcile-requirements.mjs",
+        "scripts/xroga/runtime-inventory.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "scripts/xroga/phase-one.mjs:9",
+        "scripts/xroga/verify-phase-one.test.mjs:3"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/xroga/verify-phase-one.mjs#collectPhaseEvidence",
+        "scripts/xroga/verify-phase-one.mjs#evidencePath",
+        "scripts/xroga/verify-phase-one.mjs#receipt",
+        "scripts/xroga/verify-phase-one.mjs#validatePhaseReceipt"
+      ],
+      "testCoverage": [
+        "scripts/xroga/verify-phase-one.test.mjs"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -95526,6 +95913,20 @@
       "version": "20261018001700",
       "order": 113,
       "sha256": "47106309a97034798163ad3b9697037f3edef333a0cbe442aab3ae1b3d709f39"
+    },
+    {
+      "id": "migration:abb2e41353984c9aa98d",
+      "sourcePath": "supabase/migrations/20261018001800_growth_experiment_assignment.sql",
+      "version": "20261018001800",
+      "order": 114,
+      "sha256": "72d23e5f41a3310ea0179ddc67e5f8c77a26d88b2cb8ae914ec2ad8463acf10b"
+    },
+    {
+      "id": "migration:56701a5452139054d2b2",
+      "sourcePath": "supabase/migrations/20261018001900_growth_experiment_exposure.sql",
+      "version": "20261018001900",
+      "order": 115,
+      "sha256": "7b5c22102976c166b34bc5af2c87b94a71f7cbe12c33789b284533633d62444f"
     }
   ],
   "workflows": [
@@ -99275,7 +99676,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:3ffcc08a3b43b054e687",
+      "id": "finding:47bb518f718971954619",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 353,
       "kind": "PLACEHOLDER",
@@ -99285,7 +99686,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b71113155db03aa33901",
+      "id": "finding:36fa1bfe8d67ce88928e",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 353,
       "kind": "SIMULATED",
@@ -99295,9 +99696,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:9a1e6733e0dc1221a8ba",
+      "id": "finding:54279e3926a53f9a0508",
       "sourcePath": "scripts/xroga/reconcile-requirements.mjs",
-      "line": 173,
+      "line": 175,
       "kind": "PLACEHOLDER",
       "reachable": false,
       "state": "PARTIAL",
@@ -103054,6 +103455,20 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:3a2803d4054b425a863a",
+      "sourcePath": "backend/src/growth/experimentAdmission.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e9bf40740ff34704a07f",
+      "sourcePath": "backend/src/growth/experimentAdmission.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:862911cb0ebf98bd877c",
       "sourcePath": "backend/src/growth/growthEngine.test.ts",
       "declaredTests": 5,
@@ -106224,7 +106639,7 @@
     {
       "id": "test-suite:391d343edda2653fa467",
       "sourcePath": "scripts/security/audit-tenant-policies.test.mjs",
-      "declaredTests": 4,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -106257,6 +106672,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:6226aa7756fd76e1150e",
+      "sourcePath": "scripts/security/tenant-acceptance.test.mjs",
+      "declaredTests": 11,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:0b82382276aa4f670d70",
       "sourcePath": "scripts/security/tenant-rls.database.test.mjs",
       "declaredTests": 5,
@@ -106274,6 +106696,13 @@
       "id": "test-suite:0eb74e3e3cb581708af4",
       "sourcePath": "scripts/xroga/inventory.test.mjs",
       "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:aaf0b06791fa8cdc2a69",
+      "sourcePath": "scripts/xroga/phase-one.test.mjs",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -106302,6 +106731,20 @@
       "id": "test-suite:767b35eed78a059d98d2",
       "sourcePath": "scripts/xroga/runtime-discovery.test.mjs",
       "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:dad07c0357c1a733d8db",
+      "sourcePath": "scripts/xroga/supplemental-owners.test.mjs",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a298216fd7b1cf5a7740",
+      "sourcePath": "scripts/xroga/verify-phase-one.test.mjs",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

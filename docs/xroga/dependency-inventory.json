@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "cb27adefb8a8ffec7136aedc8207f82260e0646e",
+  "source_sha": "42c4e71b9d964be1c049480735a8cf7ba653a314",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -539,6 +539,7 @@
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
         "backend/src/growth/eventReplay.local.integration.ts",
+        "backend/src/growth/experimentAdmission.local.integration.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
@@ -654,6 +655,7 @@
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
         "backend/src/growth/eventReplay.local.integration.ts",
+        "backend/src/growth/experimentAdmission.local.integration.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
@@ -7009,6 +7011,7 @@
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
         "backend/src/growth/eventReplay.local.integration.ts",
+        "backend/src/growth/experimentAdmission.local.integration.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
@@ -9648,6 +9651,7 @@
         "backend/src/config/supabase.ts",
         "backend/src/growth/activationDefinition.local.integration.ts",
         "backend/src/growth/activationEvaluation.local.integration.ts",
+        "backend/src/growth/experimentAdmission.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
         "backend/src/operations/actionAdmission.local.integration.ts",
@@ -9958,6 +9962,7 @@
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
         "backend/src/growth/eventReplay.local.integration.ts",
+        "backend/src/growth/experimentAdmission.local.integration.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
@@ -10625,6 +10630,7 @@
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
         "backend/src/growth/eventReplay.local.integration.ts",
+        "backend/src/growth/experimentAdmission.local.integration.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
@@ -10698,6 +10704,7 @@
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
         "backend/src/growth/eventReplay.local.integration.ts",
+        "backend/src/growth/experimentAdmission.local.integration.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
@@ -12334,12 +12341,16 @@
       "sha256": "be4e5c800a7f36a8811b42d25b5cd27f6eea43b3c31f28923fb1566c5d3a29b8"
     },
     {
+      "path": "backend/src/growth/experimentAdmission.local.integration.ts",
+      "sha256": "2e40692cfffeeef01b4d7ff463e1727c8ee50ede5a1a563d8cd215092225a507"
+    },
+    {
       "path": "backend/src/growth/growthEngine.ts",
       "sha256": "f6a6b2ae5c12678772ea6e3fbd466bc8e3abc83d11f8850aa561d3846fe969ae"
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b"
+      "sha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570"
     },
     {
       "path": "backend/src/growth/identity.local.integration.ts",
@@ -13059,7 +13070,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "98a7babf733b9e835cc9c3c1ac198b5d7767b16b73a20cc903ee6fb564eb6939"
+      "sha256": "486ed40876106fd81dcac909a14a274f9fd134e0df22024edef08fba6df93dca"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -18158,6 +18169,13 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/growth/experimentAdmission.local.integration.ts",
+      "line": 12,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/growth/identity.local.integration.ts",
       "line": 11,
       "credentialsInUrl": false
@@ -18929,56 +18947,56 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 94,
+      "line": 95,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 94,
+      "line": 95,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 374,
+      "line": 376,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 424,
+      "line": 426,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 513,
+      "line": 515,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 619,
+      "line": 621,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 671,
+      "line": 673,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1339,
+      "line": 1341,
       "credentialsInUrl": false
     },
     {
@@ -24158,7 +24176,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "line": 359,
+      "line": 394,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25159,14 +25177,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 838,
+      "line": 840,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1175,
+      "line": 1177,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

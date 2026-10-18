@@ -313,7 +313,7 @@ export function generateInventory({ refresh = false } = {}) {
   const identity = previous?.identity.sha === baseline && !refresh ? previous.identity : {
     repository: git(['config', '--get', 'remote.origin.url']), branch: git(['branch', '--show-current']), sha: baseline,
     sourceTimestampUtc: git(['show', '-s', '--format=%cI', baseline]), auditStartedUtc: new Date().toISOString(),
-    initialWorkingTreeState: 'Clean default-branch checkout recorded before Command 001 implementation.',
+    initialWorkingTreeState: 'Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.',
     sourceTreeState: 'Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.',
     node: process.version, npm: execFileSync(process.execPath, [npmCli(), '--version'], { encoding: 'utf8' }).trim(),
     lockfiles: paths.filter(path => /(?:package-lock\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb?)$/.test(path)),
