@@ -220,13 +220,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-7debe9f0a45ca3c7",
+      "id": "OB-0d0935cb8679da57",
       "callerIds": [
-        "ac2f35d56a05405802e3",
-        "f10d68e99b6b086d0ded"
+        "2c882ba9923d4ba6229b",
+        "f78c85803ca9f116a8ac"
       ],
       "path": "backend/src/ai/buildOutcomeMemory.ts",
-      "sourceSha256": "29eade39abd76f0491dee750e76399613b5f5062663d969eef0025d7076447fe",
+      "sourceSha256": "e4293f5b85893e529653b7cc86ca9aae5c13bc65dc634b1ace67bf4e2569941a",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -1809,12 +1809,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-6885902080322fe3",
+      "id": "OB-d848b62180ebd818",
       "callerIds": [
-        "c945e92962ec2ea9760b"
+        "c311dc7f9d71b9309140"
       ],
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "154148cdad882b77e1d0a30cdd87864e25c06a3c333796c07317b43e6a6909ce",
+      "sourceSha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -1835,17 +1835,17 @@
       "review": {
         "path": "backend/src/ai/pipeline.ts",
         "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {",
-        "sha256": "154148cdad882b77e1d0a30cdd87864e25c06a3c333796c07317b43e6a6909ce"
+        "sha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-f6f0c7555d9be7ae",
+      "id": "OB-251aa9cb67c267b8",
       "callerIds": [
-        "bafa89cc7cc29f6d8ffd"
+        "caf2719bfd249902fc9a"
       ],
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "154148cdad882b77e1d0a30cdd87864e25c06a3c333796c07317b43e6a6909ce",
+      "sourceSha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -1866,7 +1866,7 @@
       "review": {
         "path": "backend/src/ai/pipeline.ts",
         "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }",
-        "sha256": "154148cdad882b77e1d0a30cdd87864e25c06a3c333796c07317b43e6a6909ce"
+        "sha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
@@ -5949,7 +5949,7 @@
         "14b268dddb5863f18706"
       ],
       "path": "backend/src/security/ownership.ts",
-      "sourceSha256": "8b240ab552b5d1134b69bad79c31827d4a3854a623b7d045adbb0f45e556dc11",
+      "sourceSha256": "2771e83fbadd2591d749909cfdf5f4d641d57cbd052f9cf98dab52bb5075c792",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -6376,12 +6376,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-3ce124cf20299ae2",
+      "id": "OB-cd65173763d747dd",
       "callerIds": [
-        "c64306eccc74a6509be2"
+        "09c21b79800aca71c43f"
       ],
       "path": "backend/src/ai/buildOutcomeMemory.ts",
-      "sourceSha256": "29eade39abd76f0491dee750e76399613b5f5062663d969eef0025d7076447fe",
+      "sourceSha256": "e4293f5b85893e529653b7cc86ca9aae5c13bc65dc634b1ace67bf4e2569941a",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [

@@ -34,3 +34,14 @@ export async function requireOwnedFile(context: TenantContext, fileId: string, c
 }
 
 export const requireOwnedProject = (context: TenantContext, id: string, client?: SupabaseClient) => requireOwnedResource(context, 'project', id, client);
+
+/** UUIDs name database projects. Workspace run/repository keys remain logical
+ * identities and still need owner-scoped downstream stores, never UUID casting. */
+export async function requireOptionalOwnedDatabaseProject(context:TenantContext,id:string|undefined,client?:SupabaseClient):Promise<string|undefined>{
+  const scope=requireTenantContext(context);
+  if(id===undefined)return undefined;
+  if(typeof id!=='string'||!id.trim())resourceNotFound();
+  const normalized=id.trim();
+  if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(normalized))await requireOwnedProject(scope,normalized,client);
+  return normalized;
+}

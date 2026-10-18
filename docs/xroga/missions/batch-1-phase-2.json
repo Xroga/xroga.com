@@ -1,0 +1,59 @@
+{
+  "version": "1.0",
+  "missionId": "XB01-P2",
+  "baseSha": "8a1a0bfa7878603dd488db98568577b2fb1896da",
+  "requirementIds": ["XB01-C007"],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
+  "changedFiles": [
+    "backend/src/ai/pipeline.ts",
+    "backend/src/routes/swarm.ts",
+    "backend/src/security/ownership.ts",
+    "backend/src/security/ownership.test.ts",
+    "backend/src/security/tenantIsolation.integration.test.ts",
+    "backend/src/security/tenantIsolation.local.integration.ts",
+    "backend/src/ai/buildOutcomeMemory.ts",
+    "backend/src/ai/buildOutcomeMemory.test.ts",
+    "backend/src/ai/buildOutcomeOwnership.test.ts",
+    "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+    "scripts/security/full-supabase-history.mjs",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
+    "scripts/xroga/phase-one.mjs",
+    "scripts/xroga/phase-one.test.mjs",
+    "scripts/xroga/phase-two.mjs",
+    "scripts/xroga/phase-two.test.mjs",
+    "docs/xroga/batch-1/phases/PHASE-2-ACCEPTANCE.md"
+  ],
+  "decisions": {
+    "keep": ["Phase1 source/evidence and frozen371 identities", "Canonical context, resource ownership, worker attempt fences, budget and approval systems"],
+    "extend": ["Source-bound semantic proof and actual migration/catalog evidence", "Existing owner/run association and endpoint admission"],
+    "replace": ["Run-only telemetry association with exact owner/run binding", "Ambiguous disposable source labels with actual checkout attestation"],
+    "deprecate": ["Treating a historical pending-CI note as a new vulnerability", "Treating test names or source review counts as whole-workflow acceptance"]
+  },
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "Existing full migration history in disposable CI only. Catalog reads contain metadata, not customer rows. No production DDL.", "rollback": "No new schema or constraints. Keep historical migrations and metadata evidence unchanged."},
+  "securityImpact": {
+    "auth": {"changed": false, "description": "Existing server authentication retained, no login/MFA/role bypass."},
+    "tenant": {"changed": true, "description": "Exact owner/run evidence binding and independently verified parent admission. Strict ten-criterion gate remains blocked until real proof."},
+    "approval": {"changed": false, "description": "No canonical authority replacement or new grant. Phase3 remains unstarted."},
+    "credentials": {"changed": false, "description": "No live token, key or vault change. Credential custody remains a separate original009 requirement."},
+    "egress": {"changed": false, "description": "No provider call, publishing, message or external effect. Phase4 remains unstarted."},
+    "cost": {"changed": false, "description": "Zero additional spend, existing standard public CI and local/disposable tests only."},
+    "billing": {"changed": false, "description": "No payment, plan or production billing operation."}
+  },
+  "tests": [
+    {"command": "node --import tsx --test backend/src/ai/buildOutcomeOwnership.test.ts backend/src/ai/buildOutcomeMemory.test.ts", "scope": "Owner/run positive and foreign-evidence denial, including a reproduced pre-fix failing test", "negative": true, "reference": "backend/src/ai/buildOutcomeOwnership.test.ts"},
+    {"command": "node --test scripts/xroga/phase-one.test.mjs scripts/xroga/phase-two.test.mjs scripts/security/schema-catalog.test.mjs", "scope": "Frozen input preservation, finite current mapping, no fabricated certification and exact CI source attestation", "negative": true, "reference": "scripts/xroga/phase-two.test.mjs"},
+    {"command": "node --import tsx --test src/security/tenantIsolation.local.integration.ts", "scope": "Real disposable owner/run evidence, tenant and concurrency regression", "negative": true, "reference": "backend/src/security/buildOutcomeAttempt.local.integration.ts"}
+  ],
+  "architecture": {"change": "extends_canonical", "reason": "Existing tenant context, owned resources and attempt-fenced stores only. No new orchestration, relation engine or vault.", "rfc": null},
+  "rollout": "Draft PR803 only, no merge or deploy. Full source-bound acceptance required before Phase2 verification.",
+  "rollback": "Revert scoped new entry-point commits while preserving all Phase1 work, old receipts and customer state. Never drop tables, delete credentials or remove existing worker fences.",
+  "knownGaps": ["All ten007 criteria await complete real acceptance", "Unchanged proof reconciliation and remaining frozen packets", "ActualR2 and production parity are separately unverified", "Authority/custody/egress implementation stays Phases3/4"],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": ["docs/xroga/batch-1/phases/PHASE-2-ACCEPTANCE.md", "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Original007-010 acceptance and production approval remain mandatory"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
+}

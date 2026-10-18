@@ -78,6 +78,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
     try {
       const result = await runBuildPipeline({
         userId,
+        tenantContext:requireTenantContext(req.tenantContext),
         prompt: prompt.trim(),
         history,
         projectId,
@@ -88,6 +89,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
       const { route: _internalRoute, ...publicResult } = result;
       return res.json(publicAiPayload(publicResult));
     } catch (err) {
+      if(err instanceof TenantAccessError)return res.status(err.status).json({error:err.message,code:err.code});
       const e = err as Error & { code?: string };
       if (e.code === 'OUT_OF_TOKENS' || e.code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE') {
         return res.status(402).json({
@@ -175,6 +177,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
     const result = await runBuildPipeline({
       runId,
       userId,
+      tenantContext:requireTenantContext(req.tenantContext),
       prompt: prompt.trim(),
       history,
       projectId,
@@ -274,6 +277,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
       ? new Error('Run authority is unavailable. Retry after service recovery.')
       : err) as Error & { code?: string; nextUnlockAt?: string | null };
     const code =
+      e instanceof TenantAccessError ? e.code :
       e.code === 'RUN_ALREADY_EXISTS' ? 'RUN_ALREADY_EXISTS' :
       e.code === 'OUT_OF_TOKENS'
         ? 'OUT_OF_ACTIONS'
@@ -293,7 +297,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
                     ? 'RUN_RESUME_CONFLICT'
                     : 'BUILD_FAILED';
 
-    const resumeControlError = [
+    const resumeControlError = e instanceof TenantAccessError || [
       'RUN_ALREADY_EXISTS',
       'RUN_ALREADY_ACTIVE',
       'RUN_ALREADY_COMPLETE',

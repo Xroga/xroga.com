@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "b96fd150bff5580fa38538f5fb4ec84ae6cc2d3cdaea922045661cb3e99b1415",
+  "reviewRegistrySha256": "4e7478ca737a4ca1dfdd108b09014fbf122657c1c98d357d2cc76ecec2ffc8d8",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -168,7 +168,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-7debe9f0a45ca3c7"
+        "id": "OB-0d0935cb8679da57"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -484,7 +484,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-3ce124cf20299ae2"
+        "id": "OB-cd65173763d747dd"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -938,15 +938,15 @@
       }
     },
     {
-      "id": "ac2f35d56a05405802e3",
+      "id": "2c882ba9923d4ba6229b",
       "path": "backend/src/ai/buildOutcomeMemory.ts",
-      "line": 1922,
+      "line": 1923,
       "enclosing": "upsert",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "29eade39abd76f0491dee750e76399613b5f5062663d969eef0025d7076447fe",
+      "sourceSha256": "e4293f5b85893e529653b7cc86ca9aae5c13bc65dc634b1ace67bf4e2569941a",
       "semanticReview": {
         "authority": "Terminal run outcome capture uses its supplied run identity, issued context and owner-bound run key persistence. Retention deletes only that owner's rows older than its cutoff.",
         "reason": "Parent run admission, same-owner concurrent overwrite, evidence validity and retention policy remain open. Foreign-collision tests prove the helper, not full learning provenance.",
@@ -959,15 +959,15 @@
       }
     },
     {
-      "id": "c64306eccc74a6509be2",
+      "id": "09c21b79800aca71c43f",
       "path": "backend/src/ai/buildOutcomeMemory.ts",
-      "line": 2050,
+      "line": 2051,
       "enclosing": "upsert",
       "kind": "RPC_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "29eade39abd76f0491dee750e76399613b5f5062663d969eef0025d7076447fe",
+      "sourceSha256": "e4293f5b85893e529653b7cc86ca9aae5c13bc65dc634b1ace67bf4e2569941a",
       "semanticReview": {
         "authority": "Learning adapter uses captured worker generation or a distinct database-generated cancellation receipt. Separate service-only functions lock the canonical run and deny stale or foreign terminal evidence before writing the existing build_outcomes table. No client/model field grants generation authority.",
         "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
@@ -980,15 +980,15 @@
       }
     },
     {
-      "id": "f10d68e99b6b086d0ded",
+      "id": "f78c85803ca9f116a8ac",
       "path": "backend/src/ai/buildOutcomeMemory.ts",
-      "line": 2084,
+      "line": 2085,
       "enclosing": "upsert",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "build_outcomes",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "29eade39abd76f0491dee750e76399613b5f5062663d969eef0025d7076447fe",
+      "sourceSha256": "e4293f5b85893e529653b7cc86ca9aae5c13bc65dc634b1ace67bf4e2569941a",
       "semanticReview": {
         "authority": "Terminal run outcome capture uses its supplied run identity, issued context and owner-bound run key persistence. Retention deletes only that owner's rows older than its cutoff.",
         "reason": "Parent run admission, same-owner concurrent overwrite, evidence validity and retention policy remain open. Foreign-collision tests prove the helper, not full learning provenance.",
@@ -1232,15 +1232,15 @@
       }
     },
     {
-      "id": "c945e92962ec2ea9760b",
+      "id": "c311dc7f9d71b9309140",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3769,
+      "line": 3777,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "154148cdad882b77e1d0a30cdd87864e25c06a3c333796c07317b43e6a6909ce",
+      "sourceSha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -1253,15 +1253,15 @@
       }
     },
     {
-      "id": "bafa89cc7cc29f6d8ffd",
+      "id": "caf2719bfd249902fc9a",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3949,
+      "line": 3957,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "154148cdad882b77e1d0a30cdd87864e25c06a3c333796c07317b43e6a6909ce",
+      "sourceSha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -8164,7 +8164,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "8b240ab552b5d1134b69bad79c31827d4a3854a623b7d045adbb0f45e556dc11",
+      "sourceSha256": "2771e83fbadd2591d749909cfdf5f4d641d57cbd052f9cf98dab52bb5075c792",
       "semanticReview": {
         "authority": "Both helpers require an issued immutable TenantContext before either the internal or injected database client can be used. Unknown/prototype resource names and malformed IDs are rejected before query construction.",
         "reason": "Fixed resource mapping excludes caller-selected SQL tables and columns; direct resources use actor plus resource predicates. Files join their current project owner in the same request, and missing/foreign records receive the same 404. This certifies this helper boundary, not every caller issuing persisted_owner contexts or future client injection.",
@@ -8189,7 +8189,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "8b240ab552b5d1134b69bad79c31827d4a3854a623b7d045adbb0f45e556dc11",
+      "sourceSha256": "2771e83fbadd2591d749909cfdf5f4d641d57cbd052f9cf98dab52bb5075c792",
       "semanticReview": {
         "authority": "Both helpers require an issued immutable TenantContext before either the internal or injected database client can be used. Unknown/prototype resource names and malformed IDs are rejected before query construction.",
         "reason": "Fixed resource mapping excludes caller-selected SQL tables and columns; direct resources use actor plus resource predicates. Files join their current project owner in the same request, and missing/foreign records receive the same 404. This certifies this helper boundary, not every caller issuing persisted_owner contexts or future client injection.",
@@ -8214,7 +8214,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "8b240ab552b5d1134b69bad79c31827d4a3854a623b7d045adbb0f45e556dc11",
+      "sourceSha256": "2771e83fbadd2591d749909cfdf5f4d641d57cbd052f9cf98dab52bb5075c792",
       "semanticReview": {
         "authority": "Both helpers require an issued immutable TenantContext before either the internal or injected database client can be used. Unknown/prototype resource names and malformed IDs are rejected before query construction.",
         "reason": "Fixed resource mapping excludes caller-selected SQL tables and columns; direct resources use actor plus resource predicates. Files join their current project owner in the same request, and missing/foreign records receive the same 404. This certifies this helper boundary, not every caller issuing persisted_owner contexts or future client injection.",
@@ -8239,7 +8239,7 @@
       "target": "project_files",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "8b240ab552b5d1134b69bad79c31827d4a3854a623b7d045adbb0f45e556dc11",
+      "sourceSha256": "2771e83fbadd2591d749909cfdf5f4d641d57cbd052f9cf98dab52bb5075c792",
       "semanticReview": {
         "authority": "Both helpers require an issued immutable TenantContext before either the internal or injected database client can be used. Unknown/prototype resource names and malformed IDs are rejected before query construction.",
         "reason": "Fixed resource mapping excludes caller-selected SQL tables and columns; direct resources use actor plus resource predicates. Files join their current project owner in the same request, and missing/foreign records receive the same 404. This certifies this helper boundary, not every caller issuing persisted_owner contexts or future client injection.",

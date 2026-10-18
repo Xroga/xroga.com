@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { test } from 'node:test';
 import { projectContextKey, requireResumeProjectContext } from './projectContext.js';
 import { createCanonicalExecutionState } from '../executionRuntime.js';
+import {createTenantContext} from '../../security/tenantContext.js';
 
 test('resume target comes from durable repository branch and root, not new client values', () => {
   const runId = randomUUID();
@@ -31,6 +32,7 @@ test('actual pipeline refuses changed resume lineage before worker claims or pro
   const prior = keys.map(key => process.env[key]);
   const originalFetch = globalThis.fetch;
   const userId = randomUUID(), runId = randomUUID();
+  const tenantContext=createTenantContext({userId,via:'remote_getuser'});
   const projectId = projectContextKey({ repo: 'org/original', branch: 'topic', projectRoot: '/app' });
   const paths: string[] = [];
   const state = createCanonicalExecutionState({runId,projectId,repository:{owner:'org',name:'original'},selectedBranch:'topic'});
@@ -51,13 +53,13 @@ test('actual pipeline refuses changed resume lineage before worker claims or pro
   try {
     const { runBuildPipeline } = await import('../pipeline.js');
     for (const change of [{ githubTargetRepo: 'org/foreign-target' }, { githubTargetBranch: 'other' }, { projectRoot: '/other' }]) {
-      await assert.rejects(runBuildPipeline({ runId, userId, prompt: 'resume', clientMeta: { resumeRun: true, ...change } }), { code: 'RUN_RESUME_TARGET_MISMATCH' });
+      await assert.rejects(runBuildPipeline({ runId, userId, tenantContext, prompt: 'resume', clientMeta: { resumeRun: true, ...change } }), { code: 'RUN_RESUME_TARGET_MISMATCH' });
     }
     assert.equal(paths.length, 3, 'each denied resume performs only its owner-scoped checkpoint lookup');
-    await assert.rejects(runBuildPipeline({ runId, userId, projectId: randomUUID(), prompt: 'resume', clientMeta: { resumeRun: true } }), { code: 'RUN_RESUME_LINEAGE_UNAVAILABLE' });
+    await assert.rejects(runBuildPipeline({ runId, userId, tenantContext, projectId: randomUUID(), prompt: 'resume', clientMeta: { resumeRun: true } }), { code: 'RUN_RESUME_LINEAGE_UNAVAILABLE' });
     assert.equal(paths.length, 4, 'legacy checkpoint cannot authorize a database project substitution');
     malformed = true;
-    await assert.rejects(runBuildPipeline({runId,userId,prompt:'resume',clientMeta:{resumeRun:true}}),{code:'RUN_RESUME_LINEAGE_UNAVAILABLE'});
+    await assert.rejects(runBuildPipeline({runId,userId,tenantContext,prompt:'resume',clientMeta:{resumeRun:true}}),{code:'RUN_RESUME_LINEAGE_UNAVAILABLE'});
     assert.equal(paths.length,5,'misbound durable branch stops before worker admission');
   } finally {
     globalThis.fetch = originalFetch;

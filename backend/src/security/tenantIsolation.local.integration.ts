@@ -6,7 +6,7 @@ import express from 'express';
 import billingWebhookRouter from '../routes/billingWebhook.js';
 import { createClient } from '@supabase/supabase-js';
 import { createTenantContext, type TenantContext } from './tenantContext.js';
-import { requireOwnedResource, requireOwnedFile } from './ownership.js';
+import { requireOwnedResource, requireOwnedFile,requireOptionalOwnedDatabaseProject } from './ownership.js';
 import { persistOwnedRun, persistOwnedRunAttempt, persistOwnedRuntimeSession, persistOwnedRunTrace } from './ownedRunPersistence.js';
 import { listUserProviderKeys,getUserProviderKey,deleteUserProviderKey,resolveProviderEnvForDeploy } from '../services/integrations/userProviderKeys.js';
 import { reconcileOrphanedRuns,failInFlightRuns } from '../ai/runReconciler.js';
@@ -189,6 +189,22 @@ test('real owner helpers deny every foreign high-risk resource without enumerati
   }
   await requireOwnedFile(owner.context,owner.file,admin);
   await assert.rejects(requireOwnedFile(owner.context,other.file,admin),{status:404});
+});
+
+test('real build admission verifies database project ownership before creating any worker or reaching provider preparation',async()=>{
+  const [owner,other]=users;
+  assert.equal(await requireOptionalOwnedDatabaseProject(owner.context,owner.project,admin),owner.project);
+  assert.equal(await requireOptionalOwnedDatabaseProject(owner.context,'run:logical-owner-workspace',admin),'run:logical-owner-workspace');
+  await assert.rejects(requireOptionalOwnedDatabaseProject(owner.context,other.project,admin),{status:404});
+  const read=()=>admin.from('swarm_runs').select('id').eq('user_id',owner.id).order('id');
+  const before=await read();assert.equal(before.error,null);
+  for(const projectId of [other.project,randomUUID()])for(const stream of [false,true]){
+    const response=await fetch(`${api}/api/swarm/execute`,{method:'POST',headers:{Authorization:`Bearer ${owner.token}`,'Content-Type':'application/json'},
+      body:JSON.stringify({prompt:'Synthetic project admission only',stream,projectId,userId:other.id,tenantContext:{userId:other.id},runId:randomUUID()})});
+    if(!stream){assert.equal(response.status,404);assert.equal((await response.json() as {code:string}).code,'RESOURCE_NOT_FOUND');}
+    else{assert.equal(response.status,200);const text=await response.text();assert.match(text,/RESOURCE_NOT_FOUND/);assert.doesNotMatch(text,/event: complete|"event":"complete"/);}
+  }
+  const after=await read();assert.equal(after.error,null);assert.deepEqual(after.data,before.data);
 });
 
 test('avatar Storage accepts owner folders and denies foreign writes without changing bytes',async()=>{

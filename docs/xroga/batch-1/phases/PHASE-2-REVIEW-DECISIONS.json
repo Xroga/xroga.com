@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "scope": "SEMANTIC_PROGRESS_NOT_SECURITY_CERTIFICATION",
+  "decisions": [
+    {
+      "packetId": "B1-P2-7debe9f0a45ca3c7",
+      "sourceSha256": "e4293f5b85893e529653b7cc86ca9aae5c13bc65dc634b1ace67bf4e2569941a",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "DEMONSTRATED_OWNER_ASSOCIATION_DEFECT_FIXED_PENDING_DATABASE_VERIFICATION",
+      "actorTrace": "Authenticated swarm route passes server-issued context to runBuildPipeline. Existing terminal worker supplies its owner/run and fenced terminal evidence to buildOutcomeFromTerminalRun. recentRoutingOutcomes is a global service-role-loaded cache, so matching runId alone did not establish owner equality.",
+      "invariant": "Only telemetry whose userId AND runId match the admitted terminal run may attach model evidence or attest verification. Existing generation/terminal RPC fence remains mandatory and unchanged.",
+      "evidence": [
+        {"path": "backend/src/ai/buildOutcomeOwnership.test.ts", "type": "FOCUSED_TEST", "result": "PRE_FIX_FOREIGN_OWNER_TEST_FAILED_THEN_THREE_PASSED", "scope": "In-memory deterministic association only, not database or whole-caller acceptance"},
+        {"path": "backend/src/security/buildOutcomeAttempt.local.integration.ts", "type": "DISPOSABLE_DATABASE_TEST", "result": "NOT_EXECUTED_AT_RECORD_CREATION", "scope": "Real model_routing_outcomes and fenced build_outcomes persistence, owner positive and foreign-owner negative"}
+      ],
+      "remaining": ["Execute new actual database case at final source", "Reconcile unchanged legacy retention/upsert callers separately", "Do not equate this narrow fix with whole-factory certification"]
+    },
+    {
+      "packetId": "B1-P2-24934749677f47d8",
+      "sourceSha256": null,
+      "executionStatus": "IN_PROGRESS",
+      "finding": "UPSTREAM_DATABASE_PROJECT_ADMISSION_DEFECT_FIXED_PENDING_DATABASE_VERIFICATION",
+      "actorTrace": "runBuildPipeline has two production callers, both authenticated swarm execute branches. New required context is the original server-issued context, not request JSON. Restored execution databaseProjectId is checked too. Logical run/repository workspace keys remain distinct from UUID database projects and rely on existing owner-scoped stores.",
+      "invariant": "Before durable run admission or provider preparation, any supplied/restored database project UUID must belong to the issued actor. No foreign/missing project may create a run or trigger failure notifications.",
+      "relatedSourceBindings": [
+        {"path": "backend/src/ai/pipeline.ts", "sha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732"},
+        {"path": "backend/src/routes/swarm.ts", "sha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"}
+      ],
+      "evidence": [
+        {"path": "backend/src/security/tenantIsolation.integration.test.ts", "type": "LOOPBACK_HTTP_FIXTURE", "result": "PRE_FIX_FOREIGN_PROJECT_TEST_FAILED_500_INSTEAD_OF_404", "scope": "Actual HTTP and SDK transport against fixture, not actual RLS/database proof"},
+        {"path": "backend/src/security/ownership.test.ts", "type": "FOCUSED_TEST", "result": "PASS_FOUR_TESTS", "scope": "Issued versus forged context, exact owner predicate, UUID and logical-key compatibility"},
+        {"path": "backend/src/security/tenantIsolation.local.integration.ts", "type": "DISPOSABLE_DATABASE_TEST", "result": "NOT_EXECUTED_AT_RECORD_CREATION", "scope": "Actual two-user project ownership, HTTP/SSE denial and unchanged run rows"}
+      ],
+      "remaining": ["Execute fixed HTTP regression and new actual database case", "Reconcile existing run-store owner/generation/lease/cancellation proof without re-auditing unchanged SQL", "Review parent deletion/admission interleavings independently, a preflight read alone is not a lock"]
+    }
+  ]
+}

@@ -1,4 +1,6 @@
 import { randomUUID } from 'crypto';
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
+import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
 import { convertUserRequest } from './converter.js';
 import { BLACK_HOLE_PUBLIC_NAME } from './black-hole/publicIdentity.js';
 import { readCutoverPlan } from './black-hole/cutover.js';
@@ -1137,6 +1139,7 @@ export async function runChatPipeline(opts: {
 export async function runBuildPipeline(opts: {
   runId?: string;
   userId: string;
+  tenantContext: TenantContext;
   prompt: string;
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
   projectId?: string;
@@ -1148,6 +1151,9 @@ export async function runBuildPipeline(opts: {
   onCodeReady?: (output: Record<string, unknown>) => void;
   signal?: AbortSignal;
 }): Promise<BuildPipelineResult> {
+  const tenantContext=requireTenantContext(opts.tenantContext);
+  requireResourceOwner(tenantContext,opts.userId);
+  opts={...opts,userId:tenantContext.userId};
   const runId = opts.runId ?? randomUUID();
   const trace = new RunTrace(runId, opts.userId);
   const emit = (ev: PipelineProgress) => {
@@ -1189,6 +1195,8 @@ export async function runBuildPipeline(opts: {
     opts = { ...opts, projectId: persistedExecutionState.databaseProjectId ??
       (!persistedExecutionState.repository ? opts.projectId : undefined) };
   }
+  // Validate restored lineage too, before worker admission or provider IO.
+  opts={...opts,projectId:await requireOptionalOwnedDatabaseProject(tenantContext,opts.projectId)};
   // Sticky default_repo ONLY for explicit updates when the chatbar omitted a target.
   // Greenfield builds must never silently overwrite the last product.
   const stickyDefault =

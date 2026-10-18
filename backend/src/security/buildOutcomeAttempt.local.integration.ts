@@ -6,6 +6,7 @@ import pg from 'pg';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { buildOutcomeFromTerminalRun, SupabaseBuildOutcomeStore } from '../ai/buildOutcomeMemory.js';
 import { isRunCancellationRequested, requestRunCancellation } from '../ai/runStore.js';
+import {loadRoutingOutcomes,resetRoutingOutcomeCache} from '../ai/routingOutcomes.js';
 
 type FixtureUser = { id: string; token: string };
 function guard(): void {
@@ -37,6 +38,33 @@ export function registerBuildOutcomeAttemptTests(admin: SupabaseClient, getUsers
     const args = { p_run_id: runId, p_owner_id: owner.id, p_generation: generation, p_completed_at: completedAt, p_output: output, p_outcome: saved.data };
     return { owner, other, runId, args, saved: saved.data };
   }
+
+  test('real terminal learning excludes foreign-owner routing rows even when the run identifier matches', async t => {
+    const f=await fixture(t),foreignId=randomUUID(),ownedId=randomUUID();
+    t.after(async()=>{
+      resetRoutingOutcomeCache();
+      assert.equal((await admin.from('model_routing_outcomes').delete().in('id',[foreignId,ownedId])).error,null);
+    });
+    const row={run_id:f.runId,user_id:f.other.id,task_class:'coding',model_id:'deepseek_v4_flash',routing_mode:'balanced',
+      input_tokens:1,output_tokens:2,repair_loops:0,model_switches:0,final_verification_ok:true};
+    assert.equal((await admin.from('model_routing_outcomes').insert({...row,id:foreignId})).error,null);
+    resetRoutingOutcomeCache();await loadRoutingOutcomes();
+    const build=()=>buildOutcomeFromTerminalRun({runId:f.runId,userId:f.owner.id,terminalStatus:'error',
+      iterationCount:1,completedAt:f.args.p_completed_at,output:f.args.p_output});
+    const denied=build();assert.equal(denied.verified,false);assert.deepEqual(denied.modelTelemetry,[]);
+    const store=new SupabaseBuildOutcomeStore({generation:f.args.p_generation,completedAt:f.args.p_completed_at,output:f.args.p_output});
+    await store.upsert(denied);
+    let saved=await admin.from('build_outcomes').select('user_id,verified,model_telemetry').eq('run_id',f.runId).single();
+    assert.equal(saved.error,null);assert.equal(saved.data.user_id,f.owner.id);assert.equal(saved.data.verified,false);
+    assert.deepEqual(saved.data.model_telemetry,[]);
+    assert.equal((await admin.from('model_routing_outcomes').insert({...row,id:ownedId,user_id:f.owner.id})).error,null);
+    resetRoutingOutcomeCache();await loadRoutingOutcomes();
+    const allowed=build();assert.equal(allowed.verified,true);assert.equal(allowed.modelTelemetry.length,1);
+    await store.upsert(allowed);
+    saved=await admin.from('build_outcomes').select('user_id,verified,model_telemetry').eq('run_id',f.runId).single();
+    assert.equal(saved.error,null);assert.equal(saved.data.user_id,f.owner.id);assert.equal(saved.data.verified,true);
+    assert.equal(saved.data.model_telemetry.length,1);
+  });
 
   test('real worker learning fence binds owner, epoch and exact terminal evidence', async t => {
     const f = await fixture(t);

@@ -2,13 +2,16 @@
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { createHash, randomUUID } from 'node:crypto';
-import { spawnSync } from 'node:child_process';
+import { spawnSync,execFileSync } from 'node:child_process';
+import {test} from 'node:test';
 import { resolve, join } from 'node:path';
 import pg from 'pg';
 import { historicalShareSchema, readHistoricalShareSchema } from './historical-share-fixture.mjs';
 import { disposableCliPackages } from './disposable-supabase.mjs';
+import {assertDisposableSource,collectSchemaCatalog} from './schema-catalog.mjs';
 const root = resolve(import.meta.dirname,'../..');
 if (process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || !process.env.XB01_SUPABASE_WORKDIR) throw new Error('Disposable Supabase configuration required');
+const sourceSha=assertDisposableSource(execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),process.env.XB01_TEST_SOURCE_SHA);
 const url = new URL(process.env.XB01_LOCAL_DATABASE_URL ?? '');
 assert.equal(url.port,'54322'); assert.equal(url.pathname,'/postgres'); assert.ok(['localhost','127.0.0.1'].includes(url.hostname));
 const files = readdirSync(join(root,'supabase/migrations')).filter(f=>f.endsWith('.sql')).sort();
@@ -16,7 +19,7 @@ const target = '20261013150357_xroga_tenant_security_baseline.sql';
 const upgradeFiles=files.slice(files.indexOf(target));
 assert.ok(files.includes(target)&&upgradeFiles.includes('20261013221254_private_project_file_delivery.sql'));
 const inventory = files.map(file=>({file,sha256:createHash('sha256').update(readFileSync(join(root,'supabase/migrations',file))).digest('hex')}));
-const evidence = {status:'IN_PROGRESS',database:'disposable_supabase_pg17',cli:'2.120.0',migrations:inventory,upgrade:'NOT_RUN',fresh:'NOT_RUN',applied:[]};
+const evidence = {status:'IN_PROGRESS',sourceSha,database:'disposable_supabase_pg17',cli:'2.120.0',migrations:inventory,upgrade:'NOT_RUN',fresh:'NOT_RUN',applied:[]};
 const out = join(root,'artifacts/batch-01-local-security'); mkdirSync(out,{recursive:true});
 const save = () => writeFileSync(join(out,'migration-history.json'),JSON.stringify(evidence,null,2));
 const connect = async()=>{const db=new pg.Client({connectionString:url.href,ssl:false});await db.connect();return db;};
@@ -27,6 +30,7 @@ async function apply(db,names,phase) {
     evidence.applied.push({phase,file}); save();
   }
 }
+async function verifyUpgrade(){
 let db = await connect();
 try {
   // No production dump/projection: recreate the actual pre-upgrade repository schema.
@@ -74,10 +78,12 @@ try {
   evidence.preUpgradeAuditRowsPreservedAfterDeletion=true;
   evidence.upgrade='PASS'; save();
 } finally { await db.end(); }
+}
+async function verifyFresh(){
 // Explicit LOCAL reset only; isolated workdir has no linked project or seed files.
 const reset=spawnSync('npx',['--yes',...disposableCliPackages,'supabase','--workdir',process.env.XB01_SUPABASE_WORKDIR,'db','reset','--local','--no-seed','--yes'],{encoding:'utf8',maxBuffer:32*1024*1024});
 if(reset.status!==0){evidence.failure={phase:'local-reset',exit:reset.status};save();throw new Error('Disposable local database reset failed');}
-db=await connect();
+const db=await connect();
 try {
   assert.equal((await db.query("select to_regclass('public.projects') as table_name")).rows[0].table_name,null);
   await apply(db,files,'fresh');
@@ -88,7 +94,14 @@ try {
   const actual=(await db.query("select n.nspname as schema,c.relname as table_name from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname in ('public','storage') and c.relkind in ('r','p') order by n.nspname,c.relname")).rows;
   const names=new Set(actual.map(row=>`${row.schema}.${row.table_name}`));
   evidence.schemaParity={status:'NOT_PRODUCTION_DRIFT_CERTIFIED',observedReferenceTables:observed.tables.length,disposableTables:actual.length,missingObservedTables:observed.tables.filter(row=>!names.has(`${row.schema}.${row.table_name}`)).map(row=>`${row.schema}.${row.table_name}`)};
-  evidence.fresh='PASS'; evidence.status='PASS'; save();
+  const catalog=await collectSchemaCatalog(db,{sourceSha,observedAt:new Date().toISOString()});
+  writeFileSync(join(out,'schema-catalog.json'),JSON.stringify(catalog,null,2)+'\n');
   await db.query("notify pgrst, 'reload schema'");
+  evidence.fresh='PASS'; evidence.status='PASS'; save();
 } finally {await db.end();}
+}
+await test('real full-history tenant migration preserves upgraded rows policies and reapply compatibility',verifyUpgrade);
+assert.equal(evidence.upgrade,'PASS','Failed upgrade must stop before reset or a misleading fresh claim');
+await test('real full-history tenant migration succeeds on a fresh disposable database',verifyFresh);
+assert.equal(evidence.fresh,'PASS');
 console.log(`full_history=${files.length}; upgrade=PASS; fresh=PASS; no_production_data=true`);

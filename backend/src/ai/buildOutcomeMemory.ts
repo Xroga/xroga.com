@@ -1584,7 +1584,8 @@ export function buildOutcomeFromTerminalRun(
           outcome,
         ) =>
           outcome.runId ===
-          input.runId,
+          input.runId &&
+          outcome.userId === input.userId,
       )
       .slice(
         -12,

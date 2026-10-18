@@ -3453,6 +3453,7 @@
         "scripts/security/full-supabase-history.mjs",
         "scripts/security/historical-share-fixture.mjs",
         "scripts/security/r2-private-check.mjs",
+        "scripts/security/schema-catalog.mjs",
         "scripts/security/staging-preflight.mjs",
         "scripts/security/tenant-acceptance.mjs"
       ],

@@ -31,54 +31,13 @@ export function buildPhaseOne(){
   for(const c of commands)assert.equal(c.criteria.length,['009','010'].includes(c.number)?12:10,`Exact original criteria:${c.number}`);
   assert.deepEqual(commands.find(c=>c.number==='007').criteria,tenantCriteria);
   const old=historical('docs/xroga/security/privileged-callers.json'),oldReviews=historical('docs/xroga/security/caller-reviews.json');
-  const oldLedger=historical('docs/xroga/security/batch-1-closure-progress.json');
-  const current=JSON.parse(read('docs/xroga/security/privileged-callers.json'));
   const reviews=JSON.parse(read('docs/xroga/security/caller-reviews.json'));
   const pending=old.callers.filter(c=>c.review==='REVIEWED_GAP'),groups=oldReviews.reviews.filter(r=>r.disposition==='REVIEWED_GAP');
   assert.equal(pending.length,371);assert.equal(groups.length,73);assert.equal(new Set(pending.map(c=>c.path)).size,55);
-  const family=new Map();for(const group of oldLedger.matrix)for(const ids of Object.values(group.callersByPath))for(const id of ids){assert.ok(!family.has(id));family.set(id,group.rootCause);}
-  const packets=groups.map(record=>{
-    const id=`B1-P2-${hash(record.path+':'+[...record.callIds].sort().join(',')).slice(0,16)}`;
-    const mapping=record.callIds.map(oldId=>{
-      const before=pending.find(c=>c.id===oldId);assert.ok(before);
-      let next=current.callers.filter(c=>c.id===oldId);
-      if(!next.length)next=current.callers.filter(c=>c.path===before.path&&c.enclosing===before.enclosing
-        &&(c.target===before.target||(['assignExperiment','exposeExperiment'].includes(c.enclosing)&&c.kind==='RPC_CANDIDATE')));
-      assert.ok(next.length,`Unmapped baseline caller:${oldId}`);
-      return {baselineCallerId:oldId,currentCallerIds:next.map(c=>c.id),change:next.some(c=>c.id===oldId)?'RETAINED':'REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION'};
-    });
-    const currentIds=[...new Set(mapping.flatMap(m=>m.currentCallerIds))];
-    const groupFamily=family.get(record.callIds[0]);
-    const invariants={
-      'worker-state':['DURABLE_OWNER_RUN_PROJECT_LINEAGE',[4,5,9]],
-      'credentials-oauth':['OWNER_SELECTED_CONNECTION_LINEAGE',[4,6,9]],
-      'approvals-external-actions':['OWNED_ACTION_TARGET_AND_REQUESTER',[3,4,9]],
-      'billing-budget':['OWNED_PAYMENT_ACCOUNT_AND_BUDGET',[3,4,9]],
-      'projects-files-runtime':['OWNED_PARENT_RESOURCE_PERSISTENCE',[3,4,5,9]],
-      'growth-community':['PROJECT_TENANT_MEMBER_RELATION',[3,4,9]],
-      'other-source-bound-boundaries':['EXACT_SOURCE_CONTEXT_OR_NARROW_EXCEPTION',[3,4,9]],
-    };
-    const [invariant,criteria]=invariants[groupFamily];
-    const obligations=[{id:`${id}:TENANT_SCOPE`,phase:2,command:'007',criterionIds:[2,...criteria,10].map(n=>cid('007',n)),state:'EVIDENCE_GAP',
-      invariant,
-      existingGuard:record.authority,missingEvidenceOrRisk:record.reason,
-      completion:'Reuse exact-source positive/negative proof first. Fix only a demonstrated ownership defect. Every current caller scoped or narrowly exempt.'}];
-    if(/credential|oauth|provider|token|vault|keys/i.test(record.path))obligations.push({id:`${id}:CREDENTIAL_CUSTODY`,phase:3,command:'009',criterionIds:[cid('009',1),cid('009',11),cid('009',12)],
-      state:record.path.endsWith('/oauthPkceStore.ts')?'CONFIRMED_DEFECT':'EVIDENCE_GAP',
-      invariant:'Encrypted custody and consumer migration, distinct from tenant selection',
-      evidence:record.path.endsWith('/oauthPkceStore.ts')?'saveOAuthConnection forwards raw OAuth fields to save_oauth_connection; authorization-epoch migration assigns those fields directly':'Existing review, not proof that every credential class is migrated',
-      completion:'Original009 vault/migration criteria, not relabeled007 scope closure'});
-    if(/businessAction|operationsService|providerBudget|BillingService|billingWebhook/.test(record.path))obligations.push({id:`${id}:ACTION_AUTHORITY`,phase:3,command:'008',criterionIds:[cid('008',4),cid('008',5),cid('008',8)],state:'EVIDENCE_GAP',
-      invariant:'Exact account/action/digest/spend/replay and receipts, independently of tenant identity',completion:'Original008 adapter-specific positive/negative evidence'});
-    if(/storage|publish|integrations|livePreview/.test(record.path))obligations.push({id:`${id}:EGRESS`,phase:4,command:'010',criterionIds:[cid('010',3),cid('010',12)],state:'EVIDENCE_GAP',
-      invariant:'Outbound policy for actual external effects, without inventing an effect at a pure read',completion:'Phase4 actual egress inventory determines applicable adapter, then proves policy or scoped non-applicability'});
-    return {id,family:groupFamily,baselinePath:record.path,baselineCallIds:record.callIds,baselineSourceSha256:record.sourceSha256,
-      currentCallerIds:currentIds,mapping,classification:'REVIEW_WORKLOAD_NOT_EXPLOIT_COUNT',actorAndAuthorityTrace:record.authority,
-      resourceOperations:[...new Set(current.callers.filter(c=>currentIds.includes(c.id)).map(c=>`${c.enclosing}:${c.kind}:${c.target}`))],
-      sourceBoundReviewReason:record.reason,existingTestReferences:record.evidence,
-      testCoverage:record.evidence.map(e=>({...e,sourceSha256:hash(read(e.path)),polarity:'UNKNOWN_UNTIL_SOURCE_BOUND_PHASE_2_RECONCILIATION'})),obligations,
-      dependencies:['B1_P1_VERIFIED','FOUNDER_PHASE_2_ADMISSION'],founderAction:false,additionalSpend:0};
-  });
+  // Founder admitted Phase2 at this immutable Phase1 source. Current caller
+  // remapping belongs to the Phase2 ledger, not a rewrite of its frozen input.
+  const approvedFrozen=JSON.parse(git(['show','8a1a0bfa7878603dd488db98568577b2fb1896da:docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json']));
+  const packets=approvedFrozen.packets;
   assert.equal(new Set(packets.flatMap(p=>p.baselineCallIds)).size,371);
   const recorded=existsSync(resolve(root,evidencePath))?JSON.parse(read(evidencePath)):null;
   // Accepted prior-phase evidence remains tied to its immutable source. Later
@@ -89,11 +48,7 @@ export function buildPhaseOne(){
     status:'BLOCKED',reason:Number(command.number)<=6?'Final-source criterion verification is collected by the phase handoff, not inferred from file presence':'Later phase original requirement remains mandatory',
     implementationEvidence:fixtures[command.number]??[],testType:'FINAL_SOURCE_CI_REQUIRED',proofIds:[],
     ...(verified?.criteria.find(c=>c.id===cid(command.number,i+1))??{})})));
-  const phase2={version:1,scope:'FROZEN_PHASE_2_WORKLIST_NOT_TENANT_ACCEPTANCE',baselineSource:baseline,
-    historical:{reviewedCandidates:641,unreviewed:0,unresolved:371,compositeReviewEntries:73,paths:55},
-    families:oldLedger.matrix.map(g=>({family:g.rootCause,baselineRecords:g.pendingCandidates})),packets,
-    admission:['Phase1 founder review','B1_P1_VERIFIED or explicit founder resolution of its exact blockers','No Phase3/4 implementation in Phase2'],
-    invariantStates:['CONFIRMED_DEFECT','CREDIBLE_RISK','EVIDENCE_GAP','VERIFIED_BOUNDARY','APPROVED_NARROW_EXCEPTION','NOT_PERSISTENCE','EXTERNAL_BLOCKER','OUT_OF_SCOPE_WITH_PROVENANCE']};
+  const phase2=approvedFrozen;
   const obligations=reviews.reviews.map(record=>({id:`OB-${hash(record.path+':'+[...record.callIds].sort().join(',')).slice(0,16)}`,
     callerIds:record.callIds,path:record.path,sourceSha256:record.sourceSha256,
     state:record.disposition==='NOT_PERSISTENCE'?'NOT_PERSISTENCE':'EVIDENCE_GAP',legacyDispositionPreserved:record.disposition,

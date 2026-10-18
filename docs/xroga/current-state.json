@@ -274,7 +274,7 @@
       ],
       "callers": [
         "backend/src/ai/compileValidate.test.ts:9",
-        "backend/src/ai/pipeline.ts:205"
+        "backend/src/ai/pipeline.ts:207"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -366,7 +366,7 @@
       "callers": [
         "backend/src/ai/attachments.docx.test.ts:6",
         "backend/src/ai/attachments.test.ts:7",
-        "backend/src/ai/pipeline.ts:52"
+        "backend/src/ai/pipeline.ts:54"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -764,7 +764,7 @@
         "backend/src/ai/black-hole/migration.test.ts:7",
         "backend/src/ai/black-hole/productionBridge.ts:26",
         "backend/src/ai/black-hole/router.test.ts:11",
-        "backend/src/ai/pipeline.ts:16"
+        "backend/src/ai/pipeline.ts:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -899,7 +899,7 @@
       "callers": [
         "backend/src/ai/black-hole/converterPolicy.test.ts:4",
         "backend/src/ai/black-hole/migration.test.ts:6",
-        "backend/src/ai/pipeline.ts:14"
+        "backend/src/ai/pipeline.ts:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -952,7 +952,7 @@
         "backend/src/ai/black-hole/migration.test.ts:5",
         "backend/src/ai/black-hole/productionBridge.test.ts:10",
         "backend/src/ai/black-hole/productionBridge.ts:24",
-        "backend/src/ai/pipeline.ts:4"
+        "backend/src/ai/pipeline.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1125,7 +1125,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/productionBridge.test.ts:4",
-        "backend/src/ai/pipeline.ts:6"
+        "backend/src/ai/pipeline.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1246,7 +1246,7 @@
         "backend/src/ai/black-hole/leakAudit.test.ts:4",
         "backend/src/ai/black-hole/migration.test.ts:4",
         "backend/src/ai/black-hole/publicIdentity.test.ts:4",
-        "backend/src/ai/pipeline.ts:3",
+        "backend/src/ai/pipeline.ts:5",
         "backend/src/routes/capabilities.ts:30"
       ],
       "reachable": true,
@@ -1739,7 +1739,7 @@
         "backend/src/ai/black-hole/taskClass.test.ts:4",
         "backend/src/ai/black-hole/toolBindings.test.ts:6",
         "backend/src/ai/black-hole/toolRegistry.test.ts:13",
-        "backend/src/ai/pipeline.ts:15"
+        "backend/src/ai/pipeline.ts:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1972,7 +1972,7 @@
       "callers": [
         "backend/src/ai/black-hole/productionBridge.ts:29",
         "backend/src/ai/black-hole/webIntelligence.test.ts:4",
-        "backend/src/ai/pipeline.ts:10"
+        "backend/src/ai/pipeline.ts:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2091,7 +2091,7 @@
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.test.ts:12",
-        "backend/src/ai/pipeline.ts:231",
+        "backend/src/ai/pipeline.ts:233",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:34",
         "backend/src/synthesis/universalEntrypoint.ts:88"
       ],
@@ -2190,7 +2190,7 @@
       "id": "surface:10d43c92abd75c1fddae",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/buildOutcomeMemory.ts",
-      "sha256": "29eade39abd76f0491dee750e76399613b5f5062663d969eef0025d7076447fe",
+      "sha256": "e4293f5b85893e529653b7cc86ca9aae5c13bc65dc634b1ace67bf4e2569941a",
       "symbols": [
         "BUILD_OUTCOME_SCHEMA_VERSION",
         "BuildFailureCategory",
@@ -2285,6 +2285,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutcomeMemory.test.ts:19",
+        "backend/src/ai/buildOutcomeOwnership.test.ts:3",
         "backend/src/ai/runStore.ts:15",
         "backend/src/ai/step7LearningStrategy.test.ts:12",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:7",
@@ -2298,7 +2299,7 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/buildOutcomeMemory.ts:2084 (user_id)"
+        "backend/src/ai/buildOutcomeMemory.ts:2085 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -2310,6 +2311,7 @@
       ],
       "testCoverage": [
         "backend/src/ai/buildOutcomeMemory.test.ts",
+        "backend/src/ai/buildOutcomeOwnership.test.ts",
         "backend/src/ai/step7LearningStrategy.test.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
@@ -2377,7 +2379,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutcomeRoutingMemory.test.ts:8",
-        "backend/src/ai/pipeline.ts:230",
+        "backend/src/ai/pipeline.ts:232",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:29",
         "backend/src/synthesis/universalEntrypoint.ts:83"
       ],
@@ -2428,7 +2430,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutputValidation.test.ts:3",
-        "backend/src/ai/pipeline.ts:26"
+        "backend/src/ai/pipeline.ts:28"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2521,7 +2523,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:232",
+        "backend/src/ai/pipeline.ts:234",
         "backend/src/ai/step7LearningStrategy.test.ts:21",
         "backend/src/synthesis/productIntelligence.ts:18",
         "backend/src/synthesis/universalFlow.ts:24"
@@ -2577,7 +2579,7 @@
       ],
       "callers": [
         "backend/src/ai/buildStreamNarrator.test.ts:3",
-        "backend/src/ai/pipeline.ts:96"
+        "backend/src/ai/pipeline.ts:98"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2647,7 +2649,7 @@
       ],
       "callers": [
         "backend/src/ai/builderAttempt.test.ts:3",
-        "backend/src/ai/pipeline.ts:34",
+        "backend/src/ai/pipeline.ts:36",
         "backend/src/synthesis/coherentImplementation.ts:7"
       ],
       "reachable": true,
@@ -2856,7 +2858,7 @@
       ],
       "callers": [
         "backend/src/ai/compileBlockerMessage.test.ts:4",
-        "backend/src/ai/pipeline.ts:27",
+        "backend/src/ai/pipeline.ts:29",
         "backend/src/ai/validationVerdict.ts:2"
       ],
       "reachable": true,
@@ -2994,7 +2996,7 @@
       "callers": [
         "backend/src/ai/compileBlockerMessage.ts:3",
         "backend/src/ai/compileValidate.test.ts:3",
-        "backend/src/ai/pipeline.ts:200",
+        "backend/src/ai/pipeline.ts:202",
         "backend/src/ai/validationVerdict.ts:3",
         "backend/src/sandbox/sandboxIsolation.test.ts:11"
       ],
@@ -3071,7 +3073,7 @@
       ],
       "callers": [
         "backend/src/ai/contextPreparation.test.ts:3",
-        "backend/src/ai/pipeline.ts:234",
+        "backend/src/ai/pipeline.ts:236",
         "backend/src/ai/repositoryTools.ts:23",
         "backend/src/synthesis/coherentImplementation.ts:12"
       ],
@@ -3120,7 +3122,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:2"
+        "backend/src/ai/pipeline.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3188,7 +3190,7 @@
       "callers": [
         "backend/src/ai/artifactDurability.test.ts:4",
         "backend/src/ai/engineeringArtifact.test.ts:4",
-        "backend/src/ai/pipeline.ts:5",
+        "backend/src/ai/pipeline.ts:7",
         "backend/src/ai/runStore.ts:13",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:13",
         "backend/src/synthesis/browserVerificationAdapter.test.ts:7"
@@ -3311,7 +3313,7 @@
       ],
       "callers": [
         "backend/src/ai/engineeringTasks.test.ts:3",
-        "backend/src/ai/pipeline.ts:247"
+        "backend/src/ai/pipeline.ts:249"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3457,7 +3459,7 @@
         "backend/src/ai/executionRuntime.attempt.test.ts:4",
         "backend/src/ai/executionRuntime.owner.test.ts:3",
         "backend/src/ai/executionRuntime.test.ts:3",
-        "backend/src/ai/pipeline.ts:235",
+        "backend/src/ai/pipeline.ts:237",
         "backend/src/ai/universal/resumeProjectContext.test.ts:5",
         "backend/src/hardening/launchHardening.test.ts:47",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts:7",
@@ -3557,7 +3559,7 @@
       ],
       "callers": [
         "backend/src/ai/fileSelector.test.ts:3",
-        "backend/src/ai/pipeline.ts:185"
+        "backend/src/ai/pipeline.ts:187"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3597,7 +3599,7 @@
       ],
       "callers": [
         "backend/src/ai/githubShippingPlan.test.ts:3",
-        "backend/src/ai/pipeline.ts:215"
+        "backend/src/ai/pipeline.ts:217"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3745,7 +3747,7 @@
         "backend/src/ai/executionRuntime.owner.test.ts:4",
         "backend/src/ai/executionRuntime.test.ts:13",
         "backend/src/ai/intelligentRouter.test.ts:3",
-        "backend/src/ai/pipeline.ts:221",
+        "backend/src/ai/pipeline.ts:223",
         "backend/src/routes/capabilities.ts:22"
       ],
       "reachable": true,
@@ -3992,7 +3994,7 @@
       ],
       "callers": [
         "backend/src/ai/legacyBuilderAdapter.test.ts:3",
-        "backend/src/ai/pipeline.ts:88"
+        "backend/src/ai/pipeline.ts:90"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4284,7 +4286,7 @@
         "backend/src/ai/executionRuntime.test.ts:14",
         "backend/src/ai/intelligentRouter.test.ts:10",
         "backend/src/ai/intelligentRouter.ts:3",
-        "backend/src/ai/pipeline.ts:233",
+        "backend/src/ai/pipeline.ts:235",
         "backend/src/ai/providerPolicy.test.ts:330",
         "backend/src/ai/providerPolicy.test.ts:389",
         "backend/src/ai/providerPolicy.test.ts:468",
@@ -4385,7 +4387,7 @@
         "backend/src/ai/executionRuntime.ts:10",
         "backend/src/ai/modelCapabilityRegistry.ts:3",
         "backend/src/ai/openaiCompat.ts:3",
-        "backend/src/ai/pipeline.ts:17",
+        "backend/src/ai/pipeline.ts:19",
         "backend/src/ai/postCompletionAccounting.ts:3",
         "backend/src/ai/providerBudget.ts:3",
         "backend/src/ai/providerPolicy.test.ts:15",
@@ -4532,7 +4534,7 @@
         "backend/src/ai/converter.ts:1",
         "backend/src/ai/modelCapabilityRegistry.ts:6",
         "backend/src/ai/openaiCompat.test.ts:3",
-        "backend/src/ai/pipeline.ts:18",
+        "backend/src/ai/pipeline.ts:20",
         "backend/src/ai/qa.ts:1",
         "backend/src/ai/repoSummarize.ts:8",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:3",
@@ -4882,7 +4884,7 @@
         "backend/src/ai/fileSelector.test.ts:4",
         "backend/src/ai/patchSafety.test.ts:3",
         "backend/src/ai/patches.test.ts:3",
-        "backend/src/ai/pipeline.ts:72",
+        "backend/src/ai/pipeline.ts:74",
         "backend/src/synthesis/universalExecution.ts:32"
       ],
       "reachable": true,
@@ -4931,7 +4933,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "154148cdad882b77e1d0a30cdd87864e25c06a3c333796c07317b43e6a6909ce",
+      "sha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -5250,6 +5252,7 @@
         "synthesis",
         "system",
         "t",
+        "tenantContext",
         "throwIfAborted",
         "todos",
         "todosForBuild",
@@ -5301,6 +5304,8 @@
         "../lib/truthfulExecution.js",
         "../lib/vercelAuthError.js",
         "../lib/vercelEnv.js",
+        "../security/ownership.js",
+        "../security/tenantContext.js",
         "../services/integrations/githubAuth.js",
         "../services/integrations/githubDeploy.js",
         "../services/integrations/supabaseProvision.js",
@@ -5450,6 +5455,8 @@
         "backend/src/lib/taskClassifier.ts",
         "backend/src/lib/truthfulExecution.ts",
         "backend/src/lib/vercelAuthError.ts",
+        "backend/src/security/ownership.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/githubAuth.ts",
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/integrations/supabaseProvision.ts",
@@ -5484,7 +5491,7 @@
         "backend/src/ai/projectName.test.ts:3",
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
-        "backend/src/ai/universal/resumeProjectContext.test.ts:52",
+        "backend/src/ai/universal/resumeProjectContext.test.ts:54",
         "backend/src/routes/phase1.ts:13",
         "backend/src/routes/swarm.ts:6"
       ],
@@ -5626,7 +5633,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:101",
+        "backend/src/ai/pipeline.ts:103",
         "backend/src/ai/progressHeartbeat.test.ts:3"
       ],
       "reachable": true,
@@ -5716,7 +5723,7 @@
       ],
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:4",
-        "backend/src/ai/pipeline.ts:186",
+        "backend/src/ai/pipeline.ts:188",
         "backend/src/ai/projectMemoryCommit.test.ts:4",
         "backend/src/ai/repoSummarize.ts:26",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:7"
@@ -5783,7 +5790,7 @@
       ],
       "callers": [
         "backend/src/ai/converter.ts:3",
-        "backend/src/ai/pipeline.ts:43",
+        "backend/src/ai/pipeline.ts:45",
         "backend/src/ai/prompts.test.ts:4",
         "backend/src/ai/richResponsePrompt.test.ts:4",
         "backend/src/routes/guestChat.ts:15"
@@ -5909,7 +5916,7 @@
         "backend/src/ai/architect.ts:6",
         "backend/src/ai/black-hole/webIntelligence.ts:15",
         "backend/src/ai/converter.ts:2",
-        "backend/src/ai/pipeline.ts:42",
+        "backend/src/ai/pipeline.ts:44",
         "backend/src/ai/providerBudget.evidence.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:4",
         "backend/src/ai/providerBudget.test.ts:3",
@@ -6248,7 +6255,7 @@
         "backend/src/ai/blackBoxExecution.test.ts:7",
         "backend/src/ai/modelCapabilityRegistry.ts:4",
         "backend/src/ai/openaiCompat.ts:10",
-        "backend/src/ai/pipeline.ts:226",
+        "backend/src/ai/pipeline.ts:228",
         "backend/src/ai/postCompletionAccounting.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:5",
         "backend/src/ai/providerBudget.ts:4",
@@ -6360,7 +6367,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:80",
+        "backend/src/ai/pipeline.ts:82",
         "backend/src/ai/qa.test.ts:3",
         "backend/src/ai/reviewerRouting.test.ts:3",
         "backend/src/synthesis/productionAdapters.ts:24"
@@ -6471,7 +6478,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:58",
+        "backend/src/ai/pipeline.ts:60",
         "backend/src/ai/postCompletionAccounting.ts:2",
         "backend/src/ai/quota.failure.test.ts:3",
         "backend/src/ai/quota.test.ts:18",
@@ -6550,7 +6557,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:193"
+        "backend/src/ai/pipeline.ts:195"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -6797,7 +6804,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:66",
+        "backend/src/ai/pipeline.ts:68",
         "backend/src/ai/router.test.ts:7",
         "backend/src/lib/adaptiveOrchestrator.ts:10"
       ],
@@ -6923,8 +6930,9 @@
         "backend/src/ai/black-hole/router.ts:47",
         "backend/src/ai/buildOutcomeMemory.ts:5",
         "backend/src/ai/intelligentRouter.ts:11",
-        "backend/src/ai/pipeline.ts:229",
-        "backend/src/ai/routingPersistence.test.ts:3"
+        "backend/src/ai/pipeline.ts:231",
+        "backend/src/ai/routingPersistence.test.ts:3",
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts:9"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -6938,7 +6946,9 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/buildOutcomeMemory.test.ts",
-        "backend/src/ai/routingPersistence.test.ts"
+        "backend/src/ai/buildOutcomeOwnership.test.ts",
+        "backend/src/ai/routingPersistence.test.ts",
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -7138,7 +7148,7 @@
         "backend/src/ai/executionRuntime.attempt.test.ts:5",
         "backend/src/ai/executionRuntime.ts:8",
         "backend/src/ai/failRun.test.ts:4",
-        "backend/src/ai/pipeline.ts:81",
+        "backend/src/ai/pipeline.ts:83",
         "backend/src/ai/runReconciler.test.ts:12",
         "backend/src/ai/runStore.authority.test.ts:5",
         "backend/src/ai/runStore.cancellationRace.test.ts:5",
@@ -7270,7 +7280,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:211",
+        "backend/src/ai/pipeline.ts:213",
         "backend/src/ai/runTrace.attempt.test.ts:4",
         "backend/src/security/runTraceAttempt.local.integration.ts:8"
       ],
@@ -7321,7 +7331,7 @@
       ],
       "callers": [
         "backend/src/ai/benchmarkExecutor.ts:29",
-        "backend/src/ai/pipeline.ts:194",
+        "backend/src/ai/pipeline.ts:196",
         "backend/src/ai/securityScan.test.ts:3",
         "backend/src/synthesis/coherentImplementation.ts:13"
       ],
@@ -7382,7 +7392,7 @@
       ],
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:5",
-        "backend/src/ai/pipeline.ts:206",
+        "backend/src/ai/pipeline.ts:208",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:8"
       ],
       "reachable": true,
@@ -7438,7 +7448,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:214",
+        "backend/src/ai/pipeline.ts:216",
         "backend/src/ai/shipOutcome.test.ts:3"
       ],
       "reachable": true,
@@ -7506,7 +7516,7 @@
         "backend/src/ai/buildOutputValidation.ts:5",
         "backend/src/ai/buildStreamNarrator.test.ts:8",
         "backend/src/ai/patches.test.ts:10",
-        "backend/src/ai/pipeline.ts:67"
+        "backend/src/ai/pipeline.ts:69"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -8940,7 +8950,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:256",
+        "backend/src/ai/pipeline.ts:258",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:19",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:46"
       ],
@@ -9405,7 +9415,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:89",
+        "backend/src/ai/pipeline.ts:91",
         "backend/src/ai/startupProgress.test.ts:3"
       ],
       "reachable": true,
@@ -9474,7 +9484,7 @@
       ],
       "callers": [
         "backend/src/ai/htmlTruncation.test.ts:4",
-        "backend/src/ai/pipeline.ts:195",
+        "backend/src/ai/pipeline.ts:197",
         "backend/src/ai/qa.ts:3",
         "backend/src/ai/securityScan.test.ts:4"
       ],
@@ -9897,7 +9907,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
-        "backend/src/ai/pipeline.ts:152",
+        "backend/src/ai/pipeline.ts:154",
         "backend/src/ai/universal/goalContract.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:21",
         "backend/src/ai/universal/semanticRequestPlanner.ts:37",
@@ -10093,7 +10103,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:153",
+        "backend/src/ai/pipeline.ts:155",
         "backend/src/ai/universal/capabilityReadiness.test.ts:4",
         "backend/src/ai/universal/semanticRequestPlanner.ts:50",
         "backend/src/lib/xrogaCapabilities.ts:1"
@@ -10144,7 +10154,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:150",
+        "backend/src/ai/pipeline.ts:152",
         "backend/src/ai/universal/resumeProjectContext.test.ts:4",
         "backend/src/ai/universal/universalContracts.test.ts:7",
         "backend/src/synthesis/universalEntrypoint.ts:106"
@@ -10251,7 +10261,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:154",
+        "backend/src/ai/pipeline.ts:156",
         "backend/src/ai/providerRuntime.ts:9",
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.ts:54",
@@ -10494,7 +10504,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:155",
+        "backend/src/ai/pipeline.ts:157",
         "backend/src/ai/postCompletionAccounting.test.ts:5",
         "backend/src/ai/universal/capabilityReadiness.test.ts:5",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:4",
@@ -10609,7 +10619,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:29",
+        "backend/src/ai/pipeline.ts:31",
         "backend/src/ai/validationVerdict.test.ts:4",
         "backend/src/sandbox/sandboxIsolation.test.ts:12"
       ],
@@ -10665,7 +10675,7 @@
       ],
       "callers": [
         "backend/src/ai/intentReasoning.ts:25",
-        "backend/src/ai/pipeline.ts:246",
+        "backend/src/ai/pipeline.ts:248",
         "backend/src/ai/previewNotVerified.test.ts:21",
         "backend/src/ai/verificationLifecycle.test.ts:12"
       ],
@@ -11942,7 +11952,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:151",
+        "backend/src/ai/pipeline.ts:153",
         "backend/src/ai/softwareAgent/agentV2LaunchGate.test.ts:9",
         "backend/src/config/universalAgentFlags.test.ts:12",
         "backend/src/synthesis/browserGateVerification.test.ts:18",
@@ -13942,7 +13952,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:227",
+        "backend/src/ai/pipeline.ts:229",
         "backend/src/lib/adaptiveEngine.test.ts:7"
       ],
       "reachable": true,
@@ -14317,7 +14327,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:212"
+        "backend/src/ai/pipeline.ts:214"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -14577,7 +14587,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:2",
         "backend/src/ai/blackBoxExecution.test.ts:3",
         "backend/src/ai/intelligentRouter.ts:9",
-        "backend/src/ai/pipeline.ts:228",
+        "backend/src/ai/pipeline.ts:230",
         "backend/src/ai/router.ts:5",
         "backend/src/lib/adaptiveOrchestrator.ts:30",
         "backend/src/lib/taskClassifier.test.ts:3"
@@ -14639,7 +14649,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:5",
         "backend/src/ai/executionRuntime.ts:2",
         "backend/src/ai/parallelWeb.ts:2",
-        "backend/src/ai/pipeline.ts:216",
+        "backend/src/ai/pipeline.ts:218",
         "backend/src/ai/research.ts:3",
         "backend/src/ai/runTrace.ts:7",
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:47",
@@ -14766,7 +14776,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:28",
+        "backend/src/ai/pipeline.ts:30",
         "backend/src/lib/vercelAuthError.test.ts:3"
       ],
       "reachable": true,
@@ -19858,7 +19868,7 @@
       "id": "surface:10d425da4453da6d649f",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "sha256": "eb65b69a7babc3345c348b81c13ad9323a3f385a725f418b3de3b9f9eb7a8793",
+      "sha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478",
       "symbols": [
         "ac",
         "activeBuildControllers",
@@ -21077,11 +21087,13 @@
       "id": "surface:4928f851a2c75540edf8",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/ownership.ts",
-      "sha256": "8b240ab552b5d1134b69bad79c31827d4a3854a623b7d045adbb0f45e556dc11",
+      "sha256": "2771e83fbadd2591d749909cfdf5f4d641d57cbd052f9cf98dab52bb5075c792",
       "symbols": [
         "OwnedResourceKind",
         "db",
+        "normalized",
         "policy",
+        "requireOptionalOwnedDatabaseProject",
         "requireOwnedFile",
         "requireOwnedProject",
         "requireOwnedResource",
@@ -21099,14 +21111,17 @@
         "backend/src/security/tenantContext.ts",
         "backend/src/security/tenantErrors.ts"
       ],
-      "entryPoints": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
       "callers": [
+        "backend/src/ai/pipeline.ts:3",
         "backend/src/security/ownership.test.ts:5",
         "backend/src/security/tenantIsolation.integration.test.ts:16",
         "backend/src/security/tenantIsolation.local.integration.ts:9",
         "backend/src/services/storage/projectFiles.ts:5"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [
         "project_files"
       ],
@@ -21125,11 +21140,11 @@
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -21275,8 +21290,10 @@
         "backend/src/ai/buildOutcomeMemory.test.ts:12",
         "backend/src/ai/buildOutcomeMemory.ts:2",
         "backend/src/ai/executionRuntime.ts:6",
+        "backend/src/ai/pipeline.ts:2",
         "backend/src/ai/postCompletionAccounting.ts:5",
         "backend/src/ai/runStore.ts:11",
+        "backend/src/ai/universal/resumeProjectContext.test.ts:6",
         "backend/src/ai/usageAccounting.test.ts:4",
         "backend/src/middleware/admin.ts:3",
         "backend/src/middleware/auth.ts:4",
@@ -21367,6 +21384,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/buildOutcomeMemory.test.ts",
+        "backend/src/ai/universal/resumeProjectContext.test.ts",
         "backend/src/ai/usageAccounting.test.ts",
         "backend/src/routes/admin.test.ts",
         "backend/src/routes/github.oauth.test.ts",
@@ -22610,7 +22628,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:157",
+        "backend/src/ai/pipeline.ts:159",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.ts:58",
         "backend/src/routes/github.settings.test.ts:17",
@@ -23046,7 +23064,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:102",
+        "backend/src/ai/pipeline.ts:104",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:17",
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts:1",
         "backend/src/routes/github.ts:370",
@@ -23577,7 +23595,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:671",
+        "backend/src/security/tenantIsolation.local.integration.ts:687",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -23849,8 +23867,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3778",
-        "backend/src/ai/pipeline.ts:3781",
+        "backend/src/ai/pipeline.ts:3786",
+        "backend/src/ai/pipeline.ts:3789",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/routes/integrations.ts:226",
@@ -24080,8 +24098,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:114",
-        "backend/src/ai/pipeline.ts:3777",
+        "backend/src/ai/pipeline.ts:116",
+        "backend/src/ai/pipeline.ts:3785",
         "backend/src/routes/integrations.ts:16",
         "backend/src/routes/integrations.ts:638",
         "backend/src/routes/publish.ts:13",
@@ -24278,7 +24296,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:113",
+        "backend/src/ai/pipeline.ts:115",
         "backend/src/lib/platformReady.ts:7",
         "backend/src/routes/integrations.ts:27",
         "backend/src/routes/supabaseOAuth.ts:35",
@@ -24651,7 +24669,7 @@
       ],
       "callers": [
         "backend/src/ai/builderScaffoldFallback.test.ts:3",
-        "backend/src/ai/pipeline.ts:119",
+        "backend/src/ai/pipeline.ts:121",
         "backend/src/routes/github.ts:559",
         "backend/src/routes/swarm.ts:10",
         "backend/src/routes/vercel.ts:21",
@@ -24761,7 +24779,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:174",
+        "backend/src/ai/pipeline.ts:176",
         "backend/src/routes/publish.ts:214",
         "backend/src/routes/publish.ts:256",
         "backend/src/routes/publish.ts:293",
@@ -24892,7 +24910,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:176",
+        "backend/src/ai/pipeline.ts:178",
         "backend/src/routes/publish.ts:176",
         "backend/src/routes/publish.ts:320",
         "backend/src/routes/publish.ts:341",
@@ -24986,7 +25004,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:169",
+        "backend/src/ai/pipeline.ts:171",
         "backend/src/routes/publish.ts:62",
         "backend/src/routes/publish.ts:8",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:9",
@@ -25060,7 +25078,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:175",
+        "backend/src/ai/pipeline.ts:177",
         "backend/src/routes/publish.ts:365",
         "backend/src/services/publish/electronSecrets.authority.test.ts:4"
       ],
@@ -25152,7 +25170,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:163"
+        "backend/src/ai/pipeline.ts:165"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -25463,7 +25481,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:158",
+        "backend/src/ai/pipeline.ts:160",
         "backend/src/services/projectScaffold.ts:11",
         "backend/src/services/projectScaffold.ts:5",
         "backend/src/services/scaffolds/nextjsScaffold.ts:3",
@@ -25779,7 +25797,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:183",
+        "backend/src/ai/pipeline.ts:185",
         "backend/src/services/publish/nonWebShip.ts:11",
         "backend/src/services/scaffolds/scaffolds.test.ts:8",
         "backend/src/synthesis/delivery/projectDelivery.ts:9"
@@ -25830,7 +25848,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:184",
+        "backend/src/ai/pipeline.ts:186",
         "backend/src/services/scaffolds/scaffoldIntegrity.test.ts:3"
       ],
       "reachable": true,
@@ -27511,7 +27529,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:143",
+        "backend/src/ai/pipeline.ts:145",
         "backend/src/routes/delivery.ts:17",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:25",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:24"
@@ -27899,7 +27917,7 @@
       ],
       "callers": [
         "backend/src/ai/executionRuntime.attempt.test.ts:6",
-        "backend/src/ai/pipeline.ts:248",
+        "backend/src/ai/pipeline.ts:250",
         "backend/src/synthesis/foundation.fixture.test.ts:4"
       ],
       "reachable": true,
@@ -28825,7 +28843,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:146",
+        "backend/src/ai/pipeline.ts:148",
         "backend/src/routes/projectRuntime.ts:17",
         "backend/src/security/runtimeProjectBinding.test.ts:5",
         "backend/src/synthesis/livePreview/agentBridge.ts:40",
@@ -29443,7 +29461,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:90",
+        "backend/src/ai/pipeline.ts:92",
         "backend/src/synthesis/productBlueprints.test.ts:3"
       ],
       "reachable": true,
@@ -29823,7 +29841,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:131",
+        "backend/src/ai/pipeline.ts:133",
         "backend/src/synthesis/canonicalFoundation.test.ts:13",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:16",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:40",
@@ -30464,7 +30482,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:139",
+        "backend/src/ai/pipeline.ts:141",
         "backend/src/security/previewGrantAdmission.local.integration.ts:7",
         "backend/src/security/runtimeIdentity.local.integration.ts:7",
         "backend/src/security/runtimeProjectBinding.local.integration.ts:3",
@@ -30650,7 +30668,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:242",
+        "backend/src/ai/pipeline.ts:244",
         "backend/src/synthesis/reliability/canonicalResume.test.ts:9",
         "backend/src/synthesis/universalCanonicalTasks.ts:47"
       ],
@@ -32049,7 +32067,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:136",
+        "backend/src/ai/pipeline.ts:138",
         "backend/src/synthesis/canonicalFoundation.test.ts:18",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:20",
         "backend/src/synthesis/livePreview/agentBridge.ts:32",
@@ -32278,7 +32296,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:156",
+        "backend/src/ai/pipeline.ts:158",
         "backend/src/synthesis/universalCommit.test.ts:3"
       ],
       "reachable": true,
@@ -32395,7 +32413,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:130",
+        "backend/src/ai/pipeline.ts:132",
         "backend/src/ai/providerPolicy.test.ts:19",
         "backend/src/synthesis/universalEntrypoint.test.ts:14"
       ],
@@ -32919,7 +32937,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:126",
+        "backend/src/ai/pipeline.ts:128",
         "backend/src/synthesis/universalShadow.test.ts:13"
       ],
       "reachable": true,
@@ -84031,7 +84049,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "7e11610f49445b4470003110e285db9835b74421645fd0a4edc9b5cd10cba5b5",
+      "sha256": "05bf50462e18c442dc55e101b65ac0d60f07dcaefd1412e71932a8c9f6466c00",
       "symbols": [
         "after",
         "append",
@@ -85271,7 +85289,7 @@
       "callers": [
         "scripts/security/collect-local-security-logs.mjs:3",
         "scripts/security/disposable-supabase.test.mjs:6",
-        "scripts/security/full-supabase-history.mjs:9"
+        "scripts/security/full-supabase-history.mjs:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85303,13 +85321,14 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "105913ada400683a6f7009b6b8391018d29f7799eb44bb1d8830516942813240",
+      "sha256": "f77ad1684973580f513798878e15022222a9b6fad78a88dd042d30ac4e9f8e0c",
       "symbols": [
         "actual",
         "afterPolicies",
         "apply",
         "auditBefore",
         "before",
+        "catalog",
         "connect",
         "db",
         "error",
@@ -85334,23 +85353,29 @@
         "shareBefore",
         "shareSql",
         "shareToken",
+        "sourceSha",
         "target",
         "upgradeFiles",
-        "url"
+        "url",
+        "verifyFresh",
+        "verifyUpgrade"
       ],
       "imports": [
         "./disposable-supabase.mjs",
         "./historical-share-fixture.mjs",
+        "./schema-catalog.mjs",
         "node:assert/strict",
         "node:child_process",
         "node:crypto",
         "node:fs",
         "node:path",
+        "node:test",
         "pg"
       ],
       "runtimeImports": [
         "scripts/security/disposable-supabase.mjs",
-        "scripts/security/historical-share-fixture.mjs"
+        "scripts/security/historical-share-fixture.mjs",
+        "scripts/security/schema-catalog.mjs"
       ],
       "entryPoints": [
         "scripts/security/full-supabase-history.mjs"
@@ -85364,6 +85389,7 @@
         "node:crypto",
         "node:fs",
         "node:path",
+        "node:test",
         "pg"
       ],
       "authBoundary": [],
@@ -85371,7 +85397,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
-        "scripts/security/full-supabase-history.mjs#evidence"
+        "scripts/security/full-supabase-history.mjs#evidence",
+        "scripts/security/full-supabase-history.mjs#verifyFresh",
+        "scripts/security/full-supabase-history.mjs#verifyUpgrade"
       ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -85401,7 +85429,7 @@
       ],
       "callers": [
         "scripts/security/disposable-supabase.test.mjs:5",
-        "scripts/security/full-supabase-history.mjs:8"
+        "scripts/security/full-supabase-history.mjs:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85498,6 +85526,48 @@
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:a741178549139c6d7626",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/schema-catalog.mjs",
+      "sha256": "b4a2ce910d848276f73e969b71c75bff6346e25189a15da5d9d046f325cb9979",
+      "symbols": [
+        "assertDisposableSource",
+        "collectSchemaCatalog",
+        "field",
+        "r"
+      ],
+      "imports": [
+        "node:assert/strict"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/security/full-supabase-history.mjs"
+      ],
+      "callers": [
+        "scripts/security/full-supabase-history.mjs:11",
+        "scripts/security/schema-catalog.test.mjs:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/security/schema-catalog.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -85609,7 +85679,8 @@
       "callers": [
         "scripts/security/audit-tenant-policies.mjs:9",
         "scripts/security/tenant-acceptance.test.mjs:4",
-        "scripts/xroga/phase-one.mjs:8"
+        "scripts/xroga/phase-one.mjs:8",
+        "scripts/xroga/phase-two.mjs:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86540,36 +86611,25 @@
       "id": "surface:4aa5a1c1163a2875d77b",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/phase-one.mjs",
-      "sha256": "61b8b13396f971f8840ccb9b59d31c39b82d7f117e3f5e6ff19518d58782ad0d",
+      "sha256": "934b211a76cd1eea938a83b92453da0ee45649c98363e71de209ecf7e37f8164",
       "symbols": [
+        "approvedFrozen",
         "basePath",
         "baseline",
-        "before",
         "buildPhaseOne",
         "c",
         "cid",
         "commands",
         "criterionScoreboard",
-        "current",
-        "currentIds",
-        "family",
         "fixtures",
         "git",
-        "group",
-        "groupFamily",
         "groups",
         "hash",
         "historical",
-        "id",
-        "ids",
-        "invariants",
         "json",
         "main",
-        "mapping",
-        "next",
         "obligations",
         "old",
-        "oldLedger",
         "oldReviews",
         "outputs",
         "packets",
@@ -86626,6 +86686,78 @@
       "testCoverage": [
         "scripts/xroga/phase-one.test.mjs",
         "scripts/xroga/verify-phase-one.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:59ea753bbe7364873503",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/phase-two.mjs",
+      "sha256": "00b7e7d3a99c91217dd8e4fa1f11b02123dc8f3431f99e4fba016896130d85bb",
+      "symbols": [
+        "approved",
+        "binding",
+        "buildPhaseTwo",
+        "byId",
+        "callers",
+        "d",
+        "decision",
+        "decisions",
+        "frozen",
+        "frozenPath",
+        "hash",
+        "historical",
+        "id",
+        "ids",
+        "main",
+        "mapping",
+        "next",
+        "old",
+        "packets",
+        "previous",
+        "read",
+        "report",
+        "reviewed",
+        "root"
+      ],
+      "imports": [
+        "../security/tenant-acceptance.mjs",
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/security/tenant-acceptance.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "scripts/xroga/phase-two.test.mjs:5"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/xroga/phase-two.test.mjs"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -90822,7 +90954,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a4f91a9bc7e3feb065fd",
+      "id": "registration:bc45db350f93fad124d6",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 51,
       "receiver": "router",
@@ -90834,9 +90966,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:2251725411ac84a0b9f2",
+      "id": "registration:c8bfbdde5060919b4263",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 350,
+      "line": 354,
       "receiver": "router",
       "method": "get",
       "path": "/history",
@@ -90846,9 +90978,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f04b72ae60e6691ba1bd",
+      "id": "registration:a827f1787f47a55d9e91",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 366,
+      "line": 370,
       "receiver": "router",
       "method": "get",
       "path": "/runs/:runId",
@@ -90858,9 +90990,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:57ea90c0ed7ddc5ebd5f",
+      "id": "registration:5dd1bcc04a37a80c33ba",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 403,
+      "line": 407,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/cancel",
@@ -90870,9 +91002,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:2f5014ae6746c43d6138",
+      "id": "registration:1cdf6dbf2d89d31c22d7",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 460,
+      "line": 464,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/conversation",
@@ -90884,9 +91016,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:6ccec7262fd6f6b0a645",
+      "id": "registration:80b5f0cc25a19385a4c4",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 461,
+      "line": 465,
       "receiver": "router",
       "method": "patch",
       "path": "/runs/:runId/conversation",
@@ -91388,8 +91520,8 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:6dd6de532c5ba33639e2",
-      "registrationId": "registration:a4f91a9bc7e3feb065fd",
+      "id": "route:7d2dadf0e3303cfca2dd",
+      "registrationId": "registration:bc45db350f93fad124d6",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 51,
       "method": "POST",
@@ -91405,10 +91537,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ab9e978aaabc96e55968",
-      "registrationId": "registration:2251725411ac84a0b9f2",
+      "id": "route:93bf75fb16980ab8fab6",
+      "registrationId": "registration:c8bfbdde5060919b4263",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 350,
+      "line": 354,
       "method": "GET",
       "path": "/api/swarm/history",
       "mountChain": [
@@ -91422,10 +91554,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:da81b41c30b3c33d1c9f",
-      "registrationId": "registration:f04b72ae60e6691ba1bd",
+      "id": "route:8541244d2b9014aca603",
+      "registrationId": "registration:a827f1787f47a55d9e91",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 366,
+      "line": 370,
       "method": "GET",
       "path": "/api/swarm/runs/:runId",
       "mountChain": [
@@ -91439,10 +91571,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:6cd00e1cc27e5bd18d21",
-      "registrationId": "registration:57ea90c0ed7ddc5ebd5f",
+      "id": "route:42ceca899bb7fa544c0b",
+      "registrationId": "registration:5dd1bcc04a37a80c33ba",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 403,
+      "line": 407,
       "method": "POST",
       "path": "/api/swarm/runs/:runId/cancel",
       "mountChain": [
@@ -91456,10 +91588,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:88e082aa68bfb44f9d8f",
-      "registrationId": "registration:2f5014ae6746c43d6138",
+      "id": "route:ae32f5c8cae3db25780c",
+      "registrationId": "registration:1cdf6dbf2d89d31c22d7",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 460,
+      "line": 464,
       "method": "POST",
       "path": "/api/swarm/runs/:runId/conversation",
       "mountChain": [
@@ -91473,10 +91605,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8e9f92cced77bebe6ff8",
-      "registrationId": "registration:6ccec7262fd6f6b0a645",
+      "id": "route:28390ea518b976ddca19",
+      "registrationId": "registration:80b5f0cc25a19385a4c4",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 461,
+      "line": 465,
       "method": "PATCH",
       "path": "/api/swarm/runs/:runId/conversation",
       "mountChain": [
@@ -94952,18 +95084,18 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:de5c3cc2c073f71af989",
+      "id": "schedule:e54c7d403fc8e5bb1a0b",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 131,
+      "line": 133,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:927fc9acebe8c8bdeffc",
+      "id": "schedule:f602035e123ff3616d7d",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 141,
+      "line": 143,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
@@ -95968,7 +96100,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "a1d7333dad855d2f2a3b3afb821d24e8035852420eea5d08c447fc57a9402daa",
+      "sha256": "e6f7d6b906f0738f8bfdb0c20daacf419f6cc807912ca299c21967119b20ab3b",
       "sourceEntrypoints": [
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
@@ -96356,9 +96488,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c4b644cd9274a649a21d",
+      "id": "finding:b7d1ff5de8144b404424",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 451,
+      "line": 455,
       "kind": "STUB",
       "reachable": true,
       "state": "PARTIAL",
@@ -102555,6 +102687,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:62f40ed7992aad87a575",
+      "sourcePath": "backend/src/ai/buildOutcomeOwnership.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:043727b5cc92dfd24b3d",
       "sourcePath": "backend/src/ai/buildOutcomeRoutingMemory.test.ts",
       "declaredTests": 4,
@@ -104106,7 +104245,7 @@
     {
       "id": "test-suite:b4661f97348c378971b1",
       "sourcePath": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104190,7 +104329,7 @@
     {
       "id": "test-suite:202b022e2f1c32eef410",
       "sourcePath": "backend/src/security/ownership.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104344,14 +104483,14 @@
     {
       "id": "test-suite:5202c26b2019c416efe8",
       "sourcePath": "backend/src/security/tenantIsolation.integration.test.ts",
-      "declaredTests": 12,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 68,
+      "declaredTests": 69,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -106675,6 +106814,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:7880f7d68bf575b7b99a",
+      "sourcePath": "scripts/security/schema-catalog.test.mjs",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9df7391e554003403e8d",
       "sourcePath": "scripts/security/staging-preflight.test.mjs",
       "declaredTests": 8,
@@ -106712,7 +106858,14 @@
     {
       "id": "test-suite:aaf0b06791fa8cdc2a69",
       "sourcePath": "scripts/xroga/phase-one.test.mjs",
-      "declaredTests": 3,
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a00cdd264d6de075eb99",
+      "sourcePath": "scripts/xroga/phase-two.test.mjs",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

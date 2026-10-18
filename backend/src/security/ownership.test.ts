@@ -2,10 +2,26 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createClient } from '@supabase/supabase-js';
 import { createTenantContext } from './tenantContext.js';
-import { requireOwnedResource, requireOwnedFile, type OwnedResourceKind } from './ownership.js';
+import { requireOwnedResource, requireOwnedFile, requireOptionalOwnedDatabaseProject, type OwnedResourceKind } from './ownership.js';
 import { TenantAccessError } from './tenantErrors.js';
 
 const context = createTenantContext({ userId: '11111111-1111-4111-8111-111111111111', via: 'local_jwt' });
+test('build admission preserves logical workspace identities and verifies database project UUIDs with issued ownership',async()=>{
+  const own='33333333-3333-4333-8333-333333333333',foreign='44444444-4444-4444-8444-444444444444';
+  const seen:URL[]=[];
+  const client=createClient('http://127.0.0.1:1','fixture-only-key',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async input=>{
+    const url=new URL(String(input));seen.push(url);
+    assert.equal(url.searchParams.get('user_id'),`eq.${context.userId}`);
+    return new Response(JSON.stringify(url.searchParams.get('id')===`eq.${own}`?{id:own}:null),{headers:{'Content-Type':'application/json'}});
+  }}});
+  assert.equal(await requireOptionalOwnedDatabaseProject(context,undefined,client),undefined);
+  assert.equal(await requireOptionalOwnedDatabaseProject(context,'run:stable-project',client),'run:stable-project');
+  assert.equal(seen.length,0);
+  assert.equal(await requireOptionalOwnedDatabaseProject(context,` ${own} `,client),own);
+  await assert.rejects(requireOptionalOwnedDatabaseProject(context,foreign,client),{status:404});
+  await assert.rejects(requireOptionalOwnedDatabaseProject({...context},'run:stable-project',client),{status:401});
+  assert.equal(seen.length,2);
+});
 test('all discovered direct-owner resources send owner predicates and never retrieve secrets', async () => {
   const seen: URL[] = [];
   const client = createClient('http://127.0.0.1:1', 'fixture-only-key', { global: {fetch: async input => {

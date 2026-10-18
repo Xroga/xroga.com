@@ -3,6 +3,7 @@ import {test} from 'node:test';
 import {readFileSync} from 'node:fs';
 import {buildPhaseOne,root} from './phase-one.mjs';
 import {resolve} from 'node:path';
+import {execFileSync} from 'node:child_process';
 
 test('four-phase mapping preserves all104 original criteria and all371 frozen source identities exactly once',()=>{
   const {phase2,scoreboard}=buildPhaseOne();
@@ -30,4 +31,9 @@ test('committed Phase1 mappings cannot silently drift or omit frozen obligations
   for(const[path,content]of buildPhaseOne().outputs){
     assert.equal(readFileSync(resolve(root,path),'utf8').replace(/\r\n/g,'\n'),content,`Phase1 mapping drift:${path}`);
   }
+});
+test('later caller changes cannot rewrite the founder-approved frozen Phase2 worklist',()=>{
+  const path='docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json';
+  const approved=execFileSync('git',['show',`8a1a0bfa7878603dd488db98568577b2fb1896da:${path}`],{cwd:root,encoding:'utf8'}).replace(/\r\n/g,'\n');
+  assert.equal(buildPhaseOne().outputs.get(path),approved);
 });

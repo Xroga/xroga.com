@@ -94,6 +94,13 @@ test('anonymous protected request and body-supplied identity fail closed', async
   const response = await fetch(`${apiUrl}/api/projects`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:OWNER,tenantContext:{userId:OWNER},name:'Fake',type:'app'})});
   assert.equal(response.status,401);
 });
+test('build admission rejects a foreign database project before run persistence or provider preparation',async()=>{
+  const before=calls.length;
+  const response=await fetch(`${apiUrl}/api/swarm/execute`,{method:'POST',headers:headers(),
+    body:JSON.stringify({prompt:'Synthetic admission fixture',stream:false,projectId:OTHER_PROJECT,userId:OTHER,tenantContext:{userId:OTHER}})});
+  assert.equal(response.status,404);
+  assert.equal(calls.slice(before).some(c=>c.method!=='GET'&&/swarm_runs|execution_runs|user_integrations/.test(c.path)),false);
+});
 test('own project reads work; foreign project/files are non-enumerating and files are never queried', async () => {
   const own = await fetch(`${apiUrl}/api/projects/${OWN_PROJECT}`,{headers:headers()});assert.equal(own.status,200);assert.equal((await own.json() as {id:string}).id,OWN_PROJECT);
   const before = calls.filter(call=>call.path.endsWith('/project_files')).length;

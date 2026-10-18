@@ -1,6 +1,12 @@
 # Current implementation status — scoped evidence, not marketing claims
 
-## Founder-approved four-phase recovery, Phase1 only
+## Founder-approved Phase2 in progress
+
+Phase2 is admitted at verified Phase1 source `8a1a0bfa7878603dd488db98568577b2fb1896da`. Its finite73-packet/371-historical-identity register is `batch-1/phases/PHASE-2-CLOSURE-LEDGER.json`. All ten original007 criteria remain mandatory and currently blocked. Two reproduced defects are being fixed: foreign-owner model evidence associated by run ID alone, and foreign database-project build admission before durable worker preparation. Focused tests and new real disposable tests are distinct evidence channels. No whole-caller certification is inferred from a fix or a review. Commands008/009 and010 remain unstarted. Original Phase1 acceptance evidence and frozen worklist remain unchanged.
+
+The prior disposable workflow ran a virtual merge checkout, independently confirmed as `c34bbad59a8c0d6ab0231db7bd46b20293a8c3be` for approved head8a1a. Keep that genuine integrated evidence without relabeling it head-only proof. New disposable runs explicitly attest the requested source checkout. Production schema parity and actualR2 remain unverified.
+
+## Preserved Phase1 acceptance
 
 Current Phase1 work is indexed in `batch-1/phases/PHASE-1-ACCEPTANCE.md`, the104-criterion original-wording scoreboard and frozen371-record/73-packet Phase2 worklist. Original005 certifies the harness, not twelve unbuilt future products. Original006 is the engineering operating contract. Eight supplemental specialty owners are founder-approved PLANNED/NOT_IMPLEMENTED traceability entries, with original72 missions unchanged and roadmap placement pending. No Web3 execution is authorized.
 

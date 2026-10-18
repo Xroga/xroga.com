@@ -181,6 +181,10 @@ describe(
             },
           ];
 
+        // Keep the foreign private identity as a negative control, and retain
+        // one legitimate owner's observation to exercise telemetry sanitizing.
+        routing.push({ ...routing[0]!, userId: 'user-1' });
+
         const outcome =
           buildOutcomeFromTerminalRun({
             runId:

@@ -27,13 +27,15 @@ jobs:
       # not couple branch validation to the configuration of an older release.
       FRONTEND_URL: http://127.0.0.1:3000
       NODE_ENV: test
-      XROGA_RELEASE_SHA: ${{ github.sha }}
-      EXPECTED_RELEASE_SHA: ${{ github.sha }}
-      EXPECTED_WEB_RELEASE_SHA: ${{ github.sha }}
+      XB01_TEST_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      XROGA_RELEASE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_RELEASE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_WEB_RELEASE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version-file: '.node-version'
@@ -136,6 +138,7 @@ jobs:
             frontend/test-results/batch01-private-delivery-evidence.json
             frontend/test-results/**/test-failed-*.png
             artifacts/batch-01-local-security/migration-history.json
+            artifacts/batch-01-local-security/schema-catalog.json
             artifacts/batch-01-local-security/supabase-start-redacted.log
             artifacts/batch-01-local-security/*.redacted
           if-no-files-found: warn
