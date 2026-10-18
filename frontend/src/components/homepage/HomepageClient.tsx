@@ -24,6 +24,7 @@ import { S01CapabilityDeck } from '@/components/homepage-next/s01/S01CapabilityD
 import { S02Work } from '@/components/homepage-next/s02/S02Work';
 import { S03Growth } from '@/components/homepage-next/s03/S03Growth';
 import { S04Publish } from '@/components/homepage-next/s04/S04Publish';
+import { S05Capabilities } from '@/components/homepage-next/s05/S05Capabilities';
 import { HomepagePowerStories } from '@/components/homepage/HomepagePowerStories';
 import { AiCodingAgentSquaresTerminal } from '@/components/marketing/AiCodingAgentSquaresTerminal';
 
@@ -117,6 +118,7 @@ export function HomepageClient() {
       <S02Work loggedIn={loggedIn} />
       <S03Growth loggedIn={loggedIn} />
       <S04Publish loggedIn={loggedIn} />
+      <S05Capabilities />
       <HomepagePowerStories />
       <HomepageWorkspaceTour loggedIn={loggedIn} />
       <div id="product"><HomepageAllInOne /></div>
