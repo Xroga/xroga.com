@@ -41,15 +41,15 @@ test('the signup story rotates through four focused Xroga capability scenes', ()
   }
 });
 
-test('the story uses seven optimized generated images plus local official integration marks', () => {
+test('the story uses seven optimized clean images plus twenty real integration marks', () => {
   for (const image of [
-    'idea-to-business.webp',
-    'publish-everywhere.webp',
-    'ai-testing.webp',
-    'connected-work.webp',
-    'research-travel.webp',
-    'xroga-employees.webp',
-    'seo-aeo-geo.webp',
+    'idea-to-business-clean.webp',
+    'publish-everywhere-clean.webp',
+    'ai-testing-clean.webp',
+    'connected-work-clean.webp',
+    'research-travel-clean.webp',
+    'xroga-employees-clean.webp',
+    'seo-aeo-geo-clean.webp',
   ]) {
     assert.ok(showcase.includes(`/brand/auth-stories/${image}`), `${image} is missing from the story`);
     const imageUrl = new URL(`../../../public/brand/auth-stories/${image}`, import.meta.url);
@@ -57,15 +57,32 @@ test('the story uses seven optimized generated images plus local official integr
     assert.ok(statSync(imageUrl).size < 200_000, `${image} was not optimized for signup delivery`);
   }
 
-  for (const logo of ['github.svg', 'vercel.svg', 'supabase.svg', 'openai.svg', 'gitlab.svg', 'anthropic.svg']) {
-    assert.ok(showcase.includes(`/brand/logos/${logo}`), `${logo} is missing`);
-    assert.ok(
-      existsSync(new URL(`../../../public/brand/logos/${logo}`, import.meta.url)),
-      `${logo} does not exist in public assets`,
-    );
+  for (const mark of [
+    'siGmail', 'siGooglecalendar', 'siGoogledrive', 'siGithub', 'siGitlab',
+    'siNotion', 'siHubspot', 'siStripe', 'siShopify', 'siVercel',
+    'siSupabase', 'siAirtable', 'siDropbox', 'siDiscord', 'siJira',
+    'siAsana', 'siTrello', 'siFigma', 'siCloudflare', 'siNetlify',
+  ]) {
+    assert.ok(showcase.includes(mark), `${mark} is missing from the app grid`);
   }
+  assert.match(showcase, /const APP_MARKS: readonly SimpleIcon\[\] = \[/);
+  const appMarks = showcase.split('const APP_MARKS: readonly SimpleIcon[] = [')[1]?.split('] as const;')[0] ?? '';
+  assert.equal((appMarks.match(/\n  si[A-Za-z]+,/g) ?? []).length, 20);
+  assert.match(showcase, /Twenty popular supported apps/);
+  assert.match(showcase, /20 shown/);
+  assert.match(showcase, /1,500\+ available/);
+  assert.match(showcase, /\/brand\/xroga-orb-mark-v2\.webp/);
   assert.doesNotMatch(showcase, /https?:\/\//);
-  assert.doesNotMatch(showcase, /\bgraph\b|\bchart\b|Code2|browserMock/i);
+});
+
+test('the panel renders graphs, counts, and percentages without animating imagery', () => {
+  for (const phrase of ['94%', '128', 'checks passed', '0', 'blockers', '42%', '78%', '+31%']) {
+    assert.ok(showcase.includes(phrase), `${phrase} is missing from the metrics`);
+  }
+  assert.match(showcase, /function TrendChart/);
+  assert.match(styles, /\.trendChart/);
+  assert.doesNotMatch(styles, /@keyframes|animation\s*:/);
+  assert.doesNotMatch(styles, /\.artImage[^}]*transition|\.artImage[^}]*transform/s);
 });
 
 test('the capability panel stays usable on phones and respects reduced motion', () => {
@@ -76,5 +93,5 @@ test('the capability panel stays usable on phones and respects reduced motion', 
   assert.match(styles, /\.slide\.active/);
   assert.match(styles, /@media \(max-width: 480px\)/);
   assert.match(styles, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(styles, /\.fullBleedArt,\s*\n\s*\.secondaryArt \{ animation: none; \}/);
+  assert.match(styles, /\.slide,\s*\n\s*\.dots button span \{ transition: none; \}/);
 });
