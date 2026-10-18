@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a378817661c33e20485f085785c3abde509bb2b9",
+  "source_sha": "944b1266e66af69f5811e5880f7aed3716071cec",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12479,7 +12479,7 @@
     },
     {
       "path": "backend/src/operations/actionIntent.local.integration.ts",
-      "sha256": "7cdf02bb56f95f05759459aaf5fd27491e11c264238faeb84bd26842a83509d7"
+      "sha256": "61abc02fa2fada0bd75e3aef71420e509791160d86959570216baa3cf129d54c"
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",
@@ -12495,7 +12495,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sha256": "72a199e7bdc28567413ce8e70688bd3d3cc192c4353b4dc706d1476f4152eeba"
+      "sha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580"
     },
     {
       "path": "backend/src/operations/permissions.ts",
@@ -18310,14 +18310,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/operations/actionIntent.local.integration.ts",
-      "line": 46,
+      "line": 49,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/operations/actionIntent.local.integration.ts",
-      "line": 72,
+      "line": 83,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/operations/actionIntent.local.integration.ts",
+      "line": 109,
       "credentialsInUrl": false
     },
     {

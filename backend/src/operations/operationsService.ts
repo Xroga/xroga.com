@@ -363,8 +363,8 @@ export class OperationsService {
         .every(key => isDeepStrictEqual(candidate[key], action[key]));
     const currentVersion = await this.currentTargetVersion(action);
     if (currentVersion !== null && currentVersion !== Number(action.target_version)) {
-      await this.db.from('operations_action_approvals').update({ decision: 'expired', decided_at: new Date().toISOString() }).eq('action_id', actionId).eq('decision', 'approved');
-      await this.db.from('operations_actions').update({ status: 'expired', status_reason: 'target_state_changed', updated_at: new Date().toISOString() }).eq('id', actionId);
+      // A stale preflight cannot overwrite an action that another request has
+      // claimed or completed. Reject execution without changing durable history.
       throw new OperationsServiceError('invalid_state', 'Target state changed after this action was planned; create a new action', 409);
     }
     if (definition.confirmationRequired && action.confirmation_digest !== action.action_plan_digest) throw new OperationsServiceError('precondition_failed', 'Action confirmation is missing or stale', 409);
@@ -461,6 +461,9 @@ export class OperationsService {
       let update = this.db.from('operations_automation_rules').update({ emergency_stopped: stopped, version: Number(input.targetVersion) + 1, updated_at: now }).eq('user_id', userId).eq('project_id', projectId);
       if (targetId !== projectId) update = update.eq('id', targetId).eq('version', Number(input.targetVersion));
       const rows = await queryOrThrow<DbRow[]>(update.select('id'), 'Automation control failed');
+      if (targetId !== projectId && (rows.length !== 1 || rows[0]?.id !== targetId)) {
+        return { status: 'blocked', safeSummary: 'Automation rule changed before this action executed', errorCategory: 'invalid_state' };
+      }
       return { status: 'verified', safeSummary: `${stopped ? 'Emergency stop enabled' : 'Automation resumed'} for ${rows.length} rule(s)` };
     }
     if (capability === 'enable_automation' || capability === 'disable_automation') {

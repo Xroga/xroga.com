@@ -394,7 +394,8 @@
     "backend/src/operations/actionConfirmation.test.ts",
     "supabase/migrations/20261018000500_operations_confirmation_transaction.sql",
     "backend/src/operations/actionAdmission.local.integration.ts",
-    "supabase/migrations/20261018000600_operations_claim_admission.sql"
+    "supabase/migrations/20261018000600_operations_claim_admission.sql",
+    "backend/src/operations/internalControlReceipt.test.ts"
   ],
   "decisions": {
     "keep": [

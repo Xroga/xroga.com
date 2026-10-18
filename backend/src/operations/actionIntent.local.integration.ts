@@ -7,6 +7,43 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { OperationsService } from './operationsService.js';
 
 export function registerActionIntentTests(admin: SupabaseClient, getUsers: () => readonly { id: string; project: string }[]): void {
+  test('real single-rule stop records blocked when the target changes while its adapter waits', async t => {
+    assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');
+    assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
+    const url=new URL(process.env.XB01_LOCAL_DATABASE_URL!);
+    assert.equal(url.hostname,'127.0.0.1');assert.equal(url.port,'54322');assert.equal(url.pathname,'/postgres');
+    const [owner]=getUsers(),key=randomUUID(),ruleId=randomUUID(),service=new OperationsService(admin);
+    t.after(async()=>{
+      assert.equal((await admin.from('operations_actions').delete().eq('user_id',owner.id).eq('idempotency_key',key)).error,null);
+      assert.equal((await admin.from('operations_automation_rules').delete().eq('user_id',owner.id).eq('id',ruleId)).error,null);
+    });
+    assert.equal((await admin.from('operations_automation_rules').insert({id:ruleId,user_id:owner.id,project_id:owner.project,
+      rule_key:key,name:'Disposable conditional control',trigger_type:'fixture',risk_level:'low',action_type:'refresh_health',enabled:false})).error,null);
+    const action=await service.createAction(owner.id,{actionType:'emergency_stop',projectId:owner.project,targetType:'automation',
+      targetId:ruleId,targetVersion:1,idempotencyKey:key,confirmed:false});
+    const db=new pg.Client({connectionString:url.href,ssl:false});await db.connect();let pending:Promise<Record<string,any>>|undefined;
+    try{
+      await db.query('begin');await db.query('select id from operations_automation_rules where id=$1 for update',[ruleId]);
+      // Also exercises confirmation without independent approval, then the
+      // canonical admitted claim and real internal adapter, no provider call.
+      pending=service.confirmAction(owner.id,action.id);void pending.catch(()=>{});
+      let blocked=false;
+      for(let i=0;i<150;i++){
+        await db.query('select pg_stat_clear_snapshot()');
+        const rows=await db.query("select pid from pg_stat_activity where pid<>pg_backend_pid() and wait_event_type='Lock' and query like '%operations_automation_rules%' and query ilike '%update%'");
+        if(rows.rowCount){blocked=true;break;}await delay(20);
+      }
+      assert.equal(blocked,true,'actual internal conditional write reached the target row lock');
+      await db.query('update operations_automation_rules set version=2 where id=$1',[ruleId]);await db.query('commit');
+      const result=await pending;pending=undefined;assert.equal(result.status,'blocked');assert.equal(result.attempt_count,1);
+      const rule=await admin.from('operations_automation_rules').select('version,emergency_stopped').eq('id',ruleId).single();
+      assert.equal(rule.error,null);assert.deepEqual(rule.data,{version:2,emergency_stopped:false});
+      const runs=await admin.from('operations_action_runs').select('status,error_category').eq('action_id',action.id);
+      assert.equal(runs.error,null);assert.deepEqual(runs.data,[{status:'blocked',error_category:'invalid_state'}]);
+      const evidence=await admin.from('production_evidence').select('status').eq('action_id',action.id);
+      assert.equal(evidence.error,null);assert.deepEqual(evidence.data,[{status:'blocked'}]);
+    }finally{await db.query('rollback');if(pending)await Promise.allSettled([pending]);await db.end();}
+  });
   test('real release and deployment actions require the owned project target before creating drafts', async t => {
     assert.equal(process.env.CI, 'true'); assert.equal(process.env.XB01_DISPOSABLE_SUPABASE, '1');
     assert.equal(process.env.SUPABASE_URL, 'http://127.0.0.1:54321');
