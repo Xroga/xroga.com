@@ -377,11 +377,17 @@ export class OperationsService {
       }
     }
     const evidenceId = `ev_${randomUUID()}`;
-    await queryOrThrow(this.db.from('production_evidence').insert({ id: evidenceId, user_id: access.ownerId, project_id: action.project_id, environment_id: action.environment_id, action_id: actionId, kind: 'action_verification', source: adapter?.id ?? 'unsupported', status: result.status === 'verified' ? 'verified' : result.status === 'failed' ? 'degraded' : 'blocked', summary: String(redactOperationsValue(result.safeSummary)).slice(0, 500), reference: result.providerReference ?? null, metadata: redactOperationsValue({ errorCategory: result.errorCategory, observedState: result.observedState }), observed_at: new Date().toISOString(), verified_at: result.status === 'verified' ? new Date().toISOString() : null }).select(), 'Evidence write failed');
     const finalStatus = providerResultToStatus(result);
-    await queryOrThrow(this.db.from('operations_action_runs').insert({ action_id: actionId, user_id: access.ownerId, attempt: running.attempt_count, provider: adapter?.id ?? 'unsupported', status: finalStatus === 'verified' ? 'verified' : finalStatus === 'blocked' ? 'blocked' : 'failed', error_category: result.errorCategory ?? null, safe_error: result.status === 'verified' ? null : String(redactOperationsValue(result.safeSummary)).slice(0, 500), provider_reference: result.providerReference ?? null, evidence_reference: evidenceId, completed_at: new Date().toISOString() }).select(), 'Action run write failed');
-    const updated = await queryOrThrow<DbRow[]>(this.db.from('operations_actions').update({ status: finalStatus, status_reason: result.safeSummary, evidence_reference: evidenceId, completed_at: new Date().toISOString(), lease_owner: null, lease_expires_at: null, updated_at: new Date().toISOString() }).eq('id', actionId).select('*'), 'Action completion failed');
-    await this.audit({ userId: access.ownerId, actorId: userId, projectId: action.project_id, environmentId: action.environment_id, action: 'operations.action.completed', targetType: 'action', targetId: actionId, outcome: finalStatus, afterState: result, correlationId: action.idempotency_key, evidenceReference: evidenceId });
+    const safeResult = redactOperationsValue({ ...result, safeSummary: String(result.safeSummary).slice(0, 500) });
+    const updated = await queryOrThrow<DbRow[]>(this.db.rpc('complete_operations_action', {
+      p_actor: userId, p_expected: running, p_evidence_id: evidenceId,
+      p_provider: adapter?.id ?? 'unsupported', p_result: safeResult,
+    }), 'Action completion could not be verified; provider effects may already exist');
+    if (!Array.isArray(updated) || updated.length !== 1 || !matchesAdmittedAction(updated[0])
+      || updated[0].status !== finalStatus || updated[0].attempt_count !== running.attempt_count
+      || updated[0].evidence_reference !== evidenceId || updated[0].lease_owner !== null || updated[0].lease_expires_at !== null) {
+      throw new OperationsServiceError('unknown', 'Action completion could not be verified; provider effects may already exist', 503);
+    }
     return updated[0];
   }
 

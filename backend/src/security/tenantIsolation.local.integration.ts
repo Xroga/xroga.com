@@ -44,6 +44,7 @@ import { registerProviderKeyRevisionTests } from './providerKeyRevision.local.in
 import { registerOAuthSessionTests } from './oauthSession.local.integration.js';
 import { registerBuildOutcomeAttemptTests } from './buildOutcomeAttempt.local.integration.js';
 import { registerActionIntentTests } from '../operations/actionIntent.local.integration.js';
+import { registerActionCompletionTests } from '../operations/actionCompletion.local.integration.js';
 import { registerProjectCreationTests } from './projectCreation.local.integration.js';
 import { registerProfileDeletionTests } from './profileDeletion.local.integration.js';
 import { registerGrowthReferralTests } from './growthReferral.local.integration.js';
@@ -82,6 +83,7 @@ registerProviderKeyRevisionTests(admin, () => users);
 registerOAuthSessionTests(admin, () => users);
 registerBuildOutcomeAttemptTests(admin, () => users);
 registerActionIntentTests(admin, () => users);
+registerActionCompletionTests(admin, () => users);
 registerProjectCreationTests(admin, () => users);
 registerProfileDeletionTests(admin);
 registerGrowthReferralTests(admin, () => users);

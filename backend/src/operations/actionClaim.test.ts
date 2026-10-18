@@ -11,8 +11,15 @@ test('only the exact admitted action and current attempt receipt can reach an ad
     risk_level: 'high', execution_plan: { reason: 'fixture' }, max_attempts: 1, attempt_count: 0, status: 'queued' };
   const running = { ...action, status: 'running', attempt_count: 1, lease_owner: 'api:actor', lease_expires_at: new Date(Date.now() + 60_000).toISOString() };
   let claim: unknown = [running], fallback: Record<string, unknown> = { ...action, status: 'verified' }, reads = 0, effects = 0, writes = 0;
+  let completionPatch: Record<string, unknown> | null = null, completionError = false;
   const db = {
-    async rpc(name: string, args: unknown) {
+    async rpc(name: string, args: Record<string, unknown>) {
+      if (name === 'complete_operations_action') {
+        writes++;
+        assert.equal(args.p_actor, 'actor'); assert.deepEqual(args.p_expected, running);
+        assert.equal(args.p_provider, 'internal_database');
+        return { data: [{ ...running, status: 'blocked', evidence_reference: args.p_evidence_id, lease_owner: null, lease_expires_at: null, ...completionPatch }], error: completionError ? { code: '40001' } : null };
+      }
       assert.equal(name, 'operations_claim_action');
       assert.deepEqual(args, { p_action_id: 'action', p_lease_owner: 'api:actor', p_lease_seconds: 60 });
       return { data: claim, error: null };
@@ -53,4 +60,12 @@ test('only the exact admitted action and current attempt receipt can reach an ad
   assert.equal((await service.executeAction('actor', 'action')).status, 'verified'); assert.equal(effects, 0);
   reads = 0; claim = [running];
   assert.equal((await service.executeAction('actor', 'action')).status, 'blocked'); assert.equal(effects, 1);
+  for (completionPatch of [{ user_id: 'foreign' }, { evidence_reference: 'other' }, { status: 'verified' }, { attempt_count: 2 }, { lease_owner: 'still-held' }]) {
+    reads = 0; effects = 0; writes = 0;
+    await assert.rejects(service.executeAction('actor', 'action'), { code: 'unknown', statusCode: 503 });
+    assert.equal(effects, 1); assert.equal(writes, 1, 'one atomic completion, no fallback persistence or provider retry');
+  }
+  completionPatch = null; completionError = true; reads = 0; effects = 0; writes = 0;
+  await assert.rejects(service.executeAction('actor', 'action'), { code: 'unknown', statusCode: 503 });
+  assert.equal(effects, 1); assert.equal(writes, 1);
 });

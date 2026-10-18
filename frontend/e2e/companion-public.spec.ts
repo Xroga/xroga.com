@@ -29,8 +29,10 @@ test('current public S00 homepage, themes and reduced-motion accessibility are c
   // real guest workspace selector and its persistence. Public marketing pages
   // deliberately force MARKETING_THEME=black without changing user preferences.
   await expect(page.getByRole('button', { name: 'Change website theme' })).toHaveCount(0);
+  await page.goto('/workspace', { waitUntil: 'domcontentloaded' });
   for (const theme of ['Beige', 'White', 'Gray', 'Black']) {
-    await page.goto('/workspace', { waitUntil: 'domcontentloaded' });
+    // The preceding persistence check already returned to this workspace.
+    // Keep every theme round trip without repeating an identical navigation.
     await page.getByRole('button', { name: 'Change theme', exact: true }).first().click();
     await page.getByRole('menuitemradio', { name: new RegExp(`^${theme}`) }).click();
     await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));

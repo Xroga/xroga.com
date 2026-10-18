@@ -202,7 +202,15 @@ export class GrowthService {
       || campaign.consent_required !== true || campaign.status !== 'approval_required' || !Number.isSafeInteger(campaign.version) || campaign.version < 1) {
       throw new GrowthServiceError('storage_unavailable', 'Campaign creation could not be verified', 503);
     }
-    const action = await this.operations.createAction(userId, { actionType: 'execute_growth_campaign', projectId: input.projectId, targetType: 'growth_campaign', targetId: campaign.id, targetVersion: campaign.version, idempotencyKey: input.idempotencyKey, confirmed: true, parameters: { campaignId: campaign.id, recipientPolicy: 'consented_and_not_suppressed' } });
+    let action: Row;
+    try {
+      action = await this.operations.createAction(userId, { actionType: 'execute_growth_campaign', projectId: input.projectId, targetType: 'growth_campaign', targetId: campaign.id, targetVersion: campaign.version, idempotencyKey: input.idempotencyKey, confirmed: true, parameters: { campaignId: campaign.id, recipientPolicy: 'consented_and_not_suppressed' } });
+    } catch (error) {
+      if (error instanceof OperationsServiceError && error.code === 'conflict') {
+        throw new GrowthServiceError('idempotency_conflict', 'Campaign action does not match the requested campaign', 409);
+      }
+      throw error;
+    }
     if (!action || typeof action.id !== 'string' || !action.id || action.user_id !== tenantId || action.project_id !== input.projectId
       || action.requested_by !== userId || action.action_type !== 'execute_growth_campaign' || action.target_type !== 'growth_campaign'
       || action.target_id !== campaign.id || action.target_version !== campaign.version || action.idempotency_key !== input.idempotencyKey) {

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { GrowthService } from './growthService.js';
+import { OperationsServiceError } from '../operations/operationsService.js';
 
 test('growth retains the owner authorized by operations instead of rereading a changed project owner',async()=>{
   let projectReads=0;
@@ -31,4 +32,10 @@ test('campaign action binding and acknowledgement fail closed without fabricated
     outcome=`wrong:${key}`;const before=writes;await assert.rejects(service.createCampaign('actor',input),{code:'idempotency_conflict',statusCode:409});assert.equal(writes,before);
   }
   for(const bad of ['empty','error','wrongReceipt']){outcome=bad;await assert.rejects(service.createCampaign('actor',input),{code:'storage_unavailable',statusCode:503});}
+  for (const error of [new OperationsServiceError('conflict','fixture',409), new OperationsServiceError('unknown','fixture',503), new Error('unrelated')]) {
+    operations.createAction=async()=>{throw error;};const before=writes;
+    await assert.rejects(service.createCampaign('actor',input), error instanceof OperationsServiceError && error.code==='conflict'
+      ? {code:'idempotency_conflict',statusCode:409} : value=>value===error);
+    assert.equal(writes,before,'failed action cannot link campaign evidence');
+  }
 });
