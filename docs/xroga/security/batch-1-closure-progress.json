@@ -53,6 +53,18 @@
     }
   ],
   "additionalSpend": 0,
+  "previewGrantReceipts": {
+    "status": "IN PROGRESS",
+    "fix": "Original scalar grant input is copied before session await. Creation validates exact grant identity/scope/run/kind/port/expiry and unrevoked receipt, sanitizing write failures. All grant mappings reject malformed types, identity and timestamps. Latest reads validate returned owner/project/optional session and live expiry/revocation. Global UUID lookup validates returned ID before existing gateway signature and current-session checks.",
+    "localEvidence": "Four focused preview/runtime tests pass, including held-input mutation, substituted/malformed receipts, expired/revoked latest reads and storage outage. Existing actual foreign owner/project/revocation tests pass at25295230. Real persisted held-input and latest/revoked assertions prepared for new source.",
+    "regression": "Backend typecheck and full3049-test regression PASS:3031 pass,zero failures,18 registered Windows skips.",
+    "remaining": "Actual final-source CI required. Parent session versus insert race, coordinator/run provenance, signing-key custody and live provider/socket revocation are unresolved. No provider calls and no whole-preview certification."
+  },
+  "automationAdmissionDisposable": {
+    "source": "25295230cc26995d56e6717b9afc7c431795212a",
+    "run": "39121745945",
+    "result": "PASS:107 fresh/upgrade migrations,141 security tests and3 browser tests,zero failures/skips. Actual quota/replay/current-rule/member/rollback/browser denial pass. One unchanged admission persistence boundary closed narrowly. Aggregate39121745923 still running. Atomic rule creation108 and preview binding require their own exact-source verification."
+  },
   "automationCreation": {
     "status": "IN PROGRESS",
     "fix": "Existing rule creation retains canonical action/approval policies and redaction. Service-only transaction locks current actor/project/member, validates owner/project/rule/limits, and commits rule plus mandatory immutable audit together. Exactly one returned row must match every submitted field. No action or provider executes during creation.",
@@ -319,7 +331,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:387 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:386 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -354,7 +366,7 @@
     "ownerPredicateCandidates": 155,
     "reviewRequired": 0,
     "reviewedCandidates": 645,
-    "unresolvedSafetyCandidates": 387,
+    "unresolvedSafetyCandidates": 386,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -560,7 +572,7 @@
       "existingImplementation": "Existing prepared plan, confirmation, operations services and scheduler",
       "missingBehavior": "Account/target/digest/spend/receipt integration and complete caller provenance",
       "acceptanceTest": "Changed plan/target, expired/revoked approval, duplicate claims, unauthorized spend",
-      "pendingCandidates": 66,
+      "pendingCandidates": 65,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/operations/operationsService.ts": [
@@ -615,7 +627,6 @@
           "ad0d994bbac26afddf8b",
           "4da515a7c30d64d8c984",
           "2dcf0eb881a38ba77375",
-          "4058d1783848b91d9f27",
           "f3d0a5f2a161a0bf8b52",
           "f9577ff86262c65a8764"
         ],
@@ -985,14 +996,14 @@
           "f67653e309c9b2076efa"
         ],
         "backend/src/synthesis/livePreview/store.ts": [
-          "610553bef3df77a2b464",
-          "a0319ec25ccf91fd45de",
-          "0916cab9d5ede773407d",
-          "ed34254260ea85f46bfd",
-          "a536c7931f40a8a285c1",
-          "22480beb8bed5b2e6942",
-          "da67044df80932a8d0d1",
-          "6866cee4a6a6cf41dcd0"
+          "d5861e012f78e06bc25a",
+          "54cf280ab4a345a08393",
+          "c22873d2a25d8c1055f2",
+          "1cd23a3c452b8fe4a182",
+          "b66955b279918ab660b7",
+          "bf760f0e680ff8fcdcb0",
+          "fa2398e25b16a656e87b",
+          "a3786ba5882b32cbbc81"
         ],
         "frontend/src/lib/avatarPersistence.ts": [
           "3056dc2554f54604f101"

@@ -410,7 +410,8 @@
     "supabase/migrations/20261018001100_operations_automation_admission.sql",
     "backend/src/operations/automationCreation.local.integration.ts",
     "backend/src/operations/automationCreation.test.ts",
-    "supabase/migrations/20261018001200_operations_automation_creation.sql"
+    "supabase/migrations/20261018001200_operations_automation_creation.sql",
+    "backend/src/synthesis/livePreview/store.receipt.test.ts"
   ],
   "decisions": {
     "keep": [

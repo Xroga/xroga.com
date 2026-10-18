@@ -813,20 +813,20 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sourceSha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc",
+      "sourceSha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020",
       "callIds": [
-        "610553bef3df77a2b464",
-        "a0319ec25ccf91fd45de",
-        "0916cab9d5ede773407d",
-        "ed34254260ea85f46bfd",
-        "a536c7931f40a8a285c1",
-        "22480beb8bed5b2e6942",
-        "da67044df80932a8d0d1",
-        "6866cee4a6a6cf41dcd0"
+        "d5861e012f78e06bc25a",
+        "54cf280ab4a345a08393",
+        "c22873d2a25d8c1055f2",
+        "1cd23a3c452b8fe4a182",
+        "b66955b279918ab660b7",
+        "bf760f0e680ff8fcdcb0",
+        "fa2398e25b16a656e87b",
+        "a3786ba5882b32cbbc81"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Create loads the supplied owner's runtime session and validates matching owner/project/session, state, expiry and declared port before grant insertion. Latest/revoke filter user and project, optionally session. The global ID resolver uses the named signed_runtime_preview_resolution exception; gateway verifies signature and reloads the session before deriving an internal target.",
-      "reason": "Real disposable tests reject foreign-owner/project grants and foreign revocation. Remaining gaps: complete coordinator/request provenance and persisted run binding, parent-session validation versus grant-write race, signing-key custody and live proxy/socket revocation semantics. The global lookup is not public authorization merely because its query succeeds. No whole-preview certification is assigned.",
+      "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
+      "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
       "evidence": [
         {
           "path": "backend/src/synthesis/livePreview/access.ts",
@@ -835,6 +835,10 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.ts",
           "marker": "const target = authorizedPreviewTarget(grant, session);"
+        },
+        {
+          "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
+          "marker": "preview grant input and returned capability stay bound"
         }
       ]
     },
@@ -4941,9 +4945,9 @@
       "callIds": [
         "4058d1783848b91d9f27"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing authenticated signal endpoint supplies server actor and admitted owner/project. Service-only transaction locks current profile/project/member and exact current rule, verifies dedup owner/evidence, computes canonical condition/stop/maintenance/risk decisions and serializes database-time rate admission. Run and immutable admission audit commit together; caller validates exact receipt against existing decision engine before creating any action with the stable run UUID as key.",
-      "reason": "Eight focused intent/admission tests and29 local SQL role/decision/replay/rate/rollback assertions pass. Missing dedup is now explicit fresh admission rather than truthy empty-array fallback. Actual observed different-trigger quota and duplicate-trigger clients, stale rule/member, two-write rollback and browser denial prepared. Later rule-stop/authority changes, action/link recovery and complete automated lifecycle remain unresolved. No whole caller certification.",
+      "reason": "Fixed run-admission persistence boundary VERIFIED at25295230cc26995d56e6717b9afc7c431795212a, disposable39121745945:107 fresh/upgrade migrations,141 security tests and3 browser tests pass with zero failures/skips. Actual observed two-client different-trigger quota and duplicate-trigger replay, held rule/member mutations, both write rollbacks and browser denial pass without external execution. Invocation, SQL and fixture are unchanged. Only reservation/dedup/rate/admission audit are closed. Later rule-stop/authority changes, action/link recovery and complete automated lifecycle remain unresolved. No whole caller certification.",
       "evidence": [
         {
           "path": "backend/src/operations/automationAdmission.local.integration.ts",

@@ -37,7 +37,7 @@ import { signFileLink } from '../services/storage/fileDeliveryPolicy.js';
 import { authorizedPreviewTarget } from '../synthesis/livePreview/access.js';
 import type { LivePreviewGrant } from '../synthesis/livePreview/types.js';
 import type { ProjectRuntimeSession } from '../synthesis/projectRuntime/types.js';
-import { createLivePreviewGrant, getLivePreviewGrant, revokeLivePreviewGrants } from '../synthesis/livePreview/store.js';
+import { createLivePreviewGrant, getLatestLivePreviewGrant, getLivePreviewGrant, revokeLivePreviewGrants } from '../synthesis/livePreview/store.js';
 import { BillingService } from '../services/BillingService.js';
 import { buildUserSupabaseProvisionSql } from '../services/integrations/supabaseProvision.js';
 import { registerProviderKeyRevisionTests } from './providerKeyRevision.local.integration.js';
@@ -281,7 +281,7 @@ test('real revision restore rejects mismatched snapshot identities before restor
   } finally {assert.equal((await admin.from('project_runtime_revisions').delete().eq('revision_id',revisionId).eq('user_id',owner.id)).error,null);}
 });
 
-test('real durable preview session cannot resolve a misbound owner/project or stale capability', async () => {
+test('real durable preview session cannot resolve a misbound owner/project or stale capability', async t => {
   const [owner, other] = users;
   const now = Date.now(), sessionId = randomUUID();
   const store = new SupabaseProjectRuntimeStore();
@@ -309,10 +309,25 @@ test('real durable preview session cannot resolve a misbound owner/project or st
   await assert.rejects(createLivePreviewGrant({ ...input, projectId: other.project }), { status: 404 });
   const saved = await createLivePreviewGrant(input);
   assert.ok(await getLivePreviewGrant(saved.previewId));
+  assert.equal((await getLatestLivePreviewGrant({userId:owner.id,projectId:owner.project,sessionId}))?.previewId,saved.previewId);
+  const load=SupabaseProjectRuntimeStore.prototype.loadSession;
+  let enter!:()=>void,release!:()=>void,hold=true;
+  const entered=new Promise<void>(resolve=>{enter=resolve;}),gate=new Promise<void>(resolve=>{release=resolve;});
+  t.mock.method(SupabaseProjectRuntimeStore.prototype,'loadSession',async function(this:SupabaseProjectRuntimeStore,userId:string,id:string){
+    const result=await load.call(this,userId,id);if(hold){enter();await gate;}return result;
+  });
+  const mutable={...input},pending=createLivePreviewGrant(mutable);await entered;
+  Object.assign(mutable,{userId:other.id,projectId:other.project,sessionId:randomUUID(),runId:'changed-run',port:4000});release();
+  const stable=await pending;hold=false;
+  assert.equal(stable.userId,owner.id);assert.equal(stable.projectId,owner.project);assert.equal(stable.sessionId,sessionId);assert.equal(stable.runId,input.runId);assert.equal(stable.port,3000);
+  const persisted=await admin.from('project_preview_grants').select('user_id,project_id,session_id,run_id,port').eq('preview_id',stable.previewId).single();
+  assert.equal(persisted.error,null);assert.deepEqual(persisted.data,{user_id:owner.id,project_id:owner.project,session_id:sessionId,run_id:input.runId,port:3000});
   await revokeLivePreviewGrants({ userId: other.id, projectId: owner.project, sessionId });
   assert.equal((await getLivePreviewGrant(saved.previewId))?.revokedAt, null);
   await revokeLivePreviewGrants({ userId: owner.id, projectId: owner.project, sessionId });
   assert.ok((await getLivePreviewGrant(saved.previewId))?.revokedAt);
+  assert.ok((await getLivePreviewGrant(stable.previewId))?.revokedAt);
+  assert.equal(await getLatestLivePreviewGrant({userId:owner.id,projectId:owner.project,sessionId}),null);
 });
 test('actual API ignores client owner and rejects foreign project/file access and unsigned requests',async()=>{
   const [owner,other]=users;

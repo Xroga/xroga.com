@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "25295230cc26995d56e6717b9afc7c431795212a",
-    "sourceTimestampUtc": "2026-10-18T16:04:03+05:00",
-    "auditStartedUtc": "2026-10-18T11:08:23.987Z",
+    "sha": "a086522d0ac96647ebac1ec47d915411a1855e8f",
+    "sourceTimestampUtc": "2026-10-18T16:11:15+05:00",
+    "auditStartedUtc": "2026-10-18T11:14:34.516Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -23539,7 +23539,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:642",
+        "backend/src/security/tenantIsolation.local.integration.ts:657",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -29037,18 +29037,20 @@
       "id": "surface:b1a640e240cb2100e3b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/livePreview/store.ts",
-      "sha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc",
+      "sha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020",
       "symbols": [
         "candidate",
         "context",
         "createLivePreviewGrant",
         "getLatestLivePreviewGrant",
         "getLivePreviewGrant",
+        "grant",
         "mapGrant",
         "now",
         "previewId",
         "query",
         "revokeLivePreviewGrants",
+        "saved",
         "session"
       ],
       "imports": [
@@ -29075,7 +29077,8 @@
         "backend/src/routes/projectRuntime.ts:21",
         "backend/src/security/tenantIsolation.local.integration.ts:40",
         "backend/src/synthesis/livePreview/coordinator.ts:28",
-        "backend/src/synthesis/livePreview/index.ts:3"
+        "backend/src/synthesis/livePreview/index.ts:3",
+        "backend/src/synthesis/livePreview/store.receipt.test.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -29088,8 +29091,8 @@
         "backend/src/synthesis/livePreview/store.ts#authorizedPreviewTarget"
       ],
       "tenantBoundary": [
-        "backend/src/synthesis/livePreview/store.ts:233 (user_id)",
-        "backend/src/synthesis/livePreview/store.ts:315 (user_id)"
+        "backend/src/synthesis/livePreview/store.ts:246 (user_id)",
+        "backend/src/synthesis/livePreview/store.ts:331 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/synthesis/livePreview/store.ts#authorizedPreviewTarget"
@@ -29097,7 +29100,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/synthesis/livePreview/store.receipt.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -30427,6 +30431,7 @@
         "backend/src/security/runtimeTerminal.local.integration.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:16",
         "backend/src/security/workerRevision.local.integration.ts:9",
+        "backend/src/synthesis/livePreview/store.receipt.test.ts:4",
         "backend/src/synthesis/livePreview/store.ts:8",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts:6",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts:5",
@@ -30475,6 +30480,7 @@
         "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
+        "backend/src/synthesis/livePreview/store.receipt.test.ts",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.restore.test.ts",
@@ -30549,6 +30555,7 @@
         "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/livePreview/access.test.ts",
+        "backend/src/synthesis/livePreview/store.receipt.test.ts",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.restore.test.ts",
@@ -104418,6 +104425,13 @@
       "id": "test-suite:ff95ef585183cf93670a",
       "sourcePath": "backend/src/synthesis/livePreview/status.test.ts",
       "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8004b3f7314c2a4066f1",
+      "sourcePath": "backend/src/synthesis/livePreview/store.receipt.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "25295230cc26995d56e6717b9afc7c431795212a",
+  "source_sha": "a086522d0ac96647ebac1ec47d915411a1855e8f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12951,7 +12951,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "5b6290a93fd6e7392bc46ffc99f66a9a0a9966e6c73b6285f6c4ea9f70425390"
+      "sha256": "f5533b4eb815b838495b61ae4673cce40c4616e8ed4c38df508905a861433486"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13343,7 +13343,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sha256": "248bf88db136afa12bd96acb0de27df33f245fcadaf214beb1f3ae9ebd6abbbc"
+      "sha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020"
     },
     {
       "path": "backend/src/synthesis/livePreview/types.ts",
@@ -18786,42 +18786,42 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 347,
+      "line": 362,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 397,
+      "line": 412,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 486,
+      "line": 501,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 592,
+      "line": 607,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 644,
+      "line": 659,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1312,
+      "line": 1327,
       "credentialsInUrl": false
     },
     {
@@ -25002,14 +25002,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 811,
+      "line": 826,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1148,
+      "line": 1163,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -19,7 +19,14 @@ function mapGrant(
       string,
       unknown
     >,
-): LivePreviewGrant {
+): LivePreviewGrant | null {
+  if (!row || typeof row !== 'object' || Array.isArray(row)
+    || !['preview_id','user_id','project_id','session_id','run_id'].every(key => typeof row[key] === 'string' && row[key].length > 0)
+    || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(row.preview_id))
+    || typeof row.preview_kind !== 'string' || !['browser','api','terminal','logs','extension','mobile','desktop','mcp','ai'].includes(row.preview_kind)
+    || (row.port !== null && (typeof row.port !== 'number' || !Number.isInteger(row.port) || row.port < 1 || row.port > 65535))
+    || !['expires_at','created_at'].every(key => typeof row[key] === 'string' && Number.isFinite(Date.parse(row[key])))
+    || (row.revoked_at !== null && (typeof row.revoked_at !== 'string' || !Number.isFinite(Date.parse(row.revoked_at))))) return null;
   return {
     previewId:
       String(
@@ -109,6 +116,9 @@ export async function createLivePreviewGrant(
       string;
   },
 ): Promise<LivePreviewGrant> {
+  // Every field is scalar. Keep the original scope and capability stable while
+  // the current session is loaded, instead of rereading mutable caller input.
+  input = { ...input };
   const previewId =
     randomUUID();
   // Internal coordinator supplies the server owner; never create a capability
@@ -161,21 +171,21 @@ export async function createLivePreviewGrant(
     error ||
     !data
   ) {
-    throw (
-      error ??
-      new Error(
-        'Preview grant was not persisted.',
-      )
-    );
+    throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
   }
-
-  return mapGrant(
+  const saved = mapGrant(
     data as
       Record<
         string,
         unknown
       >,
   );
+  if (!saved || saved.previewId !== previewId || saved.userId !== input.userId || saved.projectId !== input.projectId
+    || saved.sessionId !== input.sessionId || saved.runId !== input.runId || saved.kind !== input.kind || saved.port !== input.port
+    || saved.revokedAt !== null || Date.parse(saved.expiresAt) !== Date.parse(input.expiresAt) || Date.parse(saved.expiresAt) <= Date.now()) {
+    throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
+  }
+  return saved;
 }
 
 export async function getLivePreviewGrant(
@@ -183,6 +193,7 @@ export async function getLivePreviewGrant(
     string,
 ): Promise<LivePreviewGrant | null> {
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(previewId)) return null;
+  previewId = previewId.toLowerCase();
   const {
     data,
     error,
@@ -207,13 +218,14 @@ export async function getLivePreviewGrant(
     return null;
   }
 
-  return mapGrant(
+  const grant = mapGrant(
     data as
       Record<
         string,
         unknown
       >,
   );
+  return grant?.previewId === previewId ? grant : null;
 }
 
 export async function getLatestLivePreviewGrant(
@@ -228,6 +240,7 @@ export async function getLatestLivePreviewGrant(
       string | null;
   },
 ): Promise<LivePreviewGrant | null> {
+  input = { ...input };
   const context = createTenantContext({ userId: input.userId, via: 'persisted_owner' });
   let query =
     getTenantSupabaseAdmin(context)
@@ -289,13 +302,16 @@ export async function getLatestLivePreviewGrant(
     return null;
   }
 
-  return mapGrant(
+  const grant = mapGrant(
     data as
       Record<
         string,
         unknown
       >,
   );
+  if (!grant || grant.userId !== input.userId || grant.projectId !== input.projectId
+    || (input.sessionId && grant.sessionId !== input.sessionId) || grant.revokedAt || Date.parse(grant.expiresAt) <= Date.now()) return null;
+  return grant;
 }
 
 export async function revokeLivePreviewGrants(
