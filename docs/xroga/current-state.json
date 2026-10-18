@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "496d59ab5341a922df131a5e0305636f78470fa6",
-    "sourceTimestampUtc": "2026-10-18T15:12:57+05:00",
-    "auditStartedUtc": "2026-10-18T10:21:45.411Z",
+    "sha": "aa1aad5c07c44cb907ff4432e1579ff79d08bd3d",
+    "sourceTimestampUtc": "2026-10-18T15:25:35+05:00",
+    "auditStartedUtc": "2026-10-18T10:41:51.707Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -15639,7 +15639,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
+      "sha256": "75facc8e53cac9a5dc6885a0072df2eb2618d6445d2ec965ff469f8ead03e87b",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -15654,6 +15654,7 @@
         "belongs",
         "current",
         "currentVersion",
+        "data",
         "decision",
         "definition",
         "deployment",
@@ -15760,6 +15761,7 @@
         "backend/src/operations/actionCompletion.local.integration.ts:7",
         "backend/src/operations/actionConfirmation.local.integration.ts:7",
         "backend/src/operations/actionConfirmation.test.ts:4",
+        "backend/src/operations/actionCreation.local.integration.ts:7",
         "backend/src/operations/actionIntent.local.integration.ts:7",
         "backend/src/operations/actionIntent.test.ts:4",
         "backend/src/operations/internalControlReceipt.test.ts:4",
@@ -15820,25 +15822,24 @@
         "backend/src/operations/operationsService.ts:199 (user_id)",
         "backend/src/operations/operationsService.ts:208 (user_id)",
         "backend/src/operations/operationsService.ts:211 (user_id)",
-        "backend/src/operations/operationsService.ts:235 (user_id)",
-        "backend/src/operations/operationsService.ts:266 (user_id)",
-        "backend/src/operations/operationsService.ts:325 (user_id)",
-        "backend/src/operations/operationsService.ts:372 (user_id)",
-        "backend/src/operations/operationsService.ts:412 (user_id)",
-        "backend/src/operations/operationsService.ts:442 (user_id)",
-        "backend/src/operations/operationsService.ts:448 (user_id)",
-        "backend/src/operations/operationsService.ts:452 (user_id)",
-        "backend/src/operations/operationsService.ts:456 (user_id)",
-        "backend/src/operations/operationsService.ts:471 (user_id)",
-        "backend/src/operations/operationsService.ts:485 (user_id)",
-        "backend/src/operations/operationsService.ts:489 (tenant_id)",
-        "backend/src/operations/operationsService.ts:498 (user_id)",
-        "backend/src/operations/operationsService.ts:503 (user_id)",
-        "backend/src/operations/operationsService.ts:508 (user_id)",
-        "backend/src/operations/operationsService.ts:514 (user_id)",
-        "backend/src/operations/operationsService.ts:515 (user_id)",
-        "backend/src/operations/operationsService.ts:540 (user_id)",
-        "backend/src/operations/operationsService.ts:541 (user_id)"
+        "backend/src/operations/operationsService.ts:269 (user_id)",
+        "backend/src/operations/operationsService.ts:328 (user_id)",
+        "backend/src/operations/operationsService.ts:375 (user_id)",
+        "backend/src/operations/operationsService.ts:415 (user_id)",
+        "backend/src/operations/operationsService.ts:445 (user_id)",
+        "backend/src/operations/operationsService.ts:451 (user_id)",
+        "backend/src/operations/operationsService.ts:455 (user_id)",
+        "backend/src/operations/operationsService.ts:459 (user_id)",
+        "backend/src/operations/operationsService.ts:474 (user_id)",
+        "backend/src/operations/operationsService.ts:488 (user_id)",
+        "backend/src/operations/operationsService.ts:492 (tenant_id)",
+        "backend/src/operations/operationsService.ts:501 (user_id)",
+        "backend/src/operations/operationsService.ts:506 (user_id)",
+        "backend/src/operations/operationsService.ts:511 (user_id)",
+        "backend/src/operations/operationsService.ts:517 (user_id)",
+        "backend/src/operations/operationsService.ts:518 (user_id)",
+        "backend/src/operations/operationsService.ts:543 (user_id)",
+        "backend/src/operations/operationsService.ts:544 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/operations/operationsService.ts#OperationsPermission",
@@ -15867,6 +15868,7 @@
         "backend/src/operations/actionCompletion.local.integration.ts",
         "backend/src/operations/actionConfirmation.local.integration.ts",
         "backend/src/operations/actionConfirmation.test.ts",
+        "backend/src/operations/actionCreation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/actionIntent.test.ts",
         "backend/src/operations/internalControlReceipt.test.ts",
@@ -23534,7 +23536,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:636",
+        "backend/src/security/tenantIsolation.local.integration.ts:638",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -95417,6 +95419,13 @@
       "version": "20261018000900",
       "order": 105,
       "sha256": "cb2ba5f8636d62028bae1875d50faa7c841c187c744a2b5d972842be5108618d"
+    },
+    {
+      "id": "migration:859713a1952ac66953d2",
+      "sourcePath": "supabase/migrations/20261018001000_operations_action_creation.sql",
+      "version": "20261018001000",
+      "order": 106,
+      "sha256": "704c98284ce79aa7f05290cf638f94d567cba69c91a1fa07321f462a15422467"
     }
   ],
   "workflows": [
@@ -103164,6 +103173,13 @@
     {
       "id": "test-suite:133bed2b3d1a893a25cc",
       "sourcePath": "backend/src/operations/actionConfirmation.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:fcaec46df1c5e934806f",
+      "sourcePath": "backend/src/operations/actionCreation.local.integration.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

@@ -227,28 +227,31 @@ export class OperationsService {
     await this.currentTargetVersion(row);
     const matchesIntent = (candidate: DbRow) => typeof candidate.id === 'string' && !!candidate.id
       && ['user_id','project_id','environment_id','requested_by','action_type','target_type','target_id',
-        'target_version','idempotency_key','action_plan_digest','permission_required','risk_level','execution_plan']
+        'target_version','idempotency_key','action_plan_digest','permission_required','risk_level','execution_plan','max_attempts']
         .every(key => isDeepStrictEqual(candidate[key], row[key as keyof typeof row]));
-    const { data, error } = await this.db.from('operations_actions').insert(row).select('*').single();
+    const roles: OperationsRole[] = ['viewer','operator','release_manager','recovery_manager','admin'];
+    const { data: receipt, error } = await this.db.rpc('create_operations_action', {
+      p_actor: userId, p_expected: row, p_allowed_roles: roles.filter(role => hasOperationsPermission(role, definition.permission)),
+      p_approval_role: definition.approvalRole ?? null, p_confirmation_required: definition.confirmationRequired,
+      p_audit_after: redactOperationsValue(row),
+    });
     if (error) {
-      if (error.code !== '23505') throw new OperationsServiceError('unknown', 'Action persistence could not be verified', 503);
-      const existing = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('user_id', access.ownerId).eq('project_id', request.projectId).eq('idempotency_key', request.idempotencyKey).maybeSingle(), 'Action conflict', null);
-      // A replay never confirms, approves or executes the existing action.
-      if (existing && matchesIntent(existing)) return existing;
-      throw new OperationsServiceError('conflict', 'Action key cannot be reused for a different intent', 409);
-    }
-    if (!data || !matchesIntent(data) || data.status !== status || data.confirmation_digest !== row.confirmation_digest) {
+      if (error.code === '40001') throw new OperationsServiceError('conflict', 'Action key cannot be reused for a different intent', 409);
+      if (error.code === '42501') throw new OperationsServiceError('forbidden', 'Action is not permitted', 403);
+      if (error.code === 'P0001') throw new OperationsServiceError('precondition_failed', 'Action is blocked by an active maintenance window', 409);
       throw new OperationsServiceError('unknown', 'Action persistence could not be verified', 503);
     }
-    try {
-      await this.audit({ userId: access.ownerId, actorId: userId, projectId: request.projectId, environmentId: request.environmentId, action: 'operations.action.requested', targetType: 'action', targetId: data.id, outcome: status, afterState: row, correlationId: request.idempotencyKey });
-    } catch (error) {
-      await this.db.from('operations_actions').update({ status: 'blocked', status_reason: 'audit_storage_unavailable', updated_at: new Date().toISOString() }).eq('id', data.id);
-      throw error;
+    const data = receipt?.action;
+    if (!receipt || typeof receipt.replayed !== 'boolean' || !data || typeof data !== 'object' || Array.isArray(data)) {
+      throw new OperationsServiceError('unknown', 'Action persistence could not be verified', 503);
     }
-    if (status === 'approval_required' && definition.approvalRole) {
-      await queryOrThrow(this.db.from('operations_action_approvals').insert({ action_id: data.id, user_id: access.ownerId, requester_id: userId, required_role: definition.approvalRole, target_version: request.targetVersion, action_plan_digest: digest, expires_at: new Date(Date.now() + 30 * 60_000).toISOString() }).select(), 'Approval request failed');
-      return data;
+    if (receipt.replayed) {
+      // A replay never confirms, approves or executes the existing action.
+      if (matchesIntent(data)) return data;
+      throw new OperationsServiceError('conflict', 'Action key cannot be reused for a different intent', 409);
+    }
+    if (!matchesIntent(data) || data.status !== status || data.confirmation_digest !== row.confirmation_digest) {
+      throw new OperationsServiceError('unknown', 'Action persistence could not be verified', 503);
     }
     if (status === 'queued') return this.executeAction(userId, data.id);
     return data;

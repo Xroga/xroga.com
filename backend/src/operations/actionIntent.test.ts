@@ -12,25 +12,29 @@ function fixture() {
     onProject: async () => {}, onInsert: (_table: string, _row: Record<string, unknown>) => {},
     onEq: (_table: string, _key: string, _value: unknown) => {} };
   const db = { from(table: string) {
-    let inserted: Record<string, unknown> = {};
     const q = {
       select() { return q; }, eq(key: string, value: unknown) { state.onEq(table, key, value); return q; },
-      insert(row: Record<string, unknown>) { state.onInsert(table, row); inserted = row; if (table === 'production_audit_log') state.audits++; return q; },
-      async single() {
-        assert.equal(table, 'operations_actions');
-        if (state.mode === 'conflict') return { data: null, error: { code: '23505' } };
-        if (state.mode === 'outage') return { data: null, error: { code: 'XX000' } };
-        state.stored = { id: 'action', ...inserted };
-        return { data: state.mode === 'bad-receipt' ? { ...state.stored, requested_by: 'other' } : state.stored, error: null };
-      },
+      insert(row: Record<string, unknown>) { assert.equal(table,'operations_automation_rules');state.onInsert(table, row);return q; },
       async maybeSingle() {
         if (table === 'projects') { await state.onProject(); return { data: { id: 'project', user_id: 'actor' }, error: null }; }
         if (table === 'profiles') return { data: { role: 'member' }, error: null };
         if (table === 'operations_resources') return { data: { version: 1 }, error: null };
-        assert.equal(table, 'operations_actions'); state.replayReads++; return { data: state.stored, error: null };
+        assert.fail(`Unexpected independent creation query: ${table}`);
       },
       then(resolve: (value: unknown) => unknown) { return Promise.resolve(resolve({ data: [], error: null })); },
     }; return q;
+  },async rpc(name:string,args:Record<string,unknown>){
+    assert.equal(name,'create_operations_action');assert.equal(args.p_actor,'actor');
+    assert.deepEqual(args.p_allowed_roles,['operator','release_manager','recovery_manager','admin']);
+    assert.equal(args.p_approval_role,null);assert.equal(args.p_confirmation_required,true);
+    assert.equal((args.p_audit_after as Record<string,unknown>).idempotency_key,'[REDACTED]');
+    if(state.mode==='outage')return {data:null,error:{code:'XX000'}};
+    if(state.mode==='forbidden')return {data:null,error:{code:'42501'}};
+    if(state.mode==='maintenance')return {data:null,error:{code:'P0001'}};
+    if(state.mode==='conflict'){state.replayReads++;return {data:{action:state.stored,replayed:true},error:null};}
+    if(state.mode==='bad-receipt')return {data:{action:{id:'action',...args.p_expected as object,requested_by:'other'},replayed:false},error:null};
+    state.stored={id:'action',...args.p_expected as object};state.audits++;
+    return {data:{action:state.stored,replayed:false},error:null};
   } };
   return { state, service: new OperationsService(db as unknown as SupabaseClient) };
 }
@@ -41,11 +45,12 @@ test('action retry binds owner, actor, target and plan and cannot hide non-confl
   const original = state.stored!; state.mode = 'conflict';
   assert.equal((await service.createAction('actor', input)).id, 'action');
   for (const field of ['user_id','requested_by','project_id','environment_id','action_type','target_type','target_id',
-    'target_version','idempotency_key','action_plan_digest','permission_required','risk_level','execution_plan']) {
+    'target_version','idempotency_key','action_plan_digest','permission_required','risk_level','execution_plan','max_attempts']) {
     state.stored = { ...original, [field]: 'changed' };
     await assert.rejects(service.createAction('actor', input), { code: 'conflict', statusCode: 409 });
   }
   state.stored = original;
+  const replay=await service.createAction('actor',{...input,confirmed:true});assert.equal(replay.status,'confirmation_required');
   await assert.rejects(service.createAction('actor', { ...input, parameters: { nested: { value: 'changed' } } }), { code: 'conflict' });
   const reads = state.replayReads; state.mode = 'outage';
   await assert.rejects(service.createAction('actor', input), { code: 'unknown', statusCode: 503 });
@@ -53,6 +58,8 @@ test('action retry binds owner, actor, target and plan and cannot hide non-confl
   state.mode = 'bad-receipt';
   await assert.rejects(service.createAction('actor', input), { code: 'unknown', statusCode: 503 });
   assert.equal(state.audits, 1, 'invalid or replayed receipts do not generate a fresh audit/approval or execution');
+  state.mode='forbidden';await assert.rejects(service.createAction('actor',input),{code:'forbidden',statusCode:403});
+  state.mode='maintenance';await assert.rejects(service.createAction('actor',input),{code:'precondition_failed',statusCode:409});
 });
 
 test('action snapshot retains admitted project and nested plan during authority await', async () => {
