@@ -5,7 +5,7 @@ import { getSupabaseAdmin } from '../config/supabase.js';
 import { OperationsService, OperationsServiceError } from '../operations/operationsService.js';
 import { hasOperationsPermission } from '../operations/permissions.js';
 import type { OperationsRole } from '../operations/types.js';
-import { activationSatisfied, deterministicVariant, experimentResult, recommendationDecision, redactGrowthPayload, validateEventName } from './growthEngine.js';
+import { deterministicVariant, experimentResult, recommendationDecision, redactGrowthPayload, validateEventName } from './growthEngine.js';
 
 type Row = Record<string, any>;
 
@@ -141,18 +141,30 @@ export class GrowthService {
 
   async evaluateActivation(userId: string, projectId: string, subjectUserId = userId): Promise<{ activated: boolean; lifecycle: Row | null; reason: string }> {
     const { tenantId } = await this.access(userId, projectId);
-    const definition = await query<Row | null>(this.db.from('growth_activation_definitions').select('*').eq('tenant_id', tenantId).eq('project_id', projectId).eq('active', true).order('version', { ascending: false }).limit(1).maybeSingle(), 'Activation definition unavailable', null);
-    if (!definition) return { activated: false, lifecycle: null, reason: 'not_configured' };
-    const [events, deployment] = await Promise.all([
-      query<Row[]>(this.db.from('analytics_events').select('event_type').eq('tenant_id', tenantId).eq('project_id', projectId).eq('user_id', subjectUserId), 'Activation events unavailable'),
-      query<Row | null>(this.db.from('deployment_status').select('id,status,verification_state').eq('user_id', tenantId).eq('project_id', projectId).order('created_at', { ascending: false }).limit(1).maybeSingle(), 'Deployment evidence unavailable', null),
-    ]);
-    const deploymentVerified = ['verified','production_verified','succeeded'].includes(String(deployment?.verification_state ?? deployment?.status));
-    const activated = activationSatisfied(definition.required_event_names, events.map((item) => item.event_type), deploymentVerified);
-    if (!activated) return { activated: false, lifecycle: null, reason: deploymentVerified ? 'required_events_missing' : 'deployment_unverified' };
-    const evidenceReference = `activation:${definition.id}:${deployment!.id}`;
-    const rows = await query<Row[]>(this.db.from('growth_lifecycle_state').upsert({ tenant_id: tenantId, project_id: projectId, subject_type: 'user', subject_id: subjectUserId, lifecycle_state: 'activated', activation_definition_id: definition.id, evidence_reference: evidenceReference, transitioned_at: new Date().toISOString() }, { onConflict: 'project_id,subject_type,subject_id' }).select('*'), 'Activation state failed');
-    return { activated: true, lifecycle: rows[0], reason: 'evidence_verified' };
+    const roles:OperationsRole[]=['viewer','operator','release_manager','recovery_manager','admin'];
+    const {data:receipt,error}=await this.db.rpc('evaluate_growth_activation',{
+      p_actor:userId,p_tenant:tenantId,p_project:projectId,p_subject:subjectUserId,
+      p_allowed_roles:roles.filter(role=>hasOperationsPermission(role,'view_product_operations')),
+    });
+    if(error?.code==='42501')throw new GrowthServiceError('forbidden','Activation evaluation is not permitted',403);
+    if(error?.code==='40001')throw new GrowthServiceError('conflict','Activation lifecycle ownership changed',409);
+    if(error?.code==='22023')throw new GrowthServiceError('invalid_activation','Activation evaluation is invalid',400);
+    if(error||!receipt||typeof receipt.activated!=='boolean')throw new GrowthServiceError('storage_unavailable','Activation evaluation could not be verified',503);
+    if(!receipt.activated){
+      if(receipt.lifecycle!==null||!['not_configured','required_events_missing','deployment_unverified'].includes(receipt.reason)){
+        throw new GrowthServiceError('storage_unavailable','Activation evaluation could not be verified',503);
+      }
+      return {activated:false,lifecycle:null,reason:receipt.reason};
+    }
+    const row=receipt.lifecycle,basis=receipt.basis;
+    if(receipt.reason!=='evidence_verified'||!row||typeof row.id!=='string'||!row.id||row.tenant_id!==tenantId||row.project_id!==projectId
+      ||row.subject_type!=='user'||row.subject_id!==subjectUserId||row.lifecycle_state!=='activated'
+      ||!basis||typeof basis.definitionId!=='string'||!basis.definitionId||typeof basis.deploymentId!=='string'||!basis.deploymentId
+      ||row.activation_definition_id!==basis.definitionId||row.evidence_reference!==`activation:${basis.definitionId}:${basis.deploymentId}`
+      ||!Number.isSafeInteger(row.version)||row.version<1||typeof row.transitioned_at!=='string'||!Number.isFinite(Date.parse(row.transitioned_at))){
+      throw new GrowthServiceError('storage_unavailable','Activation lifecycle persistence could not be verified',503);
+    }
+    return {activated:true,lifecycle:row,reason:'evidence_verified'};
   }
 
   async recommend(userId: string, input: { projectId: string; consent: boolean }): Promise<Row> {

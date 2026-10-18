@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "696322f0813a4e08b9d324e2bb653dfb2e2d657e",
-    "sourceTimestampUtc": "2026-10-18T16:39:44+05:00",
-    "auditStartedUtc": "2026-10-18T11:44:54.200Z",
+    "sha": "4340f62cc9f8a44144427a9ac503c5f7f3d3d960",
+    "sourceTimestampUtc": "2026-10-18T16:47:55+05:00",
+    "auditStartedUtc": "2026-10-18T11:58:23.635Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -12222,22 +12222,21 @@
       "id": "surface:4cd464f7016cf52503dd",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sha256": "411e3b930a3a1cc490dc90fc94e4a7fcae00caba9b56e884a298df2807288e24",
+      "sha256": "a4c3c278d65b2452b8833407d60858557749890e5fc54d6152436003e54e6610",
       "symbols": [
         "GrowthService",
         "GrowthServiceError",
         "Row",
         "action",
-        "activated",
         "assignment",
         "assignmentById",
         "attribution",
+        "basis",
         "binding",
         "campaign",
         "counts",
         "critical",
         "decision",
-        "definition",
         "deploymentVerified",
         "error",
         "event",
@@ -12283,6 +12282,8 @@
       "callers": [
         "backend/src/growth/activationDefinition.local.integration.ts:7",
         "backend/src/growth/activationDefinition.test.ts:4",
+        "backend/src/growth/activationEvaluation.local.integration.ts:7",
+        "backend/src/growth/activationEvaluation.test.ts:4",
         "backend/src/growth/campaignReceipt.local.integration.ts:6",
         "backend/src/growth/delivery.local.integration.ts:1",
         "backend/src/growth/deliveryReceipt.test.ts:1",
@@ -12304,7 +12305,6 @@
       "persistenceDependencies": [
         "analytics_events",
         "deployment_status",
-        "growth_activation_definitions",
         "growth_attribution_touches",
         "growth_campaigns",
         "growth_experiment_assignments",
@@ -12343,22 +12343,18 @@
         "backend/src/growth/growthService.ts:99 (tenant_id)",
         "backend/src/growth/growthService.ts:113 (user_id)",
         "backend/src/growth/growthService.ts:113 (tenant_id)",
-        "backend/src/growth/growthService.ts:144 (tenant_id)",
-        "backend/src/growth/growthService.ts:147 (user_id)",
-        "backend/src/growth/growthService.ts:147 (tenant_id)",
-        "backend/src/growth/growthService.ts:148 (user_id)",
-        "backend/src/growth/growthService.ts:162 (user_id)",
-        "backend/src/growth/growthService.ts:163 (user_id)",
-        "backend/src/growth/growthService.ts:164 (tenant_id)",
-        "backend/src/growth/growthService.ts:165 (tenant_id)",
-        "backend/src/growth/growthService.ts:208 (tenant_id)",
-        "backend/src/growth/growthService.ts:234 (tenant_id)",
-        "backend/src/growth/growthService.ts:254 (tenant_id)",
-        "backend/src/growth/growthService.ts:282 (tenant_id)",
+        "backend/src/growth/growthService.ts:174 (user_id)",
+        "backend/src/growth/growthService.ts:175 (user_id)",
+        "backend/src/growth/growthService.ts:176 (tenant_id)",
+        "backend/src/growth/growthService.ts:177 (tenant_id)",
+        "backend/src/growth/growthService.ts:220 (tenant_id)",
+        "backend/src/growth/growthService.ts:246 (tenant_id)",
+        "backend/src/growth/growthService.ts:266 (tenant_id)",
         "backend/src/growth/growthService.ts:294 (tenant_id)",
-        "backend/src/growth/growthService.ts:305 (tenant_id)",
-        "backend/src/growth/growthService.ts:307 (tenant_id)",
-        "backend/src/growth/growthService.ts:332 (tenant_id)"
+        "backend/src/growth/growthService.ts:306 (tenant_id)",
+        "backend/src/growth/growthService.ts:317 (tenant_id)",
+        "backend/src/growth/growthService.ts:319 (tenant_id)",
+        "backend/src/growth/growthService.ts:344 (tenant_id)"
       ],
       "approvalBoundary": [
         "backend/src/growth/growthService.ts#hasOperationsPermission"
@@ -12374,6 +12370,8 @@
       "testCoverage": [
         "backend/src/growth/activationDefinition.local.integration.ts",
         "backend/src/growth/activationDefinition.test.ts",
+        "backend/src/growth/activationEvaluation.local.integration.ts",
+        "backend/src/growth/activationEvaluation.test.ts",
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
         "backend/src/growth/deliveryReceipt.test.ts",
@@ -23572,7 +23570,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:665",
+        "backend/src/security/tenantIsolation.local.integration.ts:667",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -95510,6 +95508,13 @@
       "version": "20261018001500",
       "order": 111,
       "sha256": "0a5a2760c3c55ead71613772e7dd36c856dc6bdc3c55a3cd06ff79df23d284b2"
+    },
+    {
+      "id": "migration:ca3d8e19a78da2428427",
+      "sourcePath": "supabase/migrations/20261018001600_growth_activation_evaluation.sql",
+      "version": "20261018001600",
+      "order": 112,
+      "sha256": "603a3caaa6c398a1d59375639fe2fddbefacde5c170df12739bef20c89058fd1"
     }
   ],
   "workflows": [
@@ -102984,6 +102989,20 @@
     {
       "id": "test-suite:75c511e71fcf9f951367",
       "sourcePath": "backend/src/growth/activationDefinition.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:f426daa422ef6f1a9ce4",
+      "sourcePath": "backend/src/growth/activationEvaluation.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:cf57ff96a339ee3351e5",
+      "sourcePath": "backend/src/growth/activationEvaluation.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

@@ -56,6 +56,7 @@ import { registerVerificationTargetTests } from '../operations/verificationTarge
 import { registerPreviewGrantAdmissionTests } from './previewGrantAdmission.local.integration.js';
 import { registerSwarmHeartbeatTests } from './swarmHeartbeat.local.integration.js';
 import { registerGrowthActivationDefinitionTests } from '../growth/activationDefinition.local.integration.js';
+import { registerGrowthActivationEvaluationTests } from '../growth/activationEvaluation.local.integration.js';
 import { registerGrowthOutcomeTests } from '../growth/outcome.local.integration.js';
 import { registerBusinessConfirmationFinishTests } from './businessConfirmationFinish.local.integration.js';
 import { registerBusinessConfirmationClaimTests } from './businessConfirmationClaim.local.integration.js';
@@ -109,6 +110,7 @@ registerVerificationTargetTests(admin, () => users);
 registerPreviewGrantAdmissionTests(admin, () => users);
 registerSwarmHeartbeatTests(admin, () => users);
 registerGrowthActivationDefinitionTests(admin, () => users);
+registerGrowthActivationEvaluationTests(admin, () => users);
 registerGrowthOutcomeTests(admin, () => users);
 registerBusinessConfirmationFinishTests(admin, () => users);
 registerBusinessConfirmationClaimTests(admin, () => users);
