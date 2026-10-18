@@ -58,6 +58,7 @@ import { registerSwarmHeartbeatTests } from './swarmHeartbeat.local.integration.
 import { registerGrowthActivationDefinitionTests } from '../growth/activationDefinition.local.integration.js';
 import { registerGrowthActivationEvaluationTests } from '../growth/activationEvaluation.local.integration.js';
 import { registerGrowthLifecycleTransitionTests } from '../growth/lifecycleTransition.local.integration.js';
+import { registerGrowthExperimentAdmissionTests } from '../growth/experimentAdmission.local.integration.js';
 import { registerGrowthOutcomeTests } from '../growth/outcome.local.integration.js';
 import { registerBusinessConfirmationFinishTests } from './businessConfirmationFinish.local.integration.js';
 import { registerBusinessConfirmationClaimTests } from './businessConfirmationClaim.local.integration.js';
@@ -113,6 +114,7 @@ registerSwarmHeartbeatTests(admin, () => users);
 registerGrowthActivationDefinitionTests(admin, () => users);
 registerGrowthActivationEvaluationTests(admin, () => users);
 registerGrowthLifecycleTransitionTests(admin, () => users);
+registerGrowthExperimentAdmissionTests(admin, () => users);
 registerGrowthOutcomeTests(admin, () => users);
 registerBusinessConfirmationFinishTests(admin, () => users);
 registerBusinessConfirmationClaimTests(admin, () => users);

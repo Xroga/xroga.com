@@ -299,25 +299,60 @@ export class GrowthService {
   }
 
   async assignExperiment(userId: string, experimentId: string, subjectKey: string): Promise<Row> {
-    const experiment = await query<Row | null>(this.db.from('growth_experiments').select('*').eq('id', experimentId).maybeSingle(), 'Experiment unavailable', null);
-    if (!experiment) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
+    const loaded = await query<Row | null>(this.db.from('growth_experiments').select('*').eq('id', experimentId).maybeSingle(), 'Experiment unavailable', null);
+    if (!loaded || loaded.id!==experimentId) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
+    const experiment=structuredClone(loaded);
     const { tenantId } = await this.access(userId, experiment.project_id);
     if (experiment.tenant_id !== tenantId) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
-    const existing = await query<Row | null>(this.db.from('growth_experiment_assignments').select('*').eq('experiment_id', experimentId).eq('tenant_id', tenantId).eq('subject_key', subjectKey).maybeSingle(), 'Assignment unavailable', null);
-    if (existing) return existing;
-    const variant = deterministicVariant({ experimentId, subjectKey, seed: experiment.allocation_seed, variants: experiment.variants });
-    const rows = await query<Row[]>(this.db.from('growth_experiment_assignments').insert({ experiment_id: experimentId, tenant_id: tenantId, subject_key: subjectKey, variant }).select('*'), 'Assignment failed');
-    return rows[0];
+    let variant:string|null=null;
+    try{variant=deterministicVariant({experimentId,subjectKey,seed:experiment.allocation_seed,variants:experiment.variants});}catch{/* Existing cohort replay must not be reassigned from changed configuration. */}
+    const roles:OperationsRole[]=['viewer','operator','release_manager','recovery_manager','admin'];
+    const {data:receipt,error}=await this.db.rpc('assign_growth_experiment',{
+      p_actor:userId,p_tenant:tenantId,p_project:experiment.project_id,p_expected:experiment,p_subject:subjectKey,p_variant:variant,
+      p_allowed_roles:roles.filter(role=>hasOperationsPermission(role,'view_product_operations')),
+    });
+    if(error?.code==='42501')throw new GrowthServiceError('forbidden','Experiment assignment is not permitted',403);
+    if(error?.code==='P0002')throw new GrowthServiceError('not_found','Experiment assignment unavailable',404);
+    if(error?.code==='40001')throw new GrowthServiceError('conflict','Experiment assignment changed',409);
+    if(error?.code==='22023')throw new GrowthServiceError('invalid_experiment','Experiment has no eligible assignment',400);
+    const row=receipt?.assignment;
+    if(error||!receipt||typeof receipt.replayed!=='boolean'||!row||typeof row.id!=='string'||!row.id||row.experiment_id!==experimentId
+      ||row.tenant_id!==tenantId||row.subject_key!==subjectKey||typeof row.variant!=='string'||!row.variant
+      ||typeof row.assigned_at!=='string'||!Number.isFinite(Date.parse(row.assigned_at))
+      ||(row.exposed_at!==null&&(typeof row.exposed_at!=='string'||!Number.isFinite(Date.parse(row.exposed_at))))
+      ||(row.evidence_reference!==null&&typeof row.evidence_reference!=='string')
+      ||(!receipt.replayed&&(row.variant!==variant||row.exposed_at!==null||row.evidence_reference!==null))){
+      throw new GrowthServiceError('storage_unavailable','Experiment assignment could not be verified',503);
+    }
+    return row;
   }
 
   async exposeExperiment(userId: string, assignmentId: string, evidenceReference: string): Promise<Row> {
-    const assignment = await query<Row | null>(this.db.from('growth_experiment_assignments').select('*,growth_experiments(project_id,tenant_id)').eq('id', assignmentId).maybeSingle(), 'Assignment unavailable', null);
-    if (!assignment?.growth_experiments) throw new GrowthServiceError('not_found', 'Assignment not found', 404);
+    const loaded = await query<Row | null>(this.db.from('growth_experiment_assignments').select('*,growth_experiments(project_id,tenant_id)').eq('id', assignmentId).maybeSingle(), 'Assignment unavailable', null);
+    if (!loaded?.growth_experiments || loaded.id!==assignmentId) throw new GrowthServiceError('not_found', 'Assignment not found', 404);
+    const assignment=structuredClone(loaded);
     const { tenantId } = await this.access(userId, assignment.growth_experiments.project_id);
     if (assignment.tenant_id !== tenantId || assignment.growth_experiments.tenant_id !== tenantId) throw new GrowthServiceError('not_found', 'Assignment not found', 404);
-    const rows = await query<Row[]>(this.db.from('growth_experiment_assignments').update({ exposed_at: new Date().toISOString(), evidence_reference: evidenceReference }).eq('id', assignmentId).eq('tenant_id', tenantId).eq('experiment_id', assignment.experiment_id).is('exposed_at', null).select('*'), 'Exposure could not be recorded');
-    if (!rows.length) return assignment;
-    return rows[0];
+    const roles:OperationsRole[]=['viewer','operator','release_manager','recovery_manager','admin'];
+    const {data:receipt,error}=await this.db.rpc('expose_growth_experiment',{
+      p_actor:userId,p_tenant:tenantId,p_project:assignment.growth_experiments.project_id,p_expected:assignment,p_evidence:evidenceReference,
+      p_allowed_roles:roles.filter(role=>hasOperationsPermission(role,'view_product_operations')),
+    });
+    if(error?.code==='42501')throw new GrowthServiceError('forbidden','Experiment exposure is not permitted',403);
+    if(error?.code==='P0002')throw new GrowthServiceError('not_found','Experiment exposure unavailable',404);
+    if(error?.code==='40001')throw new GrowthServiceError('conflict','Experiment exposure changed',409);
+    if(error?.code==='22023')throw new GrowthServiceError('invalid_exposure','Invalid experiment exposure',400);
+    const row=receipt?.assignment;
+    if(error||!receipt||typeof receipt.replayed!=='boolean'||!row
+      ||!['id','experiment_id','tenant_id','subject_key','variant'].every(key=>typeof row[key]==='string'&&!!row[key]&&row[key]===assignment[key])
+      ||typeof row.assigned_at!=='string'||!Number.isFinite(Date.parse(row.assigned_at))||Date.parse(row.assigned_at)!==Date.parse(assignment.assigned_at)
+      ||typeof row.exposed_at!=='string'||!Number.isFinite(Date.parse(row.exposed_at))
+      ||(row.evidence_reference!==null&&typeof row.evidence_reference!=='string')
+      ||(!receipt.replayed&&row.evidence_reference!==evidenceReference)
+      ||(assignment.exposed_at!==null&&(!receipt.replayed||Date.parse(row.exposed_at)!==Date.parse(assignment.exposed_at)||row.evidence_reference!==assignment.evidence_reference))){
+      throw new GrowthServiceError('storage_unavailable','Experiment exposure could not be verified',503);
+    }
+    return row;
   }
 
   async recordExperimentOutcome(userId: string, input: { experimentId: string; assignmentId: string; eventId: string; metricKey: string }): Promise<Row> {
