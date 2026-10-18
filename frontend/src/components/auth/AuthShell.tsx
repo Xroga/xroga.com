@@ -240,10 +240,17 @@ export function AuthShell({
         state.theme
     );
 
+  /*
+   * Signup is intentionally one focused black product surface. The theme the
+   * visitor selects in SignupForm is still persisted for their workspace; it
+   * just does not repaint this acquisition page while they are completing it.
+   */
   const theme =
-    resolveTheme(
-      currentTheme
-    );
+    mode === 'signup'
+      ? 'black'
+      : resolveTheme(
+          currentTheme
+        );
 
   return (
     <main
@@ -282,7 +289,8 @@ export function AuthShell({
        *
        * Desktop:
        *
-       * IMAGE | CREATE ACCOUNT | SIGN IN
+       * SIGNUP: PRODUCT POWER | CREATE ACCOUNT
+       * LOGIN:  PRODUCT POWER | CREATE ACCOUNT | SIGN IN
        *
        * Tablet/mobile:
        *
@@ -290,31 +298,33 @@ export function AuthShell({
        * ACTIVE FORM
        */}
       <div
-        className="
-          mx-auto
-          grid
-          w-full
-          max-w-[1740px]
+        className={[
+          `
+            mx-auto
+            grid
+            w-full
 
-          overflow-hidden
+            overflow-hidden
 
-          rounded-[30px]
+            rounded-[30px]
 
-          border
-          border-[var(--auth-border)]
+            border
+            border-[var(--auth-border)]
 
-          bg-[var(--auth-shell)]
+            bg-[var(--auth-shell)]
 
-          shadow-[var(--auth-shadow)]
+            shadow-[var(--auth-shadow)]
 
-          grid-cols-1
+            grid-cols-1
 
-          xl:h-[calc(100dvh-24px)]
-          xl:max-h-[760px]
-          xl:min-h-[680px]
-
-          xl:grid-cols-[minmax(450px,1.12fr)_minmax(500px,0.98fr)_minmax(300px,0.66fr)]
-        "
+            xl:h-[calc(100dvh-24px)]
+            xl:max-h-[760px]
+            xl:min-h-[680px]
+          `,
+          mode === 'signup'
+            ? 'max-w-[1380px] xl:grid-cols-[minmax(440px,0.88fr)_minmax(560px,1.12fr)]'
+            : 'max-w-[1740px] xl:grid-cols-[minmax(450px,1.12fr)_minmax(500px,0.98fr)_minmax(300px,0.66fr)]',
+        ].join(' ')}
       >
         {/*
          * IMAGE
@@ -324,20 +334,19 @@ export function AuthShell({
          * No fake image background.
          */}
         <div
-          className="
-            relative
-            min-h-0
-            min-w-0
-            overflow-hidden
+          className={[
+            `
+              relative
+              min-h-0
+              min-w-0
+              overflow-hidden
 
-            h-[300px]
-
-            sm:h-[370px]
-
-            lg:h-[430px]
-
-            xl:h-full
-          "
+              xl:h-full
+            `,
+            mode === 'signup'
+              ? 'h-auto'
+              : 'h-[300px] sm:h-[370px] lg:h-[430px]',
+          ].join(' ')}
         >
           <AuthShowcase />
         </div>
@@ -365,7 +374,6 @@ export function AuthShell({
 
               sm:px-8
 
-              xl:flex
               xl:h-full
               xl:overflow-y-auto
               xl:border-l
@@ -415,7 +423,6 @@ export function AuthShell({
 
               sm:px-8
 
-              xl:flex
               xl:h-full
               xl:border-l
               xl:border-[var(--auth-border)]
@@ -425,7 +432,7 @@ export function AuthShell({
 
             mode === 'login'
               ? 'flex'
-              : 'hidden xl:flex',
+              : 'hidden',
           ].join(' ')}
         >
           <div
