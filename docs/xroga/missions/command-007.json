@@ -371,7 +371,8 @@
     "supabase/migrations/20261016002300_runtime_session_identity.sql",
     "backend/src/services/publish/chromeWebStore.authority.test.ts",
     "backend/src/growth/eventReplay.local.integration.ts",
-    "backend/src/growth/eventReplay.test.ts"
+    "backend/src/growth/eventReplay.test.ts",
+    "backend/src/growth/inputSnapshot.test.ts"
   ],
   "decisions": {
     "keep": [

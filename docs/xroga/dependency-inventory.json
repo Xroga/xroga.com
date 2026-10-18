@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "aca4b684759a5922d063625b8af2949d00b336f8",
+  "source_sha": "aa5b47059f048ba6f3ce7f4daff482f332f2f456",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12163,7 +12163,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sha256": "a019502f4580464db5215088b42c97f7bca7edddff1ce5bf44ebbb111d794475"
+      "sha256": "5342cd59bdf9cc0e272881a32b7d66a35462ae4d7c9dce219907709d301725c1"
     },
     {
       "path": "backend/src/growth/identity.local.integration.ts",
@@ -23757,7 +23757,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "line": 290,
+      "line": 300,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

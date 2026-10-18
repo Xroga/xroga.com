@@ -102,6 +102,7 @@ export class GrowthService {
   }
 
   async linkIdentity(userId: string, input: { projectId: string; anonymousId: string; evidenceReference: string }): Promise<Row> {
+    input = { projectId: input.projectId, anonymousId: input.anonymousId, evidenceReference: input.evidenceReference };
     const { tenantId } = await this.access(userId, input.projectId);
     const binding = { tenant_id: tenantId, project_id: input.projectId, anonymous_id: input.anonymousId, user_id: userId };
     // The unique tuple chooses the first binding. A project viewer must not
@@ -117,6 +118,7 @@ export class GrowthService {
   }
 
   async defineActivation(userId: string, input: { projectId: string; name: string; version: number; requiredEvents: string[] }): Promise<Row> {
+    input = { ...input, requiredEvents: [...input.requiredEvents] };
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
     if (!input.requiredEvents.length || input.requiredEvents.some((name) => !validateEventName(name) || name === 'onboarding.started.v1')) throw new GrowthServiceError('invalid_activation', 'Activation requires registered meaningful outcome events', 400);
     const rows = await query<Row[]>(this.db.from('growth_activation_definitions').upsert({ tenant_id: tenantId, project_id: input.projectId, name: input.name, version: input.version, required_event_names: input.requiredEvents, minimum_distinct_events: input.requiredEvents.length, active: true }, { onConflict: 'project_id,version' }).select('*'), 'Activation definition failed');
@@ -140,6 +142,7 @@ export class GrowthService {
   }
 
   async recommend(userId: string, input: { projectId: string; consent: boolean }): Promise<Row> {
+    input = { ...input };
     const { tenantId } = await this.access(userId, input.projectId);
     const [incidents, deployment, lifecycle, suppression] = await Promise.all([
       query<Row[]>(this.db.from('production_incidents').select('id,severity,status').eq('user_id', tenantId).eq('project_id', input.projectId).not('status', 'in', '(resolved,closed,cancelled)'), 'Incident state unavailable'),
@@ -156,6 +159,7 @@ export class GrowthService {
   }
 
   async transitionLifecycle(userId: string, input: { projectId: string; subjectType: 'user'|'product'; subjectId: string; state: string; evidenceReference: string }): Promise<Row> {
+    input = { ...input };
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
     const existing = await query<Row | null>(this.db.from('growth_lifecycle_state').select('version').eq('project_id', input.projectId).eq('subject_type', input.subjectType).eq('subject_id', input.subjectId).maybeSingle(), 'Lifecycle state unavailable', null);
     const rows = await query<Row[]>(this.db.from('growth_lifecycle_state').upsert({ tenant_id: tenantId, project_id: input.projectId, subject_type: input.subjectType, subject_id: input.subjectId, lifecycle_state: input.state, version: Number(existing?.version ?? 0) + 1, evidence_reference: input.evidenceReference, transitioned_at: new Date().toISOString() }, { onConflict: 'project_id,subject_type,subject_id' }).select('*'), 'Lifecycle transition failed');
@@ -163,18 +167,21 @@ export class GrowthService {
   }
 
   async suppress(userId: string, input: { projectId: string; channel: 'email'|'in_app'; address: string; reason: 'unsubscribed'|'bounced'|'complained'|'manual'|'consent_denied'; evidenceReference: string }): Promise<Row> {
+    input = { ...input };
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
     const rows = await query<Row[]>(this.db.from('growth_suppressions').upsert({ tenant_id: tenantId, project_id: input.projectId, channel: input.channel, address_hash: hash(input.address.trim().toLowerCase()), reason: input.reason, source_evidence: input.evidenceReference }, { onConflict: 'tenant_id,channel,address_hash' }).select('id,project_id,channel,reason,source_evidence,created_at'), 'Suppression could not be stored');
     return rows[0];
   }
 
   async recordAttribution(userId: string, input: { projectId: string; anonymousId?: string; touchType: 'first'|'recent'|'utm'|'referral'|'unknown'; source?: string; medium?: string; campaign?: string; evidenceReference: string }): Promise<Row> {
+    input = { ...input };
     const { tenantId } = await this.access(userId, input.projectId);
     const rows = await query<Row[]>(this.db.from('growth_attribution_touches').insert({ tenant_id: tenantId, project_id: input.projectId, user_id: userId, anonymous_id: input.anonymousId ?? null, touch_type: input.touchType, source: input.source?.slice(0, 120) ?? null, medium: input.medium?.slice(0, 120) ?? null, campaign: input.campaign?.slice(0, 120) ?? null, evidence_reference: input.evidenceReference }).select('*'), 'Attribution could not be recorded');
     return rows[0];
   }
 
   async createSegment(userId: string, input: { projectId: string; name: string; lifecycleStates: string[] }): Promise<Row> {
+    input = { ...input, lifecycleStates: [...input.lifecycleStates] };
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
     if (!input.lifecycleStates.length) throw new GrowthServiceError('invalid_segment', 'At least one lifecycle state is required');
     const rows = await query<Row[]>(this.db.from('growth_segments').insert({ tenant_id: tenantId, project_id: input.projectId, name: input.name, definition: { lifecycleStates: input.lifecycleStates }, status: 'active' }).select('*'), 'Segment could not be stored');
@@ -182,6 +189,7 @@ export class GrowthService {
   }
 
   async createCampaign(userId: string, input: { projectId: string; segmentId: string; name: string; channel: 'email'|'in_app'; templateKey: string; idempotencyKey: string }): Promise<{ campaign: Row; action: Row }> {
+    input = { ...input };
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
     const segment = await query<Row | null>(this.db.from('growth_segments').select('id').eq('id', input.segmentId).eq('tenant_id', tenantId).eq('project_id', input.projectId).eq('status', 'active').maybeSingle(), 'Segment unavailable', null);
     if (!segment) throw new GrowthServiceError('not_found', 'Segment not found', 404);
@@ -237,6 +245,7 @@ export class GrowthService {
   }
 
   async createExperiment(userId: string, input: { projectId: string; key: string; seed: string; variants: Array<{ key: string; weight: number }>; minimumSampleSize: number }): Promise<Row> {
+    input = { ...input, variants: input.variants.map(variant => ({ ...variant })) };
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
     deterministicVariant({ experimentId: 'validation', subjectKey: 'validation', seed: input.seed, variants: input.variants });
     const rows = await query<Row[]>(this.db.from('growth_experiments').insert({ tenant_id: tenantId, project_id: input.projectId, key: input.key, status: 'running', variants: input.variants, allocation_seed: input.seed, minimum_sample_size: input.minimumSampleSize }).select('*'), 'Experiment could not be stored');
@@ -266,6 +275,7 @@ export class GrowthService {
   }
 
   async recordExperimentOutcome(userId: string, input: { experimentId: string; assignmentId: string; eventId: string; metricKey: string }): Promise<Row> {
+    input = { ...input };
     const experiment = await query<Row | null>(this.db.from('growth_experiments').select('project_id,tenant_id').eq('id', input.experimentId).maybeSingle(), 'Experiment unavailable', null);
     if (!experiment) throw new GrowthServiceError('not_found', 'Experiment not found', 404);
     const { tenantId } = await this.access(userId, experiment.project_id);
