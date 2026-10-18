@@ -6468,7 +6468,7 @@
         "399344f16bc489f1e5b1"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -6489,7 +6489,7 @@
       "review": {
         "path": "backend/src/services/integrations/userProviderKeys.ts",
         "marker": "const decipher = createDecipheriv",
-        "sha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee"
+        "sha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
@@ -6516,7 +6516,7 @@
         "7dd7b79ecd7c4840a960"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6546,7 +6546,7 @@
         "2ce84a51bf89c83602d6"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6576,7 +6576,7 @@
         "5a80567257e34b837a33"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -6607,7 +6607,7 @@
         "973e39406d138c83edea"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -6637,7 +6637,7 @@
         "76af43fa48bf2989a7da"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -6671,7 +6671,7 @@
         "77b006f82faf88017a2c"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6725,7 +6725,7 @@
         "965d682f9f5d530bb929"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6800,12 +6800,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-85e30d49cf249f98",
+      "id": "OB-d85742adb3a7648a",
       "callerIds": [
-        "ee7917d219f01d454567"
+        "dcde97f1e49cda370789"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -6826,7 +6826,7 @@
       "review": {
         "path": "backend/src/services/integrations/userProviderKeys.ts",
         "marker": "Buffer.from(key.split('.')[1]!",
-        "sha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee"
+        "sha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
@@ -6862,7 +6862,7 @@
         "c0ae76586326abbbba08"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6888,7 +6888,7 @@
         "27483f27b03af7e1669b"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6914,7 +6914,7 @@
         "78fbb99c106916e565c3"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6940,7 +6940,7 @@
         "4b2e42e58a10751072e2"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -6961,17 +6961,17 @@
       "review": {
         "path": "backend/src/services/integrations/userProviderKeys.ts",
         "marker": "function legacyJwtMatches",
-        "sha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee"
+        "sha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-72eeeb2f97bb738f",
+      "id": "OB-45ae608cd76ced7c",
       "callerIds": [
-        "b3bf50cd04626be9c045"
+        "f5f03db18b208dcd4855"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -6992,17 +6992,17 @@
       "review": {
         "path": "backend/src/services/integrations/userProviderKeys.ts",
         "marker": "Buffer.from(key.split",
-        "sha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee"
+        "sha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-49a8843f9861de37",
+      "id": "OB-ad0da29c730edf9e",
       "callerIds": [
-        "bca6e647157d3ac5425b"
+        "bf2f29e05f610d929567"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -7023,12 +7023,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-2283356c2fa75180",
+      "id": "OB-56fcb291082223a6",
       "callerIds": [
-        "6fac99771fef95cbc535"
+        "8eadb3d8b716ca3f7120"
       ],
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [

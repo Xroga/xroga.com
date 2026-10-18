@@ -37,9 +37,10 @@
   "decisions": [
     {
       "packetId": "B1-P2-8c13793907db3388",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_PROVISIONING_BUNDLE_ORPHAN_AUTHORITY_FIXED_PENDING_REAL_PRIVATE_OBJECT_PROOF",
+      "actualVerification": {"sourceSha":"ef51b7056e95650a9fa0df1cb21d6637da434acc","disposableRun":"39167981317","migrations":120,"securityTests":161,"browserTests":3,"scope":"New real orphan private-object/canonical legacy-grant case passes. Aggregate39167981452 fails one deployment-map compatibility test on both branch and integrated744b028bb33ad1713952deebd16ac6bb8b86e080, so this is not full-source acceptance. Current revision restricts the canonical-revision requirement to reconnect inheritance, preserving deployment projections. Six focused bundle/connect/host/alias tests pass. Final changed-source CI remains required."},
       "actorTrace": "Authenticated integrations route passes req.userId and the issued-context build pipeline passes opts.userId to readUserSupabaseBundle. The private snapshot previously restored each absent key from owner-path private objects, permitting a consistent legacy JWT bundle with no canonical rows. Normal provisioning now reads only canonical owner/provider rows. Explicit reconnect may inspect legacy bytes for preservation, but cannot carry an orphan privileged key into a new grant.",
       "invariant": "Storage-only bundle objects cannot supply provisioning or worker credentials. A canonical public URL/anon pair cannot resurrect a missing service key. Preserve active matching legacy database grants, current atomic four-row saves, revocation fencing and all stored objects.",
       "evidence": [
@@ -126,7 +127,7 @@
     },
     {
       "packetId":"B1-P2-d3895e94f03fa522",
-      "sourceSha256":"81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256":"2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "executionStatus":"IN_PROGRESS",
       "finding":"DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_PENDING_REAL_PROOF",
       "actorTrace":"Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",

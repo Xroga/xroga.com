@@ -1049,13 +1049,13 @@ function bundleValues(rows: Map<BundleProvider, BundleRow>) {
   return { projectUrl: value('supabase_url'), anonKey: value('supabase_anon'), serviceRoleKey: value('supabase'), dbPassword: value('supabase_db_password') };
 }
 
-function boundBundle(rows: Map<BundleProvider, BundleRow>): boolean {
+function boundBundle(rows: Map<BundleProvider, BundleRow>, requireCanonicalRevision = false): boolean {
   const values = bundleValues(rows), ref = projectRefFromUrl(values.projectUrl ?? '');
   if (!ref || !values.anonKey) return false;
   const active = [...rows.values()].filter(row => row.access_token && row.metadata.revoked !== true);
   // A storage-only key has no canonical revision. Even an explicit reconnect
   // must supply that credential again rather than inherit its old mirror.
-  if (active.some(row => !row.credential_revision)) return false;
+  if (requireCanonicalRevision && active.some(row => !row.credential_revision)) return false;
   const generation = rows.get('supabase_url')?.metadata.supabase_bundle_id;
   if (generation) return typeof generation === 'string' && active.every(row => row.metadata.supabase_bundle_id === generation && row.metadata.supabase_project_ref === ref);
   if (active.some(row => row.metadata.supabase_bundle_id) || values.dbPassword) return false;
@@ -1089,7 +1089,7 @@ export async function saveSupabaseBundle(admission: SupabaseBundleAdmission, inp
   // Omitted active credentials may only survive an already-consistent same-project bundle.
   for (const key of ['serviceRoleKey', 'dbPassword'] as const) {
     if (!values[key] && previous[key]) {
-      if (!boundBundle(rows) || projectRefFromUrl(previous.projectUrl ?? '') !== ref) {
+      if (!boundBundle(rows, true) || projectRefFromUrl(previous.projectUrl ?? '') !== ref) {
         throw new Error('Disconnect the existing Supabase project before reconnecting with omitted service credentials or database password.');
       }
       values[key] = previous[key];

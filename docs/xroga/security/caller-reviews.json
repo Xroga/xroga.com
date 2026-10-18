@@ -3831,7 +3831,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
         "bf25908290a49aa14bd7",
         "399344f16bc489f1e5b1"
@@ -3848,7 +3848,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
         "3696472e5c2e79ec3877",
         "793cd087bfe58a1323e9",
@@ -3885,7 +3885,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
         "2ce84a51bf89c83602d6"
       ],
@@ -3905,7 +3905,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
         "5a80567257e34b837a33"
       ],
@@ -3925,7 +3925,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
         "a2b9af9cc94fc4528e67",
         "973e39406d138c83edea"
@@ -3946,7 +3946,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
         "76af43fa48bf2989a7da"
       ],
@@ -3970,7 +3970,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
         "77b006f82faf88017a2c"
       ],
@@ -4003,7 +4003,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
         "9f316f0cfad5794c27c5",
         "965d682f9f5d530bb929"
@@ -4054,9 +4054,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
-        "ee7917d219f01d454567"
+        "dcde97f1e49cda370789"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Node Buffer.from decodes a supplied JWT payload for negative project-ref mismatch detection. The receiver is Buffer, not a database/Storage client, and no side effect occurs in this expression.",
@@ -4086,7 +4086,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
         "c0ae76586326abbbba08"
       ],
@@ -4102,7 +4102,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
         "27483f27b03af7e1669b"
       ],
@@ -4118,7 +4118,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
         "78fbb99c106916e565c3"
       ],
@@ -4134,7 +4134,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
         "4b2e42e58a10751072e2"
       ],
@@ -4150,9 +4150,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
-        "b3bf50cd04626be9c045"
+        "f5f03db18b208dcd4855"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected exact receiver: Node Buffer.from decodes a JWT payload in memory for project/role consistency only. It performs no database or Storage operation and does not verify the JWT signature.",
@@ -4166,9 +4166,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
-        "bca6e647157d3ac5425b"
+        "bf2f29e05f610d929567"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
@@ -4182,9 +4182,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "callIds": [
-        "6fac99771fef95cbc535"
+        "8eadb3d8b716ca3f7120"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",

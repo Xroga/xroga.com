@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "aaefe24138ddfaa790751b46a49dde21c7499161",
+  "source_sha": "ef51b7056e95650a9fa0df1cb21d6637da434acc",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13368,7 +13368,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee"
+      "sha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",

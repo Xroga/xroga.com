@@ -23928,7 +23928,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "sha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
