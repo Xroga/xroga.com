@@ -813,16 +813,15 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sourceSha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020",
+      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "callIds": [
-        "d5861e012f78e06bc25a",
-        "54cf280ab4a345a08393",
-        "c22873d2a25d8c1055f2",
-        "1cd23a3c452b8fe4a182",
-        "b66955b279918ab660b7",
-        "bf760f0e680ff8fcdcb0",
-        "fa2398e25b16a656e87b",
-        "a3786ba5882b32cbbc81"
+        "260f546643a88434ec35",
+        "72439f834416b3fd90eb",
+        "fd09b17779296225433f",
+        "62f2c45d96306d0c651c",
+        "8418218a6fdf978626d1",
+        "e7d0d54375645a30b30f",
+        "790ce21b600ea4bd4f9d"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
@@ -4997,15 +4996,46 @@
           "marker": "automation creation rejects substituted missing and duplicate receipts"
         }
       ]
-    }
-    ,{
+    },
+    {
       "path": "backend/src/operations/operationsService.ts",
       "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
-      "callIds": ["5b51043946a26a6a0adf"],
+      "callIds": [
+        "5b51043946a26a6a0adf"
+      ],
       "disposition": "REVIEWED_GAP",
       "authority": "Only an exact verified running action claim reaches this owner/project/target-filtered resource read. After any claim wait, the fetched row must match target ID, server owner/project and exact finite integer planned version before the existing HTTP adapter can execute. Missing, misbound or stale rows complete as blocked through the existing atomic evidence/run/action/audit transaction.",
       "reason": "Two focused claim/target tests pass, including substituted parent/ID and changed/malformed versions with zero adapter calls, plus valid unchanged target compatibility via a synthetic adapter. Actual held claim with resource version or tenant/project mutation and durable blocked evidence prepared. Post-read target/provider lifetime, URL writers without generation increments, DNS/redirect/address egress and full Command010 acceptance remain unresolved. No provider calls, no whole caller certification.",
-      "evidence": [{"path":"backend/src/operations/verificationTarget.test.ts","marker":"HTTP verification rechecks the admitted target receipt"},{"path":"backend/src/operations/verificationTarget.local.integration.ts","marker":"registerVerificationTargetTests"}]
+      "evidence": [
+        {
+          "path": "backend/src/operations/verificationTarget.test.ts",
+          "marker": "HTTP verification rechecks the admitted target receipt"
+        },
+        {
+          "path": "backend/src/operations/verificationTarget.local.integration.ts",
+          "marker": "registerVerificationTargetTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/synthesis/livePreview/store.ts",
+      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "callIds": [
+        "a6d30f02806fc550256d"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Internal coordinator supplies copied server owner/project/session/grant intent. Existing owner-bound session loader and authorizedPreviewTarget validate the private target. Service-only transaction locks exact current owner/session, compares full expected session JSON and identity/status/provider columns, requires running interactive session with the declared HTTP port, then checks database expiry after locking before inserting. Exact single returned capability receipt is required. Gateway independently revalidates signature, revocation and current session on resolution.",
+      "reason": "Four focused preview/runtime tests and30 local SQL current-session/port/expiry/role/rollback/replay assertions pass. Actual observed grant-write lock waits with state/status/port changes and expiry, plus browser and foreign-owner denial prepared. Full coordinator/run provenance, canonical project lifecycle, revocation/in-flight socket semantics and signing-key custody remain unresolved. No provider call, no whole-preview certification.",
+      "evidence": [
+        {
+          "path": "backend/src/security/previewGrantAdmission.local.integration.ts",
+          "marker": "registerPreviewGrantAdmissionTests"
+        },
+        {
+          "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
+          "marker": "preview grant input and returned capability stay bound"
+        }
+      ]
     }
   ]
 }

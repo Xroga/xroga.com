@@ -53,6 +53,7 @@ import { registerActionCreationTests } from '../operations/actionCreation.local.
 import { registerAutomationAdmissionTests } from '../operations/automationAdmission.local.integration.js';
 import { registerAutomationCreationTests } from '../operations/automationCreation.local.integration.js';
 import { registerVerificationTargetTests } from '../operations/verificationTarget.local.integration.js';
+import { registerPreviewGrantAdmissionTests } from './previewGrantAdmission.local.integration.js';
 import { registerGrowthOutcomeTests } from '../growth/outcome.local.integration.js';
 import { registerBusinessConfirmationFinishTests } from './businessConfirmationFinish.local.integration.js';
 import { registerBusinessConfirmationClaimTests } from './businessConfirmationClaim.local.integration.js';
@@ -103,6 +104,7 @@ registerActionCreationTests(admin, () => users);
 registerAutomationAdmissionTests(admin, () => users);
 registerAutomationCreationTests(admin, () => users);
 registerVerificationTargetTests(admin, () => users);
+registerPreviewGrantAdmissionTests(admin, () => users);
 registerGrowthOutcomeTests(admin, () => users);
 registerBusinessConfirmationFinishTests(admin, () => users);
 registerBusinessConfirmationClaimTests(admin, () => users);

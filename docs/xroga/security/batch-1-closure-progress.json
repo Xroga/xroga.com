@@ -53,6 +53,12 @@
     }
   ],
   "additionalSpend": 0,
+  "previewGrantAdmission": {
+    "status": "IN PROGRESS",
+    "fix": "Existing grant creation uses a service-only transaction locking the exact current owner/session. Full session JSON and owner/project/session/provider/status/runtime columns must match. The session must remain running and interactive with the declared HTTP port. Database time after locking rejects grant or session expiry before insertion. Existing input snapshot, exact returned receipt and independent gateway signature/session checks remain in place.",
+    "localEvidence": "Four focused preview/runtime tests and30 local SQL session/port/expiry/role/rollback/replay assertions pass. Backend typecheck passes. Actual observed write-lock waits with state/status/port changes and session expiry, plus foreign/browser denial and rollback, prepared for disposable CI. No provider call.",
+    "remaining": "Combined final-source regression and109-migration CI required. Complete coordinator/run provenance, canonical project lifecycle, revoke/create concurrency and in-flight socket semantics, signing-key custody and live provider acceptance remain unresolved. No whole-preview certification."
+  },
   "verificationTargetReceipt": {
     "status": "IN PROGRESS",
     "fix": "After current action claim, HTTP verification now validates the newly fetched target ID/owner/project and exact integer planned version before invoking the existing adapter. Changed or misbound targets produce blocked evidence through the existing atomic completion transaction, without contacting the adapter. No egress mechanism replaced or Command010 activated.",
@@ -1003,14 +1009,14 @@
           "f67653e309c9b2076efa"
         ],
         "backend/src/synthesis/livePreview/store.ts": [
-          "d5861e012f78e06bc25a",
-          "54cf280ab4a345a08393",
-          "c22873d2a25d8c1055f2",
-          "1cd23a3c452b8fe4a182",
-          "b66955b279918ab660b7",
-          "bf760f0e680ff8fcdcb0",
-          "fa2398e25b16a656e87b",
-          "a3786ba5882b32cbbc81"
+          "a6d30f02806fc550256d",
+          "260f546643a88434ec35",
+          "72439f834416b3fd90eb",
+          "fd09b17779296225433f",
+          "62f2c45d96306d0c651c",
+          "8418218a6fdf978626d1",
+          "e7d0d54375645a30b30f",
+          "790ce21b600ea4bd4f9d"
         ],
         "frontend/src/lib/avatarPersistence.ts": [
           "3056dc2554f54604f101"

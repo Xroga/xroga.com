@@ -19,15 +19,21 @@ test('preview grant input and returned capability stay bound across a held sessi
   let enter!:()=>void,release!:()=>void;
   const entered=new Promise<void>(resolve=>{enter=resolve;}),gate=new Promise<void>(resolve=>{release=resolve;});
   let held=true,patch:Record<string,unknown>={},outage=false,last:Record<string,any>|null=null,read:Record<string,any>|null=null;
+  let shape='one',denial:string|null=null;
   t.mock.method(SupabaseProjectRuntimeStore.prototype,'loadSession',async(userId:string,id:string)=>{
     assert.equal(userId,owner);assert.equal(id,sessionId);if(held){enter();await gate;}return session;
   });
   t.mock.method(globalThis,'fetch',async(input:unknown,init?:RequestInit)=>{
-    const url=new URL(String(input));assert.equal(url.origin,'http://127.0.0.1:49239');assert.equal(url.pathname,'/rest/v1/project_preview_grants');
+    const url=new URL(String(input));assert.equal(url.origin,'http://127.0.0.1:49239');
     if(outage)return Response.json({code:'08006',message:'synthetic private diagnostic'},{status:503});
     if(init?.method==='POST'){
-      const body=JSON.parse(String(init.body));last={...body,created_at:now,revoked_at:null};return Response.json({...last,...patch});
+      assert.equal(url.pathname,'/rest/v1/rpc/create_project_preview_grant');
+      const args=JSON.parse(String(init.body));assert.equal(args.p_owner,owner);assert.deepEqual(args.p_session,session);
+      if(denial)return Response.json({code:denial,message:'synthetic private diagnostic'},{status:400});
+      const body=args.p_grant;last={...body,created_at:now,revoked_at:null};
+      return Response.json(shape==='empty'?[]:shape==='duplicate'?[last,last]:[{...last,...patch}]);
     }
+    assert.equal(url.pathname,'/rest/v1/project_preview_grants');
     if(url.searchParams.has('preview_id'))assert.match(url.searchParams.get('preview_id')!,/^eq\.[0-9a-f-]+$/);
     else{assert.equal(url.searchParams.get('user_id'),`eq.${owner}`);assert.equal(url.searchParams.get('project_id'),`eq.${project}`);assert.equal(url.searchParams.get('session_id'),`eq.${sessionId}`);}
     return Response.json(read);
@@ -44,7 +50,9 @@ test('preview grant input and returned capability stay bound across a held sessi
     {expires_at:'invalid'},{created_at:null},{revoked_at:now},{revoked_at:'invalid'}]){
     await assert.rejects(createLivePreviewGrant(original),{code:'RESOURCE_ACCESS_UNAVAILABLE',status:503});
   }
-  patch={};outage=true;await assert.rejects(createLivePreviewGrant(original),{code:'RESOURCE_ACCESS_UNAVAILABLE',status:503});outage=false;
+  patch={};for(shape of ['empty','duplicate'])await assert.rejects(createLivePreviewGrant(original),{code:'RESOURCE_ACCESS_UNAVAILABLE',status:503});shape='one';
+  for(denial of ['42501','40001','22023'])await assert.rejects(createLivePreviewGrant(original),{code:'RESOURCE_NOT_FOUND',status:404});denial=null;
+  outage=true;await assert.rejects(createLivePreviewGrant(original),{code:'RESOURCE_ACCESS_UNAVAILABLE',status:503});outage=false;
   read=receipt;assert.equal((await getLivePreviewGrant(receipt.preview_id.toUpperCase()))?.previewId,receipt.preview_id);
   assert.equal((await getLatestLivePreviewGrant({userId:owner,projectId:project,sessionId}))?.previewId,receipt.preview_id);
   for(const mutation of [{preview_id:'invalid'},{user_id:null},{project_id:null},{session_id:null},{run_id:null},{preview_kind:'unknown'},{port:65536},{expires_at:'invalid'},{created_at:'invalid'},{revoked_at:'invalid'}]){

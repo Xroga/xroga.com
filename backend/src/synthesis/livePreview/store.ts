@@ -126,7 +126,8 @@ export async function createLivePreviewGrant(
   const context = createTenantContext({ userId: input.userId, via: 'persisted_owner' });
   const now = new Date().toISOString();
   const candidate: LivePreviewGrant = { ...input, previewId, createdAt: now, revokedAt: null };
-  const session = await new SupabaseProjectRuntimeStore().loadSession(context.userId, input.sessionId);
+  const loaded = await new SupabaseProjectRuntimeStore().loadSession(context.userId, input.sessionId);
+  const session = loaded ? JSON.parse(JSON.stringify(loaded)) : null;
   if (!authorizedPreviewTarget(candidate, session)) throw new TenantAccessError(404, 'RESOURCE_NOT_FOUND');
 
   const {
@@ -134,10 +135,7 @@ export async function createLivePreviewGrant(
     error,
   } =
     await getTenantSupabaseAdmin(context)
-      .from(
-        'project_preview_grants',
-      )
-      .insert({
+      .rpc('create_project_preview_grant', { p_owner: context.userId, p_session: session, p_grant: {
         preview_id:
           previewId,
 
@@ -161,20 +159,18 @@ export async function createLivePreviewGrant(
 
         expires_at:
           input.expiresAt,
-      })
-      .select(
-        '*',
-      )
-      .single();
+      } });
+
+  if (error && ['42501','40001','22023'].includes(error.code)) throw new TenantAccessError(404, 'RESOURCE_NOT_FOUND');
 
   if (
     error ||
-    !data
+    !Array.isArray(data) || data.length !== 1
   ) {
     throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
   }
   const saved = mapGrant(
-    data as
+    data[0] as
       Record<
         string,
         unknown

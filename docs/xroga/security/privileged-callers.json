@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "c8be01956a5f3b87771a0661c96afd98ca4832da83502c428b3a475c5e513f94",
+  "reviewRegistrySha256": "ae4589e3555b7381cf3361c4f2736bac34b1f992a3ba3d7331de8aa3dbc2c9e7",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -12314,26 +12314,22 @@
       }
     },
     {
-      "id": "d5861e012f78e06bc25a",
+      "id": "a6d30f02806fc550256d",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 136,
+      "line": 137,
       "enclosing": "createLivePreviewGrant",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "project_preview_grants",
+      "kind": "RPC_CANDIDATE",
+      "target": "create_project_preview_grant",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020",
+      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
-        "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
-        "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+        "authority": "Internal coordinator supplies copied server owner/project/session/grant intent. Existing owner-bound session loader and authorizedPreviewTarget validate the private target. Service-only transaction locks exact current owner/session, compares full expected session JSON and identity/status/provider columns, requires running interactive session with the declared HTTP port, then checks database expiry after locking before inserting. Exact single returned capability receipt is required. Gateway independently revalidates signature, revocation and current session on resolution.",
+        "reason": "Four focused preview/runtime tests and30 local SQL current-session/port/expiry/role/rollback/replay assertions pass. Actual observed grant-write lock waits with state/status/port changes and expiry, plus browser and foreign-owner denial prepared. Full coordinator/run provenance, canonical project lifecycle, revocation/in-flight socket semantics and signing-key custody remain unresolved. No provider call, no whole-preview certification.",
         "evidence": [
           {
-            "path": "backend/src/synthesis/livePreview/access.ts",
-            "marker": "session.userId !== grant.userId"
-          },
-          {
-            "path": "backend/src/middleware/runtimePreviewGateway.ts",
-            "marker": "const target = authorizedPreviewTarget(grant, session);"
+            "path": "backend/src/security/previewGrantAdmission.local.integration.ts",
+            "marker": "registerPreviewGrantAdmissionTests"
           },
           {
             "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
@@ -12343,15 +12339,15 @@
       }
     },
     {
-      "id": "54cf280ab4a345a08393",
+      "id": "260f546643a88434ec35",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 136,
+      "line": 137,
       "enclosing": "createLivePreviewGrant",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020",
+      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
         "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
         "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
@@ -12372,15 +12368,15 @@
       }
     },
     {
-      "id": "c22873d2a25d8c1055f2",
+      "id": "72439f834416b3fd90eb",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 201,
+      "line": 197,
       "enclosing": "getLivePreviewGrant",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020",
+      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
         "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
         "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
@@ -12401,15 +12397,15 @@
       }
     },
     {
-      "id": "1cd23a3c452b8fe4a182",
+      "id": "fd09b17779296225433f",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 201,
+      "line": 197,
       "enclosing": "getLivePreviewGrant",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020",
+      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
         "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
         "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
@@ -12430,15 +12426,15 @@
       }
     },
     {
-      "id": "b66955b279918ab660b7",
+      "id": "62f2c45d96306d0c651c",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 246,
+      "line": 242,
       "enclosing": "getLatestLivePreviewGrant",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020",
+      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
         "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
         "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
@@ -12459,15 +12455,15 @@
       }
     },
     {
-      "id": "bf760f0e680ff8fcdcb0",
+      "id": "8418218a6fdf978626d1",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 246,
+      "line": 242,
       "enclosing": "getLatestLivePreviewGrant",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020",
+      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
         "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
         "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
@@ -12488,15 +12484,15 @@
       }
     },
     {
-      "id": "fa2398e25b16a656e87b",
+      "id": "e7d0d54375645a30b30f",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 331,
+      "line": 327,
       "enclosing": "revokeLivePreviewGrants",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020",
+      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
         "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
         "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
@@ -12517,15 +12513,15 @@
       }
     },
     {
-      "id": "a3786ba5882b32cbbc81",
+      "id": "790ce21b600ea4bd4f9d",
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "line": 331,
+      "line": 327,
       "enclosing": "revokeLivePreviewGrants",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020",
+      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
         "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
         "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
