@@ -163,21 +163,67 @@
     },
     {
       "packetId": "B1-P2-24934749677f47d8",
-      "sourceSha256": null,
+      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
       "executionStatus": "IN_PROGRESS",
-      "finding": "UPSTREAM_DATABASE_PROJECT_ADMISSION_DEFECT_FIXED_PENDING_DATABASE_VERIFICATION",
-      "actorTrace": "runBuildPipeline has two production callers, both authenticated swarm execute branches. New required context is the original server-issued context, not request JSON. Restored execution databaseProjectId is checked too. Logical run/repository workspace keys remain distinct from UUID database projects and rely on existing owner-scoped stores.",
-      "invariant": "Before durable run admission or provider preparation, any supplied/restored database project UUID must belong to the issued actor. No foreign/missing project may create a run or trigger failure notifications.",
+      "finding": "DEMONSTRATED_WORKER_PROJECT_WAIT_ADMISSION_FIXED_PENDING_REAL_DATABASE_PROOF",
+      "actorTrace": "Two authenticated swarm producers pass the original issued actor to runBuildPipeline. A real-pipeline synthetic probe changed project ownership during the intervening sticky-account lookup and observed a run insert without project context. Create and resume now carry only the selected database UUID into the existing swarm_runs.project_id column. The database trigger holds current project ownership at admission and dependent checkpoint/revision writes. Durable reads preserve that parent and resume cannot substitute another project.",
+      "invariant": "A stale project preflight cannot admit or resume a worker, persist execution/software checkpoints or write worker revisions after project ownership changes. Preserve legacy logical workspace behavior, current attempt/generation/lease checks, safe stopping after authority loss, exact receipts and original FK deletion behavior.",
       "relatedSourceBindings": [
-        {"path": "backend/src/ai/pipeline.ts", "sha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732"},
-        {"path": "backend/src/routes/swarm.ts", "sha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"}
+        {
+          "path": "backend/src/ai/pipeline.ts",
+          "sha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99"
+        },
+        {
+          "path": "backend/src/routes/swarm.ts",
+          "sha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
+        },
+        {
+          "path": "supabase/migrations/20261019000300_worker_database_project_admission.sql",
+            "sha256": "b2ba575f20133d3f374577b7fd65919e339f9500f3d8cf039a2a1ac7e189b4f7"
+        }
       ],
       "evidence": [
-        {"path": "backend/src/security/tenantIsolation.integration.test.ts", "type": "LOOPBACK_HTTP_FIXTURE", "result": "PRE_FIX_FOREIGN_PROJECT_TEST_FAILED_500_INSTEAD_OF_404", "scope": "Actual HTTP and SDK transport against fixture, not actual RLS/database proof"},
-        {"path": "backend/src/security/ownership.test.ts", "type": "FOCUSED_TEST", "result": "PASS_FOUR_TESTS", "scope": "Issued versus forged context, exact owner predicate, UUID and logical-key compatibility"},
-        {"path": "backend/src/security/tenantIsolation.local.integration.ts", "type": "DISPOSABLE_DATABASE_TEST", "result": "NOT_EXECUTED_AT_RECORD_CREATION", "scope": "Actual two-user project ownership, HTTP/SSE denial and unchanged run rows"}
+        {
+          "path": "backend/src/security/tenantIsolation.integration.test.ts",
+          "type": "LOOPBACK_HTTP_FIXTURE",
+          "result": "PRE_FIX_FOREIGN_PROJECT_TEST_FAILED_500_INSTEAD_OF_404",
+          "scope": "Actual HTTP and SDK transport against fixture, not actual RLS/database proof"
+        },
+        {
+          "path": "backend/src/security/ownership.test.ts",
+          "type": "FOCUSED_TEST",
+          "result": "PASS_FOUR_TESTS",
+          "scope": "Issued versus forged context, exact owner predicate, UUID and logical-key compatibility"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "type": "DISPOSABLE_DATABASE_TEST",
+          "result": "NOT_EXECUTED_AT_RECORD_CREATION",
+          "scope": "Actual two-user project ownership, HTTP/SSE denial and unchanged run rows"
+        },
+        {
+          "path": "backend/src/security/workerProjectAdmission.test.ts",
+          "type": "ACTUAL_PIPELINE_SYNTHETIC_TRANSPORT",
+          "result": "PRE_FIX_STALE_PREFLIGHT_ATTEMPTED_UNBOUND_RUN_INSERT_THEN_TWO_CASES_PASS",
+          "scope": "Actual pipeline create/resume control flow. No real DB, network provider or financial action."
+        },
+        {
+          "path": "backend/src/security/workerProjectAdmission.local.integration.ts",
+          "type": "DISPOSABLE_FIVE_OBSERVED_PROJECT_LOCK_WAITS",
+          "result": "NOT_EXECUTED_AT_RECORD_CREATION",
+          "scope": "Own creation and resume, restored project, checkpoints/revision, wrong owner, owner transfer across five actual waits, exact receipts, safe cancel and rollback."
+        }
       ],
-      "remaining": ["Execute fixed HTTP regression and new actual database case", "Reconcile existing run-store owner/generation/lease/cancellation proof without re-auditing unchanged SQL", "Review parent deletion/admission interleavings independently, a preflight read alone is not a lock"]
+      "remaining": [
+        "Execute new actual121-migration fresh/upgrade/reapply and five-wait security case",
+        "Reconcile authenticated producer through current-parent and existing scheduler/attempt writers before whole007.5 acceptance",
+        "Other worker writers and provider-account consumers remain independent, no authority or vault implementation"
+      ],
+      "previousVerification": {
+        "sourceSha": "b762157a21e9c709aba3d8a6a87b9c83f88cc617",
+        "disposableRun": "39168773496",
+        "scope": "Existing owner/generation/lease, chat and original foreign-project preflight cases pass. This does not prove the new current-parent write invariant."
+      }
     },
     {
       "packetId": "B1-P2-83d8bf9008a76d71",

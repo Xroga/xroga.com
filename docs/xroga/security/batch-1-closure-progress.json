@@ -398,7 +398,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:342 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:350 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -433,7 +433,7 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 342,
+    "unresolvedSafetyCandidates": 350,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 11
   },
@@ -510,9 +510,20 @@
       "existingImplementation": "Existing run store, worker leases and owner persistence",
       "missingBehavior": "Project lineage and full callback/side-effect lifecycle; execute new DB races",
       "acceptanceTest": "Run row-lock races, same-process delayed callbacks, resume/cancel/outage negatives",
-      "pendingCandidates": 0,
+      "pendingCandidates": 8,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
-      "callersByPath": {}
+      "callersByPath": {
+        "backend/src/ai/runStore.ts": [
+          "cb05c4e7cb4f3b73155f",
+          "eeb2bd25e4456d58a465",
+          "8796931131b8f3173ef9",
+          "24e9a07a40a70d9bd103",
+          "e81906b392bf21ef067d",
+          "3e4ef8e15d7b836d3557",
+          "b47a9af1f31012f1a675",
+          "9a5ebc5d27638e21a19f"
+        ]
+      }
     },
     {
       "rootCause": "credentials-oauth",

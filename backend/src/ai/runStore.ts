@@ -9,6 +9,7 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { createTenantContext } from '../security/tenantContext.js';
+import { TenantAccessError } from '../security/tenantErrors.js';
 import { heartbeatOwnedRunAttempt, persistOwnedRunAttempt } from '../security/ownedRunPersistence.js';
 import { isEngineeringArtifact } from './engineeringArtifact.js';
 import { redactOperationsValue } from '../operations/operationsEngine.js';
@@ -27,6 +28,7 @@ export interface SwarmRunEvent {
 export interface SwarmRunRecord {
   id: string;
   userId: string;
+  databaseProjectId?: string;
   prompt: string;
   status: 'running' | 'complete' | 'error' | 'cancelled';
   output: Record<string, unknown> | null;
@@ -364,7 +366,9 @@ export async function createRunDurable(
   userId: string,
   prompt: string,
   runId: string,
+  databaseProjectId?: string,
 ): Promise<SwarmRunRecord> {
+  if(databaseProjectId!==undefined&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(databaseProjectId))throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
   if (pendingCreations.has(runId) || runs.has(runId)) {
     throw Object.assign(new Error('This run cannot be created again. Reconnect or use its recovery action.'), { code: 'RUN_ALREADY_EXISTS' });
   }
@@ -372,6 +376,7 @@ export async function createRunDurable(
   let rec: SwarmRunRecord | undefined;
   try {
     rec = createRunHot(userId, prompt, runId);
+    if(databaseProjectId)rec.databaseProjectId=databaseProjectId;
     // Creation must never use the update-capable persistence path. The unique
     // database key, not a preceding read, arbitrates competing API processes.
     await persistToSupabase(rec, true);
@@ -401,7 +406,9 @@ export async function resumeRunDurable(
   userId: string,
   prompt: string,
   runId: string,
+  databaseProjectId?: string,
 ): Promise<SwarmRunRecord> {
+  if(databaseProjectId!==undefined&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(databaseProjectId))throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
   const codedError = (code: string, message: string) => {
     const error = new Error(message) as Error & { code: string };
     error.code = code;
@@ -419,6 +426,8 @@ export async function resumeRunDurable(
       'The build checkpoint could not be found for this account.',
     );
   }
+
+  if(existing.databaseProjectId&&databaseProjectId&&existing.databaseProjectId!==databaseProjectId)throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
 
   if (existing.status === 'running') {
     throw codedError(
@@ -461,6 +470,7 @@ export async function resumeRunDurable(
     let claim = supabase
       .from('swarm_runs')
       .update({
+        ...(databaseProjectId?{project_id:databaseProjectId}:{}),
         status: 'running',
         prompt: canonicalPrompt,
         output: canonicalOutput,
@@ -483,6 +493,7 @@ export async function resumeRunDurable(
     const { data, error } = await claim.select('id');
 
     if (error) {
+      if(error.code==='42501')throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
       throw new Error('Platform run-resume claim is unavailable.');
     }
 
@@ -523,6 +534,7 @@ export async function resumeRunDurable(
 
   const resumed: SwarmRunRecord = {
     ...existing,
+    ...(databaseProjectId?{databaseProjectId}:{}),
     prompt: canonicalPrompt,
     status: 'running',
     output: canonicalOutput,
@@ -912,6 +924,8 @@ export async function getRunAsync(
 
       userId:
         String(data.user_id),
+
+      ...(typeof data.project_id==='string'?{databaseProjectId:data.project_id}:{}),
 
       prompt:
         String(
@@ -1504,6 +1518,7 @@ async function persistToSupabase(
   const context = createTenantContext({ userId: rec.userId, via: 'persisted_owner' });
   if (!generation) throw Object.assign(new Error('Execution attempt authority is missing.'), { code: 'RUN_STATE_CONFLICT' });
   const row = {
+          ...(rec.databaseProjectId?{project_id:rec.databaseProjectId}:{}),
           id:
             rec.id,
 
@@ -1574,11 +1589,12 @@ async function persistToSupabase(
   if (createOnly) {
     const { error } = await supabase.from('swarm_runs').insert({ ...row, lease_generation: generation });
     if (error) {
+      if(error.code==='42501')throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
       if (error.code === '23505') throw Object.assign(new Error('This run already exists.'), { code: 'RUN_ALREADY_EXISTS' });
       throw new Error('Durable run creation failed.');
     }
   } else {
-    const { id, user_id, messages, created_at, worker_id, heartbeat_at, ...state } = { worker_id: null as string | null, heartbeat_at: null as string | null, ...row };
+    const { id, user_id, project_id, messages, created_at, worker_id, heartbeat_at, ...state } = { worker_id: null as string | null, heartbeat_at: null as string | null, ...row };
     await persistOwnedRunAttempt(supabase, context, id, RUN_WORKER_ID, generation, state);
   }
 }

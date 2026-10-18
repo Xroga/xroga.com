@@ -4,13 +4,13 @@
   "scope": "STRUCTURED_PROOF_LINKAGE_PENDING_PHASE_2",
   "obligations": [
     {
-      "id": "OB-6af9f06c9fdeb167",
+      "id": "OB-7c95badc853d71b1",
       "callerIds": [
-        "8a660a7f24e3ba1896fe",
-        "a30dcc38aea849794f51"
+        "08fa3351d8cb19a04571",
+        "dd16f90263b54684c181"
       ],
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
+      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -35,13 +35,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-94d30c042a0e684e",
+      "id": "OB-737e828cf7d0829a",
       "callerIds": [
-        "e01cf111d89bb2bea5f8",
-        "60145a721f2277556f55"
+        "1dec69321380b532d6ad",
+        "aaa2bb0b83359368e76c"
       ],
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
+      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -1807,12 +1807,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-d848b62180ebd818",
+      "id": "OB-de3c3d00b9f6a6d4",
       "callerIds": [
-        "c311dc7f9d71b9309140"
+        "f816225ee7eecbfbd7ae"
       ],
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732",
+      "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -1833,17 +1833,17 @@
       "review": {
         "path": "backend/src/ai/pipeline.ts",
         "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {",
-        "sha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732"
+        "sha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-251aa9cb67c267b8",
+      "id": "OB-7b8e4d060c1f7483",
       "callerIds": [
-        "caf2719bfd249902fc9a"
+        "4b3b93bfa4bbc1f26e10"
       ],
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732",
+      "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -1864,7 +1864,7 @@
       "review": {
         "path": "backend/src/ai/pipeline.ts",
         "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }",
-        "sha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732"
+        "sha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
@@ -6417,28 +6417,28 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-24934749677f47d8",
+      "id": "OB-aa02de94453fc643",
       "callerIds": [
-        "72d1173732e44759c7d0",
-        "6c170d46c524d271ecf8",
-        "e0aa5a734250805488a8",
-        "1a529d92aa80b6c6c159",
-        "1d8b0198237de162e7c8",
-        "a382df5bb9ba28546a20",
-        "d86c7dc76cda33115c93",
-        "5ab24c997d1e653f7c8a"
+        "cb05c4e7cb4f3b73155f",
+        "eeb2bd25e4456d58a465",
+        "8796931131b8f3173ef9",
+        "24e9a07a40a70d9bd103",
+        "e81906b392bf21ef067d",
+        "3e4ef8e15d7b836d3557",
+        "b47a9af1f31012f1a675",
+        "9a5ebc5d27638e21a19f"
       ],
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
+      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
+      "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Narrow eight-boundary reconciliation at412f0417719e59c0e855925da59e553eed1d8755, actual disposable39160669358 passes157 security and3 browser tests, aggregate39160669384 passes both complete repeated source baselines with actual integrated4461334bcd72d2e23c5bccf3fc4f3653263c4af7. Independently authenticated structured proof already certifies these exact eight operations from the real chat API, create collision, competing resume, foreign/browser RPC denial, completion/cancellation race, stale generation and terminal/conversation injection cases. resumeRunDurable/getRunAsync/persistConversationOnly/persistToSupabase were traced through issued pipeline context, authenticated swarm conversation writes and the private admitted record/generation map. This changes only the stale manual classification, not production source or previously verified test semantics. Other worker producers, project admission interleavings, callback adapters and complete007.5 remain separate unresolved obligations. Notification QoS and universal external-effect authority are not inferred from these fixed run-store boundaries.",
+      "reason": "Changed database-project admission and restored parent carrier require new source-bound proof. Existing run owner, generation, lease, cancellation and exact receipt invariants are preserved. Two real-pipeline transport negatives pass and the guarded SQL passes18 synthetic assertions, not real Supabase lock proof. New actual create/resume/checkpoint/revision ownership transfer waits are pending. Do not certify these eight affected operations from prior chat or worker-writer proof alone.",
       "authorityTrace": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
       "proofIds": [],
       "existingEvidence": [
@@ -6692,13 +6692,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-66585fe5f78f0418",
+      "id": "OB-6c2ea785fd1a1cc3",
       "callerIds": [
-        "6e03bd438807135843ad",
-        "c2c9bee315a611e1a474"
+        "305655721877fdc8af8d",
+        "19cd1b0c28a37907906a"
       ],
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
+      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8496,12 +8496,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-08e147c5613ad008",
+      "id": "OB-b38a27f29dbb6b8f",
       "callerIds": [
-        "d3903ed4bd1e7cfd75f2"
+        "300193e2a9a49a1a57e2"
       ],
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
+      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [

@@ -2286,7 +2286,7 @@
       "callers": [
         "backend/src/ai/buildOutcomeMemory.test.ts:19",
         "backend/src/ai/buildOutcomeOwnership.test.ts:3",
-        "backend/src/ai/runStore.ts:15",
+        "backend/src/ai/runStore.ts:16",
         "backend/src/ai/step7LearningStrategy.test.ts:12",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:22",
@@ -3191,7 +3191,7 @@
         "backend/src/ai/artifactDurability.test.ts:4",
         "backend/src/ai/engineeringArtifact.test.ts:4",
         "backend/src/ai/pipeline.ts:7",
-        "backend/src/ai/runStore.ts:13",
+        "backend/src/ai/runStore.ts:14",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:13",
         "backend/src/synthesis/browserVerificationAdapter.test.ts:7"
       ],
@@ -3465,6 +3465,8 @@
         "backend/src/security/executionCheckpointAttempt.local.integration.ts:7",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:5",
         "backend/src/security/tenantIsolation.local.integration.ts:18",
+        "backend/src/security/workerProjectAdmission.local.integration.ts:8",
+        "backend/src/security/workerProjectAdmission.test.ts:6",
         "backend/src/security/workerRevision.local.integration.ts:8",
         "backend/src/synthesis/foundation.fixture.test.ts:3",
         "backend/src/synthesis/foundation.ts:3",
@@ -3504,6 +3506,8 @@
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/recoveryMemoryRead.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/workerProjectAdmission.local.integration.ts",
+        "backend/src/security/workerProjectAdmission.test.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/synthesis/dynamicPlanning.test.ts",
         "backend/src/synthesis/foundation.fixture.test.ts",
@@ -4933,7 +4937,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "85129720009f90837e58b4a4051905b82d5da910270da6371036ee80d62a3732",
+      "sha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -4946,6 +4950,7 @@
         "ProgressFn",
         "ResearchTodoState",
         "SafeRepositoryReadError",
+        "admittedDatabaseProjectId",
         "all",
         "appleAsc",
         "applied",
@@ -5493,7 +5498,8 @@
         "backend/src/ai/repositoryReadFailure.test.ts:3",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
         "backend/src/routes/phase1.ts:13",
-        "backend/src/routes/swarm.ts:6"
+        "backend/src/routes/swarm.ts:6",
+        "backend/src/security/workerProjectAdmission.test.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5537,7 +5543,8 @@
         "backend/src/ai/projectName.test.ts",
         "backend/src/ai/repositoryHydrationAuthority.test.ts",
         "backend/src/ai/repositoryReadFailure.test.ts",
-        "backend/src/ai/universal/resumeProjectContext.test.ts"
+        "backend/src/ai/universal/resumeProjectContext.test.ts",
+        "backend/src/security/workerProjectAdmission.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -7023,7 +7030,7 @@
       "id": "surface:ec198557da445d2b1385",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "sha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
+      "sha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
       "symbols": [
         "AdmittedRunAttempt",
         "MAX_EVENTS_PER_RUN",
@@ -7125,6 +7132,7 @@
         "../operations/operationsEngine.js",
         "../security/ownedRunPersistence.js",
         "../security/tenantContext.js",
+        "../security/tenantErrors.js",
         "./buildOutcomeMemory.js",
         "./engineeringArtifact.js",
         "node:async_hooks",
@@ -7136,7 +7144,8 @@
         "backend/src/config/supabase.ts",
         "backend/src/operations/operationsEngine.ts",
         "backend/src/security/ownedRunPersistence.ts",
-        "backend/src/security/tenantContext.ts"
+        "backend/src/security/tenantContext.ts",
+        "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -7178,6 +7187,8 @@
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts:7",
         "backend/src/security/tenantIsolation.integration.test.ts:13",
         "backend/src/security/tenantIsolation.local.integration.ts:32",
+        "backend/src/security/workerProjectAdmission.local.integration.ts:7",
+        "backend/src/security/workerProjectAdmission.test.ts:8",
         "backend/src/security/workerRevision.local.integration.ts:7",
         "backend/src/synthesis/livePreview/agentBridge.drain.test.ts:5",
         "backend/src/synthesis/livePreview/agentBridge.ts:4",
@@ -7196,11 +7207,11 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/runStore.ts:461 (user_id)",
-        "backend/src/ai/runStore.ts:777 (user_id)",
-        "backend/src/ai/runStore.ts:891 (user_id)",
-        "backend/src/ai/runStore.ts:1174 (user_id)",
-        "backend/src/ai/runStore.ts:1323 (user_id)"
+        "backend/src/ai/runStore.ts:470 (user_id)",
+        "backend/src/ai/runStore.ts:789 (user_id)",
+        "backend/src/ai/runStore.ts:903 (user_id)",
+        "backend/src/ai/runStore.ts:1188 (user_id)",
+        "backend/src/ai/runStore.ts:1337 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -7239,6 +7250,8 @@
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/workerProjectAdmission.local.integration.ts",
+        "backend/src/security/workerProjectAdmission.test.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/synthesis/livePreview/agentBridge.drain.test.ts",
         "backend/src/synthesis/projectRuntime/store.worker.test.ts",
@@ -8152,6 +8165,7 @@
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts:7",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts:6",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts:8",
+        "backend/src/security/workerProjectAdmission.local.integration.ts:10",
         "backend/src/synthesis/step5VerificationAuthority.test.ts:16"
       ],
       "reachable": true,
@@ -8169,6 +8183,7 @@
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
+        "backend/src/security/workerProjectAdmission.local.integration.ts",
         "backend/src/synthesis/step5VerificationAuthority.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -8475,6 +8490,7 @@
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts:5",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.test.ts:12",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts:9",
+        "backend/src/security/workerProjectAdmission.local.integration.ts:9",
         "backend/src/synthesis/livePreview/agentBridge.ts:11",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:54"
       ],
@@ -8519,6 +8535,7 @@
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.test.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
+        "backend/src/security/workerProjectAdmission.local.integration.ts",
         "backend/src/synthesis/livePreview/agentBridge.drain.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -15624,7 +15641,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/runStore.ts:14",
+        "backend/src/ai/runStore.ts:15",
         "backend/src/hardening/launchHardening.test.ts:44",
         "backend/src/operations/benchmarkAdapter.test.ts:9",
         "backend/src/operations/operationsEngine.test.ts:3",
@@ -20990,7 +21007,7 @@
       "callers": [
         "backend/src/ai/buildOutcomeMemory.test.ts:13",
         "backend/src/ai/buildOutcomeMemory.ts:3",
-        "backend/src/ai/runStore.ts:12",
+        "backend/src/ai/runStore.ts:13",
         "backend/src/security/ownedRunHeartbeat.test.ts:5",
         "backend/src/security/ownedRunPersistence.test.ts:4",
         "backend/src/security/swarmHeartbeat.local.integration.ts:8",
@@ -21333,6 +21350,7 @@
         "backend/src/security/tenantIsolation.integration.test.ts:15",
         "backend/src/security/tenantIsolation.local.integration.ts:8",
         "backend/src/security/terminalIdentity.local.integration.ts:5",
+        "backend/src/security/workerProjectAdmission.test.ts:7",
         "backend/src/services/ensureUserRecords.receipt.test.ts:5",
         "backend/src/services/ensureUserRecords.ts:4",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:8",
@@ -21407,6 +21425,7 @@
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/workerProjectAdmission.test.ts",
         "backend/src/services/ensureUserRecords.receipt.test.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -21449,6 +21468,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/runStore.ts:12",
         "backend/src/routes/projectRuntime.ts:9",
         "backend/src/routes/swarm.ts:5",
         "backend/src/routes/terminalSessions.ts:18",
@@ -23607,7 +23627,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:789",
+        "backend/src/security/tenantIsolation.local.integration.ts:791",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -23879,8 +23899,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3786",
-        "backend/src/ai/pipeline.ts:3789",
+        "backend/src/ai/pipeline.ts:3791",
+        "backend/src/ai/pipeline.ts:3794",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/routes/integrations.ts:226",
@@ -24111,7 +24131,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:116",
-        "backend/src/ai/pipeline.ts:3785",
+        "backend/src/ai/pipeline.ts:3790",
         "backend/src/routes/integrations.ts:16",
         "backend/src/routes/integrations.ts:638",
         "backend/src/routes/publish.ts:13",
@@ -30551,6 +30571,7 @@
         "backend/src/security/runtimeSecretRead.local.integration.ts:5",
         "backend/src/security/runtimeTerminal.local.integration.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:16",
+        "backend/src/security/workerProjectAdmission.local.integration.ts:11",
         "backend/src/security/workerRevision.local.integration.ts:9",
         "backend/src/synthesis/livePreview/store.receipt.test.ts:4",
         "backend/src/synthesis/livePreview/store.ts:8",
@@ -30601,6 +30622,7 @@
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/workerProjectAdmission.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/synthesis/livePreview/store.receipt.test.ts",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts",
@@ -32146,6 +32168,7 @@
       ],
       "testCoverage": [
         "backend/src/security/runtimeProjectBinding.test.ts",
+        "backend/src/security/workerProjectAdmission.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/synthesis/canonicalFoundation.test.ts",
         "backend/src/synthesis/delivery/projectDelivery.test.ts",
@@ -95214,9 +95237,9 @@
   ],
   "scheduledJobs": [
     {
-      "id": "schedule:bc50454638b236bdfd87",
+      "id": "schedule:cf3ae5892e12b63b3fce",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "line": 161,
+      "line": 163,
       "kind": "setInterval",
       "symbol": "claimLocalRun",
       "reachable": true,
@@ -96243,6 +96266,13 @@
       "version": "20261019000200",
       "order": 120,
       "sha256": "34cf14100a03e4ac0178e18e55b623365dddc5728f71848680c515a46a780d2c"
+    },
+    {
+      "id": "migration:fc9d15519bd62bb5d526",
+      "sourcePath": "supabase/migrations/20261019000300_worker_database_project_admission.sql",
+      "version": "20261019000300",
+      "order": 121,
+      "sha256": "b2ba575f20133d3f374577b7fd65919e339f9500f3d8cf039a2a1ac7e189b4f7"
     }
   ],
   "workflows": [
@@ -96474,9 +96504,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:80419b92dbb1f5e6811d",
+      "id": "finding:5e2e86a01ea50c97ba7d",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "line": 747,
+      "line": 759,
       "kind": "STUB",
       "reachable": true,
       "state": "PARTIAL",
@@ -104709,6 +104739,20 @@
       "id": "test-suite:afee1b52b046b94f940e",
       "sourcePath": "backend/src/security/usageAccounting.local.integration.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:b6c1689821a4a1470a31",
+      "sourcePath": "backend/src/security/workerProjectAdmission.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:39a84198778a0e1a6818",
+      "sourcePath": "backend/src/security/workerProjectAdmission.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

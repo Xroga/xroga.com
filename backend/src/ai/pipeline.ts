@@ -1213,6 +1213,9 @@ export async function runBuildPipeline(opts: {
       }
     : undefined;
   const userFacingPrompt = (meta?.userPrompt || opts.prompt).trim();
+  // Logical workspace/repository IDs are not database project foreign keys.
+  // Carry the verified UUID to the decisive database worker admission boundary.
+  const admittedDatabaseProjectId=opts.projectId&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(opts.projectId)?opts.projectId:undefined;
 
 if (
   meta?.resumeRun
@@ -1221,12 +1224,14 @@ if (
     opts.userId,
     userFacingPrompt,
     runId,
+    admittedDatabaseProjectId,
   );
 } else {
   await createRunDurable(
     opts.userId,
     userFacingPrompt,
     runId,
+    admittedDatabaseProjectId,
   );
 }
   if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
