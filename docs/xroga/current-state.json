@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "a086522d0ac96647ebac1ec47d915411a1855e8f",
-    "sourceTimestampUtc": "2026-10-18T16:11:15+05:00",
-    "auditStartedUtc": "2026-10-18T11:14:34.516Z",
+    "sha": "a0affa5a71989bc75153623ae46fdfa251530653",
+    "sourceTimestampUtc": "2026-10-18T16:17:44+05:00",
+    "auditStartedUtc": "2026-10-18T11:20:41.828Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -15605,6 +15605,7 @@
         "backend/src/operations/benchmarkAdapter.test.ts:9",
         "backend/src/operations/operationsEngine.test.ts:3",
         "backend/src/operations/operationsService.ts:5",
+        "backend/src/operations/verificationTarget.local.integration.ts:8",
         "backend/src/routes/admin.ts:5"
       ],
       "reachable": true,
@@ -15626,7 +15627,8 @@
       "testCoverage": [
         "backend/src/hardening/launchHardening.test.ts",
         "backend/src/operations/benchmarkAdapter.test.ts",
-        "backend/src/operations/operationsEngine.test.ts"
+        "backend/src/operations/operationsEngine.test.ts",
+        "backend/src/operations/verificationTarget.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -15639,7 +15641,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d",
+      "sha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -15765,6 +15767,8 @@
         "backend/src/operations/automationCreation.test.ts:4",
         "backend/src/operations/internalControlReceipt.test.ts:4",
         "backend/src/operations/operationsService.owner.test.ts:4",
+        "backend/src/operations/verificationTarget.local.integration.ts:7",
+        "backend/src/operations/verificationTarget.test.ts:4",
         "backend/src/routes/operations.ts:9"
       ],
       "reachable": true,
@@ -15825,20 +15829,20 @@
         "backend/src/operations/operationsService.ts:328 (user_id)",
         "backend/src/operations/operationsService.ts:375 (user_id)",
         "backend/src/operations/operationsService.ts:415 (user_id)",
-        "backend/src/operations/operationsService.ts:445 (user_id)",
-        "backend/src/operations/operationsService.ts:451 (user_id)",
+        "backend/src/operations/operationsService.ts:449 (user_id)",
         "backend/src/operations/operationsService.ts:455 (user_id)",
         "backend/src/operations/operationsService.ts:459 (user_id)",
-        "backend/src/operations/operationsService.ts:474 (user_id)",
-        "backend/src/operations/operationsService.ts:488 (user_id)",
-        "backend/src/operations/operationsService.ts:492 (tenant_id)",
-        "backend/src/operations/operationsService.ts:501 (user_id)",
-        "backend/src/operations/operationsService.ts:506 (user_id)",
-        "backend/src/operations/operationsService.ts:511 (user_id)",
-        "backend/src/operations/operationsService.ts:517 (user_id)",
-        "backend/src/operations/operationsService.ts:518 (user_id)",
-        "backend/src/operations/operationsService.ts:556 (user_id)",
-        "backend/src/operations/operationsService.ts:602 (user_id)"
+        "backend/src/operations/operationsService.ts:463 (user_id)",
+        "backend/src/operations/operationsService.ts:478 (user_id)",
+        "backend/src/operations/operationsService.ts:492 (user_id)",
+        "backend/src/operations/operationsService.ts:496 (tenant_id)",
+        "backend/src/operations/operationsService.ts:505 (user_id)",
+        "backend/src/operations/operationsService.ts:510 (user_id)",
+        "backend/src/operations/operationsService.ts:515 (user_id)",
+        "backend/src/operations/operationsService.ts:521 (user_id)",
+        "backend/src/operations/operationsService.ts:522 (user_id)",
+        "backend/src/operations/operationsService.ts:560 (user_id)",
+        "backend/src/operations/operationsService.ts:606 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/operations/operationsService.ts#OperationsPermission",
@@ -15875,7 +15879,9 @@
         "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/operations/automationCreation.test.ts",
         "backend/src/operations/internalControlReceipt.test.ts",
-        "backend/src/operations/operationsService.owner.test.ts"
+        "backend/src/operations/operationsService.owner.test.ts",
+        "backend/src/operations/verificationTarget.local.integration.ts",
+        "backend/src/operations/verificationTarget.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -16080,7 +16086,9 @@
       "callers": [
         "backend/src/operations/actionClaim.test.ts:5",
         "backend/src/operations/operationsService.ts:10",
-        "backend/src/operations/providerAdapters.test.ts:3"
+        "backend/src/operations/providerAdapters.test.ts:3",
+        "backend/src/operations/verificationTarget.local.integration.ts:9",
+        "backend/src/operations/verificationTarget.test.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -16097,7 +16105,9 @@
       ],
       "testCoverage": [
         "backend/src/operations/actionClaim.test.ts",
-        "backend/src/operations/providerAdapters.test.ts"
+        "backend/src/operations/providerAdapters.test.ts",
+        "backend/src/operations/verificationTarget.local.integration.ts",
+        "backend/src/operations/verificationTarget.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -23539,7 +23549,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:657",
+        "backend/src/security/tenantIsolation.local.integration.ts:659",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -103317,6 +103327,20 @@
       "id": "test-suite:f6faf6a4cb563665a59b",
       "sourcePath": "backend/src/operations/providerAdapters.test.ts",
       "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:94595a856df3bea7abb3",
+      "sourcePath": "backend/src/operations/verificationTarget.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:75d4ae8b38f127b5e6af",
+      "sourcePath": "backend/src/operations/verificationTarget.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

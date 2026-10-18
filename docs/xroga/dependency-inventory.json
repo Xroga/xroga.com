@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a086522d0ac96647ebac1ec47d915411a1855e8f",
+  "source_sha": "a0affa5a71989bc75153623ae46fdfa251530653",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -548,6 +548,7 @@
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
         "backend/src/operations/automationCreation.local.integration.ts",
+        "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/routes/github.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -657,6 +658,7 @@
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
         "backend/src/operations/automationCreation.local.integration.ts",
+        "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/routes/github.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -3249,6 +3251,45 @@
         "backend/src/services/publish/easCredentials.ts",
         "backend/src/services/publish/userOwnedPublish.ts",
         "frontend/src/components/publish/MobilePublishPanel.tsx"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-fixture-invalid",
+      "provider": "Source-defined endpoint fixture.invalid",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/operations/verificationTarget.local.integration.ts"
+      ],
+      "hostnames": [
+        "fixture.invalid"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "CI",
+        "SUPABASE_URL",
+        "XB01_DISPOSABLE_SUPABASE",
+        "XB01_LOCAL_DATABASE_URL"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/operations/verificationTarget.local.integration.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -6967,6 +7008,7 @@
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
         "backend/src/operations/automationCreation.local.integration.ts",
+        "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -7007,6 +7049,7 @@
       "dependency_ids": [
         "endpoint-127-0-0-1",
         "endpoint-example-invalid",
+        "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
         "endpoint-public-example-invalid"
       ]
@@ -9910,6 +9953,7 @@
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
         "backend/src/operations/automationCreation.local.integration.ts",
+        "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -9955,6 +9999,7 @@
         "supabase",
         "endpoint-127-0-0-1",
         "endpoint-example-invalid",
+        "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
         "endpoint-localhost",
         "endpoint-public-example-invalid",
@@ -10564,6 +10609,7 @@
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
         "backend/src/operations/automationCreation.local.integration.ts",
+        "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -10605,6 +10651,7 @@
       "dependency_ids": [
         "endpoint-127-0-0-1",
         "endpoint-example-invalid",
+        "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
         "endpoint-public-example-invalid"
       ]
@@ -10630,6 +10677,7 @@
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/automationAdmission.local.integration.ts",
         "backend/src/operations/automationCreation.local.integration.ts",
+        "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
@@ -10658,6 +10706,7 @@
       "dependency_ids": [
         "endpoint-127-0-0-1",
         "endpoint-example-invalid",
+        "endpoint-fixture-invalid",
         "endpoint-public-example-invalid"
       ]
     },
@@ -12547,7 +12596,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sha256": "0c304c272d15a0841d3b9024f13f775c884f8b58526b7abfc12b9fdb2d6e2f4d"
+      "sha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91"
     },
     {
       "path": "backend/src/operations/permissions.ts",
@@ -12564,6 +12613,10 @@
     {
       "path": "backend/src/operations/types.ts",
       "sha256": "9c9158a62e5c37a10f8b3a95098392ac91802cc1bd7af9ec5616e590c84c2b57"
+    },
+    {
+      "path": "backend/src/operations/verificationTarget.local.integration.ts",
+      "sha256": "edd243ec7c8c9266a4bde099bd859e9e373664f85399bced33119c2f188d449e"
     },
     {
       "path": "backend/src/organicIntelligence/authority/cli.ts",
@@ -12951,7 +13004,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "f5533b4eb815b838495b61ae4673cce40c4616e8ed4c38df508905a861433486"
+      "sha256": "9813eaaef778ced891d08f5665c9c7e5894b6fd2a07c11c98708644e3d8cca9a"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -18419,6 +18472,20 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/operations/verificationTarget.local.integration.ts",
+      "line": 14,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "fixture.invalid",
+      "protocol": "https:",
+      "path": "backend/src/operations/verificationTarget.local.integration.ts",
+      "line": 26,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/organicIntelligence/authority/engine.ts",
@@ -18772,56 +18839,56 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 88,
+      "line": 89,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 88,
+      "line": 89,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 362,
+      "line": 364,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 412,
+      "line": 414,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 501,
+      "line": 503,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 607,
+      "line": 609,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 659,
+      "line": 661,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1327,
+      "line": 1329,
       "credentialsInUrl": false
     },
     {
@@ -25002,14 +25069,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 826,
+      "line": 828,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1163,
+      "line": 1165,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

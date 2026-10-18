@@ -414,6 +414,10 @@ export class OperationsService {
       if (adapter.id === 'http_verification') {
         const resource = await queryOrThrow<DbRow | null>(this.db.from('operations_resources').select('*').eq('id', action.target_id).eq('project_id', action.project_id).eq('user_id', access.ownerId).maybeSingle(), 'Verification target unavailable', null);
         if (!resource) result = { status: 'blocked', safeSummary: 'Verification target was not found', errorCategory: 'not_found' };
+        else if (resource.id !== action.target_id || resource.user_id !== access.ownerId || resource.project_id !== action.project_id
+          || !Number.isSafeInteger(resource.version) || resource.version !== Number(action.target_version)) {
+          result = { status: 'blocked', safeSummary: 'Verification target changed after this action was planned', errorCategory: 'invalid_state' };
+        }
         else {
           try { result = await adapter.execute(definition.providerCapability, { ...input, url: resource.observed_state?.url ?? resource.desired_state?.url, expectedMarker: resource.desired_state?.expectedMarker }); }
           catch { result = { status: 'provider_unavailable', safeSummary: 'Provider execution failed safely', errorCategory: 'provider_unavailable' }; }

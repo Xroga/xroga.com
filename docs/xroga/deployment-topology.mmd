@@ -83,6 +83,7 @@ flowchart LR
   endpoint_example_invalid["Source-defined endpoint example.invalid — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_exp_host["Source-defined endpoint exp.host — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_expo_dev["Source-defined endpoint expo.dev — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_fixture_invalid["Source-defined endpoint fixture.invalid — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_fixture_supabase_co["Source-defined endpoint fixture.supabase.co — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_fonts_gstatic_com["Source-defined endpoint fonts.gstatic.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_freetheai_xyz["Source-defined endpoint freetheai.xyz — CONFIGURED_BUT_UNVERIFIED"]
@@ -247,6 +248,7 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_example_invalid
   api -. "source host/reference; unverified" .-> endpoint_exp_host
   api -. "source host/reference; unverified" .-> endpoint_expo_dev
+  api -. "source host/reference; unverified" .-> endpoint_fixture_invalid
   api -. "source host/reference; unverified" .-> endpoint_fixture_supabase_co
   frontend -. "source host/reference; unverified" .-> endpoint_fonts_gstatic_com
   frontend -. "source host/reference; unverified" .-> endpoint_freetheai_xyz

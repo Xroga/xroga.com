@@ -1,5 +1,11 @@
 # Dependency decisions — not release approval
 
+## Registry and advisory recheck, 2026-10-18
+
+Read-only npm registry checks still resolve braces3.0.3 and node-forge1.4.0 as latest. Their published integrity values match the retained lock graph. The primary [braces advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) and [node-forge advisory](https://github.com/advisories/GHSA-86w9-cpqp-85rv) still list no patched release. No dependency was installed or upgraded for this recheck.
+
+Fresh actual audits all exit1: aggregate43 with20 high and0 critical, backend35 with15 high and0 critical, frontend12 with7 high and0 critical. Scopes overlap. The recorded downstream patches remain explicit, version-based warnings remain visible and none are waived. At25295230cc26995d56e6717b9afc7c431795212a all11 workflows pass, including frozen dependencies, Docker and repeated branch/integrated baselines. Downloaded aggregate39121745923 manifests each show21 stages twice and no source mutation, including integrated590f64a2a27ec9ac091755f0fc92e3261b882257. This preserves existing scoped patch/receiver compatibility evidence and does not establish audit-clean or Batch1 acceptance.
+
 ## Pinned downstream parser candidates, 2026-10-16
 
 The two remaining high-advisory primitive families now have narrow downstream patch candidates in backend/scripts/security-dependency-patches.mjs. Braces3.0.3 rejects parser nesting beyond128 and bounds compile/expand/stringify traversal, including directly supplied cyclic/deep ASTs. Node-forge1.4.0 requires the exact nested DigestAlgorithm element count while retaining valid optional NULL parameters. Primary advisories still report no published fixed release: [braces](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) and [node-forge](https://github.com/advisories/GHSA-86w9-cpqp-85rv).

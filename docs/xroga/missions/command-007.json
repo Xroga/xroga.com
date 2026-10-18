@@ -411,7 +411,9 @@
     "backend/src/operations/automationCreation.local.integration.ts",
     "backend/src/operations/automationCreation.test.ts",
     "supabase/migrations/20261018001200_operations_automation_creation.sql",
-    "backend/src/synthesis/livePreview/store.receipt.test.ts"
+    "backend/src/synthesis/livePreview/store.receipt.test.ts",
+    "backend/src/operations/verificationTarget.local.integration.ts",
+    "backend/src/operations/verificationTarget.test.ts"
   ],
   "decisions": {
     "keep": [
