@@ -42,6 +42,8 @@ import { BillingService } from '../services/BillingService.js';
 import { buildUserSupabaseProvisionSql } from '../services/integrations/supabaseProvision.js';
 import { registerProviderKeyRevisionTests } from './providerKeyRevision.local.integration.js';
 import {registerWorkerProjectAdmissionTests} from './workerProjectAdmission.local.integration.js';
+import {registerConnectedAccountRouteTests} from './connectedAccountRoutes.local.integration.js';
+import {registerOAuthWrapperOwnershipTests} from './oauthWrapperOwnership.local.integration.js';
 import { registerOAuthSessionTests } from './oauthSession.local.integration.js';
 import { registerBuildOutcomeAttemptTests } from './buildOutcomeAttempt.local.integration.js';
 import { registerActionIntentTests } from '../operations/actionIntent.local.integration.js';
@@ -157,6 +159,8 @@ registerBuildProjectReceiptTests(admin, () => users);
 registerGrowthEventReplayTests(admin, () => users);
 registerChatBoundaryTests(admin, () => users, request);
 registerWorkerProjectAdmissionTests(admin, () => users);
+registerConnectedAccountRouteTests(() => users);
+registerOAuthWrapperOwnershipTests(admin);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b762157a21e9c709aba3d8a6a87b9c83f88cc617",
+  "source_sha": "e22c28fcf9a244d638accc12cf67fa1fd53a0ecb",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -559,8 +559,10 @@
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/chatBoundary.local.integration.ts",
+        "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -602,6 +604,7 @@
       "secret_names": [
         "CI",
         "CLOUDFLARE_R2_PRIVATE_BUCKET",
+        "COMPOSIO_API_KEY",
         "E2E_BACKEND_URL",
         "E2E_ISOLATED_PROJECT_REF",
         "FRONTEND_URL",
@@ -682,8 +685,10 @@
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/chatBoundary.local.integration.ts",
+        "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -2022,6 +2027,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/services/integrations/composioClient.ts"
       ],
       "hostnames": [
@@ -2031,7 +2037,10 @@
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
-        "COMPOSIO_API_KEY"
+        "CI",
+        "COMPOSIO_API_KEY",
+        "SUPABASE_URL",
+        "XB01_DISPOSABLE_SUPABASE"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -2045,6 +2054,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/services/integrations/composioClient.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -7140,8 +7150,10 @@
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/chatBoundary.local.integration.ts",
+        "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -7182,6 +7194,7 @@
       "dependency_ids": [
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
+        "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
@@ -7331,6 +7344,7 @@
     {
       "name": "COMPOSIO_API_KEY",
       "consuming_sources": [
+        "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/services/integrations/composioClient.ts"
       ],
       "environments": [
@@ -7344,6 +7358,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
+        "endpoint-127-0-0-1",
         "endpoint-backend-composio-dev"
       ]
     },
@@ -9788,6 +9803,7 @@
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -10114,9 +10130,11 @@
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/chatBoundary.local.integration.ts",
+        "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -10161,6 +10179,7 @@
         "supabase",
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
+        "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
@@ -10806,8 +10825,10 @@
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/chatBoundary.local.integration.ts",
+        "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -10849,6 +10870,7 @@
       "dependency_ids": [
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
+        "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
@@ -13134,6 +13156,10 @@
       "sha256": "44c3393ad6aa60977bd4d32fc8304ae02aba715d9a4301a9fdd7d9a54aebd6a7"
     },
     {
+      "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
+      "sha256": "7f2eeaa7692db6e1ce438d3574a40228da92d77287612163db88a1a2e894dd2f"
+    },
+    {
       "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
       "sha256": "6ae3a77e6c4551ca3fc6657b1eff6334c757a9a163d4ac3ed4d53f2c00257a69"
     },
@@ -13144,6 +13170,10 @@
     {
       "path": "backend/src/security/oauthSession.local.integration.ts",
       "sha256": "199bd787a29b02c2f340254ea665b66ad9ddcff43e335edbbe3c03f898f25370"
+    },
+    {
+      "path": "backend/src/security/oauthWrapperOwnership.local.integration.ts",
+      "sha256": "8cb510d1ab8132d7d414a6a56c1cdd622240e88e72c9baf528227f9927ef78e0"
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
@@ -13247,7 +13277,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978"
+      "sha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -18982,6 +19012,27 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
+      "line": 12,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "backend.composio.dev",
+      "protocol": "https:",
+      "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
+      "line": 21,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
+      "line": 49,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
       "line": 13,
       "credentialsInUrl": false
@@ -19012,6 +19063,20 @@
       "protocol": "https:",
       "path": "backend/src/security/oauthSession.local.integration.ts",
       "line": 66,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/oauthWrapperOwnership.local.integration.ts",
+      "line": 12,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/oauthWrapperOwnership.local.integration.ts",
+      "line": 28,
       "credentialsInUrl": false
     },
     {
@@ -19186,77 +19251,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 100,
+      "line": 102,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 100,
+      "line": 102,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 459,
+      "line": 463,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 509,
+      "line": 513,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 598,
+      "line": 602,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 741,
+      "line": 745,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 793,
+      "line": 797,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1461,
+      "line": 1465,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1479,
+      "line": 1483,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1487,
+      "line": 1491,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1491,
+      "line": 1495,
       "credentialsInUrl": false
     },
     {
@@ -25528,14 +25593,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 960,
+      "line": 964,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1297,
+      "line": 1301,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

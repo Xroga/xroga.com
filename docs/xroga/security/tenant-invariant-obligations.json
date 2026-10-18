@@ -5303,14 +5303,14 @@
       "path": "backend/src/routes/profile.ts",
       "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Fresh identity positive/mismatch/deleted-user checks verified against actual disposable Auth at5fa74cd4 run38820218030. This is not atomic logout revocation, recent-login/MFA or proof of every FK and Storage cleanup race. Complete account deletion lifecycle remains unresolved.",
+      "reason": "Original007 self-account owner admission only, reconciled to unchanged source and actual disposable Auth proof atb762157a21e9c709aba3d8a6a87b9c83f88cc617 run39168773496. Even a deliberately misissued initial context cannot delete the other actor because the fresh token owner must match. Own deletion succeeds, the foreign account remains intact and deleted-identity replay denies. Current route mounts and issued-context requirements are preserved. Canonical DELETE grants, atomic logout revocation, recent-login/MFA and complete FK/Storage cleanup are not certified by this one factory and remain independent later authority/custody/lifecycle obligations. No customer account was touched.",
       "authorityTrace": "Destructive account deletion requires issued owner context, exact DELETE confirmation and a fresh Auth getUser response matching that owner immediately before admin deletion. It never accepts an independently supplied target user ID.",
       "proofIds": [],
       "existingEvidence": [

@@ -398,7 +398,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:350 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:349 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -433,7 +433,7 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 350,
+    "unresolvedSafetyCandidates": 349,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 11
   },
@@ -916,7 +916,7 @@
       "existingImplementation": "Existing services and source-bound register",
       "missingBehavior": "Inspect the exact remaining reason for each listed caller, grouping shared helpers",
       "acceptanceTest": "Per-caller negative verification proportional to risk",
-      "pendingCandidates": 72,
+      "pendingCandidates": 71,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/benchmarkRunner.ts": [
@@ -977,9 +977,6 @@
           "8a4f5a61a698f969e941",
           "7ea068acaab899c1c99e",
           "b4f7c7e759ffc010fe2f"
-        ],
-        "backend/src/routes/profile.ts": [
-          "f060c7afeb1437072a23"
         ],
         "backend/src/routes/terminalSessions.ts": [
           "353aa869f7c46574b7a6",

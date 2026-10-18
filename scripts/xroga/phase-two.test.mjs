@@ -10,7 +10,10 @@ test('Phase2 retains all73 packets and371 historical identities without certifyi
   assert.ok(r.packets.every(p=>p.state==='EVIDENCE_GAP'&&p.proofIds.length===0));
   assert.ok(r.packets.flatMap(p=>p.independentLaterObligations).every(o=>o.phase>2));
   assert.ok(r.criteria.every(c=>c.status==='BLOCKED'));assert.equal(r.criteria.length,10);
-  assert.equal(r.packets.filter(p=>p.semanticProgress).length,13);
+  assert.equal(r.packets.filter(p=>p.semanticProgress).length,14);
+  const selfAccount=r.packets.find(p=>p.id==='B1-P2-8df15cca7cda10a6');
+  assert.equal(selfAccount.currentCallerIds.length,1);
+  assert.ok(selfAccount.semanticProgress.laterPhaseRequirements.includes('XB01-C008-AC04'),'Tenant proof cannot silently erase destructive-action authority');
   const bundle=r.packets.find(p=>p.id==='B1-P2-8c13793907db3388');
   assert.equal(bundle.baselineCallerIds.length,18);
   assert.equal(bundle.currentCallerIds.length,18,'The bundle read repair retains every original persistence obligation');

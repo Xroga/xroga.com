@@ -15197,6 +15197,7 @@
         "backend/src/routes/community.ts:4",
         "backend/src/routes/guestChat.ts:17",
         "backend/src/routes/messageShares.ts:6",
+        "backend/src/security/connectedAccountRoutes.local.integration.ts:5",
         "backend/src/security/tenantIsolation.integration.test.ts:9"
       ],
       "reachable": true,
@@ -15236,6 +15237,7 @@
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/security/accountRoutes.test.ts",
+        "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
@@ -18764,7 +18766,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:19"
+        "backend/src/index.ts:19",
+        "backend/src/security/connectedAccountRoutes.local.integration.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18785,7 +18788,9 @@
       ],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/security/connectedAccountRoutes.local.integration.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -21333,6 +21338,7 @@
         "backend/src/routes/terminalSessions.failure.test.ts:6",
         "backend/src/routes/terminalSessions.ts:16",
         "backend/src/routes/vercel.ts:4",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts:5",
         "backend/src/security/ownedRunHeartbeat.test.ts:4",
         "backend/src/security/ownedRunPersistence.test.ts:5",
         "backend/src/security/ownedRunPersistence.ts:2",
@@ -21412,6 +21418,7 @@
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/ownedRunHeartbeat.test.ts",
         "backend/src/security/ownedRunPersistence.test.ts",
         "backend/src/security/ownedTerminalPersistence.test.ts",
@@ -22435,6 +22442,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts:7",
         "backend/src/security/supabaseBundle.local.integration.ts:6",
         "backend/src/security/tenantIsolation.local.integration.ts:27",
         "backend/src/services/integrations/githubTokenStore.ts:3",
@@ -22455,6 +22463,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/oauthPkceStore.test.ts"
@@ -23550,6 +23559,7 @@
       ],
       "callers": [
         "backend/src/routes/github.ts:7",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts:6",
         "backend/src/security/tenantIsolation.local.integration.ts:30",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:6",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:4",
@@ -23579,6 +23589,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -23627,7 +23638,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:791",
+        "backend/src/security/tenantIsolation.local.integration.ts:795",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -96272,7 +96283,7 @@
       "sourcePath": "supabase/migrations/20261019000300_worker_database_project_admission.sql",
       "version": "20261019000300",
       "order": 121,
-      "sha256": "b2ba575f20133d3f374577b7fd65919e339f9500f3d8cf039a2a1ac7e189b4f7"
+      "sha256": "0dd8c75213a9db8081b6c688e6a0c463954729e5b6d18d8d647f212552db2d26"
     }
   ],
   "workflows": [
@@ -104505,6 +104516,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:67decdfc40fb1832dc51",
+      "sourcePath": "backend/src/security/connectedAccountRoutes.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:640551d38883d98b1bdc",
       "sourcePath": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
       "declaredTests": 2,
@@ -104529,6 +104547,13 @@
       "id": "test-suite:b392dbba0626fe9de839",
       "sourcePath": "backend/src/security/oauthSession.local.integration.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:018cd0700357335ae0e1",
+      "sourcePath": "backend/src/security/oauthWrapperOwnership.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

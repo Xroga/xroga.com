@@ -1911,7 +1911,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3065,7 +3065,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -3947,7 +3947,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4102,7 +4102,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4215,7 +4215,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4360,9 +4360,42 @@
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-8df15cca7cda10a6",
+        "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "UNCHANGED_SELF_ACCOUNT_TENANT_ADMISSION_EXISTING_REAL_AUTH_PROOF_RECONCILED",
+        "actorTrace": "index.ts mounts the profile router behind authMiddleware. The router requires the issued context. DELETE uses only that context owner and its server-captured access token, requires exact DELETE intent, then independently obtains a current Auth user and checks its ID before admin deletion. Request-body user IDs cannot select a different account.",
+        "invariant": "The privileged account-delete client can act only on the authenticated token's matching self account. Missing, foreign or deleted identity denies before deletion. This is tenant ownership, not the complete Command008 action-authority contract.",
+        "actualVerification": {
+          "sourceSha": "b762157a21e9c709aba3d8a6a87b9c83f88cc617",
+          "disposableRun": "39168773496",
+          "scope": "Actual Auth owns/deletes temporary test users. The fixture deliberately simulates initial local-JWT admission to challenge the independent fresh-owner check. Foreign account remains intact, own deletion succeeds and deleted-token replay denies. Not production session-revocation or MFA proof."
+        },
+        "evidence": [
+          {
+            "path": "backend/src/security/profileDeletion.local.integration.ts",
+            "type": "DISPOSABLE_AUTH_AND_ACTUAL_ROUTER",
+            "result": "PASS_AT_B762",
+            "scope": "Exact self-account owner admission only"
+          }
+        ],
+        "laterPhaseRequirements": [
+          "XB01-C008-AC01",
+          "XB01-C008-AC04",
+          "XB01-C008-AC05",
+          "XB01-C008-AC06",
+          "XB01-C008-AC07",
+          "XB01-C008-AC10"
+        ],
+        "remaining": [
+          "Bind destructive self-account intent to the existing canonical authority in Phase3",
+          "Do not claim atomic logout/MFA or complete FK/Storage/provider cleanup from this tenant boundary",
+          "Final-source authenticated evidence is still required for overall Phase2 acceptance"
+        ]
+      },
       "actor": {
         "existingTrace": "Destructive account deletion requires issued owner context, exact DELETE confirmation and a fresh Auth getUser response matching that owner immediately before admin deletion. It never accepts an independently supplied target user ID.",
         "currentSemanticVerification": "PENDING"
@@ -4450,7 +4483,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4621,7 +4654,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4973,7 +5006,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5226,7 +5259,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5295,7 +5328,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5744,7 +5777,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6269,7 +6302,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6358,7 +6391,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "5a9e045d59bfed719da7d86f2226db6fb1c0b0e4ea2b3d06e134d71c7eb34978",
+          "sourceSha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6754,7 +6787,7 @@
           },
           {
             "path": "supabase/migrations/20261019000300_worker_database_project_admission.sql",
-            "sha256": "b2ba575f20133d3f374577b7fd65919e339f9500f3d8cf039a2a1ac7e189b4f7"
+            "sha256": "0dd8c75213a9db8081b6c688e6a0c463954729e5b6d18d8d647f212552db2d26"
           }
         ],
         "evidence": [
@@ -6785,8 +6818,8 @@
           {
             "path": "backend/src/security/workerProjectAdmission.local.integration.ts",
             "type": "DISPOSABLE_FIVE_OBSERVED_PROJECT_LOCK_WAITS",
-            "result": "NOT_EXECUTED_AT_RECORD_CREATION",
-            "scope": "Own creation and resume, restored project, checkpoints/revision, wrong owner, owner transfer across five actual waits, exact receipts, safe cancel and rollback."
+            "result": "E22_REAL_TEST_FAILED_CANONICAL_CANCEL_COUNTER_TRANSITION_NEW_SOURCE_PENDING",
+            "scope": "Disposable39170020977 at e22 passes121 migrations and161/162 tests. New worker test fails at canonical safe cancellation before five actual waits. The corrected guard preserves the original exact count+1 cancellation receipt.20 synthetic assertions pass, real changed-source proof remains required."
           }
         ],
         "remaining": [

@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "538f4676cf3371b9f040792fcef3789ab54755db6264ace9ccdecb49d7fd899b",
+  "reviewRegistrySha256": "08bafe643af0e5f69be75b02adf3640310f8cb950005d26c068b96b344e59b6b",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -12,16 +12,16 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 350,
+    "unresolvedSafetyCandidates": 349,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 11
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 133,
+    "SCOPED_BOUNDARY": 134,
     "NARROW_EXCEPTION": 16,
     "NOT_PERSISTENCE": 140,
-    "REVIEWED_GAP": 350
+    "REVIEWED_GAP": 349
   },
   "acceptance": {
     "version": 1,
@@ -7384,11 +7384,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
       "semanticReview": {
         "authority": "Destructive account deletion requires issued owner context, exact DELETE confirmation and a fresh Auth getUser response matching that owner immediately before admin deletion. It never accepts an independently supplied target user ID.",
-        "reason": "Fresh identity positive/mismatch/deleted-user checks verified against actual disposable Auth at5fa74cd4 run38820218030. This is not atomic logout revocation, recent-login/MFA or proof of every FK and Storage cleanup race. Complete account deletion lifecycle remains unresolved.",
+        "reason": "Original007 self-account owner admission only, reconciled to unchanged source and actual disposable Auth proof atb762157a21e9c709aba3d8a6a87b9c83f88cc617 run39168773496. Even a deliberately misissued initial context cannot delete the other actor because the fresh token owner must match. Own deletion succeeds, the foreign account remains intact and deleted-identity replay denies. Current route mounts and issued-context requirements are preserved. Canonical DELETE grants, atomic logout revocation, recent-login/MFA and complete FK/Storage cleanup are not certified by this one factory and remain independent later authority/custody/lifecycle obligations. No customer account was touched.",
         "evidence": [
           {
             "path": "backend/src/security/profileDeletion.local.integration.ts",

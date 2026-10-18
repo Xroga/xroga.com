@@ -25,9 +25,13 @@ BEGIN
       IF OLD.status='running' AND NEW.status IN ('cancelled','error')
         AND NEW.worker_id IS NULL AND NEW.lease_generation IS NULL
         AND NEW.output->>'type'='error'
-        AND (to_jsonb(NEW)-ARRAY['status','output','error','completed_at','worker_id','lease_generation','heartbeat_at'])
+        AND (NEW.iteration_count IS NOT DISTINCT FROM OLD.iteration_count
+          OR (NEW.status='cancelled'
+            AND NEW.output='{"type":"error","error":"Build stopped.","code":"BUILD_CANCELLED"}'::jsonb
+            AND NEW.iteration_count=COALESCE(OLD.iteration_count,0)+1))
+        AND (to_jsonb(NEW)-ARRAY['status','output','error','completed_at','worker_id','lease_generation','heartbeat_at','iteration_count'])
           IS NOT DISTINCT FROM
-          (to_jsonb(OLD)-ARRAY['status','output','error','completed_at','worker_id','lease_generation','heartbeat_at']) THEN
+          (to_jsonb(OLD)-ARRAY['status','output','error','completed_at','worker_id','lease_generation','heartbeat_at','iteration_count']) THEN
         RETURN NEW;
       END IF;
     END IF;
