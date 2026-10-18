@@ -105,6 +105,9 @@ try {
   const observed=JSON.parse(readFileSync(join(root,'docs/xroga/security/schema-observation.json'),'utf8'));
   const actual=(await db.query("select n.nspname as schema,c.relname as table_name from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname in ('public','storage') and c.relkind in ('r','p') order by n.nspname,c.relname")).rows;
   const names=new Set(actual.map(row=>`${row.schema}.${row.table_name}`));
+  const supplement=JSON.parse(readFileSync(join(root,'docs/xroga/security/disposable-catalog-reference.json'),'utf8'));
+  const inventoried=new Set([...observed.tables,...supplement.additionalTables].map(t=>`${t.schema}.${t.table_name}`));
+  assert.deepEqual(actual.filter(t=>!inventoried.has(`${t.schema}.${t.table_name}`)),[],'New installed tables need explicit audit inventory, not silent omission');
   evidence.schemaParity={status:'NOT_PRODUCTION_DRIFT_CERTIFIED',observedReferenceTables:observed.tables.length,disposableTables:actual.length,missingObservedTables:observed.tables.filter(row=>!names.has(`${row.schema}.${row.table_name}`)).map(row=>`${row.schema}.${row.table_name}`)};
   const catalog=await collectSchemaCatalog(db,{sourceSha,observedAt:new Date().toISOString()});
   assert.deepEqual(catalog.tables.filter(t=>t.schema==='public'&&!t.rls_enabled).map(t=>t.table_name),[],'Every installed public table must have an explicit RLS boundary');

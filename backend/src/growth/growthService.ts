@@ -107,14 +107,13 @@ export class GrowthService {
     input = { projectId: input.projectId, anonymousId: input.anonymousId, evidenceReference: input.evidenceReference };
     const { tenantId } = await this.access(userId, input.projectId);
     const binding = { tenant_id: tenantId, project_id: input.projectId, anonymous_id: input.anonymousId, user_id: userId };
-    // The unique tuple chooses the first binding. A project viewer must not
-    // overwrite another user's identity, even after a concurrent first insert.
-    await query(this.db.from('growth_identity_links').upsert({ ...binding, evidence_reference: input.evidenceReference }, { onConflict: 'tenant_id,project_id,anonymous_id', ignoreDuplicates: true }), 'Identity link failed');
-    const rows = await query<Row[]>(this.db.from('growth_identity_links').update({ evidence_reference: input.evidenceReference })
-      .eq('tenant_id', tenantId).eq('project_id', input.projectId).eq('anonymous_id', input.anonymousId).eq('user_id', userId).select('*'), 'Identity link failed');
-    if (!rows.length) throw new GrowthServiceError('identity_conflict', 'Identity binding could not be claimed', 409);
-    const row = rows[0];
-    if (rows.length !== 1 || typeof row.id !== 'string' || !row.id || Object.entries(binding).some(([key, value]) => row[key] !== value)
+    const roles:OperationsRole[]=['viewer','operator','release_manager','recovery_manager','admin'];
+    const {data:row,error}=await this.db.rpc('link_growth_identity',{p_actor:userId,p_tenant:tenantId,p_project:input.projectId,
+      p_anonymous:input.anonymousId,p_evidence:input.evidenceReference,p_allowed_roles:roles.filter(role=>hasOperationsPermission(role,'view_product_operations'))});
+    if(error?.code==='42501')throw new GrowthServiceError('forbidden','Identity linking is not permitted',403);
+    if(error?.code==='23505')throw new GrowthServiceError('identity_conflict','Identity binding could not be claimed',409);
+    if(error?.code==='22023')throw new GrowthServiceError('invalid_identity','Identity admission is invalid',400);
+    if (error || !row || Array.isArray(row) || typeof row.id !== 'string' || !row.id || Object.entries(binding).some(([key, value]) => row[key] !== value)
       || row.evidence_reference !== input.evidenceReference) throw new GrowthServiceError('storage_unavailable', 'Identity link receipt could not be verified', 503);
     return row;
   }

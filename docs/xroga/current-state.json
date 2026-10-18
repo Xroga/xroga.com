@@ -12232,7 +12232,7 @@
       "id": "surface:4cd464f7016cf52503dd",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570",
+      "sha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
       "symbols": [
         "GrowthService",
         "GrowthServiceError",
@@ -12307,6 +12307,7 @@
         "backend/src/growth/growthService.identity.test.ts:4",
         "backend/src/growth/growthService.referralBoundary.test.ts:4",
         "backend/src/growth/identity.local.integration.ts:6",
+        "backend/src/growth/identityParentAdmission.test.ts:4",
         "backend/src/growth/inputSnapshot.test.ts:4",
         "backend/src/growth/lifecycleTransition.local.integration.ts:7",
         "backend/src/growth/lifecycleTransition.test.ts:4",
@@ -12325,7 +12326,6 @@
         "growth_experiment_assignments",
         "growth_experiment_outcomes",
         "growth_experiments",
-        "growth_identity_links",
         "growth_lifecycle_state",
         "growth_messages",
         "growth_recommendations",
@@ -12356,18 +12356,16 @@
         "backend/src/growth/growthService.ts:81 (tenant_id)",
         "backend/src/growth/growthService.ts:88 (tenant_id)",
         "backend/src/growth/growthService.ts:99 (tenant_id)",
-        "backend/src/growth/growthService.ts:113 (user_id)",
-        "backend/src/growth/growthService.ts:113 (tenant_id)",
+        "backend/src/growth/growthService.ts:173 (user_id)",
         "backend/src/growth/growthService.ts:174 (user_id)",
-        "backend/src/growth/growthService.ts:175 (user_id)",
+        "backend/src/growth/growthService.ts:175 (tenant_id)",
         "backend/src/growth/growthService.ts:176 (tenant_id)",
-        "backend/src/growth/growthService.ts:177 (tenant_id)",
-        "backend/src/growth/growthService.ts:232 (tenant_id)",
-        "backend/src/growth/growthService.ts:258 (tenant_id)",
-        "backend/src/growth/growthService.ts:278 (tenant_id)",
-        "backend/src/growth/growthService.ts:364 (tenant_id)",
-        "backend/src/growth/growthService.ts:366 (tenant_id)",
-        "backend/src/growth/growthService.ts:391 (tenant_id)"
+        "backend/src/growth/growthService.ts:231 (tenant_id)",
+        "backend/src/growth/growthService.ts:257 (tenant_id)",
+        "backend/src/growth/growthService.ts:277 (tenant_id)",
+        "backend/src/growth/growthService.ts:363 (tenant_id)",
+        "backend/src/growth/growthService.ts:365 (tenant_id)",
+        "backend/src/growth/growthService.ts:390 (tenant_id)"
       ],
       "approvalBoundary": [
         "backend/src/growth/growthService.ts#hasOperationsPermission"
@@ -12397,6 +12395,7 @@
         "backend/src/growth/growthService.identity.test.ts",
         "backend/src/growth/growthService.referralBoundary.test.ts",
         "backend/src/growth/identity.local.integration.ts",
+        "backend/src/growth/identityParentAdmission.test.ts",
         "backend/src/growth/inputSnapshot.test.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/lifecycleTransition.test.ts",
@@ -85012,9 +85011,10 @@
       "id": "surface:df5a69bd66236469cf20",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/audit-tenant-policies.mjs",
-      "sha256": "5805cfe6f41cc78bf857aeb581c1885c06cfcae3cb68a8717451483189577a9a",
+      "sha256": "dd9fe9a43aa8546362b4aab13f92157284c7bcfa52f2b6af63dd2832ec7d2947",
       "symbols": [
         "actual",
+        "additionalRows",
         "adminNames",
         "admission",
         "approvedExceptions",
@@ -85024,6 +85024,8 @@
         "callers",
         "calls",
         "candidates",
+        "catalog",
+        "catalogNames",
         "chain",
         "counts",
         "discoverPersistenceCalls",
@@ -85048,6 +85050,7 @@
         "main",
         "markdown",
         "metadataPath",
+        "name",
         "normalized",
         "obligationPath",
         "observation",
@@ -85071,10 +85074,12 @@
         "registryPath",
         "report",
         "reviewedMarkdown",
+        "row",
         "runs",
         "source",
         "sourceSha",
         "statement",
+        "supplement",
         "tableNames",
         "tableRows",
         "ts",
@@ -85157,7 +85162,7 @@
       ],
       "callers": [
         "scripts/security/audit-tenant-policies.mjs:8",
-        "scripts/security/audit-tenant-policies.test.mjs:5"
+        "scripts/security/audit-tenant-policies.test.mjs:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85363,7 +85368,7 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "58b7aefabaf7a9c3b497e3cfdc419ecce716e856c3117883c3f237e07488a486",
+      "sha256": "9f377b02d7da5b0cbf64562fb9da112dd6078fcb7a9fa3076162328aa7aa3e20",
       "symbols": [
         "actual",
         "afterPolicies",
@@ -85381,6 +85386,7 @@
         "filesBefore",
         "foreign",
         "foreignSeries",
+        "inventoried",
         "inventory",
         "names",
         "observed",
@@ -85399,6 +85405,7 @@
         "shareSql",
         "shareToken",
         "sourceSha",
+        "supplement",
         "target",
         "upgradeFiles",
         "url",
@@ -86743,9 +86750,12 @@
       "id": "surface:59ea753bbe7364873503",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/phase-two.mjs",
-      "sha256": "928edb9b3080939c5445b7ff8ee16eea0b4e866e5038773c02e6d3f1963c45e7",
+      "sha256": "4b4930fa6447cbaeb8204ff9b54a59b13a94af189cd010cdae988b17aeed6e82",
       "symbols": [
         "approved",
+        "assertUnchangedEnclosing",
+        "ast",
+        "before",
         "binding",
         "buildPhaseTwo",
         "byId",
@@ -86753,6 +86763,7 @@
         "d",
         "decision",
         "decisions",
+        "enclosingText",
         "frozen",
         "frozenPath",
         "hash",
@@ -86761,14 +86772,21 @@
         "ids",
         "main",
         "mapping",
+        "matches",
         "next",
         "old",
+        "ordinal",
         "packets",
+        "peers",
         "previous",
+        "r",
         "read",
+        "remappings",
         "report",
         "reviewed",
-        "root"
+        "root",
+        "selector",
+        "visit"
       ],
       "imports": [
         "../security/tenant-acceptance.mjs",
@@ -86777,7 +86795,8 @@
         "node:crypto",
         "node:fs",
         "node:path",
-        "node:url"
+        "node:url",
+        "typescript"
       ],
       "runtimeImports": [
         "scripts/security/tenant-acceptance.mjs"
@@ -86794,7 +86813,8 @@
         "node:crypto",
         "node:fs",
         "node:path",
-        "node:url"
+        "node:url",
+        "typescript"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -96128,6 +96148,13 @@
       "version": "20261018002100",
       "order": 117,
       "sha256": "aadb97b07c7beb67cf4d1bd6f730a7bbfb5e4050c35f1b9a3ed03fb3c94ad1b9"
+    },
+    {
+      "id": "migration:432b26f2346a04692ed3",
+      "sourcePath": "supabase/migrations/20261018002200_growth_identity_parent_admission.sql",
+      "version": "20261018002200",
+      "order": 118,
+      "sha256": "47fb8eeab8930302e1af08a4d66bb03e3ca64336f32dcb0c8c7389f10166ffdf"
     }
   ],
   "workflows": [
@@ -103721,6 +103748,13 @@
     {
       "id": "test-suite:4b8d56bbe9a6bcb24b0d",
       "sourcePath": "backend/src/growth/identity.local.integration.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4753566e0e6a2e1a44e9",
+      "sourcePath": "backend/src/growth/identityParentAdmission.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
@@ -106854,7 +106888,7 @@
     {
       "id": "test-suite:391d343edda2653fa467",
       "sourcePath": "scripts/security/audit-tenant-policies.test.mjs",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -106931,7 +106965,7 @@
     {
       "id": "test-suite:a00cdd264d6de075eb99",
       "sourcePath": "scripts/xroga/phase-two.test.mjs",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { discoverPersistenceCalls,main,authenticateObservedReceipts } from './audit-tenant-policies.mjs';
 import { createHash } from 'node:crypto';
+import {readFileSync} from 'node:fs';
 import { applyCallerReviews } from './caller-reviews.mjs';
 test('discovers aliased privileged factory, owner predicates and dynamic RPC without declaring security PASS',()=>{
   const rows=discoverPersistenceCalls('backend/src/fixture.ts',`import { getSupabaseAdmin as db } from './config'; function inspect(userId){db().from('projects').select('id').eq('user_id',userId); db().rpc(operation,args);}`);
@@ -16,6 +17,16 @@ test('nested factory and table calls have distinct reproducible identities',()=>
   const rows=discoverPersistenceCalls('backend/src/fixture.ts',text);
   assert.equal(rows.length,2);assert.notEqual(rows[0].id,rows[1].id);
   assert.deepEqual(rows,discoverPersistenceCalls('backend/src/fixture.ts',text));
+});
+test('additional disposable catalog metadata retains every extra table without relabeling the original production observation',()=>{
+  const supplemental=JSON.parse(readFileSync(new URL('../../docs/xroga/security/disposable-catalog-reference.json',import.meta.url),'utf8'));
+  const observed=JSON.parse(readFileSync(new URL('../../docs/xroga/security/schema-observation.json',import.meta.url),'utf8'));
+  assert.equal(supplemental.scope,'DISPOSABLE_METADATA_NOT_PRODUCTION_PARITY');assert.equal(supplemental.customerRowsRead,false);
+  assert.equal(supplemental.sourceSha,'8a4e016c85cfd4d39ea0e681791abfe83719d9ea');assert.equal(supplemental.runId,'39151242547');
+  assert.equal(observed.tables.length,118);assert.equal(supplemental.additionalTables.length,2);
+  const names=new Set(observed.tables.map(t=>`${t.schema}.${t.table_name}`));
+  for(const table of supplemental.additionalTables){assert.equal(names.has(`${table.schema}.${table.table_name}`),false);assert.equal(table.rls_enabled,true);assert.deepEqual(table.policies,[]);}
+  assert.deepEqual(supplemental.missingObservedTables,['public.images','public.websites']);
 });
 
 test('manual review is source-bound and never inferred from owner-filter syntax',()=>{

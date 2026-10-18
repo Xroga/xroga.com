@@ -4,7 +4,7 @@ import {test} from 'node:test';
 import type {SupabaseClient} from '@supabase/supabase-js';
 import {ensureUserRecords} from '../services/ensureUserRecords.js';
 import {forgetProvisionedUser,isUserProvisioned} from '../services/userProvisioningCache.js';
-import {createTenantContext} from './tenantContext.js';
+import {createTenantContext,type TenantContext} from './tenantContext.js';
 
 export function registerProvisioningReceiptTests(admin:SupabaseClient):void{
   test('real provisioning confirms owned records without resetting existing role or paid usage',async t=>{
@@ -23,6 +23,11 @@ export function registerProvisioningReceiptTests(admin:SupabaseClient):void{
     assert.equal((await admin.from('user_token_usage').delete().eq('user_id',owner)).error,null);
     assert.equal((await admin.from('profiles').delete().eq('id',owner)).error,null);
     const context=createTenantContext({userId:owner,via:'persisted_owner'});
+    for(const forged of [owner,{...context},{userId:other}]){
+      await assert.rejects(ensureUserRecords(forged as TenantContext),{code:'TENANT_AUTH_REQUIRED'});
+    }
+    assert.equal((await admin.from('profiles').select('id').eq('id',owner).maybeSingle()).data,null);
+    assert.equal((await admin.from('user_token_usage').select('user_id').eq('user_id',owner).maybeSingle()).data,null);
     await Promise.all([ensureUserRecords(context),ensureUserRecords(context)]);
     assert.equal(isUserProvisioned(owner),true);
     const ownProfile=await admin.from('profiles').select('id,role,username').eq('id',owner).single();assert.equal(ownProfile.error,null);assert.equal(ownProfile.data.id,owner);assert.equal(ownProfile.data.role,'member');

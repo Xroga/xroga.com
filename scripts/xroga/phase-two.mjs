@@ -5,11 +5,20 @@ import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {execFileSync} from 'node:child_process';
 import {tenantCriteria} from '../security/tenant-acceptance.mjs';
+import ts from 'typescript';
 
 export const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const read=p=>readFileSync(resolve(root,p),'utf8').replace(/\r\n/g,'\n');
 const hash=t=>createHash('sha256').update(t).digest('hex');
 const frozenPath='docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json';
+function enclosingText(source,name){
+  const ast=ts.createSourceFile('review.ts',source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TS),matches=[];
+  const visit=n=>{if((ts.isMethodDeclaration(n)||ts.isFunctionDeclaration(n))&&n.name?.getText(ast)===name)matches.push(n.getText(ast));ts.forEachChild(n,visit);};
+  visit(ast);assert.equal(matches.length,1,`Enclosing function is not uniquely identifiable:${name}`);return matches[0];
+}
+export function assertUnchangedEnclosing(before,after,name){
+  assert.equal(enclosingText(before,name),enclosingText(after,name),'Changed duplicate operations need explicit semantic mapping');
+}
 export function buildPhaseTwo({reviewDecisions}={}){
   const frozen=JSON.parse(read(frozenPath));
   assert.equal(frozen.packets.length,73);
@@ -23,6 +32,13 @@ export function buildPhaseTwo({reviewDecisions}={}){
   assert.equal(decisions.scope,'SEMANTIC_PROGRESS_NOT_SECURITY_CERTIFICATION');
   assert.equal(new Set(decisions.decisions.map(d=>d.packetId)).size,decisions.decisions.length);
   const reviewed=new Map(decisions.decisions.map(d=>[d.packetId,d]));
+  const remappings=new Map((decisions.callerRemappings??[]).map(r=>[r.previousCallerId,r]));
+  assert.equal(remappings.size,(decisions.callerRemappings??[]).length,'Duplicate semantic remapping');
+  for(const r of remappings.values()){
+    const before=previous.get(r.previousCallerId),decision=reviewed.get(r.reviewPacketId);
+    assert.ok(before&&decision&&before.path===r.path&&before.enclosing===r.enclosing&&r.reason.length>=40,'Unexplained semantic remapping');
+    assert.equal(decision.sourceSha256,hash(read(r.path)),'Changed semantic remapping source');
+  }
   for(const d of reviewed.values()){
     assert.ok(frozen.packets.some(p=>p.id===d.packetId),`Unknown review packet:${d.packetId}`);
     assert.ok(['READY','IN_PROGRESS','BLOCKED'].includes(d.executionStatus),'Progress alone cannot certify or close a packet');
@@ -34,7 +50,18 @@ export function buildPhaseTwo({reviewDecisions}={}){
     const mapping=p.mapping.map(m=>({...m,currentCallerIds:[...new Set(m.currentCallerIds.flatMap(id=>{
       if(byId.has(id))return [id];
       const old=previous.get(id);assert.ok(old,`Missing approved caller provenance:${id}`);
-      const next=callers.filter(c=>c.path===old.path&&c.enclosing===old.enclosing&&c.kind===old.kind&&c.target===old.target);
+      const selector=remappings.get(id)??old;
+      let next=callers.filter(c=>c.path===selector.path&&c.enclosing===selector.enclosing&&c.kind===selector.kind&&c.target===selector.target);
+      if(next.length>1&&!remappings.has(id)){
+        // Moving an unchanged method shifts its source-position IDs. Preserve
+        // operation order only after byte-identical method and equal peer-count
+        // checks. This remaps identity, never certifies its security semantics.
+        const before=execFileSync('git',['show',`8a1a0bfa7878603dd488db98568577b2fb1896da:${old.path}`],{cwd:root,encoding:'utf8',maxBuffer:8*1024*1024}).replace(/\r\n/g,'\n');
+        assertUnchangedEnclosing(before,read(old.path),old.enclosing);
+        const peers=approved.callers.filter(c=>c.path===old.path&&c.enclosing===old.enclosing&&c.kind===old.kind&&c.target===old.target).sort((a,b)=>a.line-b.line);
+        assert.equal(peers.length,next.length,'Changed duplicate operation count');
+        const ordinal=peers.findIndex(c=>c.id===id);assert.ok(ordinal>=0);next=[next.sort((a,b)=>a.line-b.line)[ordinal]];
+      }
       assert.equal(next.length,1,`Changed caller needs explicit semantic remapping:${id}`);
       return [next[0].id];
     }))]}));

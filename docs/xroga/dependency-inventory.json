@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4e4cd6eb421eba687acf3169971516882333ff97",
+  "source_sha": "8a4e016c85cfd4d39ea0e681791abfe83719d9ea",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12351,11 +12351,11 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sha256": "e8f6e6f931f55f1555098d3df147e1b7bbba6cf929081a12fb8c9b9625565570"
+      "sha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73"
     },
     {
       "path": "backend/src/growth/identity.local.integration.ts",
-      "sha256": "6972199992746da79dccc8839baca5030863dcfd4d2511d711b470098ec07a05"
+      "sha256": "d1f3ff9617188e66adffb10646d894071024ec01fd3f10e212ecddc2485cc7ef"
     },
     {
       "path": "backend/src/growth/lifecycleTransition.local.integration.ts",
@@ -13003,7 +13003,7 @@
     },
     {
       "path": "backend/src/security/provisioningReceipt.local.integration.ts",
-      "sha256": "bd6e703ebe2e8875a3c594dcb2dee263c8684fd8592a3c3f28ad5de2be0a724f"
+      "sha256": "6ace142fd3daab4c1d94037513c4065ac2893ed1f451e6662db7dd67c0c1b378"
     },
     {
       "path": "backend/src/security/quotaEvidence.local.integration.ts",
@@ -18183,6 +18183,13 @@
       "protocol": "http:",
       "path": "backend/src/growth/identity.local.integration.ts",
       "line": 11,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/growth/identity.local.integration.ts",
+      "line": 63,
       "credentialsInUrl": false
     },
     {
@@ -24181,7 +24188,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "line": 394,
+      "line": 393,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
