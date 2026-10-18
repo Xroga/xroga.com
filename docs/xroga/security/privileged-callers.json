@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ae4a7b7f8b516dcf9d7c653e639f53dd2cbd9db73e27f95a11bab62d35e33304",
+  "reviewRegistrySha256": "3db23b6446b269ef1c8050a231554077db0729bbbd3604825895eb88e14bb469",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -9,7 +9,7 @@
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
     "persistenceCandidates": 654,
-    "ownerPredicateCandidates": 160,
+    "ownerPredicateCandidates": 159,
     "reviewRequired": 0,
     "reviewedCandidates": 654,
     "unresolvedSafetyCandidates": 403,
@@ -4303,7 +4303,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4328,7 +4328,7 @@
       "target": "projects",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Inspected authenticated route mounting, project access resolution and the persisted profiles role. Project identity is fetched by exact ID; a non-owner/non-admin must have membership matching both the current parent owner and authenticated member. Injected clients do not supply request actor identity.",
         "reason": "This certifies only these three lookup boundaries, not the entire service or concurrent revocation. Existing platform admin access remains deliberately broader than founder access. The real API membership/revocation and forged-parent tests exercise this distinction.",
@@ -4353,7 +4353,7 @@
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Inspected authenticated route mounting, project access resolution and the persisted profiles role. Project identity is fetched by exact ID; a non-owner/non-admin must have membership matching both the current parent owner and authenticated member. Injected clients do not supply request actor identity.",
         "reason": "This certifies only these three lookup boundaries, not the entire service or concurrent revocation. Existing platform admin access remains deliberately broader than founder access. The real API membership/revocation and forged-parent tests exercise this distinction.",
@@ -4378,7 +4378,7 @@
       "target": "operations_memberships",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Inspected authenticated route mounting, project access resolution and the persisted profiles role. Project identity is fetched by exact ID; a non-owner/non-admin must have membership matching both the current parent owner and authenticated member. Injected clients do not supply request actor identity.",
         "reason": "This certifies only these three lookup boundaries, not the entire service or concurrent revocation. Existing platform admin access remains deliberately broader than founder access. The real API membership/revocation and forged-parent tests exercise this distinction.",
@@ -4403,7 +4403,7 @@
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4428,7 +4428,7 @@
       "target": "operations_memberships",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4453,7 +4453,7 @@
       "target": "projects",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4478,7 +4478,7 @@
       "target": "operations_environments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4503,7 +4503,7 @@
       "target": "operations_resources",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4528,7 +4528,7 @@
       "target": "production_incidents",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4553,7 +4553,7 @@
       "target": "operations_alerts",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4578,7 +4578,7 @@
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4603,7 +4603,7 @@
       "target": "deployment_status",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4628,7 +4628,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4653,7 +4653,7 @@
       "target": "operations_environments",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4678,7 +4678,7 @@
       "target": "operations_resources",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4703,7 +4703,7 @@
       "target": "production_releases",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4728,7 +4728,7 @@
       "target": "deployment_status",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4753,7 +4753,7 @@
       "target": "production_incidents",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4778,7 +4778,7 @@
       "target": "operations_alerts",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4803,7 +4803,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4828,7 +4828,7 @@
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4853,7 +4853,7 @@
       "target": "swarm_job_queue",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4878,7 +4878,7 @@
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4903,7 +4903,7 @@
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4928,7 +4928,7 @@
       "target": "operations_resources",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4953,7 +4953,7 @@
       "target": "operations_config_checks",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -4978,7 +4978,7 @@
       "target": "operations_slo_snapshots",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -5003,7 +5003,7 @@
       "target": "operations_environments",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5028,7 +5028,7 @@
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5053,7 +5053,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5078,7 +5078,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5103,7 +5103,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5128,7 +5128,7 @@
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5153,7 +5153,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5178,7 +5178,7 @@
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5203,7 +5203,7 @@
       "target": "decide_operations_action_approval",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Authenticated operations route supplies actor/action/validated decision and reason. Existing service derives required role from ACTION_DEFINITIONS, never from request body. Service-only transaction locks current actor profile/project/membership, exact action intent and pending approval, checks requester separation, role, confirmation, version/digest and DB expiry, then atomically writes approval/action/audit.",
         "reason": "Focused transaction/error/changed receipt tests and24 local SQL assertions plus replay pass. Real held membership revocation, competing decisions, three-write rollback, role denial and no-execution tests prepared. Creation/confirmation atomicity, original claim admission and future execution-time approval revocation remain separate unresolved requirements. No whole operations service or Command008 certification.",
@@ -5228,7 +5228,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5253,7 +5253,7 @@
       "target": "confirm_operations_action",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Authenticated requester and canonical action definitions supply role permissions. Service-only confirmation RPC locks current actor/project/membership and exact confirmation-required action intent before atomically recording confirmation, optional approval request and immutable audit. Server derives allowed roles from existing permission map, never request input.",
         "reason": "Focused malformed receipt, owner and unavailable RPC tests plus25 local SQL rollback/role/intent assertions pass. Actual held-plan change, competing confirmation, three-stage rollback and browser denial prepared. Creation atomicity, mutable target admission at execution and provider recovery remain separate unresolved requirements.",
@@ -5274,7 +5274,7 @@
       "target": "production_releases",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Existing action creation and execution use currentTargetVersion after authenticated project access. Release lookup now requires exact resource ID, current owner and project, and validates all three returned fields before action creation. Previously the release branch returned version1 without any resource lookup.",
         "reason": "Focused absent and substituted resource/owner/project receipt negatives pass. Actual owned versus foreign release/deployment draft test prepared with no provider execution. Existing constant release version is preserved, mutable release state/approval freshness and actual provider promotion remain unresolved. No complete release caller certification.",
@@ -5299,7 +5299,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5324,7 +5324,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5349,7 +5349,7 @@
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5374,7 +5374,7 @@
       "target": "claim_operations_action_admitted",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Authenticated actor and canonical action definitions supply execution permission roles, confirmation requirement and approval role. Service-only admission locks current actor/project/member, exact action intent/state/attempt, current approved receipt and current approver role before reusing the original lease/retry function.",
         "reason": "Focused claim receipt/error tests and29 local SQL intent/current-role/approval/expiry assertions pass. Actual held actor/approver revocation, plan mutation, approval expiry, exclusion and browser-role tests prepared. Mutable target admission, legacy raw service-role RPC access and post-claim provider effects/recovery remain unresolved. No whole caller certification.",
@@ -5395,7 +5395,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5420,7 +5420,7 @@
       "target": "operations_resources",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5445,7 +5445,7 @@
       "target": "complete_operations_action",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Existing authenticated action executor passes the exact admitted claimed row and server actor. Service-only completion RPC locks current project owner and action, verifies immutable plan/owner/attempt/lease against database time, then commits evidence, run, action and immutable audit together. No provider action or authority admission is performed inside this persistence boundary.",
         "reason": "Fixed completion-persistence boundary VERIFIED at e47030615e13f75045e4434cddcb1294f05095f3, disposable39114496584: actual four-write rollback, browser-role denial, held-row changed attempt and competing completions pass. SQL and integration fixture are unchanged from that source.34 local SQL assertions and focused exact receipt/uncertain completion negatives also pass. Only atomic persistence of an already-admitted attempt is closed. External-effect reconciliation, mutable target admission, actor/approval lifetime and full executor certification remain separate unresolved requirements. No Command008 acceptance.",
@@ -5470,7 +5470,7 @@
       "target": "production_incidents",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5495,7 +5495,7 @@
       "target": "production_incidents",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5520,7 +5520,7 @@
       "target": "swarm_job_queue",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5545,7 +5545,7 @@
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5562,32 +5562,28 @@
       }
     },
     {
-      "id": "72c3046ef296d785db17",
+      "id": "76b20112f92c659c0501",
       "path": "backend/src/operations/operationsService.ts",
       "line": 461,
       "enclosing": "executeInternal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_automation_rules",
-      "ownerPredicateCandidate": true,
+      "kind": "RPC_CANDIDATE",
+      "target": "set_operations_automation_stop",
+      "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
-        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
-        "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+        "authority": "Existing admitted internal adapter supplies server-owned owner/project/target and stop/resume flag. Service-only RPC locks current owned project and only matching owner/project rules, preserving single-rule version comparison and incrementing each current rule version in one transaction. Descending retained versions avoid transient unique-key collisions.",
+        "reason": "Eight focused control/claim/owner tests and18 local SQL version/owner/browser/late-rollback assertions pass. Real two-writer project-wide version and conditional target race tests prepared. Current actor/approval authority at physical mutation, concurrent new-rule creation and full action crash recovery remain unresolved. No whole caller certification.",
         "evidence": [
           {
-            "path": "backend/src/operations/operationsService.owner.test.ts",
-            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+            "path": "backend/src/operations/actionIntent.local.integration.ts",
+            "marker": "real project-wide automation control increments each version"
           }
         ]
       }
     },
     {
-      "id": "727429b36119e4441768",
+      "id": "909bdb632b505b2ea066",
       "path": "backend/src/operations/operationsService.ts",
       "line": 471,
       "enclosing": "executeInternal",
@@ -5595,7 +5591,7 @@
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5612,7 +5608,7 @@
       }
     },
     {
-      "id": "912798ab51554b25f506",
+      "id": "3ce217b401a0e087506b",
       "path": "backend/src/operations/operationsService.ts",
       "line": 481,
       "enclosing": "executeInternal",
@@ -5620,7 +5616,7 @@
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5637,7 +5633,7 @@
       }
     },
     {
-      "id": "037fbf8c8ba110d8c923",
+      "id": "2958d3401b07428f93db",
       "path": "backend/src/operations/operationsService.ts",
       "line": 485,
       "enclosing": "executeInternal",
@@ -5645,7 +5641,7 @@
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5662,7 +5658,7 @@
       }
     },
     {
-      "id": "6d7de9e6b1db00f0afbf",
+      "id": "fa946d03bb803b7d2062",
       "path": "backend/src/operations/operationsService.ts",
       "line": 489,
       "enclosing": "executeInternal",
@@ -5670,7 +5666,7 @@
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5687,7 +5683,7 @@
       }
     },
     {
-      "id": "21b2303e6842ce330841",
+      "id": "19439bc66aa17f122153",
       "path": "backend/src/operations/operationsService.ts",
       "line": 498,
       "enclosing": "listActions",
@@ -5695,7 +5691,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -5712,7 +5708,7 @@
       }
     },
     {
-      "id": "e08ebfb7b8078c7ebcb4",
+      "id": "51841ae0d758e621a358",
       "path": "backend/src/operations/operationsService.ts",
       "line": 503,
       "enclosing": "listAudit",
@@ -5720,7 +5716,7 @@
       "target": "production_audit_log",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -5737,7 +5733,7 @@
       }
     },
     {
-      "id": "b6d468a69fc75005c3ad",
+      "id": "391157f2c896f6b7905a",
       "path": "backend/src/operations/operationsService.ts",
       "line": 508,
       "enclosing": "listEvidence",
@@ -5745,7 +5741,7 @@
       "target": "production_evidence",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -5762,7 +5758,7 @@
       }
     },
     {
-      "id": "bcd0eadb6d25443551cf",
+      "id": "dfc0327e9907d60bbe75",
       "path": "backend/src/operations/operationsService.ts",
       "line": 514,
       "enclosing": "automation",
@@ -5770,7 +5766,7 @@
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -5787,7 +5783,7 @@
       }
     },
     {
-      "id": "2088f8079bbdaa093e85",
+      "id": "0f7f72348e29a35a49d5",
       "path": "backend/src/operations/operationsService.ts",
       "line": 515,
       "enclosing": "automation",
@@ -5795,7 +5791,7 @@
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -5812,7 +5808,7 @@
       }
     },
     {
-      "id": "57f84b383eb296aded7f",
+      "id": "fc1c8d5c66faa9f6bd5b",
       "path": "backend/src/operations/operationsService.ts",
       "line": 529,
       "enclosing": "createAutomationRule",
@@ -5820,7 +5816,7 @@
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5837,7 +5833,7 @@
       }
     },
     {
-      "id": "5bf0c29addaa83e238ac",
+      "id": "fe13c1fa489cdc57a41a",
       "path": "backend/src/operations/operationsService.ts",
       "line": 540,
       "enclosing": "evaluateAutomationSignal",
@@ -5845,7 +5841,7 @@
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5862,7 +5858,7 @@
       }
     },
     {
-      "id": "84cc679c00db83b38351",
+      "id": "a47aa3e20951e3b80c00",
       "path": "backend/src/operations/operationsService.ts",
       "line": 541,
       "enclosing": "evaluateAutomationSignal",
@@ -5870,7 +5866,7 @@
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5887,7 +5883,7 @@
       }
     },
     {
-      "id": "1156368018cb5a83b46b",
+      "id": "515affc6e4c609f8a925",
       "path": "backend/src/operations/operationsService.ts",
       "line": 545,
       "enclosing": "evaluateAutomationSignal",
@@ -5895,7 +5891,7 @@
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5912,7 +5908,7 @@
       }
     },
     {
-      "id": "808a7ecfc5b92e73f2d6",
+      "id": "161c8fca536737ead3ec",
       "path": "backend/src/operations/operationsService.ts",
       "line": 547,
       "enclosing": "evaluateAutomationSignal",
@@ -5920,7 +5916,7 @@
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5937,7 +5933,7 @@
       }
     },
     {
-      "id": "ee7be102addc904bdd18",
+      "id": "41f696efe817cccfffa9",
       "path": "backend/src/operations/operationsService.ts",
       "line": 555,
       "enclosing": "evaluateAutomationSignal",
@@ -5945,7 +5941,7 @@
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5962,7 +5958,7 @@
       }
     },
     {
-      "id": "e60b4bac1d91d4cc83f8",
+      "id": "b4ead72f27db33091a43",
       "path": "backend/src/operations/operationsService.ts",
       "line": 561,
       "enclosing": "evaluateAutomationSignal",
@@ -5970,7 +5966,7 @@
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -5987,7 +5983,7 @@
       }
     },
     {
-      "id": "36bc793ab8d797306ab1",
+      "id": "106108cc6771c84844e4",
       "path": "backend/src/operations/operationsService.ts",
       "line": 565,
       "enclosing": "evaluateAutomationSignal",
@@ -5995,7 +5991,7 @@
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -6012,7 +6008,7 @@
       }
     },
     {
-      "id": "1eb4c4f2f08585d1c2bd",
+      "id": "51f7c30e232d3f79f71e",
       "path": "backend/src/operations/operationsService.ts",
       "line": 578,
       "enclosing": "audit",
@@ -6020,7 +6016,7 @@
       "target": "production_audit_log",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "semanticReview": {
         "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",

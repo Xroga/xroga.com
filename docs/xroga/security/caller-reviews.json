@@ -3111,7 +3111,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "callIds": [
         "dd0917f84f2764fd0472",
         "c841bcae277927c0b193",
@@ -3133,7 +3133,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "callIds": [
         "cd8790e39c3283f05482",
         "e99258e8fe888ab954f2",
@@ -3160,11 +3160,11 @@
         "b499a6018afaf6b8b490",
         "2623d45568826e06288e",
         "af2e0acf3186708a5107",
-        "21b2303e6842ce330841",
-        "e08ebfb7b8078c7ebcb4",
-        "b6d468a69fc75005c3ad",
-        "bcd0eadb6d25443551cf",
-        "2088f8079bbdaa093e85"
+        "19439bc66aa17f122153",
+        "51841ae0d758e621a358",
+        "391157f2c896f6b7905a",
+        "dfc0327e9907d60bbe75",
+        "0f7f72348e29a35a49d5"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
@@ -3182,7 +3182,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "callIds": [
         "58357b840ab8890eba45",
         "9ea21ff62008b510bd7f",
@@ -3202,20 +3202,19 @@
         "04840e25d94402b3d5e5",
         "6859c8b982dba7e3a132",
         "bd3612febc2df0e1a60d",
-        "72c3046ef296d785db17",
-        "727429b36119e4441768",
-        "912798ab51554b25f506",
-        "037fbf8c8ba110d8c923",
-        "6d7de9e6b1db00f0afbf",
-        "57f84b383eb296aded7f",
-        "5bf0c29addaa83e238ac",
-        "84cc679c00db83b38351",
-        "1156368018cb5a83b46b",
-        "808a7ecfc5b92e73f2d6",
-        "ee7be102addc904bdd18",
-        "e60b4bac1d91d4cc83f8",
-        "36bc793ab8d797306ab1",
-        "1eb4c4f2f08585d1c2bd"
+        "909bdb632b505b2ea066",
+        "3ce217b401a0e087506b",
+        "2958d3401b07428f93db",
+        "fa946d03bb803b7d2062",
+        "fc1c8d5c66faa9f6bd5b",
+        "fe13c1fa489cdc57a41a",
+        "a47aa3e20951e3b80c00",
+        "515affc6e4c609f8a925",
+        "161c8fca536737ead3ec",
+        "41f696efe817cccfffa9",
+        "b4ead72f27db33091a43",
+        "106108cc6771c84844e4",
+        "51f7c30e232d3f79f71e"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
@@ -4769,7 +4768,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "callIds": [
         "00bffa5b24f1e01a7b03"
       ],
@@ -4789,7 +4788,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "callIds": [
         "9c17503abb75e1c77b5c"
       ],
@@ -4829,7 +4828,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "callIds": [
         "724d14962fd8d05f83a7"
       ],
@@ -4849,7 +4848,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "callIds": [
         "c1345ce45faa24df24f7"
       ],
@@ -4865,7 +4864,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "callIds": [
         "eb27028b66aa6f66ff7d"
       ],
@@ -4876,6 +4875,22 @@
         {
           "path": "backend/src/operations/actionAdmission.local.integration.ts",
           "marker": "registerActionAdmissionTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/operations/operationsService.ts",
+      "sourceSha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
+      "callIds": [
+        "76b20112f92c659c0501"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Existing admitted internal adapter supplies server-owned owner/project/target and stop/resume flag. Service-only RPC locks current owned project and only matching owner/project rules, preserving single-rule version comparison and incrementing each current rule version in one transaction. Descending retained versions avoid transient unique-key collisions.",
+      "reason": "Eight focused control/claim/owner tests and18 local SQL version/owner/browser/late-rollback assertions pass. Real two-writer project-wide version and conditional target race tests prepared. Current actor/approval authority at physical mutation, concurrent new-rule creation and full action crash recovery remain unresolved. No whole caller certification.",
+      "evidence": [
+        {
+          "path": "backend/src/operations/actionIntent.local.integration.ts",
+          "marker": "real project-wide automation control increments each version"
         }
       ]
     }

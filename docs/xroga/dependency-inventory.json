@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "944b1266e66af69f5811e5880f7aed3716071cec",
+  "source_sha": "2e752b76f2d1932ea8e3e3543644b137efac79fa",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -9578,6 +9578,7 @@
         "backend/src/operations/actionClaimClock.local.integration.ts",
         "backend/src/operations/actionCompletion.local.integration.ts",
         "backend/src/operations/actionConfirmation.local.integration.ts",
+        "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
@@ -12479,7 +12480,7 @@
     },
     {
       "path": "backend/src/operations/actionIntent.local.integration.ts",
-      "sha256": "61abc02fa2fada0bd75e3aef71420e509791160d86959570216baa3cf129d54c"
+      "sha256": "7b8a4f99f9785589936e8a527f51dedc4077ff4ea908d5d62882619f3742592f"
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",
@@ -12495,7 +12496,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580"
+      "sha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797"
     },
     {
       "path": "backend/src/operations/permissions.ts",
@@ -18310,21 +18311,28 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/operations/actionIntent.local.integration.ts",
-      "line": 49,
+      "line": 60,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/operations/actionIntent.local.integration.ts",
-      "line": 83,
+      "line": 97,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/operations/actionIntent.local.integration.ts",
-      "line": 109,
+      "line": 131,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/operations/actionIntent.local.integration.ts",
+      "line": 157,
       "credentialsInUrl": false
     },
     {

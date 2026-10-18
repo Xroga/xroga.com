@@ -3,10 +3,58 @@ import { randomUUID } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 import { test } from 'node:test';
 import pg from 'pg';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { OperationsService } from './operationsService.js';
 
-export function registerActionIntentTests(admin: SupabaseClient, getUsers: () => readonly { id: string; project: string }[]): void {
+export function registerActionIntentTests(admin: SupabaseClient, getUsers: () => readonly { id: string; project: string; token: string }[]): void {
+  test('real project-wide automation control increments each version under concurrent writers and rolls back partial updates', async t => {
+    assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');
+    assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
+    const url=new URL(process.env.XB01_LOCAL_DATABASE_URL!);
+    assert.equal(url.hostname,'127.0.0.1');assert.equal(url.port,'54322');assert.equal(url.pathname,'/postgres');
+    const [owner,other]=getUsers(),project=randomUUID(),key=randomUUID(),ids=[randomUUID(),randomUUID(),randomUUID(),randomUUID()];
+    t.after(async()=>{
+      assert.equal((await admin.from('operations_automation_rules').delete().in('id',ids)).error,null);
+      assert.equal((await admin.from('projects').delete().eq('id',project).eq('user_id',owner.id)).error,null);
+    });
+    assert.equal((await admin.from('projects').insert({id:project,user_id:owner.id,name:'Disposable automation versions',type:'app'})).error,null);
+    assert.equal((await admin.from('operations_automation_rules').insert(ids.map((id,i)=>({id,user_id:i===3?other.id:owner.id,
+      project_id:i===3?other.project:project,rule_key:i<2?key:`${key}-${i}`,version:[1,2,10,50][i],name:'Disposable version row',
+      trigger_type:'fixture',risk_level:'low',action_type:'refresh_health',enabled:false})))).error,null);
+    const args={p_owner:owner.id,p_project:project,p_target:project,p_version:1,p_stopped:true};
+    const snapshot=async()=>{const result=await admin.from('operations_automation_rules').select('id,version,emergency_stopped').in('id',ids).order('id');assert.equal(result.error,null);return result.data!;};
+    const before=await snapshot();
+    assert.equal((await admin.rpc('set_operations_automation_stop',{...args,p_owner:other.id})).error?.code,'42501');
+    assert.deepEqual(await snapshot(),before);
+    const db=new pg.Client({connectionString:url.href,ssl:false});await db.connect();let pending:PromiseLike<any>[]=[];
+    try{
+      await db.query('begin');await db.query('select id from operations_automation_rules where project_id=$1 for update',[project]);
+      pending=[0,1].map(()=>Promise.resolve(admin.rpc('set_operations_automation_stop',args)));
+      let blocked=false;
+      for(let i=0;i<150;i++){
+        await db.query('select pg_stat_clear_snapshot()');
+        const rows=await db.query("select pid from pg_stat_activity where pid<>pg_backend_pid() and wait_event_type='Lock' and query like '%set_operations_automation_stop%'");
+        if((rows.rowCount??0)>=2){blocked=true;break;}await delay(20);
+      }
+      assert.equal(blocked,true,'both project-wide calls reached the held rule locks');await db.query('commit');
+      const receipts=await Promise.all(pending);pending=[];
+      for(const receipt of receipts){assert.equal(receipt.error,null);assert.deepEqual(receipt.data.map((r:{id:string})=>r.id).sort(),ids.slice(0,3).sort());}
+      const after=await snapshot();
+      for(let i=0;i<3;i++)assert.deepEqual(after.find(row=>row.id===ids[i]),{id:ids[i],version:[3,4,12][i],emergency_stopped:true});
+      assert.deepEqual(after.find(row=>row.id===ids[3]),before.find(row=>row.id===ids[3]));
+      await db.query('begin');
+      await db.query(`alter table operations_automation_rules add constraint fixture_version_failure check(id<>'${ids[2]}' or version<=12) not valid`);
+      await db.query('savepoint attempt');
+      await assert.rejects(db.query('select * from set_operations_automation_stop($1,$2,$3,$4,$5)',[owner.id,project,project,1,false]),{code:'23514'});
+      await db.query('rollback to savepoint attempt');
+      const stable=await db.query('select id,version,emergency_stopped from operations_automation_rules where id=any($1::uuid[]) order by id',[ids]);
+      assert.deepEqual(stable.rows,after);await db.query('rollback');
+      for(const token of [undefined,owner.token]){
+        const browser:SupabaseClient=createClient(process.env.SUPABASE_URL!,process.env.SUPABASE_ANON_KEY!,{auth:{persistSession:false,autoRefreshToken:false},...(token?{global:{headers:{Authorization:`Bearer ${token}`}}}:{})});
+        assert.equal((await browser.rpc('set_operations_automation_stop',args)).error?.code,'42501');
+      }
+    }finally{await db.query('rollback');await Promise.allSettled(pending);await db.end();}
+  });
   test('real single-rule stop records blocked when the target changes while its adapter waits', async t => {
     assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');
     assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
@@ -30,7 +78,7 @@ export function registerActionIntentTests(admin: SupabaseClient, getUsers: () =>
       let blocked=false;
       for(let i=0;i<150;i++){
         await db.query('select pg_stat_clear_snapshot()');
-        const rows=await db.query("select pid from pg_stat_activity where pid<>pg_backend_pid() and wait_event_type='Lock' and query like '%operations_automation_rules%' and query ilike '%update%'");
+        const rows=await db.query("select pid from pg_stat_activity where pid<>pg_backend_pid() and wait_event_type='Lock' and query like '%set_operations_automation_stop%'");
         if(rows.rowCount){blocked=true;break;}await delay(20);
       }
       assert.equal(blocked,true,'actual internal conditional write reached the target row lock');

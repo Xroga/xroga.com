@@ -5,11 +5,9 @@ import { OperationsService } from './operationsService.js';
 
 test('single-rule controls reject empty, substituted and duplicate mutation receipts', async () => {
   let rows: Record<string,unknown>[]=[];
-  const filters:Record<string,unknown>={};
-  const db={from(table:string){
-    assert.equal(table,'operations_automation_rules');
-    const q={update(){return q;},eq(key:string,value:unknown){filters[key]=value;return q;},
-      async select(){return {data:rows,error:null};}};return q;
+  let args:Record<string,unknown>={};
+  const db={async rpc(name:string,input:Record<string,unknown>){
+    assert.equal(name,'set_operations_automation_stop');args=input;return {data:rows,error:null};
   }};
   const service=new OperationsService(db as unknown as SupabaseClient) as unknown as {
     executeInternal(capability:string,input:Record<string,unknown>):Promise<{status:string}>;
@@ -17,7 +15,7 @@ test('single-rule controls reject empty, substituted and duplicate mutation rece
   for(const capability of ['emergency_stop','resume_automation']){
     for(rows of [[],[{id:'other'}],[{id:'rule'},{id:'rule'}]]){
       assert.equal((await service.executeInternal(capability,{userId:'owner',projectId:'project',targetId:'rule',targetVersion:5})).status,'blocked');
-      assert.deepEqual(filters,{user_id:'owner',project_id:'project',id:'rule',version:5});
+      assert.deepEqual(args,{p_owner:'owner',p_project:'project',p_target:'rule',p_version:5,p_stopped:capability==='emergency_stop'});
     }
     rows=[{id:'rule'}];assert.equal((await service.executeInternal(capability,{userId:'owner',projectId:'project',targetId:'rule',targetVersion:5})).status,'verified');
   }

@@ -458,9 +458,9 @@ export class OperationsService {
     }
     if (capability === 'emergency_stop' || capability === 'resume_automation') {
       const stopped = capability === 'emergency_stop';
-      let update = this.db.from('operations_automation_rules').update({ emergency_stopped: stopped, version: Number(input.targetVersion) + 1, updated_at: now }).eq('user_id', userId).eq('project_id', projectId);
-      if (targetId !== projectId) update = update.eq('id', targetId).eq('version', Number(input.targetVersion));
-      const rows = await queryOrThrow<DbRow[]>(update.select('id'), 'Automation control failed');
+      const rows = await queryOrThrow<DbRow[]>(this.db.rpc('set_operations_automation_stop', {
+        p_owner: userId, p_project: projectId, p_target: targetId, p_version: Number(input.targetVersion), p_stopped: stopped,
+      }), 'Automation control failed');
       if (targetId !== projectId && (rows.length !== 1 || rows[0]?.id !== targetId)) {
         return { status: 'blocked', safeSummary: 'Automation rule changed before this action executed', errorCategory: 'invalid_state' };
       }

@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "944b1266e66af69f5811e5880f7aed3716071cec",
-    "sourceTimestampUtc": "2026-10-18T14:45:51+05:00",
-    "auditStartedUtc": "2026-10-18T09:49:54.366Z",
+    "sha": "2e752b76f2d1932ea8e3e3543644b137efac79fa",
+    "sourceTimestampUtc": "2026-10-18T14:51:56+05:00",
+    "auditStartedUtc": "2026-10-18T09:55:37.929Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -15635,7 +15635,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "1171d875e329dc9cfec0a316c8b11f3e6d05bee9363b4ad008055cc8b9782580",
+      "sha256": "f70f089238ea12902368264c5604dbae5b069c91a78e077c6631e42c2b4b0797",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -15714,7 +15714,6 @@
         "statusMap",
         "stopped",
         "targetId",
-        "update",
         "updated",
         "userId",
         "validity",
@@ -15826,7 +15825,6 @@
         "backend/src/operations/operationsService.ts:448 (user_id)",
         "backend/src/operations/operationsService.ts:452 (user_id)",
         "backend/src/operations/operationsService.ts:456 (user_id)",
-        "backend/src/operations/operationsService.ts:461 (user_id)",
         "backend/src/operations/operationsService.ts:471 (user_id)",
         "backend/src/operations/operationsService.ts:485 (user_id)",
         "backend/src/operations/operationsService.ts:489 (tenant_id)",
@@ -95387,6 +95385,13 @@
       "version": "20261018000600",
       "order": 102,
       "sha256": "ea519d807832685ce35ca6233e82b625818935cb97bff787ee2a65d40402b011"
+    },
+    {
+      "id": "migration:8b8143c05b731f496092",
+      "sourcePath": "supabase/migrations/20261018000700_operations_automation_version.sql",
+      "version": "20261018000700",
+      "order": 103,
+      "sha256": "39893cbbcd116bcb2b5db2be7b4239d22016b76dfcdb62f08441e7ce5e4fcdef"
     }
   ],
   "workflows": [
@@ -103127,7 +103132,7 @@
     {
       "id": "test-suite:f98a9a778d3ab33a4bb7",
       "sourcePath": "backend/src/operations/actionIntent.local.integration.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
