@@ -53,6 +53,12 @@
     }
   ],
   "additionalSpend": 0,
+  "businessConfirmationFinish": {
+    "status": "IN PROGRESS",
+    "fix": "Existing executor reuses its admin client and exact original claimed row for service-only terminal persistence. Full plan/display metadata, original expiry and claim timestamp are locked and checked before consumed/failed status. Exact terminal replay cannot overwrite a different outcome. Invalid claim receipts produce no unbound table write, and uncertain terminal storage raises a typed503 without retrying the provider.",
+    "localEvidence": "Loopback real confirmation path records one failed invalid-digest attempt and rejects unavailable, missing, foreign-owner and changed-plan terminal receipts.16 local SQL assertions/reapply and backend typecheck pass, including expiry after claim, terminal replay/conflict, browser denial and rollback. No provider calls. Actual held-plan/claim changes, competing terminal results, rollback and browser-role tests prepared.",
+    "remaining": "Actual final-source verification, provider session ownership, displayed-intent acknowledgement, expiry before provider start and external-success crash reconciliation remain unresolved.652 reviewed/398 gaps reflects two removed unbound persistence candidates, not new certification."
+  },
   "growthOutcomeTransaction": {
     "status": "IN PROGRESS",
     "fix": "Existing outcome service now uses a service-only transaction that locks current project authority, experiment, exposed assignment and event, verifies exact owner/project/experiment relationships and inserts or verifies an immutable replay. Typed denials and exact returned outcome identity are preserved.",
@@ -107,11 +113,11 @@
     "correction": "Disposable fixture now explicitly seeds a three-attempt budget and waits only until old lease expiry. It asserts lease updated_at is at or after the database pre-release clock and retains live lease,exact10-second duration,competing exclusion,exhausted-attempt and browser-denial assertions. No production timeout or retry limit changed. Final-source rerun required."
   },
   "latestVerifiedSource": {
-    "source": "e47030615e13f75045e4434cddcb1294f05095f3",
-    "integrated": "5bfe5f4add655ed57d98266b5d126879471ab8e4",
-    "aggregateRun": "39114496575",
-    "disposableRun": "39114496584",
-    "result": "All11 workflows PASS. Disposable98 fresh/upgrade migrations,131 security tests and3 browser tests pass with zero failures/skips. Completion competing-writer and rollback, exact release/deployment draft ownership and business-confirmation lock/expiry/intent races now pass. Subsequent approval transaction and claim-clock changes require new final-source verification. Command007 strict acceptance remains blocked."
+    "source": "2e752b76f2d1932ea8e3e3543644b137efac79fa",
+    "integrated": "8bad058be955495033cc8a219b32136a6b64132b",
+    "aggregateRun": "39117021150",
+    "disposableRun": "39117021162",
+    "result": "All11 workflows PASS. Downloaded branch/integrated manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable102 fresh/upgrade migrations,136 security tests and3 browser tests pass with zero failures/skips. Later automation-version, growth-outcome and business terminal changes need their own CI. Command007 strict acceptance remains blocked."
   },
   "operationsApproval": {
     "status": "IN PROGRESS",
@@ -132,6 +138,18 @@
     "remaining": "Constant release version compatibility is preserved; mutable release state, approval freshness and provider authorization are not certified. New lookup stays REVIEWED_GAP pending full evidence."
   },
   "latestCandidate": {
+    "source": "2e752b76f2d1932ea8e3e3543644b137efac79fa",
+    "integrated": "8bad058be955495033cc8a219b32136a6b64132b",
+    "aggregateRun": "39117021150",
+    "disposableRun": "39117021162",
+    "result": "PASS_SCOPED_CI_NOT_BATCH_ACCEPTANCE",
+    "securityPass": 136,
+    "securityFail": 0,
+    "browserPass": 3,
+    "browserFail": 0,
+    "aggregateStatus": "PASS: branch and integrated21 stages twice,sourceTreeMutated=false. All11 workflows pass.104/105-migration later revisions still require verification."
+  },
+  "historicalFb3Candidate": {
     "source": "fb3a2301e3deb102634fe3aa3693412b58cd2c0d",
     "integrated": "415e3018a3539b33a6bd17359a11dadab70c78d2",
     "aggregateRun": "39115679162",
@@ -175,16 +193,16 @@
     "aggregateStatus": "PASS: branch139bf16d and integratedc48fc1b0f695e551b40eaa3c864f2012525eb820 repeated full baselines both passed with sourceTreeMutated=false. Disposable/browser failure remains independent and unwaived."
   },
   "latestDisposable": {
-    "source": "e47030615e13f75045e4434cddcb1294f05095f3",
-    "integrated": "5bfe5f4add655ed57d98266b5d126879471ab8e4",
-    "run": "39114496584",
+    "source": "2e752b76f2d1932ea8e3e3543644b137efac79fa",
+    "integrated": "8bad058be955495033cc8a219b32136a6b64132b",
+    "run": "39117021162",
     "result": "VERIFIED",
-    "migrations": 98,
-    "securityTests": 131,
+    "migrations": 102,
+    "securityTests": 136,
     "browserTests": 3,
     "failures": 0,
     "skips": 0,
-    "aggregate": "Aggregate39114496575 PASS: downloaded manifests show branch e4703061 and integrated5bfe5f4 each21 stages twice,zero nonzero exits,sourceTreeMutated=false. All11 source workflows pass. Subsequent approval transaction and lease-clock fixes still require their own exact-source CI."
+    "aggregate": "Aggregate39117021150 PASS: downloaded branch2e752b76/integrated8bad058b manifests each21 stages twice,zero failed exits,sourceTreeMutated=false. All11 source workflows pass. Later automation-version, growth-outcome and business terminal changes need their own exact-source CI."
   },
   "overnightEngineering": {
     "status": "IN PROGRESS",
@@ -265,7 +283,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:400 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:398 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -296,11 +314,11 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
-    "persistenceCandidates": 654,
-    "ownerPredicateCandidates": 159,
+    "persistenceCandidates": 652,
+    "ownerPredicateCandidates": 156,
     "reviewRequired": 0,
-    "reviewedCandidates": 654,
-    "unresolvedSafetyCandidates": 400,
+    "reviewedCandidates": 652,
+    "unresolvedSafetyCandidates": 398,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -364,7 +382,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Preserve2e752b76 aggregate39117021150 until completion. Commit locally verified growth outcome transaction and push with automation-version fix at a meaningful CI checkpoint. Verify104 migrations and real project-wide version/outcome races. Continue business confirmation terminal persistence, action creation atomic recovery, worker lifecycle and other growth parent mutation races.654 reviewed/400 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
+  "nextTask": "Preserve4e7c5fe1 aggregate39117989320 and disposable39117989323 until completion. Verify104 migrations and actual automation-version/outcome races. Commit locally verified business terminal persistence and verify105 migrations plus its real claim/outcome races at the next CI checkpoint. Continue immutable external action intent through metadata/policy awaits, action creation atomic recovery, worker lifecycle and other growth parent mutation races.652 reviewed/398 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
@@ -506,7 +524,7 @@
       "existingImplementation": "Existing prepared plan, confirmation, operations services and scheduler",
       "missingBehavior": "Account/target/digest/spend/receipt integration and complete caller provenance",
       "acceptanceTest": "Changed plan/target, expired/revoked approval, duplicate claims, unauthorized spend",
-      "pendingCandidates": 78,
+      "pendingCandidates": 76,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/operations/operationsService.ts": [
@@ -579,19 +597,17 @@
           "6ac8a018f3c309f7f133"
         ],
         "backend/src/services/integrations/businessActionConfirmations.ts": [
-          "54d7881d096799f0bbbc",
-          "8498af01e3ea93df075c",
-          "37cdea800bc3a61640e5",
-          "ceb778e84973feb93a46",
-          "fdcd67b3b3f41d8b79d9",
-          "5b4af0b6dfcc46eab1a0",
-          "21d1e6a391c087be536f",
-          "134d721e6f9615596c9c",
-          "406dc3bc9886c695d266",
-          "0ffad26428a284894b4b",
-          "ad474fc1aee6723385dd",
-          "0e2f237c402443967a5c",
-          "8074f7eefc4ec3159e26"
+          "26f90ee24dce5e61e10b",
+          "59f28725fd15f630ac34",
+          "2a61d02591ae6e43f5d1",
+          "4cdb3108a232ecf02181",
+          "ce274db3e3762bd69af8",
+          "2a047295d4b09a7b1f92",
+          "caf3f72c768eb7498c76",
+          "e4f2831f63600f3747e7",
+          "a87492795c9bd48e9684",
+          "cb762f752172a9129c4b",
+          "06c3aac16e5f68e6719e"
         ]
       }
     },

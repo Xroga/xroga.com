@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a7ceaa84c835a3ec55da4b77e0e4ba74585af9b1",
+  "source_sha": "4e7c5fe1fcaaf806cba6939018a51186facc6866",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -549,6 +549,7 @@
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
+        "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
@@ -654,6 +655,7 @@
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
+        "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
@@ -6959,6 +6961,7 @@
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
+        "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
@@ -9585,6 +9588,7 @@
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
+        "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
@@ -9894,6 +9898,7 @@
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
+        "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
@@ -10544,6 +10549,7 @@
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
+        "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
@@ -10605,6 +10611,7 @@
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
+        "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -12806,6 +12813,10 @@
       "sha256": "77469adbac183a215e93adcb25c117a1abbd56f199f08dfd4df8a2a9b074ccff"
     },
     {
+      "path": "backend/src/security/businessConfirmationFinish.local.integration.ts",
+      "sha256": "9ee39d62ab7780d2a93da87398de7e0257c6a796eccb3b8e21e93ba5aaf946bd"
+    },
+    {
       "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
       "sha256": "6ae3a77e6c4551ca3fc6657b1eff6334c757a9a163d4ac3ed4d53f2c00257a69"
     },
@@ -12907,7 +12918,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "9a6bf3e1cf7e01a536abd2d5bb6d0d545d4a8e3be29bbdf356daf84b4e884112"
+      "sha256": "a61eca378431cb73cabe9b4a5b81816e41fd3425f81d55ed9222e4520ede45a3"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -12943,7 +12954,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c"
+      "sha256": "6a73ac47ec9ccc63f49dc3b3b291b2a9a3a3677294e39b4998720c529368da9c"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
@@ -18531,6 +18542,13 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/businessConfirmationFinish.local.integration.ts",
+      "line": 11,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
       "line": 13,
       "credentialsInUrl": false
@@ -18700,56 +18718,56 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 84,
+      "line": 85,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 84,
+      "line": 85,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 339,
+      "line": 341,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 389,
+      "line": 391,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 478,
+      "line": 480,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 584,
+      "line": 586,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 636,
+      "line": 638,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1304,
+      "line": 1306,
       "credentialsInUrl": false
     },
     {
@@ -24930,14 +24948,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 803,
+      "line": 805,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1140,
+      "line": 1142,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "a7ceaa84c835a3ec55da4b77e0e4ba74585af9b1",
-    "sourceTimestampUtc": "2026-10-18T14:56:14+05:00",
-    "auditStartedUtc": "2026-10-18T10:00:57.280Z",
+    "sha": "4e7c5fe1fcaaf806cba6939018a51186facc6866",
+    "sourceTimestampUtc": "2026-10-18T15:04:25+05:00",
+    "auditStartedUtc": "2026-10-18T10:12:18.920Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -11872,7 +11872,7 @@
         "backend/src/security/serviceRoleGuard.ts:1",
         "backend/src/services/BillingService.ts:5",
         "backend/src/services/ensureUserRecords.ts:7",
-        "backend/src/services/integrations/businessActionConfirmations.ts:1",
+        "backend/src/services/integrations/businessActionConfirmations.ts:3",
         "backend/src/services/integrations/credentialStorageBucket.ts:2",
         "backend/src/services/integrations/githubAuth.ts:1",
         "backend/src/services/integrations/githubDeploy.ts:1",
@@ -21784,7 +21784,7 @@
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:9",
         "backend/src/routes/phase1.ts:63",
         "backend/src/services/integrations/businessAction.digest.test.ts:4",
-        "backend/src/services/integrations/businessActionConfirmations.ts:10"
+        "backend/src/services/integrations/businessActionConfirmations.ts:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21827,7 +21827,7 @@
       "id": "surface:0315124fb31feefa3fcb",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
+      "sha256": "6a73ac47ec9ccc63f49dc3b3b291b2a9a3a3677294e39b4998720c529368da9c",
       "symbols": [
         "CONFIRMATION_TTL_MS",
         "ConfirmationRow",
@@ -21838,7 +21838,8 @@
         "claimedRow",
         "clean",
         "cleanConfirmationId",
-        "completedAt",
+        "code",
+        "completed",
         "confirmBusinessAction",
         "createBusinessActionConfirmation",
         "current",
@@ -21847,6 +21848,7 @@
         "execution",
         "expireIfNeeded",
         "expiresAt",
+        "finishClaimedConfirmation",
         "getBusinessActionConfirmation",
         "id",
         "isBusinessActionPlan",
@@ -21858,7 +21860,9 @@
       "imports": [
         "../../config/supabase.js",
         "./businessAction.js",
-        "./composioClient.js"
+        "./composioClient.js",
+        "@supabase/supabase-js",
+        "node:util"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
@@ -21877,16 +21881,16 @@
       "persistenceDependencies": [
         "business_action_confirmations"
       ],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "@supabase/supabase-js",
+        "node:util"
+      ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/services/integrations/businessActionConfirmations.ts:228 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:386 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:466 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:552 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:704 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:781 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:853 (user_id)"
+        "backend/src/services/integrations/businessActionConfirmations.ts:230 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:388 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:468 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:579 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/businessActionConfirmations.ts#CONFIRMATION_TTL_MS",
@@ -21897,6 +21901,7 @@
         "backend/src/services/integrations/businessActionConfirmations.ts#cleanConfirmationId",
         "backend/src/services/integrations/businessActionConfirmations.ts#confirmBusinessAction",
         "backend/src/services/integrations/businessActionConfirmations.ts#createBusinessActionConfirmation",
+        "backend/src/services/integrations/businessActionConfirmations.ts#finishClaimedConfirmation",
         "backend/src/services/integrations/businessActionConfirmations.ts#getBusinessActionConfirmation",
         "backend/src/services/integrations/businessActionConfirmations.ts#safeConfirmation",
         "backend/src/services/integrations/businessActionConfirmations.ts#verifyPlanDigest"
@@ -22228,7 +22233,7 @@
         "backend/src/routes/integrations.ts:40",
         "backend/src/routes/phase1.ts:68",
         "backend/src/services/integrations/businessAction.ts:28",
-        "backend/src/services/integrations/businessActionConfirmations.ts:5",
+        "backend/src/services/integrations/businessActionConfirmations.ts:7",
         "backend/src/services/integrations/businessRead.ts:24",
         "frontend/src/lib/customMcp.test.ts:6",
         "frontend/src/lib/pluginInstalledPermissions.test.ts:6"
@@ -23527,7 +23532,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:634",
+        "backend/src/security/tenantIsolation.local.integration.ts:636",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -95403,6 +95408,13 @@
       "version": "20261018000800",
       "order": 104,
       "sha256": "b9f9aa83d3c617fd7ebbbd92589e97433c3a2e234762f5d07c2d3c176a0b59b2"
+    },
+    {
+      "id": "migration:49846617dfc3b5368661",
+      "sourcePath": "supabase/migrations/20261018000900_business_confirmation_finish.sql",
+      "version": "20261018000900",
+      "order": 105,
+      "sha256": "cb2ba5f8636d62028bae1875d50faa7c841c187c744a2b5d972842be5108618d"
     }
   ],
   "workflows": [
@@ -103481,6 +103493,13 @@
     {
       "id": "test-suite:0f3bb3ae8c8f587480b1",
       "sourcePath": "backend/src/security/businessConfirmationClaim.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c07592278230f501e87f",
+      "sourcePath": "backend/src/security/businessConfirmationFinish.local.integration.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

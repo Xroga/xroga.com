@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a7ceaa84c835a3ec55da4b77e0e4ba74585af9b1",
+  "source_sha": "4e7c5fe1fcaaf806cba6939018a51186facc6866",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -2919,9 +2919,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "18c8d8ccb536eb28fe1c341f05e327817f00c874315ec38470ab3f266c4236b6",
-      "byte_size": 3879679,
-      "modified_timestamp": "2026-10-18T10:00:57.765Z",
+      "sha256": "61aea642919874e2a52a59c4e4d92f7d71169ffb3baa4312e5933e137fd79812",
+      "byte_size": 3880196,
+      "modified_timestamp": "2026-10-18T10:12:19.797Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -7131,9 +7131,9 @@
       "source_id": "SRC-0315124fb31feefa",
       "filename": "businessActionConfirmations.ts",
       "path_or_url": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
-      "byte_size": 16122,
-      "modified_timestamp": "2026-10-18T08:59:21.062Z",
+      "sha256": "6a73ac47ec9ccc63f49dc3b3b291b2a9a3a3677294e39b4998720c529368da9c",
+      "byte_size": 16211,
+      "modified_timestamp": "2026-10-18T10:10:42.760Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

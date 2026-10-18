@@ -1,3 +1,5 @@
+import { isDeepStrictEqual } from 'node:util';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import {
   getSupabaseAdmin,
 } from '../../config/supabase.js';
@@ -522,6 +524,31 @@ export async function cancelBusinessActionConfirmation(
   );
 }
 
+async function finishClaimedConfirmation(
+  db: SupabaseClient, userId: string, id: string, expected: ConfirmationRow, status: 'consumed' | 'failed', failureCode?: unknown,
+): Promise<ConfirmationRow> {
+  const code = status === 'consumed' ? null
+    : typeof failureCode === 'string' && /^[A-Za-z0-9_.:-]{1,120}$/.test(failureCode) ? failureCode : 'execution_failed';
+  if (expected.id !== id || expected.user_id !== userId || expected.status !== 'executing'
+    || typeof expected.claimed_at !== 'string' || !Number.isFinite(Date.parse(expected.claimed_at))) {
+    throw new ComposioClientError('The claimed action record could not be verified.', {
+      status: 503, code: 'BUSINESS_ACTION_CONFIRMATION_FINALIZE_FAILED',
+    });
+  }
+  const { data, error } = await db.rpc('finish_business_action_confirmation', {
+    p_owner: userId, p_expected: expected, p_status: status, p_failure_code: code,
+  }).maybeSingle<ConfirmationRow>();
+  if (error || !data || data.id !== id || data.user_id !== userId || data.status !== status || data.failure_code !== code
+    || typeof data.completed_at !== 'string' || !Number.isFinite(Date.parse(data.completed_at))
+    || !['plan','plan_digest','summary','toolkit','risk','created_at','expires_at','claimed_at']
+      .every(key => isDeepStrictEqual(data[key as keyof ConfirmationRow], expected[key as keyof ConfirmationRow]))) {
+    throw new ComposioClientError('Xroga could not finalize the claimed action record. Its execution outcome may require recovery.', {
+      status: 503, code: 'BUSINESS_ACTION_CONFIRMATION_FINALIZE_FAILED',
+    });
+  }
+  return data as ConfirmationRow;
+}
+
 export async function confirmBusinessAction(
   userId: string,
   confirmationId: string,
@@ -697,36 +724,15 @@ export async function confirmBusinessAction(
     claimedRow.summary !== claimedRow.plan.summary ||
     claimedRow.toolkit !== claimedRow.plan.toolkit ||
     claimedRow.risk !== claimedRow.plan.risk ||
+    !isDeepStrictEqual(claimedRow.plan, row.plan) ||
+    claimedRow.created_at !== row.created_at ||
+    claimedRow.expires_at !== row.expires_at ||
+    typeof claimedRow.claimed_at !== 'string' ||
+    !Number.isFinite(Date.parse(claimedRow.claimed_at)) ||
     claimedRow.user_id !== userId ||
     claimedRow.id !== id ||
     claimedRow.status !== 'executing'
   ) {
-    await db
-      .from(
-        'business_action_confirmations',
-      )
-      .update(
-        {
-          status:
-            'failed',
-
-          completed_at:
-            new Date()
-              .toISOString(),
-
-          failure_code:
-            'invalid_plan',
-        },
-      )
-      .eq(
-        'id',
-        id,
-      )
-      .eq(
-        'user_id',
-        userId,
-      );
-
     throw new ComposioClientError(
       'Stored business-action confirmation is invalid.',
       {
@@ -770,60 +776,7 @@ export async function confirmBusinessAction(
       );
     }
 
-    const completedAt =
-      new Date()
-        .toISOString();
-
-    const {
-      data: completed,
-      error: completeError,
-    } =
-      await db
-        .from(
-          'business_action_confirmations',
-        )
-        .update(
-          {
-            status:
-              'consumed',
-
-            completed_at:
-              completedAt,
-
-            failure_code:
-              null,
-          },
-        )
-        .eq(
-          'id',
-          id,
-        )
-        .eq(
-          'user_id',
-          userId,
-        )
-        .eq(
-          'status',
-          'executing',
-        )
-        .select(
-          'id,user_id,status,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code',
-        )
-        .single();
-
-    if (
-      completeError ||
-      !completed
-    ) {
-      throw new ComposioClientError(
-        'The external action completed, but Xroga could not finalize its confirmation record.',
-        {
-          status: 503,
-          code:
-            'BUSINESS_ACTION_CONFIRMATION_FINALIZE_FAILED',
-        },
-      );
-    }
+    const completed = await finishClaimedConfirmation(db, userId, id, claimedRow, 'consumed');
 
     return {
       confirmation:
@@ -850,40 +803,7 @@ export async function confirmBusinessAction(
           'BUSINESS_ACTION_CONFIRMATION_FINALIZE_FAILED'
       )
     ) {
-      await db
-        .from(
-          'business_action_confirmations',
-        )
-        .update(
-          {
-            status:
-              'failed',
-
-            completed_at:
-              new Date()
-                .toISOString(),
-
-            failure_code:
-              (
-                error as {
-                  code?: string;
-                }
-              )?.code ??
-              'execution_failed',
-          },
-        )
-        .eq(
-          'id',
-          id,
-        )
-        .eq(
-          'user_id',
-          userId,
-        )
-        .eq(
-          'status',
-          'executing',
-        );
+      await finishClaimedConfirmation(db, userId, id, claimedRow, 'failed', (error as { code?: unknown })?.code);
     }
 
     throw error;
