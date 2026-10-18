@@ -2,7 +2,8 @@
 
 /**
  * S04 · Publish & distribute (V10, Release Studio).
- * An editorial head in the same order as S03 (eyebrow, two-line headline, lede and one action), then one Release Studio:
+ * An editorial head (eyebrow, a one-line headline, a short outcome line; no section action: each store's handoff carries
+ * its own review action), then one Release Studio:
  * a window whose title bar holds the three destinations, a stage composed for the selected store, and a readiness rail
  * that names what that store's release needs and who owns each part.
  * Stages: App Store (three vertical objects), Google Play (gameplay → key art, then the listing), Chrome Web Store
@@ -10,7 +11,6 @@
  * A header shield (the same device S03 uses) keeps content from showing under the fixed site header.
  */
 import Image from 'next/image';
-import Link from 'next/link';
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { COPY, DESTS, READINESS, STORY, itemState } from './publish';
 import { StoreMark } from './StoreMark';
@@ -49,24 +49,40 @@ export function S04Publish({ loggedIn = false }: { loggedIn?: boolean }) {
     return () => io.disconnect();
   }, []);
 
+  // the head's entrance, once: armed only when the section is still below the fold at load (so nothing visible ever
+  // disappears), played when it arrives. Without script, under reduced motion, or arriving mid-page: the finished head.
+  const [intro, setIntro] = useState<'armed' | 'play' | undefined>();
+  useEffect(() => {
+    const el = root.current;
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.85) return;
+    setIntro('armed');
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        setIntro('play');
+        io.disconnect();
+      },
+      { rootMargin: '0px 0px -15% 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   const stage = { beat, phase, playing, acted, act: sc.act, href };
   return (
-    <section ref={root} id="s04" aria-labelledby="s04-title" className={s.section} data-under={under || undefined}>
+    <section ref={root} id="s04" aria-labelledby="s04-title" className={s.section} data-under={under || undefined} data-intro={intro}>
       <div className={s.shield} aria-hidden="true" />
       <div className={s.inner}>
         {/* ---------------------------------------------------------------- the editorial head */}
         <header className={s.head}>
           <p className={s.eyebrow}>{COPY.eyebrow}</p>
           <h2 id="s04-title" className={s.title}>
-            <span>{COPY.titleA}</span> <span className={s.titleB}>{COPY.titleB}</span>
+            <span className={s.titleA}>{COPY.titleA}</span> <span className={s.titleB}>{COPY.titleB}</span>
           </h2>
-          <div className={s.side}>
-            <p className={s.lede}>{COPY.lede}</p>
-            <Link href={href} className={s.cta}>
-              {COPY.cta}
-              <span aria-hidden="true">→</span>
-            </Link>
-          </div>
+          <p className={s.lede}>
+            {COPY.lede} <span className={s.ledeNote}>{COPY.ledeNote}</span>
+          </p>
         </header>
 
         {/* ---------------------------------------------------------------- the Release Studio */}

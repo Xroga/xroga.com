@@ -11,9 +11,9 @@
  * - compose: the App Store page assembles with those screenshots; ready: the owner's steps.
  */
 import { useRef } from 'react';
-import { Arcset, ArcsetIcon, type ArcsetScreen } from '../apps/Arcset';
+import { Arcset, ArcsetIcon, StatusBar, type ArcsetScreen } from '../apps/Arcset';
 import { NATURAL, beatIndex, phaseReached, type Phase } from '../publish';
-import { Device, Fill, Inspector, Render, Scanline, clamp, useViewportHeight } from './kit';
+import { Device, Fill, Inspector, Render, Scanline, clamp, useViewport } from './kit';
 import { Xcard } from './Xcard';
 import s from './Stages.module.css';
 
@@ -26,8 +26,11 @@ const FULL = { x: 0, y: 0, w: 280, h: 600 };
 
 export function StageIOS({ beat, phase, playing, acted, act, href }: { beat: string; phase: Phase; playing: boolean; acted: boolean; act: () => void; href: string }) {
   const box = useRef<HTMLDivElement>(null);
-  const vh = useViewportHeight();
-  const phoneH = clamp(330, vh - 440, 452);
+  const { w: vw, h: vh } = useViewport();
+  // both iPhones lead the scene: as tall as the screen allows with the whole scene still in one view (desktop), at
+  // their full size when the stage stacks (tablet and phone). Each phone column is exactly the phone's width.
+  const phoneH = vw <= 1080 ? 600 : vh <= 860 ? clamp(380, vh - 282, 560) : clamp(420, vh - 336, 640);
+  const phoneW = Math.round((phoneH * 297.6) / 617.6) + 8;
   const at = (id: string) => beatIndex('ios', beat) >= beatIndex('ios', id);
   const now = beatIndex('ios', beat);
   // the live app visits each screen while it is captured, then returns to the workout
@@ -40,7 +43,7 @@ export function StageIOS({ beat, phase, playing, acted, act, href }: { beat: str
   };
   const composed = phaseReached(phase, 'compose');
   return (
-    <div className={s.ios} data-ready={phase === 'ready' || undefined}>
+    <div className={s.ios} data-ready={phase === 'ready' || undefined} style={{ ['--phone-w' as string]: `${phoneW}px` }}>
       <div className={s.iosLive}>
         <span className={s.objLabel}>Your iPhone app · Arcset</span>
         <Device
@@ -84,7 +87,7 @@ export function StageIOS({ beat, phase, playing, acted, act, href }: { beat: str
 
       <div className={s.iosStore}>
         <span className={s.objLabel}>App Store page · preview</span>
-        <Device natural={NATURAL.ios} maxH={phoneH - 14} kind="phone">
+        <Device natural={NATURAL.ios} maxH={phoneH} kind="phone">
           <AppStorePage composed={composed} shots={SHOTS.map((_, i) => shotState(i) !== 'empty')} ready={phase === 'ready'} />
         </Device>
       </div>
@@ -92,14 +95,24 @@ export function StageIOS({ beat, phase, playing, acted, act, href }: { beat: str
   );
 }
 
+const glyph = (d: string) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+    <path d={d} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+/** the product page's information strip (no ratings: the app has none) */
+const FACTS = [
+  { k: 'Age', v: <b>4+</b>, sub: 'Years Old' },
+  { k: 'Category', v: glyph('M3 9.5v5 M6 7.5v9 M18 7.5v9 M21 9.5v5 M6 12h12'), sub: 'Health & Fitness' },
+  { k: 'Developer', v: glyph('M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5'), sub: 'Arcset' },
+  { k: 'Size', v: <b>38</b>, sub: 'MB' },
+];
+
 /** the App Store product page as it will read on iPhone, assembled around the art-directed screenshots */
 function AppStorePage({ composed, shots, ready }: { composed: boolean; shots: boolean[]; ready: boolean }) {
   return (
     <div className={s.asp} data-composed={composed || undefined}>
-      <div className={s.aspStatus} aria-hidden="true">
-        <span>9:41</span>
-        <i />
-      </div>
+      <StatusBar className={s.aspStatus} />
       <span className={s.aspBack} aria-hidden="true">
         ‹ Search
       </span>
@@ -116,15 +129,13 @@ function AppStorePage({ composed, shots, ready }: { composed: boolean; shots: bo
         </span>
       </header>
       <dl className={s.aspFacts}>
-        {[
-          ['Age', '4+'],
-          ['Category', 'Fitness'],
-          ['Developer', 'Arcset'],
-          ['Size', '38 MB'],
-        ].map(([k, v], i) => (
-          <div key={k} style={{ ['--i' as string]: i }}>
-            <dt>{k}</dt>
-            <dd>{v}</dd>
+        {FACTS.map((x, i) => (
+          <div key={x.k} style={{ ['--i' as string]: i }}>
+            <dt>{x.k}</dt>
+            <dd>
+              {x.v}
+              <small>{x.sub}</small>
+            </dd>
           </div>
         ))}
       </dl>
@@ -151,6 +162,7 @@ function AppStorePage({ composed, shots, ready }: { composed: boolean; shots: bo
         <b>App Privacy</b>
         <small>{ready ? 'Shown once you confirm it' : 'Not provided yet'}</small>
       </div>
+      <i className={s.aspHome} aria-hidden="true" />
     </div>
   );
 }

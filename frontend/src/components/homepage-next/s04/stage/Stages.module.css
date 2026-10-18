@@ -135,9 +135,11 @@
 }
 
 /* ================================================================== App Store */
+/* the two iPhones lead: each phone column is the phone's own width (--phone-w, sized from the screen in StageIOS),
+   Xroga's work takes what remains between them */
 .ios {
   display: grid;
-  grid-template-columns: minmax(0, 300px) minmax(0, 1fr) minmax(0, 290px);
+  grid-template-columns: minmax(0, var(--phone-w, 280px)) minmax(0, 1fr) minmax(0, var(--phone-w, 280px));
   align-items: start;
   column-gap: 36px;
 }
@@ -189,9 +191,10 @@
     inset 0 0 0 1px rgba(255, 255, 255, 0.08),
     0 20px 34px -24px rgba(0, 0, 0, 0.9);
 }
+/* the cards compact in the same frame the handoff replaces the Xroga card; easing their height left the studio taller
+   than its settled size for a moment, past the fold on short screens */
 .ios[data-ready] .shot {
   height: 212px;
-  transition: height 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .ios[data-ready] .shot figcaption {
   min-height: 34px;
@@ -228,8 +231,8 @@
   aspect-ratio: 280 / 600;
   border-radius: 20px 20px 0 0;
   overflow: hidden;
-  /* the screen's size never depends on the card's height: when the cards settle (height transition at the handoff),
-     the rendered screen is neither laid out nor repainted again, only clipped (measured: per-frame paint + raster) */
+  /* the screen's size never depends on the card's height: when the cards compact at the handoff, the rendered screen
+     is neither laid out nor repainted again, only clipped (measured: paint + raster) */
   contain: layout paint;
   will-change: transform;
   background: rgba(255, 255, 255, 0.04);
@@ -265,9 +268,10 @@
 
 /* the App Store page as it reads on iPhone (light, assembled around the screenshots) */
 .asp {
+  position: relative;
   display: grid;
   align-content: start;
-  gap: 12px;
+  gap: 10px;
   width: 280px;
   height: 600px;
   padding: 0 16px;
@@ -280,19 +284,20 @@
 .asp :is(b, small, span, em, i, dt, dd) {
   font-style: normal;
 }
+/* the same iPhone status bar as the app (Arcset.tsx), across the full display width */
 .aspStatus {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 40px;
-  padding: 0 6px 0 12px;
-  font-size: 13px;
-  font-weight: 650;
+  height: 44px;
+  margin: 0 -16px;
+  color: #000;
 }
-.aspStatus i {
-  width: 22px;
-  height: 10px;
-  border-radius: 3px;
+.aspHome {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: 94px;
+  height: 4px;
+  margin-left: -47px;
+  border-radius: 2px;
   background: #000;
 }
 .aspBack {
@@ -321,13 +326,13 @@
   min-width: 0;
 }
 .aspTitle b {
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 .aspTitle small {
   display: -webkit-box;
-  font-size: 13px;
+  font-size: 12.5px;
   line-height: 1.25;
   color: #6b6b70;
   -webkit-line-clamp: 2;
@@ -336,8 +341,8 @@
 }
 .aspGet {
   justify-self: start;
-  margin-top: 6px;
-  padding: 5px 14px;
+  margin-top: 4px;
+  padding: 4px 14px;
   border-radius: 999px;
   background: #eef0f3;
   color: #0a7cff;
@@ -358,19 +363,27 @@
   background: #ececf0;
   border-radius: 5px;
 }
+/* the App Store's information strip: label, value, caption; it scrolls sideways, so the last fact runs off the edge */
 .aspFacts {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin: 0;
-  padding: 10px 0;
-  border-top: 1px solid #ececf0;
-  border-bottom: 1px solid #ececf0;
+  grid-auto-flow: column;
+  grid-auto-columns: 84px;
+  padding: 7px 0;
+  overflow: hidden;
+  border-top: 1px solid #e5e5ea;
+  border-bottom: 1px solid #e5e5ea;
+}
+/* (the section resets list margins with higher specificity) */
+.asp .aspFacts {
+  margin: 0 -16px 0 0;
 }
 .aspFacts div {
   display: grid;
+  grid-template-rows: auto 22px auto;
+  align-items: center;
   justify-items: center;
-  gap: 2px;
-  border-left: 1px solid #ececf0;
+  gap: 1px;
+  border-left: 1px solid #e5e5ea;
 }
 .aspFacts div:first-child {
   border-left: 0;
@@ -383,24 +396,42 @@
   color: #8e8e93;
 }
 .aspFacts dd {
-  margin: 0;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #4a4a4f;
+  display: contents;
 }
+.aspFacts dd b {
+  font-size: 16px;
+  font-weight: 700;
+  color: #6c6c70;
+}
+.aspFacts dd svg {
+  display: block;
+  color: #6c6c70;
+}
+.aspFacts dd small {
+  max-width: 80px;
+  overflow: hidden;
+  font-size: 10px;
+  color: #8e8e93;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* screenshots read as on the product page: about two and a half across, the third peeking at the edge */
 .aspShots {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 7px;
+  grid-auto-flow: column;
+  grid-auto-columns: 100px;
+  gap: 8px;
+  margin-right: -16px;
+  overflow: hidden;
 }
 .aspShot {
   display: grid;
   justify-items: center;
   align-content: start;
   gap: 6px;
-  height: 172px;
-  padding: 8px 5px 0;
-  border-radius: 12px;
+  height: 166px;
+  padding: 9px 6px 0;
+  border-radius: 14px;
   overflow: hidden;
   background: #ececf0;
   transition:
@@ -408,7 +439,7 @@
     transform 460ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * 90ms);
 }
 .aspShot b {
-  font-size: 8.5px;
+  font-size: 10.5px;
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
@@ -417,7 +448,7 @@
 }
 .aspShotScreen {
   display: block;
-  width: 58px;
+  width: 70px;
   border-radius: 9px 9px 0 0;
   overflow: hidden;
   opacity: 0;
@@ -982,9 +1013,11 @@
 }
 
 /* ================================================================== Google Play */
+/* the phone column is at least the original 300 px and grows to the phone (--phone-w, StageAndroid), so the listing
+   keeps its width where the phone is smaller */
 .android {
   display: grid;
-  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, max(300px, var(--phone-w, 300px))) minmax(0, 1fr);
   align-items: start;
   column-gap: 36px;
 }
@@ -1314,9 +1347,25 @@
 .chrome[data-layout='c'] {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
+/* short screens, at the handoff: the phone steps back to the listing's height (--back, StageAndroid) and gives the
+   height it no longer uses to the handoff, which rises in once the phone has settled */
+.anDev {
+  /* full column width: the device measures this box to size itself */
+  justify-self: stretch;
+  width: 100%;
+  min-width: 0;
+  transform-origin: 50% 0;
+  transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+}
 .android[data-wide] .anPhone {
-  /* the finished phone is scaled back (0.94); give its unused layout height to the handoff below */
-  margin-bottom: -22px;
+  transform: none;
+}
+.android[data-wide] .anDev {
+  transform: scale(var(--back, 1));
+  margin-bottom: calc((var(--back, 1) - 1) * var(--phone-h, 0px));
+}
+.android[data-wide] .anHandoff .handoff {
+  animation-delay: 380ms;
 }
 .anHandoff {
   grid-column: 1 / -1;
@@ -1685,7 +1734,6 @@
 /* ================================================================== laptop and tablet */
 @media (max-width: 1240px) {
   .ios {
-    grid-template-columns: minmax(0, 260px) minmax(0, 1fr) minmax(0, 250px);
     column-gap: 26px;
   }
   .shot {
@@ -1702,11 +1750,14 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+/* tablet: the two iPhones side by side at full size (the app, then its App Store page), Xroga's work under them */
 @media (max-width: 1080px) {
   .ios {
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-    grid-template-areas: 'live studio';
-    row-gap: 24px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      'live store'
+      'studio studio';
+    row-gap: 28px;
   }
   .iosLive {
     grid-area: live;
@@ -1715,7 +1766,7 @@
     grid-area: studio;
   }
   .iosStore {
-    display: none;
+    grid-area: store;
   }
   .chrome,
   .chrome[data-layout='c'] {
@@ -1732,11 +1783,9 @@
     grid-template-areas: none;
     row-gap: 18px;
   }
-  .iosStore {
-    display: grid;
-  }
   .iosLive,
-  .iosStudio {
+  .iosStudio,
+  .iosStore {
     grid-area: auto;
   }
   .android[data-layout='c'] .anPhone {
@@ -1819,6 +1868,7 @@
   .anPanel,
   .chPanel,
   .anPhone,
+  .anDev,
   .chrome,
   .access,
   .accessRows li,

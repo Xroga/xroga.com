@@ -65,9 +65,11 @@ test('the three stages are different compositions with their own products', () =
   }
 });
 
-test('copy follows the brief: headline, one action, no em or en dashes', () => {
-  assert.equal(`${COPY.titleA} ${COPY.titleB}`, 'Build anywhere. Publish with Xroga.');
-  assert.equal(COPY.cta, 'Prepare a release');
+test('copy follows the brief: headline, short outcome line, no section action, no em or en dashes', () => {
+  assert.equal(`${COPY.titleA} ${COPY.titleB}`, 'Build anywhere. Launch with Xroga.');
+  assert.equal(COPY.lede, 'From working software to the App Store, Google Play, and Chrome Web Store.');
+  assert.ok(!('cta' in COPY), 'the head has no section-level action; each store handoff keeps its own review action');
+  assert.doesNotMatch(src('S04Publish.tsx'), /<Link\b|className=\{s\.cta\}/);
   assert.deepEqual(DESTS.map((d) => STORY[d].storeName), ['App Store', 'Google Play', 'Chrome Web Store']);
   assert.deepEqual(DESTS.map((d) => STORY[d].product), ['Arcset', 'Fernway', 'MerchantLens']);
   assert.doesNotMatch(strings, /[–—]/);
@@ -143,6 +145,56 @@ test('frame cost: the render pass and stage changes never animate layout or repa
   // animated track widths made every scaled product copy re-measure, re-render and re-raster (measured ~1 s GPU raster)
   assert.doesNotMatch(stages, /transition:\s*grid-template-columns/);
   assert.match(stages, /\.shotDevice \{[^}]*contain: layout paint;/);
+});
+
+test('the App Store handoff never makes the studio taller than its settled size', () => {
+  const stages = src('stage/Stages.module.css');
+  // easing the cards' height while the handoff appeared at full size pushed the rail past the fold at 1280 × 800
+  assert.doesNotMatch(stages, /transition:\s*height/);
+  for (const rule of stages.match(/\.ios\[data-ready\] \.shot \{[^}]*\}/g) ?? []) assert.doesNotMatch(rule, /transition/);
+});
+
+test('App Store: two authentic iPhones lead the scene at a size set by the screen, both kept on every layout', () => {
+  const ios = src('stage/StageIOS.tsx');
+  const kitCss = src('stage/kit.module.css');
+  const stages = src('stage/Stages.module.css');
+  // both phones share one size and one iOS status bar (Dynamic Island, cellular, Wi-Fi, battery)
+  assert.equal((ios.match(/maxH=\{phoneH\}/g) ?? []).length, 2);
+  assert.match(ios, /<StatusBar className=\{s\.aspStatus\} \/>/);
+  assert.match(src('apps/Arcset.tsx'), /export function StatusBar/);
+  // the frame keeps the phone's proportions: border, band, corners and buttons scale with the device (--s)
+  for (const m of ['border-radius: calc(40px * var(--s, 1))', 'inset: calc(-8.8px * var(--s, 1))', 'border: calc(2.6px * var(--s, 1)) solid transparent']) assert.ok(kitCss.includes(m), m);
+  assert.match(src('stage/kit.tsx'), /const IPHONE_EDGE = 8\.8;/);
+  // the phone columns are the phones' own width; the App Store page is never hidden (tablet shows both phones)
+  assert.match(stages, /grid-template-columns: minmax\(0, var\(--phone-w, 280px\)\) minmax\(0, 1fr\) minmax\(0, var\(--phone-w, 280px\)\)/);
+  assert.doesNotMatch(stages, /\.iosStore \{\s*display: none/);
+  // the product page states no ratings, reviews or downloads
+  assert.match(ios, /\{ k: 'Age'/);
+  assert.doesNotMatch(ios, /\{ k: '(Ratings?|Reviews?|Downloads?|Chart)'/i);
+});
+
+test('Google Play: the Android phone leads at the App Store phone scale, in a proportional Pixel-class frame', () => {
+  const an = src('stage/StageAndroid.tsx');
+  const kitCss = src('stage/kit.module.css');
+  const stages = src('stage/Stages.module.css');
+  assert.match(an, /maxH=\{phoneH\}/);
+  assert.match(an, /clamp\(420, vh - 336, 640\)/, 'same desktop sizing rule as the App Store phones');
+  assert.match(src('stage/kit.tsx'), /const ANDROID_EDGE = 9;/);
+  for (const m of ['border-radius: calc(28px * var(--s, 1))', 'inset: calc(-9px * var(--s, 1))', 'border: calc(2.4px * var(--s, 1)) solid transparent']) assert.ok(kitCss.includes(m), m);
+  // the listing keeps at least its original width; on short screens the phone steps back at the handoff to fit one view
+  assert.match(stages, /minmax\(0, max\(300px, var\(--phone-w, 300px\)\)\) minmax\(0, 1fr\)/);
+  assert.match(stages, /\.android\[data-wide\] \.anDev \{[^}]*scale\(var\(--back, 1\)\)/);
+});
+
+test('head: one entrance, only when S04 arrives from below, never under reduced motion; a tall studio still starts', () => {
+  const shell = src('S04Publish.tsx');
+  assert.match(shell, /matchMedia\('\(prefers-reduced-motion: reduce\)'\)\.matches\) return;/);
+  assert.match(shell, /getBoundingClientRect\(\)\.top < window\.innerHeight \* 0\.85\) return;/);
+  const css = src('S04.module.css');
+  for (const k of ['s04Rise', 's04Light', 's04Studio']) assert.match(css, new RegExp(`@keyframes ${k} \{`));
+  assert.match(css, /\.title\.title \{[^}]*white-space: nowrap;/);
+  // on phones the studio is taller than the screen: filling half the screen counts as seen
+  assert.match(src('useScene.ts'), /e\.intersectionRect\.height >= screenH \* 0\.5/);
 });
 
 test('store marks stay out until brand approval is recorded; no generic icon stands in for them', () => {

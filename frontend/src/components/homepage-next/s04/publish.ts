@@ -130,9 +130,9 @@ export function itemState(d: Dest, item: Item, beatId: string): ItemState {
 export const COPY = {
   eyebrow: 'Publish & distribute',
   titleA: 'Build anywhere.',
-  titleB: 'Publish with Xroga.',
-  lede: 'Bring your app, game or Chrome extension, built in Xroga or brought from an existing project. Xroga helps prepare it for the App Store, Google Play or Chrome Web Store. You approve what ships.',
-  cta: 'Prepare a release',
+  titleB: 'Launch with Xroga.',
+  lede: 'From working software to the App Store, Google Play, and Chrome Web Store.',
+  ledeNote: 'Xroga prepares the testing, store materials and handoff. You approve what ships.',
   studio: 'Release Studio',
   preview: 'Illustrative preview',
   replay: 'Replay',

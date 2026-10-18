@@ -32,9 +32,10 @@ export function ArcsetIcon({ size = 40 }: { size?: number }) {
   );
 }
 
-function StatusBar() {
+/** the iOS status bar for a Dynamic Island iPhone (time, island, cellular, Wi-Fi, battery); colour from the parent */
+export function StatusBar({ className }: { className?: string }) {
   return (
-    <div className={a.status} aria-hidden="true">
+    <div className={`${a.status} ${className ?? ''}`} aria-hidden="true">
       <span>9:41</span>
       <i className={a.island} />
       <span className={a.sysIcons}>
@@ -43,6 +44,11 @@ function StatusBar() {
           <rect x="4.3" y="4" width="3" height="6" rx="0.8" fill="currentColor" />
           <rect x="8.6" y="2" width="3" height="8" rx="0.8" fill="currentColor" />
           <rect x="12.9" y="0" width="3" height="10" rx="0.8" fill="currentColor" />
+        </svg>
+        <svg width="14" height="10" viewBox="0 0 14 10">
+          <path d="M7 9.6 4.9 7.5a3 3 0 0 1 4.2 0z" fill="currentColor" />
+          <path d="M2.8 5.4a6 6 0 0 1 8.4 0l-1.1 1.1a4.4 4.4 0 0 0-6.2 0z" fill="currentColor" />
+          <path d="M.6 3.2a9.1 9.1 0 0 1 12.8 0l-1.1 1.1a7.5 7.5 0 0 0-10.6 0z" fill="currentColor" />
         </svg>
         <svg width="20" height="10" viewBox="0 0 22 11">
           <rect x="0.5" y="0.5" width="18" height="10" rx="3" fill="none" stroke="currentColor" strokeOpacity="0.5" />
