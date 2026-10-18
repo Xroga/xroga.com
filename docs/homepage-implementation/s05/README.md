@@ -115,3 +115,24 @@ used only on the homepage; nothing in the site links to the `#product`, `#showca
 the homepage structured data is a plain WebPage with no FAQ schema. Removing them is a separate, reversible change to
 `HomepageClient.tsx` (the component files can stay); the FAQ and pricing preview carry content worth relocating
 rather than losing.
+
+## Final precision pass (after founder review against the Aiven recording of 2026-10-19)
+
+Restraint over more motion:
+- **Ground:** near-black (#05070b) with one faint cool light at the top; the violet floor light, cyan reflection and
+  coloured tile glows are gone. Tiles are flat graphite (#0b0e14) with a hairline edge, lifting to plain charcoal
+  (#161a21) on hover, radius 14.
+- **Type:** headline in pearl white with one solid accent on "go further." (no gradient); weight 620; tile titles 20 px.
+- **Motion:** no easing overshoots anywhere (tested); the trigger heartbeat, flag wave, ripple and dock hops are
+  removed; connector lines at rest are thin solid lines instead of dotted.
+- **Travel & Bookings:** one idea: an airliner silhouette waits just past the origin, flies the arc on an offset path
+  (950 ms, turning with the curve) while the route draws behind it, and stops short of the destination, which lights;
+  on leave it fades back in at the origin rather than flying backwards.
+- **Email & Calendars:** envelope (34 to 130) and calendar (156 to 290) keep separate regions with a 26-unit gap; the
+  flap opens, a compact event chip leaves the envelope and lands in one calendar slot, which highlights.
+- **Workflow Templates:** at rest three slots wait empty; the missing modules slide a short way in one after another
+  (no crossing paths). Payments: calmer card angle. CRM, Coding, APIs, Web3, Hackathons, Desktop, Infrastructure and
+  Operations keep their concepts.
+- **Arrival at /#s05** (direct link, reload, back/forward): the sections above grow as they load and used to carry S05
+  about 4,600 px away; S05 now keeps itself aligned under the navigation while the page settles and stops the moment
+  the visitor scrolls or presses a key.

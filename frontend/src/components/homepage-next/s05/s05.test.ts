@@ -48,7 +48,7 @@ test('art: thirteen original compositions on one canvas, each with its own chore
     assert.doesNotMatch(ART[c.id], /<script|on[a-z]+=|href=/i, `${c.id} art is inert markup`);
   }
   // a distinct movement per tile, keyed to what it does
-  const moves = ['s5Plane', '.s5-letterIn', '.s5-deal', '.s5-lrow', '.s5-mod', 's5Sig', '.s5-add', 's5Packet', '.s5-drop', '.s5-prog', '.s5-w3', 's5Pulse', 's5Tele'];
+  const moves = ['s5Fly', '.s5-evChip', '.s5-deal', '.s5-lrow', '.s5-mod', 's5Sig', '.s5-add', 's5Packet', '.s5-drop', '.s5-prog', '.s5-w3', 's5Pulse', 's5Tele'];
   for (const m of moves) assert.ok(css.includes(m), `motion ${m}`);
   // the coding tile is a working-looking IDE: tree, code, inline diff, branch and checks
   for (const part of ['s5-tree', 's5-kw', 's5-del', 's5-add', 's5-gitB', 's5-checkTick']) assert.ok(ART.coding.includes(part), `coding ${part}`);
@@ -63,6 +63,28 @@ test('art: thirteen original compositions on one canvas, each with its own chore
     if (/^(from|to|\d+%)/.test(sel.trim())) continue;
     assert.match(sel, /\.s5|\[data-on\]/, `scoped: ${sel.trim()}`);
   }
+});
+
+test('restraint: near-black ground, pearl headline, flat tiles, no overshoot, a real airliner, a clean email composition', () => {
+  // no easing curve overshoots (control-point y values stay within 0..1)
+  for (const m of css.matchAll(/cubic-bezier\(([^)]+)\)/g)) {
+    const [, y1, , y2] = m[1].split(',').map(Number);
+    assert.ok(y1 <= 1 && y2 <= 1 && y1 >= 0 && y2 >= 0, `no overshoot: ${m[0]}`);
+  }
+  // the headline accent is one solid colour; tiles carry no coloured glow
+  assert.match(css, /\.s5-title \.s5-accent \{\s*color: #[0-9a-f]{6};\s*\}/);
+  assert.doesNotMatch(css, /\.s5-tile::before/);
+  assert.match(css, /\.s5-tile \{[^}]*background: #0b0e14;/);
+  // the background is near-black with at most one faint light
+  assert.equal((css.match(/\.s5\.s5\.s5 \{[\s\S]*?\n\}/)?.[0].match(/radial-gradient/g) ?? []).length, 1);
+  // Travel: an airliner silhouette rides the flight path and turns with it
+  assert.match(ART.travel, /class="s5-planeG" style="offset-path: path\('M48 112C100 34 196 22 254 50'\)"/);
+  assert.match(css, /offset-rotate: auto;/);
+  // Email: the envelope and the calendar keep their own, non-overlapping regions
+  const box = (svg: string, cls: string) => svg.match(new RegExp(`class="${cls}" x="([0-9]+)" y="([0-9]+)" width="([0-9]+)"`))!.slice(1).map(Number);
+  const [ex, , ew] = box(ART.mail, 's5-c1');
+  const [cx] = box(ART.mail, 's5-p1');
+  assert.ok(ex + ew + 16 <= cx, 'at least 16 units between envelope and calendar');
 });
 
 test('rails: native scrolling with snap, labelled arrows, keyboard, no auto drift, hover without re-render', () => {
