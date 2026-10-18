@@ -297,6 +297,16 @@ export class OperationsService {
     // These existing controls deliberately address every rule in the authorized project.
     if (action.target_type === 'automation' && action.target_id === action.project_id
       && ['emergency_stop','resume_automation'].includes(action.action_type)) return Number(action.target_version);
+    if (action.target_type === 'release') {
+      const release = await queryOrThrow<DbRow | null>(this.db.from('production_releases').select('id,user_id,project_id')
+        .eq('id', action.target_id).eq('project_id', action.project_id).eq('user_id', action.user_id).maybeSingle(), 'Release unavailable', null);
+      if (!release || release.id !== action.target_id || release.user_id !== action.user_id || release.project_id !== action.project_id) {
+        throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
+      }
+      // Preserve the existing release-version contract. Mutable release state
+      // and provider promotion still require their own authority/approval gate.
+      return 1;
+    }
     const lookups: Record<string, { table: string; idColumn: string; versionColumn: string }> = {
       service: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' }, health_check: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' },
       workflow_check: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' }, domain: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' },
@@ -305,9 +315,10 @@ export class OperationsService {
       environment: { table: 'operations_environments', idColumn: 'id', versionColumn: 'version' }, maintenance: { table: 'operations_maintenance_windows', idColumn: 'id', versionColumn: 'version' },
       migration: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' }, backup: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' }, queue: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' },
       growth_campaign: { table: 'growth_campaigns', idColumn: 'id', versionColumn: 'version' },
+      deployment: { table: 'deployment_status', idColumn: 'id', versionColumn: 'version' },
     };
     const lookup = lookups[action.target_type];
-    if (!lookup) return action.target_type === 'release' ? 1 : null;
+    if (!lookup) return null;
     const row = await queryOrThrow<DbRow | null>(this.db.from(lookup.table).select(lookup.versionColumn).eq(lookup.idColumn, action.target_id).eq('project_id', action.project_id).eq(action.target_type === 'growth_campaign' ? 'tenant_id' : 'user_id', action.user_id).maybeSingle(), 'Target state unavailable', null);
     if (!row) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
     return Number(row[lookup.versionColumn]);

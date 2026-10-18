@@ -7,6 +7,32 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { OperationsService } from './operationsService.js';
 
 export function registerActionIntentTests(admin: SupabaseClient, getUsers: () => readonly { id: string; project: string }[]): void {
+  test('real release and deployment actions require the owned project target before creating drafts', async t => {
+    assert.equal(process.env.CI, 'true'); assert.equal(process.env.XB01_DISPOSABLE_SUPABASE, '1');
+    assert.equal(process.env.SUPABASE_URL, 'http://127.0.0.1:54321');
+    const [owner, other] = getUsers(), service = new OperationsService(admin);
+    const releases = [randomUUID(),randomUUID()], deployments = [randomUUID(),randomUUID()], keys: string[] = [];
+    t.after(async () => {
+      if (keys.length) assert.equal((await admin.from('operations_actions').delete().eq('user_id', owner.id).in('idempotency_key', keys)).error, null);
+      assert.equal((await admin.from('production_releases').delete().in('id', releases)).error, null);
+      assert.equal((await admin.from('deployment_status').delete().in('id', deployments)).error, null);
+    });
+    for (const [index,user] of [owner,other].entries()) {
+      assert.equal((await admin.from('production_releases').insert({ id: releases[index], user_id: user.id, project_id: user.project,
+        commit_sha: '0'.repeat(40), artifact_digest: randomUUID(), environment: 'preview', manifest: {}, state: 'created', created_by: user.id })).error, null);
+      assert.equal((await admin.from('deployment_status').insert({ id: deployments[index], user_id: user.id, project_id: user.project,
+        target: 'github', status: 'pending' })).error, null);
+    }
+    for (const [targetType,actionType,targets] of [['release','promote_release',releases],['deployment','prepare_repair',deployments]] as const) {
+      const key = randomUUID(); keys.push(key);
+      const input = { projectId: owner.project, targetType, actionType, targetId: targets[1], targetVersion: 1, idempotencyKey: key, confirmed: false };
+      await assert.rejects(service.createAction(owner.id, input), { code: 'forbidden', statusCode: 403 });
+      const draft = await service.createAction(owner.id, { ...input, targetId: targets[0] });
+      assert.equal(draft.status, 'confirmation_required'); assert.equal(draft.target_id, targets[0]);
+      const runs = await admin.from('operations_action_runs').select('id').eq('action_id', draft.id);
+      assert.equal(runs.error, null); assert.deepEqual(runs.data, []);
+    }
+  });
   test('real action claim executes only the owned disposable automation rule once', async t => {
     assert.equal(process.env.CI, 'true'); assert.equal(process.env.XB01_DISPOSABLE_SUPABASE, '1');
     assert.equal(process.env.SUPABASE_URL, 'http://127.0.0.1:54321');

@@ -4,7 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { OperationsService } from './operationsService.js';
 
 test('missing authorized target is denied before any action or audit insert',async()=>{
-  for(const targetType of ['job','webhook','service']){
+  for(const targetType of ['job','webhook','service','release','deployment']){
     const reads:string[]=[];
     const db={from(table:string){
       reads.push(table);
@@ -17,7 +17,9 @@ test('missing authorized target is denied before any action or audit insert',asy
       return query;
     }};
     const service=new OperationsService(db as unknown as SupabaseClient);
-    await assert.rejects(service.createAction('actor',{projectId:'project',actionType:targetType==='job'?'retry_job':targetType==='webhook'?'retry_webhook':'refresh_health',targetType,targetId:'outside-project',targetVersion:0,idempotencyKey:'fixture',confirmed:true}),{code:'forbidden',statusCode:403});
+    const actionTypes: Record<string,string> = {job:'retry_job',webhook:'retry_webhook',service:'refresh_health',release:'promote_release',deployment:'prepare_repair'};
+    const actionType = actionTypes[targetType];
+    await assert.rejects(service.createAction('actor',{projectId:'project',actionType,targetType,targetId:'outside-project',targetVersion:0,idempotencyKey:'fixture',confirmed:true}),{code:'forbidden',statusCode:403});
     assert.ok(!reads.includes('operations_actions'));assert.ok(!reads.includes('production_audit_log'));
   }
 });
@@ -28,6 +30,26 @@ test('missing action yields not found without querying an undefined project',asy
   await assert.rejects(service.confirmAction('actor','missing'),{statusCode:404});
   await assert.rejects(service.approveAction('actor','missing','approved','fixture'),{statusCode:404});
   await assert.rejects(service.executeAction('actor','missing'),{statusCode:404});
+});
+
+test('release target lookup validates the returned owner project and resource identity', async () => {
+  let receipt: Record<string,unknown> | null = null;
+  const db = { from(table: string) {
+    assert.equal(table, 'production_releases'); const filters: Record<string,unknown> = {};
+    const q = { select() { return q; }, eq(key: string,value: unknown) { filters[key] = value; return q; },
+      async maybeSingle() { assert.deepEqual(filters, { id: 'release', project_id: 'project', user_id: 'owner' }); return { data: receipt, error: null }; } };
+    return q;
+  } };
+  const service = new OperationsService(db as unknown as SupabaseClient) as unknown as {
+    currentTargetVersion(action: Record<string,unknown>): Promise<number | null>;
+  };
+  const action = { target_type: 'release', target_id: 'release', project_id: 'project', user_id: 'owner' };
+  for (receipt of [null, { id: 'other', user_id: 'owner', project_id: 'project' },
+    { id: 'release', user_id: 'foreign', project_id: 'project' }, { id: 'release', user_id: 'owner', project_id: 'foreign' }]) {
+    await assert.rejects(service.currentTargetVersion(action), { code: 'forbidden', statusCode: 403 });
+  }
+  receipt = { id: 'release', user_id: 'owner', project_id: 'project' };
+  assert.equal(await service.currentTargetVersion(action), 1);
 });
 
 test('misbound operations actions cannot be confirmed approved or returned as verified',async()=>{
