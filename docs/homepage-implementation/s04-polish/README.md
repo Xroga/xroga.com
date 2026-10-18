@@ -72,3 +72,26 @@ modes, horizontal overflow at 320 to 1920, viewport fit for all 26 beats at 1280
 a cold-start suite run as the server's first page load (first visit, Pause/Play, Replay, store switching, pause
 across scrolling, reaching the studio while the page above is still laying out, reduced motion). Typecheck compared
 with `main` in an isolated worktree: identical error set, none in S04. Evidence is kept locally, not in the repo.
+
+## Final design refinement
+
+- **App Store iPhones lead.** Both phones are sized from the screen (`StageIOS`: as tall as the whole scene still
+  fitting one view, full size when the stage stacks) and each phone column is the phone's own width, so Xroga's work
+  takes what remains. Arcset and the App Store page went from 160 to 235 px (1280 x 800), 203 to 256 px (1440 x 900)
+  and 203 to 290 px (1920 x 1080) wide, screen only. The studio keeps one height through every beat.
+- **One device, drawn as one.** A modern Pro-class iPhone front view: display corners, slim black border, brushed
+  titanium band and side controls all scale with the device (`--s`). Dynamic Island 88 x 26 and home indicator 94 x 4 at
+  the app's 280 px width; time and system icons centred in the ears. The App Store page uses the same status bar and
+  home indicator, the store's three-line information strip (Age, Category "Health & Fitness", Developer, Size; no
+  ratings, the app has none) and screenshots about two and a half across.
+- **Tablet** shows both iPhones side by side above Xroga's work (the App Store page was hidden there); **phones** read
+  app, Xroga's result, then the App Store page.
+- **Head.** "Build anywhere. Launch with Xroga." on one line from tablet up (two deliberate lines on phones), the payoff
+  phrase in a restrained sapphire light, then "From working software to the App Store, Google Play, and Chrome Web
+  Store." The section-level "Prepare a release" action is removed; each store's handoff keeps its review action. A
+  one-time entrance (headline, light, copy, then the studio) plays only when S04 arrives from below; never under
+  reduced motion or when the page opens on it.
+- **Background.** A dark-sapphire release environment: deep navy, a diffused key light behind the studio that rims its
+  edges, light pooling under it, a faint cool wash over the headline; the purple and teal side glows are gone.
+- **Phones start their walkthrough.** With the devices stacked the studio is taller than the screen, so "seen" also
+  means it fills half the screen; once seen it stays seen until it leaves the screen, as before.

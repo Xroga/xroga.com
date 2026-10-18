@@ -115,15 +115,20 @@ export function useScene(theater: RefObject<HTMLElement | null>) {
     setArmed(true);
   }, [seek]);
 
-  // visibility: start when first seen, pause offscreen, resume on return
+  // visibility: start when first seen, pause offscreen, resume on return. Seen means a third of the studio is on
+  // screen, or, when the studio is taller than the screen (phones, where the devices stack), it fills half the screen;
+  // once seen it stays seen until it has left the screen entirely.
   useEffect(() => {
     const el = theater.current;
     if (!el) return;
     const io = new IntersectionObserver(
       ([e]) => {
-        visible.current = e.isIntersecting;
+        const screenH = e.rootBounds?.height ?? window.innerHeight;
+        const seen = e.isIntersecting && (visible.current || e.intersectionRatio >= 0.35 || e.intersectionRect.height >= screenH * 0.5);
+        if (seen === visible.current) return;
+        visible.current = seen;
         const c = r.current;
-        if (e.isIntersecting) {
+        if (seen) {
           if (c.armed) {
             try {
               sessionStorage.setItem('s04-v10-seen', '1');
@@ -139,7 +144,7 @@ export function useScene(theater: RefObject<HTMLElement | null>) {
           setHold(true);
         }
       },
-      { threshold: 0.35 },
+      { threshold: [0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.45, 0.6] },
     );
     io.observe(el);
     return () => io.disconnect();

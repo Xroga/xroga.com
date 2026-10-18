@@ -34,19 +34,21 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 22px 0 28px;
+  /* the time and the system icons sit centred in the two ears beside the island */
+  padding: 0 25px 0 33px;
   font-size: 13px;
   font-weight: 650;
   letter-spacing: -0.01em;
 }
+/* iPhone proportions at this 280 px width (0.7 of the 402 pt display): Dynamic Island 88 × 26, 8 from the top */
 .island {
   position: absolute;
   left: 50%;
-  top: 10px;
-  width: 82px;
-  height: 24px;
-  margin-left: -41px;
-  border-radius: 14px;
+  top: 8px;
+  width: 88px;
+  height: 26px;
+  margin-left: -44px;
+  border-radius: 13px;
   background: #000;
 }
 .sysIcons {
@@ -61,13 +63,14 @@
   min-height: 0;
   padding: 4px 16px 0;
 }
+/* home indicator 94 × 4, 6 from the bottom */
 .home {
   position: absolute;
   left: 50%;
-  bottom: 7px;
-  width: 104px;
+  bottom: 6px;
+  width: 94px;
   height: 4px;
-  margin-left: -52px;
+  margin-left: -47px;
   border-radius: 2px;
   background: rgba(238, 245, 243, 0.85);
 }

@@ -13,17 +13,18 @@ import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type 
 import type { Phase } from '../publish';
 import k from './kit.module.css';
 
-/** the window's height (900 before mount): devices size themselves so a whole scene fits one desktop screen */
-export function useViewportHeight() {
-  const [h, setH] = useState(900);
+/** the window's size (1440 × 900 before mount): devices size themselves so a whole scene fits one desktop screen */
+export function useViewport() {
+  const [v, setV] = useState({ w: 1440, h: 900 });
   useEffect(() => {
-    const on = () => setH(window.innerHeight);
+    const on = () => setV({ w: window.innerWidth, h: window.innerHeight });
     on();
     window.addEventListener('resize', on);
     return () => window.removeEventListener('resize', on);
   }, []);
-  return h;
+  return v;
 }
+export const useViewportHeight = () => useViewport().h;
 const clamp = (min: number, v: number, max: number) => Math.max(min, Math.min(max, v));
 export { clamp };
 
@@ -39,6 +40,9 @@ export function useWidth(ref: RefObject<HTMLElement | null>, guess: number) {
   }, [ref]);
   return w;
 }
+
+/** the iPhone frame outside the display, in natural px per side: black border 6.2 + titanium band 2.6 (kit.module.css) */
+const IPHONE_EDGE = 8.8;
 
 /** scales natural-size content to fit `maxW` (measured from the parent) and `maxH` */
 export function Device({
@@ -60,11 +64,13 @@ export function Device({
 }) {
   const host = useRef<HTMLDivElement>(null);
   const w = useWidth(host, natural.w);
-  const frame = kind === 'phone' ? 18 : kind === 'android' ? 16 : kind === 'landscape' ? 20 : 2;
-  const scale = Math.max(0.2, Math.min((w - frame) / natural.w, (maxH - frame) / natural.h, 1.25));
+  // the iPhone's bezel and titanium band scale with the device (natural px per side); the others keep a fixed frame
+  const frame = kind === 'phone' ? 0 : kind === 'android' ? 16 : kind === 'landscape' ? 20 : 2;
+  const band = kind === 'phone' ? 2 * IPHONE_EDGE : 0;
+  const scale = Math.max(0.2, Math.min((w - frame) / (natural.w + band), (maxH - frame) / (natural.h + band), 1.25));
   return (
     <div ref={host} className={`${k.host} ${className ?? ''}`}>
-      <div className={k.device} data-kind={kind} style={{ width: natural.w * scale, height: natural.h * scale }}>
+      <div className={k.device} data-kind={kind} style={{ width: natural.w * scale, height: natural.h * scale, ['--s' as string]: scale }}>
         <div ref={boxRef} className={k.screen} data-kind={kind}>
           <div className={k.scaled} data-live="" style={{ width: natural.w, height: natural.h, transform: `scale(${scale})` }}>
             {children}
