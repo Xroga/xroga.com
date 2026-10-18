@@ -73,6 +73,9 @@ test('growth parent relations reject foreign segments, tenants and events before
       async maybeSingle() { return { data: (rows[table] ?? []).find(row => filters.every(([key, value]) => row[key] === value)) ?? null, error: null }; },
       then(resolve: (value: unknown) => unknown) { return Promise.resolve(resolve({ data: [{ id: 'saved', ...(payload as object) }], error: null })); },
     }; return q;
+  }, async rpc(name: string,args: Record<string,unknown>) {
+    assert.equal(name,'record_growth_experiment_outcome');mutations++;
+    return {data:[{id:'saved',experiment_id:args.p_experiment,assignment_id:args.p_assignment,event_id:args.p_event,metric_key:args.p_metric}],error:null};
   } };
   const service = new GrowthService(db as unknown as SupabaseClient);
   const outcome = { experimentId: 'experiment', assignmentId: 'assignment', eventId: 'event', metricKey: 'fixture' };

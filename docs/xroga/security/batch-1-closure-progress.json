@@ -53,6 +53,17 @@
     }
   ],
   "additionalSpend": 0,
+  "growthOutcomeTransaction": {
+    "status": "IN PROGRESS",
+    "fix": "Existing outcome service now uses a service-only transaction that locks current project authority, experiment, exposed assignment and event, verifies exact owner/project/experiment relationships and inserts or verifies an immutable replay. Typed denials and exact returned outcome identity are preserved.",
+    "localEvidence": "Thirteen focused parent/input/receipt tests and23 local SQL assertions/reapply pass, including corrupt replay preservation. Backend typecheck and full3039-test regression pass:3021 pass,zero failures,18 registered Windows skips. Actual current membership revocation, experiment/assignment/event mutation, two-client replay, rollback and browser-role tests prepared.",
+    "remaining": "Actual final-source verification, subject-to-event attribution, event provenance and full experiment lifecycle remain unresolved."
+  },
+  "latestScopedDisposable": {
+    "source": "2e752b76f2d1932ea8e3e3543644b137efac79fa",
+    "run": "39117021162",
+    "result": "PASS:102 fresh/upgrade migrations,136 security tests and3 browser tests,zero failures/skips. Corrected lease-clock test, current-role approval, atomic confirmation, current-authority claim and stale-rule blocked completion all pass. Three unchanged approval/confirmation/admission transaction boundaries closed narrowly. Later automation-version and growth-outcome changes need their own CI. Aggregate39117021150 remains pending."
+  },
   "operationsAutomationVersion": {
     "status": "IN PROGRESS",
     "fix": "Existing stop/resume adapter uses a service-only owner/project-locked rule update. Each current rule increments its own version. Retained rows with a shared rule key are locked in descending version order. Single-rule commands retain optimistic version checks and exact receipt validation.",
@@ -254,7 +265,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:403 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:400 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -289,7 +300,7 @@
     "ownerPredicateCandidates": 159,
     "reviewRequired": 0,
     "reviewedCandidates": 654,
-    "unresolvedSafetyCandidates": 403,
+    "unresolvedSafetyCandidates": 400,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -353,7 +364,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Commit and push current control-truth changes after typecheck and inventory gates. Verify102 migrations, corrected lease fixture, confirmation and current-authority claim races plus repeated branch/integrated CI at the final source. Continue project-wide automation version handling, action creation atomic recovery, worker lifecycle and growth parent mutation races.654 reviewed/403 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
+  "nextTask": "Preserve2e752b76 aggregate39117021150 until completion. Commit locally verified growth outcome transaction and push with automation-version fix at a meaningful CI checkpoint. Verify104 migrations and real project-wide version/outcome races. Continue business confirmation terminal persistence, action creation atomic recovery, worker lifecycle and other growth parent mutation races.654 reviewed/400 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
@@ -495,7 +506,7 @@
       "existingImplementation": "Existing prepared plan, confirmation, operations services and scheduler",
       "missingBehavior": "Account/target/digest/spend/receipt integration and complete caller provenance",
       "acceptanceTest": "Changed plan/target, expired/revoked approval, duplicate claims, unauthorized spend",
-      "pendingCandidates": 81,
+      "pendingCandidates": 78,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/operations/operationsService.ts": [
@@ -532,14 +543,11 @@
           "13f8c6782e6f1035be2d",
           "e752324399a17c9bf37d",
           "9fa0c495a462830de8aa",
-          "724d14962fd8d05f83a7",
           "9c895c62ea1658ea5c87",
-          "c1345ce45faa24df24f7",
           "9c17503abb75e1c77b5c",
           "c72b469052cef4c67f39",
           "88214e2ca8786937732b",
           "f2e5398a7b13328ea5a4",
-          "eb27028b66aa6f66ff7d",
           "5f8b021616ada4f5149f",
           "defa87a4ef7032cd2858",
           "f08db29689cd7a268c66",
@@ -815,10 +823,10 @@
           "0867f0e2c4060450d1f0",
           "7ef4fc27890780df43d5",
           "5d7c9df9dd797e201589",
-          "e2f5929b72a2b32b934a",
-          "39936ebab025c69dbb5b",
-          "45e54b5c19409ce5d665",
-          "55626cbac4deeeaa2bf1"
+          "a479d8875321283fa208",
+          "82d66e01fff21f752018",
+          "8e38396280b9c8d8cd42",
+          "f6a9ae290a11804c97fb"
         ]
       }
     },

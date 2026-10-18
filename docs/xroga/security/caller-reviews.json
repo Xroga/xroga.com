@@ -518,7 +518,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f0511bb0108cef2d6f7c6e8a35bc23e419c110e127d59e3c3e3473590d5d3e1c",
+      "sourceSha256": "6bac046d4f374a87676caa1ca05fe9556597c899528114cd9611a4cc3720dafc",
       "callIds": [
         "af8158b08e229f15c10f",
         "71221eab1f046a066ce1",
@@ -561,10 +561,9 @@
         "0867f0e2c4060450d1f0",
         "7ef4fc27890780df43d5",
         "5d7c9df9dd797e201589",
-        "e2f5929b72a2b32b934a",
-        "39936ebab025c69dbb5b",
-        "45e54b5c19409ce5d665",
-        "55626cbac4deeeaa2bf1"
+        "82d66e01fff21f752018",
+        "8e38396280b9c8d8cd42",
+        "f6a9ae290a11804c97fb"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
@@ -4624,7 +4623,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f0511bb0108cef2d6f7c6e8a35bc23e419c110e127d59e3c3e3473590d5d3e1c",
+      "sourceSha256": "6bac046d4f374a87676caa1ca05fe9556597c899528114cd9611a4cc3720dafc",
       "callIds": [
         "43b1d3221332271da73e"
       ],
@@ -4656,7 +4655,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f0511bb0108cef2d6f7c6e8a35bc23e419c110e127d59e3c3e3473590d5d3e1c",
+      "sourceSha256": "6bac046d4f374a87676caa1ca05fe9556597c899528114cd9611a4cc3720dafc",
       "callIds": [
         "13f580c62466a63a5411"
       ],
@@ -4704,7 +4703,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f0511bb0108cef2d6f7c6e8a35bc23e419c110e127d59e3c3e3473590d5d3e1c",
+      "sourceSha256": "6bac046d4f374a87676caa1ca05fe9556597c899528114cd9611a4cc3720dafc",
       "callIds": [
         "b38e3cffefceddb22a15"
       ],
@@ -4720,7 +4719,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f0511bb0108cef2d6f7c6e8a35bc23e419c110e127d59e3c3e3473590d5d3e1c",
+      "sourceSha256": "6bac046d4f374a87676caa1ca05fe9556597c899528114cd9611a4cc3720dafc",
       "callIds": [
         "44a221df17739d063b74"
       ],
@@ -4736,7 +4735,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f0511bb0108cef2d6f7c6e8a35bc23e419c110e127d59e3c3e3473590d5d3e1c",
+      "sourceSha256": "6bac046d4f374a87676caa1ca05fe9556597c899528114cd9611a4cc3720dafc",
       "callIds": [
         "16a7341c7957cefe67ef"
       ],
@@ -4752,7 +4751,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f0511bb0108cef2d6f7c6e8a35bc23e419c110e127d59e3c3e3473590d5d3e1c",
+      "sourceSha256": "6bac046d4f374a87676caa1ca05fe9556597c899528114cd9611a4cc3720dafc",
       "callIds": [
         "77cc61cc60e433268587"
       ],
@@ -4832,9 +4831,9 @@
       "callIds": [
         "724d14962fd8d05f83a7"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated operations route supplies actor/action/validated decision and reason. Existing service derives required role from ACTION_DEFINITIONS, never from request body. Service-only transaction locks current actor profile/project/membership, exact action intent and pending approval, checks requester separation, role, confirmation, version/digest and DB expiry, then atomically writes approval/action/audit.",
-      "reason": "Focused transaction/error/changed receipt tests and24 local SQL assertions plus replay pass. Real held membership revocation, competing decisions, three-write rollback, role denial and no-execution tests prepared. Creation/confirmation atomicity, original claim admission and future execution-time approval revocation remain separate unresolved requirements. No whole operations service or Command008 certification.",
+      "reason": "Fixed approval-decision transaction VERIFIED at2e752b76f2d1932ea8e3e3543644b137efac79fa, disposable39117021162: actual held membership revocation, competing decisions, all three write rollbacks, browser-role denial and rejection without execution pass. SQL and fixture are unchanged from that source. Focused receipt/error tests and24 local SQL assertions/replay also pass. Only this atomic current-role approval boundary is closed. Creation atomicity, mutable target and full execution/provider lifecycle remain unresolved. No whole caller or Command008 certification.",
       "evidence": [
         {
           "path": "backend/src/operations/actionApproval.local.integration.ts",
@@ -4852,9 +4851,9 @@
       "callIds": [
         "c1345ce45faa24df24f7"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated requester and canonical action definitions supply role permissions. Service-only confirmation RPC locks current actor/project/membership and exact confirmation-required action intent before atomically recording confirmation, optional approval request and immutable audit. Server derives allowed roles from existing permission map, never request input.",
-      "reason": "Focused malformed receipt, owner and unavailable RPC tests plus25 local SQL rollback/role/intent assertions pass. Actual held-plan change, competing confirmation, three-stage rollback and browser denial prepared. Creation atomicity, mutable target admission at execution and provider recovery remain separate unresolved requirements.",
+      "reason": "Fixed confirmation transaction VERIFIED at2e752b76f2d1932ea8e3e3543644b137efac79fa, disposable39117021162: actual held-plan mutation, competing confirmations, all three write rollbacks and browser-role denial pass. SQL and fixture are unchanged from that source. Focused exact receipt/input tests and29 local SQL assertions/replay also pass. Only atomic requester/intent confirmation and optional approval creation is closed. Creation atomicity, mutable target admission and provider recovery remain unresolved. No whole caller certification.",
       "evidence": [
         {
           "path": "backend/src/operations/actionConfirmation.local.integration.ts",
@@ -4868,9 +4867,9 @@
       "callIds": [
         "eb27028b66aa6f66ff7d"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated actor and canonical action definitions supply execution permission roles, confirmation requirement and approval role. Service-only admission locks current actor/project/member, exact action intent/state/attempt, current approved receipt and current approver role before reusing the original lease/retry function.",
-      "reason": "Focused claim receipt/error tests and29 local SQL intent/current-role/approval/expiry assertions pass. Actual held actor/approver revocation, plan mutation, approval expiry, exclusion and browser-role tests prepared. Mutable target admission, legacy raw service-role RPC access and post-claim provider effects/recovery remain unresolved. No whole caller certification.",
+      "reason": "Fixed current-authority claim admission VERIFIED at2e752b76f2d1932ea8e3e3543644b137efac79fa, disposable39117021162: actual held actor and approver revocation, intervening plan mutation, approval expiry while blocked, competing claim exclusion and browser-role denial pass before adapter effects. SQL and fixture are unchanged from that source. Focused exact receipt/error tests and29 local SQL assertions/replay also pass. Only transactional admission before the existing lease function is closed. Mutable target admission, legacy raw service-role RPC access and post-claim effects/recovery remain unresolved. No whole caller certification.",
       "evidence": [
         {
           "path": "backend/src/operations/actionAdmission.local.integration.ts",
@@ -4891,6 +4890,22 @@
         {
           "path": "backend/src/operations/actionIntent.local.integration.ts",
           "marker": "real project-wide automation control increments each version"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/growth/growthService.ts",
+      "sourceSha256": "6bac046d4f374a87676caa1ca05fe9556597c899528114cd9611a4cc3720dafc",
+      "callIds": [
+        "a479d8875321283fa208"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Auth-mounted growth route supplies verified server actor. Existing project-view permission is rechecked against current locked profile/project/member. Service-only outcome transaction locks experiment, exposed assignment and event and verifies exact current owner/project/experiment relations before an insert-or-verified-replay. Service validates returned immutable outcome tuple.",
+      "reason": "Thirteen focused parent/input/receipt/error tests and21 local SQL role/parent/exposure/replay/rollback assertions pass. Actual held role revocation and experiment/assignment/event mutation races, concurrent replay, rollback and browser denial prepared. Subject-to-event attribution, event provenance and full experiment lifecycle remain unresolved. No whole caller certification.",
+      "evidence": [
+        {
+          "path": "backend/src/growth/outcome.local.integration.ts",
+          "marker": "registerGrowthOutcomeTests"
         }
       ]
     }

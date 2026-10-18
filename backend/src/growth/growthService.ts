@@ -292,7 +292,20 @@ export class GrowthService {
     if (!assignment?.exposed_at) throw new GrowthServiceError('invalid_state', 'Outcome requires recorded exposure', 409);
     const event = await query<Row | null>(this.db.from('analytics_events').select('id').eq('id', input.eventId).eq('tenant_id', tenantId).eq('project_id', experiment.project_id).eq('experiment_id', input.experimentId).maybeSingle(), 'Outcome event unavailable', null);
     if (!event) throw new GrowthServiceError('not_found', 'Outcome event not found', 404);
-    const rows = await query<Row[]>(this.db.from('growth_experiment_outcomes').upsert({ experiment_id: input.experimentId, assignment_id: input.assignmentId, event_id: input.eventId, metric_key: input.metricKey }, { onConflict: 'assignment_id,event_id,metric_key' }).select('*'), 'Experiment outcome failed');
+    const { data: rows, error } = await this.db.rpc('record_growth_experiment_outcome', {
+      p_actor: userId, p_tenant: tenantId, p_project: experiment.project_id, p_experiment: input.experimentId,
+      p_assignment: input.assignmentId, p_event: input.eventId, p_metric: input.metricKey,
+    });
+    if (error?.code === 'P0002') throw new GrowthServiceError('not_found', 'Experiment outcome parent unavailable', 404);
+    if (error?.code === '42501') throw new GrowthServiceError('forbidden', 'Experiment recording is not permitted', 403);
+    if (error?.code === 'P0001') throw new GrowthServiceError('invalid_state', 'Outcome requires recorded exposure', 409);
+    if (error?.code === '40001') throw new GrowthServiceError('conflict', 'Experiment outcome changed', 409);
+    if (error?.code === '22023') throw new GrowthServiceError('invalid_request', 'Invalid experiment outcome', 400);
+    if (error || !Array.isArray(rows) || rows.length !== 1 || typeof rows[0]?.id !== 'string' || !rows[0].id
+      || rows[0].experiment_id !== input.experimentId || rows[0].assignment_id !== input.assignmentId
+      || rows[0].event_id !== input.eventId || rows[0].metric_key !== input.metricKey) {
+      throw new GrowthServiceError('storage_unavailable', 'Experiment outcome could not be verified', 503);
+    }
     return rows[0];
   }
 
