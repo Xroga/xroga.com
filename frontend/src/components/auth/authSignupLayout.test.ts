@@ -16,16 +16,25 @@ test('signup is a focused black two-column surface without the duplicate login p
   assert.doesNotMatch(loginAside, /xl:flex/, 'desktop utilities must not override the signup-only hidden state');
 });
 
-test('the signup power panel covers the real Xroga workflow and connected ecosystem', () => {
+test('the signup story rotates through four focused Xroga capability scenes', () => {
+  assert.match(showcase, /const SLIDE_COUNT = 4/);
+  assert.match(showcase, /const INTRO_DURATION_MS = 5200/);
+  assert.match(showcase, /const FEATURE_DURATION_MS = 6200/);
+  assert.match(showcase, /window\.setTimeout/);
+  assert.match(showcase, /window\.clearTimeout/);
+  assert.match(showcase, /if \(paused \|\| reducedMotion\) return/);
+  assert.match(showcase, /aria-roledescription="carousel"/);
+  assert.match(showcase, /Pause capability slides/);
+  assert.match(showcase, /Choose a capability slide/);
+
   for (const phrase of [
+    'Convert your ideas into',
     'simple conversation',
-    'Apps that reach production',
-    'Live browser work',
-    '1,500+ apps &amp; custom MCPs',
-    'SEO · AEO · GEO',
+    'Ship it everywhere',
+    '1,500+ apps',
+    'Web &amp; X research',
     'Xroga AI Employees',
-    'Research the web &amp; X',
-    'Travel, flights &amp; more',
+    'SEO, AEO, and GEO',
   ]) {
     assert.ok(showcase.includes(phrase), `${phrase} is missing from the signup power panel`);
   }
@@ -40,12 +49,17 @@ test('integration marks are local official assets and the growth percentage is l
     );
   }
   assert.match(showcase, /Illustrative discoverability trend/);
-  assert.match(showcase, /Illustrative signals/);
+  assert.match(showcase, /Illustrative visibility signals/);
   assert.doesNotMatch(showcase, /https?:\/\//);
 });
 
 test('the capability panel stays usable on phones and respects reduced motion', () => {
+  assert.match(styles, /\.introSlide/);
+  assert.match(styles, /\.buildSlide/);
+  assert.match(styles, /\.connectSlide/);
+  assert.match(styles, /\.growthSlide/);
+  assert.match(styles, /\.slide\.active/);
   assert.match(styles, /@media \(max-width: 480px\)/);
   assert.match(styles, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(styles, /\.aurora \{ animation: none; \}/);
+  assert.match(styles, /\.graphLine \{ stroke-dashoffset: 0; \}/);
 });
