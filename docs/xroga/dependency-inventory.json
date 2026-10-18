@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8a4e016c85cfd4d39ea0e681791abfe83719d9ea",
+  "source_sha": "31940c7579eb58dd38da8c54c57bd8dc1714f61c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13071,7 +13071,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1"
+      "sha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13163,7 +13163,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "sha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606"
+      "sha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff"
     },
     {
       "path": "backend/src/services/integrations/githubTreeSnapshot.ts",
@@ -13191,7 +13191,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "f90c43cc89a03f37f4e29abcb77c3f445a09a13797dae4be976e745c11f824a3"
+      "sha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -18994,21 +18994,21 @@
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 694,
+      "line": 731,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 746,
+      "line": 783,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1414,
+      "line": 1451,
       "credentialsInUrl": false
     },
     {
@@ -25189,14 +25189,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 913,
+      "line": 950,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1250,
+      "line": 1287,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

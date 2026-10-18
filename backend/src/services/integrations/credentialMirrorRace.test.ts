@@ -28,6 +28,12 @@ test('legacy downloads recheck authoritative revocation, rotation and outages be
     }
     assert.ok(path.startsWith('/rest/v1/'));
     const primary = path.startsWith('/rest/v1/github_integrations');
+    const selectedAuthority=github?(legacyAuthority?!primary:primary):!primary;
+    // A valid old grant must exist before download to exercise in-flight
+    // disappearance/revocation, rather than failing the initial admission.
+    if(github&&selectedAuthority&&!downloaded&&!scenario.startsWith('initial-')&&scenario!=='legacy'){
+      res.end(JSON.stringify([{access_token:'SYNTHETIC_OLD_GITHUB'}]));return;
+    }
     const applyAuthority = (github ? (legacyAuthority ? !primary : primary) : !primary) && (downloaded || scenario.startsWith('initial-'));
     if (applyAuthority && scenario.endsWith('outage')) {
       res.statusCode = 400;res.end(JSON.stringify({ code:'42P01',message:'SYNTHETIC_AUTHORITY_DIAGNOSTIC' }));return;
@@ -59,7 +65,7 @@ test('legacy downloads recheck authoritative revocation, rotation and outages be
         assert.ok(paths.at(-1)?.startsWith('/rest/v1/user_integrations'));
       }
       reset('rotated');assert.equal(await getUserProviderKey(user,selected),'SYNTHETIC_NEW_BYOK');
-      reset('legacy');assert.equal(await getUserProviderKey(user,selected),'SYNTHETIC_OLD_BYOK');
+      reset('legacy');assert.equal(await getUserProviderKey(user,selected),null,'An orphaned mirror is not a BYOK authority grant');
     }
     provider='apikey_openai';
     for(const next of ['revoked','outage']) {
@@ -72,10 +78,11 @@ test('legacy downloads recheck authoritative revocation, rotation and outages be
     for(const next of ['initial-revoked','initial-outage']) {
       reset(next);assert.equal(await getGitHubTokenFromStorage(user),null);assert.equal(downloaded,false);
     }
-    for(const next of ['revoked','outage','rotated','initial-rotated']) {
+    for(const next of ['revoked','outage','rotated','initial-rotated','missing']) {
       reset(next);assert.equal(await getGitHubTokenFromStorage(user),null);assert.ok(downloaded);
     }
-    for(const next of ['legacy','same','initial-same']) {
+    reset('legacy');assert.equal(await getGitHubTokenFromStorage(user),null);assert.equal(downloaded,false);
+    for(const next of ['same','initial-same']) {
       reset(next);assert.equal((await getGitHubTokenFromStorage(user))?.access_token,'SYNTHETIC_OLD_GITHUB');assert.ok(downloaded);
     }
     }

@@ -23348,7 +23348,7 @@
       "id": "surface:f780b953b9a0b38aa89b",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubTokenStore.ts",
-      "sha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
+      "sha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
       "symbols": [
         "BUCKET",
         "StoredGitHubAuth",
@@ -23383,6 +23383,7 @@
       ],
       "callers": [
         "backend/src/security/tenantIsolation.local.integration.ts:26",
+        "backend/src/services/integrations/absentCredentialAuthority.test.ts:3",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:5",
         "backend/src/services/integrations/githubAuth.ts:2",
         "backend/src/services/integrations/userProviderKeys.ts:12"
@@ -23408,6 +23409,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/integrations/absentCredentialAuthority.test.ts",
         "backend/src/services/integrations/credentialMirrorRace.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -23594,7 +23596,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:744",
+        "backend/src/security/tenantIsolation.local.integration.ts:781",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -23915,7 +23917,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "f90c43cc89a03f37f4e29abcb77c3f445a09a13797dae4be976e745c11f824a3",
+      "sha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -24106,6 +24108,7 @@
         "backend/src/security/providerKeyRevision.local.integration.ts:6",
         "backend/src/security/supabaseBundle.local.integration.ts:5",
         "backend/src/security/tenantIsolation.local.integration.ts:11",
+        "backend/src/services/integrations/absentCredentialAuthority.test.ts:4",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:58",
         "backend/src/services/integrations/supabaseBundle.test.ts:5",
@@ -24151,6 +24154,7 @@
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/integrations/absentCredentialAuthority.test.ts",
         "backend/src/services/integrations/credentialMirrorRace.test.ts",
         "backend/src/services/integrations/supabaseBundle.test.ts",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts",
@@ -86750,7 +86754,7 @@
       "id": "surface:59ea753bbe7364873503",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/phase-two.mjs",
-      "sha256": "4b4930fa6447cbaeb8204ff9b54a59b13a94af189cd010cdae988b17aeed6e82",
+      "sha256": "d8aa83577ef5a4fd740fe37307fb29be48f363a04dceb12078c16b632244a982",
       "symbols": [
         "approved",
         "assertUnchangedEnclosing",
@@ -104583,7 +104587,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 71,
+      "declaredTests": 72,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104633,6 +104637,13 @@
       "id": "test-suite:fd61c82d7fde66dc547d",
       "sourcePath": "backend/src/services/ensureUserRecords.receipt.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:81c8be9382a4f6407399",
+      "sourcePath": "backend/src/services/integrations/absentCredentialAuthority.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

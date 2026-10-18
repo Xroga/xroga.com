@@ -672,6 +672,7 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
   const [owner,other]=users,bucket='xroga-github-tokens',path=`${owner.id}/github.json`;
   const canary='SYNTHETIC_PRIVATE_STORAGE_CANARY_NOT_A_PROVIDER_CREDENTIAL';
   try {
+    assert.equal((await admin.from('user_integrations').insert({user_id:owner.id,provider:'github',access_token:canary,metadata:{}})).error,null);
     assert.equal(await saveGitHubTokenToStorage(owner.id,{access_token:canary,username:'fixture',provider_user_id:'fixture',repo_strategy:'auto',default_repo:null,updated_at:new Date().toISOString()}),true);
     const config=await admin.storage.getBucket(bucket);assert.equal(config.error,null);assert.equal(config.data?.public,false);
     assert.equal((await getGitHubTokenFromStorage(owner.id))?.access_token,canary);
@@ -683,7 +684,43 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
     }
     const publicRead=await fetch(`${url}/storage/v1/object/public/${bucket}/${path}`,{headers:{apikey:process.env.SUPABASE_ANON_KEY!}});assert.equal(publicRead.ok,false);assert.ok(!(await publicRead.text()).includes(canary));
     const status=await request('/api/github/status',other.token);assert.equal(status.status,200);assert.equal((await status.json() as {connected:boolean}).connected,false);
-  } finally {const removed=await admin.storage.from(bucket).remove([path]);assert.equal(removed.error,null,'temporary private object cleanup failed');}
+  } finally {
+    const removed=await admin.storage.from(bucket).remove([path]);assert.equal(removed.error,null,'temporary private object cleanup failed');
+    assert.equal((await admin.from('user_integrations').delete().eq('user_id',owner.id).eq('provider','github')).error,null);
+  }
+});
+
+test('real orphaned GitHub and BYOK mirrors cannot restore absent authority but matching legacy database grants remain usable',async t=>{
+  const created=await admin.auth.admin.createUser({email:`orphan-authority-${randomUUID()}@example.invalid`,email_confirm:true});
+  assert.equal(created.error,null);assert.ok(created.data.user);const owner=created.data.user.id,other=users[1];
+  const provider=`custom_orphan_${randomUUID().replaceAll('-','').slice(0,12)}`,bucket='xroga-github-tokens';
+  const paths=[`${owner}/github.json`,`${owner}/vault-apikey_${provider}.json`];
+  t.after(async()=>{assert.equal((await admin.storage.from(bucket).remove(paths)).error,null);assert.equal((await admin.auth.admin.deleteUser(owner)).error,null);});
+  assert.equal(await ensurePrivateOAuthBucket(),true);
+  const github='SYNTHETIC_ORPHAN_GITHUB_CANARY',byok='SYNTHETIC_ORPHAN_BYOK_CANARY',encoded='enc:'+Buffer.from(`fixture:${byok}`).toString('base64');
+  assert.equal(await saveGitHubTokenToStorage(owner,{access_token:github,username:'fixture',provider_user_id:'fixture',repo_strategy:'auto',default_repo:null,updated_at:new Date().toISOString()}),true);
+  assert.equal((await admin.storage.from(bucket).upload(paths[1],JSON.stringify({access_token:encoded,metadata:{provider,env_var:'ORPHAN_PRIVATE_KEY'}}),{contentType:'application/json'})).error,null);
+  assert.equal(await getGitHubTokenFromStorage(owner),null);assert.equal(await getGitHubToken(owner),null);
+  assert.equal(await getUserProviderKey(owner,provider),null);assert.deepEqual(await listUserProviderKeys(owner),[]);
+  assert.deepEqual(await resolveProviderEnvForDeploy(owner),{});
+  assert.equal((await admin.from('user_integrations').insert([
+    {user_id:owner,provider:'github',access_token:github,metadata:{}},
+    {user_id:owner,provider:`apikey_${provider}`,access_token:encoded,metadata:{provider,env_var:'ORPHAN_PRIVATE_KEY'}},
+  ])).error,null);
+  assert.equal((await getGitHubTokenFromStorage(owner))?.access_token,github);
+  assert.equal(await getUserProviderKey(owner,provider),byok);
+  assert.equal(await getGitHubTokenFromStorage(other.id),null);assert.equal(await getUserProviderKey(other.id,provider),null);
+  const original=globalThis.fetch;let removedDuringDownload=false;
+  globalThis.fetch=async(input,init)=>{
+    const response=await original(input,init),target=new URL(String(input instanceof Request?input.url:input));
+    if(!removedDuringDownload&&target.pathname.includes('/storage/v1/object/')&&target.pathname.endsWith('/'+paths[0])){
+      removedDuringDownload=true;
+      assert.equal((await admin.from('user_integrations').delete().eq('user_id',owner).eq('provider','github')).error,null);
+    }
+    return response;
+  };
+  try{assert.equal(await getGitHubTokenFromStorage(owner),null);assert.equal(removedDuringDownload,true);}
+  finally{globalThis.fetch=original;}
 });
 
 test('real GitHub disconnect persists owner-bound revocation despite a delayed legacy mirror',async()=>{

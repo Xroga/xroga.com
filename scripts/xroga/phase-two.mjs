@@ -87,7 +87,8 @@ export function buildPhaseTwo({reviewDecisions}={}){
     approvedPhase1Source:'8a1a0bfa7878603dd488db98568577b2fb1896da',
     frozenWorklist:{path:frozenPath,sha256:hash(read(frozenPath)),historicalRecords:371,packets:73,paths:55},
     baselineEvidence:{aggregateRun:'39145128193',disposableRun:'39145128353',migrations:115,securityTests:149,browserTests:3,
-      scope:'Prior exact-source evidence. Unchanged source and relevant semantics must be established before reuse. Not proof for new edits.'},
+      headSource:'8a1a0bfa7878603dd488db98568577b2fb1896da',actualDisposableCheckout:'c34bbad59a8c0d6ab0231db7bd46b20293a8c3be',
+      scope:'Prior branch and actual virtual-merge evidence, not head-only disposable proof. Unchanged source and relevant semantics must be established before reuse. Not proof for new edits.'},
     criteria:tenantCriteria.map((text,i)=>({id:`XB01-C007-AC${String(i+1).padStart(2,'0')}`,text,status:'BLOCKED',proofIds:[]})),
     catalogProgress:decisions.catalogReview??null,
     packets,phase3Started:false,productionAuthorized:false,additionalSpend:0};

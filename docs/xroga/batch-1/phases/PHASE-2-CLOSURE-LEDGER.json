@@ -15,7 +15,9 @@
     "migrations": 115,
     "securityTests": 149,
     "browserTests": 3,
-    "scope": "Prior exact-source evidence. Unchanged source and relevant semantics must be established before reuse. Not proof for new edits."
+    "headSource": "8a1a0bfa7878603dd488db98568577b2fb1896da",
+    "actualDisposableCheckout": "c34bbad59a8c0d6ab0231db7bd46b20293a8c3be",
+    "scope": "Prior branch and actual virtual-merge evidence, not head-only disposable proof. Unchanged source and relevant semantics must be established before reuse. Not proof for new edits."
   },
   "criteria": [
     {
@@ -1909,7 +1911,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3022,7 +3024,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -3507,7 +3509,7 @@
         {
           "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
           "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection",
-          "sourceSha256": "608b0e048245e8505324455d3d38a6aeb426550f62b4c8976e562b3842722f4b",
+          "sourceSha256": "a75583ad4479b2f160d97bac395f0f60cc49edf10d8d97314bd0e28632d14412",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3904,7 +3906,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4059,7 +4061,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4172,7 +4174,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4407,7 +4409,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4578,7 +4580,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4930,7 +4932,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5183,7 +5185,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5252,7 +5254,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5650,7 +5652,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6045,7 +6047,7 @@
       "id": "B1-P2-680a665952e714b9",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/githubTokenStore.ts",
-      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
+      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
       "baselineCallerIds": [
         "3606e6e2a2c84f5d37fd",
         "8ea0355a7a40e6d35fef",
@@ -6059,10 +6061,10 @@
         "3606e6e2a2c84f5d37fd",
         "8ea0355a7a40e6d35fef",
         "0be2ba1bb19f870be5da",
-        "55573ca462209ab422c3",
-        "36464f94938ad7240220",
-        "8a8f49466dccccc652af",
-        "08adc22ee116d34993ce"
+        "843eba0ea3da35256af4",
+        "fb5f2a438e4dca7a88b5",
+        "ead5dae371b81c43c54a",
+        "4b2a022c7513e234b002"
       ],
       "mapping": [
         {
@@ -6089,28 +6091,28 @@
         {
           "baselineCallerId": "55573ca462209ab422c3",
           "currentCallerIds": [
-            "55573ca462209ab422c3"
+            "843eba0ea3da35256af4"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "36464f94938ad7240220",
           "currentCallerIds": [
-            "36464f94938ad7240220"
+            "fb5f2a438e4dca7a88b5"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8a8f49466dccccc652af",
           "currentCallerIds": [
-            "8a8f49466dccccc652af"
+            "ead5dae371b81c43c54a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "08adc22ee116d34993ce",
           "currentCallerIds": [
-            "08adc22ee116d34993ce"
+            "4b2a022c7513e234b002"
           ],
           "change": "RETAINED"
         }
@@ -6139,7 +6141,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6228,7 +6230,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
+          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6340,44 +6342,70 @@
       "id": "B1-P2-08a1009a4a9b93a5",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/githubTokenStore.ts",
-      "sourceSha256": "93ac3e7bd45e198388786d3f7d75c84e65d2578671e9c4631643ac36e3e00606",
+      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
       "baselineCallerIds": [
         "5af0dfecb133879330e2",
         "2aa98c887631896938dc",
         "e8a7ea96116a374773c0"
       ],
       "currentCallerIds": [
-        "5af0dfecb133879330e2",
-        "2aa98c887631896938dc",
-        "e8a7ea96116a374773c0"
+        "61adf56646ed13a11fed",
+        "06533d636013a0aca788",
+        "cf7709de7979144f2f42"
       ],
       "mapping": [
         {
           "baselineCallerId": "5af0dfecb133879330e2",
           "currentCallerIds": [
-            "5af0dfecb133879330e2"
+            "61adf56646ed13a11fed"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2aa98c887631896938dc",
           "currentCallerIds": [
-            "2aa98c887631896938dc"
+            "06533d636013a0aca788"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e8a7ea96116a374773c0",
           "currentCallerIds": [
-            "e8a7ea96116a374773c0"
+            "cf7709de7979144f2f42"
           ],
           "change": "RETAINED"
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-08a1009a4a9b93a5",
+        "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "DEMONSTRATED_ORPHAN_MIRROR_GRANT_FIXED_PENDING_REAL_DATABASE_PROOF",
+        "actorTrace": "GitHub mirror path is owner-derived, but both canonical rows could be absent while the helper treated a private object as authority. A delayed legacy object after canonical deletion could restore credential access. Missing/error/revoked authority now denies. A matching active github_integrations or legacy user_integrations grant remains supported and is rechecked after download.",
+        "invariant": "Private storage is a mirror, never a grant when canonical authority is absent. Owner and canonical token must match at use. Do not remove objects, rotate keys or claim new vault encryption.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/absentCredentialAuthority.test.ts",
+            "type": "FOCUSED_TEST",
+            "result": "PRE_FIX_RETURNED_ORPHAN_GITHUB_SECRET_THEN_PASSED",
+            "scope": "Synthetic SDK transport, missing authority denies before storage download"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "type": "DISPOSABLE_DATABASE_TEST",
+            "result": "NEW_ORPHAN_CASE_NOT_EXECUTED_AT_RECORD_CREATION",
+            "scope": "Actual private objects denied with no grant, valid legacy database grant positive and foreign owner negative"
+          }
+        ],
+        "remaining": [
+          "Execute final-source real orphan case and all existing rotation/revocation regressions",
+          "Storage-only orphaned connections require explicit reconnect through existing flows, no silent credential migration",
+          "Whole consumer provenance, connected-account authority and Phase3 custody remain separate"
+        ]
+      },
       "actor": {
         "existingTrace": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
         "currentSemanticVerification": "PENDING"
@@ -6672,7 +6700,7 @@
       "id": "B1-P2-8c13793907db3388",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f90c43cc89a03f37f4e29abcb77c3f445a09a13797dae4be976e745c11f824a3",
+      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
       "baselineCallerIds": [
         "c3f2ca136ccab92884f3",
         "8466decbcb9ca41d5da8",
@@ -6694,149 +6722,149 @@
         "219ebcffd2df24f5d96c"
       ],
       "currentCallerIds": [
-        "c3f2ca136ccab92884f3",
-        "8466decbcb9ca41d5da8",
-        "945c1743c499e90155c7",
-        "30c947b4c1a108a17b92",
-        "9dee422de25d294a7357",
-        "c5490d9431dfdae9ca6a",
-        "aad6224f275c7da17b55",
-        "c8806caee1b6dcf5dffe",
-        "8a0eb63ebffa141243f3",
-        "e6d9a5693ccddad6699b",
-        "6de4d56764f41d3a11bc",
-        "57c1b65d21f7ad3e10e9",
-        "dceb9a28d0e6cf3e0163",
-        "66faab8392a58be8ebaa",
-        "4fd45320f2922de4093b",
-        "e24569ab9a41af1806a7",
-        "daa98fe8de4afd945ac5",
-        "219ebcffd2df24f5d96c"
+        "3696472e5c2e79ec3877",
+        "793cd087bfe58a1323e9",
+        "b2c86b6db6573be9213f",
+        "e5b57581e4457cd58ff2",
+        "f77c97eed440f2d836c0",
+        "f651340939c0fe9a8786",
+        "ee377e28847a820d3e60",
+        "912679b2d70aeb54860e",
+        "8e483e5db88e334d4fd9",
+        "2714bcb8dd844631154a",
+        "b11077c6032271361558",
+        "208413eede9db532d440",
+        "4bbd68abc608cd40cf5e",
+        "b13ab17aa7429003241b",
+        "281beef588e15d39be66",
+        "251a8f22c720652f36a5",
+        "0671bfb9368569581fba",
+        "7dd7b79ecd7c4840a960"
       ],
       "mapping": [
         {
           "baselineCallerId": "c3f2ca136ccab92884f3",
           "currentCallerIds": [
-            "c3f2ca136ccab92884f3"
+            "3696472e5c2e79ec3877"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8466decbcb9ca41d5da8",
           "currentCallerIds": [
-            "8466decbcb9ca41d5da8"
+            "793cd087bfe58a1323e9"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "945c1743c499e90155c7",
           "currentCallerIds": [
-            "945c1743c499e90155c7"
+            "b2c86b6db6573be9213f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "30c947b4c1a108a17b92",
           "currentCallerIds": [
-            "30c947b4c1a108a17b92"
+            "e5b57581e4457cd58ff2"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9dee422de25d294a7357",
           "currentCallerIds": [
-            "9dee422de25d294a7357"
+            "f77c97eed440f2d836c0"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c5490d9431dfdae9ca6a",
           "currentCallerIds": [
-            "c5490d9431dfdae9ca6a"
+            "f651340939c0fe9a8786"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "aad6224f275c7da17b55",
           "currentCallerIds": [
-            "aad6224f275c7da17b55"
+            "ee377e28847a820d3e60"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c8806caee1b6dcf5dffe",
           "currentCallerIds": [
-            "c8806caee1b6dcf5dffe"
+            "912679b2d70aeb54860e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8a0eb63ebffa141243f3",
           "currentCallerIds": [
-            "8a0eb63ebffa141243f3"
+            "8e483e5db88e334d4fd9"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e6d9a5693ccddad6699b",
           "currentCallerIds": [
-            "e6d9a5693ccddad6699b"
+            "2714bcb8dd844631154a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6de4d56764f41d3a11bc",
           "currentCallerIds": [
-            "6de4d56764f41d3a11bc"
+            "b11077c6032271361558"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "57c1b65d21f7ad3e10e9",
           "currentCallerIds": [
-            "57c1b65d21f7ad3e10e9"
+            "208413eede9db532d440"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "dceb9a28d0e6cf3e0163",
           "currentCallerIds": [
-            "dceb9a28d0e6cf3e0163"
+            "4bbd68abc608cd40cf5e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "66faab8392a58be8ebaa",
           "currentCallerIds": [
-            "66faab8392a58be8ebaa"
+            "b13ab17aa7429003241b"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "4fd45320f2922de4093b",
           "currentCallerIds": [
-            "4fd45320f2922de4093b"
+            "281beef588e15d39be66"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e24569ab9a41af1806a7",
           "currentCallerIds": [
-            "e24569ab9a41af1806a7"
+            "251a8f22c720652f36a5"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "daa98fe8de4afd945ac5",
           "currentCallerIds": [
-            "daa98fe8de4afd945ac5"
+            "0671bfb9368569581fba"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "219ebcffd2df24f5d96c",
           "currentCallerIds": [
-            "219ebcffd2df24f5d96c"
+            "7dd7b79ecd7c4840a960"
           ],
           "change": "RETAINED"
         }
@@ -6930,26 +6958,52 @@
       "id": "B1-P2-d3895e94f03fa522",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f90c43cc89a03f37f4e29abcb77c3f445a09a13797dae4be976e745c11f824a3",
+      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
       "baselineCallerIds": [
         "00329f071464b8e43b18"
       ],
       "currentCallerIds": [
-        "00329f071464b8e43b18"
+        "2ce84a51bf89c83602d6"
       ],
       "mapping": [
         {
           "baselineCallerId": "00329f071464b8e43b18",
           "currentCallerIds": [
-            "00329f071464b8e43b18"
+            "2ce84a51bf89c83602d6"
           ],
           "change": "RETAINED"
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-d3895e94f03fa522",
+        "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_PENDING_REAL_PROOF",
+        "actorTrace": "Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",
+        "invariant": "No orphaned private object may become a BYOK key, status or deploy environment entry without matching database authority. Canonical disappearance during the download must fail closed.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/absentCredentialAuthority.test.ts",
+            "type": "FOCUSED_TEST",
+            "result": "PRE_FIX_RETURNED_ORPHAN_BYOK_SECRET_THEN_PASSED",
+            "scope": "Synthetic SDK transport, empty canonical state"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "type": "DISPOSABLE_DATABASE_TEST",
+            "result": "NEW_ORPHAN_CASE_NOT_EXECUTED_AT_RECORD_CREATION",
+            "scope": "Actual owner/provider private mirror, empty status/env and matching canonical legacy-key positive"
+          }
+        ],
+        "remaining": [
+          "Execute real final-source case and existing epoch/revision races",
+          "Caller identity and custody for all other provider consumers remain independent",
+          "No customer data or credential row was migrated or deleted"
+        ]
+      },
       "actor": {
         "existingTrace": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "currentSemanticVerification": "PENDING"
@@ -7019,18 +7073,18 @@
       "id": "B1-P2-bee64099846891d0",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f90c43cc89a03f37f4e29abcb77c3f445a09a13797dae4be976e745c11f824a3",
+      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
       "baselineCallerIds": [
         "3fd4baa9d381d8e8ebdb"
       ],
       "currentCallerIds": [
-        "3fd4baa9d381d8e8ebdb"
+        "77b006f82faf88017a2c"
       ],
       "mapping": [
         {
           "baselineCallerId": "3fd4baa9d381d8e8ebdb",
           "currentCallerIds": [
-            "3fd4baa9d381d8e8ebdb"
+            "77b006f82faf88017a2c"
           ],
           "change": "RETAINED"
         }
@@ -7101,27 +7155,27 @@
       "id": "B1-P2-ee04e35f1fc33a98",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f90c43cc89a03f37f4e29abcb77c3f445a09a13797dae4be976e745c11f824a3",
+      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
       "baselineCallerIds": [
         "bffd24f4371afe0068ce",
         "c0a660520b23bcf21065"
       ],
       "currentCallerIds": [
-        "bffd24f4371afe0068ce",
-        "c0a660520b23bcf21065"
+        "9f316f0cfad5794c27c5",
+        "965d682f9f5d530bb929"
       ],
       "mapping": [
         {
           "baselineCallerId": "bffd24f4371afe0068ce",
           "currentCallerIds": [
-            "bffd24f4371afe0068ce"
+            "9f316f0cfad5794c27c5"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c0a660520b23bcf21065",
           "currentCallerIds": [
-            "c0a660520b23bcf21065"
+            "965d682f9f5d530bb929"
           ],
           "change": "RETAINED"
         }
@@ -7193,18 +7247,18 @@
       "id": "B1-P2-0814a4d254cfad84",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f90c43cc89a03f37f4e29abcb77c3f445a09a13797dae4be976e745c11f824a3",
+      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
       "baselineCallerIds": [
         "616340b0d7522ddd6992"
       ],
       "currentCallerIds": [
-        "616340b0d7522ddd6992"
+        "4c0b83f730d798cf4005"
       ],
       "mapping": [
         {
           "baselineCallerId": "616340b0d7522ddd6992",
           "currentCallerIds": [
-            "616340b0d7522ddd6992"
+            "4c0b83f730d798cf4005"
           ],
           "change": "RETAINED"
         }
@@ -7275,18 +7329,18 @@
       "id": "B1-P2-4f31a2595f724ac7",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f90c43cc89a03f37f4e29abcb77c3f445a09a13797dae4be976e745c11f824a3",
+      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
       "baselineCallerIds": [
         "20831c35d677b0bb0980"
       ],
       "currentCallerIds": [
-        "20831c35d677b0bb0980"
+        "707b067210417872007b"
       ],
       "mapping": [
         {
           "baselineCallerId": "20831c35d677b0bb0980",
           "currentCallerIds": [
-            "20831c35d677b0bb0980"
+            "707b067210417872007b"
           ],
           "change": "RETAINED"
         }
@@ -7357,18 +7411,18 @@
       "id": "B1-P2-2114492823658128",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "f90c43cc89a03f37f4e29abcb77c3f445a09a13797dae4be976e745c11f824a3",
+      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
       "baselineCallerIds": [
         "f18023f7a692ccdd61fe"
       ],
       "currentCallerIds": [
-        "f18023f7a692ccdd61fe"
+        "6c25f2727c3524cf7afa"
       ],
       "mapping": [
         {
           "baselineCallerId": "f18023f7a692ccdd61fe",
           "currentCallerIds": [
-            "f18023f7a692ccdd61fe"
+            "6c25f2727c3524cf7afa"
           ],
           "change": "RETAINED"
         }

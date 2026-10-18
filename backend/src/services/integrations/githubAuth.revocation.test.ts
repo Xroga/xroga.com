@@ -23,6 +23,7 @@ test('GitHub authority outages and durable revocation prevent stale mirror resur
       else if (mode === 'revoked') res.end(JSON.stringify([{ access_token: '' }]));
       else if (mode === 'active') res.end(JSON.stringify([{ access_token: 'synthetic-current-token' }]));
       else if (mode === 'legacy-revoked' && !primary) res.end(JSON.stringify([{ access_token: 'synthetic-stale-token', metadata: { revoked: true } }]));
+      else if (mode === 'legacy-only' && !primary) res.end(JSON.stringify([{ access_token: 'synthetic-stale-token', metadata: {} }]));
       else res.end('[]');
     });
   });
@@ -50,7 +51,11 @@ test('GitHub authority outages and durable revocation prevent stale mirror resur
     mode = 'active';
     assert.equal(await getGitHubToken(user), 'synthetic-current-token');
     mode = 'legacy-only';
-    assert.equal(await getGitHubToken(user), 'synthetic-stale-token', 'Legacy-only compatibility requires successful empty authority reads');
+    assert.equal(await getGitHubToken(user), 'synthetic-stale-token', 'A matching active legacy database grant remains supported');
+    mode = 'orphan';calls.length=0;
+    assert.equal(await getGitHubToken(user),null);
+    assert.equal(await getGitHubStorageMeta(user),null);
+    assert.ok(calls.every(call=>!call.path.startsWith('/storage/')),'Empty authority is not a storage-only credential grant');
     mode = 'cleanup-failure';
     calls.length = 0;
     await assert.rejects(clearGitHubConnection(user), { message: 'GitHub disconnected, but legacy copy cleanup is pending. Retry shortly.' });

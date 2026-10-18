@@ -64,7 +64,7 @@ export async function saveGitHubTokenToStorage(
   }
 }
 
-/** Null means authority denied/unavailable, empty string means legacy-only. */
+/** A mirror cannot create authority when both canonical connection rows are absent. */
 async function currentGitHubAuthority(userId: string): Promise<string | null> {
   const supabase = getSupabaseAdmin();
   const primary = await supabase.from('github_integrations').select('access_token').eq('user_id', userId).maybeSingle();
@@ -75,7 +75,7 @@ async function currentGitHubAuthority(userId: string): Promise<string | null> {
   if (legacy.error) return null;
   if (legacy.data) return legacy.data.metadata?.revoked === true ? null
     : typeof legacy.data.access_token === 'string' ? legacy.data.access_token.trim() || null : null;
-  return '';
+  return null;
 }
 
 export async function getGitHubTokenFromStorage(userId: string): Promise<StoredGitHubAuth | null> {
@@ -90,7 +90,7 @@ export async function getGitHubTokenFromStorage(userId: string): Promise<StoredG
     // A delayed mirror cannot override a disconnect/rotation, including one
     // committed while this download was in flight. Metadata is token-bound too.
     const authority = await currentGitHubAuthority(userId);
-    if (authority === null || (authority !== '' && authority !== parsed.access_token.trim())) return null;
+    if (authority === null || authority !== parsed.access_token.trim()) return null;
     return parsed;
   } catch {
     return null;

@@ -10,11 +10,12 @@ test('Phase2 retains all73 packets and371 historical identities without certifyi
   assert.ok(r.packets.every(p=>p.state==='EVIDENCE_GAP'&&p.proofIds.length===0));
   assert.ok(r.packets.flatMap(p=>p.independentLaterObligations).every(o=>o.phase>2));
   assert.ok(r.criteria.every(c=>c.status==='BLOCKED'));assert.equal(r.criteria.length,10);
-  assert.equal(r.packets.filter(p=>p.semanticProgress).length,6);
+  assert.equal(r.packets.filter(p=>p.semanticProgress).length,8);
   assert.ok(r.packets.filter(p=>p.semanticProgress).every(p=>p.executionStatus==='IN_PROGRESS'&&p.state==='EVIDENCE_GAP'));
   const oldIdentity=r.packets.flatMap(p=>p.mapping).filter(m=>m.currentCallerIds.includes('3e1df69e18246e1cf193'));
   assert.equal(oldIdentity.length,2,'Both original insert and refresh obligations survive atomic consolidation');
   assert.equal(r.phase3Started,false);assert.equal(r.additionalSpend,0);
+  assert.notEqual(r.baselineEvidence.headSource,r.baselineEvidence.actualDisposableCheckout,'Historical virtual-merge evidence cannot be relabeled as a head-only checkout');
   assert.equal(readFileSync(resolve(root,path),'utf8').replace(/\r\n/g,'\n'),text);
 });
 test('Phase2 semantic progress rejects changed source, unknown or duplicate packets and self-certified status',()=>{

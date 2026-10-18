@@ -2,7 +2,7 @@
  * User BYOK / product API keys — AES-256-GCM in user_integrations.
  * Secrets never go into GitHub; synced to the user's Vercel project env on deploy.
  * The database is authoritative for revocation. Legacy private Storage reads
- * require a successful database lookup, never an unavailable authority store.
+ * require an active canonical row. Absence or an outage never grants access.
  */
 
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
@@ -69,7 +69,7 @@ async function loadKeyFromStorage(
       if (current.metadata?.revoked === true || typeof current.access_token !== 'string' || !current.access_token) return null;
       return { access_token: current.access_token, metadata: current.metadata ?? {} };
     }
-    return { access_token: parsed.access_token, metadata: parsed.metadata ?? {} };
+    return null;
   } catch {
     return null;
   }

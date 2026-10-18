@@ -21,6 +21,26 @@
   ],
   "decisions": [
     {
+      "packetId":"B1-P2-08a1009a4a9b93a5",
+      "sourceSha256":"a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "executionStatus":"IN_PROGRESS",
+      "finding":"DEMONSTRATED_ORPHAN_MIRROR_GRANT_FIXED_PENDING_REAL_DATABASE_PROOF",
+      "actorTrace":"GitHub mirror path is owner-derived, but both canonical rows could be absent while the helper treated a private object as authority. A delayed legacy object after canonical deletion could restore credential access. Missing/error/revoked authority now denies. A matching active github_integrations or legacy user_integrations grant remains supported and is rechecked after download.",
+      "invariant":"Private storage is a mirror, never a grant when canonical authority is absent. Owner and canonical token must match at use. Do not remove objects, rotate keys or claim new vault encryption.",
+      "evidence":[{"path":"backend/src/services/integrations/absentCredentialAuthority.test.ts","type":"FOCUSED_TEST","result":"PRE_FIX_RETURNED_ORPHAN_GITHUB_SECRET_THEN_PASSED","scope":"Synthetic SDK transport, missing authority denies before storage download"},{"path":"backend/src/security/tenantIsolation.local.integration.ts","type":"DISPOSABLE_DATABASE_TEST","result":"NEW_ORPHAN_CASE_NOT_EXECUTED_AT_RECORD_CREATION","scope":"Actual private objects denied with no grant, valid legacy database grant positive and foreign owner negative"}],
+      "remaining":["Execute final-source real orphan case and all existing rotation/revocation regressions", "Storage-only orphaned connections require explicit reconnect through existing flows, no silent credential migration", "Whole consumer provenance, connected-account authority and Phase3 custody remain separate"]
+    },
+    {
+      "packetId":"B1-P2-d3895e94f03fa522",
+      "sourceSha256":"0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "executionStatus":"IN_PROGRESS",
+      "finding":"DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_PENDING_REAL_PROOF",
+      "actorTrace":"Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",
+      "invariant":"No orphaned private object may become a BYOK key, status or deploy environment entry without matching database authority. Canonical disappearance during the download must fail closed.",
+      "evidence":[{"path":"backend/src/services/integrations/absentCredentialAuthority.test.ts","type":"FOCUSED_TEST","result":"PRE_FIX_RETURNED_ORPHAN_BYOK_SECRET_THEN_PASSED","scope":"Synthetic SDK transport, empty canonical state"},{"path":"backend/src/security/tenantIsolation.local.integration.ts","type":"DISPOSABLE_DATABASE_TEST","result":"NEW_ORPHAN_CASE_NOT_EXECUTED_AT_RECORD_CREATION","scope":"Actual owner/provider private mirror, empty status/env and matching canonical legacy-key positive"}],
+      "remaining":["Execute real final-source case and existing epoch/revision races", "Caller identity and custody for all other provider consumers remain independent", "No customer data or credential row was migrated or deleted"]
+    },
+    {
       "packetId": "B1-P2-05e42140dd947e21",
       "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
       "executionStatus": "IN_PROGRESS",
