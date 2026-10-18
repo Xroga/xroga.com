@@ -1,27 +1,27 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "4098e7e6a935160de9cf6baba23dd082f5f2e44eb44fdda8ad2050e6ebe05aca",
+  "reviewRegistrySha256": "b6eeef52252be2ff32cd5b52d62285ed78048af9a9a57274dd2ecba863dbc7c7",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
-    "persistenceCandidates": 658,
+    "persistenceCandidates": 659,
     "ownerPredicateCandidates": 160,
     "reviewRequired": 0,
-    "reviewedCandidates": 658,
-    "unresolvedSafetyCandidates": 419,
+    "reviewedCandidates": 659,
+    "unresolvedSafetyCandidates": 416,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 90,
+    "SCOPED_BOUNDARY": 93,
     "NARROW_EXCEPTION": 10,
-    "NOT_PERSISTENCE": 139,
-    "REVIEWED_GAP": 419
+    "NOT_PERSISTENCE": 140,
+    "REVIEWED_GAP": 416
   },
   "callers": [
     {
@@ -3011,19 +3011,15 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "ba5fdbb3d15b9add7640606c1ca1ee42e662a2320ba8de43aa212f7f32b32f39",
       "semanticReview": {
-        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval.",
+        "authority": "Exact existence read only. Verified server actor obtains existing project authority, then SELECT predicates constrain both tenant owner and requested project plus exact referenced identifier. The read performs no write or provider action, returns only ID or attribution tuple, and absent/foreign rows fail closed.",
+        "reason": "Narrow read scope verified against source and disposable7d12bf42 run38827153400, real growth relation test and referral guard. It does not certify the enclosing event writer, mutable reference races, project membership revocation, event provenance, idempotent payload equivalence or reward qualification. Whole Command007 remains blocked.",
         "evidence": [
           {
-            "path": "backend/src/growth/growthService.boundary.test.ts",
-            "marker": "growth replay cannot return another project event"
-          },
-          {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real growth event replay cannot disclose a different project event"
+            "marker": "real growth relation checks reject foreign segments and misbound experiment evidence"
           }
         ]
       }
@@ -3036,19 +3032,15 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "ba5fdbb3d15b9add7640606c1ca1ee42e662a2320ba8de43aa212f7f32b32f39",
       "semanticReview": {
-        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval.",
+        "authority": "Exact existence read only. Verified server actor obtains existing project authority, then SELECT predicates constrain both tenant owner and requested project plus exact referenced identifier. The read performs no write or provider action, returns only ID or attribution tuple, and absent/foreign rows fail closed.",
+        "reason": "Narrow read scope verified against source and disposable7d12bf42 run38827153400, real growth relation test and referral guard. It does not certify the enclosing event writer, mutable reference races, project membership revocation, event provenance, idempotent payload equivalence or reward qualification. Whole Command007 remains blocked.",
         "evidence": [
           {
-            "path": "backend/src/growth/growthService.boundary.test.ts",
-            "marker": "growth replay cannot return another project event"
-          },
-          {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real growth event replay cannot disclose a different project event"
+            "marker": "real growth relation checks reject foreign segments and misbound experiment evidence"
           }
         ]
       }
@@ -3061,15 +3053,15 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_referral_attribution",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "ba5fdbb3d15b9add7640606c1ca1ee42e662a2320ba8de43aa212f7f32b32f39",
       "semanticReview": {
-        "authority": "Growth event admission derives tenant/project through existing access policy, then requires the exact existing growth_referral_attribution tuple. The database trigger repeats that tuple predicate under a row lock through event commit, including direct service-role writes. Null-referral events are unchanged.",
-        "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval.",
+        "authority": "Exact existence read only. Verified server actor obtains existing project authority, then SELECT predicates constrain both tenant owner and requested project plus exact referenced identifier. The read performs no write or provider action, returns only ID or attribution tuple, and absent/foreign rows fail closed.",
+        "reason": "Narrow read scope verified against source and disposable7d12bf42 run38827153400, real growth relation test and referral guard. It does not certify the enclosing event writer, mutable reference races, project membership revocation, event provenance, idempotent payload equivalence or reward qualification. Whole Command007 remains blocked.",
         "evidence": [
           {
             "path": "backend/src/security/growthReferral.local.integration.ts",
-            "marker": "real referral event guard rejects foreign tuples"
+            "marker": "real referral event guard rejects foreign tuples and concurrent attribution removal"
           }
         ]
       }
@@ -8056,7 +8048,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "These three expressions are Buffer.from conversions of webhook signing material or candidate signatures inside the raw-body HMAC verifier; they do not call a database or credential store.",
         "reason": "The verifier checks a bounded timestamp and uses timingSafeEqual after equal-length validation. This classification only removes false persistence candidates; it does not certify webhook authority, provider metadata, or subsequent membership writes.",
@@ -8077,7 +8069,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "These three expressions are Buffer.from conversions of webhook signing material or candidate signatures inside the raw-body HMAC verifier; they do not call a database or credential store.",
         "reason": "The verifier checks a bounded timestamp and uses timingSafeEqual after equal-length validation. This classification only removes false persistence candidates; it does not certify webhook authority, provider metadata, or subsequent membership writes.",
@@ -8098,7 +8090,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "These three expressions are Buffer.from conversions of webhook signing material or candidate signatures inside the raw-body HMAC verifier; they do not call a database or credential store.",
         "reason": "The verifier checks a bounded timestamp and uses timingSafeEqual after equal-length validation. This classification only removes false persistence candidates; it does not certify webhook authority, provider metadata, or subsequent membership writes.",
@@ -8119,7 +8111,7 @@
       "target": "whop_memberships",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "All production callers of createCustomerPortal/getUserBillingStatus are in routes/billing.ts and pass req.userId; index.ts mounts that router behind authMiddleware. Neither route admits a body/query owner or membership identifier. Helpers have no exported injected database client.",
         "reason": "Fixed membership projections restrict the server-issued actor and select only its latest subscription. Portal URLs are limited to HTTPS Whop destinations without userinfo. This records the inspected read boundary and caller provenance, not certification of every entitlement helper or provider callback.",
@@ -8144,7 +8136,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "All production callers of createCustomerPortal/getUserBillingStatus are in routes/billing.ts and pass req.userId; index.ts mounts that router behind authMiddleware. Neither route admits a body/query owner or membership identifier. Helpers have no exported injected database client.",
         "reason": "Fixed membership projections restrict the server-issued actor and select only its latest subscription. Portal URLs are limited to HTTPS Whop destinations without userinfo. This records the inspected read boundary and caller provenance, not certification of every entitlement helper or provider callback.",
@@ -8169,7 +8161,7 @@
       "target": "whop_memberships",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "All production callers of createCustomerPortal/getUserBillingStatus are in routes/billing.ts and pass req.userId; index.ts mounts that router behind authMiddleware. Neither route admits a body/query owner or membership identifier. Helpers have no exported injected database client.",
         "reason": "Fixed membership projections restrict the server-issued actor and select only its latest subscription. Portal URLs are limited to HTTPS Whop destinations without userinfo. This records the inspected read boundary and caller provenance, not certification of every entitlement helper or provider callback.",
@@ -8194,7 +8186,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "All production callers of createCustomerPortal/getUserBillingStatus are in routes/billing.ts and pass req.userId; index.ts mounts that router behind authMiddleware. Neither route admits a body/query owner or membership identifier. Helpers have no exported injected database client.",
         "reason": "Fixed membership projections restrict the server-issued actor and select only its latest subscription. Portal URLs are limited to HTTPS Whop destinations without userinfo. This records the inspected read boundary and caller provenance, not certification of every entitlement helper or provider callback.",
@@ -8219,10 +8211,10 @@
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved.",
+        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8244,10 +8236,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved.",
+        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8269,10 +8261,10 @@
       "target": "fulfill_whop_payment",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved.",
+        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8294,10 +8286,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved.",
+        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8311,18 +8303,18 @@
       }
     },
     {
-      "id": "b039cedc2100eee34314",
+      "id": "76ae3b0bf5943ddc497f",
       "path": "backend/src/services/BillingService.ts",
-      "line": 1918,
+      "line": 1919,
       "enclosing": "syncMembership",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved.",
+        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8336,18 +8328,18 @@
       }
     },
     {
-      "id": "880000a353e70a87ea07",
+      "id": "e14049093a9f9e59f9a4",
       "path": "backend/src/services/BillingService.ts",
-      "line": 1918,
+      "line": 1919,
       "enclosing": "syncMembership",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved.",
+        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8361,68 +8353,68 @@
       }
     },
     {
-      "id": "cc13349e4162619b57c0",
-      "path": "backend/src/services/BillingService.ts",
-      "line": 2060,
-      "enclosing": "syncMembership",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
-      "semanticReview": {
-        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved.",
-        "evidence": [
-          {
-            "path": "backend/src/services/BillingService.test.ts",
-            "marker": "membership callback denies a foreign owner"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real Whop fulfillment rolls back foreign membership collisions"
-          }
-        ]
-      }
-    },
-    {
-      "id": "27541abc3a19a508e2e8",
-      "path": "backend/src/services/BillingService.ts",
-      "line": 2061,
-      "enclosing": "syncMembership",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "whop_memberships",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
-      "semanticReview": {
-        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved.",
-        "evidence": [
-          {
-            "path": "backend/src/services/BillingService.test.ts",
-            "marker": "membership callback denies a foreign owner"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real Whop fulfillment rolls back foreign membership collisions"
-          }
-        ]
-      }
-    },
-    {
-      "id": "a3dcfe39e30e5a606328",
+      "id": "86f2172a1d35a127cd1f",
       "path": "backend/src/services/BillingService.ts",
       "line": 2065,
+      "enclosing": "syncMembership",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "semanticReview": {
+        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
+        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/services/BillingService.test.ts",
+            "marker": "membership callback denies a foreign owner"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real Whop fulfillment rolls back foreign membership collisions"
+          }
+        ]
+      }
+    },
+    {
+      "id": "5c848b31c07edd31de1f",
+      "path": "backend/src/services/BillingService.ts",
+      "line": 2066,
+      "enclosing": "syncMembership",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "whop_memberships",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "semanticReview": {
+        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
+        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/services/BillingService.test.ts",
+            "marker": "membership callback denies a foreign owner"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real Whop fulfillment rolls back foreign membership collisions"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d4d06add80a5e50beafa",
+      "path": "backend/src/services/BillingService.ts",
+      "line": 2070,
       "enclosing": "syncMembership",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "semanticReview": {
         "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved.",
+        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -11647,6 +11639,27 @@
       }
     },
     {
+      "id": "8cdc22e0147506033143",
+      "path": "backend/src/services/publish/chromeWebStore.ts",
+      "line": 350,
+      "enclosing": "publishChromeExtensionToStore",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "62a159ab8033ea6c4323fe271ad304027fa5a275085b6bce936956ed73ea1164",
+      "semanticReview": {
+        "authority": "Exact receiver is Node Buffer.from, copying the caller ZIP bytes in memory before asynchronous credential access. It does not access database or remote storage.",
+        "reason": "Conservative from-method false positive only. Subsequent authenticated CWS upload and publication require separately validated targets and receipts, and live provider acceptance remains unverified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/chromeWebStore.ts",
+            "marker": "opts={...opts,zip:Buffer.from(opts.zip)}"
+          }
+        ]
+      }
+    },
+    {
       "id": "7228332f4cdde91a1b83",
       "path": "backend/src/services/publish/electronSecrets.ts",
       "line": 47,
@@ -12378,7 +12391,7 @@
       }
     },
     {
-      "id": "ab2b733ee43e7e80859e",
+      "id": "c2bb7df7e79e706650ec",
       "path": "backend/src/services/storage/projectFiles.ts",
       "line": 10,
       "enclosing": "storeProjectFile",
@@ -12386,7 +12399,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b04aa220706bd4d4a218c846115f37eb7277878b48ef88603197f16ba7c1bc8d",
+      "sourceSha256": "640effcfcfa42f90b0efc7a2acc301a23a9c4a7590ff3e697a6fe2dcdad43f8c",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in storeProjectFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -12399,7 +12412,7 @@
       }
     },
     {
-      "id": "96d4cf005d08ca0b32c0",
+      "id": "75c9b1e5a9405ec287bc",
       "path": "backend/src/services/storage/projectFiles.ts",
       "line": 13,
       "enclosing": "storeProjectFile",
@@ -12407,7 +12420,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b04aa220706bd4d4a218c846115f37eb7277878b48ef88603197f16ba7c1bc8d",
+      "sourceSha256": "640effcfcfa42f90b0efc7a2acc301a23a9c4a7590ff3e697a6fe2dcdad43f8c",
       "semanticReview": {
         "authority": "Exact receiver is Node Buffer.from. This copies the input bytes or converts a string to UTF-8 in memory before asynchronous ownership and storage work. It does not itself access database, Storage or a provider.",
         "reason": "Conservative from-method false positive. Actual ownership, file insert and R2 upload remain independently reviewed and unresolved where provider/lifecycle evidence is missing.",
@@ -12420,18 +12433,18 @@
       }
     },
     {
-      "id": "9358ee1a46bdb9583705",
+      "id": "82128ce3750aebf2c11c",
       "path": "backend/src/services/storage/projectFiles.ts",
-      "line": 26,
+      "line": 27,
       "enclosing": "storeProjectFile",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_files",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b04aa220706bd4d4a218c846115f37eb7277878b48ef88603197f16ba7c1bc8d",
+      "sourceSha256": "640effcfcfa42f90b0efc7a2acc301a23a9c4a7590ff3e697a6fe2dcdad43f8c",
       "semanticReview": {
         "authority": "storeProjectFile creates an internal context from supplied userId, checks the owned project before R2 or database persistence, embeds owner-bound private storage metadata and returns an application-private URL. Retired unscoped helpers throw. Current source references are the build helper and security fixtures.",
-        "reason": "The real disposable test proves owner-only database file delivery and foreign project denial precedes upload in transport tests. Remaining gaps: caller identity provenance, transaction separation between parent lookup and privileged insert, post-upload orphan cleanup/retry, live R2 privacy and application-backed provider verification. The already classified Buffer.from expression is excluded from this record. Sixth-source file insert success requires exact generated ID. Buffer copied before ownership await, mocked storage tests confirm immutable upload bytes and cleanup on unverified receipt. Current production consumer uses strings. Real inline DB path prepared, actual R2 acceptance, ambiguous commit cleanup and ownership revocation across provider awaits remain unresolved.",
+        "reason": "The real disposable test proves owner-only database file delivery and foreign project denial precedes upload in transport tests. Remaining gaps: caller identity provenance, transaction separation between parent lookup and privileged insert, post-upload orphan cleanup/retry, live R2 privacy and application-backed provider verification. The already classified Buffer.from expression is excluded from this record. Sixth-source file insert success requires exact generated ID. Buffer copied before ownership await, mocked storage tests confirm immutable upload bytes and cleanup on unverified receipt. Current production consumer uses strings. Real inline DB path prepared, actual R2 acceptance, ambiguous commit cleanup and ownership revocation across provider awaits remain unresolved. Seventh-source supersedes previous automatic cleanup behavior: uncertain insert acknowledgement now retains uploaded objects, because late or successful commit with lost response can already reference them. Mocked committed-row/lost-response and malformed receipt tests prove no destructive cleanup. Orphan reconciliation and live R2 acceptance remain open.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -12445,18 +12458,18 @@
       }
     },
     {
-      "id": "be0bd23390f54b5c19b6",
+      "id": "86bc34b55fee2854131b",
       "path": "backend/src/services/storage/projectFiles.ts",
-      "line": 26,
+      "line": 27,
       "enclosing": "storeProjectFile",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "b04aa220706bd4d4a218c846115f37eb7277878b48ef88603197f16ba7c1bc8d",
+      "sourceSha256": "640effcfcfa42f90b0efc7a2acc301a23a9c4a7590ff3e697a6fe2dcdad43f8c",
       "semanticReview": {
         "authority": "storeProjectFile creates an internal context from supplied userId, checks the owned project before R2 or database persistence, embeds owner-bound private storage metadata and returns an application-private URL. Retired unscoped helpers throw. Current source references are the build helper and security fixtures.",
-        "reason": "The real disposable test proves owner-only database file delivery and foreign project denial precedes upload in transport tests. Remaining gaps: caller identity provenance, transaction separation between parent lookup and privileged insert, post-upload orphan cleanup/retry, live R2 privacy and application-backed provider verification. The already classified Buffer.from expression is excluded from this record. Sixth-source file insert success requires exact generated ID. Buffer copied before ownership await, mocked storage tests confirm immutable upload bytes and cleanup on unverified receipt. Current production consumer uses strings. Real inline DB path prepared, actual R2 acceptance, ambiguous commit cleanup and ownership revocation across provider awaits remain unresolved.",
+        "reason": "The real disposable test proves owner-only database file delivery and foreign project denial precedes upload in transport tests. Remaining gaps: caller identity provenance, transaction separation between parent lookup and privileged insert, post-upload orphan cleanup/retry, live R2 privacy and application-backed provider verification. The already classified Buffer.from expression is excluded from this record. Sixth-source file insert success requires exact generated ID. Buffer copied before ownership await, mocked storage tests confirm immutable upload bytes and cleanup on unverified receipt. Current production consumer uses strings. Real inline DB path prepared, actual R2 acceptance, ambiguous commit cleanup and ownership revocation across provider awaits remain unresolved. Seventh-source supersedes previous automatic cleanup behavior: uncertain insert acknowledgement now retains uploaded objects, because late or successful commit with lost response can already reference them. Mocked committed-row/lost-response and malformed receipt tests prove no destructive cleanup. Orphan reconciliation and live R2 acceptance remain open.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",

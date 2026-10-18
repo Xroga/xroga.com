@@ -25,6 +25,22 @@ const TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const CWS_SCOPE = 'https://www.googleapis.com/auth/chromewebstore';
 const PKCE_PROVIDER = 'cws_oauth_pkce';
+const itemStates=new Set(['PENDING_REVIEW','STAGED','PUBLISHED','PUBLISHED_TO_TESTERS','REJECTED','CANCELLED']);
+const uploadStates=new Set(['UPLOAD_STATE_UNSPECIFIED','SUCCEEDED','IN_PROGRESS','FAILED','NOT_FOUND']);
+function resourceIds(extensionId:string,publisherId:string):{extensionId:string;publisherId:string}{
+  const item=typeof extensionId==='string'?extensionId.trim():'';
+  const publisher=typeof publisherId==='string'?publisherId.trim().replace(/^publishers\//,''):'';
+  if(!/^[A-Za-z0-9_-]{1,128}$/.test(item)||!/^[A-Za-z0-9_-]{1,128}$/.test(publisher))throw new Error('Invalid Chrome Web Store item or publisher identifier.');
+  return {extensionId:item,publisherId:publisher};
+}
+async function cwsFetch(input:string,init?:RequestInit):Promise<Response>{
+  try{return await fetch(input,{...init,redirect:'error',signal:AbortSignal.timeout(20_000)});}catch{throw new Error('Chrome Web Store request unavailable. Retry shortly.');}
+}
+function matchesItem(value:unknown,creds:CwsCredentials):boolean{
+  if(!value||typeof value!=='object'||Array.isArray(value))return false;
+  const row=value as Record<string,unknown>;
+  return row.name===itemName(creds)&&row.itemId===creds.extensionId&&!row.error;
+}
 export const CWS_CALLBACK_PATH = '/dashboard/publish/cws/callback';
 
 export type CwsCredentials = {
@@ -99,8 +115,7 @@ export async function getCwsCredentials(userId: string): Promise<CwsCredentials 
       clientId: parsed.clientId.trim(),
       clientSecret: parsed.clientSecret.trim(),
       refreshToken: parsed.refreshToken.trim(),
-      extensionId: parsed.extensionId.trim(),
-      publisherId: parsed.publisherId.trim().replace(/^publishers\//, ''),
+      ...resourceIds(parsed.extensionId,parsed.publisherId),
     };
   } catch {
     return null;
@@ -112,6 +127,7 @@ export async function saveCwsCredentials(
   creds: CwsCredentials,
   writeAdmission?: ProviderKeyWriteAdmission,
 ): Promise<void> {
+  const identity=resourceIds(creds.extensionId,creds.publisherId);
   await saveUserProviderKey(
     userId,
     'cws_oauth',
@@ -119,21 +135,21 @@ export async function saveCwsCredentials(
       clientId: creds.clientId.trim(),
       clientSecret: creds.clientSecret.trim(),
       refreshToken: creds.refreshToken.trim(),
-      extensionId: creds.extensionId.trim(),
-      publisherId: creds.publisherId.trim().replace(/^publishers\//, ''),
+      ...identity,
     }),
     { writeAdmission },
   );
 }
 
 async function refreshAccessToken(creds: CwsCredentials): Promise<string> {
+  resourceIds(creds.extensionId,creds.publisherId);
   const body = new URLSearchParams({
     client_id: creds.clientId,
     client_secret: creds.clientSecret,
     refresh_token: creds.refreshToken,
     grant_type: 'refresh_token',
   });
-  const res = await fetch(TOKEN_URL, {
+  const res = await cwsFetch(TOKEN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body,
@@ -143,12 +159,8 @@ async function refreshAccessToken(creds: CwsCredentials): Promise<string> {
     error?: string;
     error_description?: string;
   };
-  if (!res.ok || !json.access_token) {
-    throw new Error(
-      json.error_description ||
-        json.error ||
-        `Chrome Web Store OAuth failed (${res.status}) — check client id/secret/refresh token`,
-    );
+  if (!res.ok || typeof json?.access_token!=='string' || !json.access_token.trim() || json.error) {
+    throw new Error('Chrome Web Store OAuth failed. Reconnect your Google credentials.');
   }
   return json.access_token;
 }
@@ -161,12 +173,13 @@ export async function validateCwsCredentials(
     await refreshAccessToken(creds);
     return { ok: true };
   } catch (err) {
-    return { ok: false, error: (err as Error).message };
+    return { ok: false, error: 'Chrome Web Store credentials could not be validated.' };
   }
 }
 
 function itemName(creds: CwsCredentials): string {
-  return `publishers/${creds.publisherId}/items/${creds.extensionId}`;
+  const ids=resourceIds(creds.extensionId,creds.publisherId);
+  return `publishers/${encodeURIComponent(ids.publisherId)}/items/${encodeURIComponent(ids.extensionId)}`;
 }
 
 /**
@@ -182,6 +195,7 @@ export async function startCwsOAuth(opts: {
   redirectUri: string;
 }): Promise<{ url: string; state: string; redirectUri: string }> {
   const context = requireTenantContext(opts.tenantContext);
+  resourceIds(opts.extensionId,opts.publisherId);
   const redirectUri = getCwsOAuthCallbackUrl(opts.redirectUri);
   if (!isAllowedCwsCallbackUrl(redirectUri)) {
     throw new Error('Invalid CWS OAuth redirect URI');
@@ -267,6 +281,7 @@ export async function completeCwsOAuth(opts: {
   if (!clientId || !clientSecret || !extensionId || !publisherId) {
     return { ok: false, error: 'CWS OAuth session missing client fields — start again' };
   }
+  resourceIds(extensionId,publisherId);
 
   const writeAdmission = await prepareUserProviderKeyWrite(userId, 'cws_oauth', {
     cwsAuthorizationRevision: pkce.authorization_revision,
@@ -279,7 +294,7 @@ export async function completeCwsOAuth(opts: {
     redirect_uri: redirectUri,
     grant_type: 'authorization_code',
   });
-  const res = await fetch(TOKEN_URL, {
+  const res = await cwsFetch(TOKEN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body,
@@ -291,15 +306,10 @@ export async function completeCwsOAuth(opts: {
     error_description?: string;
   };
 
-  if (!res.ok || !json.refresh_token) {
+  if (!res.ok || typeof json?.refresh_token!=='string' || !json.refresh_token.trim() || json.error) {
     return {
       ok: false,
-      error:
-        json.error_description ||
-        json.error ||
-        (!json.refresh_token
-          ? 'Google did not return a refresh token — ensure access_type=offline and prompt=consent, and that this OAuth client is new/unused for this Google account'
-          : `Token exchange failed (${res.status})`),
+      error: 'Google token exchange failed or did not return a refresh token. Reauthorize with offline access.',
     };
   }
 
@@ -337,6 +347,7 @@ export async function publishChromeExtensionToStore(opts: {
   userId: string;
   zip: Buffer;
 }): Promise<CwsPublishResult> {
+  opts={...opts,zip:Buffer.from(opts.zip)};
   const creds = await getCwsCredentials(opts.userId);
   if (!creds) {
     return {
@@ -363,14 +374,14 @@ export async function publishChromeExtensionToStore(opts: {
     return {
       ok: false,
       submitted: false,
-      message: (err as Error).message,
+      message: 'Chrome Web Store authorization unavailable. Reconnect your Google credentials.',
       error: 'OAUTH_FAILED',
     };
   }
 
   const name = itemName(creds);
   const uploadUrl = `https://chromewebstore.googleapis.com/upload/v2/${name}:upload`;
-  const upload = await fetch(uploadUrl, {
+  const upload = await cwsFetch(uploadUrl, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -380,26 +391,27 @@ export async function publishChromeExtensionToStore(opts: {
     body: opts.zip,
   });
   const uploadJson = (await upload.json().catch(() => ({}))) as {
+    name?:string;
     uploadState?: string;
     itemId?: string;
     error?: { message?: string };
     message?: string;
   };
-  if (!upload.ok) {
+  if (!upload.ok || !matchesItem(uploadJson,creds) || uploadJson.uploadState!=='SUCCEEDED') {
     return {
       ok: false,
       submitted: false,
-      message:
-        uploadJson.error?.message ||
-        uploadJson.message ||
-        `CWS upload failed (${upload.status})`,
-      error: 'UPLOAD_FAILED',
+      message: upload.ok && matchesItem(uploadJson,creds) && uploadJson.uploadState==='IN_PROGRESS'
+        ? 'Chrome Web Store upload is still processing. Check status or the developer dashboard before submitting.'
+        : 'Chrome Web Store upload could not be verified. Check the developer dashboard before retrying.',
+      error: upload.ok && matchesItem(uploadJson,creds) && uploadJson.uploadState==='IN_PROGRESS'?'UPLOAD_PENDING':'UPLOAD_FAILED',
+      uploadState:uploadJson && uploadStates.has(uploadJson.uploadState??'')?uploadJson.uploadState:undefined,
       dashboardUrl: `https://chrome.google.com/webstore/devconsole/${creds.extensionId}`,
     };
   }
 
   const publishUrl = `https://chromewebstore.googleapis.com/v2/${name}:publish`;
-  const publish = await fetch(publishUrl, {
+  const publish = await cwsFetch(publishUrl, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -409,21 +421,19 @@ export async function publishChromeExtensionToStore(opts: {
     body: JSON.stringify({ publishType: 'DEFAULT_PUBLISH' }),
   });
   const publishJson = (await publish.json().catch(() => ({}))) as {
+    name?:string;itemId?:string;state?:string;
     error?: { message?: string };
     message?: string;
     status?: string;
   };
-  if (!publish.ok) {
+  if (!publish.ok || !matchesItem(publishJson,creds) || !['PENDING_REVIEW','STAGED','PUBLISHED','PUBLISHED_TO_TESTERS'].includes(publishJson.state??'')) {
     return {
       ok: true,
       submitted: false,
       uploadState: uploadJson.uploadState,
       itemId: uploadJson.itemId || creds.extensionId,
       dashboardUrl: `https://chrome.google.com/webstore/devconsole/${creds.extensionId}`,
-      message:
-        `Zip uploaded to CWS, but publish/submit failed: ${
-          publishJson.error?.message || publishJson.message || publish.status
-        }. Open the developer dashboard to finish submit.`,
+      message: 'Zip upload succeeded, but submission could not be verified. Check the developer dashboard before retrying.',
       error: 'PUBLISH_FAILED',
     };
   }
@@ -463,7 +473,7 @@ export async function fetchCwsItemStatus(userId: string): Promise<{
   }
 
   const name = itemName(creds);
-  const res = await fetch(`https://chromewebstore.googleapis.com/v2/${name}`, {
+  const res = await cwsFetch(`https://chromewebstore.googleapis.com/v2/${name}:fetchStatus`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
       Accept: 'application/json',
@@ -471,25 +481,30 @@ export async function fetchCwsItemStatus(userId: string): Promise<{
     },
   });
   const json = (await res.json().catch(() => ({}))) as {
-    status?: string;
+    name?: string;
+    publishedItemRevisionStatus?: {state?:string};
+    submittedItemRevisionStatus?: {state?:string};
+    lastAsyncUploadState?: string;
+    takenDown?: boolean;
     itemId?: string;
     error?: { message?: string };
     message?: string;
   };
   const dashboardUrl = `https://chrome.google.com/webstore/devconsole/${creds.extensionId}`;
-  if (!res.ok) {
+  const state=json?.takenDown===true?'TAKEN_DOWN':json?.submittedItemRevisionStatus?.state??json?.publishedItemRevisionStatus?.state;
+  if (!res.ok || !matchesItem(json,creds) || (json.takenDown!==undefined && typeof json.takenDown!=='boolean') || !state || (state!=='TAKEN_DOWN'&&!itemStates.has(state))) {
     return {
       ok: false,
       dashboardUrl,
-      message: json.error?.message || json.message || `CWS status failed (${res.status})`,
+      message: 'Chrome Web Store status could not be verified. Check the developer dashboard.',
       error: 'STATUS_FAILED',
     };
   }
   return {
     ok: true,
-    status: json.status || 'UNKNOWN',
+    status: state,
     dashboardUrl,
-    message: `CWS item status: ${json.status || 'UNKNOWN'} (public only after Google approval)`,
+    message: `CWS item status: ${state}. Review the developer dashboard for release details.`,
   };
 }
 

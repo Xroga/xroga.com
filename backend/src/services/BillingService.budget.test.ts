@@ -18,7 +18,13 @@ test('billing leaves durable budget changes inside canonical transactions and pr
     }
     if (url.pathname.endsWith('/profiles')) return Response.json({ id: owner });
     if (url.pathname.endsWith('/fulfill_whop_payment')) return Response.json(fulfilled);
-    if (url.pathname.endsWith('/whop_memberships')) return Response.json(init?.method === 'PATCH' ? { whop_membership_id: 'old' } : init?.method === 'POST' ? null : { user_id: owner });
+    if (url.pathname.endsWith('/whop_memberships')) {
+      if(init?.method==='POST'||init?.method==='PATCH'){
+        const row=JSON.parse(String(init.body));assert.equal(row.whop_plan_id,'stored-plan');assert.equal(row.whop_account_id,'stored-account');
+        return Response.json(init.method==='PATCH'?{whop_membership_id:'old'}:null);
+      }
+      return Response.json({user_id:owner,whop_plan_id:'stored-plan',whop_account_id:'stored-account'});
+    }
     if (url.pathname.endsWith('/ensure_xroga_free_cycle')) return Response.json(null);
     if (url.pathname.endsWith('/xroga_billing_cycles')) return Response.json({ cycle_kind: 'paid', status: 'active', starts_at: new Date().toISOString(), ends_at: new Date(Date.now() + 86400000).toISOString(), entitlement_micro_usd: 16500000, pacing: 'balanced_month', settled_micro_usd: 0, reserved_micro_usd: 0, accounting_safety_hold_micro_usd: 0, accelerated_unlock_micro_usd: 0 });
     throw new Error(`Unexpected ${url.pathname}`);

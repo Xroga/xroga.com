@@ -1907,6 +1907,7 @@ export class BillingService {
       );
 
 
+    let persistedIdentifiers: { whop_plan_id?: string; whop_account_id?: string } = {};
     // The signed provider event establishes its source, not permission to move
     // an existing membership to the actor named in its metadata.
     if (membershipId) {
@@ -1920,7 +1921,7 @@ export class BillingService {
             'whop_memberships',
           )
           .select(
-            'user_id',
+            'user_id,whop_plan_id,whop_account_id',
           )
           .eq(
             'whop_membership_id',
@@ -1933,6 +1934,7 @@ export class BillingService {
       if (existing?.user_id) {
         if (userId && userId !== existing.user_id) throw new Error('membership_owner_mismatch');
         userId = existing.user_id;
+        persistedIdentifiers = existing;
       }
     }
 
@@ -1989,6 +1991,7 @@ export class BillingService {
           data,
           'plan_id',
         ) ||
+        persistedIdentifiers.whop_plan_id ||
         process.env
           .WHOP_PLAN_ID ||
         null,
@@ -1999,6 +2002,7 @@ export class BillingService {
           'account_id',
           'company_id',
         ) ||
+        persistedIdentifiers.whop_account_id ||
         process.env
           .WHOP_COMPANY_ID ||
         null,
@@ -2055,6 +2059,7 @@ export class BillingService {
     };
 
 
+    if (!row.whop_plan_id || !row.whop_account_id) throw new Error('membership_identity_unavailable');
     // Insert-ignore closes the lookup/insert race. The following mutation must
     // match both the provider ID and its persisted owner and return one row.
     const db = getSupabaseAdmin();

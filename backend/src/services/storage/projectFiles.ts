@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { uploadToR2,buildR2Key,removeNewR2Object } from '../../lib/r2.js';
+import { uploadToR2,buildR2Key } from '../../lib/r2.js';
 import { createTenantContext } from '../../security/tenantContext.js';
 import { requireOwnedProject } from '../../security/ownership.js';
 import { FileDeliveryError,digestBytes,privateFileUrl,storageMetadataSchema,MAX_PRIVATE_FILE_BYTES,type PrivateStorageMetadata } from './fileDeliveryPolicy.js';
@@ -23,14 +23,18 @@ export async function storeProjectFile(userId:string,projectId:string,filename:s
   }
   metadata=storageMetadataSchema.parse(metadata);
   const fileUrl=privateFileUrl(projectId,id);
-  const {data,error}=await getSupabaseAdmin().from('project_files').insert({id,project_id:projectId,file_name:filename,file_path:metadata.key??filename,file_type:fileType,file_url:fileUrl,content:inline,storage_metadata:metadata}).select('id').single();
-  if(error || !data || typeof data!=='object' || Array.isArray(data) || data.id!==id) {
+  try {
+    const {data,error}=await getSupabaseAdmin().from('project_files').insert({id,project_id:projectId,file_name:filename,file_path:metadata.key??filename,file_type:fileType,file_url:fileUrl,content:inline,storage_metadata:metadata}).select('id').single();
+    if(error || !data || typeof data!=='object' || Array.isArray(data) || data.id!==id) throw new FileDeliveryError(503,'FILE_RECORD_WRITE_UNAVAILABLE');
+  } catch {
     if(metadata.provider==='private_r2') {
-      try{await removeNewR2Object(metadata.key!,userId,metadata.bucket!);}catch{console.warn('[private-files] newly uploaded object needs authorized cleanup; no file receipt issued');}
+      // A missing receipt can follow a committed insert. Deleting now could
+      // destroy a referenced object, and a negative read cannot rule out a late commit.
+      console.warn('[private-files] persistence unconfirmed; uploaded object retained for reconciliation');
     }
     throw new FileDeliveryError(503,'FILE_RECORD_WRITE_UNAVAILABLE');
   }
-  return {id:data.id,fileName:filename,fileUrl,fileType,projectId};
+  return {id,fileName:filename,fileUrl,fileType,projectId};
 }
 /** Retired unscoped media paths have no active callers; never fabricate durable delivery. */
 export async function storeUserFile(_userId:string,_filename:string,_content:Buffer|string,_contentType:string): Promise<{fileUrl:string;playbackUrl:string;key:string}> {throw new FileDeliveryError(503,'PROJECT_FILE_SCOPE_REQUIRED');}

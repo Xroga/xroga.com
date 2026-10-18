@@ -10,6 +10,7 @@ test('project file requires exact durable receipt and snapshots Buffer before ow
   const prior=Object.fromEntries(Object.keys(env).map(key=>[key,process.env[key]]));Object.assign(process.env,env);
   const owner=randomUUID(),project=randomUUID(),originalFetch=globalThis.fetch;let receipt='valid',release:(()=>void)|undefined,hold=false;
   const rows:Record<string,any>[]=[];let uploaded:Buffer|undefined,deleted=0;
+  const logs:unknown[][]=[];t.mock.method(console,'warn',(...args:unknown[])=>{logs.push(args);});
   t.mock.method(S3Client.prototype,'send',async(command:unknown)=>{
     if(command instanceof PutObjectCommand){uploaded=Buffer.from(command.input.Body as Buffer);return{};}
     assert.ok(command instanceof DeleteObjectCommand);deleted++;return{};
@@ -19,6 +20,9 @@ test('project file requires exact durable receipt and snapshots Buffer before ow
     if(url.pathname==='/rest/v1/projects'){assert.equal(url.searchParams.get('user_id'),`eq.${owner}`);if(hold)await new Promise<void>(resolve=>{release=resolve;});return Response.json({id:project});}
     if(url.hostname==='api.cloudflare.com')return Response.json({success:true,result:url.pathname.endsWith('/domains/managed')?{enabled:false}:url.pathname.endsWith('/domains/custom')?{domains:[]}:{name:'private-fixture'}});
     assert.equal(url.pathname,'/rest/v1/project_files');const row=JSON.parse(String(init?.body));rows.push(row);
+    // The server accepted the row before the response was lost.
+    if(receipt==='lost-response')throw new Error('PRIVATE_TRANSPORT_CANARY');
+    if(receipt==='http-error')return Response.json({message:'PRIVATE_DATABASE_CANARY'},{status:503});
     return Response.json(receipt==='valid'?{id:row.id}:receipt==='missing'?{}:{id:randomUUID()});
   };
   try{
@@ -27,6 +31,11 @@ test('project file requires exact durable receipt and snapshots Buffer before ow
     receipt='valid';hold=true;const original=Buffer.from('original'),pending=storeProjectFile(owner,project,'file.bin',original,'application/octet-stream','other');
     while(!release)await new Promise(resolve=>setImmediate(resolve));original.fill(120);release();await pending;hold=false;
     assert.equal(uploaded?.toString(),'original');assert.equal(rows.at(-1)?.storage_metadata.sha256,digestBytes('original'));
-    receipt='different';await assert.rejects(storeProjectFile(owner,project,'file.bin',Buffer.from('fixture'),'application/octet-stream','other'),{code:'FILE_RECORD_WRITE_UNAVAILABLE'});assert.equal(deleted,1);
+    for(const failure of ['different','missing','lost-response','http-error']){
+      receipt=failure;const committedBefore=rows.length;
+      await assert.rejects(storeProjectFile(owner,project,'file.bin',Buffer.from('fixture'),'application/octet-stream','other'),{code:'FILE_RECORD_WRITE_UNAVAILABLE'});
+      assert.equal(rows.length,committedBefore+1);assert.equal(rows.at(-1)?.storage_metadata.provider,'private_r2');assert.equal(deleted,0);
+    }
+    assert.equal(logs.length,4);assert.ok(logs.every(args=>args.length===1&&args[0]==='[private-files] persistence unconfirmed; uploaded object retained for reconciliation'));
   }finally{release?.();globalThis.fetch=originalFetch;for(const[key,value]of Object.entries(prior)){if(value===undefined)delete process.env[key];else process.env[key]=value;}}
 });

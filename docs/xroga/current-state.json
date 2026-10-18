@@ -21405,7 +21405,7 @@
       "id": "surface:9b0c1b5d45c8637e2209",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/BillingService.ts",
-      "sha256": "fed360eeefc2a585db8327d02dfbec8726dfc97ab326c24dc5663a686d4be80b",
+      "sha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
       "symbols": [
         "APPROVED_ACCOUNT_ID",
         "APPROVED_PLAN_ID",
@@ -21456,6 +21456,7 @@
         "parseDate",
         "payload",
         "paymentId",
+        "persistedIdentifiers",
         "pickString",
         "plan",
         "planId",
@@ -21521,7 +21522,7 @@
       "tenantBoundary": [
         "backend/src/services/BillingService.ts:1152 (user_id)",
         "backend/src/services/BillingService.ts:1220 (user_id)",
-        "backend/src/services/BillingService.ts:2065 (user_id)"
+        "backend/src/services/BillingService.ts:2070 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [
@@ -24572,7 +24573,7 @@
       "id": "surface:26a7a0e14f4a25338521",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/chromeWebStore.ts",
-      "sha256": "87d760025ee32b4368d941538084d360a1fab68ac44c9c2a4b49c2ca4af9233b",
+      "sha256": "62a159ab8033ea6c4323fe271ad304027fa5a275085b6bce936956ed73ea1164",
       "symbols": [
         "AUTH_URL",
         "CWS_CALLBACK_PATH",
@@ -24592,15 +24593,21 @@
         "completeCwsOAuth",
         "context",
         "creds",
+        "cwsFetch",
         "dashboardUrl",
         "err",
         "extensionId",
         "fetchCwsItemStatus",
         "getCwsCredentials",
         "getCwsOAuthCallbackUrl",
+        "identity",
+        "ids",
         "isAllowedCwsCallbackUrl",
+        "item",
         "itemName",
+        "itemStates",
         "json",
+        "matchesItem",
         "meta",
         "name",
         "params",
@@ -24613,17 +24620,21 @@
         "publishChromeExtensionToStore",
         "publishJson",
         "publishUrl",
+        "publisher",
         "publisherId",
         "raw",
         "redirectUri",
         "refreshAccessToken",
         "res",
+        "resourceIds",
+        "row",
         "saveCwsCredentials",
         "startCwsOAuth",
         "state",
         "u",
         "upload",
         "uploadJson",
+        "uploadStates",
         "uploadUrl",
         "validateCwsCredentials",
         "writeAdmission"
@@ -24649,7 +24660,8 @@
         "backend/src/routes/publish.ts:293",
         "backend/src/routes/publish.ts:309",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:7",
-        "backend/src/services/integrations/oauthPkceStore.consume.test.ts:8"
+        "backend/src/services/integrations/oauthPkceStore.consume.test.ts:8",
+        "backend/src/services/publish/chromeWebStore.authority.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -24667,6 +24679,7 @@
         "backend/src/services/publish/chromeWebStore.ts#CwsOAuthPending",
         "backend/src/services/publish/chromeWebStore.ts#completeCwsOAuth",
         "backend/src/services/publish/chromeWebStore.ts#getCwsOAuthCallbackUrl",
+        "backend/src/services/publish/chromeWebStore.ts#identity",
         "backend/src/services/publish/chromeWebStore.ts#startCwsOAuth"
       ],
       "tenantBoundary": [],
@@ -24675,7 +24688,8 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
-        "backend/src/services/integrations/oauthPkceStore.consume.test.ts"
+        "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+        "backend/src/services/publish/chromeWebStore.authority.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -26113,7 +26127,7 @@
       "id": "surface:ea3880cd083e5e066e3d",
       "subsystem": "file_storage",
       "sourcePath": "backend/src/services/storage/projectFiles.ts",
-      "sha256": "b04aa220706bd4d4a218c846115f37eb7277878b48ef88603197f16ba7c1bc8d",
+      "sha256": "640effcfcfa42f90b0efc7a2acc301a23a9c4a7590ff3e697a6fe2dcdad43f8c",
       "symbols": [
         "StoredFile",
         "bytes",
@@ -103767,6 +103781,13 @@
       "id": "test-suite:7b08ebbf93d127ef0eb2",
       "sourcePath": "backend/src/services/notificationService.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8adc7e5cae164b9275bc",
+      "sourcePath": "backend/src/services/publish/chromeWebStore.authority.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
