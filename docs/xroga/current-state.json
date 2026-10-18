@@ -85730,7 +85730,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "scripts/security/audit-tenant-policies.mjs"
+        "scripts/security/audit-tenant-policies.mjs",
+        "scripts/xroga/phase-two.mjs"
       ],
       "callers": [
         "scripts/security/audit-tenant-policies.mjs:9",
@@ -86805,11 +86806,13 @@
       "runtimeImports": [
         "scripts/security/tenant-acceptance.mjs"
       ],
-      "entryPoints": [],
+      "entryPoints": [
+        "scripts/xroga/phase-two.mjs"
+      ],
       "callers": [
         "scripts/xroga/phase-two.test.mjs:5"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:assert/strict",
@@ -86828,11 +86831,11 @@
       "testCoverage": [
         "scripts/xroga/phase-two.test.mjs"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -96268,10 +96271,11 @@
     {
       "id": "workflow:cd0effce06f425599e96",
       "sourcePath": ".github/workflows/unit-tests.yml",
-      "sha256": "6234e4234c41366da18496a09cb441fe6fc4b959cedd3130fc2b43b07da10014",
+      "sha256": "29ad4cf950a8f333fb92477ddef9d0976fc1242600420442ec9e9a2ab6fb21b6",
       "sourceEntrypoints": [
         "scripts/ci/compare-baseline-runs.mjs",
-        "scripts/ci/prepare-pr-integration.mjs"
+        "scripts/ci/prepare-pr-integration.mjs",
+        "scripts/xroga/phase-two.mjs"
       ],
       "hasSchedule": false
     },
@@ -106976,7 +106980,7 @@
     {
       "id": "test-suite:a00cdd264d6de075eb99",
       "sourcePath": "scripts/xroga/phase-two.test.mjs",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

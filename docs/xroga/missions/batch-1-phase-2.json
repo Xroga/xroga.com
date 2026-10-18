@@ -42,6 +42,7 @@
     "supabase/migrations/20261018002100_legacy_server_table_rls.sql",
     "supabase/migrations/20261018002200_growth_identity_parent_admission.sql",
     "scripts/ci/run-baseline.mjs",
+    ".github/workflows/unit-tests.yml",
     "scripts/xroga/phase-one.mjs",
     "scripts/xroga/phase-one.test.mjs",
     "scripts/xroga/phase-two.mjs",

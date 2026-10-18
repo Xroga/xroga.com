@@ -6423,7 +6423,7 @@
         {
           "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
           "marker": "revocation",
-          "sourceSha256": "33938799c2382cda66222541479e50d6353ae2985390d30c11aa3e1fdd162151",
+          "sourceSha256": "895c021bc86551869d072e35f14dcfa8edf2bba3e5a891fc62fee995f5c90b2f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
