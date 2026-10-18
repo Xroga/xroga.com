@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b9bd2828cf325b5b2088601019abc604f1018d4d",
+  "source_sha": "aaefe24138ddfaa790751b46a49dde21c7499161",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -3369,6 +3369,46 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/security/providerKeyRevision.local.integration.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-fixtureproject-supabase-co",
+      "provider": "Source-defined endpoint fixtureproject.supabase.co",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/security/supabaseBundle.local.integration.ts"
+      ],
+      "hostnames": [
+        "fixtureproject.supabase.co"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "CI",
+        "SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_URL",
+        "XB01_DISPOSABLE_SUPABASE"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/security/supabaseBundle.local.integration.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -7142,6 +7182,7 @@
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
+        "endpoint-fixtureproject-supabase-co",
         "endpoint-public-example-invalid",
         "endpoint-whop-com"
       ]
@@ -9774,6 +9815,7 @@
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
         "endpoint-fixture-supabase-co",
+        "endpoint-fixtureproject-supabase-co",
         "endpoint-public-example-invalid",
         "endpoint-whop-com"
       ]
@@ -10021,6 +10063,7 @@
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
         "endpoint-fixture-supabase-co",
+        "endpoint-fixtureproject-supabase-co",
         "endpoint-github-com",
         "endpoint-localhost",
         "endpoint-public-example-invalid",
@@ -10116,6 +10159,7 @@
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
+        "endpoint-fixtureproject-supabase-co",
         "endpoint-localhost",
         "endpoint-public-example-invalid",
         "endpoint-whop-com",
@@ -10802,6 +10846,7 @@
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
+        "endpoint-fixtureproject-supabase-co",
         "endpoint-public-example-invalid",
         "endpoint-whop-com"
       ]
@@ -13175,7 +13220,7 @@
     },
     {
       "path": "backend/src/security/supabaseBundle.local.integration.ts",
-      "sha256": "c57dd72444f4f20685706cec630f492b514f6147f5a43455cddefa6de1c76a50"
+      "sha256": "11ef92290e7133cd2cdfc3da2f29bcdcfeb969e3cf06f0acc4d76cdc2f538e57"
     },
     {
       "path": "backend/src/security/swarmHeartbeat.local.integration.ts",
@@ -13323,7 +13368,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1"
+      "sha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -19088,14 +19133,28 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/supabaseBundle.local.integration.ts",
-      "line": 26,
+      "line": 16,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "fixtureproject.supabase.co",
+      "protocol": "https:",
+      "path": "backend/src/security/supabaseBundle.local.integration.ts",
+      "line": 24,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/supabaseBundle.local.integration.ts",
-      "line": 33,
+      "line": 56,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/supabaseBundle.local.integration.ts",
+      "line": 63,
       "credentialsInUrl": false
     },
     {
@@ -25437,7 +25496,7 @@
     },
     {
       "path": "backend/src/security/supabaseBundle.local.integration.ts",
-      "line": 54,
+      "line": 84,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

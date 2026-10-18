@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { test, type TestContext } from 'node:test';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { prepareSupabaseBundleWrite } from '../services/integrations/userProviderKeys.js';
+import { prepareSupabaseBundleWrite,readUserSupabaseBundle,saveSupabaseBundle } from '../services/integrations/userProviderKeys.js';
+import {ensurePrivateOAuthBucket} from '../services/integrations/credentialStorageBucket.js';
 
 const providers=['apikey_supabase','apikey_supabase_anon','apikey_supabase_db_password','apikey_supabase_url'];
 type FixtureUser={id:string;token:string};
@@ -10,6 +11,35 @@ type Row={provider:string;credential_revision:string;metadata:Record<string,unkn
 
 /** Register only inside the existing guarded disposable Supabase suite. */
 export function registerSupabaseBundleTests(admin:SupabaseClient,getUsers:()=>readonly FixtureUser[]):void {
+  test('real provisioning bundle denies orphan private mirrors and preserves canonical legacy owner grants',async t=>{
+    assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');
+    assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
+    const created=await admin.auth.admin.createUser({email:`bundle-authority-${randomUUID()}@example.invalid`,email_confirm:true});
+    assert.equal(created.error,null);assert.ok(created.data.user);const owner=created.data.user.id;
+    const bucket='xroga-github-tokens',names=['supabase_url','supabase_anon','supabase'] as const;
+    const paths=names.map(name=>`${owner}/vault-apikey_${name}.json`);
+    t.after(async()=>{assert.equal((await admin.storage.from(bucket).remove(paths)).error,null);assert.equal((await admin.auth.admin.deleteUser(owner)).error,null);});
+    assert.equal(await ensurePrivateOAuthBucket(),true);
+    const jwt=(role:string)=>`e30.${Buffer.from(JSON.stringify({ref:'fixtureproject',role})).toString('base64url')}.synthetic`;
+    const values={supabase_url:'https://fixtureproject.supabase.co',supabase_anon:jwt('anon'),supabase:jwt('service_role')};
+    const rows=names.map(name=>({user_id:owner,provider:`apikey_${name}`,access_token:'enc:'+Buffer.from(`fixture:${values[name]}`).toString('base64'),metadata:{}}));
+    for(const [index,row]of rows.entries())assert.equal((await admin.storage.from(bucket).upload(paths[index]!,JSON.stringify(row),{contentType:'application/json'})).error,null);
+    const current=async()=>{const result=await admin.from('user_integrations').select('*').eq('user_id',owner).order('provider');assert.equal(result.error,null);return result.data!;};
+    assert.deepEqual(await current(),[]);assert.equal(await readUserSupabaseBundle(owner),null);
+    const admission=await prepareSupabaseBundleWrite(owner);
+    await assert.rejects(saveSupabaseBundle(admission,{projectUrl:values.supabase_url,anonKey:values.supabase_anon}),/Disconnect/);
+    assert.deepEqual(await current(),[],'Explicit reconnect cannot inherit orphan privileged authority from a public anon key');
+    assert.equal((await admin.from('user_integrations').insert(rows)).error,null);
+    assert.equal((await readUserSupabaseBundle(owner))?.serviceRoleKey,values.supabase,'Existing matching database legacy grants remain usable');
+    assert.equal(await readUserSupabaseBundle(getUsers()[1].id),null,'A different actor cannot select this bundle');
+    const canonical=await current();
+    assert.equal((await admin.from('user_integrations').delete().eq('user_id',owner).eq('provider','apikey_supabase')).error,null);
+    const partial=await readUserSupabaseBundle(owner);assert.ok(partial);assert.equal(partial.serviceRoleKey,null);
+    assert.deepEqual((await current()).map(row=>row.id),canonical.filter(row=>row.provider!=='apikey_supabase').map(row=>row.id));
+    assert.equal((await admin.from('user_integrations').delete().eq('user_id',owner)).error,null);
+    assert.equal(await readUserSupabaseBundle(owner),null);assert.deepEqual(await current(),[]);
+    for(const path of paths){const retained=await admin.storage.from(bucket).download(path);assert.equal(retained.error,null);assert.ok(retained.data,'Read denial must preserve legacy objects for explicit reconnect');}
+  });
   const read=async(owner:string)=>{
     const result=await admin.from('user_integrations').select('*').eq('user_id',owner).in('provider',providers).order('provider');
     assert.equal(result.error,null);return result.data as Row[];

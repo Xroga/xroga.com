@@ -22415,6 +22415,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/security/supabaseBundle.local.integration.ts:6",
         "backend/src/security/tenantIsolation.local.integration.ts:27",
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
@@ -22434,6 +22435,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/oauthPkceStore.test.ts"
       ],
@@ -23890,8 +23892,8 @@
         "backend/src/security/tenantIsolation.local.integration.ts:42",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
-        "backend/src/services/integrations/userProviderKeys.ts:1149",
-        "backend/src/services/integrations/userProviderKeys.ts:1158"
+        "backend/src/services/integrations/userProviderKeys.ts:1159",
+        "backend/src/services/integrations/userProviderKeys.ts:1168"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -23926,7 +23928,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -24120,6 +24122,7 @@
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:4",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:58",
+        "backend/src/services/integrations/supabaseBundle.authority.test.ts:4",
         "backend/src/services/integrations/supabaseBundle.test.ts:5",
         "backend/src/services/integrations/supabaseProvision.ts:10",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts:5",
@@ -24165,6 +24168,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts",
         "backend/src/services/integrations/credentialMirrorRace.test.ts",
+        "backend/src/services/integrations/supabaseBundle.authority.test.ts",
         "backend/src/services/integrations/supabaseBundle.test.ts",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
@@ -104648,7 +104652,7 @@
     {
       "id": "test-suite:30aa81a5268a9c0b613e",
       "sourcePath": "backend/src/security/supabaseBundle.local.integration.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104922,6 +104926,13 @@
       "id": "test-suite:4e143d1613918feb9727",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:3dc997bd0551138da3e2",
+      "sourcePath": "backend/src/services/integrations/supabaseBundle.authority.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

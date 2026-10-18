@@ -969,7 +969,7 @@ export type SupabaseBundleAdmission = Readonly<{ userId: string }>;
 const bundleAdmissions = new WeakMap<SupabaseBundleAdmission, Map<BundleProvider, BundleRow>>();
 const bundleConflict = () => Object.assign(new Error('Supabase connection changed. Reconnect explicitly.'), { code: 'CREDENTIAL_WRITE_CONFLICT' });
 
-async function snapshotSupabaseRows(userId: string): Promise<Map<BundleProvider, BundleRow>> {
+async function snapshotSupabaseRows(userId: string, inspectLegacyForReconnect = false): Promise<Map<BundleProvider, BundleRow>> {
   const db = getSupabaseAdmin();
   const query = () => db.from('user_integrations').select('user_id,provider,access_token,metadata,credential_revision')
     .eq('user_id', userId).in('provider', SUPABASE_BUNDLE_PROVIDERS.map(p => `apikey_${p}`));
@@ -989,6 +989,13 @@ async function snapshotSupabaseRows(userId: string): Promise<Map<BundleProvider,
   for (const provider of SUPABASE_BUNDLE_PROVIDERS) {
     const row = rows.find(r => r.provider === `apikey_${provider}`);
     if (row) { result.set(provider, row as BundleRow); continue; }
+    // Normal provisioning reads require canonical authority for each key.
+    // Only explicit reconnect admission inspects old objects to avoid silently
+    // discarding credentials. Inspection never makes an object an active grant.
+    if (!inspectLegacyForReconnect) {
+      result.set(provider, { provider: `apikey_${provider}`, access_token: '', metadata: { revoked: true }, credential_revision: null });
+      continue;
+    }
     // Preserve legacy records, but distinguish absence from an unavailable mirror.
     const downloaded = await db.storage.from(KEY_BUCKET).download(keyStoragePath(userId, `apikey_${provider}`));
     if (downloaded.error) {
@@ -1019,7 +1026,7 @@ async function snapshotSupabaseRows(userId: string): Promise<Map<BundleProvider,
 }
 
 export async function prepareSupabaseBundleWrite(userId: string): Promise<SupabaseBundleAdmission> {
-  const rows = await snapshotSupabaseRows(userId);
+  const rows = await snapshotSupabaseRows(userId, true);
   const admission = Object.freeze({ userId });
   bundleAdmissions.set(admission, rows);
   return admission;
@@ -1046,6 +1053,9 @@ function boundBundle(rows: Map<BundleProvider, BundleRow>): boolean {
   const values = bundleValues(rows), ref = projectRefFromUrl(values.projectUrl ?? '');
   if (!ref || !values.anonKey) return false;
   const active = [...rows.values()].filter(row => row.access_token && row.metadata.revoked !== true);
+  // A storage-only key has no canonical revision. Even an explicit reconnect
+  // must supply that credential again rather than inherit its old mirror.
+  if (active.some(row => !row.credential_revision)) return false;
   const generation = rows.get('supabase_url')?.metadata.supabase_bundle_id;
   if (generation) return typeof generation === 'string' && active.every(row => row.metadata.supabase_bundle_id === generation && row.metadata.supabase_project_ref === ref);
   if (active.some(row => row.metadata.supabase_bundle_id) || values.dbPassword) return false;

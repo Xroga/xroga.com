@@ -75,7 +75,7 @@ test('bundle reads preserve consistent legacy JWTs and deny opaque, mixed and ch
     for(const [p,value] of [['supabase_url','https://oldproject.supabase.co'],['supabase_anon',jwt('oldproject','anon')],['supabase',jwt('oldproject','service_role')]]) {
       mirrors.set(`apikey_${p}`,{access_token:enc(value),metadata:{}});
     }
-    assert.equal((await readUserSupabaseBundle(owner))?.serviceRoleKey,jwt('oldproject','service_role'));
+    assert.equal(await readUserSupabaseBundle(owner),null,'Orphan mirrors are not canonical provisioning authority');
     const legacyAdmission=await prepareSupabaseBundleWrite(owner);
     assert.equal(rows.size,0,'Admission never masks legacy mirrors with tombstones');
     await assert.rejects(saveSupabaseBundle(legacyAdmission,{projectUrl:'https://newproject.supabase.co',anonKey:'SYNTHETIC_ANON'}),/Disconnect/);

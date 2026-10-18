@@ -36,21 +36,50 @@
   ],
   "decisions": [
     {
+      "packetId": "B1-P2-8c13793907db3388",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "DEMONSTRATED_PROVISIONING_BUNDLE_ORPHAN_AUTHORITY_FIXED_PENDING_REAL_PRIVATE_OBJECT_PROOF",
+      "actorTrace": "Authenticated integrations route passes req.userId and the issued-context build pipeline passes opts.userId to readUserSupabaseBundle. The private snapshot previously restored each absent key from owner-path private objects, permitting a consistent legacy JWT bundle with no canonical rows. Normal provisioning now reads only canonical owner/provider rows. Explicit reconnect may inspect legacy bytes for preservation, but cannot carry an orphan privileged key into a new grant.",
+      "invariant": "Storage-only bundle objects cannot supply provisioning or worker credentials. A canonical public URL/anon pair cannot resurrect a missing service key. Preserve active matching legacy database grants, current atomic four-row saves, revocation fencing and all stored objects.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/supabaseBundle.authority.test.ts",
+          "type": "FOCUSED_NEGATIVE_AND_POSITIVE",
+          "result": "PRE_FIX_RETURNED_ORPHAN_SERVICE_ROLE_THEN_PASS",
+          "scope": "Synthetic loopback transport, no real provider or database claim"
+        },
+        {
+          "path": "backend/src/security/supabaseBundle.local.integration.ts",
+          "type": "DISPOSABLE_PRIVATE_OBJECT_AND_DATABASE",
+          "result": "NOT_EXECUTED_AT_RECORD_CREATION",
+          "scope": "Actual orphan private objects, exact absent/partial canonical rows, legacy grants, foreign actor, reconnect denial and retained object receipts"
+        }
+      ],
+      "remaining": [
+        "Execute the added real private-object test and full exact-source regression",
+        "Reconcile all remaining upstream account-selection consumers independently",
+        "No Phase3 encryption, key rotation, credential migration or external provider call"
+      ]
+    },
+    {
       "packetId":"B1-P2-392b9b628a9b92be",
       "sourceSha256":"55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
       "executionStatus":"IN_PROGRESS",
-      "finding":"DEMONSTRATED_MISBOUND_BUDGET_CYCLE_PARENT_FIXED_PENDING_ACTUAL_LOCK_PROOF",
+      "finding":"DEMONSTRATED_MISBOUND_BUDGET_CYCLE_PARENT_FIXED_ACTUAL_LOCK_PROOF_VERIFIED",
+      "actualVerification":{"sourceSha":"aaefe24138ddfaa790751b46a49dde21c7499161","disposableRun":"39165967730","aggregateRun":"39165967766","integratedSha":"edd3b8759d301861e1a7b0cb27d707085e63fc8b","migrations":120,"securityTests":160,"browserTests":3,"scope":"All eight actual parent-lock waits, misbound status variants, own replay, exact receipts, rollback and browser denial. Caller provenance for all16 operations remains independent."},
       "actorTrace":"Existing request/pipeline accounting callers and service-only RPCs remain unchanged. SQL formerly checked reservation.user_id but used cycle_id alone for balance mutation, or returned a replay without checking the cycle owner. A synthetic inconsistent reservation proved reserve accepting the foreign parent and settle/release changing its balance. This is a misbound-state authorization defect, not a claimed browser-created row or production exploit.",
       "invariant":"Current reservation and cycle owner must both match the admitted user before replay, settlement, release or uncertainty transition. A competing cycle-owner change that wins the row lock must deny without touching balances or the receipt. Preserve existing accounting and RPC defaults, no new engine or constraint/backfill.",
       "relatedSourceBindings":[{"path":"supabase/migrations/20261019000200_provider_budget_cycle_parent.sql","sha256":"34cf14100a03e4ac0178e18e55b623365dddc5728f71848680c515a46a780d2c"}],
       "evidence":[{"path":"supabase/migrations/20261019000200_provider_budget_cycle_parent.sql","type":"SYNTHETIC_SQL_PROBE","result":"THREE_PRE_FIX_MISSING_REJECTIONS_THEN21_ASSERTIONS_PASS_WITH_REAPPLY","scope":"Actual function definitions in PGlite, not real Supabase, real locks or production data"},{"path":"backend/src/security/providerCycleParent.local.integration.ts","type":"DISPOSABLE_DATABASE_LOCK_TEST","result":"NOT_EXECUTED_AT_RECORD_CREATION","scope":"Misbound states, own concurrency/replay, exact balance/receipt, foreign/browser denial, four cycle-owner and four reservation-parent lock waits and rollback"}],
-      "remaining":["Execute actual new parent-lock and billing API tests with120-migration fresh/upgrade/reapply at final source","Reconcile owner provenance for the remaining budget callers instead of treating this parent fix as all16 caller certification","Keep universal spend/settlement authority and dormant activatePaidCycle activation in Phase3"]
+      "remaining":["Reconcile owner provenance for the remaining budget callers instead of treating this parent fix as all16 caller certification","Keep universal spend/settlement authority and dormant activatePaidCycle activation in Phase3"]
     },
     {
       "packetId":"B1-P2-f4ec01f111f4e6a3",
       "sourceSha256":"a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15",
       "executionStatus":"IN_PROGRESS",
-      "finding":"SOURCE_TRACED_SIGNED_DELIVERY_EXCEPTION_REGISTERED_PENDING_NEW_SOURCE_PROOF",
+      "finding":"SOURCE_TRACED_SIGNED_DELIVERY_EXCEPTION_VERIFIED_AT_AAEFE",
+      "actualVerification":{"sourceSha":"aaefe24138ddfaa790751b46a49dde21c7499161","disposableRun":"39165967730","scope":"Six fixed signed delivery operations, exact HMAC/timestamp and receipts, failed retry, browser DML denial. Registered exception admitted by unchanged evaluator. No paid entitlement or app-user authority."},
       "actorTrace":"The sole production router verifies raw-body HMAC and timestamp before acquiring the fixed signed_whop_delivery_receipts global client. Fixed whop/delivery/digest controls query scope. Delivery claims establish provider receipt lineage only, never an app-user grant. BillingService separately verifies canonical checkout or stored membership/payment owner before paid mutation.",
       "invariant":"Invalid signatures, active/lost retry, changed digest, store error or absent/substituted completion cannot acknowledge new success. Browser identities cannot create or modify service-only delivery receipts even with their own user_id. Uncertain processing stays503.",
       "evidence":[{"path":"backend/src/routes/billingWebhook.test.ts","type":"FOCUSED_TEST","result":"EXISTING_NEGATIVE_CASE_REUSED","scope":"Invalid signature, lost/active claim, outage, receipt substitution and redaction"},{"path":"backend/src/services/billingOwnership.local.integration.ts","type":"SIGNED_HTTP_DATABASE_TEST","result":"B9BD_DISPOSABLE39163904198_PASSED_PRIOR_FACTORY_NAME","scope":"First ownership, exact signed delivery receipts, concurrency and recovery"},{"path":"backend/src/services/billingRoutes.local.integration.ts","type":"DISPOSABLE_AUTHENTICATED_API_TEST","result":"NOT_EXECUTED_AT_RECORD_CREATION","scope":"Browser DML denial, authenticated billing owner and forged body/query identity"}],
@@ -97,7 +126,7 @@
     },
     {
       "packetId":"B1-P2-d3895e94f03fa522",
-      "sourceSha256":"0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256":"81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "executionStatus":"IN_PROGRESS",
       "finding":"DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_PENDING_REAL_PROOF",
       "actorTrace":"Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",

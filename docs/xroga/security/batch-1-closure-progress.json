@@ -594,9 +594,9 @@
           "251a8f22c720652f36a5",
           "0671bfb9368569581fba",
           "7dd7b79ecd7c4840a960",
-          "4c0b83f730d798cf4005",
-          "707b067210417872007b",
-          "6c25f2727c3524cf7afa"
+          "c0ae76586326abbbba08",
+          "27483f27b03af7e1669b",
+          "78fbb99c106916e565c3"
         ],
         "backend/src/services/integrations/vercelAuth.ts": [
           "c47cd353f14ba5046be8",

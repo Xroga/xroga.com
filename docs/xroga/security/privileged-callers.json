@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "cede2c26d4a81172399a80e21b8c65689b24847d9c026ffef4ad0fac12d265c7",
+  "reviewRegistrySha256": "94eaacfe5d4646774a6c9ddf1c1f1dc87b539da6e17155ddb9507f5733a9b00c",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -536,23 +536,23 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-b0851634d55d78fb"
+        "id": "OB-bdf179810bec3c87"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-909e2fbc177086ff"
+        "id": "OB-2ccd843ae1414bab"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-001d807fc5405172"
+        "id": "OB-3b83e8359c9a6536"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-619c71c6f217d2c0"
+        "id": "OB-49a8843f9861de37"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-2bfe6c7a58a3478f"
+        "id": "OB-2283356c2fa75180"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -10485,7 +10485,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -10510,7 +10510,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -10535,7 +10535,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -10560,7 +10560,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -10585,7 +10585,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
@@ -10610,7 +10610,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -10635,7 +10635,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -10660,7 +10660,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10681,7 +10681,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations.",
@@ -10702,7 +10702,7 @@
       "target": "prepare_provider_key_write",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Fixed admission RPC/client use VERIFIED at696322f0, disposable39124146660: absent/existing save/revoke, exact owner/provider revision separation, malformed provider paths and browser-denial cases pass. Only production consumers are the authenticated provider-key/publish routes or internal provisioning/CWS helpers carrying server owner and captured admission. The service validates allowed provider/env, accepts only a UUID revision and issues a frozen WeakMap-backed owner/provider/env handle. SQL touches only that explicit owner/provider, inserting an empty revoked CAS target when absent. Runtime/SQL/fixtures unchanged. Only admission persistence/client use closes. Remote work before admission, mirrors and full credential lifecycle/KMS remain separate gaps, with no external account ownership or provider certification.",
@@ -10727,7 +10727,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Fixed admission RPC/client use VERIFIED at696322f0, disposable39124146660: absent/existing save/revoke, exact owner/provider revision separation, malformed provider paths and browser-denial cases pass. Only production consumers are the authenticated provider-key/publish routes or internal provisioning/CWS helpers carrying server owner and captured admission. The service validates allowed provider/env, accepts only a UUID revision and issues a frozen WeakMap-backed owner/provider/env handle. SQL touches only that explicit owner/provider, inserting an empty revoked CAS target when absent. Runtime/SQL/fixtures unchanged. Only admission persistence/client use closes. Remote work before admission, mirrors and full credential lifecycle/KMS remain separate gaps, with no external account ownership or provider certification.",
@@ -10752,7 +10752,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -10777,7 +10777,7 @@
       "target": "save_cws_oauth_key_if_current",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "CWS callback consumes the exact owner/state before provider I/O and obtains an issued BYOK admission only when the current revision matches the consumed epoch. save_cws_oauth_key_if_current locks that owner/key, checks the unexpired consumed receipt, then delegates encrypted metadata validation and revision CAS to the existing BYOK RPC.",
         "reason": "Focused CWS tests deny changes before exchange and before encrypted persistence. Local SQL checks cover lost revision, duplicate save, revoke, reconnect and receipt expiry. Actual two-client CI is pending. Complete caller admission, legacy cryptography and external provider revocation remain open. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
@@ -10798,7 +10798,7 @@
       "target": "save_provider_key_if_current",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Exact owner/provider/revision save transaction VERIFIED at696322f0813a4e08b9d324e2bb653dfb2e2d657e, disposable39124146660. Actual absent/existing two-client save/revoke races retain tombstones, cross-owner/provider revision reuse and malformed metadata deny, concurrent saves yield one winner, browser RPC and direct BYOK writes/rename bypasses deny. Runtime helper, SQL and fixtures are unchanged. Save arguments derive from an opaque issued admission bound to original owner/provider/env and the canonical private alias policy. Only this encrypted-row CAS closes. Storage mirrors, upstream remote work, external account selection, bulk enumeration, already-issued credentials and complete lifecycle/KMS remain independently unresolved. No provider calls or whole vault certification.",
@@ -10823,7 +10823,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -10848,7 +10848,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -10873,7 +10873,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -10898,7 +10898,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -10923,7 +10923,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Explicit authenticated disconnect passes issued TenantContext. Custom provider enumeration reads only that owner database rows and legacy Storage object names with bounded pagination, never downloads secrets, and fails closed when complete enumeration cannot be established. Exact selected provider revocations retain existing CAS tombstones.",
         "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
@@ -10944,7 +10944,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Explicit authenticated disconnect passes issued TenantContext. Custom provider enumeration reads only that owner database rows and legacy Storage object names with bounded pagination, never downloads secrets, and fails closed when complete enumeration cannot be established. Exact selected provider revocations retain existing CAS tombstones.",
         "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
@@ -10965,7 +10965,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -10990,7 +10990,7 @@
       "target": "revoke_provider_key",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact-row revocation RPC only. Authenticated integration and Supabase disconnect routes supply req.userId. Private helper admits validated provider or exact delete-only legacy alias, calls service-only revoke_provider_key and requires true receipt. SQL binds owner/provider, clears credentials, retains revoked tombstone and rotates revision atomically.",
         "reason": "Real421a6b10 disposable38791937032 passed four BYOK cases for existing/absent save-revoke ordering, exact owner/provider binding, stale-save denial and browser mutation/RPC denial. SQL is unchanged. Current legacy alias and disconnect failure semantics have focused tests. Scope excludes bulk-custom completeness, mirror cleanup success, upstream reconnect admission, already-issued credentials and provider-side revocation. Those remain separately unresolved.",
@@ -11019,7 +11019,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -11044,7 +11044,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -11069,7 +11069,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -11094,7 +11094,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -11119,7 +11119,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -11144,7 +11144,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -11161,7 +11161,7 @@
       }
     },
     {
-      "id": "4c0b83f730d798cf4005",
+      "id": "c0ae76586326abbbba08",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "line": 973,
       "enclosing": "snapshotSupabaseRows",
@@ -11169,7 +11169,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
         "reason": "Twenty-two focused tests and local SQL probe pass. Real empty-owner admission, two-client winner, late-row rollback, wrong-owner/role, revoke and generic overwrite tests prepared. Final-source CI pending. Legacy exact-ref/role JWT compatibility is consistency only, unbound opaque keys require reconnect. Already-started external actions and complete lifecycle/KMS remain separate. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
@@ -11182,7 +11182,7 @@
       }
     },
     {
-      "id": "707b067210417872007b",
+      "id": "27483f27b03af7e1669b",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "line": 974,
       "enclosing": "snapshotSupabaseRows",
@@ -11190,7 +11190,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
         "reason": "Twenty-two focused tests and local SQL probe pass. Real empty-owner admission, two-client winner, late-row rollback, wrong-owner/role, revoke and generic overwrite tests prepared. Final-source CI pending. Legacy exact-ref/role JWT compatibility is consistency only, unbound opaque keys require reconnect. Already-started external actions and complete lifecycle/KMS remain separate. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
@@ -11203,15 +11203,15 @@
       }
     },
     {
-      "id": "6c25f2727c3524cf7afa",
+      "id": "78fbb99c106916e565c3",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 993,
+      "line": 1000,
       "enclosing": "snapshotSupabaseRows",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
         "reason": "Twenty-two focused tests and local SQL probe pass. Real empty-owner admission, two-client winner, late-row rollback, wrong-owner/role, revoke and generic overwrite tests prepared. Final-source CI pending. Legacy exact-ref/role JWT compatibility is consistency only, unbound opaque keys require reconnect. Already-started external actions and complete lifecycle/KMS remain separate. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
@@ -11224,15 +11224,15 @@
       }
     },
     {
-      "id": "2681fdfdb353c0e46a10",
+      "id": "4b2e42e58a10751072e2",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 1032,
+      "line": 1039,
       "enclosing": "legacyJwtMatches",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Inspected exact receiver: Node Buffer.from decodes a JWT payload in memory for project/role consistency only. It performs no database or Storage operation and does not verify the JWT signature.",
         "reason": "Conservative from-method scanner false positive only. Decoding cannot grant provider identity, provisioning or tenant authorization. Adjacent bundle storage paths have separate unresolved source-bound reviews.",
@@ -11245,15 +11245,15 @@
       }
     },
     {
-      "id": "7e12a8ff6f4280049e32",
+      "id": "b3bf50cd04626be9c045",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 1072,
+      "line": 1082,
       "enclosing": "saveSupabaseBundle",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Inspected exact receiver: Node Buffer.from decodes a JWT payload in memory for project/role consistency only. It performs no database or Storage operation and does not verify the JWT signature.",
         "reason": "Conservative from-method scanner false positive only. Decoding cannot grant provider identity, provisioning or tenant authorization. Adjacent bundle storage paths have separate unresolved source-bound reviews.",
@@ -11266,15 +11266,15 @@
       }
     },
     {
-      "id": "1176df8ec1ca9bc901e2",
+      "id": "bca6e647157d3ac5425b",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 1100,
+      "line": 1110,
       "enclosing": "saveSupabaseBundle",
       "kind": "RPC_CANDIDATE",
       "target": "save_supabase_bundle_if_current",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
         "reason": "Four-row owner/revision bundle transaction VERIFIED at696322f0813a4e08b9d324e2bb653dfb2e2d657e, disposable39124146660 tests51-53: absent-owner admission does not mutate rows, two clients yield one common generation, a last-row stale revision rolls back all earlier writes, wrong owner/browser cannot save, individual revocation invalidates the bundle, generic single-key overwrite removes association. Runtime/SQL/fixtures unchanged. Only atomic association/persistence closes. Association and legacy JWT decoding do not verify provider identity. Upstream account/project selection, mirrors, already-issued external effects and full lifecycle/KMS remain separately unresolved. No live provider or whole vault certification.",
@@ -11287,15 +11287,15 @@
       }
     },
     {
-      "id": "520474b3c3eb30ff7190",
+      "id": "6fac99771fef95cbc535",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 1100,
+      "line": 1110,
       "enclosing": "saveSupabaseBundle",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
         "reason": "Fixed bundle client use VERIFIED at696322f0, disposable39124146660 tests51-53. The client is invoked only after resolving an opaque admission from the private WeakMap. Its frozen owner supplies p_owner_id, the payload has the four fixed providers and captured revisions, and only true acknowledges the existing atomic transaction. Successful save consumes the admission. Protected connect requires issued TenantContext, with internal OAuth/provisioning callers capturing admissions before remote work. Runtime helper and transaction unchanged. Only this fixed client use closes. Full upstream actor/provider account lifecycle, legacy mirror policy, external effects and KMS remain independently open. No whole credential caller certification.",
@@ -11308,15 +11308,15 @@
       }
     },
     {
-      "id": "307e64cc3f9363ef219b",
+      "id": "ee7917d219f01d454567",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 1130,
+      "line": 1140,
       "enclosing": "connectUserSupabase",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0f5db2aec8725f637329ac45aa3c31324afadbaf02bab843dc8bd3779496e3a1",
+      "sourceSha256": "81219bf000d4ebb87639605f2cadc9f5425810fc9de9803fc832be783ac7aeee",
       "semanticReview": {
         "authority": "Node Buffer.from decodes a supplied JWT payload for negative project-ref mismatch detection. The receiver is Buffer, not a database/Storage client, and no side effect occurs in this expression.",
         "reason": "Exclude only this AST conversion false positive. It does not authenticate the JWT claims or certify subsequent credential persistence/provisioning.",
