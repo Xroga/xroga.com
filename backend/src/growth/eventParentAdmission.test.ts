@@ -39,7 +39,8 @@ test('event RPC failures and substituted persistence receipts fail closed withou
     });
   }
   errorCode=undefined;
-  for(change of [()=>null,r=>({...r,duplicate:'true'}),r=>({...r,event:{...r.event,tenant_id:'foreign'}}),r=>({...r,event:{...r.event,project_id:'foreign'}}),r=>({...r,event:{...r.event,user_id:'foreign'}}),r=>({...r,event:{...r.event,id:''}}),r=>({...r,event:{...r.event,occurred_at:'invalid'}})]){
+  const corruptions:Array<(receipt:any)=>any>=[()=>null,r=>({...r,duplicate:'true'}),r=>({...r,event:{...r.event,tenant_id:'foreign'}}),r=>({...r,event:{...r.event,project_id:'foreign'}}),r=>({...r,event:{...r.event,user_id:'foreign'}}),r=>({...r,event:{...r.event,id:''}}),r=>({...r,event:{...r.event,occurred_at:'invalid'}})];
+  for(change of corruptions){
     await assert.rejects(service.recordEvent('actor',input),{code:'storage_unavailable',statusCode:503});
   }
   change=r=>r;assert.equal((await service.recordEvent('actor',input)).event.user_id,'actor');
