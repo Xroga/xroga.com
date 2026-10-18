@@ -4,25 +4,43 @@
     {
       "path": "backend/src/ai/runStore.ts",
       "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
-      "callIds": ["e04b294245cb6657cdbb", "b6df0b190fb35e254f16"],
+      "callIds": [
+        "e04b294245cb6657cdbb",
+        "b6df0b190fb35e254f16"
+      ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Both production consumers are authMiddleware-mounted swarm history and dashboard ship-analytics handlers passing server req.userId. The sole privileged query filters that exact owner. Returned rows and hot cache entries must match owner, persisted IDs are checked and malformed statuses are excluded. Hydration never replaces an admitted local worker object. No write or external effect occurs at these two sites.",
       "reason": "Verified at5c7e8dcf1413e3e4cfa698f6926fea5b993d6e34 disposable39110916568, real historical-state test93 checks normalized legacy states, foreign cold reads and foreign history canary denial. Focused historyAdmission and persistedStatus tests cover substituted owner/invalid state and delayed read versus admitted local object. Only fixed read/factory boundaries closed. Cache freshness, account-deletion retention, immediate JWT revocation and entire worker lifecycle remain separate open obligations.",
       "evidence": [
-        {"path": "backend/src/security/tenantIsolation.local.integration.ts", "marker": "real historical run states hydrate truthfully and remain owner scoped"},
-        {"path": "backend/src/ai/runStore.historyAdmission.test.ts", "marker": "history hydration cannot replace an admitted worker"}
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real historical run states hydrate truthfully and remain owner scoped"
+        },
+        {
+          "path": "backend/src/ai/runStore.historyAdmission.test.ts",
+          "marker": "history hydration cannot replace an admitted worker"
+        }
       ]
     },
     {
       "path": "backend/src/ai/runStore.ts",
       "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
-      "callIds": ["cbda964648a33f5f44ec", "cef7e4bdd68cb2fe472e"],
+      "callIds": [
+        "cbda964648a33f5f44ec",
+        "cef7e4bdd68cb2fe472e"
+      ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Sole production polling consumer runs inside the authenticated swarm execution's asynchronous attempt scope, captures original server actor/run, checks admission before polling and aborts on missing or stale authority. Query filters exact owner/run, validates returned identities and known status, matches admitted generation/worker and rechecks the local object after await. It reads status only and never grants a new worker lease or credential.",
       "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification.",
       "evidence": [
-        {"path": "backend/src/security/buildOutcomeAttempt.local.integration.ts", "marker": "isRunCancellationRequested(f.runId, f.other.id)"},
-        {"path": "backend/src/ai/runStore.cancellationRace.test.ts", "marker": "a delayed cancellation read cannot admit an old callback"}
+        {
+          "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+          "marker": "isRunCancellationRequested(f.runId, f.other.id)"
+        },
+        {
+          "path": "backend/src/ai/runStore.cancellationRace.test.ts",
+          "marker": "a delayed cancellation read cannot admit an old callback"
+        }
       ]
     },
     {
@@ -3094,7 +3112,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "54606dc2ef0252a8119d3f51cb41ff0166bf9097d7caa62533bbe8ab72df1200",
+      "sourceSha256": "3bb1f496ff4c66ce24be73dd408d74558d0a77fa44f03efb9b10dd3b456286aa",
       "callIds": [
         "dd0917f84f2764fd0472",
         "c841bcae277927c0b193",
@@ -3116,7 +3134,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "54606dc2ef0252a8119d3f51cb41ff0166bf9097d7caa62533bbe8ab72df1200",
+      "sourceSha256": "3bb1f496ff4c66ce24be73dd408d74558d0a77fa44f03efb9b10dd3b456286aa",
       "callIds": [
         "cd8790e39c3283f05482",
         "e99258e8fe888ab954f2",
@@ -3143,11 +3161,11 @@
         "b499a6018afaf6b8b490",
         "2623d45568826e06288e",
         "af2e0acf3186708a5107",
-        "e43bafdce56293587c51",
-        "70985cc0ee7a5e3925ea",
-        "325bb1f8664dd87b01b6",
-        "ad19bdcdf16108f63d4e",
-        "0a087582abea5e4d10ac"
+        "ddc28d5b44740bdb3066",
+        "3517ab078a1ab43a1c36",
+        "d84f4ce62fbb66efc9b9",
+        "a3d1ad1d93c54bf4dc9e",
+        "ad398d92cfc1542f1175"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
@@ -3165,7 +3183,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "54606dc2ef0252a8119d3f51cb41ff0166bf9097d7caa62533bbe8ab72df1200",
+      "sourceSha256": "3bb1f496ff4c66ce24be73dd408d74558d0a77fa44f03efb9b10dd3b456286aa",
       "callIds": [
         "58357b840ab8890eba45",
         "9ea21ff62008b510bd7f",
@@ -3183,37 +3201,37 @@
         "0688cd0a4c8eb36c4fad",
         "33ad2ed94b0335d358e0",
         "e2cc6b2b7d333aec6d8a",
-        "0f60187644970487e218",
-        "667bf4e5ca7c0df6365c",
-        "295e4e1bf1adc5d0cf12",
-        "18ac9ab3450e152acedd",
-        "0eee9ae4d92aabe15119",
-        "799ea0c6c4b315b3a099",
-        "062025c6175e3b3f8b89",
-        "c2bf8a3418248396b8f0",
-        "0bc6fb4fdcd48089329d",
-        "e6ddff767ea1c290d226",
-        "a72aaf3a158c933ef5cb",
-        "616671524ec5b9cf29ff",
-        "c8ed101ecc9db258cdab",
-        "a07cd0890b930332b4d0",
-        "db86d539d41260752d80",
-        "77243248541bdf0d2b67",
-        "31a69f5c4eddbbb62a73",
-        "4f616b7ee430acf6ded5",
-        "2b2c7296abe798a23e0b",
-        "6b7484ab93081fa2da61",
-        "95535693c1299dc0de3b",
-        "64999dc1f17c3e3f3b0b",
-        "83940923d3786332f72e",
-        "c283e0311624ac18ebb6",
-        "8cbc076aebb814149e51",
-        "bcb4811af6e6174f8c18",
-        "c577941d41ca19cb48c2"
+        "f1cde40b1c6d716bd917",
+        "84d306b7a6a740e5ed5f",
+        "43761135adb9e90dd1d0",
+        "d72e72b0794b3c790bf4",
+        "219a72ccb68923580a68",
+        "2645083548a6fd4d39ed",
+        "cf8eb6ff186aa77841f2",
+        "de82d25941f638f33a6a",
+        "8c95311458356ddce84c",
+        "c5a9f6e8e4f2117560e0",
+        "823faca300ac164a6cb8",
+        "0b7257b831f07926370c",
+        "f44fa15d6c35da6f65ed",
+        "540c19912b3b0faacdd7",
+        "9ecd741e4db84c93a4c1",
+        "04f80f886bd836826e87",
+        "d7c7bc08dde0348de534",
+        "3b74ad7de7fc07a7cda9",
+        "cd8e610d91795206c09e",
+        "463d6beb69d7c823b873",
+        "5bf3183a80575f16ff9e",
+        "267ad2b8fcc7df73f7d8",
+        "4b178260313d13405fb1",
+        "cbe1df600e72deeac341",
+        "4bdfb0a985453936075b",
+        "bcad96f0e716cb345e5b",
+        "d7aca53cadc45611b7d6"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
-      "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted.100 focused operations tests pass; real observed concurrent insert and unconfirmed replay test prepared. Lease completion atomicity, approval revocation freshness, atomic action/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+      "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests are prepared, not yet verified. Lease completion atomicity, approval revocation freshness, atomic action/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
       "evidence": [
         {
           "path": "backend/src/operations/operationsService.owner.test.ts",

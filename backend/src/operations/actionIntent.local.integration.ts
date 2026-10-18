@@ -7,6 +7,32 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { OperationsService } from './operationsService.js';
 
 export function registerActionIntentTests(admin: SupabaseClient, getUsers: () => readonly { id: string; project: string }[]): void {
+  test('real action claim executes only the owned disposable automation rule once', async t => {
+    assert.equal(process.env.CI, 'true'); assert.equal(process.env.XB01_DISPOSABLE_SUPABASE, '1');
+    assert.equal(process.env.SUPABASE_URL, 'http://127.0.0.1:54321');
+    const [owner, other] = getUsers(), key = randomUUID(), ruleId = randomUUID();
+    const service = new OperationsService(admin);
+    t.after(async () => {
+      assert.equal((await admin.from('operations_actions').delete().eq('user_id', owner.id).eq('idempotency_key', key)).error, null);
+      assert.equal((await admin.from('operations_automation_rules').delete().eq('user_id', owner.id).eq('id', ruleId)).error, null);
+    });
+    const inserted = await admin.from('operations_automation_rules').insert({ id: ruleId, user_id: owner.id,
+      project_id: owner.project, rule_key: key, name: 'Disposable claim fixture', trigger_type: 'fixture',
+      risk_level: 'low', action_type: 'refresh_health', enabled: false });
+    assert.equal(inserted.error, null);
+    const input = { actionType: 'emergency_stop', projectId: owner.project, targetType: 'automation', targetId: ruleId,
+      targetVersion: 1, idempotencyKey: key, confirmed: true, parameters: {} };
+    await assert.rejects(service.createAction(other.id, input), { code: 'forbidden', statusCode: 403 });
+    const result = await service.createAction(owner.id, input);
+    assert.equal(result.status, 'verified'); assert.equal(result.attempt_count, 1);
+    assert.equal(result.lease_owner, null); assert.equal(result.lease_expires_at, null);
+    assert.equal((await service.executeAction(owner.id, result.id)).id, result.id);
+    await assert.rejects(service.executeAction(other.id, result.id), { code: 'forbidden', statusCode: 403 });
+    const rule = await admin.from('operations_automation_rules').select('version,emergency_stopped').eq('id', ruleId).single();
+    assert.equal(rule.error, null); assert.deepEqual(rule.data, { version: 2, emergency_stopped: true });
+    const runs = await admin.from('operations_action_runs').select('attempt,status,provider').eq('action_id', result.id);
+    assert.equal(runs.error, null); assert.deepEqual(runs.data, [{ attempt: 1, status: 'verified', provider: 'internal_database' }]);
+  });
   test('real concurrent action creation preserves one actor plan and cannot confirm through replay', async t => {
     assert.equal(process.env.CI, 'true'); assert.equal(process.env.XB01_DISPOSABLE_SUPABASE, '1');
     assert.equal(process.env.SUPABASE_URL, 'http://127.0.0.1:54321');

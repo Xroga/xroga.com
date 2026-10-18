@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "5c7e8dcf1413e3e4cfa698f6926fea5b993d6e34",
-    "sourceTimestampUtc": "2026-10-18T13:17:59+05:00",
-    "auditStartedUtc": "2026-10-18T08:29:13.491Z",
+    "sha": "e03f33beaa9e2bdcc5e01ae935c1f8d90ca3405e",
+    "sourceTimestampUtc": "2026-10-18T13:29:50+05:00",
+    "auditStartedUtc": "2026-10-18T08:38:48.165Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -15635,7 +15635,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "54606dc2ef0252a8119d3f51cb41ff0166bf9097d7caa62533bbe8ab72df1200",
+      "sha256": "3bb1f496ff4c66ce24be73dd408d74558d0a77fa44f03efb9b10dd3b456286aa",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -15672,6 +15672,7 @@
         "maintenanceBlocked",
         "mapResource",
         "matches",
+        "matchesAdmittedAction",
         "matchesIntent",
         "maxRuns",
         "memberProjectIds",
@@ -15744,6 +15745,7 @@
         "backend/src/growth/campaignReceipt.local.integration.ts:7",
         "backend/src/growth/delivery.local.integration.ts:1",
         "backend/src/growth/growthService.ts:5",
+        "backend/src/operations/actionClaim.test.ts:4",
         "backend/src/operations/actionIntent.local.integration.ts:7",
         "backend/src/operations/actionIntent.test.ts:4",
         "backend/src/operations/operationsService.owner.test.ts:4",
@@ -15806,23 +15808,23 @@
         "backend/src/operations/operationsService.ts:211 (user_id)",
         "backend/src/operations/operationsService.ts:235 (user_id)",
         "backend/src/operations/operationsService.ts:263 (user_id)",
-        "backend/src/operations/operationsService.ts:332 (user_id)",
-        "backend/src/operations/operationsService.ts:355 (user_id)",
-        "backend/src/operations/operationsService.ts:379 (user_id)",
-        "backend/src/operations/operationsService.ts:385 (user_id)",
-        "backend/src/operations/operationsService.ts:389 (user_id)",
-        "backend/src/operations/operationsService.ts:393 (user_id)",
+        "backend/src/operations/operationsService.ts:337 (user_id)",
+        "backend/src/operations/operationsService.ts:368 (user_id)",
+        "backend/src/operations/operationsService.ts:392 (user_id)",
         "backend/src/operations/operationsService.ts:398 (user_id)",
-        "backend/src/operations/operationsService.ts:405 (user_id)",
-        "backend/src/operations/operationsService.ts:419 (user_id)",
-        "backend/src/operations/operationsService.ts:423 (tenant_id)",
+        "backend/src/operations/operationsService.ts:402 (user_id)",
+        "backend/src/operations/operationsService.ts:406 (user_id)",
+        "backend/src/operations/operationsService.ts:411 (user_id)",
+        "backend/src/operations/operationsService.ts:418 (user_id)",
         "backend/src/operations/operationsService.ts:432 (user_id)",
-        "backend/src/operations/operationsService.ts:437 (user_id)",
-        "backend/src/operations/operationsService.ts:442 (user_id)",
-        "backend/src/operations/operationsService.ts:448 (user_id)",
-        "backend/src/operations/operationsService.ts:449 (user_id)",
-        "backend/src/operations/operationsService.ts:474 (user_id)",
-        "backend/src/operations/operationsService.ts:475 (user_id)"
+        "backend/src/operations/operationsService.ts:436 (tenant_id)",
+        "backend/src/operations/operationsService.ts:445 (user_id)",
+        "backend/src/operations/operationsService.ts:450 (user_id)",
+        "backend/src/operations/operationsService.ts:455 (user_id)",
+        "backend/src/operations/operationsService.ts:461 (user_id)",
+        "backend/src/operations/operationsService.ts:462 (user_id)",
+        "backend/src/operations/operationsService.ts:487 (user_id)",
+        "backend/src/operations/operationsService.ts:488 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/operations/operationsService.ts#OperationsPermission",
@@ -15842,6 +15844,7 @@
       "testCoverage": [
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
+        "backend/src/operations/actionClaim.test.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/actionIntent.test.ts",
         "backend/src/operations/operationsService.owner.test.ts"
@@ -16047,6 +16050,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/operations/actionClaim.test.ts:5",
         "backend/src/operations/operationsService.ts:10",
         "backend/src/operations/providerAdapters.test.ts:3"
       ],
@@ -16064,6 +16068,7 @@
         "backend/src/operations/providerAdapters.ts#verified"
       ],
       "testCoverage": [
+        "backend/src/operations/actionClaim.test.ts",
         "backend/src/operations/providerAdapters.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -103003,9 +103008,16 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:ec2c873e3b984ab63113",
+      "sourcePath": "backend/src/operations/actionClaim.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:f98a9a778d3ab33a4bb7",
       "sourcePath": "backend/src/operations/actionIntent.local.integration.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

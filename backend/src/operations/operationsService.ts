@@ -316,11 +316,16 @@ export class OperationsService {
   async executeAction(userId: string, actionId: string): Promise<DbRow> {
     const action = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable', null);
     if (!action) throw new OperationsServiceError('not_found', 'Action not found', 404);
+    if (action.id !== actionId) throw new OperationsServiceError('unknown', 'Action receipt is invalid', 503);
     const definition = ACTION_DEFINITIONS[action.action_type];
     if (!definition) throw new OperationsServiceError('invalid_state', 'Action is unavailable', 409);
     const access = await this.access(userId, action.project_id, definition.permission);
     if (action.user_id !== access.ownerId) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
     if (action.status === 'verified') return action;
+    const matchesAdmittedAction = (candidate: DbRow) => candidate && typeof candidate === 'object' && !Array.isArray(candidate) && candidate.id === actionId
+      && ['user_id','project_id','environment_id','requested_by','action_type','target_type','target_id',
+        'target_version','idempotency_key','action_plan_digest','confirmation_digest','permission_required','risk_level','execution_plan','max_attempts']
+        .every(key => isDeepStrictEqual(candidate[key], action[key]));
     const currentVersion = await this.currentTargetVersion(action);
     if (currentVersion !== null && currentVersion !== Number(action.target_version)) {
       await this.db.from('operations_action_approvals').update({ decision: 'expired', decided_at: new Date().toISOString() }).eq('action_id', actionId).eq('decision', 'approved');
@@ -335,12 +340,20 @@ export class OperationsService {
       if (!validity.valid) throw new OperationsServiceError('invalid_state', validity.reason ?? 'Approval invalid', 409);
     }
     const claimed = await queryOrThrow<DbRow[]>(this.db.rpc('operations_claim_action', { p_action_id: actionId, p_lease_owner: `api:${userId}`, p_lease_seconds: 60 }), 'Action lock unavailable');
+    if (!Array.isArray(claimed)) throw new OperationsServiceError('unknown', 'Action claim receipt is invalid', 503);
     if (!claimed.length) {
       const current = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable', null);
-      if (current?.status === 'verified') return current;
+      if (current?.status === 'verified' && matchesAdmittedAction(current)) return current;
       throw new OperationsServiceError('conflict', 'Action is already running or not executable', 409);
     }
     const running = claimed[0];
+    if (claimed.length !== 1 || !matchesAdmittedAction(running) || running.status !== 'running'
+      || running.lease_owner !== `api:${userId}` || !Number.isFinite(Date.parse(running.lease_expires_at))
+      || Date.parse(running.lease_expires_at) <= Date.now()
+      || !Number.isSafeInteger(running.attempt_count) || running.attempt_count !== action.attempt_count + 1
+      || running.attempt_count > running.max_attempts) {
+      throw new OperationsServiceError('unknown', 'Action claim receipt is invalid', 503);
+    }
     const adapter = ['refresh_health','verify_domain','run_synthetic_check'].includes(action.action_type)
       ? this.registry.get('http_verification')
       : action.action_type === 'run_model_benchmark'
