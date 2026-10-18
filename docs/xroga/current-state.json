@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "aa1aad5c07c44cb907ff4432e1579ff79d08bd3d",
-    "sourceTimestampUtc": "2026-10-18T15:25:35+05:00",
-    "auditStartedUtc": "2026-10-18T10:41:51.707Z",
+    "sha": "eb73e9e7ffe5181d7417beb6a8145e2ad39831fa",
+    "sourceTimestampUtc": "2026-10-18T15:42:38+05:00",
+    "auditStartedUtc": "2026-10-18T11:01:40.641Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -15639,7 +15639,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "75facc8e53cac9a5dc6885a0072df2eb2618d6445d2ec965ff469f8ead03e87b",
+      "sha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -15651,6 +15651,7 @@
         "approval",
         "attributes",
         "availableActions",
+        "baseline",
         "belongs",
         "current",
         "currentVersion",
@@ -15659,26 +15660,23 @@
         "definition",
         "deployment",
         "digest",
+        "eligible",
         "enabled",
         "endsAt",
         "environment",
         "environmentRow",
-        "error",
         "evidence",
         "evidenceId",
         "excluded",
-        "existing",
         "finalStatus",
         "ids",
         "input",
         "lookup",
         "lookups",
-        "maintenanceBlocked",
         "mapResource",
         "matches",
         "matchesAdmittedAction",
         "matchesIntent",
-        "maxRuns",
         "memberProjectIds",
         "membership",
         "memberships",
@@ -15692,9 +15690,7 @@
         "projectsQuery",
         "query",
         "queryOrThrow",
-        "rate",
         "reason",
-        "recent",
         "release",
         "requiredRole",
         "resource",
@@ -15707,12 +15703,12 @@
         "rule",
         "rules",
         "run",
-        "runRows",
+        "runMatches",
         "runStatus",
         "running",
-        "safeError",
         "safeResult",
         "snapshotIntent",
+        "sourceRule",
         "stale",
         "startsAt",
         "status",
@@ -15724,7 +15720,6 @@
         "validity",
         "value",
         "values",
-        "windowSeconds",
         "windows"
       ],
       "imports": [
@@ -15764,6 +15759,8 @@
         "backend/src/operations/actionCreation.local.integration.ts:7",
         "backend/src/operations/actionIntent.local.integration.ts:7",
         "backend/src/operations/actionIntent.test.ts:4",
+        "backend/src/operations/automationAdmission.local.integration.ts:7",
+        "backend/src/operations/automationAdmission.test.ts:4",
         "backend/src/operations/internalControlReceipt.test.ts:4",
         "backend/src/operations/operationsService.owner.test.ts:4",
         "backend/src/routes/operations.ts:9"
@@ -15839,7 +15836,7 @@
         "backend/src/operations/operationsService.ts:517 (user_id)",
         "backend/src/operations/operationsService.ts:518 (user_id)",
         "backend/src/operations/operationsService.ts:543 (user_id)",
-        "backend/src/operations/operationsService.ts:544 (user_id)"
+        "backend/src/operations/operationsService.ts:589 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/operations/operationsService.ts#OperationsPermission",
@@ -15871,6 +15868,8 @@
         "backend/src/operations/actionCreation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/actionIntent.test.ts",
+        "backend/src/operations/automationAdmission.local.integration.ts",
+        "backend/src/operations/automationAdmission.test.ts",
         "backend/src/operations/internalControlReceipt.test.ts",
         "backend/src/operations/operationsService.owner.test.ts"
       ],
@@ -23536,7 +23535,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:638",
+        "backend/src/security/tenantIsolation.local.integration.ts:640",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -95426,6 +95425,13 @@
       "version": "20261018001000",
       "order": 106,
       "sha256": "704c98284ce79aa7f05290cf638f94d567cba69c91a1fa07321f462a15422467"
+    },
+    {
+      "id": "migration:8a4a589487b44a791ea0",
+      "sourcePath": "supabase/migrations/20261018001100_operations_automation_admission.sql",
+      "version": "20261018001100",
+      "order": 107,
+      "sha256": "307fbe8cdad30d1562979bc1f7c91234f6819e9141a97b783aba4e441f405c2d"
     }
   ],
   "workflows": [
@@ -103202,6 +103208,20 @@
       "id": "test-suite:8fa8363945c882c86816",
       "sourcePath": "backend/src/operations/agentIntelligenceGate.test.ts",
       "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:db1a5867ee6c4494777b",
+      "sourcePath": "backend/src/operations/automationAdmission.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:70247d028f04b4f535e8",
+      "sourcePath": "backend/src/operations/automationAdmission.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

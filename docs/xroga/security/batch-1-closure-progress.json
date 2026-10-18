@@ -53,6 +53,12 @@
     }
   ],
   "additionalSpend": 0,
+  "automationAdmission": {
+    "status": "IN PROGRESS",
+    "fix": "Service-only admission locks current actor/project/member and exact rule, binds owner/evidence replay, serializes rule-level database-time quota, and commits durable run plus immutable admission audit. Fresh missing dedup no longer becomes a truthy empty-array replay. Existing action creator uses stable run UUID as key. Conditional exact pending-run linking never marks uncertain action outcomes failed or retries, including4xx after possible queued-action persistence.",
+    "localEvidence": "Eight focused admission/intent tests and29 local SQL role/decision/replay/rate/rollback assertions pass. Backend typecheck and full3045-test regression pass:3027 pass,zero failures,18 registered Windows skips. Actual observed two-client quota/replay, held rule/member mutations, two-write rollback and browser denial prepared for disposable CI. No provider calls.",
+    "remaining": "Actual final-source CI required. Post-admission stop/actor authority, new maintenance phantoms, action/link recovery and complete automation lifecycle remain unresolved. Four consolidated/removed persistence candidates do not constitute certification."
+  },
   "operationsActionCreation": {
     "status": "IN PROGRESS",
     "fix": "Existing createAction uses a service-only transaction with canonical policy roles and redacted audit state. It locks current actor/project/member/environment and existing maintenance rows, checks database admission time, then commits action, optional approval and immutable audit together. Explicit same-intent replay never confirms or executes the stored action.",
@@ -136,11 +142,11 @@
     "correction": "Disposable fixture now explicitly seeds a three-attempt budget and waits only until old lease expiry. It asserts lease updated_at is at or after the database pre-release clock and retains live lease,exact10-second duration,competing exclusion,exhausted-attempt and browser-denial assertions. No production timeout or retry limit changed. Final-source rerun required."
   },
   "latestVerifiedSource": {
-    "source": "aa1aad5c07c44cb907ff4432e1579ff79d08bd3d",
-    "integrated": "3943d6e138cd6df699bed00fa7a68b899aec24f5",
-    "aggregateRun": "39119207561",
-    "disposableRun": "39119207485",
-    "result": "All11 workflows PASS. Downloaded branch/integrated manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable105 fresh/upgrade migrations,139 security tests and3 browser tests pass with zero failures/skips. Atomic creation106 migration still needs its own CI. Command007 strict acceptance remains blocked."
+    "source": "eb73e9e7ffe5181d7417beb6a8145e2ad39831fa",
+    "integrated": "2f2f075deb3c542c588c0bf7695191b8dda78d97",
+    "aggregateRun": "39120329884",
+    "disposableRun": "39120329897",
+    "result": "All11 workflows PASS. Downloaded branch/integrated manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable106 fresh/upgrade migrations,140 security tests and3 browser tests pass with zero failures/skips. Atomic creation persistence closed narrowly. Automation admission107 migration still needs its own CI. Command007 strict acceptance remains blocked."
   },
   "operationsApproval": {
     "status": "IN PROGRESS",
@@ -161,16 +167,16 @@
     "remaining": "Constant release version compatibility is preserved; mutable release state, approval freshness and provider authorization are not certified. New lookup stays REVIEWED_GAP pending full evidence."
   },
   "latestCandidate": {
-    "source": "aa1aad5c07c44cb907ff4432e1579ff79d08bd3d",
-    "integrated": "3943d6e138cd6df699bed00fa7a68b899aec24f5",
-    "aggregateRun": "39119207561",
-    "disposableRun": "39119207485",
+    "source": "eb73e9e7ffe5181d7417beb6a8145e2ad39831fa",
+    "integrated": "2f2f075deb3c542c588c0bf7695191b8dda78d97",
+    "aggregateRun": "39120329884",
+    "disposableRun": "39120329897",
     "result": "PASS_SCOPED_CI_NOT_BATCH_ACCEPTANCE",
-    "securityPass": 139,
+    "securityPass": 140,
     "securityFail": 0,
     "browserPass": 3,
     "browserFail": 0,
-    "aggregateStatus": "PASS: branch and integrated21 stages twice,sourceTreeMutated=false. All11 workflows pass.106-migration atomic creation revision still requires verification."
+    "aggregateStatus": "PASS: downloaded branch and integrated21 stages twice,sourceTreeMutated=false. All11 workflows pass.107-migration automation admission revision still requires verification."
   },
   "historicalFb3Candidate": {
     "source": "fb3a2301e3deb102634fe3aa3693412b58cd2c0d",
@@ -216,16 +222,16 @@
     "aggregateStatus": "PASS: branch139bf16d and integratedc48fc1b0f695e551b40eaa3c864f2012525eb820 repeated full baselines both passed with sourceTreeMutated=false. Disposable/browser failure remains independent and unwaived."
   },
   "latestDisposable": {
-    "source": "aa1aad5c07c44cb907ff4432e1579ff79d08bd3d",
-    "integrated": "3943d6e138cd6df699bed00fa7a68b899aec24f5",
-    "run": "39119207485",
+    "source": "eb73e9e7ffe5181d7417beb6a8145e2ad39831fa",
+    "integrated": "2f2f075deb3c542c588c0bf7695191b8dda78d97",
+    "run": "39120329897",
     "result": "VERIFIED",
-    "migrations": 105,
-    "securityTests": 139,
+    "migrations": 106,
+    "securityTests": 140,
     "browserTests": 3,
     "failures": 0,
     "skips": 0,
-    "aggregate": "Aggregate39119207561 PASS: downloaded branchaa1aad5c/integrated3943d6e1 manifests each21 stages twice,zero failed exits,sourceTreeMutated=false. All11 source workflows pass. Atomic creation106 migration still requires its own exact-source CI."
+    "aggregate": "Aggregate39120329884 PASS: downloaded brancheb73e9e7/integrated2f2f075d manifests each21 stages twice,zero failed exits,sourceTreeMutated=false. All11 source workflows pass. Automation admission107 migration still requires its own exact-source CI."
   },
   "overnightEngineering": {
     "status": "IN PROGRESS",
@@ -306,7 +312,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:392 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:387 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -337,11 +343,11 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
-    "persistenceCandidates": 649,
+    "persistenceCandidates": 645,
     "ownerPredicateCandidates": 155,
     "reviewRequired": 0,
-    "reviewedCandidates": 649,
-    "unresolvedSafetyCandidates": 392,
+    "reviewedCandidates": 645,
+    "unresolvedSafetyCandidates": 387,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -405,7 +411,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Commit/push locally verified atomic creation after completedaa1aad5c CI, then verify106 migrations and current-role/environment/maintenance/rollback races. Implement atomic automation rate/dedup admission using the existing rule/run/action mechanisms and stable run-bound action key. Continue worker lifecycle and growth parent mutation groups.649 reviewed/392 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
+  "nextTask": "Finish full regression and push atomic automation admission, then verify107 migrations and actual competing trigger quota/replay, current-rule/member races, rollback and browser denial. Continue worker lifecycle, growth parent mutation and operations rule/action recovery groups.645 reviewed/387 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
@@ -547,7 +553,7 @@
       "existingImplementation": "Existing prepared plan, confirmation, operations services and scheduler",
       "missingBehavior": "Account/target/digest/spend/receipt integration and complete caller provenance",
       "acceptanceTest": "Changed plan/target, expired/revoked approval, duplicate claims, unauthorized spend",
-      "pendingCandidates": 71,
+      "pendingCandidates": 66,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/operations/operationsService.ts": [
@@ -578,7 +584,6 @@
           "af2e0acf3186708a5107",
           "58357b840ab8890eba45",
           "9ea21ff62008b510bd7f",
-          "6abbcd4bdc2a8835113a",
           "b88fc4f8215d76b34ea8",
           "82752ae689b24bd04b63",
           "fd2a647124264e9a2f63",
@@ -603,13 +608,9 @@
           "ad0d994bbac26afddf8b",
           "0842197be6faf25e37fb",
           "e5cd1c31025282db85a6",
-          "2b35963a52ee77871066",
-          "1df9fb742babc733a8cc",
-          "d8f1fe4c89296c3644b1",
-          "454806ee0f6e95cecda2",
-          "40107efafc757595905b",
-          "29161e4b091e9794173b",
-          "6c864d257b8d4a3f647b"
+          "ce73439a131ba741d906",
+          "8ff27acb70b177dbac91",
+          "c5718b6fd27487351420"
         ],
         "backend/src/routes/operations.ts": [
           "e23a6715863cc22fbccf",

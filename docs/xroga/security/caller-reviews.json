@@ -3107,7 +3107,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "75facc8e53cac9a5dc6885a0072df2eb2618d6445d2ec965ff469f8ead03e87b",
+      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
       "callIds": [
         "dd0917f84f2764fd0472",
         "c841bcae277927c0b193",
@@ -3129,7 +3129,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "75facc8e53cac9a5dc6885a0072df2eb2618d6445d2ec965ff469f8ead03e87b",
+      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
       "callIds": [
         "cd8790e39c3283f05482",
         "e99258e8fe888ab954f2",
@@ -3178,7 +3178,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "75facc8e53cac9a5dc6885a0072df2eb2618d6445d2ec965ff469f8ead03e87b",
+      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
       "callIds": [
         "58357b840ab8890eba45",
         "9ea21ff62008b510bd7f",
@@ -3200,13 +3200,7 @@
         "75a4e4d0dcbac3fbadc0",
         "0842197be6faf25e37fb",
         "e5cd1c31025282db85a6",
-        "2b35963a52ee77871066",
-        "1df9fb742babc733a8cc",
-        "d8f1fe4c89296c3644b1",
-        "454806ee0f6e95cecda2",
-        "40107efafc757595905b",
-        "29161e4b091e9794173b",
-        "6c864d257b8d4a3f647b"
+        "c5718b6fd27487351420"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
@@ -4760,7 +4754,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "75facc8e53cac9a5dc6885a0072df2eb2618d6445d2ec965ff469f8ead03e87b",
+      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
       "callIds": [
         "5174d95d4b9405bca096"
       ],
@@ -4780,7 +4774,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "75facc8e53cac9a5dc6885a0072df2eb2618d6445d2ec965ff469f8ead03e87b",
+      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
       "callIds": [
         "f175f84e5afd902c17c0"
       ],
@@ -4820,7 +4814,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "75facc8e53cac9a5dc6885a0072df2eb2618d6445d2ec965ff469f8ead03e87b",
+      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
       "callIds": [
         "ed0903282a7144871281"
       ],
@@ -4840,7 +4834,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "75facc8e53cac9a5dc6885a0072df2eb2618d6445d2ec965ff469f8ead03e87b",
+      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
       "callIds": [
         "00aea7c9a2f2d60601a1"
       ],
@@ -4856,7 +4850,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "75facc8e53cac9a5dc6885a0072df2eb2618d6445d2ec965ff469f8ead03e87b",
+      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
       "callIds": [
         "e1b151df5a5cc43046f5"
       ],
@@ -4872,7 +4866,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "75facc8e53cac9a5dc6885a0072df2eb2618d6445d2ec965ff469f8ead03e87b",
+      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
       "callIds": [
         "eaf9d6130529cf9e1281"
       ],
@@ -4924,13 +4918,13 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "75facc8e53cac9a5dc6885a0072df2eb2618d6445d2ec965ff469f8ead03e87b",
+      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
       "callIds": [
         "6abbcd4bdc2a8835113a"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated actor and canonical action definitions supply immutable intent, allowed roles and confirmation/approval policy. Service-only create transaction locks current actor/project/member/environment and existing maintenance rows, uses database admission time, and atomically persists action, optional approval and redacted immutable audit. Exact same-intent replay is explicitly reported and cannot confirm or execute.",
-      "reason": "Ten focused intent/owner/claim tests and33 local SQL role/replay/maintenance/three-write rollback assertions pass. Actual held membership/environment changes, maintenance start while waiting, all write rollbacks and browser-role denial prepared. Mutable target admission, new maintenance phantoms, external effects and full operations lifecycle remain unresolved. No whole caller certification.",
+      "reason": "Creation persistence boundary VERIFIED at eb73e9e7ffe5181d7417beb6a8145e2ad39831fa, disposable39120329897:106 fresh/upgrade migrations,140 security tests and3 browser tests pass with zero failures/skips. Actual held membership/environment changes, maintenance start while waiting, all three write rollbacks, concurrent immutable replay and browser-role denial pass. Invocation, SQL and fixture are unchanged. Only atomic creation persistence is closed. Mutable target admission, concurrent new maintenance windows, external effects and full operations lifecycle remain unresolved. No whole caller certification.",
       "evidence": [
         {
           "path": "backend/src/operations/actionCreation.local.integration.ts",
@@ -4941,6 +4935,35 @@
           "marker": "real concurrent action creation preserves one actor plan"
         }
       ]
+    },
+    {
+      "path": "backend/src/operations/operationsService.ts",
+      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "callIds": [
+        "ce73439a131ba741d906"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Existing authenticated signal endpoint supplies server actor and admitted owner/project. Service-only transaction locks current profile/project/member and exact current rule, verifies dedup owner/evidence, computes canonical condition/stop/maintenance/risk decisions and serializes database-time rate admission. Run and immutable admission audit commit together; caller validates exact receipt against existing decision engine before creating any action with the stable run UUID as key.",
+      "reason": "Eight focused intent/admission tests and29 local SQL role/decision/replay/rate/rollback assertions pass. Missing dedup is now explicit fresh admission rather than truthy empty-array fallback. Actual observed different-trigger quota and duplicate-trigger clients, stale rule/member, two-write rollback and browser denial prepared. Later rule-stop/authority changes, action/link recovery and complete automated lifecycle remain unresolved. No whole caller certification.",
+      "evidence": [
+        {
+          "path": "backend/src/operations/automationAdmission.local.integration.ts",
+          "marker": "registerAutomationAdmissionTests"
+        },
+        {
+          "path": "backend/src/operations/automationAdmission.test.ts",
+          "marker": "uncertain action creation or linking preserves admission"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/operations/operationsService.ts",
+      "sourceSha256": "67bc38a0b5b3ede4d3323efd8f6c0949c5d229ba42554ad4aa842687254e06d8",
+      "callIds": ["8ff27acb70b177dbac91"],
+      "disposition": "REVIEWED_GAP",
+      "authority": "After exact service-only admission, the existing action creator receives the stable run UUID key. Linking updates only the admitted owner/rule/digest/run in evaluating state with no action, then verifies its returned identity and action/status. No replay executes another action.",
+      "reason": "Eight focused admission/intent tests pass. Empty or substituted link receipts and every unreturned action outcome, including4xx after possible queued-action persistence, preserve pending admission and return typed503 without falsely recording failure or retrying. Link remains separate from action creation and final audit. Crash reconciliation, post-admission current-rule/actor authority and parent lifecycle races remain unresolved. This write is reviewed but not security-certified.",
+      "evidence": [{"path":"backend/src/operations/automationAdmission.test.ts","marker":"uncertain action creation or linking preserves admission"},{"path":"backend/src/operations/automationAdmission.test.ts","marker":"a 4xx after action persistence"}]
     }
   ]
 }

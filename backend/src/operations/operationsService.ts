@@ -541,32 +541,62 @@ export class OperationsService {
     signal = snapshotIntent(signal);
     const access = await this.access(userId, projectId, 'manage_automation');
     const rules = await queryOrThrow<DbRow[]>(this.db.from('operations_automation_rules').select('*').eq('user_id', access.ownerId).eq('project_id', projectId).eq('trigger_type', signal.triggerType), 'Automation rules unavailable');
-    const windows = await queryOrThrow<DbRow[]>(this.db.from('operations_maintenance_windows').select('starts_at,ends_at,allowed_actions,blocked_actions').eq('user_id', access.ownerId).eq('project_id', projectId), 'Maintenance state unavailable');
     const results: DbRow[] = [];
-    for (const rule of rules) {
+    for (const sourceRule of rules) {
+      const rule = snapshotIntent(sourceRule);
+      if (typeof rule.id !== 'string' || !rule.id || rule.user_id !== access.ownerId || rule.project_id !== projectId || rule.trigger_type !== signal.triggerType) {
+        throw new OperationsServiceError('unknown', 'Automation rule receipt is invalid', 503);
+      }
       const digest = actionPlanDigest({ actionType: rule.action_type, projectId, environmentId: signal.environmentId, targetType: signal.targetType, targetId: `${signal.targetId}:${signal.triggerId}`, targetVersion: signal.targetVersion, idempotencyKey: 'automation', confirmed: true, parameters: signal.attributes });
-      const existing = await queryOrThrow<DbRow | null>(this.db.from('operations_automation_runs').select('*').eq('rule_id', rule.id).eq('trigger_digest', digest).maybeSingle(), 'Automation deduplication unavailable');
-      const rate = rule.rate_limit ?? {}; const windowSeconds = Math.max(60, Math.min(86_400, Number(rate.windowSeconds ?? 3600))); const maxRuns = Math.max(1, Math.min(20, Number(rate.maxRuns ?? 3)));
-      const recent = await queryOrThrow<DbRow[]>(this.db.from('operations_automation_runs').select('id').eq('rule_id', rule.id).gte('started_at', new Date(Date.now() - windowSeconds * 1000).toISOString()), 'Automation rate state unavailable');
+      const { data: admission, error } = await this.db.rpc('admit_operations_automation_run', {
+        p_actor: userId, p_owner: access.ownerId, p_project: projectId, p_expected_rule: rule,
+        p_digest: digest, p_attributes: signal.attributes ?? {}, p_evidence: signal.evidenceReference ?? null,
+      });
+      if (error?.code === '42501') throw new OperationsServiceError('forbidden', 'Automation is not permitted', 403);
+      if (error?.code === '40001') throw new OperationsServiceError('conflict', 'Automation rule or signal changed', 409);
+      if (error?.code === '22023') throw new OperationsServiceError('precondition_failed', 'Automation signal is invalid', 400);
+      if (error) throw new OperationsServiceError('unknown', 'Automation admission could not be verified', 503);
+      const statusMap: Record<string, string> = { execute: 'evaluating', approval_required: 'evaluating', disabled: 'blocked', stopped: 'stopped', rate_limited: 'rate_limited', maintenance_blocked: 'blocked', duplicate: 'blocked' };
+      let run = admission?.run;
+      const decision = admission?.decision;
+      const runMatches = (candidate: DbRow) => candidate && candidate.id === run.id && candidate.user_id === access.ownerId
+        && candidate.rule_id === rule.id && candidate.trigger_digest === digest && candidate.evidence_reference === (signal.evidenceReference ?? null);
       const attributes = signal.attributes ?? {};
       const matches = Object.entries(rule.conditions ?? {}).every(([key, value]) => attributes[key] === value);
       const excluded = Object.entries(rule.exclusions ?? {}).some(([key, value]) => attributes[key] === value);
-      const maintenanceBlocked = maintenanceBlocksAction({ actionType: rule.action_type, now: new Date(), windows: windows.map((item) => ({ startsAt: item.starts_at, endsAt: item.ends_at, allowedActions: item.allowed_actions, blockedActions: item.blocked_actions })) });
-      let decision = automationDecision({ enabled: Boolean(rule.enabled && matches && !excluded), emergencyStopped: Boolean(rule.emergency_stopped), riskLevel: rule.risk_level, recentRuns: recent.length, maxRuns, maintenanceBlocked, duplicate: Boolean(existing) });
-      if (existing) { results.push(existing); continue; }
-      const statusMap: Record<string, string> = { execute: 'evaluating', approval_required: 'evaluating', disabled: 'blocked', stopped: 'stopped', rate_limited: 'rate_limited', maintenance_blocked: 'blocked', duplicate: 'blocked' };
-      const runRows = await queryOrThrow<DbRow[]>(this.db.from('operations_automation_runs').insert({ user_id: access.ownerId, rule_id: rule.id, trigger_digest: digest, status: statusMap[decision], evidence_reference: signal.evidenceReference ?? null, safe_error: ['execute','approval_required'].includes(decision) ? null : decision, completed_at: ['execute','approval_required'].includes(decision) ? null : new Date().toISOString() }).select('*'), 'Automation run write failed');
-      let run = runRows[0];
+      const baseline = automationDecision({ enabled: Boolean(rule.enabled && matches && !excluded), emergencyStopped: Boolean(rule.emergency_stopped),
+        riskLevel: rule.risk_level, recentRuns: 0, maxRuns: Infinity, maintenanceBlocked: false, duplicate: false });
+      if (!admission || typeof admission.replayed !== 'boolean' || !Object.hasOwn(statusMap, decision)
+        || !run || typeof run.id !== 'string' || !run.id || !runMatches(run)
+        || run.evidence_reference !== (signal.evidenceReference ?? null)
+        || !['evaluating','action_created','approval_required','verified','failed','blocked','rate_limited','stopped'].includes(run.status)
+        || (admission.replayed ? decision !== 'duplicate' : decision === 'duplicate' || run.status !== statusMap[decision])) {
+        throw new OperationsServiceError('unknown', 'Automation admission receipt is invalid', 503);
+      }
+      if (admission.replayed) { results.push(run); continue; }
+      const eligible = ['execute','approval_required'].includes(decision);
+      if ((!['execute','approval_required'].includes(baseline) ? decision !== baseline
+        : ![baseline,'rate_limited','maintenance_blocked'].includes(decision))
+        || run.action_id !== null || typeof run.started_at !== 'string' || !Number.isFinite(Date.parse(run.started_at))
+        || (eligible ? run.safe_error !== null || run.completed_at !== null
+          : run.safe_error !== decision || typeof run.completed_at !== 'string' || !Number.isFinite(Date.parse(run.completed_at)))) {
+        throw new OperationsServiceError('unknown', 'Automation decision receipt is invalid', 503);
+      }
       if (['execute','approval_required'].includes(decision)) {
         try {
-          const action = await this.createAction(userId, { actionType: rule.action_type, projectId, environmentId: signal.environmentId, targetType: signal.targetType, targetId: signal.targetId, targetVersion: signal.targetVersion, idempotencyKey: randomUUID(), confirmed: true, parameters: { triggerId: signal.triggerId, evidenceReference: signal.evidenceReference } });
+          const action = await this.createAction(userId, { actionType: rule.action_type, projectId, environmentId: signal.environmentId, targetType: signal.targetType, targetId: signal.targetId, targetVersion: signal.targetVersion, idempotencyKey: run.id, confirmed: true, parameters: { triggerId: signal.triggerId, evidenceReference: signal.evidenceReference } });
           const runStatus = action.status === 'approval_required' ? 'approval_required' : action.status === 'verified' ? 'verified' : 'action_created';
-          const updated = await queryOrThrow<DbRow[]>(this.db.from('operations_automation_runs').update({ status: runStatus, action_id: action.id, completed_at: action.status === 'verified' ? new Date().toISOString() : null }).eq('id', run.id).select('*'), 'Automation run update failed');
+          const updated = await queryOrThrow<DbRow[]>(this.db.from('operations_automation_runs').update({ status: runStatus, action_id: action.id, completed_at: action.status === 'verified' ? new Date().toISOString() : null })
+            .eq('id', run.id).eq('user_id', access.ownerId).eq('rule_id', rule.id).eq('trigger_digest', digest).eq('status', 'evaluating').is('action_id', null).select('*'), 'Automation run update failed');
+          if (updated.length !== 1 || !runMatches(updated[0]) || updated[0].status !== runStatus || updated[0].action_id !== action.id) {
+            throw new OperationsServiceError('unknown', 'Automation action link could not be verified', 503);
+          }
           run = updated[0];
-        } catch (error) {
-          const safeError = error instanceof OperationsServiceError ? error.code : 'action_failed';
-          const updated = await queryOrThrow<DbRow[]>(this.db.from('operations_automation_runs').update({ status: 'failed', safe_error: safeError, completed_at: new Date().toISOString() }).eq('id', run.id).select('*'), 'Automation failure write failed');
-          run = updated[0];
+        } catch {
+          // createAction can persist a queued action before executeAction denies
+          // current authority with a 4xx. Without a returned action receipt even
+          // that error cannot prove that no durable action needs reconciliation.
+          throw new OperationsServiceError('unknown', 'Automation action outcome requires reconciliation before another attempt', 503);
         }
       }
       await this.audit({ userId: access.ownerId, actorId: userId, projectId, environmentId: signal.environmentId, action: 'operations.automation.evaluated', targetType: 'automation_run', targetId: run.id, outcome: run.status, reason: run.safe_error ?? undefined, correlationId: digest, evidenceReference: signal.evidenceReference });

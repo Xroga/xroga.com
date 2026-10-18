@@ -50,6 +50,7 @@ import { registerActionClaimClockTests } from '../operations/actionClaimClock.lo
 import { registerActionConfirmationTests } from '../operations/actionConfirmation.local.integration.js';
 import { registerActionAdmissionTests } from '../operations/actionAdmission.local.integration.js';
 import { registerActionCreationTests } from '../operations/actionCreation.local.integration.js';
+import { registerAutomationAdmissionTests } from '../operations/automationAdmission.local.integration.js';
 import { registerGrowthOutcomeTests } from '../growth/outcome.local.integration.js';
 import { registerBusinessConfirmationFinishTests } from './businessConfirmationFinish.local.integration.js';
 import { registerBusinessConfirmationClaimTests } from './businessConfirmationClaim.local.integration.js';
@@ -97,6 +98,7 @@ registerActionClaimClockTests(admin, () => users);
 registerActionConfirmationTests(admin, () => users);
 registerActionAdmissionTests(admin, () => users);
 registerActionCreationTests(admin, () => users);
+registerAutomationAdmissionTests(admin, () => users);
 registerGrowthOutcomeTests(admin, () => users);
 registerBusinessConfirmationFinishTests(admin, () => users);
 registerBusinessConfirmationClaimTests(admin, () => users);
