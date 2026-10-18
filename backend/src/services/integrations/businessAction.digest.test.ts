@@ -45,6 +45,48 @@ test('old summary-unbound digests and unsafe cyclic or prototype arguments fail 
   assert.equal(verifyPlanDigest({ ...plan, arguments: JSON.parse('{"__proto__":{"admin":true}}') }), false);
 });
 
+test('metadata waits cannot change the admitted actor plan or confirmation authority',async t=>{
+  const previous=new Map(['COMPOSIO_API_KEY','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY'].map(key=>[key,process.env[key]]));
+  process.env.COMPOSIO_API_KEY='SYNTHETIC_NO_PROVIDER_CALL';process.env.SUPABASE_URL='http://127.0.0.1:1';process.env.SUPABASE_SERVICE_ROLE_KEY='SYNTHETIC_NO_DATABASE_CALL';
+  t.after(()=>{for(const [key,value]of previous)value===undefined?delete process.env[key]:process.env[key]=value;});
+  const owner='11111111-1111-4111-8111-111111111111';
+  let enter!:()=>void,release!:()=>void,metadata=0,policies=0;
+  const entered=new Promise<void>(resolve=>{enter=resolve;});const gate=new Promise<void>(resolve=>{release=resolve;});
+  t.mock.method(globalThis,'fetch',async(input:string|URL|Request)=>{
+    const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
+    const respond=(body:unknown)=>new Response(JSON.stringify(body),{status:200,headers:{'Content-Type':'application/json'}});
+    if(url.origin==='https://backend.composio.dev'&&url.pathname.includes('/tools/')){
+      metadata++;assert.match(url.pathname,/SLACK_DELETE_MESSAGE/);enter();await gate;
+      return respond({slug:'SLACK_DELETE_MESSAGE',toolkit:{slug:'slack'},tags:['destructive'],scopes:['fixture.delete']});
+    }
+    assert.equal(url.origin,'http://127.0.0.1:1','no provider execution endpoint is allowed');
+    assert.equal(url.pathname,'/rest/v1/user_integrations');assert.equal(url.searchParams.get('user_id'),`eq.${owner}`);policies++;
+    return respond({access_token:'always_ask',metadata:{mode:'always_ask'}});
+  });
+  const input:Parameters<typeof executePreparedBusinessAction>[0]={userId:owner,plan:fixture(),authorization:{explicitUserAuthorization:true}};
+  const admitted=structuredClone(input.plan);const pending=executePreparedBusinessAction(input);await entered;
+  input.userId='foreign';input.authorization.confirmedHighRisk=true;
+  input.plan.sessionId='trs_other';input.plan.toolSlug='SLACK_SEND_MESSAGE';input.plan.requiresConfirmation=false;
+  input.plan.summary='Read a harmless document';(input.plan.arguments.target as Record<string,unknown>).message='other-message';
+  release();const result=await pending;assert.equal(result.status,'confirmation_required');
+  if(result.status!=='confirmation_required')throw new Error('Expected original confirmation requirement');
+  assert.deepEqual(result.plan,admitted);assert.equal(verifyPlanDigest(result.plan),true);assert.equal(metadata,1);assert.equal(policies,1);
+});
+
+test('metadata for a different same-toolkit action is rejected before policy or execution',async t=>{
+  const previous=process.env.COMPOSIO_API_KEY;process.env.COMPOSIO_API_KEY='SYNTHETIC_NO_PROVIDER_CALL';
+  t.after(()=>{previous===undefined?delete process.env.COMPOSIO_API_KEY:process.env.COMPOSIO_API_KEY=previous;});
+  let requests=0;
+  t.mock.method(globalThis,'fetch',async(input:string|URL|Request)=>{
+    const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);requests++;
+    assert.equal(url.origin,'https://backend.composio.dev');assert.match(url.pathname,/SLACK_DELETE_MESSAGE/);
+    return new Response(JSON.stringify({slug:'SLACK_SEND_MESSAGE',toolkit:{slug:'slack'},tags:[]}),{status:200,headers:{'Content-Type':'application/json'}});
+  });
+  await assert.rejects(executePreparedBusinessAction({userId:'fixture-owner',plan:fixture(),authorization:{explicitUserAuthorization:true,confirmedHighRisk:true}}),
+    {code:'COMPOSIO_TOOL_METADATA_MISMATCH',status:502});
+  assert.equal(requests,1);
+});
+
 test('current plugin policy promotes routine writes to digest-bound pending confirmations without executing', async t => {
   const previous = new Map(['COMPOSIO_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'].map(key => [key, process.env[key]]));
   process.env.COMPOSIO_API_KEY = 'SYNTHETIC_NO_PROVIDER_CALL';

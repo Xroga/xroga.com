@@ -12,6 +12,7 @@ import {
 import {
   executePreparedBusinessAction,
   verifyPlanDigest,
+  snapshotBusinessActionPlan,
   type BusinessActionPlan,
   type BusinessActionExecutionOutcome,
 } from './businessAction.js';
@@ -288,6 +289,7 @@ export async function createBusinessActionConfirmation(
       status: 409, code: 'BUSINESS_ACTION_PLAN_CHANGED',
     });
   }
+  plan = snapshotBusinessActionPlan(plan);
   if (
     !plan.requiresConfirmation
   ) {

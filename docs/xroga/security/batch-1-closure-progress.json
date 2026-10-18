@@ -53,6 +53,18 @@
     }
   ],
   "additionalSpend": 0,
+  "businessActionSnapshot": {
+    "status": "IN PROGRESS",
+    "fix": "Existing preparation confirmation and executor copy the canonical digest-verified plan. Executor also copies actor and authorization before metadata/policy waits. Tool metadata rejects an explicitly different returned slug before risk classification or execution.",
+    "localEvidence": "Six digest/confirmation tests pass, including mutation of actor, confirmation flag, session, slug, summary and nested arguments during a held metadata read. The original actor/plan still requires confirmation. Same-toolkit wrong tool metadata is rejected before policy or execution. Backend typecheck and full3041-test regression pass:3023 pass,zero failures,18 registered Windows skips. Every HTTP response is mocked and no provider executes.",
+    "reference": "https://docs.composio.dev/reference/v3/api-reference/tools/getToolsByToolSlug",
+    "remaining": "Provider/session lifecycle, live compatibility/acceptance and complete business-action recovery remain unresolved."
+  },
+  "automationOutcomeDisposable": {
+    "source": "4e7c5fe1fcaaf806cba6939018a51186facc6866",
+    "run": "39117989323",
+    "result": "PASS:104 fresh/upgrade migrations,138 security tests and3 browser tests,zero failures/skips. Actual concurrent project-wide monotonic rule versions and transaction rollback, plus current-role/parent experiment outcome races and concurrent replay pass. Two unchanged transaction boundaries closed narrowly. Aggregate39117989320 remains pending. Business terminal and input-copy changes need their own exact-source verification."
+  },
   "businessConfirmationFinish": {
     "status": "IN PROGRESS",
     "fix": "Existing executor reuses its admin client and exact original claimed row for service-only terminal persistence. Full plan/display metadata, original expiry and claim timestamp are locked and checked before consumed/failed status. Exact terminal replay cannot overwrite a different outcome. Invalid claim receipts produce no unbound table write, and uncertain terminal storage raises a typed503 without retrying the provider.",
@@ -283,7 +295,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:398 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:396 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -318,7 +330,7 @@
     "ownerPredicateCandidates": 156,
     "reviewRequired": 0,
     "reviewedCandidates": 652,
-    "unresolvedSafetyCandidates": 398,
+    "unresolvedSafetyCandidates": 396,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -382,7 +394,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Preserve4e7c5fe1 aggregate39117989320 and disposable39117989323 until completion. Verify104 migrations and actual automation-version/outcome races. Commit locally verified business terminal persistence and verify105 migrations plus its real claim/outcome races at the next CI checkpoint. Continue immutable external action intent through metadata/policy awaits, action creation atomic recovery, worker lifecycle and other growth parent mutation races.652 reviewed/398 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
+  "nextTask": "Commit and push copied external-action intent/metadata guard with terminal persistence, after completed4e7c5fe1 CI. Verify105 migrations and actual terminal claim/outcome races plus final-source repeated branch/integrated results. Implement atomic operations action creation/audit/approval and current role admission, preserving replay-without-confirm/execute. Continue worker lifecycle and other growth parent mutation groups.652 reviewed/396 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
@@ -524,7 +536,7 @@
       "existingImplementation": "Existing prepared plan, confirmation, operations services and scheduler",
       "missingBehavior": "Account/target/digest/spend/receipt integration and complete caller provenance",
       "acceptanceTest": "Changed plan/target, expired/revoked approval, duplicate claims, unauthorized spend",
-      "pendingCandidates": 76,
+      "pendingCandidates": 75,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/operations/operationsService.ts": [
@@ -572,7 +584,6 @@
           "04840e25d94402b3d5e5",
           "6859c8b982dba7e3a132",
           "bd3612febc2df0e1a60d",
-          "76b20112f92c659c0501",
           "909bdb632b505b2ea066",
           "3ce217b401a0e087506b",
           "2958d3401b07428f93db",
@@ -597,17 +608,17 @@
           "6ac8a018f3c309f7f133"
         ],
         "backend/src/services/integrations/businessActionConfirmations.ts": [
-          "26f90ee24dce5e61e10b",
-          "59f28725fd15f630ac34",
-          "2a61d02591ae6e43f5d1",
-          "4cdb3108a232ecf02181",
-          "ce274db3e3762bd69af8",
-          "2a047295d4b09a7b1f92",
-          "caf3f72c768eb7498c76",
-          "e4f2831f63600f3747e7",
-          "a87492795c9bd48e9684",
-          "cb762f752172a9129c4b",
-          "06c3aac16e5f68e6719e"
+          "c37a93be0605e64b3156",
+          "94fb30ec710f32d062c2",
+          "36d0fbfc5ddf864ad6ea",
+          "bda77ff34ad9e973cbde",
+          "a1e1f647efb6e7002993",
+          "7c2970e3ea0940d5d136",
+          "986c86eebabfae033939",
+          "884cad1975974abc0599",
+          "1a3d2ad705ca358ebbe3",
+          "b6708d08741254f6da06",
+          "85d5a147aa59e4f62e68"
         ]
       }
     },
@@ -788,7 +799,7 @@
       "existingImplementation": "Existing community roles and growth owner filters",
       "missingBehavior": "Remaining role/parent lineage, replay and external publishing authority",
       "acceptanceTest": "Mixed-field escalation, foreign parents, retry races and no unauthorized provider effects",
-      "pendingCandidates": 49,
+      "pendingCandidates": 48,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/community/service.ts": [
@@ -839,7 +850,6 @@
           "0867f0e2c4060450d1f0",
           "7ef4fc27890780df43d5",
           "5d7c9df9dd797e201589",
-          "a479d8875321283fa208",
           "82d66e01fff21f752018",
           "8e38396280b9c8d8cd42",
           "f6a9ae290a11804c97fb"

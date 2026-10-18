@@ -401,7 +401,8 @@
     "backend/src/growth/outcomeReceipt.test.ts",
     "supabase/migrations/20261018000800_growth_outcome_transaction.sql",
     "backend/src/security/businessConfirmationFinish.local.integration.ts",
-    "supabase/migrations/20261018000900_business_confirmation_finish.sql"
+    "supabase/migrations/20261018000900_business_confirmation_finish.sql",
+    "backend/src/services/integrations/composioClient.ts"
   ],
   "decisions": {
     "keep": [

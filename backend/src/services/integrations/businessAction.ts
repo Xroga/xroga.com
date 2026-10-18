@@ -556,6 +556,16 @@ export function verifyPlanDigest(
   }
 }
 
+export function snapshotBusinessActionPlan(plan: BusinessActionPlan): BusinessActionPlan {
+  let snapshot: BusinessActionPlan;
+  try { snapshot = JSON.parse(JSON.stringify(plan)) as BusinessActionPlan; }
+  catch { throw new ComposioClientError('The prepared external action changed after planning.', { status: 409, code: 'BUSINESS_ACTION_PLAN_CHANGED' }); }
+  if (!snapshot || typeof snapshot !== 'object' || Array.isArray(snapshot) || !verifyPlanDigest(snapshot)) {
+    throw new ComposioClientError('The prepared external action changed after planning.', { status: 409, code: 'BUSINESS_ACTION_PLAN_CHANGED' });
+  }
+  return snapshot;
+}
+
 function buildCandidatePayload(
   tools: XrogaConnectTool[],
 ) {
@@ -1363,21 +1373,7 @@ export async function executePreparedBusinessAction(
     );
   }
 
-  if (
-    !verifyPlanDigest(
-      input.plan,
-    )
-  ) {
-    throw new ComposioClientError(
-      'The prepared external action changed after planning.',
-      {
-        status: 409,
-
-        code:
-          'BUSINESS_ACTION_PLAN_CHANGED',
-      },
-    );
-  }
+  input = { userId: input.userId, authorization: { ...input.authorization }, plan: snapshotBusinessActionPlan(input.plan) };
 
   /*
    * Re-resolve current tool metadata before

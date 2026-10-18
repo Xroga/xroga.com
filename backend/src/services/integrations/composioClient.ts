@@ -2303,6 +2303,11 @@ export async function getComposioToolDetails(
   );
 
   const resolvedSlug = details.slug ?? clean;
+  if (resolvedSlug !== clean) {
+    throw new ComposioClientError('The app provider returned metadata for a different action.', {
+      status: 502, code: 'COMPOSIO_TOOL_METADATA_MISMATCH',
+    });
+  }
   const toolkit = details.toolkit?.slug;
 
   if (!toolkit) {

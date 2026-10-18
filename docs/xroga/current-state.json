@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "4e7c5fe1fcaaf806cba6939018a51186facc6866",
-    "sourceTimestampUtc": "2026-10-18T15:04:25+05:00",
-    "auditStartedUtc": "2026-10-18T10:12:18.920Z",
+    "sha": "496d59ab5341a922df131a5e0305636f78470fa6",
+    "sourceTimestampUtc": "2026-10-18T15:12:57+05:00",
+    "auditStartedUtc": "2026-10-18T10:21:45.411Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -21686,7 +21686,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "c5273283b8d744b24f30724498a622fa1c44c35b598e80602d4c8b4cd407751c",
+      "sha256": "0c2480b8fae9641148fceddd40e111d2d62d579cadd3cb5697e2853fd8ef24a2",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -21744,6 +21744,8 @@
         "selected",
         "selection",
         "serialized",
+        "snapshot",
+        "snapshotBusinessActionPlan",
         "structured",
         "summary",
         "system",
@@ -21827,7 +21829,7 @@
       "id": "surface:0315124fb31feefa3fcb",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "6a73ac47ec9ccc63f49dc3b3b291b2a9a3a3677294e39b4998720c529368da9c",
+      "sha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
       "symbols": [
         "CONFIRMATION_TTL_MS",
         "ConfirmationRow",
@@ -21887,10 +21889,10 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/services/integrations/businessActionConfirmations.ts:230 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:388 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:468 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:579 (user_id)"
+        "backend/src/services/integrations/businessActionConfirmations.ts:231 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:390 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:470 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:581 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/businessActionConfirmations.ts#CONFIRMATION_TTL_MS",
@@ -22036,7 +22038,7 @@
       "id": "surface:8c25c7e0b5b0dd66676d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "d242e3b59c7e0c96ab639b6c93836631ce1ca4302ed190ebc74d4a9d4029efff",
+      "sha256": "787b311feb9cde06f97c1ee90093e51b0b734b1e3ea555d14033366a0f422d2e",
       "symbols": [
         "COMPOSIO_API_BASE",
         "COMPOSIO_CACHE_TTL_MS",
@@ -103766,7 +103768,7 @@
     {
       "id": "test-suite:1a2c6e09fefb8dd8d884",
       "sourcePath": "backend/src/services/integrations/businessAction.digest.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
