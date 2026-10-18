@@ -1,360 +1,97 @@
 'use client';
 
+/**
+ * Navigation V2: the public marketing header (homepage and marketing pages; the workspace keeps its own chrome).
+ *
+ * - One floating bar with an original particle layer (nav/particles.ts): a quiet rim at rest, and a capsule of light
+ *   that gathers around the hovered item and glides between items as one object.
+ * - Five mega menus (Product, Build, Connect, Develop, Explore) in one shared panel under the bar: an editorial column,
+ *   grouped links with one icon system, and a preview that answers the link in focus (nav/MegaPreviews.tsx). Moving
+ *   between menus crossfades the content inside a fixed envelope, so the panel never jumps in size.
+ * - Disclosure pattern: each trigger is a button with aria-expanded/aria-controls; hover opens (with intent delays so
+ *   the bar-to-panel gap never closes it), click toggles, Escape closes and returns focus, outside press closes.
+ * - Hides when the visitor scrolls down past the opening screen, returns on any intentional upward scroll, near the
+ *   top, when focus enters it or when the pointer reaches the top edge; never hides while a menu is open.
+ */
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import {
-  AppWindow,
-  ArrowUpRight,
-  BookOpen,
-  Boxes,
-  ChevronDown,
-  Code2,
-  FileCode2,
-  GalleryHorizontalEnd,
-  GitBranch,
-  Globe2,
-  LayoutDashboard,
-  Menu,
-  Rocket,
-  Search,
-  ShieldCheck,
-  Sparkles,
-  TerminalSquare,
-  Workflow,
-  X,
-} from 'lucide-react';
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { ArrowUpRight, ChevronDown, TerminalSquare } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { Logo } from '@/components/layout/Logo';
 import { createClient } from '@/lib/supabase/client';
 import { PUBLIC_MARKETING_NAV } from '@/lib/publicMarketing';
+import { CONNECT_GROUPS, MEGA_MENUS, type MegaItem, type MegaMenu, type MenuKey } from './nav/navData';
+import { BrandMark, BuildPreview, ConnectDirectory, DevelopPreview, ExplorePreview, ProductPreview } from './nav/MegaPreviews';
+import { NavParticles } from './nav/particles';
+import './nav/xroga-nav.css';
 
-type MegaItem = {
-  href: string;
-  label: string;
-  note: string;
-  icon?: typeof Sparkles;
-};
+const isMenu = (label: string): label is MenuKey => label in MEGA_MENUS;
+const FIRST_PREVIEW: Record<MenuKey, string> = { Product: 'request', Build: 'webapp', Connect: '', Develop: 'diff', Explore: 'product' };
 
-type MegaMenu = {
-  eyebrow: string;
-  title: string;
-  description: string;
-  primary: MegaItem[];
-  secondary: MegaItem[];
-  ctaHref: string;
-  ctaLabel: string;
-  art: 'product' | 'build' | 'connect' | 'develop' | 'explore';
-};
-
-const MEGA_MENUS: Partial<Record<(typeof PUBLIC_MARKETING_NAV)[number]['label'], MegaMenu>> = {
-  Product: {
-    eyebrow: 'XROGA',
-    title: 'Everything Xroga can do.',
-    description: 'One AI workspace to create software, work on existing code, connect external apps, verify results, and help ship what you build.',
-    primary: [
-      { href: '/features', label: 'Overview', note: 'See the full Xroga product.', icon: Sparkles },
-      { href: '/software', label: 'Workspace', note: 'Chat, build, inspect, preview, and iterate.', icon: LayoutDashboard },
-      { href: '/features', label: 'Xroga Intelligence', note: 'Plan and coordinate software work.', icon: Workflow },
-    ],
-    secondary: [
-      { href: '/features', label: 'Verification', note: 'Tests, builds, evidence, and blockers.', icon: ShieldCheck },
-      { href: '/integrations', label: 'Integrations', note: 'Connect apps and services to Xroga.', icon: Boxes },
-      { href: '/github-ai-coding-agent', label: 'GitHub & ownership', note: 'Keep source code in repositories you control.', icon: GitBranch },
-    ],
-    ctaHref: '/features',
-    ctaLabel: 'Explore Xroga',
-    art: 'product',
-  },
-
-  Build: {
-    eyebrow: 'BUILD',
-    title: 'Build almost any kind of software.',
-    description: 'Start with an idea, a prompt, or a product direction and turn it into a working project.',
-    primary: [
-      { href: '/ai-app-builder', label: 'Web apps', note: 'Full-stack products with real application logic.', icon: AppWindow },
-      { href: '/ai-website-builder', label: 'Websites', note: 'Marketing sites, product sites, and landing pages.', icon: Globe2 },
-      { href: '/build-saas-with-ai', label: 'SaaS', note: 'Subscription products, dashboards, and accounts.', icon: LayoutDashboard },
-    ],
-    secondary: [
-      { href: '/build', label: 'Extensions, APIs & tools', note: 'Browser extensions, APIs, automations, and utilities.', icon: Boxes },
-      { href: '/game-builder', label: 'Games', note: 'Build supported playable web experiences.', icon: Rocket },
-      { href: '/crypto', label: 'Web3 & crypto', note: 'Build supported Web3 product experiences.', icon: Sparkles },
-    ],
-    ctaHref: '/build',
-    ctaLabel: 'Explore What You Can Build',
-    art: 'build',
-  },
-
-  Connect: {
-    eyebrow: 'XROGA CONNECT',
-    title: 'Connect Xroga to the apps you already use.',
-    description: 'Let Xroga retrieve data from supported connected apps and perform actions you explicitly request.',
-    primary: [
-      { href: '/integrations', label: 'Gmail & Calendar', note: 'Email, schedules, and connected Google workflows.', icon: Globe2 },
-      { href: '/integrations', label: 'Slack', note: 'Read and act in connected team workflows.', icon: Boxes },
-      { href: '/integrations', label: 'Notion', note: 'Work with connected workspace content.', icon: BookOpen },
-    ],
-    secondary: [
-      { href: '/integrations', label: 'GitHub', note: 'Repositories, project delivery, and code workflows.', icon: GitBranch },
-      { href: '/integrations', label: 'Stripe', note: 'Supported billing and business workflows.', icon: AppWindow },
-      { href: '/integrations', label: 'Vercel & Supabase', note: 'Deployment, data, authentication, and app infrastructure.', icon: Rocket },
-    ],
-    ctaHref: '/integrations',
-    ctaLabel: 'Explore All Integrations',
-    art: 'connect',
-  },
-
-  Develop: {
-    eyebrow: 'DEVELOP',
-    title: 'Work on real software you already own.',
-    description: 'Bring an existing repository and use Xroga for implementation, debugging, verification, and release preparation.',
-    primary: [
-      { href: '/ai-coding-agent', label: 'Existing projects', note: 'Understand and change a real codebase.', icon: Code2 },
-      { href: '/github-ai-coding-agent', label: 'GitHub repositories', note: 'Work from connected repositories and branches.', icon: GitBranch },
-      { href: '/ai-coding-agent', label: 'Add features & fix bugs', note: 'Make focused changes without rebuilding everything.', icon: FileCode2 },
-    ],
-    secondary: [
-      { href: '/ai-coding-agent', label: 'Test & verify', note: 'Run relevant checks and surface failures.', icon: ShieldCheck },
-      { href: '/tools/production-readiness-checker', label: 'Production readiness', note: 'Check whether a project is ready to ship.', icon: Search },
-      { href: '/docs', label: 'Developer docs', note: 'Technical reference and workflow guidance.', icon: TerminalSquare },
-    ],
-    ctaHref: '/ai-coding-agent',
-    ctaLabel: 'Explore Development Workflows',
-    art: 'develop',
-  },
-
-  Explore: {
-    eyebrow: 'EXPLORE',
-    title: 'See what Xroga can build and how it works.',
-    description: 'Browse examples, learn the workflows, and compare product paths before you start.',
-    primary: [
-      { href: '/showcase', label: 'Showcase', note: 'See real product directions and output.', icon: GalleryHorizontalEnd },
-      { href: '/build', label: 'Build categories', note: 'Explore apps, websites, SaaS, tools, and more.', icon: Boxes },
-      { href: '/learn', label: 'Guides & tutorials', note: 'Learn how to build with Xroga.', icon: BookOpen },
-    ],
-    secondary: [
-      { href: '/blog', label: 'Blog', note: 'Product, software, and AI-building insights.', icon: FileCode2 },
-      { href: '/compare', label: 'Compare', note: 'Evidence-based comparisons and alternatives.', icon: ShieldCheck },
-      { href: '/docs', label: 'Docs', note: 'Product and technical documentation.', icon: BookOpen },
-    ],
-    ctaHref: '/showcase',
-    ctaLabel: 'Explore Xroga',
-    art: 'explore',
-  },
-};
-
-type ConnectBrand = {
-  name: string;
-  slug: string;
-  color: string;
-  category: string;
-  domain?: string;
-};
-
-const CONNECT_PRIMARY_BRANDS: ConnectBrand[] = [
-  { name: 'GitHub', slug: 'github', color: '181717', category: 'Developer' },
-  { name: 'Gmail', slug: 'gmail', color: 'EA4335', category: 'Communication' },
-  { name: 'Google Calendar', slug: 'googlecalendar', color: '4285F4', category: 'Productivity' },
-  { name: 'Google Drive', slug: 'googledrive', color: '4285F4', category: 'Storage' },
-  { name: 'Slack', slug: 'slack', color: '4A154B', category: 'Communication' },
-  { name: 'Discord', slug: 'discord', color: '5865F2', category: 'Communication' },
-  { name: 'Notion', slug: 'notion', color: '000000', category: 'Workspace' },
-  { name: 'Linear', slug: 'linear', color: '5E6AD2', category: 'Project management' },
-  { name: 'Jira', slug: 'jira', color: '0052CC', category: 'Project management' },
-  { name: 'Asana', slug: 'asana', color: 'F06A6A', category: 'Project management' },
-  { name: 'Airtable', slug: 'airtable', color: '18BFFF', category: 'Data' },
-  { name: 'Stripe', slug: 'stripe', color: '635BFF', category: 'Payments' },
-  { name: 'Shopify', slug: 'shopify', color: '7AB55C', category: 'Commerce' },
-  { name: 'HubSpot', slug: 'hubspot', color: 'FF7A59', category: 'CRM' },
-  { name: 'Salesforce', slug: 'salesforce', color: '00A1E0', category: 'CRM' },
-  { name: 'Vercel', slug: 'vercel', color: '000000', category: 'Deployment' },
-  { name: 'Supabase', slug: 'supabase', color: '3FCF8E', category: 'Database' },
-  { name: 'Cloudflare', slug: 'cloudflare', color: 'F38020', category: 'Infrastructure' },
-  { name: 'Sentry', slug: 'sentry', color: '362D59', category: 'Monitoring' },
-  { name: 'Dropbox', slug: 'dropbox', color: '0061FF', category: 'Storage' },
-];
-
-const CONNECT_MORE_BRANDS: ConnectBrand[] = [
-  { name: 'OneDrive', slug: 'microsoftonedrive', color: '0078D4', category: 'Storage', domain: 'onedrive.live.com' },
-  { name: 'Box', slug: 'box', color: '0061D5', category: 'Storage', domain: 'box.com' },
-  { name: 'Calendly', slug: 'calendly', color: '006BFF', category: 'Scheduling', domain: 'calendly.com' },
-  { name: 'Mailchimp', slug: 'mailchimp', color: 'FFE01B', category: 'Marketing', domain: 'mailchimp.com' },
-  { name: 'Twilio', slug: 'twilio', color: 'F22F46', category: 'Communication', domain: 'twilio.com' },
-  { name: 'Postman', slug: 'postman', color: 'FF6C37', category: 'Developer', domain: 'postman.com' },
-  { name: 'MongoDB', slug: 'mongodb', color: '47A248', category: 'Database', domain: 'mongodb.com' },
-  { name: 'OpenAI', slug: 'openai', color: '412991', category: 'AI', domain: 'openai.com' },
-  { name: 'Figma', slug: 'figma', color: 'F24E1E', category: 'Design', domain: 'figma.com' },
-  { name: 'PayPal', slug: 'paypal', color: '003087', category: 'Payments', domain: 'paypal.com' },
-];
-
-function BrandMark({ brand, compact = false }: { brand: ConnectBrand; compact?: boolean }) {
-  const [sourceStage, setSourceStage] = useState(0);
-  const primary = `https://cdn.simpleicons.org/${brand.slug}/${brand.color}`;
-  const fallback = brand.domain
-    ? `https://www.google.com/s2/favicons?domain=${brand.domain}&sz=128`
-    : null;
-
-  if (sourceStage > 1 || (sourceStage === 1 && !fallback)) {
-    return <span className="xv-nav-brand-fallback" aria-hidden="true">{brand.name.slice(0, 1)}</span>;
-  }
-
-  return (
-    <img
-      src={sourceStage === 0 ? primary : fallback ?? primary}
-      alt=""
-      width={compact ? 22 : 24}
-      height={compact ? 22 : 24}
-      loading="eager"
-      decoding="async"
-      referrerPolicy="no-referrer"
-      onError={() => setSourceStage((stage) => stage + 1)}
-    />
-  );
-}
-
-function MegaArt({ kind }: { kind: MegaMenu['art'] }) {
-  if (kind === 'build') {
-    return (
-      <div className="xv-nav-art xv-nav-art--app" aria-hidden="true">
-        <span className="xv-nav-art__serif">Build</span>
-        <div className="xv-nav-art__fan">
-          <i /><i /><i /><i />
-          <b>anything</b>
-        </div>
-      </div>
-    );
-  }
-
-  if (kind === 'connect') {
-    return (
-      <div className="xv-nav-art xv-nav-art--connect" aria-hidden="true">
-        <span className="xv-nav-art__serif">Connect</span>
-        <div className="xv-nav-connect-orbit">
-          <div className="xv-nav-connect-core">X</div>
-          {CONNECT_PRIMARY_BRANDS.slice(0, 6).map((brand, index) => (
-            <span className="xv-nav-connect-logo" style={{ '--logo-index': index } as CSSProperties} key={brand.name}>
-              <BrandMark brand={brand} compact />
-            </span>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (kind === 'develop') {
-    return (
-      <div className="xv-nav-art xv-nav-art--agent" aria-hidden="true">
-        <span className="xv-nav-art__serif is-muted">Develop</span>
-        <div className="xv-nav-art__terminal">
-          <small>repo / customer-cloud</small>
-          <b>Implement billing portal</b>
-          <i>✓ inspect</i><i>✓ build</i><i>● verify</i>
-        </div>
-      </div>
-    );
-  }
-
-  if (kind === 'explore') {
-    return (
-      <div className="xv-nav-art xv-nav-art--showcase" aria-hidden="true">
-        <div className="xv-nav-art__stack"><i /><i /><i /><strong>05</strong></div>
-        <span>Projects</span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="xv-nav-art xv-nav-art--product" aria-hidden="true">
-      <span className="xv-nav-art__badge">XROGA</span>
-      <strong>Build<br /><em>software</em><br />with AI.</strong>
-      <div className="xv-nav-art__cursor">↖</div>
-    </div>
-  );
-}
-
-function MegaLink({ item, onNavigate }: { item: MegaItem; onNavigate: () => void }) {
+function MegaLink({ item, onNavigate, onPreview }: { item: MegaItem; onNavigate: () => void; onPreview: (k: string) => void }) {
   const Icon = item.icon;
+  const show = () => item.preview && onPreview(item.preview);
   return (
-    <Link href={item.href} onClick={onNavigate}>
-      <i>{Icon ? <Icon aria-hidden="true" /> : null}</i>
-      <span><b>{item.label}</b><em>{item.note}</em></span>
-      <ArrowUpRight aria-hidden="true" />
+    <Link href={item.href} className="xn-link" onClick={onNavigate} onPointerEnter={show} onFocus={show}>
+      <i className="xn-icon">
+        <Icon aria-hidden="true" />
+      </i>
+      <span>
+        <b>{item.label}</b>
+        <em>{item.note}</em>
+      </span>
+      <ArrowUpRight className="xn-link-go" aria-hidden="true" />
     </Link>
   );
 }
 
-function MegaPanel({ menu, onNavigate }: { menu: MegaMenu; onNavigate: () => void }) {
-  const isConnect = menu.art === 'connect';
-
+function MegaContent({ id, menu, onNavigate }: { id: MenuKey; menu: MegaMenu; onNavigate: () => void }) {
+  const [preview, setPreview] = useState(FIRST_PREVIEW[id]);
   return (
-    <div className="xv-nav-mega" role="group">
-      <div className="xv-nav-mega__grid" aria-hidden="true" />
-      <div className={isConnect ? 'xv-nav-mega__inner xv-nav-mega__inner--connect' : 'xv-nav-mega__inner'}>
-        <section className="xv-nav-mega__intro">
-          <p>{menu.eyebrow}</p>
-          <h2>{menu.title}</h2>
-          <span>{menu.description}</span>
-          <Link href={menu.ctaHref} className="xv-nav-mega__cta" onClick={onNavigate}>
-            <span>{menu.ctaLabel}</span><ArrowUpRight aria-hidden="true" />
-          </Link>
-        </section>
-
-        {isConnect ? (
-          <section className="xv-nav-connect-catalog" aria-label="Popular Xroga integrations">
-            <div className="xv-nav-connect-catalog__head">
-              <div>
-                <small>POPULAR APPS & SERVICES</small>
-                <b>Connect your everyday stack</b>
-              </div>
-              <Link href="/integrations" onClick={onNavigate}>Explore all <ArrowUpRight aria-hidden="true" /></Link>
-            </div>
-
-            <div className="xv-nav-connect-grid">
-              {CONNECT_PRIMARY_BRANDS.map((brand) => (
-                <Link href="/integrations" className="xv-nav-connect-card" key={brand.name} onClick={onNavigate}>
-                  <i className="is-brand"><BrandMark brand={brand} /></i>
-                  <span><b>{brand.name}</b><em>{brand.category}</em></span>
-                  <ArrowUpRight aria-hidden="true" />
-                </Link>
-              ))}
-            </div>
-
-            <div className="xv-nav-connect-more">
-              <small>AND MORE</small>
-              <div>
-                {CONNECT_MORE_BRANDS.map((brand) => (
-                  <Link href="/integrations" key={brand.name} title={brand.name} aria-label={brand.name} onClick={onNavigate}>
-                    <BrandMark brand={brand} compact />
-                  </Link>
+    <div className="xn-menu" data-menu={id}>
+      <section className="xn-intro">
+        <p className="xn-eyebrow">{menu.eyebrow}</p>
+        <h2 className="xn-title">{menu.title}</h2>
+        <p className="xn-desc">{menu.description}</p>
+        <Link href={menu.ctaHref} className="xn-intro-cta" onClick={onNavigate}>
+          {menu.ctaLabel}
+          <ArrowUpRight aria-hidden="true" />
+        </Link>
+      </section>
+      {id === 'Connect' ? (
+        <ConnectDirectory onNavigate={onNavigate} />
+      ) : (
+        <>
+          <div className="xn-links">
+            {menu.groups.map((g) => (
+              <div className="xn-group" key={g.label} role="group" aria-label={g.label}>
+                <small className="xn-group-label">{g.label}</small>
+                {g.items.map((item) => (
+                  <MegaLink item={item} key={item.label} onNavigate={onNavigate} onPreview={setPreview} />
                 ))}
-                <Link href="/integrations" className="xv-nav-connect-more__all" onClick={onNavigate}>
-                  + Explore all
-                </Link>
               </div>
-            </div>
-          </section>
-        ) : (
-          <>
-            <section className="xv-nav-mega__links" aria-label={menu.eyebrow + ' links'}>
-              <div>
-                <small>Explore</small>
-                {menu.primary.map((item) => <MegaLink item={item} onNavigate={onNavigate} key={item.label} />)}
-              </div>
-              <div>
-                <small>More</small>
-                {menu.secondary.map((item) => <MegaLink item={item} onNavigate={onNavigate} key={item.label} />)}
-              </div>
-            </section>
-
-            <aside className="xv-nav-mega__art">
-              <Link href={menu.ctaHref} className="xv-nav-mega__art-link" aria-label={menu.ctaLabel} onClick={onNavigate}>
-                <MegaArt kind={menu.art} />
-              </Link>
-            </aside>
-          </>
-        )}
-      </div>
+            ))}
+          </div>
+          <aside className="xn-preview">
+            {id === 'Product' && <ProductPreview active={preview} />}
+            {id === 'Build' && <BuildPreview active={preview} />}
+            {id === 'Develop' && <DevelopPreview active={preview} />}
+            {id === 'Explore' && <ExplorePreview active={preview} />}
+          </aside>
+        </>
+      )}
     </div>
+  );
+}
+
+/** a 3 × 3 field of dots that folds into a cross when the mobile menu is open */
+function MenuGlyph({ open }: { open: boolean }) {
+  return (
+    <span className="xn-glyph" data-open={open || undefined} aria-hidden="true">
+      {Array.from({ length: 9 }, (_, i) => (
+        <i key={i} style={{ '--x': `${1.5 + (i % 3) * 5.5}px`, '--y': `${1.5 + Math.floor(i / 3) * 5.5}px` } as CSSProperties} />
+      ))}
+    </span>
   );
 }
 
@@ -362,56 +99,98 @@ export function PublicMarketingHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const rootRef = useRef<HTMLElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLElement | null>(null);
+  const fx = useRef<NavParticles | null>(null);
+  const triggers = useRef<Partial<Record<MenuKey, HTMLButtonElement | null>>>({});
+  const openTimer = useRef<number>();
+  const closeTimer = useRef<number>();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeMega, setActiveMega] = useState<string | null>(null);
+  const [activeMega, setActiveMega] = useState<MenuKey | null>(null);
+  const [mobileSection, setMobileSection] = useState<MenuKey | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [headerCompressed, setHeaderCompressed] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [focusInside, setFocusInside] = useState(false);
+  const hoverItem = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     let active = true;
     try {
-      void createClient().auth.getSession().then(({ data }) => {
-        if (active) setLoggedIn(Boolean(data.session));
-      }).catch(() => { if (active) setLoggedIn(false); });
+      void createClient()
+        .auth.getSession()
+        .then(({ data }) => {
+          if (active) setLoggedIn(Boolean(data.session));
+        })
+        .catch(() => {
+          if (active) setLoggedIn(false);
+        });
     } catch {
       setLoggedIn(false);
     }
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, []);
 
+  // route change: close everything
   useEffect(() => {
     setMenuOpen(false);
     setActiveMega(null);
   }, [pathname]);
 
+  /* ------------------------------------------------------------ particles */
   useEffect(() => {
-    let frame = 0;
-
-    const syncHeaderToScroll = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(() => {
-        setHeaderCompressed(window.scrollY > 72);
-        frame = 0;
-      });
-    };
-
-    syncHeaderToScroll();
-    window.addEventListener('scroll', syncHeaderToScroll, { passive: true });
+    const canvas = canvasRef.current;
+    const bar = barRef.current;
+    if (!canvas || !bar || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const p = new NavParticles(canvas, bar);
+    fx.current = p;
+    const measure = () => p.resize(ctaRef.current);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(bar);
+    void document.fonts?.ready.then(measure);
     return () => {
-      window.removeEventListener('scroll', syncHeaderToScroll);
-      if (frame) window.cancelAnimationFrame(frame);
+      ro.disconnect();
+      p.destroy();
+      fx.current = null;
     };
-  }, []);
+  }, [loggedIn]);
 
-  useEffect(() => {
-    setHeaderCompressed(menuOpen || Boolean(activeMega) ? false : window.scrollY > 72);
-  }, [menuOpen, activeMega]);
+  // the capsule surrounds the hovered item, else the open menu's trigger, else dissolves
+  const aim = useCallback(() => {
+    const el = hoverItem.current ?? (activeMega ? triggers.current[activeMega] ?? null : null);
+    fx.current?.target(el);
+  }, [activeMega]);
+  useEffect(aim, [aim]);
+
+  /* ------------------------------------------------------------ menus: hover intent, click, Escape, outside */
+  const open = (key: MenuKey, delay: number) => {
+    window.clearTimeout(closeTimer.current);
+    window.clearTimeout(openTimer.current);
+    if (delay <= 0) setActiveMega(key);
+    else openTimer.current = window.setTimeout(() => setActiveMega(key), delay);
+  };
+  const scheduleClose = () => {
+    window.clearTimeout(openTimer.current);
+    window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => setActiveMega(null), 260);
+  };
+  const closeMenus = () => {
+    window.clearTimeout(openTimer.current);
+    setActiveMega(null);
+  };
 
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setMenuOpen(false);
-        setActiveMega(null);
+        setActiveMega((current) => {
+          if (current) triggers.current[current]?.focus();
+          return null;
+        });
       }
     };
     const closeOutside = (event: PointerEvent) => {
@@ -422,144 +201,299 @@ export function PublicMarketingHeader() {
     return () => {
       window.removeEventListener('keydown', closeOnEscape);
       window.removeEventListener('pointerdown', closeOutside);
+      window.clearTimeout(openTimer.current);
+      window.clearTimeout(closeTimer.current);
     };
   }, []);
 
+  // the mobile menu keeps the page beneath it still
+  useEffect(() => {
+    if (!menuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [menuOpen]);
+
+  /* ------------------------------------------------------------ scroll: hide going down, return going up */
+  const pinned = Boolean(activeMega) || menuOpen || focusInside;
+  const pinnedRef = useRef(pinned);
+  pinnedRef.current = pinned;
+  useEffect(() => {
+    if (pinned) setHidden(false);
+  }, [pinned]);
+  useEffect(() => {
+    let last = window.scrollY;
+    let travel = 0;
+    let frame = 0;
+    const threshold = () => (pathname === '/' ? Math.max(420, window.innerHeight * 0.75) : 160);
+    const update = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const dy = y - last;
+      last = y;
+      if (pinnedRef.current || y < 80) {
+        travel = 0;
+        setHidden(false);
+        return;
+      }
+      // accumulate movement in one direction; a direction change starts a new count (hysteresis)
+      travel = Math.sign(dy) === Math.sign(travel) ? travel + dy : dy;
+      if (travel > 24 && y > threshold()) setHidden(true);
+      else if (travel < -12) setHidden(false);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    // the pointer reaching the very top of the window brings the bar back on desktop
+    let edge = 0;
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return;
+      if (e.clientY <= 6) {
+        if (!edge) edge = window.setTimeout(() => setHidden(false), 120);
+      } else if (edge) {
+        window.clearTimeout(edge);
+        edge = 0;
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('pointermove', onMove);
+      if (frame) cancelAnimationFrame(frame);
+      window.clearTimeout(edge);
+    };
+  }, [pathname]);
+
+  // a closed panel is out of the tab order and the accessibility tree
+  useEffect(() => {
+    if (panelRef.current) panelRef.current.inert = !activeMega;
+  }, [activeMega]);
+
+  // focus order follows the disclosure pattern: Tab from an open trigger enters its panel, Tab past the panel's last
+  // link continues to the next trigger, Shift+Tab from the panel's first link returns to its trigger
+  const panelLinks = () => [...(panelRef.current?.querySelectorAll<HTMLElement>('a[href], button') ?? [])];
+  const onTriggerKey = (key: MenuKey) => (e: ReactKeyboardEvent<HTMLButtonElement>) => {
+    if (e.key !== 'Tab' || e.shiftKey || activeMega !== key) return;
+    const first = panelLinks()[0];
+    if (first) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+  const onPanelKey = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'Tab' || !activeMega) return;
+    const links = panelLinks();
+    const at = links.indexOf(document.activeElement as HTMLElement);
+    const keys = Object.keys(MEGA_MENUS) as MenuKey[];
+    if (e.shiftKey && at === 0) {
+      e.preventDefault();
+      triggers.current[activeMega]?.focus();
+    } else if (!e.shiftKey && at === links.length - 1) {
+      e.preventDefault();
+      const next = keys[keys.indexOf(activeMega) + 1];
+      const nextEl = next ? triggers.current[next] : rootRef.current?.querySelector<HTMLElement>('.xn-nav > a');
+      setActiveMega(null);
+      nextEl?.focus();
+    }
+  };
+
   const accountHref = loggedIn ? '/workspace' : '/auth/login';
+  const menu = activeMega ? MEGA_MENUS[activeMega] : null;
 
   return (
     <header
       ref={rootRef}
-      className="xv-marketing-header"
+      className="xn"
       data-public-marketing-header
-      data-compressed={headerCompressed ? 'true' : 'false'}
+      data-hidden={hidden || undefined}
+      data-open={activeMega ? 'mega' : menuOpen ? 'mobile' : undefined}
+      onPointerEnter={() => window.clearTimeout(closeTimer.current)}
+      onPointerLeave={(e) => e.pointerType === 'mouse' && scheduleClose()}
+      // keyboard focus pins the bar; focus left behind by a mouse click does not
+      onFocusCapture={(e) => setFocusInside((e.target as HTMLElement).matches(':focus-visible'))}
+      onBlurCapture={(e) => {
+        if (!rootRef.current?.contains(e.relatedTarget as Node)) {
+          setFocusInside(false);
+          setActiveMega(null);
+        }
+      }}
     >
-      <svg className="xv-nav-filter" aria-hidden="true">
-        <defs>
-          <filter id="xv-nav-turbulent-displace">
-            <feTurbulence type="turbulence" baseFrequency="0.018" numOctaves="4" seed="2" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="B" />
-          </filter>
-        </defs>
-      </svg>
+      <div ref={barRef} className="xn-bar">
+        <canvas ref={canvasRef} className="xn-particles" aria-hidden="true" />
+        <Logo href="/" variant="homepage" height={38} className="xn-logo" />
 
-      <div className="xv-marketing-header__inner">
-        <Logo href="/" variant="homepage" height={58} className="xv-marketing-header__logo" />
-
-        <nav className="xv-marketing-header__nav" aria-label="Primary navigation">
+        <nav className="xn-nav" aria-label="Primary navigation" onPointerLeave={() => { hoverItem.current = null; aim(); }}>
           {PUBLIC_MARKETING_NAV.map((item) => {
-            const mega = MEGA_MENUS[item.label];
-            const isCurrent = pathname === item.href || (pathname === '/' && item.label === 'Product');
-            if (!mega) {
+            const isCurrent = pathname === item.href;
+            if (!isMenu(item.label)) {
               return (
                 <Link
-                  className="xv-marketing-header__direct-link"
                   key={item.href}
                   href={item.href}
+                  className="xn-item"
                   aria-current={isCurrent ? 'page' : undefined}
+                  onPointerEnter={(e) => {
+                    hoverItem.current = e.currentTarget;
+                    aim();
+                    scheduleClose();
+                  }}
                 >
                   {item.label}
                 </Link>
               );
             }
-
-            const isOpen = activeMega === item.label;
+            const key = item.label;
+            const isOpen = activeMega === key;
             return (
-              <div
-                className="xv-nav-root"
-                data-open={isOpen}
+              <button
                 key={item.href}
-                onMouseEnter={() => setActiveMega(item.label)}
-                onMouseLeave={() => setActiveMega((value) => value === item.label ? null : value)}
+                ref={(el) => {
+                  triggers.current[key] = el;
+                }}
+                type="button"
+                className="xn-item xn-trigger"
+                aria-expanded={isOpen}
+                aria-controls="xn-panel"
+                data-open={isOpen || undefined}
+                aria-current={isCurrent ? 'page' : undefined}
+                onPointerEnter={(e) => {
+                  if (e.pointerType !== 'mouse') return;
+                  hoverItem.current = e.currentTarget;
+                  aim();
+                  // the first menu opens after a short intent delay; once a menu is open, moving across switches at once
+                  open(key, activeMega ? 0 : 90);
+                }}
+                onKeyDown={onTriggerKey(key)}
+                onClick={() => {
+                  window.clearTimeout(openTimer.current);
+                  setActiveMega((value) => (value === key ? null : key));
+                }}
               >
-                <button
-                  type="button"
-                  className="xv-nav-trigger"
-                  aria-expanded={isOpen}
-                  aria-haspopup="true"
-                  aria-current={isCurrent ? 'page' : undefined}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setActiveMega((value) => value === item.label ? null : item.label);
-                  }}
-                  onFocus={() => setActiveMega(item.label)}
-                >
-                  <span>{item.label}</span>
-                  <ChevronDown aria-hidden="true" />
-                </button>
-                {isOpen && <MegaPanel menu={mega} onNavigate={() => setActiveMega(null)} />}
-              </div>
+                <span>{item.label}</span>
+                <ChevronDown aria-hidden="true" />
+              </button>
             );
           })}
         </nav>
 
-        <div className="xv-marketing-header__actions">
+        <div className="xn-actions">
           {loggedIn ? (
             <button
-                type="button"
-                className="xv-header-build-button xv-header-dashboard-button"
-                onClick={() => router.push(accountHref)}
-              >
-                <span className="xv-header-build-fold" aria-hidden="true" />
-                <span className="xv-header-build-points" aria-hidden="true">
-                  {Array.from({ length: 10 }, (_, index) => <i key={index} />)}
-                </span>
-                <span className="xv-header-build-inner">
-                  <TerminalSquare className="xv-header-build-icon" aria-hidden="true" />
-                  Workspace
-                </span>
-              </button>
+              type="button"
+              ref={(el) => {
+                ctaRef.current = el;
+              }}
+              className="xn-cta xv-header-dashboard-button"
+              onPointerEnter={() => fx.current?.ctaHover(true)}
+              onPointerLeave={() => fx.current?.ctaHover(false)}
+              onPointerDown={() => fx.current?.ctaPress()}
+              onClick={() => router.push(accountHref)}
+            >
+              <TerminalSquare className="xn-cta-icon" aria-hidden="true" />
+              Workspace
+            </button>
           ) : (
-            <Link className="xv-header-build-button xv-marketing-header__cta" href="/workspace">
-              <span className="xv-header-build-fold" aria-hidden="true" />
-              <span className="xv-header-build-points" aria-hidden="true">
-                {Array.from({ length: 10 }, (_, index) => <i key={index} />)}
-              </span>
-              <span className="xv-header-build-inner">
-                <svg
-                  className="xv-header-build-icon"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2.5"
-                  aria-hidden="true"
-                >
-                  <polyline points="13.18 1.37 13.18 9.64 21.45 9.64 10.82 22.63 10.82 14.36 2.55 14.36 13.18 1.37" />
-                </svg>
-                Start Building Free
-              </span>
+            <Link
+              ref={(el) => {
+                ctaRef.current = el;
+              }}
+              className="xn-cta"
+              href="/workspace"
+              onPointerEnter={() => fx.current?.ctaHover(true)}
+              onPointerLeave={() => fx.current?.ctaHover(false)}
+              onPointerDown={() => fx.current?.ctaPress()}
+            >
+              <svg className="xn-cta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" aria-hidden="true">
+                <polyline points="13.18 1.37 13.18 9.64 21.45 9.64 10.82 22.63 10.82 14.36 2.55 14.36 13.18 1.37" />
+              </svg>
+              Start Building Free
             </Link>
           )}
           <button
             type="button"
-            className="xv-marketing-header__menu-button"
+            className="xn-menu-button"
             aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
             aria-expanded={menuOpen}
             aria-controls="xv-public-mobile-menu"
             onClick={() => setMenuOpen((open) => !open)}
           >
-            {menuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+            <MenuGlyph open={menuOpen} />
           </button>
         </div>
       </div>
 
-      <div id="xv-public-mobile-menu" className="xv-marketing-mobile-menu" data-open={menuOpen}>
+      {/* the shared mega-menu panel: one envelope, content crossfades between menus */}
+      <div ref={panelRef} id="xn-panel" className="xn-panel" data-open={menu ? true : undefined} aria-hidden={!menu} onKeyDown={onPanelKey}>
+        <div className="xn-panel-surface">
+          {menu && activeMega && <MegaContent key={activeMega} id={activeMega} menu={menu} onNavigate={closeMenus} />}
+        </div>
+      </div>
+
+      {/* mobile: a drawer of disclosure sections */}
+      <div id="xv-public-mobile-menu" className="xn-drawer" data-open={menuOpen || undefined} aria-hidden={!menuOpen}>
         <nav aria-label="Mobile navigation">
-          {PUBLIC_MARKETING_NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={(pathname === item.href || (pathname === '/' && item.label === 'Product')) ? 'page' : undefined}
-            >
-              {item.label}<ArrowUpRight aria-hidden="true" />
-            </Link>
-          ))}
+          {PUBLIC_MARKETING_NAV.map((item) => {
+            if (!isMenu(item.label)) {
+              return (
+                <Link key={item.href} href={item.href} className="xn-drawer-row" aria-current={pathname === item.href ? 'page' : undefined}>
+                  {item.label}
+                  <ArrowUpRight aria-hidden="true" />
+                </Link>
+              );
+            }
+            const key = item.label;
+            const m = MEGA_MENUS[key];
+            const expanded = mobileSection === key;
+            return (
+              <div className="xn-drawer-section" key={item.href} data-open={expanded || undefined}>
+                <button type="button" className="xn-drawer-row" aria-expanded={expanded} aria-controls={`xn-m-${key}`} onClick={() => setMobileSection(expanded ? null : key)}>
+                  {item.label}
+                  <ChevronDown aria-hidden="true" />
+                </button>
+                <div id={`xn-m-${key}`} className="xn-drawer-body" hidden={!expanded}>
+                  {key === 'Connect' ? (
+                    <div className="xn-drawer-apps">
+                      {CONNECT_GROUPS.flatMap((g) => g.brands).slice(0, 12).map((b) => (
+                        <Link href="/integrations" key={b.name} className="xn-drawer-app" onClick={() => setMenuOpen(false)}>
+                          <i className="xn-app-mark">
+                            <BrandMark brand={b} size={18} />
+                          </i>
+                          {b.name}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    m.groups.flatMap((g) => g.items).map((it) => {
+                      const Icon = it.icon;
+                      return (
+                        <Link key={it.label} href={it.href} className="xn-drawer-link" onClick={() => setMenuOpen(false)}>
+                          <i className="xn-icon">
+                            <Icon aria-hidden="true" />
+                          </i>
+                          {it.label}
+                        </Link>
+                      );
+                    })
+                  )}
+                  <Link href={m.ctaHref} className="xn-drawer-more" onClick={() => setMenuOpen(false)}>
+                    {m.ctaLabel}
+                    <ArrowUpRight aria-hidden="true" />
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
         </nav>
-        <div className="xv-marketing-mobile-menu__actions">
+        <div className="xn-drawer-actions">
           <Link href={accountHref}>{loggedIn ? 'Workspace' : 'Sign in'}</Link>
-          {!loggedIn && <Link className="xv-marketing-button xv-marketing-button--primary" href="/workspace">Start Building Free</Link>}
+          {!loggedIn && (
+            <Link className="xn-cta" href="/workspace">
+              Start Building Free
+            </Link>
+          )}
         </div>
       </div>
     </header>
