@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "e29ce32625b6fbc1c2cdde0a334c0c0c106b4adee75ab52ec7c763ffe4a1ef30",
+  "reviewRegistrySha256": "cede2c26d4a81172399a80e21b8c65689b24847d9c026ffef4ad0fac12d265c7",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -12,16 +12,16 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 358,
+    "unresolvedSafetyCandidates": 342,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 10
+    "registeredNarrowGlobalExceptions": 11
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 131,
-    "NARROW_EXCEPTION": 10,
+    "SCOPED_BOUNDARY": 141,
+    "NARROW_EXCEPTION": 16,
     "NOT_PERSISTENCE": 140,
-    "REVIEWED_GAP": 358
+    "REVIEWED_GAP": 342
   },
   "acceptance": {
     "version": 1,
@@ -420,7 +420,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-f4ec01f111f4e6a3"
+        "id": "OB-19d76fcda9035a89"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -444,11 +444,11 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-f8cb123dcb4c4a53"
+        "id": "OB-e7319d6bd8d0d6dd"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-258dab60dbec0afd"
+        "id": "OB-911eaa4720313d55"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -6567,18 +6567,18 @@
       }
     },
     {
-      "id": "05bb1afcf9e554e379ee",
+      "id": "d6ad5ae8bdb2a0a4e3b1",
       "path": "backend/src/routes/billingWebhook.ts",
       "line": 35,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
+      "review": "NARROW_EXCEPTION",
+      "sourceSha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15",
       "semanticReview": {
         "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-        "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
+        "reason": "Explicit signed_whop_delivery_receipts registration covers only fixed Whop delivery insert/select/update after raw-body HMAC, never callback app-user authority. Prior b9bd2828 disposable39163904198 passes158 real security and3 browser tests, including signed billing foreign claims/replay/recovery and actual failed delivery retry/concurrency. Focused route tests cover invalid signature, active/lost claim, store error, exact completion receipt and safe failure redaction. Registration changes only the named client admission, not query or HMAC semantics. New source still requires source-bound CI. The actual browser-role delivery DML check is prepared for the next checkpoint. Uncertain processing recovery and universal financial authority remain separate, not exempted.",
         "evidence": [
           {
             "path": "backend/src/routes/billingWebhook.test.ts",
@@ -6587,23 +6587,31 @@
           {
             "path": "backend/src/routes/billingWebhook.ts",
             "marker": "if (!verifyWhopWebhookSignature(rawBody"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real webhook delivery acknowledges only durable completion and serializes failed retries"
           }
         ]
       }
     },
     {
-      "id": "0868dd015f782d0afe48",
+      "id": "f4820eadd2737e8f1dd6",
       "path": "backend/src/routes/billingWebhook.ts",
       "line": 36,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
+      "review": "NARROW_EXCEPTION",
+      "sourceSha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15",
       "semanticReview": {
         "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-        "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
+        "reason": "Explicit signed_whop_delivery_receipts registration covers only fixed Whop delivery insert/select/update after raw-body HMAC, never callback app-user authority. Prior b9bd2828 disposable39163904198 passes158 real security and3 browser tests, including signed billing foreign claims/replay/recovery and actual failed delivery retry/concurrency. Focused route tests cover invalid signature, active/lost claim, store error, exact completion receipt and safe failure redaction. Registration changes only the named client admission, not query or HMAC semantics. New source still requires source-bound CI. The actual browser-role delivery DML check is prepared for the next checkpoint. Uncertain processing recovery and universal financial authority remain separate, not exempted.",
         "evidence": [
           {
             "path": "backend/src/routes/billingWebhook.test.ts",
@@ -6612,23 +6620,31 @@
           {
             "path": "backend/src/routes/billingWebhook.ts",
             "marker": "if (!verifyWhopWebhookSignature(rawBody"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real webhook delivery acknowledges only durable completion and serializes failed retries"
           }
         ]
       }
     },
     {
-      "id": "abb420bd0c2f1dd23e61",
+      "id": "c3960cde434d4b5ff038",
       "path": "backend/src/routes/billingWebhook.ts",
       "line": 41,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
+      "review": "NARROW_EXCEPTION",
+      "sourceSha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15",
       "semanticReview": {
         "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-        "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
+        "reason": "Explicit signed_whop_delivery_receipts registration covers only fixed Whop delivery insert/select/update after raw-body HMAC, never callback app-user authority. Prior b9bd2828 disposable39163904198 passes158 real security and3 browser tests, including signed billing foreign claims/replay/recovery and actual failed delivery retry/concurrency. Focused route tests cover invalid signature, active/lost claim, store error, exact completion receipt and safe failure redaction. Registration changes only the named client admission, not query or HMAC semantics. New source still requires source-bound CI. The actual browser-role delivery DML check is prepared for the next checkpoint. Uncertain processing recovery and universal financial authority remain separate, not exempted.",
         "evidence": [
           {
             "path": "backend/src/routes/billingWebhook.test.ts",
@@ -6637,23 +6653,31 @@
           {
             "path": "backend/src/routes/billingWebhook.ts",
             "marker": "if (!verifyWhopWebhookSignature(rawBody"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real webhook delivery acknowledges only durable completion and serializes failed retries"
           }
         ]
       }
     },
     {
-      "id": "a726074753588be4d961",
+      "id": "dd938b6a5379ea36386a",
       "path": "backend/src/routes/billingWebhook.ts",
       "line": 59,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
+      "review": "NARROW_EXCEPTION",
+      "sourceSha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15",
       "semanticReview": {
         "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-        "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
+        "reason": "Explicit signed_whop_delivery_receipts registration covers only fixed Whop delivery insert/select/update after raw-body HMAC, never callback app-user authority. Prior b9bd2828 disposable39163904198 passes158 real security and3 browser tests, including signed billing foreign claims/replay/recovery and actual failed delivery retry/concurrency. Focused route tests cover invalid signature, active/lost claim, store error, exact completion receipt and safe failure redaction. Registration changes only the named client admission, not query or HMAC semantics. New source still requires source-bound CI. The actual browser-role delivery DML check is prepared for the next checkpoint. Uncertain processing recovery and universal financial authority remain separate, not exempted.",
         "evidence": [
           {
             "path": "backend/src/routes/billingWebhook.test.ts",
@@ -6662,23 +6686,31 @@
           {
             "path": "backend/src/routes/billingWebhook.ts",
             "marker": "if (!verifyWhopWebhookSignature(rawBody"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real webhook delivery acknowledges only durable completion and serializes failed retries"
           }
         ]
       }
     },
     {
-      "id": "b46650b51c072e1a3771",
+      "id": "cc6e0a6545effa5f63ea",
       "path": "backend/src/routes/billingWebhook.ts",
       "line": 77,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
+      "review": "NARROW_EXCEPTION",
+      "sourceSha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15",
       "semanticReview": {
         "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-        "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
+        "reason": "Explicit signed_whop_delivery_receipts registration covers only fixed Whop delivery insert/select/update after raw-body HMAC, never callback app-user authority. Prior b9bd2828 disposable39163904198 passes158 real security and3 browser tests, including signed billing foreign claims/replay/recovery and actual failed delivery retry/concurrency. Focused route tests cover invalid signature, active/lost claim, store error, exact completion receipt and safe failure redaction. Registration changes only the named client admission, not query or HMAC semantics. New source still requires source-bound CI. The actual browser-role delivery DML check is prepared for the next checkpoint. Uncertain processing recovery and universal financial authority remain separate, not exempted.",
         "evidence": [
           {
             "path": "backend/src/routes/billingWebhook.test.ts",
@@ -6687,23 +6719,31 @@
           {
             "path": "backend/src/routes/billingWebhook.ts",
             "marker": "if (!verifyWhopWebhookSignature(rawBody"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real webhook delivery acknowledges only durable completion and serializes failed retries"
           }
         ]
       }
     },
     {
-      "id": "8d7582310ee0460ac163",
+      "id": "5d11d486dbd8eb6d0c68",
       "path": "backend/src/routes/billingWebhook.ts",
       "line": 92,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
+      "review": "NARROW_EXCEPTION",
+      "sourceSha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15",
       "semanticReview": {
         "authority": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
-        "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
+        "reason": "Explicit signed_whop_delivery_receipts registration covers only fixed Whop delivery insert/select/update after raw-body HMAC, never callback app-user authority. Prior b9bd2828 disposable39163904198 passes158 real security and3 browser tests, including signed billing foreign claims/replay/recovery and actual failed delivery retry/concurrency. Focused route tests cover invalid signature, active/lost claim, store error, exact completion receipt and safe failure redaction. Registration changes only the named client admission, not query or HMAC semantics. New source still requires source-bound CI. The actual browser-role delivery DML check is prepared for the next checkpoint. Uncertain processing recovery and universal financial authority remain separate, not exempted.",
         "evidence": [
           {
             "path": "backend/src/routes/billingWebhook.test.ts",
@@ -6712,6 +6752,14 @@
           {
             "path": "backend/src/routes/billingWebhook.ts",
             "marker": "if (!verifyWhopWebhookSignature(rawBody"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real webhook delivery acknowledges only durable completion and serializes failed retries"
           }
         ]
       }
@@ -8278,7 +8326,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "64b6347bfc9ff15fe6e423295e1490860a5e1a7bdce02a3b9e90922f533a732e",
+      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
       "semanticReview": {
         "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
         "reason": "These are admission helpers, not automatic RLS or constrained query proxies. The full control flow of every recipient must be reviewed. Registry names cannot certify their callers, raw diagnostic redaction, account authority or arbitrary subsequent queries. Keep unresolved rather than pretending this shared factory completes tenant isolation.",
@@ -8291,15 +8339,15 @@
       }
     },
     {
-      "id": "bda2ddc16c7864ef18d8",
+      "id": "50264ff60cc6dffe2345",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 27,
+      "line": 28,
       "enclosing": "getGlobalSupabaseAdmin",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "64b6347bfc9ff15fe6e423295e1490860a5e1a7bdce02a3b9e90922f533a732e",
+      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
       "semanticReview": {
         "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
         "reason": "These are admission helpers, not automatic RLS or constrained query proxies. The full control flow of every recipient must be reviewed. Registry names cannot certify their callers, raw diagnostic redaction, account authority or arbitrary subsequent queries. Keep unresolved rather than pretending this shared factory completes tenant isolation.",
@@ -8312,15 +8360,15 @@
       }
     },
     {
-      "id": "109f0a7e94911b731b59",
+      "id": "cafa82e3b4fb14576aa1",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 31,
+      "line": 32,
       "enclosing": "probeDatabaseReadiness",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "64b6347bfc9ff15fe6e423295e1490860a5e1a7bdce02a3b9e90922f533a732e",
+      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
       "semanticReview": {
         "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
         "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
@@ -8333,15 +8381,15 @@
       }
     },
     {
-      "id": "7f28bb589186620d4902",
+      "id": "a22962598684bcdd5ce4",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 31,
+      "line": 32,
       "enclosing": "probeDatabaseReadiness",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "64b6347bfc9ff15fe6e423295e1490860a5e1a7bdce02a3b9e90922f533a732e",
+      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
       "semanticReview": {
         "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
         "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
@@ -8524,11 +8572,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
-        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "reason": "Verified ten scoped admission/persistence boundaries atb9bd2828cf325b5b2088601019abc604f1018d4d, disposable39163904198 passes119 migrations/158 security/3 browser, aggregate39163904210 passes repeated21-stage branch and actual integrated9496c851f6321606541f56e9c25b92a1f834d0b6 baselines. Authenticated structured proof certifies only these ten operations. Two focused negatives first failed by accepting a different checkout owner, then pass. Actual signed HTTP and DB tests cover foreign first claims, concurrent fulfillment, exact receipts, legacy replay, failed lookup/retry, membership collisions, full SQL rollback and paid/expired budget preservation. Whop lookup is synthetic, not live provider acceptance or an asserted configured permission. checkout_configuration:basic:read must be verified before future provider activation. No live provider request, credential migration, new store or universal Command008 authority claim. Adjacent billing reads, provider-account consumers and later financial lifecycle obligations remain independent.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8557,11 +8605,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_payment_fulfillments",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
-        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "reason": "Verified ten scoped admission/persistence boundaries atb9bd2828cf325b5b2088601019abc604f1018d4d, disposable39163904198 passes119 migrations/158 security/3 browser, aggregate39163904210 passes repeated21-stage branch and actual integrated9496c851f6321606541f56e9c25b92a1f834d0b6 baselines. Authenticated structured proof certifies only these ten operations. Two focused negatives first failed by accepting a different checkout owner, then pass. Actual signed HTTP and DB tests cover foreign first claims, concurrent fulfillment, exact receipts, legacy replay, failed lookup/retry, membership collisions, full SQL rollback and paid/expired budget preservation. Whop lookup is synthetic, not live provider acceptance or an asserted configured permission. checkout_configuration:basic:read must be verified before future provider activation. No live provider request, credential migration, new store or universal Command008 authority claim. Adjacent billing reads, provider-account consumers and later financial lifecycle obligations remain independent.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8590,11 +8638,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
-        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "reason": "Verified ten scoped admission/persistence boundaries atb9bd2828cf325b5b2088601019abc604f1018d4d, disposable39163904198 passes119 migrations/158 security/3 browser, aggregate39163904210 passes repeated21-stage branch and actual integrated9496c851f6321606541f56e9c25b92a1f834d0b6 baselines. Authenticated structured proof certifies only these ten operations. Two focused negatives first failed by accepting a different checkout owner, then pass. Actual signed HTTP and DB tests cover foreign first claims, concurrent fulfillment, exact receipts, legacy replay, failed lookup/retry, membership collisions, full SQL rollback and paid/expired budget preservation. Whop lookup is synthetic, not live provider acceptance or an asserted configured permission. checkout_configuration:basic:read must be verified before future provider activation. No live provider request, credential migration, new store or universal Command008 authority claim. Adjacent billing reads, provider-account consumers and later financial lifecycle obligations remain independent.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8623,11 +8671,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
-        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "reason": "Verified ten scoped admission/persistence boundaries atb9bd2828cf325b5b2088601019abc604f1018d4d, disposable39163904198 passes119 migrations/158 security/3 browser, aggregate39163904210 passes repeated21-stage branch and actual integrated9496c851f6321606541f56e9c25b92a1f834d0b6 baselines. Authenticated structured proof certifies only these ten operations. Two focused negatives first failed by accepting a different checkout owner, then pass. Actual signed HTTP and DB tests cover foreign first claims, concurrent fulfillment, exact receipts, legacy replay, failed lookup/retry, membership collisions, full SQL rollback and paid/expired budget preservation. Whop lookup is synthetic, not live provider acceptance or an asserted configured permission. checkout_configuration:basic:read must be verified before future provider activation. No live provider request, credential migration, new store or universal Command008 authority claim. Adjacent billing reads, provider-account consumers and later financial lifecycle obligations remain independent.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8656,11 +8704,11 @@
       "kind": "RPC_CANDIDATE",
       "target": "fulfill_whop_payment",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
-        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "reason": "Verified ten scoped admission/persistence boundaries atb9bd2828cf325b5b2088601019abc604f1018d4d, disposable39163904198 passes119 migrations/158 security/3 browser, aggregate39163904210 passes repeated21-stage branch and actual integrated9496c851f6321606541f56e9c25b92a1f834d0b6 baselines. Authenticated structured proof certifies only these ten operations. Two focused negatives first failed by accepting a different checkout owner, then pass. Actual signed HTTP and DB tests cover foreign first claims, concurrent fulfillment, exact receipts, legacy replay, failed lookup/retry, membership collisions, full SQL rollback and paid/expired budget preservation. Whop lookup is synthetic, not live provider acceptance or an asserted configured permission. checkout_configuration:basic:read must be verified before future provider activation. No live provider request, credential migration, new store or universal Command008 authority claim. Adjacent billing reads, provider-account consumers and later financial lifecycle obligations remain independent.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8689,11 +8737,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
-        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "reason": "Verified ten scoped admission/persistence boundaries atb9bd2828cf325b5b2088601019abc604f1018d4d, disposable39163904198 passes119 migrations/158 security/3 browser, aggregate39163904210 passes repeated21-stage branch and actual integrated9496c851f6321606541f56e9c25b92a1f834d0b6 baselines. Authenticated structured proof certifies only these ten operations. Two focused negatives first failed by accepting a different checkout owner, then pass. Actual signed HTTP and DB tests cover foreign first claims, concurrent fulfillment, exact receipts, legacy replay, failed lookup/retry, membership collisions, full SQL rollback and paid/expired budget preservation. Whop lookup is synthetic, not live provider acceptance or an asserted configured permission. checkout_configuration:basic:read must be verified before future provider activation. No live provider request, credential migration, new store or universal Command008 authority claim. Adjacent billing reads, provider-account consumers and later financial lifecycle obligations remain independent.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8722,11 +8770,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
-        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "reason": "Verified ten scoped admission/persistence boundaries atb9bd2828cf325b5b2088601019abc604f1018d4d, disposable39163904198 passes119 migrations/158 security/3 browser, aggregate39163904210 passes repeated21-stage branch and actual integrated9496c851f6321606541f56e9c25b92a1f834d0b6 baselines. Authenticated structured proof certifies only these ten operations. Two focused negatives first failed by accepting a different checkout owner, then pass. Actual signed HTTP and DB tests cover foreign first claims, concurrent fulfillment, exact receipts, legacy replay, failed lookup/retry, membership collisions, full SQL rollback and paid/expired budget preservation. Whop lookup is synthetic, not live provider acceptance or an asserted configured permission. checkout_configuration:basic:read must be verified before future provider activation. No live provider request, credential migration, new store or universal Command008 authority claim. Adjacent billing reads, provider-account consumers and later financial lifecycle obligations remain independent.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8755,11 +8803,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
-        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "reason": "Verified ten scoped admission/persistence boundaries atb9bd2828cf325b5b2088601019abc604f1018d4d, disposable39163904198 passes119 migrations/158 security/3 browser, aggregate39163904210 passes repeated21-stage branch and actual integrated9496c851f6321606541f56e9c25b92a1f834d0b6 baselines. Authenticated structured proof certifies only these ten operations. Two focused negatives first failed by accepting a different checkout owner, then pass. Actual signed HTTP and DB tests cover foreign first claims, concurrent fulfillment, exact receipts, legacy replay, failed lookup/retry, membership collisions, full SQL rollback and paid/expired budget preservation. Whop lookup is synthetic, not live provider acceptance or an asserted configured permission. checkout_configuration:basic:read must be verified before future provider activation. No live provider request, credential migration, new store or universal Command008 authority claim. Adjacent billing reads, provider-account consumers and later financial lifecycle obligations remain independent.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8788,11 +8836,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
-        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "reason": "Verified ten scoped admission/persistence boundaries atb9bd2828cf325b5b2088601019abc604f1018d4d, disposable39163904198 passes119 migrations/158 security/3 browser, aggregate39163904210 passes repeated21-stage branch and actual integrated9496c851f6321606541f56e9c25b92a1f834d0b6 baselines. Authenticated structured proof certifies only these ten operations. Two focused negatives first failed by accepting a different checkout owner, then pass. Actual signed HTTP and DB tests cover foreign first claims, concurrent fulfillment, exact receipts, legacy replay, failed lookup/retry, membership collisions, full SQL rollback and paid/expired budget preservation. Whop lookup is synthetic, not live provider acceptance or an asserted configured permission. checkout_configuration:basic:read must be verified before future provider activation. No live provider request, credential migration, new store or universal Command008 authority claim. Adjacent billing reads, provider-account consumers and later financial lifecycle obligations remain independent.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8821,11 +8869,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
-        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "reason": "Verified ten scoped admission/persistence boundaries atb9bd2828cf325b5b2088601019abc604f1018d4d, disposable39163904198 passes119 migrations/158 security/3 browser, aggregate39163904210 passes repeated21-stage branch and actual integrated9496c851f6321606541f56e9c25b92a1f834d0b6 baselines. Authenticated structured proof certifies only these ten operations. Two focused negatives first failed by accepting a different checkout owner, then pass. Actual signed HTTP and DB tests cover foreign first claims, concurrent fulfillment, exact receipts, legacy replay, failed lookup/retry, membership collisions, full SQL rollback and paid/expired budget preservation. Whop lookup is synthetic, not live provider acceptance or an asserted configured permission. checkout_configuration:basic:read must be verified before future provider activation. No live provider request, credential migration, new store or universal Command008 authority claim. Adjacent billing reads, provider-account consumers and later financial lifecycle obligations remain independent.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",

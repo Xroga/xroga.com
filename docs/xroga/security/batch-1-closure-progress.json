@@ -398,7 +398,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:358 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:342 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -433,9 +433,9 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 358,
+    "unresolvedSafetyCandidates": 342,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 10
+    "registeredNarrowGlobalExceptions": 11
   },
   "dependency": {
     "downstreamPatchStatus": "VERIFIED_SCOPE at4f8c56acdf6b9c90a5ea1147dfd79151bffe6c46: four targeted fixtures and18 combined dependency/Cline tests, frozen workspace/standalone38806776199, Docker38806776574 and repeated branch/integrated21-stage baseline38806776471 pass. Integrated7377b5a5ffc76d49c7dcb4094ddc9055c4062eeb. Versions/audit findings retained, no waiver. Current later-source CI still required.",
@@ -701,7 +701,7 @@
       "existingImplementation": "Existing billing functions and provider reservations",
       "missingBehavior": "Remaining source-bound billing/budget replay, numeric and caller authority gaps",
       "acceptanceTest": "Concurrent replay, foreign account, failed reservation/settlement and compensation",
-      "pendingCandidates": 32,
+      "pendingCandidates": 16,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/providerBudget.ts": [
@@ -721,26 +721,6 @@
           "564673e6f6b21c690fce",
           "5ed8ef26b72e26561f26",
           "3fc72ec34d884b871909"
-        ],
-        "backend/src/routes/billingWebhook.ts": [
-          "05bb1afcf9e554e379ee",
-          "0868dd015f782d0afe48",
-          "abb420bd0c2f1dd23e61",
-          "a726074753588be4d961",
-          "b46650b51c072e1a3771",
-          "8d7582310ee0460ac163"
-        ],
-        "backend/src/services/BillingService.ts": [
-          "fd7ae7cab6529f4fb459",
-          "4e027991ba45aac9e16d",
-          "b52db4c851f3dea1748b",
-          "099c4eef2a21db12099d",
-          "363aaa2323ae3945da87",
-          "756de29153249d2fac2a",
-          "3bf2f7d4aadc2706ceb1",
-          "05c0b2493c01eed93637",
-          "87702decca37439d7217",
-          "8b10b8683a2118a013b9"
         ]
       }
     },
@@ -1008,7 +988,7 @@
         ],
         "backend/src/security/serviceRoleGuard.ts": [
           "d84df34ff692e4fb31c1",
-          "bda2ddc16c7864ef18d8"
+          "50264ff60cc6dffe2345"
         ],
         "backend/src/services/ensureUserRecords.ts": [
           "d81d114079399f02921b",

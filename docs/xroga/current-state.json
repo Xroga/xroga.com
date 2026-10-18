@@ -11875,7 +11875,6 @@
         "backend/src/growth/growthService.ts:4",
         "backend/src/lib/resolveIdentity.ts:39",
         "backend/src/operations/operationsService.ts:4",
-        "backend/src/routes/billingWebhook.ts:4",
         "backend/src/routes/dashboard.ts:3",
         "backend/src/routes/github.ts:3",
         "backend/src/routes/terminalSessions.ts:13",
@@ -17916,7 +17915,7 @@
       "id": "surface:3211d837a0678bf0750e",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
-      "sha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
+      "sha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15",
       "symbols": [
         "completion",
         "error",
@@ -17934,13 +17933,13 @@
         "webhookId"
       ],
       "imports": [
-        "../config/supabase.js",
+        "../security/serviceRoleGuard.js",
         "../services/BillingService.js",
         "express",
         "node:crypto"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts",
+        "backend/src/security/serviceRoleGuard.ts",
         "backend/src/services/BillingService.ts"
       ],
       "entryPoints": [
@@ -21194,7 +21193,7 @@
       "id": "surface:e31c62507c56bf4fa325",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "64b6347bfc9ff15fe6e423295e1490860a5e1a7bdce02a3b9e90922f533a732e",
+      "sha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
       "symbols": [
         "getGlobalSupabaseAdmin",
         "getTenantSupabaseAdmin",
@@ -21221,6 +21220,7 @@
         "backend/src/index.ts:55",
         "backend/src/middleware/admin.ts:2",
         "backend/src/routes/admin.ts:2",
+        "backend/src/routes/billingWebhook.ts:4",
         "backend/src/routes/messageShares.ts:4",
         "backend/src/routes/notifications.ts:2",
         "backend/src/routes/operations.ts:4",
@@ -23605,7 +23605,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:785",
+        "backend/src/security/tenantIsolation.local.integration.ts:789",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -88873,7 +88873,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:0e7bd87b94aef1e6af6a",
+      "id": "registration:d07510a3642c567f22e5",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
       "line": 8,
       "receiver": "router",
@@ -88887,7 +88887,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:73c35c139e35221afb0f",
+      "id": "registration:b62293e8c82a2e292c0e",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
       "line": 101,
       "receiver": "router",
@@ -88901,7 +88901,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:8fcf26da1bc0c7e03d2f",
+      "id": "registration:46aadcccf82b8e06980f",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
       "line": 105,
       "receiver": "router",
@@ -91361,8 +91361,8 @@
   ],
   "routes": [
     {
-      "id": "route:bd2d50d293788524d391",
-      "registrationId": "registration:0e7bd87b94aef1e6af6a",
+      "id": "route:a96914a77728ddf06d5a",
+      "registrationId": "registration:d07510a3642c567f22e5",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
       "line": 8,
       "method": "POST",
@@ -91376,8 +91376,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e97a6519f1c478492a3a",
-      "registrationId": "registration:73c35c139e35221afb0f",
+      "id": "route:6cc5da7e9e00d46deed6",
+      "registrationId": "registration:b62293e8c82a2e292c0e",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
       "line": 101,
       "method": "POST",
@@ -91391,8 +91391,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:173841b4e1bda2927463",
-      "registrationId": "registration:8fcf26da1bc0c7e03d2f",
+      "id": "route:aef4eecfe59e00073c6c",
+      "registrationId": "registration:46aadcccf82b8e06980f",
       "sourcePath": "backend/src/routes/billingWebhook.ts",
       "line": 105,
       "method": "POST",
@@ -96232,6 +96232,13 @@
       "version": "20261019000100",
       "order": 119,
       "sha256": "28e7843561a76b98071e02d896c33039f1ba3f32ab42699081fc0dab485e0db2"
+    },
+    {
+      "id": "migration:c879f12ebd0ec82d840f",
+      "sourcePath": "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+      "version": "20261019000200",
+      "order": 120,
+      "sha256": "34cf14100a03e4ac0178e18e55b623365dddc5728f71848680c515a46a780d2c"
     }
   ],
   "workflows": [
@@ -104541,6 +104548,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:0a9bb027c475f4c8be63",
+      "sourcePath": "backend/src/security/providerCycleParent.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:e317bdcc8525180a373a",
       "sourcePath": "backend/src/security/providerKeyRevision.local.integration.ts",
       "declaredTests": 4,
@@ -104732,6 +104746,13 @@
     {
       "id": "test-suite:46f8e861fa7823f4cd28",
       "sourcePath": "backend/src/services/billingOwnership.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7e971da14448b6d4dcd8",
+      "sourcePath": "backend/src/services/billingRoutes.local.integration.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

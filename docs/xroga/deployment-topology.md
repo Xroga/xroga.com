@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `412f0417719e59c0e855925da59e553eed1d8755`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `b9bd2828cf325b5b2088601019abc604f1018d4d`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -134,6 +134,7 @@ Source SHA: `412f0417719e59c0e855925da59e553eed1d8755`; source/config hashes are
 | endpoint-vercel-com | Source-defined endpoint vercel.com | CONFIGURED_BUT_UNVERIFIED | vercel.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-wa-me | Source-defined endpoint wa.me | CONFIGURED_BUT_UNVERIFIED | wa.me | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-web3-okx-com | Source-defined endpoint web3.okx.com | CONFIGURED_BUT_UNVERIFIED | web3.okx.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-whop-com | Source-defined endpoint whop.com | CONFIGURED_BUT_UNVERIFIED | whop.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-anchor-lang-com | Source-defined endpoint www.anchor-lang.com | CONFIGURED_BUT_UNVERIFIED | www.anchor-lang.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-anera-org | Source-defined endpoint www.anera.org | CONFIGURED_BUT_UNVERIFIED | www.anera.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-anthropic-com | Source-defined endpoint www.anthropic.com | CONFIGURED_BUT_UNVERIFIED | www.anthropic.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -200,7 +201,7 @@ Frontend release 3b2bad and API release 41665b legitimately differ: the initial 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-698 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
+699 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
 
 ## Boundaries
 

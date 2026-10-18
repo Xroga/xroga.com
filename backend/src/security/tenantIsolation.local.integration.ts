@@ -90,6 +90,8 @@ import { registerRuntimeProjectBindingTests } from './runtimeProjectBinding.loca
 import { registerGrowthIdentityTests } from '../growth/identity.local.integration.js';
 import { registerBillingBudgetTests } from '../services/billingBudget.local.integration.js';
 import { registerBillingOwnershipTests } from '../services/billingOwnership.local.integration.js';
+import { registerBillingRouteTests } from '../services/billingRoutes.local.integration.js';
+import { registerProviderCycleParentTests } from './providerCycleParent.local.integration.js';
 import { registerBuildProjectReceiptTests } from './buildProjectReceipt.local.integration.js';
 import { registerGrowthEventReplayTests } from '../growth/eventReplay.local.integration.js';
 import { registerChatBoundaryTests } from './chatBoundary.local.integration.js';
@@ -148,6 +150,8 @@ registerRuntimeProjectBindingTests(admin, () => users, request);
 registerGrowthIdentityTests(admin);
 registerBillingBudgetTests(admin);
 registerBillingOwnershipTests(admin);
+registerBillingRouteTests(admin,request);
+registerProviderCycleParentTests(admin);
 registerBuildProjectReceiptTests(admin, () => users);
 registerGrowthEventReplayTests(admin, () => users);
 registerChatBoundaryTests(admin, () => users, request);

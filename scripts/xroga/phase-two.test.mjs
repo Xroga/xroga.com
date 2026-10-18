@@ -10,7 +10,7 @@ test('Phase2 retains all73 packets and371 historical identities without certifyi
   assert.ok(r.packets.every(p=>p.state==='EVIDENCE_GAP'&&p.proofIds.length===0));
   assert.ok(r.packets.flatMap(p=>p.independentLaterObligations).every(o=>o.phase>2));
   assert.ok(r.criteria.every(c=>c.status==='BLOCKED'));assert.equal(r.criteria.length,10);
-  assert.equal(r.packets.filter(p=>p.semanticProgress).length,10);
+  assert.equal(r.packets.filter(p=>p.semanticProgress).length,12);
   assert.ok(r.packets.filter(p=>p.semanticProgress).every(p=>p.executionStatus==='IN_PROGRESS'&&p.state==='EVIDENCE_GAP'));
   const identity=JSON.parse(readFileSync(resolve(root,'docs/xroga/security/privileged-callers.json'),'utf8')).callers.find(c=>c.path==='backend/src/growth/growthService.ts'&&c.target==='link_growth_identity');
   const oldIdentity=r.packets.flatMap(p=>p.mapping).filter(m=>m.currentCallerIds.includes(identity.id));

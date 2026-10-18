@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "412f0417719e59c0e855925da59e553eed1d8755",
+  "source_sha": "b9bd2828cf325b5b2088601019abc604f1018d4d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -564,6 +564,7 @@
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
+        "backend/src/security/providerCycleParent.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/provisioningReceipt.local.integration.ts",
         "backend/src/security/quotaEvidence.local.integration.ts",
@@ -584,6 +585,7 @@
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
         "backend/src/services/billingOwnership.local.integration.ts",
+        "backend/src/services/billingRoutes.local.integration.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/browserVerificationAdapter.ts",
@@ -684,6 +686,7 @@
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
+        "backend/src/security/providerCycleParent.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/provisioningReceipt.local.integration.ts",
         "backend/src/security/quotaEvidence.local.integration.ts",
@@ -704,6 +707,7 @@
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
         "backend/src/services/billingOwnership.local.integration.ts",
+        "backend/src/services/billingRoutes.local.integration.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/browserVerificationAdapter.ts",
@@ -5085,6 +5089,45 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-whop-com",
+      "provider": "Source-defined endpoint whop.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/services/billingRoutes.local.integration.ts"
+      ],
+      "hostnames": [
+        "whop.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "CI",
+        "SUPABASE_ANON_KEY",
+        "SUPABASE_URL",
+        "XB01_DISPOSABLE_SUPABASE"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/services/billingRoutes.local.integration.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-www-anchor-lang-com",
       "provider": "Source-defined endpoint www.anchor-lang.com",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -7060,6 +7103,7 @@
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
+        "backend/src/security/providerCycleParent.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/provisioningReceipt.local.integration.ts",
         "backend/src/security/quotaEvidence.local.integration.ts",
@@ -7079,6 +7123,7 @@
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
         "backend/src/services/billingOwnership.local.integration.ts",
+        "backend/src/services/billingRoutes.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -7097,7 +7142,8 @@
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
-        "endpoint-public-example-invalid"
+        "endpoint-public-example-invalid",
+        "endpoint-whop-com"
       ]
     },
     {
@@ -9701,6 +9747,7 @@
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
+        "backend/src/security/providerCycleParent.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
@@ -9708,7 +9755,8 @@
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
-        "backend/src/security/workerRevision.local.integration.ts"
+        "backend/src/security/workerRevision.local.integration.ts",
+        "backend/src/services/billingRoutes.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -9726,7 +9774,8 @@
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
         "endpoint-fixture-supabase-co",
-        "endpoint-public-example-invalid"
+        "endpoint-public-example-invalid",
+        "endpoint-whop-com"
       ]
     },
     {
@@ -10024,6 +10073,7 @@
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
+        "backend/src/security/providerCycleParent.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/provisioningReceipt.local.integration.ts",
         "backend/src/security/quotaEvidence.local.integration.ts",
@@ -10044,6 +10094,7 @@
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
         "backend/src/services/billingOwnership.local.integration.ts",
+        "backend/src/services/billingRoutes.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -10067,6 +10118,7 @@
         "endpoint-fixture-supabase-co",
         "endpoint-localhost",
         "endpoint-public-example-invalid",
+        "endpoint-whop-com",
         "endpoint-xrogaaicom-vercel-app"
       ]
     },
@@ -10710,6 +10762,7 @@
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
+        "backend/src/security/providerCycleParent.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/provisioningReceipt.local.integration.ts",
         "backend/src/security/quotaEvidence.local.integration.ts",
@@ -10730,6 +10783,7 @@
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
         "backend/src/services/billingOwnership.local.integration.ts",
+        "backend/src/services/billingRoutes.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -10748,7 +10802,8 @@
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
-        "endpoint-public-example-invalid"
+        "endpoint-public-example-invalid",
+        "endpoint-whop-com"
       ]
     },
     {
@@ -10784,6 +10839,7 @@
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
+        "backend/src/security/providerCycleParent.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
@@ -12831,7 +12887,7 @@
     },
     {
       "path": "backend/src/routes/billingWebhook.ts",
-      "sha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80"
+      "sha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15"
     },
     {
       "path": "backend/src/routes/capabilities.ts",
@@ -13062,6 +13118,10 @@
       "sha256": "55ee8fe9a2177ec14b484e6ed98b75758ee553a1f2d58a6086916cc3405cb2c6"
     },
     {
+      "path": "backend/src/security/providerCycleParent.local.integration.ts",
+      "sha256": "254aa5f9109075948ef0eda465285d8130969c0f79ada90b1b18654a09b0c6e5"
+    },
+    {
       "path": "backend/src/security/providerKeyRevision.local.integration.ts",
       "sha256": "b12a4978235027960e22eaec1c72e619fc2180ff805e89f5aee1baa4aa695a58"
     },
@@ -13107,7 +13167,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "64b6347bfc9ff15fe6e423295e1490860a5e1a7bdce02a3b9e90922f533a732e"
+      "sha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17"
     },
     {
       "path": "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
@@ -13135,7 +13195,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8"
+      "sha256": "461b2ea18478a899e3b1048c5db2b389443ab4f48b27c4053356cb10a0b7c5fa"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13164,6 +13224,10 @@
     {
       "path": "backend/src/services/billingOwnership.local.integration.ts",
       "sha256": "6315688eff3d99636ab31c3958e9284ca51f8a2628dbb41dc217c6227e756d0e"
+    },
+    {
+      "path": "backend/src/services/billingRoutes.local.integration.ts",
+      "sha256": "1f7ce1602847ca3f2a24e3ac5c93c1b0dfdded4e0a424d81adc4a85895e98a2d"
     },
     {
       "path": "backend/src/services/ensureUserRecords.ts",
@@ -18932,6 +18996,13 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/providerCycleParent.local.integration.ts",
+      "line": 10,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/providerKeyRevision.local.integration.ts",
       "line": 13,
       "credentialsInUrl": false
@@ -19045,77 +19116,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 97,
+      "line": 99,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 97,
+      "line": 99,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 453,
+      "line": 457,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 503,
+      "line": 507,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 592,
+      "line": 596,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 735,
+      "line": 739,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 787,
+      "line": 791,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1455,
+      "line": 1459,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1473,
+      "line": 1477,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1481,
+      "line": 1485,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1485,
+      "line": 1489,
       "credentialsInUrl": false
     },
     {
@@ -19221,6 +19292,20 @@
       "protocol": "http:",
       "path": "backend/src/services/billingOwnership.local.integration.ts",
       "line": 46,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/services/billingRoutes.local.integration.ts",
+      "line": 9,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "whop.com",
+      "protocol": "https:",
+      "path": "backend/src/services/billingRoutes.local.integration.ts",
+      "line": 40,
       "credentialsInUrl": false
     },
     {
@@ -25344,6 +25429,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/security/providerCycleParent.local.integration.ts",
+      "line": 38,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/security/supabaseBundle.local.integration.ts",
       "line": 54,
       "scope": "FUNCTION_LOCAL",
@@ -25359,14 +25451,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 954,
+      "line": 958,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1291,
+      "line": 1295,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

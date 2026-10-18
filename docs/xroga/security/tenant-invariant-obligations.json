@@ -5775,14 +5775,14 @@
       "path": "backend/src/services/BillingService.ts",
       "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+      "reason": "Verified ten scoped admission/persistence boundaries atb9bd2828cf325b5b2088601019abc604f1018d4d, disposable39163904198 passes119 migrations/158 security/3 browser, aggregate39163904210 passes repeated21-stage branch and actual integrated9496c851f6321606541f56e9c25b92a1f834d0b6 baselines. Authenticated structured proof certifies only these ten operations. Two focused negatives first failed by accepting a different checkout owner, then pass. Actual signed HTTP and DB tests cover foreign first claims, concurrent fulfillment, exact receipts, legacy replay, failed lookup/retry, membership collisions, full SQL rollback and paid/expired budget preservation. Whop lookup is synthetic, not live provider acceptance or an asserted configured permission. checkout_configuration:basic:read must be verified before future provider activation. No live provider request, credential migration, new store or universal Command008 authority claim. Adjacent billing reads, provider-account consumers and later financial lifecycle obligations remain independent.",
       "authorityTrace": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
       "proofIds": [],
       "existingEvidence": [
@@ -5806,26 +5806,26 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-f4ec01f111f4e6a3",
+      "id": "OB-19d76fcda9035a89",
       "callerIds": [
-        "05bb1afcf9e554e379ee",
-        "0868dd015f782d0afe48",
-        "abb420bd0c2f1dd23e61",
-        "a726074753588be4d961",
-        "b46650b51c072e1a3771",
-        "8d7582310ee0460ac163"
+        "d6ad5ae8bdb2a0a4e3b1",
+        "f4820eadd2737e8f1dd6",
+        "c3960cde434d4b5ff038",
+        "dd938b6a5379ea36386a",
+        "cc6e0a6545effa5f63ea",
+        "5d11d486dbd8eb6d0c68"
       ],
       "path": "backend/src/routes/billingWebhook.ts",
-      "sourceSha256": "d970df5ffffc086a72b992d1f36f596f4a817848b8260c6a154fcde82c927c80",
+      "sourceSha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Only completed duplicates are acknowledged. Active/lost retry claims return503. Retry and completion are payload-digest-bound, and completion requires one exact delivery receipt; errors, missing/substituted rows and rejected transport cannot report success. Focused route negatives pass. New real signed synthetic unsupported-event retry/concurrency test awaits CI and makes no billing/provider call. Crash recovery for uncertain processing, actual provider integration and first-account binding remain unresolved. No blanket global exception or Command008 completion.",
+      "reason": "Explicit signed_whop_delivery_receipts registration covers only fixed Whop delivery insert/select/update after raw-body HMAC, never callback app-user authority. Prior b9bd2828 disposable39163904198 passes158 real security and3 browser tests, including signed billing foreign claims/replay/recovery and actual failed delivery retry/concurrency. Focused route tests cover invalid signature, active/lost claim, store error, exact completion receipt and safe failure redaction. Registration changes only the named client admission, not query or HMAC semantics. New source still requires source-bound CI. The actual browser-role delivery DML check is prepared for the next checkpoint. Uncertain processing recovery and universal financial authority remain separate, not exempted.",
       "authorityTrace": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
       "proofIds": [],
       "existingEvidence": [
@@ -5836,6 +5836,14 @@
         {
           "path": "backend/src/routes/billingWebhook.ts",
           "marker": "if (!verifyWhopWebhookSignature(rawBody"
+        },
+        {
+          "path": "backend/src/services/billingOwnership.local.integration.ts",
+          "marker": "real signed billing callbacks bind first owners"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real webhook delivery acknowledges only durable completion and serializes failed retries"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -6013,13 +6021,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-f8cb123dcb4c4a53",
+      "id": "OB-e7319d6bd8d0d6dd",
       "callerIds": [
         "d84df34ff692e4fb31c1",
-        "bda2ddc16c7864ef18d8"
+        "50264ff60cc6dffe2345"
       ],
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "64b6347bfc9ff15fe6e423295e1490860a5e1a7bdce02a3b9e90922f533a732e",
+      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6040,13 +6048,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-258dab60dbec0afd",
+      "id": "OB-911eaa4720313d55",
       "callerIds": [
-        "109f0a7e94911b731b59",
-        "7f28bb589186620d4902"
+        "cafa82e3b4fb14576aa1",
+        "a22962598684bcdd5ce4"
       ],
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "64b6347bfc9ff15fe6e423295e1490860a5e1a7bdce02a3b9e90922f533a732e",
+      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [

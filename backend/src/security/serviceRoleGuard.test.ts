@@ -5,4 +5,7 @@ test('unregistered or prototype-derived global operations fail before constructi
   for(const name of ['unknown','__proto__','constructor','toString',null,undefined]) assert.throws(()=>getGlobalSupabaseAdmin(name as never),/Unregistered/);
   assert.equal(Object.isFrozen(globalServiceExceptions),true);
   assert.ok(Object.values(globalServiceExceptions).every(value=>Object.isFrozen(value) && value.source && value.table && value.reason));
+  assert.equal(globalServiceExceptions.signed_whop_delivery_receipts.source,'backend/src/routes/billingWebhook.ts');
+  assert.equal(globalServiceExceptions.signed_whop_delivery_receipts.table,'webhook_deliveries');
+  assert.equal(globalServiceExceptions.signed_whop_delivery_receipts.action,'insert/select/update');
 });

@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import express, { Router } from 'express';
 import { BillingService, verifyWhopWebhookSignature, type WhopWebhookEvent } from '../services/BillingService.js';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { getGlobalSupabaseAdmin } from '../security/serviceRoleGuard.js';
 
 const router = Router();
 
@@ -32,7 +32,7 @@ router.post('/whop', express.raw({ type: 'application/json', limit: '1mb' }), as
 
   const payloadDigest = createHash('sha256').update(rawBody).digest('hex');
   const eventType = String(event.type ?? '').slice(0, 100);
-  const supabase = getSupabaseAdmin();
+  const supabase = getGlobalSupabaseAdmin('signed_whop_delivery_receipts');
   const { error: claimError } = await supabase.from('webhook_deliveries').insert({
     provider: 'whop', delivery_id: webhookId, payload_digest: payloadDigest,
     status: 'processing', event_type: eventType, signature_verified: true, response_status: null,
