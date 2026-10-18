@@ -47,6 +47,7 @@ import { registerActionIntentTests } from '../operations/actionIntent.local.inte
 import { registerActionCompletionTests } from '../operations/actionCompletion.local.integration.js';
 import { registerActionApprovalTests } from '../operations/actionApproval.local.integration.js';
 import { registerActionClaimClockTests } from '../operations/actionClaimClock.local.integration.js';
+import { registerActionConfirmationTests } from '../operations/actionConfirmation.local.integration.js';
 import { registerBusinessConfirmationClaimTests } from './businessConfirmationClaim.local.integration.js';
 import { registerProjectCreationTests } from './projectCreation.local.integration.js';
 import { registerProfileDeletionTests } from './profileDeletion.local.integration.js';
@@ -89,6 +90,7 @@ registerActionIntentTests(admin, () => users);
 registerActionCompletionTests(admin, () => users);
 registerActionApprovalTests(admin, () => users);
 registerActionClaimClockTests(admin, () => users);
+registerActionConfirmationTests(admin, () => users);
 registerBusinessConfirmationClaimTests(admin, () => users);
 registerProjectCreationTests(admin, () => users);
 registerProfileDeletionTests(admin);

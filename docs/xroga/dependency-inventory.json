@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4b66bfa7ceab29252832278fc55911fe162eeb0a",
+  "source_sha": "fb3a2301e3deb102634fe3aa3693412b58cd2c0d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -541,6 +541,7 @@
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
         "backend/src/operations/actionCompletion.local.integration.ts",
+        "backend/src/operations/actionConfirmation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/routes/github.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
@@ -643,6 +644,7 @@
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
         "backend/src/operations/actionCompletion.local.integration.ts",
+        "backend/src/operations/actionConfirmation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/routes/github.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
@@ -6946,6 +6948,7 @@
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
         "backend/src/operations/actionCompletion.local.integration.ts",
+        "backend/src/operations/actionConfirmation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -9570,6 +9573,7 @@
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
         "backend/src/operations/actionCompletion.local.integration.ts",
+        "backend/src/operations/actionConfirmation.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
@@ -9874,6 +9878,7 @@
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
         "backend/src/operations/actionCompletion.local.integration.ts",
+        "backend/src/operations/actionConfirmation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -10521,6 +10526,7 @@
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
         "backend/src/operations/actionCompletion.local.integration.ts",
+        "backend/src/operations/actionConfirmation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -10580,6 +10586,7 @@
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
         "backend/src/operations/actionCompletion.local.integration.ts",
+        "backend/src/operations/actionConfirmation.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -12449,11 +12456,15 @@
     },
     {
       "path": "backend/src/operations/actionClaimClock.local.integration.ts",
-      "sha256": "cb72721b05e62c5f3ad7dc90adb3b282f1313253a377fd4ef1e919358ccb70de"
+      "sha256": "58d6ced1a4488f33377b53c37aeb9cea260f80af00b73f03f3714c386c350029"
     },
     {
       "path": "backend/src/operations/actionCompletion.local.integration.ts",
       "sha256": "1b442233000bfdfe97a6c71b3b53ef705a6508db6eacd6772567e5f83750883e"
+    },
+    {
+      "path": "backend/src/operations/actionConfirmation.local.integration.ts",
+      "sha256": "cbb9d9f7d72a5f9472fbc026294e8d4e2810808f0b8ebcd5f76681fc73a9a726"
     },
     {
       "path": "backend/src/operations/actionIntent.local.integration.ts",
@@ -12473,7 +12484,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sha256": "aad8e80cea8b1683ba8a968b95f6764521838f0e030a05649f499199b5753e68"
+      "sha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6"
     },
     {
       "path": "backend/src/operations/permissions.ts",
@@ -12873,7 +12884,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "cf47c3841583ee153918c3c04933a6eaad3bfc61af65cc1476a2d9411862f7ba"
+      "sha256": "672ac282f03b35432b935b826558de3fd6c4310281ce37e100c447ee65b1d7f5"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -18266,6 +18277,13 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/operations/actionConfirmation.local.integration.ts",
+      "line": 12,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/operations/actionIntent.local.integration.ts",
       "line": 12,
       "credentialsInUrl": false
@@ -18631,56 +18649,56 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 81,
+      "line": 82,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 81,
+      "line": 82,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 333,
+      "line": 335,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 383,
+      "line": 385,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 472,
+      "line": 474,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 578,
+      "line": 580,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 630,
+      "line": 632,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1298,
+      "line": 1300,
       "credentialsInUrl": false
     },
     {
@@ -24861,14 +24879,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 797,
+      "line": 799,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1134,
+      "line": 1136,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

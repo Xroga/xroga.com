@@ -21,7 +21,7 @@ export function registerActionClaimClockTests(admin: SupabaseClient, getUsers: (
     let pending: PromiseLike<any> | undefined;
     try {
       // Expire an existing lease while the request is blocked. No adapter runs.
-      await db.query("update operations_actions set status='running',attempt_count=1,lease_owner='fixture:old',lease_expires_at=clock_timestamp()+interval '1 second' where id=$1", [action.id]);
+      await db.query("update operations_actions set status='running',attempt_count=1,max_attempts=3,lease_owner='fixture:old',lease_expires_at=clock_timestamp()+interval '1 second' where id=$1", [action.id]);
       await db.query('begin'); await db.query('select id from operations_actions where id=$1 for update', [action.id]);
       pending = Promise.resolve(admin.rpc('operations_claim_action', args));
       let blocked = false;
@@ -33,14 +33,16 @@ export function registerActionClaimClockTests(admin: SupabaseClient, getUsers: (
       assert.equal(blocked, true, 'claim reached held row lock');
       const competing = await admin.rpc('operations_claim_action', args);
       assert.equal(competing.error, null); assert.deepEqual(competing.data, [], 'advisory exclusion is immediate');
-      // Wait past both the old lease and the requested ten-second new lease,
-      // measured entirely by PostgreSQL rather than the application clock.
-      await db.query('select pg_sleep(10.1)');
+      // Wait past the old lease using database time. Comparing updated_at with
+      // a pre-release database timestamp detects a transaction-start lease
+      // without exceeding the existing PostgREST statement timeout.
+      await db.query('select pg_sleep(greatest(0,extract(epoch from lease_expires_at-clock_timestamp()))+0.05) from operations_actions where id=$1',[action.id]);
+      const releasedAfter = (await db.query('select clock_timestamp() as instant')).rows[0].instant;
       await db.query('commit');
       const claimed = await pending; assert.equal(claimed.error, null); assert.equal(claimed.data?.length, 1);
       assert.equal(claimed.data[0].attempt_count, 2); assert.equal(claimed.data[0].lease_owner, args.p_lease_owner);
-      const fresh = await db.query('select lease_expires_at>clock_timestamp() as live, extract(epoch from lease_expires_at-updated_at)::int as duration from operations_actions where id=$1', [action.id]);
-      assert.deepEqual(fresh.rows[0], { live: true, duration: 10 });
+      const fresh = await db.query('select lease_expires_at>clock_timestamp() as live, updated_at >= $2::timestamptz as after_release, extract(epoch from lease_expires_at-updated_at)::int as duration from operations_actions where id=$1', [action.id,releasedAfter]);
+      assert.deepEqual(fresh.rows[0], { live: true, after_release: true, duration: 10 });
       const duplicate = await admin.rpc('operations_claim_action', args); assert.equal(duplicate.error, null); assert.deepEqual(duplicate.data, []);
       await db.query("update operations_actions set attempt_count=max_attempts,lease_expires_at=clock_timestamp()-interval '1 second' where id=$1", [action.id]);
       const exhausted = await admin.rpc('operations_claim_action', args); assert.equal(exhausted.error, null); assert.deepEqual(exhausted.data, []);

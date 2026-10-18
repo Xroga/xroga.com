@@ -3111,7 +3111,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "aad8e80cea8b1683ba8a968b95f6764521838f0e030a05649f499199b5753e68",
+      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
       "callIds": [
         "dd0917f84f2764fd0472",
         "c841bcae277927c0b193",
@@ -3133,7 +3133,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "aad8e80cea8b1683ba8a968b95f6764521838f0e030a05649f499199b5753e68",
+      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
       "callIds": [
         "cd8790e39c3283f05482",
         "e99258e8fe888ab954f2",
@@ -3160,11 +3160,11 @@
         "b499a6018afaf6b8b490",
         "2623d45568826e06288e",
         "af2e0acf3186708a5107",
-        "cc44dcedf2662387cb81",
-        "e11308812a22e4d952ac",
-        "38fbc3850d913022c84f",
-        "90f59ab9cd32dbdece95",
-        "9bacd16b84877e4f8712"
+        "c5059553552947bfc301",
+        "a9c75531593a342ee098",
+        "751368bd678bf96a5a24",
+        "bd390e36fde04b316470",
+        "6d39f021a47270680bfc"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
@@ -3182,7 +3182,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "aad8e80cea8b1683ba8a968b95f6764521838f0e030a05649f499199b5753e68",
+      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
       "callIds": [
         "58357b840ab8890eba45",
         "9ea21ff62008b510bd7f",
@@ -3193,34 +3193,32 @@
         "e752324399a17c9bf37d",
         "9fa0c495a462830de8aa",
         "9c895c62ea1658ea5c87",
-        "83333130eafae673a15b",
-        "1e3c1b5f9e3866886452",
-        "5926a8fdbfbf2acc9b37",
-        "71febd25f94dc90b64d0",
-        "7e89add7625f8d1fff17",
-        "3408c16cd39907083b7b",
-        "5219a764f1620ecfb6f9",
-        "22af38f1839d001422a4",
-        "ef77a255dec9e133e4e9",
-        "4853e23d760ba97bfd73",
-        "bc05a0f23ee3cf9bac1a",
-        "96463fd0ea4a5b4834e6",
-        "16bb774da6ebb78ffa47",
-        "7cda9f7c1c77e2c37bcb",
-        "8b30182ca734eb7a105d",
-        "8fb26fa41fbe9fb9f720",
-        "37a558c075aa4f0f1548",
-        "ecad67efb5cbab3c9429",
-        "e4378eae2fb7af223c27",
-        "3fa348ccb92bc90d7355",
-        "629606b46d7007ac087a",
-        "c3a5e509dbd11f94793c",
-        "4a72f829b3222a3a0431",
-        "110be233977ed3a07b88",
-        "43c8f371343ac94b28bf",
-        "5ef9bfe46dfdd29508a8",
-        "ede25c142c444b5f81a0",
-        "1493927a5f401f2858e5"
+        "c72b469052cef4c67f39",
+        "88214e2ca8786937732b",
+        "8eb5dc91f52c3229d6e2",
+        "1aad3ce63a7db7e238dc",
+        "a99d23afe5ed24442733",
+        "edcfa9b9cb8a446b1fb4",
+        "60f17fd3a482025faf37",
+        "5a2f0e1a099df46d11db",
+        "7929f50bc9421cb6687e",
+        "cb738c705f5fac37fb7c",
+        "27491fe8f54a4e11fc9b",
+        "12376032529402ee9fe4",
+        "fa36928c4258bc786fd9",
+        "8afd49a6579aaa188ce6",
+        "ab2bc75548341ea8e918",
+        "352be3465f66f9b30be9",
+        "59b139057a85ae290e70",
+        "b7a99d93d52998140510",
+        "6e162811c72d74102837",
+        "972324f7a4446c5c975f",
+        "d3f1dae41d5c646046c0",
+        "98c90a024b8126a1fae1",
+        "2301c247a5634e70eded",
+        "06f72ee3f07c007e620c",
+        "d326eb212795a552e8c2",
+        "171366a84c149df597c9"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
@@ -4774,9 +4772,9 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "aad8e80cea8b1683ba8a968b95f6764521838f0e030a05649f499199b5753e68",
+      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
       "callIds": [
-        "89de6704de3ee3f8073b"
+        "c8cfd24bfdf9dd13fc75"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Existing authenticated action executor passes the exact admitted claimed row and server actor. Service-only completion RPC locks current project owner and action, verifies immutable plan/owner/attempt/lease against database time, then commits evidence, run, action and immutable audit together. No provider action or authority admission is performed inside this persistence boundary.",
@@ -4794,9 +4792,9 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "aad8e80cea8b1683ba8a968b95f6764521838f0e030a05649f499199b5753e68",
+      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
       "callIds": [
-        "91d0a8da596256613302"
+        "9c17503abb75e1c77b5c"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Existing action creation and execution use currentTargetVersion after authenticated project access. Release lookup now requires exact resource ID, current owner and project, and validates all three returned fields before action creation. Previously the release branch returned version1 without any resource lookup.",
@@ -4834,7 +4832,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "aad8e80cea8b1683ba8a968b95f6764521838f0e030a05649f499199b5753e68",
+      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
       "callIds": [
         "724d14962fd8d05f83a7"
       ],
@@ -4849,6 +4847,22 @@
         {
           "path": "backend/src/operations/actionApproval.test.ts",
           "marker": "approval delegates one role-bound transaction and rejects changed or uncertain receipts"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/operations/operationsService.ts",
+      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
+      "callIds": [
+        "c1345ce45faa24df24f7"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Authenticated requester and canonical action definitions supply role permissions. Service-only confirmation RPC locks current actor/project/membership and exact confirmation-required action intent before atomically recording confirmation, optional approval request and immutable audit. Server derives allowed roles from existing permission map, never request input.",
+      "reason": "Focused malformed receipt, owner and unavailable RPC tests plus25 local SQL rollback/role/intent assertions pass. Actual held-plan change, competing confirmation, three-stage rollback and browser denial prepared. Creation atomicity, mutable target admission at execution and provider recovery remain separate unresolved requirements.",
+      "evidence": [
+        {
+          "path": "backend/src/operations/actionConfirmation.local.integration.ts",
+          "marker": "registerActionConfirmationTests"
         }
       ]
     }

@@ -288,6 +288,7 @@ export class OperationsService {
   async confirmAction(userId: string, actionId: string): Promise<DbRow> {
     const action = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable', null);
     if (!action) throw new OperationsServiceError('not_found', 'Action not found', 404);
+    if (action.id !== actionId) throw new OperationsServiceError('unknown', 'Action receipt is invalid', 503);
     if (action.requested_by !== userId) throw new OperationsServiceError('forbidden', 'Only the requester can confirm this action', 403);
     const definition = ACTION_DEFINITIONS[action.action_type];
     if (!definition) throw new OperationsServiceError('invalid_state', 'Action is unavailable', 409);
@@ -295,12 +296,24 @@ export class OperationsService {
     if (action.user_id !== access.ownerId) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
     if (action.status !== 'confirmation_required') throw new OperationsServiceError('invalid_state', 'Action is not waiting for confirmation', 409);
     const status = definition.approvalRole ? 'approval_required' : 'queued';
-    const updated = await queryOrThrow<DbRow[]>(this.db.from('operations_actions').update({ confirmation_digest: action.action_plan_digest, status, updated_at: new Date().toISOString() }).eq('id', actionId).eq('status', 'confirmation_required').select('*'), 'Action confirmation failed');
-    if (!updated.length) throw new OperationsServiceError('conflict', 'Action state changed before confirmation', 409);
-    if (definition.approvalRole) {
-      await queryOrThrow(this.db.from('operations_action_approvals').insert({ action_id: action.id, user_id: action.user_id, requester_id: userId, required_role: definition.approvalRole, target_version: action.target_version, action_plan_digest: action.action_plan_digest, expires_at: new Date(Date.now() + 30 * 60_000).toISOString() }).select(), 'Approval request failed');
-      return updated[0];
+    const roles: OperationsRole[] = ['viewer','operator','release_manager','recovery_manager','admin'];
+    const { data: updated, error } = await this.db.rpc('confirm_operations_action', {
+      p_actor: userId, p_expected: action, p_allowed_roles: roles.filter(role => hasOperationsPermission(role, definition.permission)),
+      p_approval_role: definition.approvalRole ?? null,
+    });
+    if (error) {
+      if (error.code === '42501') throw new OperationsServiceError('forbidden', 'Confirmation is not permitted', 403);
+      if (error.code === '40001') throw new OperationsServiceError('conflict', 'Action state changed before confirmation', 409);
+      throw new OperationsServiceError('unknown', 'Action confirmation could not be verified', 503);
     }
+    if (!Array.isArray(updated) || updated.length !== 1 || updated[0]?.id !== actionId || updated[0]?.status !== status
+      || updated[0]?.confirmation_digest !== action.action_plan_digest
+      || !['user_id','project_id','environment_id','requested_by','action_type','target_type','target_id','target_version',
+        'action_plan_digest','execution_plan','idempotency_key','permission_required','risk_level','max_attempts']
+        .every(key => isDeepStrictEqual(updated[0][key], action[key]))) {
+      throw new OperationsServiceError('unknown', 'Action confirmation receipt is invalid', 503);
+    }
+    if (definition.approvalRole) return updated[0];
     return this.executeAction(userId, actionId);
   }
 
