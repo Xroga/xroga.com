@@ -375,7 +375,9 @@
     "backend/src/growth/inputSnapshot.test.ts",
     "backend/src/ai/runStore.cancellationRace.test.ts",
     "backend/src/ai/runStore.cancellationRead.test.ts",
-    "backend/src/ai/runStore.persistedStatus.test.ts"
+    "backend/src/ai/runStore.persistedStatus.test.ts",
+    "backend/src/operations/actionIntent.local.integration.ts",
+    "backend/src/operations/actionIntent.test.ts"
   ],
   "decisions": {
     "keep": [

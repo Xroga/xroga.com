@@ -43,6 +43,7 @@ import { buildUserSupabaseProvisionSql } from '../services/integrations/supabase
 import { registerProviderKeyRevisionTests } from './providerKeyRevision.local.integration.js';
 import { registerOAuthSessionTests } from './oauthSession.local.integration.js';
 import { registerBuildOutcomeAttemptTests } from './buildOutcomeAttempt.local.integration.js';
+import { registerActionIntentTests } from '../operations/actionIntent.local.integration.js';
 import { registerProjectCreationTests } from './projectCreation.local.integration.js';
 import { registerProfileDeletionTests } from './profileDeletion.local.integration.js';
 import { registerGrowthReferralTests } from './growthReferral.local.integration.js';
@@ -80,6 +81,7 @@ const users: Array<{id:string;token:string;context:TenantContext;project:string;
 registerProviderKeyRevisionTests(admin, () => users);
 registerOAuthSessionTests(admin, () => users);
 registerBuildOutcomeAttemptTests(admin, () => users);
+registerActionIntentTests(admin, () => users);
 registerProjectCreationTests(admin, () => users);
 registerProfileDeletionTests(admin);
 registerGrowthReferralTests(admin, () => users);

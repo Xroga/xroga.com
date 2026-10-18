@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "05e20e6d22107212803b5f67ba663e6576aa2a33",
-    "sourceTimestampUtc": "2026-10-18T12:59:51+05:00",
-    "auditStartedUtc": "2026-10-18T08:15:38.541Z",
+    "sha": "5c7e8dcf1413e3e4cfa698f6926fea5b993d6e34",
+    "sourceTimestampUtc": "2026-10-18T13:17:59+05:00",
+    "auditStartedUtc": "2026-10-18T08:29:13.491Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -11864,7 +11864,7 @@
         "backend/src/community/service.ts:1",
         "backend/src/growth/growthService.ts:4",
         "backend/src/lib/resolveIdentity.ts:39",
-        "backend/src/operations/operationsService.ts:3",
+        "backend/src/operations/operationsService.ts:4",
         "backend/src/routes/billingWebhook.ts:4",
         "backend/src/routes/dashboard.ts:3",
         "backend/src/routes/github.ts:3",
@@ -15474,7 +15474,7 @@
       "callers": [
         "backend/src/ai/benchmarkEvidence.validation.test.ts:5",
         "backend/src/operations/benchmarkAdapter.test.ts:3",
-        "backend/src/operations/operationsService.ts:10"
+        "backend/src/operations/operationsService.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -15600,7 +15600,7 @@
         "backend/src/hardening/launchHardening.test.ts:44",
         "backend/src/operations/benchmarkAdapter.test.ts:9",
         "backend/src/operations/operationsEngine.test.ts:3",
-        "backend/src/operations/operationsService.ts:4",
+        "backend/src/operations/operationsService.ts:5",
         "backend/src/routes/admin.ts:5"
       ],
       "reachable": true,
@@ -15635,7 +15635,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "9c7614bee2559935f300ed22bc4720c765d0741b0d55e320beb160fc98d494fb",
+      "sha256": "54606dc2ef0252a8119d3f51cb41ff0166bf9097d7caa62533bbe8ab72df1200",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -15672,6 +15672,7 @@
         "maintenanceBlocked",
         "mapResource",
         "matches",
+        "matchesIntent",
         "maxRuns",
         "memberProjectIds",
         "membership",
@@ -15702,6 +15703,7 @@
         "runStatus",
         "running",
         "safeError",
+        "snapshotIntent",
         "stale",
         "startsAt",
         "status",
@@ -15712,6 +15714,7 @@
         "updated",
         "userId",
         "validity",
+        "value",
         "values",
         "windowSeconds",
         "windows"
@@ -15724,7 +15727,8 @@
         "./providerAdapters.js",
         "./types.js",
         "@supabase/supabase-js",
-        "node:crypto"
+        "node:crypto",
+        "node:util"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
@@ -15740,6 +15744,8 @@
         "backend/src/growth/campaignReceipt.local.integration.ts:7",
         "backend/src/growth/delivery.local.integration.ts:1",
         "backend/src/growth/growthService.ts:5",
+        "backend/src/operations/actionIntent.local.integration.ts:7",
+        "backend/src/operations/actionIntent.test.ts:4",
         "backend/src/operations/operationsService.owner.test.ts:4",
         "backend/src/routes/operations.ts:9"
       ],
@@ -15770,7 +15776,8 @@
       ],
       "externalProviderDependencies": [
         "@supabase/supabase-js",
-        "node:crypto"
+        "node:crypto",
+        "node:util"
       ],
       "authBoundary": [
         "backend/src/operations/operationsService.ts#OperationsPermission",
@@ -15778,44 +15785,44 @@
         "backend/src/operations/operationsService.ts#permissionsForRole"
       ],
       "tenantBoundary": [
-        "backend/src/operations/operationsService.ts:82 (user_id)",
-        "backend/src/operations/operationsService.ts:100 (user_id)",
-        "backend/src/operations/operationsService.ts:155 (user_id)",
-        "backend/src/operations/operationsService.ts:156 (user_id)",
-        "backend/src/operations/operationsService.ts:157 (user_id)",
-        "backend/src/operations/operationsService.ts:158 (user_id)",
-        "backend/src/operations/operationsService.ts:159 (user_id)",
-        "backend/src/operations/operationsService.ts:160 (user_id)",
-        "backend/src/operations/operationsService.ts:161 (user_id)",
-        "backend/src/operations/operationsService.ts:162 (user_id)",
-        "backend/src/operations/operationsService.ts:163 (user_id)",
+        "backend/src/operations/operationsService.ts:91 (user_id)",
+        "backend/src/operations/operationsService.ts:109 (user_id)",
         "backend/src/operations/operationsService.ts:164 (user_id)",
         "backend/src/operations/operationsService.ts:165 (user_id)",
         "backend/src/operations/operationsService.ts:166 (user_id)",
+        "backend/src/operations/operationsService.ts:167 (user_id)",
+        "backend/src/operations/operationsService.ts:168 (user_id)",
+        "backend/src/operations/operationsService.ts:169 (user_id)",
+        "backend/src/operations/operationsService.ts:170 (user_id)",
+        "backend/src/operations/operationsService.ts:171 (user_id)",
+        "backend/src/operations/operationsService.ts:172 (user_id)",
+        "backend/src/operations/operationsService.ts:173 (user_id)",
         "backend/src/operations/operationsService.ts:174 (user_id)",
+        "backend/src/operations/operationsService.ts:175 (user_id)",
         "backend/src/operations/operationsService.ts:183 (user_id)",
-        "backend/src/operations/operationsService.ts:190 (user_id)",
-        "backend/src/operations/operationsService.ts:198 (user_id)",
-        "backend/src/operations/operationsService.ts:201 (user_id)",
-        "backend/src/operations/operationsService.ts:220 (user_id)",
-        "backend/src/operations/operationsService.ts:244 (user_id)",
-        "backend/src/operations/operationsService.ts:313 (user_id)",
-        "backend/src/operations/operationsService.ts:336 (user_id)",
-        "backend/src/operations/operationsService.ts:360 (user_id)",
-        "backend/src/operations/operationsService.ts:366 (user_id)",
-        "backend/src/operations/operationsService.ts:370 (user_id)",
-        "backend/src/operations/operationsService.ts:374 (user_id)",
+        "backend/src/operations/operationsService.ts:192 (user_id)",
+        "backend/src/operations/operationsService.ts:199 (user_id)",
+        "backend/src/operations/operationsService.ts:208 (user_id)",
+        "backend/src/operations/operationsService.ts:211 (user_id)",
+        "backend/src/operations/operationsService.ts:235 (user_id)",
+        "backend/src/operations/operationsService.ts:263 (user_id)",
+        "backend/src/operations/operationsService.ts:332 (user_id)",
+        "backend/src/operations/operationsService.ts:355 (user_id)",
         "backend/src/operations/operationsService.ts:379 (user_id)",
-        "backend/src/operations/operationsService.ts:386 (user_id)",
-        "backend/src/operations/operationsService.ts:400 (user_id)",
-        "backend/src/operations/operationsService.ts:404 (tenant_id)",
-        "backend/src/operations/operationsService.ts:413 (user_id)",
-        "backend/src/operations/operationsService.ts:418 (user_id)",
-        "backend/src/operations/operationsService.ts:423 (user_id)",
-        "backend/src/operations/operationsService.ts:429 (user_id)",
-        "backend/src/operations/operationsService.ts:430 (user_id)",
-        "backend/src/operations/operationsService.ts:453 (user_id)",
-        "backend/src/operations/operationsService.ts:454 (user_id)"
+        "backend/src/operations/operationsService.ts:385 (user_id)",
+        "backend/src/operations/operationsService.ts:389 (user_id)",
+        "backend/src/operations/operationsService.ts:393 (user_id)",
+        "backend/src/operations/operationsService.ts:398 (user_id)",
+        "backend/src/operations/operationsService.ts:405 (user_id)",
+        "backend/src/operations/operationsService.ts:419 (user_id)",
+        "backend/src/operations/operationsService.ts:423 (tenant_id)",
+        "backend/src/operations/operationsService.ts:432 (user_id)",
+        "backend/src/operations/operationsService.ts:437 (user_id)",
+        "backend/src/operations/operationsService.ts:442 (user_id)",
+        "backend/src/operations/operationsService.ts:448 (user_id)",
+        "backend/src/operations/operationsService.ts:449 (user_id)",
+        "backend/src/operations/operationsService.ts:474 (user_id)",
+        "backend/src/operations/operationsService.ts:475 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/operations/operationsService.ts#OperationsPermission",
@@ -15835,6 +15842,8 @@
       "testCoverage": [
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
+        "backend/src/operations/actionIntent.local.integration.ts",
+        "backend/src/operations/actionIntent.test.ts",
         "backend/src/operations/operationsService.owner.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -15871,7 +15880,7 @@
       "callers": [
         "backend/src/operations/benchmarkAdapter.test.ts:10",
         "backend/src/operations/operationsEngine.test.ts:8",
-        "backend/src/operations/operationsService.ts:8",
+        "backend/src/operations/operationsService.ts:9",
         "backend/src/operations/permissions.test.ts:3"
       ],
       "reachable": true,
@@ -16038,7 +16047,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/operations/operationsService.ts:9",
+        "backend/src/operations/operationsService.ts:10",
         "backend/src/operations/providerAdapters.test.ts:3"
       ],
       "reachable": true,
@@ -16101,6 +16110,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/operations/actionIntent.test.ts",
         "backend/src/operations/operationsEngine.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
@@ -23491,7 +23501,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:618",
+        "backend/src/security/tenantIsolation.local.integration.ts:620",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -102989,6 +102999,20 @@
       "id": "test-suite:c947ec396bf7a93fba06",
       "sourcePath": "backend/src/middleware/admin.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:f98a9a778d3ab33a4bb7",
+      "sourcePath": "backend/src/operations/actionIntent.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d1c7f7886e89cfa486c1",
+      "sourcePath": "backend/src/operations/actionIntent.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

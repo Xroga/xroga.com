@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import {
@@ -25,6 +26,14 @@ export class OperationsServiceError extends Error {
 
 function stale(staleAfter?: string | null): boolean {
   return Boolean(staleAfter && new Date(staleAfter).getTime() <= Date.now());
+}
+
+function snapshotIntent<T extends object>(input: T): T {
+  try {
+    const value = JSON.parse(JSON.stringify(input));
+    if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid shape');
+    return value;
+  } catch { throw new OperationsServiceError('precondition_failed', 'Operation input is invalid', 400); }
 }
 
 function availableActions(kind: string, status: string): string[] {
@@ -191,6 +200,7 @@ export class OperationsService {
   }
 
   async createAction(userId: string, request: SafeActionRequest): Promise<DbRow> {
+    request = snapshotIntent(request);
     const definition = ACTION_DEFINITIONS[request.actionType];
     if (!definition || !definition.supportedTargetTypes.includes(request.targetType)) throw new OperationsServiceError('precondition_failed', 'Unsupported action or target', 400);
     const access = await this.access(userId, request.projectId, definition.permission);
@@ -215,11 +225,20 @@ export class OperationsService {
     };
     // Do not create an action/approval for a target outside this project boundary.
     await this.currentTargetVersion(row);
+    const matchesIntent = (candidate: DbRow) => typeof candidate.id === 'string' && !!candidate.id
+      && ['user_id','project_id','environment_id','requested_by','action_type','target_type','target_id',
+        'target_version','idempotency_key','action_plan_digest','permission_required','risk_level','execution_plan']
+        .every(key => isDeepStrictEqual(candidate[key], row[key as keyof typeof row]));
     const { data, error } = await this.db.from('operations_actions').insert(row).select('*').single();
     if (error) {
+      if (error.code !== '23505') throw new OperationsServiceError('unknown', 'Action persistence could not be verified', 503);
       const existing = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('user_id', access.ownerId).eq('project_id', request.projectId).eq('idempotency_key', request.idempotencyKey).maybeSingle(), 'Action conflict', null);
-      if (existing) return existing;
-      throw new OperationsServiceError('conflict', 'Action could not be created', 409);
+      // A replay never confirms, approves or executes the existing action.
+      if (existing && matchesIntent(existing)) return existing;
+      throw new OperationsServiceError('conflict', 'Action key cannot be reused for a different intent', 409);
+    }
+    if (!data || !matchesIntent(data) || data.status !== status || data.confirmation_digest !== row.confirmation_digest) {
+      throw new OperationsServiceError('unknown', 'Action persistence could not be verified', 503);
     }
     try {
       await this.audit({ userId: access.ownerId, actorId: userId, projectId: request.projectId, environmentId: request.environmentId, action: 'operations.action.requested', targetType: 'action', targetId: data.id, outcome: status, afterState: row, correlationId: request.idempotencyKey });
@@ -436,6 +455,7 @@ export class OperationsService {
     ruleKey: string; name: string; triggerType: string; riskLevel: RiskLevel; actionType: string;
     conditions: Record<string, unknown>; exclusions: Record<string, unknown>; maxRuns: number; windowSeconds: number; enabled: boolean;
   }): Promise<DbRow> {
+    input = snapshotIntent(input);
     const access = await this.access(userId, projectId, 'manage_automation');
     const definition = ACTION_DEFINITIONS[input.actionType];
     if (!definition) throw new OperationsServiceError('precondition_failed', 'Automation action is unsupported', 400);
@@ -449,6 +469,7 @@ export class OperationsService {
     triggerType: string; triggerId: string; targetType: string; targetId: string; targetVersion: number;
     environmentId?: string; attributes: Record<string, unknown>; evidenceReference?: string;
   }): Promise<DbRow[]> {
+    signal = snapshotIntent(signal);
     const access = await this.access(userId, projectId, 'manage_automation');
     const rules = await queryOrThrow<DbRow[]>(this.db.from('operations_automation_rules').select('*').eq('user_id', access.ownerId).eq('project_id', projectId).eq('trigger_type', signal.triggerType), 'Automation rules unavailable');
     const windows = await queryOrThrow<DbRow[]>(this.db.from('operations_maintenance_windows').select('starts_at,ends_at,allowed_actions,blocked_actions').eq('user_id', access.ownerId).eq('project_id', projectId), 'Maintenance state unavailable');

@@ -45,4 +45,3 @@ test('a delayed cancellation read cannot admit an old callback after local resum
     await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   }
 });
-
