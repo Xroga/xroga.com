@@ -67,12 +67,8 @@ export class GrowthService {
     const matches = (row: Row) => row.tenant_id === tenantId && typeof row.id === 'string' && !!row.id
       && Object.entries(payload).every(([key,value]) => isDeepStrictEqual(row[key],value))
       && (!input.occurredAt || Date.parse(row.occurred_at) === Date.parse(input.occurredAt));
-    const replay = (row: Row) => {
-      if (!matches(row)) throw new GrowthServiceError('idempotency_conflict', 'Event key cannot be reused for a different event', 409);
-      return {event:row,duplicate:true};
-    };
     const existing = await query<Row | null>(this.db.from('analytics_events').select('*').eq('tenant_id', tenantId).eq('idempotency_key', input.idempotencyKey).maybeSingle(), 'Event deduplication unavailable', null);
-    if (existing) return replay(existing);
+    if (existing && !matches(existing)) throw new GrowthServiceError('idempotency_conflict', 'Event key cannot be reused for a different event', 409);
     if (input.experimentId) {
       const experiment = await query<Row | null>(this.db.from('growth_experiments').select('id').eq('id', input.experimentId).eq('tenant_id', tenantId).eq('project_id', input.projectId).maybeSingle(), 'Event experiment unavailable', null);
       if (!experiment) throw new GrowthServiceError('not_found', 'Event experiment not found', 404);
@@ -94,13 +90,20 @@ export class GrowthService {
         throw new GrowthServiceError('not_found', 'Event referral not found', 404);
       }
     }
-    const {data:rows,error} = await this.db.from('analytics_events').insert({...payload,tenant_id:tenantId,occurred_at:input.occurredAt ?? new Date().toISOString()}).select('*');
-    if (error?.code === '23505') {
-      const winner = await query<Row|null>(this.db.from('analytics_events').select('*').eq('tenant_id',tenantId).eq('idempotency_key',input.idempotencyKey).maybeSingle(),'Event deduplication unavailable',null);
-      if (winner) return replay(winner);
+    const roles:OperationsRole[]=['viewer','operator','release_manager','recovery_manager','admin'];
+    const {data:receipt,error}=await this.db.rpc('record_growth_event',{
+      p_actor:userId,p_tenant:tenantId,p_project:input.projectId,p_intent:payload,p_occurred_at:input.occurredAt??null,
+      p_allowed_roles:roles.filter(role=>hasOperationsPermission(role,'view_product_operations')),
+    });
+    if(error?.code==='42501')throw new GrowthServiceError('forbidden','Event recording is not permitted',403);
+    if(error?.code==='P0002')throw new GrowthServiceError('not_found','Event reference not found',404);
+    if(error?.code==='23505')throw new GrowthServiceError('idempotency_conflict','Event key cannot be reused for a different event',409);
+    if(['22023','22P02','22007','22008'].includes(error?.code??''))throw new GrowthServiceError('invalid_event','Event admission is invalid',400);
+    if(error||!receipt||typeof receipt.duplicate!=='boolean'||!receipt.event
+      ||!matches(receipt.event)||typeof receipt.event.occurred_at!=='string'||!Number.isFinite(Date.parse(receipt.event.occurred_at))){
+      throw new GrowthServiceError('storage_unavailable','Event persistence could not be verified',503);
     }
-    if(error || !rows || rows.length!==1 || !matches(rows[0])) throw new GrowthServiceError('storage_unavailable','Event persistence could not be verified',503);
-    return { event: rows[0], duplicate: false };
+    return {event:receipt.event,duplicate:receipt.duplicate};
   }
 
   async linkIdentity(userId: string, input: { projectId: string; anonymousId: string; evidenceReference: string }): Promise<Row> {

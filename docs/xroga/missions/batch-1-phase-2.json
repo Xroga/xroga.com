@@ -21,6 +21,12 @@
     "backend/src/growth/growthService.identity.test.ts",
     "backend/src/growth/identityParentAdmission.test.ts",
     "backend/src/growth/identity.local.integration.ts",
+    "backend/src/growth/eventParentAdmission.test.ts",
+    "backend/src/growth/eventReplay.test.ts",
+    "backend/src/growth/eventReplay.local.integration.ts",
+    "backend/src/growth/growthService.boundary.test.ts",
+    "backend/src/growth/growthService.referralBoundary.test.ts",
+    "supabase/migrations/20261019000100_growth_event_parent_admission.sql",
     "backend/src/security/provisioningReceipt.local.integration.ts",
     "backend/src/services/integrations/githubTokenStore.ts",
     "backend/src/services/integrations/userProviderKeys.ts",
@@ -55,12 +61,12 @@
     "replace": ["Run-only telemetry association with exact owner/run binding", "Ambiguous disposable source labels with actual checkout attestation"],
     "deprecate": ["Treating a historical pending-CI note as a new vulnerability", "Treating test names or source review counts as whole-workflow acceptance"]
   },
-  "schemaImpact": {"changed": true, "migrations": ["supabase/migrations/20261018002000_browser_table_privileges.sql", "supabase/migrations/20261018002100_legacy_server_table_rls.sql", "supabase/migrations/20261018002200_growth_identity_parent_admission.sql"], "rollout": "Disposable CI only. Revoke browser whole-table privileges, enable13 omitted legacy server-only RLS boundaries and extend the existing current-parent growth transaction pattern to identity linking. No row rewrite, owner-column/constraint tightening, production DDL or orphan remediation. Default grant changes cover the migration creator, not all future creators.", "rollback": "No data rewrite or new constraint to reverse. Preserve restrictive grant, RLS and current-parent admission. A code revert must not automatically re-grant unsafe browser rights, disable RLS or restore unguarded writes. Any production rollout or privilege rollback requires separate approval."},
+  "schemaImpact": {"changed":true,"migrations":["supabase/migrations/20261018002000_browser_table_privileges.sql","supabase/migrations/20261018002100_legacy_server_table_rls.sql","supabase/migrations/20261018002200_growth_identity_parent_admission.sql","supabase/migrations/20261019000100_growth_event_parent_admission.sql"],"rollout":"Disposable CI only. Revoke browser whole-table privileges, enable13 omitted legacy server-only RLS boundaries and extend the existing current-parent growth transaction pattern to identity linking. No row rewrite, owner-column/constraint tightening, production DDL or orphan remediation. Default grant changes cover the migration creator, not all future creators. Event creation and replay use current-parent transaction admission, including release/deployment references. No new status restriction on historical analytics.","rollback":"No data rewrite or new constraint to reverse. Preserve restrictive grant, RLS and current-parent admission. A code revert must not automatically re-grant unsafe browser rights, disable RLS or restore unguarded writes. Any production rollout or privilege rollback requires separate approval. Never restore independent event writes or replay without current admission. Disable the route if the RPC must be withdrawn."},
   "securityImpact": {
     "auth": {"changed": false, "description": "Existing server authentication retained, no login/MFA/role bypass."},
     "tenant": {"changed": true, "description": "Exact owner/run evidence binding and independently verified parent admission. Strict ten-criterion gate remains blocked until real proof."},
     "approval": {"changed": false, "description": "No canonical authority replacement or new grant. Phase3 remains unstarted."},
-    "credentials": {"changed": false, "description": "No live token, key or vault change. Credential custody remains a separate original009 requirement."},
+    "credentials": {"changed": true, "description": "Earlier Phase2 orphan-mirror fixes restrict credential read admission when canonical authority is absent. No live token, key or vault change. Credential custody remains a separate original009 requirement."},
     "egress": {"changed": false, "description": "No provider call, publishing, message or external effect. Phase4 remains unstarted."},
     "cost": {"changed": false, "description": "Zero additional spend, existing standard public CI and local/disposable tests only."},
     "billing": {"changed": false, "description": "No payment, plan or production billing operation."}

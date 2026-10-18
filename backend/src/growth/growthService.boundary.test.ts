@@ -36,6 +36,11 @@ test('growth replay cannot return another project event and absent replay perfor
       then(resolve: (value: unknown) => unknown) { return Promise.resolve(resolve({ data: [{ id: 'new-event', ...(payload as object) }], error: null })); },
     };
     return query;
+  },async rpc(name:string,args:Record<string,unknown>){
+    assert.equal(name,'record_growth_event');
+    if(existing)return{data:{event:existing,duplicate:true},error:null};
+    inserts++;
+    return{data:{event:{id:'new-event',...(args.p_intent as object),tenant_id:args.p_tenant,occurred_at:new Date().toISOString()},duplicate:false},error:null};
   } };
   const service = new GrowthService(db as unknown as SupabaseClient);
   const input = { projectId: 'project', name: 'identity.linked.v1', idempotencyKey: 'fixture', environment: 'test' as const,

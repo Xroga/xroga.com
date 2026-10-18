@@ -1,18 +1,18 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "b029cd095ffef111036f5799df3a583f9b0d3557eaa5b31b445313306eadde82",
+  "reviewRegistrySha256": "9f03742d262ef288fe00ccc23e4431f88c9fb4fa2b0491f85d389954d7ce7c14",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
-    "persistenceCandidates": 639,
+    "persistenceCandidates": 638,
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
-    "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 367,
+    "reviewedCandidates": 638,
+    "unresolvedSafetyCandidates": 366,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -21,7 +21,7 @@
     "SCOPED_BOUNDARY": 122,
     "NARROW_EXCEPTION": 10,
     "NOT_PERSISTENCE": 140,
-    "REVIEWED_GAP": 367
+    "REVIEWED_GAP": 366
   },
   "acceptance": {
     "version": 1,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 140,
-    "unresolvedCandidateBoundaries": 499,
+    "unresolvedCandidateBoundaries": 498,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -248,7 +248,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-9f1c260c05af9613"
+        "id": "OB-f72b7f5af401d8bc"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -656,27 +656,27 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-ee06d256551e8e56"
+        "id": "OB-472fd4b0c7ae5c73"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-785ddc8567d370c3"
+        "id": "OB-cb29ba25ac18b89d"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-612444d13d6255bc"
+        "id": "OB-3bb8f503ee5c6cbc"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-34c80b4cc58b98df"
+        "id": "OB-a4acd183bc021abc"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-05bcd67ae9d9b2ee"
+        "id": "OB-b58c154094283c6d"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-235593db1d7f94e0"
+        "id": "OB-7c715def14a3bf36"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -708,7 +708,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-4b81015bffb51415"
+        "id": "OB-d30fbb18675714c5"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -744,11 +744,11 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-bbdcc3aec00683d5"
+        "id": "OB-03d89e258c10d36f"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-944daf645d01d295"
+        "id": "OB-a9c1e3128d130b97"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -756,15 +756,15 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-acc6652be830fb84"
+        "id": "OB-9aedc90f5779eab5"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-3a66aee5bdba014e"
+        "id": "OB-d60d0e0e4f109050"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-3a48b48641663361"
+        "id": "OB-dcf2f949f34a3d17"
       }
     ]
   },
@@ -3482,7 +3482,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3507,7 +3507,7 @@
       "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3532,7 +3532,7 @@
       "target": "growth_recommendations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3557,7 +3557,7 @@
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3582,7 +3582,7 @@
       "target": "growth_messages",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3607,7 +3607,7 @@
       "target": "growth_segments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3632,7 +3632,7 @@
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3657,7 +3657,7 @@
       "target": "growth_attribution_touches",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3682,7 +3682,7 @@
       "target": "analytics_events",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3699,15 +3699,15 @@
       }
     },
     {
-      "id": "2a10818ab5282f53a025",
+      "id": "c4b48546dd042cc91bf0",
       "path": "backend/src/growth/growthService.ts",
-      "line": 74,
+      "line": 70,
       "enclosing": "recordEvent",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "analytics_events",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3724,15 +3724,15 @@
       }
     },
     {
-      "id": "ea8b430421923fa7f064",
+      "id": "14f21b570e00cea3678a",
       "path": "backend/src/growth/growthService.ts",
-      "line": 77,
+      "line": 73,
       "enclosing": "recordEvent",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "Exact existence read only. Verified server actor obtains existing project authority, then SELECT predicates constrain both tenant owner and requested project plus exact referenced identifier. The read performs no write or provider action, returns only ID or attribution tuple, and absent/foreign rows fail closed.",
         "reason": "Narrow read scope verified against source and disposable7d12bf42 run38827153400, real growth relation test and referral guard. It does not certify the enclosing event writer, mutable reference races, project membership revocation, event provenance, idempotent payload equivalence or reward qualification. Whole Command007 remains blocked.",
@@ -3745,15 +3745,15 @@
       }
     },
     {
-      "id": "88507e6640248f4470fc",
+      "id": "1dd8488d7322fb73b4ba",
       "path": "backend/src/growth/growthService.ts",
-      "line": 81,
+      "line": 77,
       "enclosing": "recordEvent",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "Exact existence read only. Verified server actor obtains existing project authority, then SELECT predicates constrain both tenant owner and requested project plus exact referenced identifier. The read performs no write or provider action, returns only ID or attribution tuple, and absent/foreign rows fail closed.",
         "reason": "Narrow read scope verified against source and disposable7d12bf42 run38827153400, real growth relation test and referral guard. It does not certify the enclosing event writer, mutable reference races, project membership revocation, event provenance, idempotent payload equivalence or reward qualification. Whole Command007 remains blocked.",
@@ -3766,15 +3766,15 @@
       }
     },
     {
-      "id": "6fe29938495992b03de5",
+      "id": "5361369536d39e4f27a4",
       "path": "backend/src/growth/growthService.ts",
-      "line": 88,
+      "line": 84,
       "enclosing": "recordEvent",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_referral_attribution",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "Exact existence read only. Verified server actor obtains existing project authority, then SELECT predicates constrain both tenant owner and requested project plus exact referenced identifier. The read performs no write or provider action, returns only ID or attribution tuple, and absent/foreign rows fail closed.",
         "reason": "Narrow read scope verified against source and disposable7d12bf42 run38827153400, real growth relation test and referral guard. It does not certify the enclosing event writer, mutable reference races, project membership revocation, event provenance, idempotent payload equivalence or reward qualification. Whole Command007 remains blocked.",
@@ -3787,40 +3787,15 @@
       }
     },
     {
-      "id": "c1d15835cacb17c3e97f",
+      "id": "7da72c17fc2cd9b645f6",
       "path": "backend/src/growth/growthService.ts",
-      "line": 97,
+      "line": 94,
       "enclosing": "recordEvent",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "analytics_events",
+      "kind": "RPC_CANDIDATE",
+      "target": "record_growth_event",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
-      "semanticReview": {
-        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
-        "evidence": [
-          {
-            "path": "backend/src/growth/growthService.boundary.test.ts",
-            "marker": "growth replay cannot return another project event"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real growth event replay cannot disclose a different project event"
-          }
-        ]
-      }
-    },
-    {
-      "id": "a16a5d06c352a7901267",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 99,
-      "enclosing": "recordEvent",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "analytics_events",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "Original authenticated actor and normalized immutable event intent are retained across project authority awaits. Existing tenant/idempotency unique index serializes concurrent inserts. A losing unique-conflict request re-reads the winning row with exact tenant/key predicates and verifies actor/project/payload before returning a duplicate.",
         "reason": "Focused changed-intent, owner, consent, timestamp, metadata ordering, receipt corruption and concurrent-conflict tests pass. Real two-HTTP-request observed PostgreSQL insert-lock test prepared. Mutable membership and experiment/campaign reference races, event provenance and reward qualification remain unresolved. No whole event-writer certification. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3833,15 +3808,15 @@
       }
     },
     {
-      "id": "3e1df69e18246e1cf193",
+      "id": "d837c5ed2b4022b6e71c",
       "path": "backend/src/growth/growthService.ts",
-      "line": 111,
+      "line": 114,
       "enclosing": "linkIdentity",
       "kind": "RPC_CANDIDATE",
       "target": "link_growth_identity",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "Authenticated growth route supplies the immutable server actor. Existing OperationsService preflight selects the project owner, then service-only link_growth_identity rechecks and locks current profile, owner and membership through a first-owner-preserving atomic identity write. Exact returned actor, tenant, project, anonymous key and evidence are validated. There is no direct-write fallback.",
         "reason": "Pre-fix focused stale-parent test failed because the old two writes accepted an ownership transfer after preflight. Three focused identity tests and15 synthetic SQL assertions now pass. Existing actual competing-claim proof is retained, while the new real project-transfer/member-revocation lock test requires final-source CI. Anonymous-key possession and end-user attribution are not certified. No whole growth service or Phase3 authority claim.",
@@ -3854,15 +3829,15 @@
       }
     },
     {
-      "id": "20cc8f0f49dab70c2d8c",
+      "id": "692414c732801b00c846",
       "path": "backend/src/growth/growthService.ts",
-      "line": 126,
+      "line": 129,
       "enclosing": "defineActivation",
       "kind": "RPC_CANDIDATE",
       "target": "define_growth_activation",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "Existing authenticated growth endpoint supplies server actor and validated project/name/version/events. Manage roles derive from the existing operations permission map. Service-only transaction locks current actor/project/member and validates the tenant, then preserves owned upsert semantics but conditionally refuses an existing foreign tenant row at conflict-update time. Caller validates exactly one returned definition and every submitted field.",
         "reason": "Owned definition persistence boundary VERIFIED at4340f62cc9f8a44144427a9ac503c5f7f3d3d960, disposable39125143060:111 fresh/upgrade migrations,146 security tests and3 browser tests pass with zero failures/skips. Actual member and owner revocation deny writes, foreign conflicts before and during row wait preserve the foreign canary, concurrent same-owner upserts retain one identity, rollback and browser denial pass. Runtime invocation, SQL and fixture unchanged. Only current-owner definition upsert closes. Definition changes versus already evaluated lifecycle evidence and complete growth/source attribution remain unresolved. No whole growth or Command008 certification.",
@@ -3879,15 +3854,15 @@
       }
     },
     {
-      "id": "62fbf9b70d6626923ebc",
+      "id": "5029c4f93698661c528c",
       "path": "backend/src/growth/growthService.ts",
-      "line": 144,
+      "line": 147,
       "enclosing": "evaluateActivation",
       "kind": "RPC_CANDIDATE",
       "target": "evaluate_growth_activation",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "Existing authenticated activation endpoint supplies server actor, admitted tenant/project and validated subject UUID. View roles derive from the existing operations permission map, preserving viewer evaluation. Service-only transaction locks current actor/project/member and the chosen owned definition/deployment/event rows, applies the existing activationSatisfied membership and verification-state policy, then conditionally upserts lifecycle only for the same tenant. Exact returned owner/project/subject/definition/evidence/time receipt is required; internal source basis is not added to the public API.",
         "reason": "Verified narrow transaction at ea2305700ae5c46ea24f612f9a09fbfcba4161cd disposable39126345772:113 fresh/upgrade migrations,148 security tests and3 browser tests,zero failures/skips. Actual held definition/deployment/event/member changes, competing lifecycle replay, foreign lifecycle mutation while waiting, rollback and browser denial pass. Invocation, SQL and fixture are unchanged in current source. Seven focused tests and23 local SQL assertions also pass. Event/provider provenance, later evidence supersession, subject history and full growth lifecycle remain unresolved. No live provider proof or whole caller certification.",
@@ -3904,15 +3879,15 @@
       }
     },
     {
-      "id": "b5b306489315f83f7e7c",
+      "id": "954c42fd1a2437f38ed5",
       "path": "backend/src/growth/growthService.ts",
-      "line": 173,
+      "line": 176,
       "enclosing": "recommend",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_incidents",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3929,15 +3904,15 @@
       }
     },
     {
-      "id": "4459eb37406d668dc783",
+      "id": "126ec04bb2325ac5e091",
       "path": "backend/src/growth/growthService.ts",
-      "line": 174,
+      "line": 177,
       "enclosing": "recommend",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "deployment_status",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3954,15 +3929,15 @@
       }
     },
     {
-      "id": "cf57efbb17e154f1e6de",
+      "id": "e8c8697a4352dcfcc9cc",
       "path": "backend/src/growth/growthService.ts",
-      "line": 175,
+      "line": 178,
       "enclosing": "recommend",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_lifecycle_state",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -3979,15 +3954,15 @@
       }
     },
     {
-      "id": "e64c86da39cc7d63259e",
+      "id": "6f6f225977a580ed8fe5",
       "path": "backend/src/growth/growthService.ts",
-      "line": 176,
+      "line": 179,
       "enclosing": "recommend",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_suppressions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4004,15 +3979,15 @@
       }
     },
     {
-      "id": "a9bc98213346f4889180",
+      "id": "9165c67959d8d407c5a5",
       "path": "backend/src/growth/growthService.ts",
-      "line": 182,
+      "line": 185,
       "enclosing": "recommend",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_recommendations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4029,15 +4004,15 @@
       }
     },
     {
-      "id": "98dac7d52540ad342f71",
+      "id": "1e602fb4373033690dd5",
       "path": "backend/src/growth/growthService.ts",
-      "line": 190,
+      "line": 193,
       "enclosing": "transitionLifecycle",
       "kind": "RPC_CANDIDATE",
       "target": "transition_growth_lifecycle",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "Existing authenticated managed lifecycle route supplies the server actor and validated project/subject/state/evidence. Canonical manage roles derive from the existing operations permission map. Service-only transaction locks current actor/project/member and conditionally upserts only the same tenant. Existing-row version increments atomically and uses database update time after conflict locking; retained activation lineage is not erased. Caller validates exact returned identity/state/evidence/version/time.",
         "reason": "Verified narrow transaction at ea2305700ae5c46ea24f612f9a09fbfcba4161cd disposable39126345772:113 fresh/upgrade migrations,148 security tests and3 browser tests,zero failures/skips. Actual two-writer versions6/7 and DB clock, current member/owner revocation, foreign tenant mutation during row wait, lineage retention, rollback and browser denial pass. Invocation, SQL and fixture unchanged in current source. Eleven focused tests and22 local SQL assertions also pass. Valid state transition policy and evidence attestation are unchanged, complete source/subject lifecycle remains unresolved. No provider action or whole-caller certification.",
@@ -4054,15 +4029,15 @@
       }
     },
     {
-      "id": "0ff7a593a9a39bb9d990",
+      "id": "217775d36b1bfb2a82d7",
       "path": "backend/src/growth/growthService.ts",
-      "line": 209,
+      "line": 212,
       "enclosing": "suppress",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_suppressions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4079,15 +4054,15 @@
       }
     },
     {
-      "id": "2348b62d71e0098ad828",
+      "id": "f38c186211e3bdc5cd0c",
       "path": "backend/src/growth/growthService.ts",
-      "line": 216,
+      "line": 219,
       "enclosing": "recordAttribution",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_attribution_touches",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4104,15 +4079,15 @@
       }
     },
     {
-      "id": "7d08ae0ba84845a09630",
+      "id": "3e008f78c752aac4b1db",
       "path": "backend/src/growth/growthService.ts",
-      "line": 224,
+      "line": 227,
       "enclosing": "createSegment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_segments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4129,40 +4104,15 @@
       }
     },
     {
-      "id": "6dd9eb303f850d1cf6ac",
-      "path": "backend/src/growth/growthService.ts",
-      "line": 231,
-      "enclosing": "createCampaign",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_segments",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
-      "semanticReview": {
-        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
-        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
-        "evidence": [
-          {
-            "path": "backend/src/growth/growthService.boundary.test.ts",
-            "marker": "growth replay cannot return another project event"
-          },
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real growth event replay cannot disclose a different project event"
-          }
-        ]
-      }
-    },
-    {
-      "id": "ff50c7488f7e24f96451",
+      "id": "9e2dc91ea6a697441853",
       "path": "backend/src/growth/growthService.ts",
       "line": 234,
       "enclosing": "createCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "growth_campaigns",
+      "target": "growth_segments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4179,15 +4129,15 @@
       }
     },
     {
-      "id": "c98374b117b236acdc2f",
+      "id": "0dde4c3ada0f6a0c7f1a",
       "path": "backend/src/growth/growthService.ts",
-      "line": 257,
+      "line": 237,
       "enclosing": "createCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4204,15 +4154,40 @@
       }
     },
     {
-      "id": "e83e42339b445dae10b7",
+      "id": "aa7b09be7d9eaa4a9eaa",
       "path": "backend/src/growth/growthService.ts",
-      "line": 272,
+      "line": 260,
+      "enclosing": "createCampaign",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "growth_campaigns",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
+      "semanticReview": {
+        "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+        "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/growth/growthService.boundary.test.ts",
+            "marker": "growth replay cannot return another project event"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real growth event replay cannot disclose a different project event"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fdcf63161ed9e5974934",
+      "path": "backend/src/growth/growthService.ts",
+      "line": 275,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_campaigns",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4229,15 +4204,15 @@
       }
     },
     {
-      "id": "5357b66041be775416aa",
+      "id": "475f72899defe3275ff6",
       "path": "backend/src/growth/growthService.ts",
-      "line": 277,
+      "line": 280,
       "enclosing": "processCampaign",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_segments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4254,15 +4229,15 @@
       }
     },
     {
-      "id": "0cbc7fdaff8fcf0277c9",
+      "id": "c1474c428e0318338162",
       "path": "backend/src/growth/growthService.ts",
-      "line": 279,
+      "line": 282,
       "enclosing": "processCampaign",
       "kind": "RPC_CANDIDATE",
       "target": "process_growth_in_app_campaign",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "Existing operations authority supplies its admitted project owner. Campaign creation validates exact action tuple and durable link receipt. In-app delivery service-only RPC locks current actor/project/member/campaign/action/approval, requires canonical verified action and matching approval digest/version, admits bounded consent/suppression cohort in one snapshot and atomically commits messages, notifications and completed receipt.",
         "reason": "Focused receipt and local SQL tests pass, actual canonical approval/rollback/two-client delivery/replay/foreign/stale/role tests prepared. Email remains unsupported. Legacy uncertain deliveries fail closed for recovery; no retroactive consent revocation or external provider delivery certification. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4275,15 +4250,15 @@
       }
     },
     {
-      "id": "652d5d70ef4f9ad9ddd0",
+      "id": "7e49c18af7e9d2a2ab4d",
       "path": "backend/src/growth/growthService.ts",
-      "line": 296,
+      "line": 299,
       "enclosing": "createExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4300,15 +4275,15 @@
       }
     },
     {
-      "id": "5664e753a684f27af527",
+      "id": "fe6817a5fc74340f5374",
       "path": "backend/src/growth/growthService.ts",
-      "line": 301,
+      "line": 304,
       "enclosing": "assignExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4325,15 +4300,15 @@
       }
     },
     {
-      "id": "511588ad5e19d699e94f",
+      "id": "2e0772f3a7d5c2dbe133",
       "path": "backend/src/growth/growthService.ts",
-      "line": 309,
+      "line": 312,
       "enclosing": "assignExperiment",
       "kind": "RPC_CANDIDATE",
       "target": "assign_growth_experiment",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "Authenticated growth endpoints retain the server actor and snapshot the loaded experiment or assignment before authority awaits. Existing canonical project-view roles are rechecked under current profile/project/member locks. Assignment locks and compares the complete experiment snapshot, then inserts or reads the unique owned cohort winner. Exposure locks the current owned experiment and exact immutable assignment tuple, writes first exposure once and returns the durable winning row on retries. Exact receipt checks reject substituted identity, variant, timestamps or evidence.",
         "reason": "Ten focused admission/boundary/engine tests and31 local SQL owner/parent/role/replay/receipt/rollback assertions pass. Actual two-client cohort and exposure winners, held authority/parent/configuration/assignment mutations, both write rollbacks and browser-role denial prepared for disposable CI. Subject identity, experiment status policy, event provenance and complete growth lifecycle remain unresolved. No provider calls or whole-caller certification.",
@@ -4350,15 +4325,15 @@
       }
     },
     {
-      "id": "46d6b0a0467c25a8b235",
+      "id": "5a66230d3ca8b6da41e2",
       "path": "backend/src/growth/growthService.ts",
-      "line": 330,
+      "line": 333,
       "enclosing": "exposeExperiment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_assignments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4375,15 +4350,15 @@
       }
     },
     {
-      "id": "5d242b708a645138b525",
+      "id": "2bba1c835da16479b688",
       "path": "backend/src/growth/growthService.ts",
-      "line": 336,
+      "line": 339,
       "enclosing": "exposeExperiment",
       "kind": "RPC_CANDIDATE",
       "target": "expose_growth_experiment",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "Authenticated growth endpoints retain the server actor and snapshot the loaded experiment or assignment before authority awaits. Existing canonical project-view roles are rechecked under current profile/project/member locks. Assignment locks and compares the complete experiment snapshot, then inserts or reads the unique owned cohort winner. Exposure locks the current owned experiment and exact immutable assignment tuple, writes first exposure once and returns the durable winning row on retries. Exact receipt checks reject substituted identity, variant, timestamps or evidence.",
         "reason": "Ten focused admission/boundary/engine tests and31 local SQL owner/parent/role/replay/receipt/rollback assertions pass. Actual two-client cohort and exposure winners, held authority/parent/configuration/assignment mutations, both write rollbacks and browser-role denial prepared for disposable CI. Subject identity, experiment status policy, event provenance and complete growth lifecycle remain unresolved. No provider calls or whole-caller certification.",
@@ -4400,15 +4375,15 @@
       }
     },
     {
-      "id": "aa4fee1ed0fd15757908",
+      "id": "69f945f3952abb99aa42",
       "path": "backend/src/growth/growthService.ts",
-      "line": 359,
+      "line": 362,
       "enclosing": "recordExperimentOutcome",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4425,15 +4400,15 @@
       }
     },
     {
-      "id": "516b9b0a546ad1ca868a",
+      "id": "cb6ad27c63645e069d74",
       "path": "backend/src/growth/growthService.ts",
-      "line": 363,
+      "line": 366,
       "enclosing": "recordExperimentOutcome",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_assignments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4450,15 +4425,15 @@
       }
     },
     {
-      "id": "2e65b91a39081e474448",
+      "id": "d56c4b7825d7f2b53b41",
       "path": "backend/src/growth/growthService.ts",
-      "line": 365,
+      "line": 368,
       "enclosing": "recordExperimentOutcome",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "analytics_events",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4475,15 +4450,15 @@
       }
     },
     {
-      "id": "76ca27c15377d98a4a93",
+      "id": "c663c74dad64079c4364",
       "path": "backend/src/growth/growthService.ts",
-      "line": 367,
+      "line": 370,
       "enclosing": "recordExperimentOutcome",
       "kind": "RPC_CANDIDATE",
       "target": "record_growth_experiment_outcome",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "Auth-mounted growth route supplies verified server actor. Existing project-view permission is rechecked against current locked profile/project/member. Service-only outcome transaction locks experiment, exposed assignment and event and verifies exact current owner/project/experiment relations before an insert-or-verified-replay. Service validates returned immutable outcome tuple.",
         "reason": "Fixed outcome parent/authority persistence boundary VERIFIED at4e7c5fe1fcaaf806cba6939018a51186facc6866, disposable39117989323: actual held membership removal and experiment/assignment/event mutation deny before writes, two concurrent clients return one immutable outcome, forced rollback and browser-role denial pass. Runtime method, SQL and fixture are unchanged. Thirteen focused tests and23 local SQL assertions/replay include corrupt replay preservation. Only this current-parent outcome boundary is closed. Subject-to-event attribution, event provenance and full experiment lifecycle remain unresolved. No whole caller certification.",
@@ -4496,15 +4471,15 @@
       }
     },
     {
-      "id": "1c0603159ceef14ae60d",
+      "id": "a277bc4aeecdecf24bd8",
       "path": "backend/src/growth/growthService.ts",
-      "line": 385,
+      "line": 388,
       "enclosing": "experimentResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4521,15 +4496,15 @@
       }
     },
     {
-      "id": "897a5e48192622058fcc",
+      "id": "ed4315ef29a1b2295862",
       "path": "backend/src/growth/growthService.ts",
-      "line": 390,
+      "line": 393,
       "enclosing": "experimentResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_assignments",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
@@ -4546,15 +4521,15 @@
       }
     },
     {
-      "id": "6f82ca03327425cc635d",
+      "id": "e83943315635e947cfcb",
       "path": "backend/src/growth/growthService.ts",
-      "line": 391,
+      "line": 394,
       "enclosing": "experimentResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "growth_experiment_outcomes",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
         "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",

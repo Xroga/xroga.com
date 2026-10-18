@@ -814,7 +814,7 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-9f1c260c05af9613",
+      "id": "OB-f72b7f5af401d8bc",
       "callerIds": [
         "5d2b5832658fd3299a4b",
         "10f3c1b47a240d3e5eec",
@@ -825,33 +825,32 @@
         "8eb28e7a820e5ba7e0d5",
         "53e04f9e265e59db81e5",
         "714fd3e95dccdeeb7cfa",
-        "2a10818ab5282f53a025",
-        "c1d15835cacb17c3e97f",
-        "b5b306489315f83f7e7c",
-        "4459eb37406d668dc783",
-        "cf57efbb17e154f1e6de",
-        "e64c86da39cc7d63259e",
-        "a9bc98213346f4889180",
-        "0ff7a593a9a39bb9d990",
-        "2348b62d71e0098ad828",
-        "7d08ae0ba84845a09630",
-        "6dd9eb303f850d1cf6ac",
-        "ff50c7488f7e24f96451",
-        "c98374b117b236acdc2f",
-        "e83e42339b445dae10b7",
-        "5357b66041be775416aa",
-        "652d5d70ef4f9ad9ddd0",
-        "5664e753a684f27af527",
-        "46d6b0a0467c25a8b235",
-        "aa4fee1ed0fd15757908",
-        "516b9b0a546ad1ca868a",
-        "2e65b91a39081e474448",
-        "1c0603159ceef14ae60d",
-        "897a5e48192622058fcc",
-        "6f82ca03327425cc635d"
+        "c4b48546dd042cc91bf0",
+        "954c42fd1a2437f38ed5",
+        "126ec04bb2325ac5e091",
+        "e8c8697a4352dcfcc9cc",
+        "6f6f225977a580ed8fe5",
+        "9165c67959d8d407c5a5",
+        "217775d36b1bfb2a82d7",
+        "f38c186211e3bdc5cd0c",
+        "3e008f78c752aac4b1db",
+        "9e2dc91ea6a697441853",
+        "0dde4c3ada0f6a0c7f1a",
+        "aa7b09be7d9eaa4a9eaa",
+        "fdcf63161ed9e5974934",
+        "475f72899defe3275ff6",
+        "7e49c18af7e9d2a2ab4d",
+        "fe6817a5fc74340f5374",
+        "5a66230d3ca8b6da41e2",
+        "69f945f3952abb99aa42",
+        "cb6ad27c63645e069d74",
+        "d56c4b7825d7f2b53b41",
+        "a277bc4aeecdecf24bd8",
+        "ed4315ef29a1b2295862",
+        "e83943315635e947cfcb"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -7699,12 +7698,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-ee06d256551e8e56",
+      "id": "OB-472fd4b0c7ae5c73",
       "callerIds": [
-        "0cbc7fdaff8fcf0277c9"
+        "c1474c428e0318338162"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -7756,12 +7755,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-785ddc8567d370c3",
+      "id": "OB-cb29ba25ac18b89d",
       "callerIds": [
-        "3e1df69e18246e1cf193"
+        "d837c5ed2b4022b6e71c"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -7844,12 +7843,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-612444d13d6255bc",
+      "id": "OB-3bb8f503ee5c6cbc",
       "callerIds": [
-        "ea8b430421923fa7f064"
+        "14f21b570e00cea3678a"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -7870,12 +7869,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-34c80b4cc58b98df",
+      "id": "OB-a4acd183bc021abc",
       "callerIds": [
-        "88507e6640248f4470fc"
+        "1dd8488d7322fb73b4ba"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -7896,12 +7895,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-05bcd67ae9d9b2ee",
+      "id": "OB-b58c154094283c6d",
       "callerIds": [
-        "6fe29938495992b03de5"
+        "5361369536d39e4f27a4"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -7922,12 +7921,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-235593db1d7f94e0",
+      "id": "OB-7c715def14a3bf36",
       "callerIds": [
-        "a16a5d06c352a7901267"
+        "7da72c17fc2cd9b645f6"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -8146,12 +8145,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-4b81015bffb51415",
+      "id": "OB-d30fbb18675714c5",
       "callerIds": [
-        "76ca27c15377d98a4a93"
+        "c663c74dad64079c4364"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8412,12 +8411,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-bbdcc3aec00683d5",
+      "id": "OB-03d89e258c10d36f",
       "callerIds": [
-        "20cc8f0f49dab70c2d8c"
+        "692414c732801b00c846"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8442,12 +8441,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-944daf645d01d295",
+      "id": "OB-a9c1e3128d130b97",
       "callerIds": [
-        "62fbf9b70d6626923ebc"
+        "5029c4f93698661c528c"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8506,12 +8505,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-acc6652be830fb84",
+      "id": "OB-9aedc90f5779eab5",
       "callerIds": [
-        "98dac7d52540ad342f71"
+        "1e602fb4373033690dd5"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8536,12 +8535,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-3a66aee5bdba014e",
+      "id": "OB-d60d0e0e4f109050",
       "callerIds": [
-        "511588ad5e19d699e94f"
+        "2e0772f3a7d5c2dbe133"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -8566,12 +8565,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-3a48b48641663361",
+      "id": "OB-dcf2f949f34a3d17",
       "callerIds": [
-        "5d242b708a645138b525"
+        "2bba1c835da16479b688"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [

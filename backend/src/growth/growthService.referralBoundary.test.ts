@@ -23,6 +23,9 @@ test('growth events require the exact existing project referral attribution befo
         return Promise.resolve(resolve({ data: [{ id: 'event', ...payload }], error: null }));
       },
     }; return q;
+  },async rpc(name:string,args:Record<string,unknown>){
+    assert.equal(name,'record_growth_event');inserts++;
+    return{data:{event:{id:'event',...(args.p_intent as object),tenant_id:args.p_tenant,occurred_at:new Date().toISOString()},duplicate:false},error:null};
   } };
   const service = new GrowthService(db as unknown as SupabaseClient);
   const input = { projectId: 'project', name: 'referral.attributed.v1', idempotencyKey: 'key', environment: 'test' as const,

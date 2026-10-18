@@ -17,9 +17,21 @@
   },
   "callerRemappings": [
     {"previousCallerId":"049cf6f3b8c71da16801","reviewPacketId":"B1-P2-05e42140dd947e21","path":"backend/src/growth/growthService.ts","enclosing":"linkIdentity","kind":"RPC_CANDIDATE","target":"link_growth_identity","reason":"Original separate insert-ignore and evidence refresh are now one atomic owner/member-fenced RPC. Preserve both frozen historical obligations at that same new operation."},
-    {"previousCallerId":"fe39e67000ca4c823db9","reviewPacketId":"B1-P2-05e42140dd947e21","path":"backend/src/growth/growthService.ts","enclosing":"linkIdentity","kind":"RPC_CANDIDATE","target":"link_growth_identity","reason":"Original evidence refresh no longer has an independent service-role table write. It is part of the same first-owner-preserving atomic RPC, not a deleted requirement."}
+    {"previousCallerId":"fe39e67000ca4c823db9","reviewPacketId":"B1-P2-05e42140dd947e21","path":"backend/src/growth/growthService.ts","enclosing":"linkIdentity","kind":"RPC_CANDIDATE","target":"link_growth_identity","reason":"Original evidence refresh no longer has an independent service-role table write. It is part of the same first-owner-preserving atomic RPC, not a deleted requirement."},
+    {"previousCallerId":"c1d15835cacb17c3e97f","reviewPacketId":"B1-P2-235593db1d7f94e0","path":"backend/src/growth/growthService.ts","enclosing":"recordEvent","kind":"RPC_CANDIDATE","target":"record_growth_event","reason":"The original independent insert and unique-conflict winner read now execute inside the same current-owner/member/parent-fenced RPC. Preserve both historical obligations at that new operation, without certifying either from consolidation."},
+    {"previousCallerId":"a16a5d06c352a7901267","reviewPacketId":"B1-P2-235593db1d7f94e0","path":"backend/src/growth/growthService.ts","enclosing":"recordEvent","kind":"RPC_CANDIDATE","target":"record_growth_event","reason":"The old post-conflict service-role read is inside the atomic event RPC, with current authority checks before creation or replay. Retain the historical replay obligation at the new guarded operation."}
   ],
   "decisions": [
+    {
+      "packetId":"B1-P2-235593db1d7f94e0",
+      "sourceSha256":"9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
+      "executionStatus":"IN_PROGRESS",
+      "finding":"DEMONSTRATED_STALE_EVENT_PARENT_CREATION_AND_REPLAY_FIXED_PENDING_REAL_LOCK_PROOF",
+      "actorTrace":"Authenticated growth mount supplies req.userId. OperationsService.permissions resolves project owner. Service-only record_growth_event rechecks and holds actor/project/member and exact campaign/experiment/referral/release/deployment tuples through insertion or replay, preserving normalized actor intent and the existing unique index.",
+      "invariant":"A parent transfer or membership revocation that wins the database lock cannot admit a stale event or replay. Same-owner and viewer creation, normalized duplicate intent, exact receipt and historical paused/completed labels remain supported. Analytics labels grant no reward or execution authority.",
+      "evidence":[{"path":"backend/src/growth/eventParentAdmission.test.ts","type":"FOCUSED_TEST","result":"PRE_FIX_FAILED_MISSING_REJECTION_THEN_PASSED","scope":"Stale snapshot cannot return replay or perform unguarded insert"},{"path":"backend/src/growth/eventReplay.local.integration.ts","type":"DISPOSABLE_LOCK_TEST","result":"NEW_CURRENT_PARENT_CASE_NOT_EXECUTED_AT_RECORD_CREATION","scope":"Observed parent/member locks, forged tenant, browser denial, duplicate/distinct HTTP concurrency, rollback and unchanged rewards"}],
+      "remaining":["Execute final-source real locks and unchanged referral-trigger regression","Reconcile broad growth packet without certifying unrelated writes","Phase3 authority and provider provenance are not inferred from analytics labels"]
+    },
     {
       "packetId":"B1-P2-08a1009a4a9b93a5",
       "sourceSha256":"a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
@@ -42,7 +54,7 @@
     },
     {
       "packetId": "B1-P2-05e42140dd947e21",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_STALE_PARENT_WRITE_FIXED_PENDING_REAL_LOCK_PROOF",
       "actorTrace": "Authenticated growth route supplies req.userId. Existing OperationsService.permissions preflight supplies the observed project owner. The former two service-role writes did not recheck that owner or current membership at commit. New service-only link_growth_identity locks current actor profile, project and membership through one first-owner-preserving identity mutation.",

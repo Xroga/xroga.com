@@ -518,7 +518,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
         "5d2b5832658fd3299a4b",
         "10f3c1b47a240d3e5eec",
@@ -529,30 +529,29 @@
         "8eb28e7a820e5ba7e0d5",
         "53e04f9e265e59db81e5",
         "714fd3e95dccdeeb7cfa",
-        "2a10818ab5282f53a025",
-        "c1d15835cacb17c3e97f",
-        "b5b306489315f83f7e7c",
-        "4459eb37406d668dc783",
-        "cf57efbb17e154f1e6de",
-        "e64c86da39cc7d63259e",
-        "a9bc98213346f4889180",
-        "0ff7a593a9a39bb9d990",
-        "2348b62d71e0098ad828",
-        "7d08ae0ba84845a09630",
-        "6dd9eb303f850d1cf6ac",
-        "ff50c7488f7e24f96451",
-        "c98374b117b236acdc2f",
-        "e83e42339b445dae10b7",
-        "5357b66041be775416aa",
-        "652d5d70ef4f9ad9ddd0",
-        "5664e753a684f27af527",
-        "46d6b0a0467c25a8b235",
-        "aa4fee1ed0fd15757908",
-        "516b9b0a546ad1ca868a",
-        "2e65b91a39081e474448",
-        "1c0603159ceef14ae60d",
-        "897a5e48192622058fcc",
-        "6f82ca03327425cc635d"
+        "c4b48546dd042cc91bf0",
+        "954c42fd1a2437f38ed5",
+        "126ec04bb2325ac5e091",
+        "e8c8697a4352dcfcc9cc",
+        "6f6f225977a580ed8fe5",
+        "9165c67959d8d407c5a5",
+        "217775d36b1bfb2a82d7",
+        "f38c186211e3bdc5cd0c",
+        "3e008f78c752aac4b1db",
+        "9e2dc91ea6a697441853",
+        "0dde4c3ada0f6a0c7f1a",
+        "aa7b09be7d9eaa4a9eaa",
+        "fdcf63161ed9e5974934",
+        "475f72899defe3275ff6",
+        "7e49c18af7e9d2a2ab4d",
+        "fe6817a5fc74340f5374",
+        "5a66230d3ca8b6da41e2",
+        "69f945f3952abb99aa42",
+        "cb6ad27c63645e069d74",
+        "d56c4b7825d7f2b53b41",
+        "a277bc4aeecdecf24bd8",
+        "ed4315ef29a1b2295862",
+        "e83943315635e947cfcb"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
@@ -4598,9 +4597,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
-        "0cbc7fdaff8fcf0277c9"
+        "c1474c428e0318338162"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Existing operations authority supplies its admitted project owner. Campaign creation validates exact action tuple and durable link receipt. In-app delivery service-only RPC locks current actor/project/member/campaign/action/approval, requires canonical verified action and matching approval digest/version, admits bounded consent/suppression cohort in one snapshot and atomically commits messages, notifications and completed receipt.",
@@ -4630,9 +4629,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
-        "3e1df69e18246e1cf193"
+        "d837c5ed2b4022b6e71c"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Authenticated growth route supplies the immutable server actor. Existing OperationsService preflight selects the project owner, then service-only link_growth_identity rechecks and locks current profile, owner and membership through a first-owner-preserving atomic identity write. Exact returned actor, tenant, project, anonymous key and evidence are validated. There is no direct-write fallback.",
@@ -4678,9 +4677,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
-        "ea8b430421923fa7f064"
+        "14f21b570e00cea3678a"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact existence read only. Verified server actor obtains existing project authority, then SELECT predicates constrain both tenant owner and requested project plus exact referenced identifier. The read performs no write or provider action, returns only ID or attribution tuple, and absent/foreign rows fail closed.",
@@ -4694,9 +4693,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
-        "88507e6640248f4470fc"
+        "1dd8488d7322fb73b4ba"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact existence read only. Verified server actor obtains existing project authority, then SELECT predicates constrain both tenant owner and requested project plus exact referenced identifier. The read performs no write or provider action, returns only ID or attribution tuple, and absent/foreign rows fail closed.",
@@ -4710,9 +4709,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
-        "6fe29938495992b03de5"
+        "5361369536d39e4f27a4"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact existence read only. Verified server actor obtains existing project authority, then SELECT predicates constrain both tenant owner and requested project plus exact referenced identifier. The read performs no write or provider action, returns only ID or attribution tuple, and absent/foreign rows fail closed.",
@@ -4726,9 +4725,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
-        "a16a5d06c352a7901267"
+        "7da72c17fc2cd9b645f6"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Original authenticated actor and normalized immutable event intent are retained across project authority awaits. Existing tenant/idempotency unique index serializes concurrent inserts. A losing unique-conflict request re-reads the winning row with exact tenant/key predicates and verifies actor/project/payload before returning a duplicate.",
@@ -4870,9 +4869,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
-        "76ca27c15377d98a4a93"
+        "c663c74dad64079c4364"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Auth-mounted growth route supplies verified server actor. Existing project-view permission is rechecked against current locked profile/project/member. Service-only outcome transaction locks experiment, exposed assignment and event and verifies exact current owner/project/experiment relations before an insert-or-verified-replay. Service validates returned immutable outcome tuple.",
@@ -5046,9 +5045,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
-        "20cc8f0f49dab70c2d8c"
+        "692414c732801b00c846"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing authenticated growth endpoint supplies server actor and validated project/name/version/events. Manage roles derive from the existing operations permission map. Service-only transaction locks current actor/project/member and validates the tenant, then preserves owned upsert semantics but conditionally refuses an existing foreign tenant row at conflict-update time. Caller validates exactly one returned definition and every submitted field.",
@@ -5066,9 +5065,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
-        "62fbf9b70d6626923ebc"
+        "5029c4f93698661c528c"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing authenticated activation endpoint supplies server actor, admitted tenant/project and validated subject UUID. View roles derive from the existing operations permission map, preserving viewer evaluation. Service-only transaction locks current actor/project/member and the chosen owned definition/deployment/event rows, applies the existing activationSatisfied membership and verification-state policy, then conditionally upserts lifecycle only for the same tenant. Exact returned owner/project/subject/definition/evidence/time receipt is required; internal source basis is not added to the public API.",
@@ -5110,9 +5109,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
-        "98dac7d52540ad342f71"
+        "1e602fb4373033690dd5"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing authenticated managed lifecycle route supplies the server actor and validated project/subject/state/evidence. Canonical manage roles derive from the existing operations permission map. Service-only transaction locks current actor/project/member and conditionally upserts only the same tenant. Existing-row version increments atomically and uses database update time after conflict locking; retained activation lineage is not erased. Caller validates exact returned identity/state/evidence/version/time.",
@@ -5130,9 +5129,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
-        "511588ad5e19d699e94f"
+        "2e0772f3a7d5c2dbe133"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Authenticated growth endpoints retain the server actor and snapshot the loaded experiment or assignment before authority awaits. Existing canonical project-view roles are rechecked under current profile/project/member locks. Assignment locks and compares the complete experiment snapshot, then inserts or reads the unique owned cohort winner. Exposure locks the current owned experiment and exact immutable assignment tuple, writes first exposure once and returns the durable winning row on retries. Exact receipt checks reject substituted identity, variant, timestamps or evidence.",
@@ -5150,9 +5149,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "callIds": [
-        "5d242b708a645138b525"
+        "2bba1c835da16479b688"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Authenticated growth endpoints retain the server actor and snapshot the loaded experiment or assignment before authority awaits. Existing canonical project-view roles are rechecked under current profile/project/member locks. Assignment locks and compares the complete experiment snapshot, then inserts or reads the unique owned cohort winner. Exposure locks the current owned experiment and exact immutable assignment tuple, writes first exposure once and returns the durable winning row on retries. Exact receipt checks reject substituted identity, variant, timestamps or evidence.",

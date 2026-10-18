@@ -2,6 +2,16 @@
 
 State: IN_PROGRESS. Command007 is not certified. Founder approved Phase2 only at Phase1 source `8a1a0bfa7878603dd488db98568577b2fb1896da`. Both supplied Phase2 directives have identical contents. Original criteria and Phase1 evidence remain unchanged.
 
+## October19 continuation, event admission
+
+Founder approved complete Phase2 continuation from623b002f. Its all11 successful workflows and four21-stage repeated branch/integrated manifests are preserved, not rerun as proof for changed source. Disposable39155725789 proved118 migrations,155 security tests and3 browser tests. Actual original007 criteria1,7,8 passed,2,3,4,5,6,9,10 remained blocked.
+
+Frozen packet `B1-P2-235593db1d7f94e0` and shared broad packet `B1-P2-b2b55b7ff19b02a8`: event creation/replay used stale project authority before an independent insert or early replay return. The new focused negative failed with missing rejection before repair. Existing growth transaction pattern now uses service-only `record_growth_event`, migration20261019000100, to hold current actor/project/member and exact campaign/experiment/referral/release/deployment references through insertion or replay. The unique index retains exact-intent idempotency. No reward, provider action, new engine or Phase3 authority is introduced. Paused/completed references remain legitimate historical labels, with current ownership still mandatory. Canonically absent/misbound release/deployment ownership is denied, not inferred from an opaque ID.
+
+All39 growth unit tests and20 synthetic SQL assertions pass. Synthetic SQL is not actual Supabase or contention proof. New actual two-connection test requires observed pg_blocking_pids for seven parent/member changes, denied stale writes, browser-role denial, current-member positives, duplicate/distinct HTTP writes, rollback, exact receipts and unchanged rewards. New-source disposable and integrated CI are still required. Both old event insert/winner historical obligations map to the one guarded RPC. Current638 candidates and366 manual gaps reflect one operation consolidation, not certification. All371 historical identities remain retained.
+
+Rollback must preserve safe admission. No row or constraint rewrite is introduced. If withdrawing the RPC, disable the event route rather than restoring unguarded inserts or early replay. No production migration is authorized.
+
 ## Finite execution plan
 
 | Work item | Original criteria | Concrete completion condition | Required proof |
