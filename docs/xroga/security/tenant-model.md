@@ -2,7 +2,9 @@
 
 Starting verified policy SHA: 224fb2b38c92e6351429a2c073a95bd265d1378e; evidence checkpoint 3f06da0b. No hosting, billing or production database change. Source report is Command 007 in research/inputs/batch-one-report.txt.
 
-Latest isolated proof: CI 38448018758, `934cb850`, three real browser tests and eleven real tenant tests PASS, plus full 68-file fresh/upgrade migrations and both builds. This supersedes earlier environment-blocked notes, not the full semantic/staging acceptance gate. Subsequent changes require rerun.
+Latest fully reconciled source is `d60292bbd91b552ba2bef33ceb48368e4b1c15c5`. Disposable run39123094921 passes108 fresh/upgrade migrations,143 security/concurrency tests and3 authenticated browser tests, with zero failures/skips. All11 source workflows pass. Downloaded aggregate39123094918 manifests each pass21 stages twice on the branch and integrated`22b92140c8163995f9e5857126fdd37f6f2c4766`, with no source mutation. Newer preview admission/heartbeat source`696322f0` and subsequent growth activation work require their own exact-source proof.
+
+The canonical caller register currently records645 reviewed candidates,zero unreviewed and384 unresolved gaps, with zero whole callers security-certified. Narrow statement/transaction closures require source tracing and actual isolated evidence. They don't certify their entire upstream workflow. The registry has10 named global exceptions. Its count and integrity checks don't establish tenant acceptance. These current records supersede the historical checkpoints below without discarding their failed-run or scope limitations.
 
 ## Additional semantic boundaries under verification
 

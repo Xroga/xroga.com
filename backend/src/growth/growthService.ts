@@ -3,6 +3,8 @@ import { isDeepStrictEqual } from 'node:util';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { OperationsService, OperationsServiceError } from '../operations/operationsService.js';
+import { hasOperationsPermission } from '../operations/permissions.js';
+import type { OperationsRole } from '../operations/types.js';
 import { activationSatisfied, deterministicVariant, experimentResult, recommendationDecision, redactGrowthPayload, validateEventName } from './growthEngine.js';
 
 type Row = Record<string, any>;
@@ -121,7 +123,19 @@ export class GrowthService {
     input = { ...input, requiredEvents: [...input.requiredEvents] };
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
     if (!input.requiredEvents.length || input.requiredEvents.some((name) => !validateEventName(name) || name === 'onboarding.started.v1')) throw new GrowthServiceError('invalid_activation', 'Activation requires registered meaningful outcome events', 400);
-    const rows = await query<Row[]>(this.db.from('growth_activation_definitions').upsert({ tenant_id: tenantId, project_id: input.projectId, name: input.name, version: input.version, required_event_names: input.requiredEvents, minimum_distinct_events: input.requiredEvents.length, active: true }, { onConflict: 'project_id,version' }).select('*'), 'Activation definition failed');
+    const roles:OperationsRole[]=['viewer','operator','release_manager','recovery_manager','admin'];
+    const {data:rows,error}=await this.db.rpc('define_growth_activation',{
+      p_actor:userId,p_tenant:tenantId,p_project:input.projectId,p_name:input.name,p_version:input.version,p_events:input.requiredEvents,
+      p_allowed_roles:roles.filter(role=>hasOperationsPermission(role,'manage_automation')),
+    });
+    if(error?.code==='42501')throw new GrowthServiceError('forbidden','Growth management is not permitted',403);
+    if(error?.code==='40001')throw new GrowthServiceError('conflict','Activation definition ownership changed',409);
+    if(error?.code==='22023'||error?.code==='22003')throw new GrowthServiceError('invalid_activation','Activation definition is invalid',400);
+    if(error||!Array.isArray(rows)||rows.length!==1||typeof rows[0]?.id!=='string'||!rows[0].id
+      ||rows[0].tenant_id!==tenantId||rows[0].project_id!==input.projectId||rows[0].name!==input.name||rows[0].version!==input.version
+      ||!isDeepStrictEqual(rows[0].required_event_names,input.requiredEvents)||rows[0].minimum_distinct_events!==input.requiredEvents.length||rows[0].active!==true){
+      throw new GrowthServiceError('storage_unavailable','Activation definition persistence could not be verified',503);
+    }
     return rows[0];
   }
 

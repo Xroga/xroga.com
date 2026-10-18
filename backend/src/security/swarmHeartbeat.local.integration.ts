@@ -17,7 +17,7 @@ export function registerSwarmHeartbeatTests(admin:SupabaseClient,getUsers:()=>re
     const context=createTenantContext({userId:owner.id,via:'persisted_owner'});
     t.after(async()=>{assert.equal((await admin.from('swarm_runs').delete().in('id',[run,foreign])).error,null);});
     assert.equal((await admin.from('swarm_runs').insert([owner,other].map((user,index)=>({id:index?foreign:run,user_id:user.id,
-      prompt:'Immutable heartbeat canary',status:'running',worker_id:worker,lease_generation:generation,heartbeat_at:'2000-01-01T00:00:00.000Z',
+      prompt:'Immutable heartbeat canary',status:'running',worker_id:worker,lease_generation:generation,heartbeat_at:new Date().toISOString(),
       output:{canary:true},events:[],last_sequence:7,iteration_count:2})))).error,null);
     const snapshot=async(id=run)=>{
       const result=await admin.from('swarm_runs').select('id,user_id,prompt,status,worker_id,lease_generation,heartbeat_at,output,events,last_sequence,iteration_count,completed_at').eq('id',id).single();

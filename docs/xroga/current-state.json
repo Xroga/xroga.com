@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "a3e8c7a9a7273c7bc52d89a3bdba508410450d2c",
-    "sourceTimestampUtc": "2026-10-18T16:29:25+05:00",
-    "auditStartedUtc": "2026-10-18T11:35:28.760Z",
+    "sha": "696322f0813a4e08b9d324e2bb653dfb2e2d657e",
+    "sourceTimestampUtc": "2026-10-18T16:39:44+05:00",
+    "auditStartedUtc": "2026-10-18T11:44:54.200Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -12190,7 +12190,7 @@
       ],
       "callers": [
         "backend/src/growth/growthEngine.test.ts:3",
-        "backend/src/growth/growthService.ts:6"
+        "backend/src/growth/growthService.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -12222,7 +12222,7 @@
       "id": "surface:4cd464f7016cf52503dd",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sha256": "6bac046d4f374a87676caa1ca05fe9556597c899528114cd9611a4cc3720dafc",
+      "sha256": "411e3b930a3a1cc490dc90fc94e4a7fcae00caba9b56e884a298df2807288e24",
       "symbols": [
         "GrowthService",
         "GrowthServiceError",
@@ -12254,6 +12254,7 @@
         "reference",
         "replay",
         "result",
+        "roles",
         "row",
         "rows",
         "segment",
@@ -12263,6 +12264,8 @@
       "imports": [
         "../config/supabase.js",
         "../operations/operationsService.js",
+        "../operations/permissions.js",
+        "../operations/types.js",
         "./growthEngine.js",
         "@supabase/supabase-js",
         "node:crypto",
@@ -12271,12 +12274,15 @@
       "runtimeImports": [
         "backend/src/config/supabase.ts",
         "backend/src/growth/growthEngine.ts",
-        "backend/src/operations/operationsService.ts"
+        "backend/src/operations/operationsService.ts",
+        "backend/src/operations/permissions.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/growth/activationDefinition.local.integration.ts:7",
+        "backend/src/growth/activationDefinition.test.ts:4",
         "backend/src/growth/campaignReceipt.local.integration.ts:6",
         "backend/src/growth/delivery.local.integration.ts:1",
         "backend/src/growth/deliveryReceipt.test.ts:1",
@@ -12318,41 +12324,45 @@
         "node:crypto",
         "node:util"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/growth/growthService.ts#hasOperationsPermission"
+      ],
       "tenantBoundary": [
-        "backend/src/growth/growthService.ts:41 (tenant_id)",
-        "backend/src/growth/growthService.ts:42 (tenant_id)",
         "backend/src/growth/growthService.ts:43 (tenant_id)",
         "backend/src/growth/growthService.ts:44 (tenant_id)",
         "backend/src/growth/growthService.ts:45 (tenant_id)",
         "backend/src/growth/growthService.ts:46 (tenant_id)",
         "backend/src/growth/growthService.ts:47 (tenant_id)",
         "backend/src/growth/growthService.ts:48 (tenant_id)",
-        "backend/src/growth/growthService.ts:72 (tenant_id)",
-        "backend/src/growth/growthService.ts:75 (tenant_id)",
-        "backend/src/growth/growthService.ts:79 (tenant_id)",
-        "backend/src/growth/growthService.ts:86 (tenant_id)",
-        "backend/src/growth/growthService.ts:97 (tenant_id)",
-        "backend/src/growth/growthService.ts:111 (user_id)",
-        "backend/src/growth/growthService.ts:111 (tenant_id)",
-        "backend/src/growth/growthService.ts:130 (tenant_id)",
-        "backend/src/growth/growthService.ts:133 (user_id)",
-        "backend/src/growth/growthService.ts:133 (tenant_id)",
-        "backend/src/growth/growthService.ts:134 (user_id)",
+        "backend/src/growth/growthService.ts:49 (tenant_id)",
+        "backend/src/growth/growthService.ts:50 (tenant_id)",
+        "backend/src/growth/growthService.ts:74 (tenant_id)",
+        "backend/src/growth/growthService.ts:77 (tenant_id)",
+        "backend/src/growth/growthService.ts:81 (tenant_id)",
+        "backend/src/growth/growthService.ts:88 (tenant_id)",
+        "backend/src/growth/growthService.ts:99 (tenant_id)",
+        "backend/src/growth/growthService.ts:113 (user_id)",
+        "backend/src/growth/growthService.ts:113 (tenant_id)",
+        "backend/src/growth/growthService.ts:144 (tenant_id)",
+        "backend/src/growth/growthService.ts:147 (user_id)",
+        "backend/src/growth/growthService.ts:147 (tenant_id)",
         "backend/src/growth/growthService.ts:148 (user_id)",
-        "backend/src/growth/growthService.ts:149 (user_id)",
-        "backend/src/growth/growthService.ts:150 (tenant_id)",
-        "backend/src/growth/growthService.ts:151 (tenant_id)",
-        "backend/src/growth/growthService.ts:194 (tenant_id)",
-        "backend/src/growth/growthService.ts:220 (tenant_id)",
-        "backend/src/growth/growthService.ts:240 (tenant_id)",
-        "backend/src/growth/growthService.ts:268 (tenant_id)",
-        "backend/src/growth/growthService.ts:280 (tenant_id)",
-        "backend/src/growth/growthService.ts:291 (tenant_id)",
-        "backend/src/growth/growthService.ts:293 (tenant_id)",
-        "backend/src/growth/growthService.ts:318 (tenant_id)"
+        "backend/src/growth/growthService.ts:162 (user_id)",
+        "backend/src/growth/growthService.ts:163 (user_id)",
+        "backend/src/growth/growthService.ts:164 (tenant_id)",
+        "backend/src/growth/growthService.ts:165 (tenant_id)",
+        "backend/src/growth/growthService.ts:208 (tenant_id)",
+        "backend/src/growth/growthService.ts:234 (tenant_id)",
+        "backend/src/growth/growthService.ts:254 (tenant_id)",
+        "backend/src/growth/growthService.ts:282 (tenant_id)",
+        "backend/src/growth/growthService.ts:294 (tenant_id)",
+        "backend/src/growth/growthService.ts:305 (tenant_id)",
+        "backend/src/growth/growthService.ts:307 (tenant_id)",
+        "backend/src/growth/growthService.ts:332 (tenant_id)"
       ],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/growth/growthService.ts#hasOperationsPermission"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [
         "backend/src/growth/growthService.ts#deploymentVerified",
@@ -12362,6 +12372,8 @@
         "backend/src/growth/growthService.ts#validateEventName"
       ],
       "testCoverage": [
+        "backend/src/growth/activationDefinition.local.integration.ts",
+        "backend/src/growth/activationDefinition.test.ts",
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
         "backend/src/growth/deliveryReceipt.test.ts",
@@ -15916,6 +15928,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/growth/growthService.ts:6",
         "backend/src/operations/benchmarkAdapter.test.ts:10",
         "backend/src/operations/operationsEngine.test.ts:8",
         "backend/src/operations/operationsService.ts:9",
@@ -23559,7 +23572,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:663",
+        "backend/src/security/tenantIsolation.local.integration.ts:665",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -95490,6 +95503,13 @@
       "version": "20261018001400",
       "order": 110,
       "sha256": "1822e67dac84e7bb6f4bd85a24faceefb43dea65880923659f6d92bde241f1dd"
+    },
+    {
+      "id": "migration:afac00119b9683133f39",
+      "sourcePath": "supabase/migrations/20261018001500_growth_activation_definition.sql",
+      "version": "20261018001500",
+      "order": 111,
+      "sha256": "0a5a2760c3c55ead71613772e7dd36c856dc6bdc3c55a3cd06ff79df23d284b2"
     }
   ],
   "workflows": [
@@ -102951,6 +102971,20 @@
       "id": "test-suite:c9e64862eb7c7cfedf8a",
       "sourcePath": "backend/src/e2e/xrogaGoldenJourneys.test.ts",
       "declaredTests": 12,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:add0923a08cf3c7f7a3c",
+      "sourcePath": "backend/src/growth/activationDefinition.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:75c511e71fcf9f951367",
+      "sourcePath": "backend/src/growth/activationDefinition.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
