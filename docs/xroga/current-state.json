@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "42c4e71b9d964be1c049480735a8cf7ba653a314",
-    "sourceTimestampUtc": "2026-10-18T20:48:26+05:00",
-    "auditStartedUtc": "2026-10-18T15:51:26.145Z",
+    "sha": "914121203fb54d8326b3f8dacbdd7e9f27e4a1ac",
+    "sourceTimestampUtc": "2026-10-18T20:53:08+05:00",
+    "auditStartedUtc": "2026-10-18T15:59:16.941Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -87404,9 +87404,10 @@
       "id": "surface:57ac0568ca77895c0177",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/verify-phase-one.mjs",
-      "sha256": "ec2b95407fc4dfc39cb2b1a850caf5798040b91c2dedd05a4d9d126d6f29fd4b",
+      "sha256": "32049a7adfbc4359deda7c7e8e3d1a670041cd8e024f6a4982c9caccb5cc8749",
       "symbols": [
         "arg",
+        "baselineFixtureLog",
         "browser",
         "c",
         "collectPhaseEvidence",
@@ -106744,7 +106745,7 @@
     {
       "id": "test-suite:a298216fd7b1cf5a7740",
       "sourcePath": "scripts/xroga/verify-phase-one.test.mjs",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

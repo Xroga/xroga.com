@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {validatePhaseReceipt,implementationBindingsAtSource} from './verify-phase-one.mjs';
+import {validatePhaseReceipt,implementationBindingsAtSource,baselineFixtureLog} from './verify-phase-one.mjs';
 import {buildPhaseOne} from './phase-one.mjs';
 function fixture(){return {version:1,collection:'GH_READ_ONLY_EXACT_SOURCE_AND_DOWNLOADED_ARTIFACTS',sourceSha:'a'.repeat(40),integratedSha:'b'.repeat(40),
   aggregateRun:'123',disposableRun:'456',
@@ -24,4 +24,9 @@ test('prior accepted source bindings come from immutable Git objects rather than
   assert.ok(bindings.length>100);assert.ok(bindings.some(b=>b.path==='backend/src/growth/growthService.ts'));
   assert.ok(!bindings.some(b=>b.path==='scripts/security/tenant-acceptance.mjs'));
   assert.equal(implementationBindingsAtSource(source),bindings);
+});
+test('acceptance collects both baseline failure-propagation and inventory policy fixture logs',()=>{
+  const files=['branch/baseline-negative-fixtures.log','branch/inventory-and-ledger-fixtures.log','branch/backend-unit-tests.log'];
+  const log=baselineFixtureLog(files,p=>p.includes('baseline-negative')?'ok 1 - genuine compiler failure stops baseline':p.includes('inventory-and-ledger')?'ok 1 - valid source-bound criterion proof':'irrelevant');
+  assert.ok(log.includes('genuine compiler failure'));assert.ok(log.includes('valid source-bound criterion proof'));assert.ok(!log.includes('irrelevant'));
 });

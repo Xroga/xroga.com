@@ -52,6 +52,9 @@ export function validatePhaseReceipt(receipt,bindings){
   for(const c of receipt.criteria)assert.equal(c.originalText,original.get(c.id),'Original criterion wording or ID changed');
   assert.match(receipt.manifestSetSha256,/^[a-f0-9]{64}$/);return receipt;
 }
+export function baselineFixtureLog(files,readLog){
+  return files.filter(p=>/(?:inventory-and-ledger-fixtures|baseline-negative-fixtures)\.log$/.test(p)).map(readLog).join('\n');
+}
 
 export function collectPhaseEvidence({source,aggregate,disposable,directory}){
   assert.equal(git(['rev-parse','HEAD']),source,'Collect on the exact candidate checkout');
@@ -67,7 +70,7 @@ export function collectPhaseEvidence({source,aggregate,disposable,directory}){
   for(const rows of grouped.values()){assert.equal(rows.length,2);compareBaselineRuns(rows[0].value,rows[1].value);
     for(const row of rows)for(const stage of row.value.results)if(stage.skipped!==undefined)assert.equal(stage.skipped,0,'Mandatory Linux CI tests must not be hidden by skips');}
   const integratedSha=[...grouped.keys()].find(s=>s!==source);
-  const fixtureLog=files.filter(p=>/inventory-and-ledger-fixtures\.log$/.test(p)).map(p=>read(directory+'/'+p)).join('\n');
+  const fixtureLog=baselineFixtureLog(files,p=>read(directory+'/'+p));
   for(const name of ['fully valid synthetic ten-criterion proof passes','all eight approved supplemental owners','committed Phase1 mappings cannot silently drift'])assert.ok(fixtureLog.includes(`ok `)&&fixtureLog.includes(name),`Missing executed Phase1 fixture:${name}`);
   const log=gh(['run','view',disposable,'--log']);
   const migration=log.match(/full_history=(\d+); upgrade=PASS; fresh=PASS; no_production_data=true/);assert.ok(migration);
