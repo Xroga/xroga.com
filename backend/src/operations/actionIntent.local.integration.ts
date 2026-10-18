@@ -12,11 +12,19 @@ export function registerActionIntentTests(admin: SupabaseClient, getUsers: () =>
     assert.equal(process.env.SUPABASE_URL, 'http://127.0.0.1:54321');
     const [owner, other] = getUsers(), service = new OperationsService(admin);
     const releases = [randomUUID(),randomUUID()], deployments = [randomUUID(),randomUUID()], keys: string[] = [];
+    const prior = await admin.from('operations_memberships').select('*').eq('project_id', owner.project).eq('member_user_id', other.id).maybeSingle();
+    assert.equal(prior.error, null);
+    const membershipId = prior.data?.id ?? randomUUID();
     t.after(async () => {
       if (keys.length) assert.equal((await admin.from('operations_actions').delete().eq('user_id', owner.id).in('idempotency_key', keys)).error, null);
       assert.equal((await admin.from('production_releases').delete().in('id', releases)).error, null);
       assert.equal((await admin.from('deployment_status').delete().in('id', deployments)).error, null);
+      if (prior.data) assert.equal((await admin.from('operations_memberships').upsert(prior.data)).error, null);
+      else assert.equal((await admin.from('operations_memberships').delete().eq('id', membershipId)).error, null);
     });
+    assert.equal((await admin.from('operations_memberships').upsert({ id: membershipId, user_id: owner.id, project_id: owner.project,
+      member_user_id: other.id, role: 'release_manager', created_by: owner.id }, { onConflict: 'project_id,member_user_id' })).error, null);
+    assert.equal((await service.permissions(other.id, owner.project)).role, 'release_manager');
     for (const [index,user] of [owner,other].entries()) {
       assert.equal((await admin.from('production_releases').insert({ id: releases[index], user_id: user.id, project_id: user.project,
         commit_sha: '0'.repeat(40), artifact_digest: randomUUID(), environment: 'preview', manifest: {}, state: 'created', created_by: user.id })).error, null);
@@ -26,8 +34,8 @@ export function registerActionIntentTests(admin: SupabaseClient, getUsers: () =>
     for (const [targetType,actionType,targets] of [['release','promote_release',releases],['deployment','prepare_repair',deployments]] as const) {
       const key = randomUUID(); keys.push(key);
       const input = { projectId: owner.project, targetType, actionType, targetId: targets[1], targetVersion: 1, idempotencyKey: key, confirmed: false };
-      await assert.rejects(service.createAction(owner.id, input), { code: 'forbidden', statusCode: 403 });
-      const draft = await service.createAction(owner.id, { ...input, targetId: targets[0] });
+      await assert.rejects(service.createAction(other.id, input), { code: 'forbidden', statusCode: 403 });
+      const draft = await service.createAction(other.id, { ...input, targetId: targets[0] });
       assert.equal(draft.status, 'confirmation_required'); assert.equal(draft.target_id, targets[0]);
       const runs = await admin.from('operations_action_runs').select('id').eq('action_id', draft.id);
       assert.equal(runs.error, null); assert.deepEqual(runs.data, []);

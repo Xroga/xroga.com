@@ -10,7 +10,7 @@ test('missing authorized target is denied before any action or audit insert',asy
       reads.push(table);
       const query={select(){return query;},eq(){return query;},async maybeSingle(){
         if(table==='projects')return {data:{id:'project',user_id:'actor'},error:null};
-        if(table==='profiles')return {data:{role:'member'},error:null};
+        if(table==='profiles')return {data:{role:targetType==='release'?'admin':'member'},error:null};
         return {data:null,error:null};
       },then(resolve:(value:unknown)=>unknown){return Promise.resolve(resolve({data:[],error:null}));},
       insert(){throw new Error('Missing target must never produce an action or audit write');}};
@@ -21,6 +21,8 @@ test('missing authorized target is denied before any action or audit insert',asy
     const actionType = actionTypes[targetType];
     await assert.rejects(service.createAction('actor',{projectId:'project',actionType,targetType,targetId:'outside-project',targetVersion:0,idempotencyKey:'fixture',confirmed:true}),{code:'forbidden',statusCode:403});
     assert.ok(!reads.includes('operations_actions'));assert.ok(!reads.includes('production_audit_log'));
+    if (targetType==='release') assert.ok(reads.includes('production_releases'));
+    if (targetType==='deployment') assert.ok(reads.includes('deployment_status'));
   }
 });
 

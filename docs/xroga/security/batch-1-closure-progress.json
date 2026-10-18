@@ -66,6 +66,21 @@
     "remaining": "Constant release version compatibility is preserved; mutable release state, approval freshness and provider authorization are not certified. New lookup stays REVIEWED_GAP pending full evidence."
   },
   "latestCandidate": {
+    "source": "cc09d46898355ebe0f7eaa163fbeb21234e9f56a",
+    "integrated": "5af4cd3b25853eecab91f2a19b31d373c96a9534",
+    "disposableRun": "39113488461",
+    "result": "FAILED",
+    "securityPass": 128,
+    "securityFail": 2,
+    "browserPass": 3,
+    "browserFail": 0,
+    "verifiedSubset": "Actual completion rollback at all four writes and browser-role denial PASS. Existing real admitted action execution, concurrent action creation and campaign error-contract tests PASS. Browser assertions pass without timeout/retry changes.97 migrations fresh/upgrade PASS.",
+    "failures": "Release positive fixture used owner/operator without promote_release permission. Competing completion observation reused pg_stat_activity cached transaction snapshot. Fixtures now use an explicit disposable release-manager membership with restoration and clear statistics snapshots on each poll. Original role and both-waiter assertions remain unchanged. No claim that the race test passed yet.",
+    "statisticsReference": "https://www.postgresql.org/docs/current/monitoring-stats.htm",
+    "aggregateRun": "39113488467",
+    "aggregateStatus": "PASS: branchcc09d468 and integrated5af4cd3b25853eecab91f2a19b31d373c96a9534 each pass21 stages twice, sourceTreeMutated=false. Separately failed two disposable fixture assertions remain unwaived."
+  },
+  "previousCandidate": {
     "source": "139bf16d7978deb1e7202e9d0a2a800deb8589c4",
     "integrated": "c48fc1b0f695e551b40eaa3c864f2012525eb820",
     "disposableRun": "39112431193",

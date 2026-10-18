@@ -43,6 +43,7 @@ export function registerBusinessConfirmationClaimTests(admin: SupabaseClient, ge
         pending = Array.from({ length: mode === 'competing' ? 2 : 1 }, () => Promise.resolve(admin.rpc('claim_business_action_confirmation', args).maybeSingle()));
         let blocked = false;
         for (let i = 0; i < 150; i++) {
+          await db.query('select pg_stat_clear_snapshot()');
           const waiting = await db.query("select pid from pg_stat_activity where pid<>pg_backend_pid() and wait_event_type='Lock' and query like '%claim_business_action_confirmation%'");
           if ((waiting.rowCount ?? 0) >= pending.length) { blocked = true; break; } await delay(20);
         }

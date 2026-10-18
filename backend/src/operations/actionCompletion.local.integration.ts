@@ -77,6 +77,7 @@ export function registerActionCompletionTests(admin: SupabaseClient, getUsers: (
         p_evidence_id: evidence, p_provider: 'internal_database', p_result: result }));
       let blocked = false;
       for (let i = 0; i < 150; i++) {
+        await db.query('select pg_stat_clear_snapshot()');
         const rows = await db.query("select pid from pg_stat_activity where pid<>pg_backend_pid() and wait_event_type='Lock' and query like '%complete_operations_action%'");
         if (rows.rowCount) { blocked = true; break; } await delay(20);
       }
@@ -97,6 +98,7 @@ export function registerActionCompletionTests(admin: SupabaseClient, getUsers: (
         p_expected: admitted.data, p_evidence_id: `ev_${randomUUID()}`, p_provider: 'internal_database', p_result: result })));
       blocked = false;
       for (let i = 0; i < 150; i++) {
+        await db.query('select pg_stat_clear_snapshot()');
         const rows = await db.query("select pid from pg_stat_activity where pid<>pg_backend_pid() and wait_event_type='Lock' and query like '%complete_operations_action%'");
         if ((rows.rowCount ?? 0) >= 2) { blocked = true; break; } await delay(20);
       }
