@@ -1,0 +1,670 @@
+/* S05 tile art. Colour comes from the tile (--a accent, --b second accent, --am muted accent, --n1..--n3 neutrals);
+   `[data-on]` is set on the tile by S05Capabilities on hover, keyboard focus or tap. Rest: neutral greys and a muted
+   accent. On: the accent saturates and each piece moves in its own way (transform, opacity and stroke offsets only;
+   loops run only while a tile is on). */
+.art {
+  --e: cubic-bezier(0.22, 1, 0.36, 1);
+  --snap: cubic-bezier(0.3, 1.35, 0.45, 1);
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  width: var(--art-w, 100%);
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+}
+.art * {
+  transform-box: fill-box;
+}
+
+/* ---- palette ---- */
+.ink {
+  fill: var(--n2);
+  transition: fill 200ms ease;
+}
+.inkL {
+  fill: var(--n3);
+  transition: fill 240ms ease;
+}
+.inkD,
+.cell {
+  fill: var(--n1);
+  transition: fill 200ms ease;
+}
+.paper {
+  fill: rgba(250, 251, 253, 0.86);
+}
+.inkStroke,
+.faint,
+.wire,
+.track {
+  fill: none;
+  stroke: var(--n3);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 240ms ease;
+}
+.inkStroke {
+  stroke-width: 3;
+}
+/* the path at rest: the muted accent, so a resting graphic already shows its colour */
+.faint {
+  stroke: var(--am);
+  stroke-width: 2.6;
+}
+.wire {
+  stroke-width: 3;
+}
+.acc {
+  fill: var(--am);
+  transition: fill 220ms ease;
+}
+.accM {
+  fill: var(--am);
+  transition: fill 260ms ease;
+}
+.acc2 {
+  fill: var(--b);
+}
+.acc2M {
+  fill: var(--bm);
+  transition: fill 220ms ease;
+}
+.accS {
+  fill: none;
+  stroke: var(--a);
+  stroke-width: 3.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+[data-on] .acc {
+  fill: var(--a);
+}
+[data-on] .accM {
+  fill: var(--ah);
+}
+[data-on] .acc2M {
+  fill: var(--b);
+}
+
+/* a stroke that draws itself (paths carry pathLength="1") */
+.draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 620ms var(--e) var(--d, 0ms);
+}
+[data-on] .draw {
+  stroke-dashoffset: 0;
+}
+
+/* ---- 01 Travel: the route draws, a marker rides it, the destination lands, the itinerary settles ---- */
+.dest {
+  stroke: var(--am);
+  transform-origin: center;
+  transition:
+    stroke 200ms ease 420ms,
+    transform 320ms var(--snap) 420ms;
+}
+[data-on] .dest {
+  stroke: var(--a);
+  transform: scale(1.18);
+}
+.destDot {
+  transform-origin: center;
+  transform: scale(0);
+  transition: transform 280ms var(--snap) 480ms;
+}
+[data-on] .destDot {
+  transform: scale(1);
+}
+.mark {
+  opacity: 0;
+  transform: translate(34px, 112px) rotate(-66deg);
+  transform-box: view-box;
+}
+[data-on] .mark {
+  animation: tvMark 640ms var(--e) forwards;
+}
+@keyframes tvMark {
+  0% {
+    opacity: 1;
+    transform: translate(34px, 112px) rotate(-66deg);
+  }
+  25% {
+    transform: translate(69.6px, 63.8px) rotate(-40deg);
+  }
+  50% {
+    transform: translate(116px, 41.5px) rotate(-6deg);
+  }
+  75% {
+    transform: translate(164.8px, 43.9px) rotate(24deg);
+  }
+  92% {
+    opacity: 1;
+    transform: translate(204px, 68px) rotate(46deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(206px, 70px) rotate(46deg);
+  }
+}
+.itin > * {
+  opacity: 0.5;
+  transform: translateX(10px);
+  transition:
+    opacity 260ms ease,
+    transform 380ms var(--e);
+}
+[data-on] .itin > * {
+  opacity: 1;
+  transform: none;
+}
+[data-on] .itin > :nth-child(1) {
+  transition-delay: 520ms;
+}
+[data-on] .itin > :nth-child(2) {
+  transition-delay: 580ms;
+}
+[data-on] .itin > :nth-child(3) {
+  transition-delay: 640ms;
+}
+
+/* ---- 02 Email & Calendars: the envelope opens, the message travels into a calendar slot, the times align ---- */
+.flap {
+  transform-origin: 50% 0;
+  transition: transform 240ms var(--e);
+}
+[data-on] .flap {
+  transform: scaleY(-1);
+}
+[data-on] .letter {
+  animation: mlLetter 640ms var(--e) 120ms forwards;
+}
+@keyframes mlLetter {
+  0% {
+    transform: none;
+  }
+  38% {
+    opacity: 1;
+    transform: translate(0, -34px);
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(146px, 8px) scale(0.26);
+  }
+}
+.letter {
+  transform-origin: 0 0;
+}
+.slot {
+  opacity: 0;
+  transform-origin: center;
+  transform: scale(0.4);
+  transition:
+    opacity 180ms ease 620ms,
+    transform 300ms var(--snap) 620ms;
+}
+[data-on] .slot {
+  opacity: 1;
+  transform: none;
+}
+.ticks > * {
+  opacity: 0.45;
+  transition:
+    opacity 240ms ease,
+    transform 320ms var(--e);
+}
+.ticks > :nth-child(1) {
+  transform: translateX(-9px);
+}
+.ticks > :nth-child(2) {
+  transform: translateX(7px);
+}
+[data-on] .ticks > * {
+  opacity: 1;
+  transform: none;
+  transition-delay: 700ms;
+}
+
+/* ---- 03 CRM & Support: contacts link to the record one by one, the support status advances ---- */
+.link {
+  --d: calc(var(--i) * 90ms);
+}
+.node {
+  transition: fill 220ms ease calc(160ms + var(--i) * 90ms);
+}
+[data-on] .node {
+  fill: var(--a);
+}
+.step {
+  transform-origin: center;
+  transition:
+    fill 200ms ease calc(460ms + var(--i) * 150ms),
+    transform 260ms var(--snap) calc(460ms + var(--i) * 150ms);
+}
+[data-on] .step {
+  fill: var(--a);
+  transform: scale(1.25);
+}
+
+/* ---- 04 Payments & Accounting: the card squares up, ledger lines reconcile, the total checks ---- */
+.card {
+  transform-origin: center;
+  transform: translateY(4px) rotate(-9deg);
+  transition: transform 520ms var(--e);
+}
+[data-on] .card {
+  transform: none;
+}
+.row {
+  transform: translateX(var(--dx));
+  transition:
+    transform 460ms var(--e) calc(100ms + var(--i) * 60ms),
+    fill 240ms ease;
+}
+[data-on] .row {
+  transform: none;
+}
+.total {
+  transform-origin: 100% 50%;
+  transform: scaleX(0.62);
+  transition:
+    transform 380ms var(--e) 400ms,
+    fill 220ms ease 400ms;
+}
+[data-on] .total {
+  transform: none;
+}
+.check {
+  fill: none;
+  stroke: var(--a);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  --d: 640ms;
+}
+
+/* ---- 05 Workflow Templates: scattered modules snap into the template's slots ---- */
+.frame {
+  fill: none;
+  stroke: var(--n3);
+  stroke-width: 1.6;
+  stroke-dasharray: 4 5;
+  transition: stroke 240ms ease 420ms;
+}
+[data-on] .frame {
+  stroke: var(--am);
+}
+.slotLine {
+  fill: none;
+  stroke: var(--n2);
+  stroke-width: 1.2;
+}
+.mod {
+  transform-origin: center;
+  transform: translate(var(--tx), var(--ty)) rotate(var(--r));
+  transition: transform 560ms var(--snap) calc(var(--i) * 70ms);
+}
+[data-on] .mod {
+  transform: none;
+}
+
+/* ---- 06 Workflows & Triggers: a signal leaves the trigger, passes the condition, arrives at the outcome ---- */
+.trig {
+  transform-origin: center;
+}
+.cond {
+  transform-origin: center;
+  transform: rotate(45deg);
+}
+.sig {
+  opacity: 0;
+  transform-box: view-box;
+}
+[data-on] .trig {
+  animation: trTrig 1800ms var(--e) infinite;
+}
+[data-on] .sig {
+  animation: trSig 1800ms cubic-bezier(0.45, 0, 0.3, 1) infinite;
+}
+[data-on] .cond {
+  animation: trCond 1800ms var(--e) infinite;
+}
+[data-on] .out {
+  animation: trOut 1800ms ease infinite;
+}
+@keyframes trTrig {
+  0% {
+    transform: scale(1.14);
+  }
+  18%,
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes trSig {
+  0% {
+    opacity: 0;
+    transform: translate(56px, 78px);
+  }
+  6% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+    transform: translate(106px, 78px);
+  }
+  36%,
+  44% {
+    opacity: 0;
+    transform: translate(120px, 78px);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(136px, 78px);
+  }
+  76% {
+    opacity: 1;
+    transform: translate(182px, 78px);
+  }
+  82%,
+  100% {
+    opacity: 0;
+    transform: translate(184px, 78px);
+  }
+}
+@keyframes trCond {
+  0%,
+  30% {
+    transform: rotate(45deg);
+    fill: var(--n3);
+  }
+  42% {
+    transform: rotate(135deg);
+    fill: var(--b);
+  }
+  64% {
+    fill: var(--b);
+  }
+  80%,
+  100% {
+    transform: rotate(135deg);
+    fill: var(--n3);
+  }
+}
+@keyframes trOut {
+  0%,
+  74% {
+    fill: var(--n2);
+  }
+  82%,
+  94% {
+    fill: var(--a);
+  }
+  100% {
+    fill: var(--n2);
+  }
+}
+
+/* ---- 07 Custom APIs & MCPs: the two ports dock and a data path opens between them ---- */
+.portL {
+  transform: translateX(-8px);
+  transition: transform 460ms var(--snap);
+}
+.portR {
+  transform: translateX(8px);
+  transition: transform 460ms var(--snap);
+}
+[data-on] .portL {
+  transform: translateX(24px);
+}
+[data-on] .portR {
+  transform: translateX(-22px);
+}
+.led {
+  transition: fill 200ms ease 440ms;
+}
+[data-on] .led {
+  fill: var(--a);
+}
+.flow {
+  stroke-dasharray: 6 10;
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+[data-on] .flow {
+  opacity: 1;
+  transition-delay: 380ms;
+  animation: apFlow 900ms linear infinite;
+}
+@keyframes apFlow {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+/* ---- 08 Web3 & Blockchain: the blocks align into a chain, the links light, a new block joins ---- */
+.blk {
+  transform: translate(var(--o));
+  transition: transform 520ms var(--e) calc(var(--i) * 60ms);
+}
+[data-on] .blk {
+  transform: none;
+}
+.blkTop {
+  fill: var(--am);
+  transition: fill 220ms ease calc(240ms + var(--i) * 110ms);
+}
+[data-on] .blkTop {
+  fill: var(--a);
+}
+.drop {
+  opacity: 0;
+  transform: translateY(-34px);
+  transition:
+    opacity 180ms ease,
+    transform 420ms var(--snap);
+}
+[data-on] .drop {
+  opacity: 1;
+  transform: none;
+  transition-delay: 520ms;
+}
+[data-art='web3'] .draw {
+  --d: 260ms;
+}
+
+/* ---- 09 Hackathons & Projects: progress steps through the milestones until the flag goes up ---- */
+.track {
+  stroke: var(--n2);
+  stroke-width: 5;
+}
+.prog {
+  stroke-width: 5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+[data-on] .prog {
+  animation: hkProg 1300ms var(--e) forwards;
+}
+@keyframes hkProg {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  24%,
+  34% {
+    stroke-dashoffset: 0.65;
+  }
+  58%,
+  68% {
+    stroke-dashoffset: 0.3;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+.ms {
+  transform-origin: center;
+  transition:
+    fill 200ms ease calc(var(--i) * 400ms + 60ms),
+    transform 280ms var(--snap) calc(var(--i) * 400ms + 60ms);
+}
+[data-on] .ms {
+  fill: var(--a);
+  transform: scale(1.12);
+}
+.flag {
+  transform-origin: 0 50%;
+  transform: translateY(26px) scaleX(0.55);
+  transition: transform 380ms var(--snap);
+}
+[data-on] .flag {
+  transform: none;
+  transition-delay: 1180ms;
+}
+.brief {
+  transition: transform 300ms var(--e);
+}
+[data-on] .brief {
+  transform: translateY(-4px);
+}
+
+/* ---- 10 Desktop Applications: the overlapping windows separate into a tidy workspace ---- */
+.winA,
+.winB {
+  transform-origin: 0 0;
+  transition: transform 560ms var(--e);
+}
+.winB {
+  transition-delay: 40ms;
+}
+[data-on] .winA {
+  transform: translate(-14px, 4px) scale(0.86);
+}
+[data-on] .winB {
+  transform: translate(46px, -14px) scale(0.86);
+}
+.dock {
+  transform-origin: center;
+  transform: scaleX(0.6);
+  transition:
+    transform 420ms var(--e) 200ms,
+    fill 240ms ease 200ms;
+}
+[data-on] .dock {
+  transform: none;
+  fill: var(--n3);
+}
+.pane {
+  transition: fill 220ms ease 380ms;
+}
+
+/* ---- 11 Domains & Infrastructure: the links resolve, a check passes through, the lock closes ---- */
+.globe {
+  fill: none;
+  stroke: var(--am);
+  stroke-width: 1.6;
+  transition: stroke 220ms ease;
+}
+[data-on] .globe {
+  stroke: var(--a);
+}
+.ledS {
+  transition: fill 200ms ease calc(240ms + var(--i) * 90ms);
+}
+[data-on] .ledS {
+  fill: var(--a);
+}
+.shackle {
+  transform: translateY(-7px);
+  transition: transform 280ms var(--snap);
+}
+[data-on] .shackle {
+  transform: none;
+  transition-delay: 680ms;
+}
+.lock {
+  transition: fill 220ms ease;
+}
+[data-on] .lock {
+  fill: var(--a);
+  transition-delay: 720ms;
+}
+.verify {
+  opacity: 0;
+  transform-box: view-box;
+}
+[data-on] .verify {
+  animation: inVerify 780ms cubic-bezier(0.45, 0, 0.3, 1) forwards;
+}
+@keyframes inVerify {
+  0% {
+    opacity: 0;
+    transform: translate(60px, 76px);
+  }
+  8% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+    transform: translate(96px, 76px);
+  }
+  46%,
+  52% {
+    opacity: 0;
+    transform: translate(121px, 76px);
+  }
+  58% {
+    opacity: 1;
+    transform: translate(146px, 76px);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(180px, 76px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(184px, 76px);
+  }
+}
+
+/* ---- 12 Live Operations: a telemetry pulse runs the health line, the services report in ---- */
+.pulse {
+  stroke-dasharray: 0.16 0.84;
+  stroke-dashoffset: 0.16;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+[data-on] .pulse {
+  opacity: 1;
+  animation: opPulse 1500ms linear infinite;
+}
+@keyframes opPulse {
+  to {
+    stroke-dashoffset: -0.84;
+  }
+}
+.svc {
+  transition: fill 200ms ease calc(300ms + var(--i) * 170ms);
+}
+[data-on] .svc {
+  fill: var(--a);
+}
+
+/* reduced motion: no travel; the tile shows its finished state at once */
+@media (prefers-reduced-motion: reduce) {
+  .art *,
+  .art {
+    transition: none !important;
+    animation: none !important;
+  }
+  [data-on] .prog {
+    stroke-dashoffset: 0;
+  }
+  [data-on] .pulse {
+    stroke-dashoffset: -0.3;
+  }
+}
