@@ -17,7 +17,17 @@ First reconcile actual Phase1 aggregate39145128193 and disposable39145128353 bef
 
 Global model-quality data must exclude private tenant payloads or have a documented narrow exception. Dormant exports need safe admission, not invented activation. Same-owner last-writer-wins or unrelated notification QoS is not automatically a tenant defect. A parent/project/account race that enables another owner's operation remains007.
 
-## Safety and stop conditions
+## First exact-head verification and correction
+
+Candidate `4e4cd6eb421eba687acf3169971516882333ff97`, disposable39150147992, completed115 migration upgrade/fresh/reapply successfully and captured118 actual catalog tables. There are63 public tables with broad browser TRUNCATE grants in that disposable catalog. The original dated observation remains separate and unchanged. New catalog-only entries are `storage.iceberg_namespaces` and `storage.iceberg_tables`; original observed `public.images` and `public.websites` remain absent. This is not production parity.
+
+The run failed overall:150/151 security tests passed, zero skipped, and2/3 browser tests passed. The new learning test omitted `featureCategory:chat`, so the existing strict terminal-evidence fence correctly denied it. Correct the fixture to use its actual admitted run category, without weakening the fence. The browser release assertion exposed use of implicit merge-event metadata in the web release endpoint; use the same explicit release identity as the API, with safe fallback for hosting metadata. Preserve these failures and require a new-source run.
+
+Grant hardening `20261018002000` adds no row rewrite, new owner column or FK/NOT NULL constraint. Its24 synthetic PostgreSQL-engine assertions and parser gate pass, but actual PostgreSQL15 fixture and full Supabase116-migration gates remain required. The migration preserves service-role and row-DML privileges. Default privilege changes apply to its creating role, not all possible future creators.
+
+The captured fresh catalog also demonstrates13 legacy public tables with RLS disabled. The original observed catalog has RLS enabled and no browser policies for each. New `20261018002100` enables precisely those13 existing server-only boundaries, without adding permissive policies or modifying rows. No frontend consumer of these table names was found. Fresh/replay and actual anonymous/owner/foreign denial are mandatory. The full installer now contains117 migrations. This correction does not certify production parity, enable movie/marketplace features or authorize production DDL.
+
+## Safety boundaries
 
 Zero additional spending. No paid API, merge, deployment, DNS, live credential or customer-row operation. Existing free public-repository CI and disposable Supabase only. No new policy engine, orchestrator or credential vault. No NOT NULL/FK tightening without an authorized orphan audit. No customer-row deletion or RLS disablement.
 

@@ -23595,7 +23595,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:687",
+        "backend/src/security/tenantIsolation.local.integration.ts:744",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -35833,16 +35833,18 @@
       "id": "surface:b9a70bd2c4f7d168aaa4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/api/release/route.ts",
-      "sha256": "6884203835e8a7d612bc6dbc4141004d1da1c67f5406f77441ec3b0fd5c2994f",
+      "sha256": "de4e1b96fa5027848ea2cf1decf98439f9728b5d356a7af96731ebe90f1702f0",
       "symbols": [
         "GET",
-        "dynamic",
-        "safeRelease"
+        "dynamic"
       ],
       "imports": [
+        "../../../lib/releaseIdentity",
         "next/server"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "frontend/src/lib/releaseIdentity.ts"
+      ],
       "entryPoints": [
         "frontend/src/app/api/release/route.ts"
       ],
@@ -35852,7 +35854,9 @@
       "externalProviderDependencies": [
         "next/server"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "frontend/src/app/api/release/route.ts#webReleaseIdentity"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -76729,6 +76733,44 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:32318f3be8e07a9b6ed7",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/releaseIdentity.ts",
+      "sha256": "fa206695217e86fad2c517b7efc036e6cc3978dc4f5def3b5cf924bdd2d288f0",
+      "symbols": [
+        "value",
+        "webReleaseIdentity"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/api/release/route.ts"
+      ],
+      "callers": [
+        "frontend/src/app/api/release/route.ts:2",
+        "frontend/src/lib/releaseIdentity.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [
+        "frontend/src/lib/releaseIdentity.ts#webReleaseIdentity"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/releaseIdentity.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:c13a4e160f9c62a6254b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/repoAnalysisCache.ts",
@@ -85321,7 +85363,7 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "f77ad1684973580f513798878e15022222a9b6fad78a88dd042d30ac4e9f8e0c",
+      "sha256": "58b7aefabaf7a9c3b497e3cfdc419ecce716e856c3117883c3f237e07488a486",
       "symbols": [
         "actual",
         "afterPolicies",
@@ -85338,6 +85380,7 @@
         "files",
         "filesBefore",
         "foreign",
+        "foreignSeries",
         "inventory",
         "names",
         "observed",
@@ -85350,6 +85393,8 @@
         "reset",
         "root",
         "save",
+        "series",
+        "seriesBefore",
         "shareBefore",
         "shareSql",
         "shareToken",
@@ -86698,7 +86743,7 @@
       "id": "surface:59ea753bbe7364873503",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/phase-two.mjs",
-      "sha256": "00b7e7d3a99c91217dd8e4fa1f11b02123dc8f3431f99e4fba016896130d85bb",
+      "sha256": "928edb9b3080939c5445b7ff8ee16eea0b4e866e5038773c02e6d3f1963c45e7",
       "symbols": [
         "approved",
         "binding",
@@ -96069,6 +96114,20 @@
       "version": "20261018001900",
       "order": 115,
       "sha256": "7b5c22102976c166b34bc5af2c87b94a71f7cbe12c33789b284533633d62444f"
+    },
+    {
+      "id": "migration:b91c13e6f0af118cd818",
+      "sourcePath": "supabase/migrations/20261018002000_browser_table_privileges.sql",
+      "version": "20261018002000",
+      "order": 116,
+      "sha256": "cd91b9f485116ff7c8384769a097aa8d090afb44d4499de638e62c7cc96b64f0"
+    },
+    {
+      "id": "migration:c0510aa1cd7f7ddfda42",
+      "sourcePath": "supabase/migrations/20261018002100_legacy_server_table_rls.sql",
+      "version": "20261018002100",
+      "order": 117,
+      "sha256": "aadb97b07c7beb67cf4d1bd6f730a7bbfb5e4050c35f1b9a3ed03fb3c94ad1b9"
     }
   ],
   "workflows": [
@@ -104490,7 +104549,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 69,
+      "declaredTests": 71,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -106240,6 +106299,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:eba180921dc40a119895",
+      "sourcePath": "frontend/src/lib/releaseIdentity.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:fe39ce20747c660cd690",
       "sourcePath": "frontend/src/lib/semanticAgentRouting.test.ts",
       "declaredTests": 4,
@@ -106837,7 +106903,7 @@
     {
       "id": "test-suite:0b82382276aa4f670d70",
       "sourcePath": "scripts/security/tenant-rls.database.test.mjs",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -106865,7 +106931,7 @@
     {
       "id": "test-suite:a00cdd264d6de075eb99",
       "sourcePath": "scripts/xroga/phase-two.test.mjs",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

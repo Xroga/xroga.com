@@ -207,6 +207,63 @@ test('real build admission verifies database project ownership before creating a
   const after=await read();assert.equal(after.error,null);assert.deepEqual(after.data,before.data);
 });
 
+test('real catalog denies whole-table browser privileges and actual SQL truncation while preserving owner updates',async()=>{
+  const database=new URL(process.env.XB01_LOCAL_DATABASE_URL??'');
+  assert.equal(database.hostname,'127.0.0.1');assert.equal(database.port,'54322');assert.equal(database.pathname,'/postgres');
+  const db=new pg.Client({connectionString:database.href,ssl:false});await db.connect();
+  try{
+    const excess=await db.query(`select c.relname,r.name,p.privilege from pg_class c join pg_namespace n on n.oid=c.relnamespace
+      cross join (values ('anon'),('authenticated')) r(name)
+      cross join (values ('TRUNCATE'),('REFERENCES'),('TRIGGER')) p(privilege)
+      where n.nspname='public' and c.relkind in ('r','p') and has_table_privilege(r.name,c.oid,p.privilege)`);
+    assert.deepEqual(excess.rows,[],'Effective rights, including PUBLIC/inherited grants, cannot bypass row ownership');
+    for(const role of ['anon','authenticated']){
+      await db.query('begin');
+      try{
+        await db.query(`set local role ${role}`);
+        await assert.rejects(db.query('truncate public.model_routing_outcomes'),error=>(error as {code:string}).code==='42501');
+      }finally{await db.query('rollback');}
+    }
+    const [owner,other]=users;
+    await db.query('begin');
+    try{
+      await db.query('set local role authenticated');
+      await db.query("select set_config('request.jwt.claim.sub',$1,true)",[owner.id]);
+      assert.equal((await db.query('update public.projects set name=name where id=$1 returning id',[owner.project])).rowCount,1);
+      assert.equal((await db.query('update public.projects set name=name where id=$1 returning id',[other.project])).rowCount,0);
+    }finally{await db.query('rollback');}
+  }finally{await db.end();}
+});
+
+test('real legacy server-only RLS blocks owner foreign and anonymous table access while preserving service rows',async()=>{
+  const [owner,other]=users,series=randomUUID(),foreignSeries=randomUUID();
+  assert.equal((await admin.from('series_projects').insert([
+    {id:series,user_id:owner.id,title:'Owned synthetic series'},
+    {id:foreignSeries,user_id:other.id,title:'Foreign synthetic series'},
+  ])).error,null);
+  try{
+    const tables=['api_priority_config','audio_tracks','characters','community_pool','influencer_commissions','influencer_profiles',
+      'marketplace_listings','marketplace_purchases','orchestrator_config','scripts','series_projects','token_distribution_log','video_jobs'];
+    for(const token of [null,owner.token,other.token]){
+      const browser=createClient(url,process.env.SUPABASE_ANON_KEY!,{auth:{persistSession:false,autoRefreshToken:false},
+        ...(token?{global:{headers:{Authorization:`Bearer ${token}`}}}:{})});
+      for(const table of tables){
+        const read=await browser.from(table).select('*').limit(1);
+        assert.equal(read.error,null);assert.deepEqual(read.data,[],`${table} must remain server-only`);
+      }
+      const write=await browser.from('series_projects').insert({id:randomUUID(),user_id:owner.id,title:'Denied synthetic row'});
+      assert.equal(write.error?.code,'42501');
+      const changed=await browser.from('series_projects').update({title:'Denied synthetic edit'}).in('id',[series,foreignSeries]).select('id');
+      assert.equal(changed.error,null);assert.deepEqual(changed.data,[]);
+    }
+    const retained=await admin.from('series_projects').select('id,user_id,title').in('id',[series,foreignSeries]).order('id');
+    assert.equal(retained.error,null);assert.deepEqual(retained.data,[
+      {id:series,user_id:owner.id,title:'Owned synthetic series'},
+      {id:foreignSeries,user_id:other.id,title:'Foreign synthetic series'},
+    ].sort((a,b)=>a.id.localeCompare(b.id)));
+  }finally{assert.equal((await admin.from('series_projects').delete().in('id',[series,foreignSeries])).error,null);}
+});
+
 test('avatar Storage accepts owner folders and denies foreign writes without changing bytes',async()=>{
   const [owner,other]=users;
   const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${owner.token}`}},auth:{persistSession:false,autoRefreshToken:false}});

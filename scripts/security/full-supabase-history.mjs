@@ -41,6 +41,15 @@ try {
   const owner=randomUUID(),other=randomUUID(),project=randomUUID(),foreign=randomUUID();
   await db.query("insert into auth.users(id,email,raw_user_meta_data) values($1,$2,'{}'),($3,$4,'{}')",[owner,'upgrade-owner@example.invalid',other,'upgrade-other@example.invalid']);
   await db.query("insert into public.projects(id,user_id,name,type) values($1,$2,'Sanitized fixture','app'),($3,$4,'Foreign fixture','app')",[project,owner,foreign,other]);
+  const series=randomUUID(),foreignSeries=randomUUID();
+  await db.query("insert into public.series_projects(id,user_id,title) values($1,$2,'Owned synthetic series'),($3,$4,'Foreign synthetic series')",[series,owner,foreignSeries,other]);
+  const seriesBefore=(await db.query('select * from public.series_projects order by id')).rows;
+  await db.query('begin');
+  try{
+    await db.query('set local role authenticated');
+    await db.query("select set_config('request.jwt.claim.sub',$1,true)",[owner]);
+    assert.equal((await db.query('select id from public.series_projects order by id')).rowCount,2,'Reproduce omitted legacy RLS before the actual repair');
+  }finally{await db.query('rollback');}
   await db.query("insert into public.project_files(project_id,file_name,content) values($1,'fixture.txt','non-customer example')",[project]);
   const shareToken=randomUUID();
   await db.query("insert into public.message_shares(token,owner_id,visibility,scope,response) values($1,$2,'private','response','Sanitized pre-upgrade fixture')",[shareToken,owner]);
@@ -50,6 +59,7 @@ try {
   const filesBefore=(await db.query('select id,project_id,file_name,content,file_url from public.project_files order by id')).rows;
   const auditBefore=(await db.query("insert into public.production_audit_log(actor_id,user_id,project_id,action,target_type,outcome,metadata) values($1,$1,$2,'fixture.pre-upgrade','fixture','verified','{\"synthetic\":true}') returning *",[owner,project])).rows;
   await apply(db,upgradeFiles,'upgrade');
+  assert.deepEqual((await db.query('select * from public.series_projects order by id')).rows,seriesBefore);
   assert.deepEqual((await db.query('select * from public.production_audit_log where id=$1',[auditBefore[0].id])).rows,auditBefore);
   assert.deepEqual((await db.query('select id,project_id,file_name,content,file_url from public.project_files order by id')).rows,filesBefore);
   const fileEpochs=(await db.query('select delivery_version,storage_metadata from public.project_files')).rows;
@@ -67,6 +77,8 @@ try {
     assert.deepEqual((await db.query('select id from public.projects order by id')).rows,[{id:project}]);
     assert.equal((await db.query('update public.projects set name=$1 where id=$2 returning id',['Forbidden',foreign])).rowCount,0);
     assert.equal((await db.query('select id from public.project_files')).rowCount,1);
+    assert.equal((await db.query('select id from public.series_projects')).rowCount,0,'Preserve the observed server-only boundary, including for the owner');
+    assert.equal((await db.query('update public.series_projects set title=$1 where id=$2 returning id',['Forbidden',foreignSeries])).rowCount,0);
   } finally { await db.query('rollback'); }
   await apply(db,upgradeFiles,'upgrade-reapply');
   assert.deepEqual((await db.query('select * from public.production_audit_log where id=$1',[auditBefore[0].id])).rows,auditBefore);
@@ -95,6 +107,7 @@ try {
   const names=new Set(actual.map(row=>`${row.schema}.${row.table_name}`));
   evidence.schemaParity={status:'NOT_PRODUCTION_DRIFT_CERTIFIED',observedReferenceTables:observed.tables.length,disposableTables:actual.length,missingObservedTables:observed.tables.filter(row=>!names.has(`${row.schema}.${row.table_name}`)).map(row=>`${row.schema}.${row.table_name}`)};
   const catalog=await collectSchemaCatalog(db,{sourceSha,observedAt:new Date().toISOString()});
+  assert.deepEqual(catalog.tables.filter(t=>t.schema==='public'&&!t.rls_enabled).map(t=>t.table_name),[],'Every installed public table must have an explicit RLS boundary');
   writeFileSync(join(out,'schema-catalog.json'),JSON.stringify(catalog,null,2)+'\n');
   await db.query("notify pgrst, 'reload schema'");
   evidence.fresh='PASS'; evidence.status='PASS'; save();

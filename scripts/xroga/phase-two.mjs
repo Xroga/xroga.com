@@ -10,7 +10,7 @@ export const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const read=p=>readFileSync(resolve(root,p),'utf8').replace(/\r\n/g,'\n');
 const hash=t=>createHash('sha256').update(t).digest('hex');
 const frozenPath='docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json';
-export function buildPhaseTwo(){
+export function buildPhaseTwo({reviewDecisions}={}){
   const frozen=JSON.parse(read(frozenPath));
   assert.equal(frozen.packets.length,73);
   const historical=frozen.packets.flatMap(p=>p.mapping.map(m=>m.baselineCallerId));
@@ -19,7 +19,7 @@ export function buildPhaseTwo(){
   const byId=new Map(callers.map(c=>[c.id,c]));
   const approved=JSON.parse(execFileSync('git',['show','8a1a0bfa7878603dd488db98568577b2fb1896da:docs/xroga/security/privileged-callers.json'],{cwd:root,encoding:'utf8',maxBuffer:8*1024*1024}));
   const previous=new Map(approved.callers.map(c=>[c.id,c]));
-  const decisions=JSON.parse(read('docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json'));
+  const decisions=reviewDecisions??JSON.parse(read('docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json'));
   assert.equal(decisions.scope,'SEMANTIC_PROGRESS_NOT_SECURITY_CERTIFICATION');
   assert.equal(new Set(decisions.decisions.map(d=>d.packetId)).size,decisions.decisions.length);
   const reviewed=new Map(decisions.decisions.map(d=>[d.packetId,d]));
@@ -62,6 +62,7 @@ export function buildPhaseTwo(){
     baselineEvidence:{aggregateRun:'39145128193',disposableRun:'39145128353',migrations:115,securityTests:149,browserTests:3,
       scope:'Prior exact-source evidence. Unchanged source and relevant semantics must be established before reuse. Not proof for new edits.'},
     criteria:tenantCriteria.map((text,i)=>({id:`XB01-C007-AC${String(i+1).padStart(2,'0')}`,text,status:'BLOCKED',proofIds:[]})),
+    catalogProgress:decisions.catalogReview??null,
     packets,phase3Started:false,productionAuthorized:false,additionalSpend:0};
   return new Map([['docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json',JSON.stringify(report,null,2)+'\n']]);
 }

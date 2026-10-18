@@ -79,6 +79,54 @@
       "proofIds": []
     }
   ],
+  "catalogProgress": {
+    "finding": "HISTORICAL_EXCESS_TABLE_PRIVILEGES_WITH_REPRODUCED_RLS_LIMITATION",
+    "originalCriteria": [
+      1,
+      3,
+      8,
+      9,
+      10
+    ],
+    "historicalObservation": "Oct13 read-only schema-observation.json records67 public tables with anon/authenticated TRUNCATE grants. This is dated metadata, not current production inspection or an external exploit reproduction.",
+    "primaryReference": "https://www.postgresql.org/docs/17/ddl-rowsecurity.html",
+    "reproduction": "Synthetic PGlite showed one visible owner row, but TRUNCATE removed both owners' rows. Transaction rolled back. Corrected actual migration passes24 synthetic assertions, including unchanged owner DML, foreign DML denial, both default-grant scopes and replay.",
+    "migration": "supabase/migrations/20261018002000_browser_table_privileges.sql",
+    "scope": "Revoke only TRUNCATE/REFERENCES/TRIGGER on existing public tables from PUBLIC/anon/authenticated, and those default privileges for the migration creator. Preserve row DML, RLS policies, service_role grants, all rows and constraints. No orphan audit required because no constraint tightening or data rewrite occurs.",
+    "status": "IN_PROGRESS",
+    "requiredActualTests": [
+      "actual browser grant migration removes RLS-bypassing table rights while preserving owner DML and service grants",
+      "real catalog denies whole-table browser privileges and actual SQL truncation while preserving owner updates"
+    ],
+    "productionStatus": "NOT_APPLIED_NOT_VERIFIED",
+    "actualDisposableObservation": {
+      "sourceSha": "4e4cd6eb421eba687acf3169971516882333ff97",
+      "runId": "39150147992",
+      "result": "CATALOG_CAPTURED_FULL115_MIGRATIONS_PASS_BUT_OVERALL_RUN_FAILED",
+      "broadBrowserTruncateTables": 63,
+      "publicTablesWithoutRls": [
+        "api_priority_config",
+        "audio_tracks",
+        "characters",
+        "community_pool",
+        "influencer_commissions",
+        "influencer_profiles",
+        "marketplace_listings",
+        "marketplace_purchases",
+        "orchestrator_config",
+        "scripts",
+        "series_projects",
+        "token_distribution_log",
+        "video_jobs"
+      ]
+    },
+    "legacyRlsRepair": {
+      "migration": "supabase/migrations/20261018002100_legacy_server_table_rls.sql",
+      "scope": "Enable precisely13 omitted server-only RLS boundaries matching the original observation. Preserve all rows, existing policies, owner columns and constraints. No frontend table consumer found. Do not invent movie/marketplace browser access.",
+      "actualProofRequired": "Upgrade fixture reproduces pre-repair foreign browser SELECT, then actual migration must preserve rows and deny all browser access. Fresh catalog must have no public table missing RLS; real browser roles must remain denied.",
+      "status": "IN_PROGRESS_NOT_PRODUCTION_VERIFIED"
+    }
+  },
   "packets": [
     {
       "id": "B1-P2-95daee9f388f2274",
@@ -1861,7 +1909,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -2974,7 +3022,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -3719,9 +3767,28 @@
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-83d8bf9008a76d71",
+        "sourceSha256": "b26780997843838a902d06a7dd928454cff64e5d93ce9140984587ab25c0d934",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "UNCHANGED_TENANT_GUARD_PRIOR_DATABASE_PROOF_RECONCILED",
+        "actorTrace": "Browser publishable client verifies auth.getUser, generates a new object key under that exact user folder and never imports the submitted filename. Storage RLS independently checks the first path component. This public-avatar path is deliberately distinct from private project artifacts.",
+        "invariant": "A signed-in user can upload in their folder, never overwrite another user's object. Profile update failure propagates rather than reporting upload as a completed profile change.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "type": "DISPOSABLE_DATABASE_TEST",
+            "result": "PRIOR149_TEST_RUN39145128353_PASSED_NEW_SOURCE_RECHECK_PENDING",
+            "scope": "avatar Storage accepts owner folders and denies foreign writes without changing bytes"
+          }
+        ],
+        "remaining": [
+          "Attach new source-bound receipt without rewriting unchanged production code",
+          "Public image content safety and orphan cleanup are distinct from foreign-owner overwrite prevention, no private-file claim"
+        ]
+      },
       "actor": {
         "existingTrace": "Read the upload helper, browser client, hook, modal, profile endpoint and Storage policies. Browser getUser derives the first key segment and RLS independently restricts writes. No service key is used. Profile success follows an acknowledged API write only.",
         "currentSemanticVerification": "PENDING"
@@ -3774,9 +3841,47 @@
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-e8d53fa0f6105a1f",
+        "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "UNCHANGED_COMMUNITY_FIELD_PARENT_ROLE_GUARDS_PRIOR_REAL_LOCK_PROOF_RECONCILED",
+        "actorTrace": "Only production constructor is routes/community.ts, mounted at /api/community. optionalAuthMiddleware resolves the real session, requireUser rejects missing actor for mutations, and request JSON never selects userId. Fixed service-only SQL operations lock current profiles and parent rows before field-specific mutations. Anonymous/public reads return public projections, not private staff notes.",
+        "invariant": "Author body edits, parent-owner acceptance and staff moderation are distinct permissions. Foreign authors and revoked staff cannot inherit another field's permission. Parent/staff changes serialize against the mutation.",
+        "evidence": [
+          {
+            "path": "backend/src/community/commentUpdate.local.integration.ts",
+            "type": "DISPOSABLE_LOCK_TEST",
+            "result": "PRIOR149_TEST_RUN39145128353_PASSED_NEW_SOURCE_RECHECK_PENDING",
+            "scope": "Current field authorization and observed pg_blocking_pids while staff or parent authority changes"
+          },
+          {
+            "path": "backend/src/community/postMutation.local.integration.ts",
+            "type": "DISPOSABLE_LOCK_TEST",
+            "result": "PRIOR149_TEST_RUN39145128353_PASSED_NEW_SOURCE_RECHECK_PENDING",
+            "scope": "Post mutations and cascade receipts"
+          },
+          {
+            "path": "backend/src/community/remainingMutations.local.integration.ts",
+            "type": "DISPOSABLE_LOCK_TEST",
+            "result": "PRIOR149_TEST_RUN39145128353_PASSED_NEW_SOURCE_RECHECK_PENDING",
+            "scope": "Parent/role changes, note confidentiality and vote replay"
+          },
+          {
+            "path": "backend/src/community/reads.local.integration.ts",
+            "type": "DISPOSABLE_DATABASE_TEST",
+            "result": "PRIOR149_TEST_RUN39145128353_PASSED_NEW_SOURCE_RECHECK_PENDING",
+            "scope": "Anonymous public projection, denied private reads, single-statement snapshots and revoked staff"
+          }
+        ],
+        "remaining": [
+          "Attach exact new source-bound receipts and actual HTTP tests",
+          "Review each service caller mapping without promoting the whole injected SDK",
+          "Feed cursor freshness is not permission to weaken tenant or private-note guards"
+        ]
+      },
       "actor": {
         "existingTrace": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
         "currentSemanticVerification": "PENDING"
@@ -3799,7 +3904,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3954,7 +4059,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4067,7 +4172,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4302,7 +4407,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4375,9 +4480,32 @@
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-28ef434878dcc175",
+        "sourceSha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "UNCHANGED_ISSUED_ACTOR_PROVISIONING_PRIOR_REAL_PROOF_RECONCILED",
+        "actorTrace": "Authentication supplies the original issued TenantContext. ensureUserRecords requires that context before the private provisionUserRecords helper receives its primitive userId. Per-user in-flight deduplication and cache track record existence only. They never issue paid balance or role authority.",
+        "invariant": "Provision only the admitted actor's missing profile/usage rows. Concurrent first requests must preserve the winner. Existing roles and paid usage must remain byte-for-byte unchanged, including the second actor.",
+        "evidence": [
+          {
+            "path": "backend/src/security/provisioningReceipt.local.integration.ts",
+            "type": "DISPOSABLE_DATABASE_TEST",
+            "result": "PRIOR149_TEST_RUN39145128353_PASSED_NEW_SOURCE_RECHECK_PENDING",
+            "scope": "Two-user positive/negative preservation and concurrent provisioning, including owner profile username constraints"
+          }
+        ],
+        "relatedPackets": [
+          "B1-P2-9f64440a9693378b",
+          "B1-P2-1b75dad6d83a1d53"
+        ],
+        "remaining": [
+          "Attach new source-bound receipt and map related private-helper boundaries",
+          "Cache membership alone must never be represented as entitlement or fresh-session proof"
+        ]
+      },
       "actor": {
         "existingTrace": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
         "currentSemanticVerification": "PENDING"
@@ -4450,7 +4578,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4802,7 +4930,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5055,7 +5183,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5124,7 +5252,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5522,7 +5650,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6011,7 +6139,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6100,7 +6228,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c",
+          "sourceSha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6349,7 +6477,7 @@
         {
           "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
           "marker": "real worker learning fence binds owner",
-          "sourceSha256": "e82e75027fb74b23b31d1bd016bde15c9be22ef21ab8a3047dc4ac756d29bba9",
+          "sourceSha256": "a270fb0183f8f5dd8b4930e7970476e1b37a8f98153415aafbc900de8e3ca29e",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }

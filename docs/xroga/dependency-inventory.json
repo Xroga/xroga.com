@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8a1a0bfa7878603dd488db98568577b2fb1896da",
+  "source_sha": "4e4cd6eb421eba687acf3169971516882333ff97",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11087,6 +11087,7 @@
       "name": "XROGA_RELEASE_SHA",
       "consuming_sources": [
         "backend/src/lib/safeHealth.ts",
+        "frontend/src/app/api/release/route.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -12946,7 +12947,7 @@
     },
     {
       "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
-      "sha256": "e82e75027fb74b23b31d1bd016bde15c9be22ef21ab8a3047dc4ac756d29bba9"
+      "sha256": "a270fb0183f8f5dd8b4930e7970476e1b37a8f98153415aafbc900de8e3ca29e"
     },
     {
       "path": "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -13070,7 +13071,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "ede63a6d91fdd3b34234e402fe4c311138cc61ff14089dab9c89efac304ec48c"
+      "sha256": "ae06847606a9d3acf332299671d2c8ab6bcf3b99b3e44261fa4dbad6bd5164f1"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13898,7 +13899,7 @@
     },
     {
       "path": "frontend/src/app/api/release/route.ts",
-      "sha256": "6884203835e8a7d612bc6dbc4141004d1da1c67f5406f77441ec3b0fd5c2994f"
+      "sha256": "de4e1b96fa5027848ea2cf1decf98439f9728b5d356a7af96731ebe90f1702f0"
     },
     {
       "path": "frontend/src/app/api/session/route.ts",
@@ -16753,6 +16754,10 @@
       "sha256": "788ead5d6a7b6cafb927adadefe00e108550134043852801b5846e23483d6672"
     },
     {
+      "path": "frontend/src/lib/releaseIdentity.ts",
+      "sha256": "fa206695217e86fad2c517b7efc036e6cc3978dc4f5def3b5cf924bdd2d288f0"
+    },
+    {
       "path": "frontend/src/lib/repoAnalysisCache.ts",
       "sha256": "644deb5c0e24dec2af89c63039b9b6d0200031be0344733e70a79d61ea53e80e"
     },
@@ -18961,42 +18966,42 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 392,
+      "line": 449,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 442,
+      "line": 499,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 531,
+      "line": 588,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 637,
+      "line": 694,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 689,
+      "line": 746,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1357,
+      "line": 1414,
       "credentialsInUrl": false
     },
     {
@@ -25177,14 +25182,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 856,
+      "line": 913,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1193,
+      "line": 1250,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

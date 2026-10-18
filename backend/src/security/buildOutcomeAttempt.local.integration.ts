@@ -49,7 +49,7 @@ export function registerBuildOutcomeAttemptTests(admin: SupabaseClient, getUsers
       input_tokens:1,output_tokens:2,repair_loops:0,model_switches:0,final_verification_ok:true};
     assert.equal((await admin.from('model_routing_outcomes').insert({...row,id:foreignId})).error,null);
     resetRoutingOutcomeCache();await loadRoutingOutcomes();
-    const build=()=>buildOutcomeFromTerminalRun({runId:f.runId,userId:f.owner.id,terminalStatus:'error',
+    const build=()=>buildOutcomeFromTerminalRun({runId:f.runId,userId:f.owner.id,terminalStatus:'error',featureCategory:'chat',
       iterationCount:1,completedAt:f.args.p_completed_at,output:f.args.p_output});
     const denied=build();assert.equal(denied.verified,false);assert.deepEqual(denied.modelTelemetry,[]);
     const store=new SupabaseBuildOutcomeStore({generation:f.args.p_generation,completedAt:f.args.p_completed_at,output:f.args.p_output});

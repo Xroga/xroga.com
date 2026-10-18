@@ -14,6 +14,7 @@ const OWNER='11111111-1111-4111-8111-111111111111',OTHER='22222222-2222-4222-822
 const A='33333333-3333-4333-8333-333333333333',B='44444444-4444-4444-8444-444444444444';
 const direct=['projects','chat_metadata','swarm_runs','execution_runs','terminal_sessions','project_runtime_sessions','ai_usage_ledger'];
 const migration=readFileSync(join(root,'supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql'),'utf8');
+const grantsMigration=readFileSync(join(root,'supabase/migrations/20261018002000_browser_table_privileges.sql'),'utf8');
 before(async()=>{
   await client.connect();
   const {rows}=await client.query('select current_database() as name');assert.equal(rows[0].name,'xb01_tenant_test');
@@ -63,4 +64,32 @@ test('anonymous role without identity receives zero rows; service role explicitl
 test('migration neither grants missing operations nor opens intentionally server-only feeds',async()=>{
   await client.query('DROP POLICY deliberately_broad_fixture ON public.ai_usage_ledger');
   const result=await asUser(OWNER,()=>client.query('SELECT id FROM public.ai_usage_ledger'));assert.equal(result.rowCount,0);
+});
+test('actual browser grant migration removes RLS-bypassing table rights while preserving owner DML and service grants',async()=>{
+  // Deliberately reproduce the historical ALL-grant risk on disposable rows.
+  await client.query('GRANT TRUNCATE,REFERENCES,TRIGGER ON ALL TABLES IN SCHEMA public TO PUBLIC,anon,authenticated,service_role');
+  const visible=await asUser(OWNER,()=>client.query('select id from public.project_messages'));
+  assert.deepEqual(visible.rows,[{id:A}]);
+  await asUser(OWNER,async()=>{
+    await client.query('truncate public.project_messages');
+    assert.equal((await client.query('select count(*)::int n from public.project_messages')).rows[0].n,0);
+  });
+  assert.equal((await client.query('select count(*)::int n from public.project_messages')).rows[0].n,2,'Reproduction is rolled back');
+  // Both global and schema-local default ALL grants must be removed too.
+  await client.query('ALTER DEFAULT PRIVILEGES GRANT ALL ON TABLES TO anon,authenticated');
+  await client.query('ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon,authenticated');
+  await client.query(grantsMigration);await client.query(grantsMigration);
+  for(const role of ['anon','authenticated']){
+    await assert.rejects(asUser(OWNER,()=>client.query('truncate public.project_messages'),role),error=>error.code==='42501');
+    for(const privilege of ['TRUNCATE','REFERENCES','TRIGGER']){
+      assert.equal((await client.query('select has_table_privilege($1,$2,$3) allowed',[role,'public.project_messages',privilege])).rows[0].allowed,false);
+    }
+  }
+  assert.equal((await asUser(OWNER,()=>client.query('update public.projects set user_id=$1 where id=$2 returning id',[OWNER,A]))).rowCount,1);
+  assert.equal((await asUser(OWNER,()=>client.query('delete from public.project_messages where id=$1 returning id',[B]))).rowCount,0);
+  assert.equal((await client.query("select has_table_privilege('service_role','public.project_messages','TRUNCATE') allowed")).rows[0].allowed,true);
+  await client.query('CREATE TABLE public.future_grant_fixture(id uuid)');
+  for(const role of ['anon','authenticated'])for(const privilege of ['TRUNCATE','REFERENCES','TRIGGER']){
+    assert.equal((await client.query('select has_table_privilege($1,$2,$3) allowed',[role,'public.future_grant_fixture',privilege])).rows[0].allowed,false);
+  }
 });

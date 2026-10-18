@@ -1,6 +1,6 @@
 # Environment/secret NAME inventory
 
-Source SHA: `8a1a0bfa7878603dd488db98568577b2fb1896da`. Values are prohibited, including public credential values. 209 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
+Source SHA: `4e4cd6eb421eba687acf3169971516882333ff97`. Values are prohibited, including public credential values. 209 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
 
 | Name | Class | Requiredness | Consuming source | Validation status |
 | --- | --- | --- | --- | --- |
@@ -196,7 +196,7 @@ Source SHA: `8a1a0bfa7878603dd488db98568577b2fb1896da`. Values are prohibited, i
 | XROGA_PREVIEW_SCHEME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/synthesis/livePreview/signing.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_PREVIEW_SIGNING_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/synthesis/livePreview/signing.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_PROVIDER_BUDGETS_JSON | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/routerConfig.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
-| XROGA_RELEASE_SHA | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/lib/safeHealth.ts, frontend/src/lib/supabase/authBuildRealm.mjs | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_RELEASE_SHA | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/lib/safeHealth.ts, frontend/src/app/api/release/route.ts, frontend/src/lib/supabase/authBuildRealm.mjs | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_REQUIRE_HIGH_RISK_REVIEW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/routerConfig.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_ROUTING_MODE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/routerConfig.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_SANDBOX_BROWSER_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/scripts/verifyFlySandboxBrowser.ts, backend/src/synthesis/browserVerificationAdapter.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
