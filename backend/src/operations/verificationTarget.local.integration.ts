@@ -9,6 +9,36 @@ import { actionPlanDigest } from './operationsEngine.js';
 import { httpVerificationAdapter, type ProviderAdapterRegistry } from './providerAdapters.js';
 
 export function registerVerificationTargetTests(admin:SupabaseClient,getUsers:()=>readonly {id:string;project:string}[]):void{
+  test('real HTTP verification retains the current owned target and exact receipts without forwarding a provider call',async t=>{
+    assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');
+    assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
+    const [owner,other]=getUsers(),resource=randomUUID(),actions:string[]=[],service=new OperationsService(admin),calls:Record<string,unknown>[]=[];
+    (service as unknown as {registry:ProviderAdapterRegistry}).registry.register({...httpVerificationAdapter,async execute(capability,input){
+      assert.equal(capability,'refresh_health');assert.equal(input.userId,owner.id);assert.equal(input.actorId,owner.id);
+      assert.equal(input.projectId,owner.project);assert.equal(input.targetId,resource);assert.equal(input.targetVersion,1);
+      assert.equal(input.url,'https://fixture.invalid/owned');calls.push(input);
+      return {status:'verified',safeSummary:'Synthetic local adapter, no HTTP request',providerReference:'fixture-owned-target'};
+    }});
+    t.after(async()=>{
+      if(actions.length)assert.equal((await admin.from('operations_actions').delete().in('id',actions)).error,null);
+      assert.equal((await admin.from('operations_resources').delete().eq('id',resource)).error,null);
+    });
+    assert.equal((await admin.from('operations_resources').insert({id:resource,user_id:owner.id,project_id:owner.project,
+      kind:'service',provider:'fixture',name:'Owned verification target',source:'fixture',version:1,observed_state:{url:'https://fixture.invalid/owned'}})).error,null);
+    const result=await service.createAction(owner.id,{actionType:'refresh_health',projectId:owner.project,targetType:'service',
+      targetId:resource,targetVersion:1,idempotencyKey:randomUUID(),confirmed:false,
+      parameters:{userId:other.id,projectId:other.project,url:'https://fixture.invalid/not-owned'}});
+    actions.push(result.id);assert.equal(result.user_id,owner.id);assert.equal(result.status,'verified');assert.equal(result.attempt_count,1);
+    assert.equal(calls.length,1);assert.equal(calls[0].actionId,result.id);
+    assert.equal((await service.executeAction(owner.id,result.id)).id,result.id);assert.equal(calls.length,1,'Completed replay has no second provider effect');
+    await assert.rejects(service.executeAction(other.id,result.id),{code:'forbidden'});assert.equal(calls.length,1);
+    const runs=await admin.from('operations_action_runs').select('attempt,status,provider').eq('action_id',result.id);
+    assert.equal(runs.error,null);assert.deepEqual(runs.data,[{attempt:1,status:'verified',provider:'http_verification'}]);
+    const evidence=await admin.from('production_evidence').select('id,status').eq('action_id',result.id);
+    assert.equal(evidence.error,null);assert.deepEqual(evidence.data,[{id:result.evidence_reference,status:'verified'}]);
+    const retained=await admin.from('operations_resources').select('user_id,project_id,version,observed_state').eq('id',resource).single();
+    assert.equal(retained.error,null);assert.deepEqual(retained.data,{user_id:owner.id,project_id:owner.project,version:1,observed_state:{url:'https://fixture.invalid/owned'}});
+  });
   test('real HTTP target changes during the claim wait cannot reach a provider adapter',async t=>{
     assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');
     assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');

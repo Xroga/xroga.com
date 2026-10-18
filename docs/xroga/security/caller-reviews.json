@@ -689,9 +689,9 @@
         "cf3bf4daeb128ba98911",
         "d1853a0190149ebf0ef1"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Checkpoint load filters owner/run and validates row owner/run/project/repository/base/status against embedded shape. Sole production adapter captures current admitted worker and wraps both injected/default stores with immutable run/project/repository/base recovery identity shared by Service and preview. Writes now use separate parent-row-locked generation RPC.",
-      "reason": "Actual HTTP store malformed-owner/embedded negatives and shared recovery wrapper tests pass with valid legacy compatibility. Typed conflict/outage stops Service and Executor even when a tool catches errors. Three updated real corruption/role/parent-lock tests await final-source CI. Complete external effects, preview provider cancellation and staging remain separate, no whole caller certification before these tests.",
+      "reason": "Reconciled unchanged source atd9b13e09 disposable39171571259. The sole production constructor is checkpointStoreFor in softwareAgentImplementationAdapter, which must capture the current run/user admitted attempt before constructing the store. Save rechecks that issued attempt and exact owner/run, serializes its snapshots and accepts only true RPC receipt. Actual software checkpoint test proves own load/save, foreign load denial, five corrupt embedded identities, exact restoration, wrong epoch/worker/owner/recovery lineage and browser denial. Actual project admission adds current-parent transfer waits. This closes only these three fixed loader/factory calls, not whole worker effects or009 custody. No unchanged runtime code was modified.",
       "evidence": [
         {
           "path": "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts",
@@ -706,9 +706,9 @@
         "6cb302dec6a7d693df42",
         "09b6dc142ebd7f16df10"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "This record covers only canonical checkpoint load. SupabaseExecutionStateStore builds issued tenant context from constructor userId, filters owner/run and validates stored owner/run/project against embedded state. Writes have a separate issued-attempt row-lock disposition.",
-      "reason": "Owner-bound row persistence and embedded consistency do not establish parent project/run authorization. Full constructor caller provenance, same-owner concurrency and lifecycle transition control remain unresolved. This record covers the persistence sites, not certification of the entire execution runtime.",
+      "reason": "Reconciled unchanged source atd9b13e09 disposable39171571259. Both production constructors are runBuildPipeline, which requires original issued context and matching user. Resume reads only that user's exact run, validates embedded row/project/repository/branch lineage and rechecks current database project before durable worker admission. After admission the constructor receives the captured original run/user attempt. Actual canonical execution-store case proves permitted own load, foreign canary denial, corrupt run/project rejection and preserved concurrent owner receipt. Separate current-parent admission and checkpoint epoch tests pass. These two loader/factory calls are scoped, not whole runtime/provider lifecycle or a permission to read a foreign run.",
       "evidence": [
         {
           "path": "backend/src/ai/executionRuntime.ts",
@@ -3424,12 +3424,6 @@
         "5d90ff0ff5c303419423",
         "71763251ce3650f64a42",
         "efdb39bc229d1fb04151",
-        "e7db064acbe958d8fd76",
-        "0a50f29a357989f22449",
-        "b2603393f6e57aa8c372",
-        "b94338b6bb001b7e55ce",
-        "4ed0f34665473f6b62ce",
-        "288a27a7d2a5f5cd103e",
         "180631f7a6bd706af8d0",
         "14438be451fcb7f3bbe1",
         "c14b0badea7dd2cc312f",
@@ -3439,7 +3433,7 @@
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
-      "reason": "Epoch tests remain in real suite. Current policy setter requires issued tenant context and exact saved owner/provider/value/metadata receipt, focused failures pass. Real policy owner/foreign/forged-context tests await current-source CI. Complete primitive provenance, already-issued external tokens, policy concurrency and vault/KMS remain unresolved.",
+      "reason": "Ten original token/policy/shared storage calls remain open after the six issued-context PKCE calls are separately proven. Actual wrapper epoch/revision and private cleanup cases now pass atd9b13e09 disposable39171571259, but complete token-consumer provenance, selected external accounts, shared cleanup producers and policy concurrency still need exact source-bound disposition.009 custody is preserved separately and no whole-file certification is made.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -3450,6 +3444,15 @@
           "marker": "real two-client OAuth claims"
         }
       ]
+    },
+    {
+      "path":"backend/src/services/integrations/oauthPkceStore.ts",
+      "sourceSha256":"f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
+      "callIds":["e7db064acbe958d8fd76","0a50f29a357989f22449","b2603393f6e57aa8c372","b94338b6bb001b7e55ce","4ed0f34665473f6b62ce","288a27a7d2a5f5cd103e"],
+      "disposition":"SCOPED_BOUNDARY",
+      "authority":"Six issued-context store/consume/clear calls only. authMiddleware verifies the token and issues an uncloneable context. The four authenticated provider producers preserve that context. Wrappers derive only its owner and four fixed session providers. SQL binds owner/provider/revision, current session, one-use state and database expiry. No shared token/storage primitive or external selected account is included.",
+"reason":"Actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce passes164 security and3 browser tests. New wrapper case uses fresh real Auth actors and checks cloned-context rejection, foreign owner/provider/state, exact original receipt, one-use and revocation. Existing two-client case verifies concurrency/expiry/replacement/browser denial. This closes only session ownership, not selected external account, token retrieval, full007.6 criterion,008 grant or009 custody. All original sixteen caller identities remain represented with ten separate open calls.",
+      "evidence":[{"path":"backend/src/security/oauthWrapperOwnership.local.integration.ts","marker":"real OAuth wrappers retain issued owner provider revision and revocation across one-use sessions"},{"path":"backend/src/security/oauthSession.local.integration.ts","marker":"real two-client OAuth claims enforce one-use, expiry, identity and newer-session preservation"},{"path":"backend/src/services/integrations/oauthPkceStore.consume.test.ts","marker":"session persistence and consumption reject raw, cloned or fabricated tenant authority before I/O"}]
     },
     {
       "path": "backend/src/services/integrations/githubTokenStore.ts",
@@ -3807,9 +3810,9 @@
         "b47a9af1f31012f1a675",
         "9a5ebc5d27638e21a19f"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-      "reason": "Changed database-project admission and restored parent carrier require new source-bound proof. Existing run owner, generation, lease, cancellation and exact receipt invariants are preserved. Two real-pipeline transport negatives pass and the guarded SQL passes18 synthetic assertions, not real Supabase lock proof. New actual create/resume/checkpoint/revision ownership transfer waits are pending. Do not certify these eight affected operations from prior chat or worker-writer proof alone.",
+      "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
       "evidence": [
         {
           "path": "backend/src/ai/runStore.authority.test.ts",

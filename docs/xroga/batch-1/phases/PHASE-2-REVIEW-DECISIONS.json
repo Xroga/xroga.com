@@ -36,6 +36,53 @@
   ],
   "decisions": [
     {
+      "packetId":"B1-P2-aca46b7ed6cc0fa7",
+      "sourceSha256":"1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "executionStatus":"IN_PROGRESS",
+      "finding":"DEMONSTRATED_EVENT_FOREIGN_SESSION_PARENT_ACCEPTANCE_NARROW_SQL_FIX_PENDING_REAL_DATABASE_PROOF",
+      "actorTrace":"The existing SupabaseProjectRuntimeStore.appendEvent inserts user/project/session values into the fixed event table. Current disposable catalog has only event PK and Auth-user FK, with owner-only browser SELECT policy. It has no session-parent relationship. A synthetic SQL probe using the exact original table definitions accepts an owner's event referencing a foreign session. This establishes a service-write parent gap, not a browser write bypass or foreign-payload disclosure. All eleven original store callers remain open unless separately proven.",
+      "invariant":"A new session-bearing event must hold the current session and match both its owner and logical project at the decisive write. Missing, deleted, foreign or different-project sessions deny. Existing session-less logical-project events remain supported.",
+      "relatedSourceBindings":[{"path":"supabase/migrations/20261019000400_runtime_event_session_parent.sql","sha256":"8e332bafe5a48235644fb4392bd0fb79f5c9573426788a322154783b7308e16e"}],
+      "evidence":[{"path":"supabase/migrations/20260919000000_project_runtime_platform.sql","type":"SYNTHETIC_SQL_REPRODUCTION","result":"PRE_FIX_MISSING_EXPECTED_REJECTION_THEN_NINE_ASSERTIONS_PASS","scope":"Exact original session/event table definitions in PostgreSQL-engine simulation. Initial missing state fixture was corrected before the actual missing-rejection reproduction. Not real Supabase or locking proof."},{"path":"backend/src/security/runtimeEventParent.local.integration.ts","type":"ACTUAL_DATABASE_TEST_PREPARED","result":"NOT_EXECUTED_AT_RECORD_CREATION","scope":"Same-owner store receipt, foreign/other-project/missing parent denial, updates, null-session compatibility, browser denial, two observed waits including concurrent deletion and rollback"}],
+      "remaining":["Run actual122-migration fresh/upgrade/reapply and new event-parent test","Trace every event producer and retain revision/session/secret caller obligations","Do not treat current-parent SQL proof as complete actor provenance or009 encrypted custody"]
+    },
+    {
+      "packetId":"B1-P2-b8b2050b4efeeb5b",
+      "sourceSha256":"bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+      "executionStatus":"IN_PROGRESS",
+      "finding":"UNCHANGED_EXECUTION_RECOVERY_OWNER_AND_PRODUCER_PROOF_RECONCILED",
+      "actorTrace":"Only production constructors occur inside runBuildPipeline after original issued actor and user match. Resume loads exact server owner/run, validates stored and embedded lineage and current database project before durable worker admission. New writes additionally require captured original attempt. No body owner can choose another checkpoint.",
+      "invariant":"The two privileged checkpoint loader calls return only the original owner's matching run/project/repository state. Foreign owner or corrupt embedded identity yields no recoverable state.",
+      "actualVerification":{"sourceSha":"d9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce","disposableRun":"39171571259","scope":"Actual canonical execution-store positive/foreign/corruption/concurrent receipt case, separate checkpoint epoch and current-project wait cases."},
+      "evidence":[{"path":"backend/src/security/tenantIsolation.local.integration.ts","type":"DISPOSABLE_DATABASE","result":"PASS_AT_D9B13E09","scope":"canonical execution store denies foreign overwrite and corrupt resume state against real database"}],
+      "remaining":["Bind final-source receipts, preserve separate checkpoint writes and other worker callers","Do not infer whole worker or provider-effect completion from checkpoint reads"]
+    },
+    {
+      "packetId":"B1-P2-5f7aa13240647b98",
+      "sourceSha256":"7134da04e50a5575ff165edd6381c171abe4fe0c160bd889ba87769d92453f39",
+      "executionStatus":"IN_PROGRESS",
+      "finding":"UNCHANGED_SOFTWARE_CHECKPOINT_LOADER_AND_ISSUED_FACTORY_PROOF_RECONCILED",
+      "actorTrace":"The sole production default store constructor is softwareAgentImplementationAdapter.checkpointStoreFor, which captures a current admitted run/user attempt before construction. Exact owner/run load validates embedded recovery identity. Save rechecks original uncloneable attempt, queues immutable snapshot and validates true persistence receipt. RPC and its separate caller proof retain current generation and current database parent.",
+      "invariant":"The three original loader/factory calls cannot select a foreign run or write without its issued current worker identity. Embedded run/project/repository/base/status substitution denies recovery.",
+      "actualVerification":{"sourceSha":"d9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce","disposableRun":"39171571259","scope":"Actual own load/save, foreign load, five embedded corruption variants, exact recovery, wrong owner/epoch/worker/lineage/browser and parent-lock tests."},
+      "evidence":[{"path":"backend/src/security/softwareCheckpointAttempt.local.integration.ts","type":"DISPOSABLE_DATABASE","result":"PASS_AT_D9B13E09","scope":"real software checkpoint writer binds issued attempt owner epoch and immutable recovery lineage"}],
+      "remaining":["Bind final-source receipts, preserve separate RPC and caller obligations","External effects and full provider lifecycle are not certified by these checkpoint boundaries"]
+    },
+    {
+      "packetId":"B1-P2-d068943836963a9c",
+      "sourceSha256":"f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
+      "executionStatus":"IN_PROGRESS",
+      "finding":"SIX_ISSUED_CONTEXT_PKCE_CALLS_PROVEN_TEN_ORIGINAL_TOKEN_AND_STORAGE_CALLS_RETAINED_OPEN",
+      "actorTrace":"index.ts authenticates GitHub, Supabase, Vercel and publishing mounts. Start/callback/disconnect producers require the original issued TenantContext and pass it unchanged to the four fixed provider PKCE wrappers. Store/consume/clear derive only its verified owner. SQL binds exact owner/provider/authorization revision, current one-use state and database expiry. Raw token/policy and shared storage primitives are separate callers and remain unresolved.",
+      "invariant":"Foreign actor/provider/state, cloned context, replay and revoked or replaced session must not save, consume or clear another owner's authorization session. A PKCE session is not an external account credential or consequential-action grant.",
+      "actualVerification":{"sourceSha":"d9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce","disposableRun":"39171571259","migrations":121,"securityTests":164,"browserTests":3,"scope":"New existing-wrapper test with fresh real Auth actors plus unchanged two-client concurrency/expiry/replacement/browser-role tests. Synthetic token payloads, no OAuth provider exchange or account operation."},
+      "verifiedCurrentCallerIds":["e7db064acbe958d8fd76","0a50f29a357989f22449","b2603393f6e57aa8c372","b94338b6bb001b7e55ce","4ed0f34665473f6b62ce","288a27a7d2a5f5cd103e"],
+      "remainingCurrentCallerIds":["b8d0ad5c152e8ec1c565","5d90ff0ff5c303419423","71763251ce3650f64a42","efdb39bc229d1fb04151","180631f7a6bd706af8d0","14438be451fcb7f3bbe1","c14b0badea7dd2cc312f","4325b87a6699a71f0325","7595558fe3d8cbd76faa","3028f7fe3ff9804dd3e6"],
+      "evidence":[{"path":"backend/src/security/oauthWrapperOwnership.local.integration.ts","type":"DISPOSABLE_AUTH_DB_AND_PRIVATE_OBJECTS","result":"PASS_AT_D9B13E09","scope":"Existing wrappers, no provider-backed acceptance"},{"path":"backend/src/security/oauthSession.local.integration.ts","type":"REAL_TWO_CLIENT_DATABASE","result":"PASS_AT_D9B13E09","scope":"Original owner/provider/state/expiry/epoch/browser semantics"}],
+      "laterPhaseRequirements":["XB01-C008-AC01","XB01-C008-AC03","XB01-C008-AC04","XB01-C008-AC06","XB01-C009-AC01","XB01-C009-AC02","XB01-C009-AC03","XB01-C009-AC04","XB01-C009-AC05","XB01-C009-AC06","XB01-C009-AC07","XB01-C009-AC08","XB01-C009-AC09","XB01-C009-AC10","XB01-C009-AC11","XB01-C009-AC12"],
+      "remaining":["Reconcile ten original token/policy/shared storage callers and every selected external account producer","Bind exact changed-source receipts before whole007 acceptance","Do not implement008/009 or claim complete provider-account selection from the six PKCE calls"]
+    },
+    {
       "packetId":"B1-P2-8df15cca7cda10a6",
       "sourceSha256":"4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
       "executionStatus":"IN_PROGRESS",
@@ -177,7 +224,8 @@
       "packetId": "B1-P2-24934749677f47d8",
       "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
       "executionStatus": "IN_PROGRESS",
-      "finding": "DEMONSTRATED_WORKER_PROJECT_WAIT_ADMISSION_FIXED_PENDING_REAL_DATABASE_PROOF",
+      "finding": "DEMONSTRATED_WORKER_PROJECT_WAIT_ADMISSION_FIXED_REAL_DATABASE_PROOF_AT_D9B13E09",
+      "actualVerification":{"sourceSha":"d9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce","disposableRun":"39171571259","migrations":121,"securityTests":164,"browserTests":3,"scope":"All five actual observed project-lock waits, own create/resume/cold restore/checkpoints/revision, canonical safe cancellation after transfer, foreign/browser denial, exact receipts and rollback. Aggregate regression remains separately required."},
       "actorTrace": "Two authenticated swarm producers pass the original issued actor to runBuildPipeline. A real-pipeline synthetic probe changed project ownership during the intervening sticky-account lookup and observed a run insert without project context. Create and resume now carry only the selected database UUID into the existing swarm_runs.project_id column. The database trigger holds current project ownership at admission and dependent checkpoint/revision writes. Durable reads preserve that parent and resume cannot substitute another project.",
       "invariant": "A stale project preflight cannot admit or resume a worker, persist execution/software checkpoints or write worker revisions after project ownership changes. Preserve legacy logical workspace behavior, current attempt/generation/lease checks, safe stopping after authority loss, exact receipts and original FK deletion behavior.",
       "relatedSourceBindings": [
@@ -222,12 +270,12 @@
         {
           "path": "backend/src/security/workerProjectAdmission.local.integration.ts",
           "type": "DISPOSABLE_FIVE_OBSERVED_PROJECT_LOCK_WAITS",
-          "result": "E22_REAL_TEST_FAILED_CANONICAL_CANCEL_COUNTER_TRANSITION_NEW_SOURCE_PENDING",
-          "scope": "Disposable39170020977 at e22 passes121 migrations and161/162 tests. New worker test fails at canonical safe cancellation before five actual waits. The corrected guard preserves the original exact count+1 cancellation receipt.20 synthetic assertions pass, real changed-source proof remains required."
+          "result": "PASS_AT_D9B13E09_WITH_FIVE_OBSERVED_LOCK_WAITS",
+          "scope": "Disposable39171571259 passes121 migrations and164 security tests. Preserve e22 failure at canonical safe cancellation before five waits. Corrected source passes exact canonical count+1 cancellation and all five waits, receipts and rollback.20 synthetic SQL assertions are supplementary only."
         }
       ],
       "remaining": [
-        "Execute new actual121-migration fresh/upgrade/reapply and five-wait security case",
+        "Bind final-source121-migration fresh/upgrade/reapply and five-wait receipts, preserving the now passing d9 proof",
         "Reconcile authenticated producer through current-parent and existing scheduler/attempt writers before whole007.5 acceptance",
         "Other worker writers and provider-account consumers remain independent, no authority or vault implementation"
       ],

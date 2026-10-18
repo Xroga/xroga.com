@@ -23638,7 +23638,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:795",
+        "backend/src/security/tenantIsolation.local.integration.ts:797",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -30576,6 +30576,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:141",
         "backend/src/security/previewGrantAdmission.local.integration.ts:7",
+        "backend/src/security/runtimeEventParent.local.integration.ts:7",
         "backend/src/security/runtimeIdentity.local.integration.ts:7",
         "backend/src/security/runtimeProjectBinding.local.integration.ts:3",
         "backend/src/security/runtimeProjectBinding.test.ts:6",
@@ -30627,6 +30628,7 @@
       ],
       "testCoverage": [
         "backend/src/security/previewGrantAdmission.local.integration.ts",
+        "backend/src/security/runtimeEventParent.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.test.ts",
@@ -96284,6 +96286,13 @@
       "version": "20261019000300",
       "order": 121,
       "sha256": "0dd8c75213a9db8081b6c688e6a0c463954729e5b6d18d8d647f212552db2d26"
+    },
+    {
+      "id": "migration:d48e121a533bec1d99c9",
+      "sourcePath": "supabase/migrations/20261019000400_runtime_event_session_parent.sql",
+      "version": "20261019000400",
+      "order": 122,
+      "sha256": "8e332bafe5a48235644fb4392bd0fb79f5c9573426788a322154783b7308e16e"
     }
   ],
   "workflows": [
@@ -104236,7 +104245,7 @@
     {
       "id": "test-suite:94595a856df3bea7abb3",
       "sourcePath": "backend/src/operations/verificationTarget.local.integration.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104652,6 +104661,13 @@
       "id": "test-suite:d7b055d93f5551e59ddd",
       "sourcePath": "backend/src/security/runTraceAttempt.local.integration.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a0b0b8052a1a0a3710fd",
+      "sourcePath": "backend/src/security/runtimeEventParent.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

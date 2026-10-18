@@ -398,7 +398,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:349 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:330 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -433,7 +433,7 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 349,
+    "unresolvedSafetyCandidates": 330,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 11
   },
@@ -510,20 +510,9 @@
       "existingImplementation": "Existing run store, worker leases and owner persistence",
       "missingBehavior": "Project lineage and full callback/side-effect lifecycle; execute new DB races",
       "acceptanceTest": "Run row-lock races, same-process delayed callbacks, resume/cancel/outage negatives",
-      "pendingCandidates": 8,
+      "pendingCandidates": 0,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
-      "callersByPath": {
-        "backend/src/ai/runStore.ts": [
-          "cb05c4e7cb4f3b73155f",
-          "eeb2bd25e4456d58a465",
-          "8796931131b8f3173ef9",
-          "24e9a07a40a70d9bd103",
-          "e81906b392bf21ef067d",
-          "3e4ef8e15d7b836d3557",
-          "b47a9af1f31012f1a675",
-          "9a5ebc5d27638e21a19f"
-        ]
-      }
+      "callersByPath": {}
     },
     {
       "rootCause": "credentials-oauth",
@@ -531,7 +520,7 @@
       "existingImplementation": "Existing OAuth, BYOK and credential mirrors",
       "missingBehavior": "Atomic save/revoke ordering, one-use PKCE, encrypted vault migration and KMS boundary",
       "acceptanceTest": "Wrong owner, revocation during read/write, replay, rotation and tampering",
-      "pendingCandidates": 76,
+      "pendingCandidates": 70,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/services/integrations/credentialStorageBucket.ts": [
@@ -569,12 +558,6 @@
           "5d90ff0ff5c303419423",
           "71763251ce3650f64a42",
           "efdb39bc229d1fb04151",
-          "e7db064acbe958d8fd76",
-          "0a50f29a357989f22449",
-          "b2603393f6e57aa8c372",
-          "b94338b6bb001b7e55ce",
-          "4ed0f34665473f6b62ce",
-          "288a27a7d2a5f5cd103e",
           "180631f7a6bd706af8d0",
           "14438be451fcb7f3bbe1",
           "c14b0badea7dd2cc312f",
@@ -741,7 +724,7 @@
       "existingImplementation": "Existing owner checks, project/file stores and runtime",
       "missingBehavior": "Inherited parent identity, durable receipt, revision and runtime ownership gaps",
       "acceptanceTest": "Wrong parent, orphan, stale revision, failed persistence and cross-tenant download",
-      "pendingCandidates": 78,
+      "pendingCandidates": 76,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/buildImprovementMemory.ts": [
@@ -760,10 +743,6 @@
         "backend/src/ai/buildStrategyMemory.ts": [
           "c0288e26c844107ebca9",
           "51e187f3cd0b99673791"
-        ],
-        "backend/src/ai/executionRuntime.ts": [
-          "6cb302dec6a7d693df42",
-          "09b6dc142ebd7f16df10"
         ],
         "backend/src/ai/projectMemory.ts": [
           "278f199f6ac90620ad7f",
@@ -916,7 +895,7 @@
       "existingImplementation": "Existing services and source-bound register",
       "missingBehavior": "Inspect the exact remaining reason for each listed caller, grouping shared helpers",
       "acceptanceTest": "Per-caller negative verification proportional to risk",
-      "pendingCandidates": 71,
+      "pendingCandidates": 68,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/benchmarkRunner.ts": [
@@ -945,11 +924,6 @@
           "1740e151510be65ae1da",
           "a11bf3e4f0c999a36b58",
           "952ba0881d01437685bf"
-        ],
-        "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts": [
-          "b5df26e09290b7336e88",
-          "cf3bf4daeb128ba98911",
-          "d1853a0190149ebf0ef1"
         ],
         "backend/src/ai/usageAccounting.ts": [
           "8c7615ae94f3ecbfe8ed",

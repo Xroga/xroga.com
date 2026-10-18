@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e22c28fcf9a244d638accc12cf67fa1fd53a0ecb",
+  "source_sha": "d9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -573,6 +573,7 @@
         "backend/src/security/recoveryMemoryRead.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeEventParent.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
@@ -699,6 +700,7 @@
         "backend/src/security/recoveryMemoryRead.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeEventParent.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
@@ -7164,6 +7166,7 @@
         "backend/src/security/recoveryMemoryRead.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeEventParent.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
@@ -9810,6 +9813,7 @@
         "backend/src/security/providerCycleParent.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeEventParent.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
@@ -10145,6 +10149,7 @@
         "backend/src/security/recoveryMemoryRead.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeEventParent.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
@@ -10839,6 +10844,7 @@
         "backend/src/security/recoveryMemoryRead.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeEventParent.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
@@ -10915,6 +10921,7 @@
         "backend/src/security/providerCycleParent.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
+        "backend/src/security/runtimeEventParent.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
@@ -12865,7 +12872,7 @@
     },
     {
       "path": "backend/src/operations/verificationTarget.local.integration.ts",
-      "sha256": "edd243ec7c8c9266a4bde099bd859e9e373664f85399bced33119c2f188d449e"
+      "sha256": "18be781f17abcc95b99af8cefd598594aa51d93c1a711c53dcc28456491fe177"
     },
     {
       "path": "backend/src/organicIntelligence/authority/cli.ts",
@@ -13228,6 +13235,10 @@
       "sha256": "df809feac0b0b2f39f91f8080193c28ec12ad61ed3a0d3bb6f372efffcd2dba1"
     },
     {
+      "path": "backend/src/security/runtimeEventParent.local.integration.ts",
+      "sha256": "9ae41ef83948206da3e5314e10e0b141a839184d8f5c66966c2b4f64afc5fb1b"
+    },
+    {
       "path": "backend/src/security/runtimeIdentity.local.integration.ts",
       "sha256": "1fd0e6237322dcb64728abc6afb5c95fc996c52682116ee0abcb2ee5f1d10b63"
     },
@@ -13277,7 +13288,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "317263ff03c6bdd2b96084425ffca0326019befab0f960a1184e0ea00bdb62db"
+      "sha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -18817,7 +18828,42 @@
       "hostname": "fixture.invalid",
       "protocol": "https:",
       "path": "backend/src/operations/verificationTarget.local.integration.ts",
-      "line": 26,
+      "line": 19,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "fixture.invalid",
+      "protocol": "https:",
+      "path": "backend/src/operations/verificationTarget.local.integration.ts",
+      "line": 27,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "fixture.invalid",
+      "protocol": "https:",
+      "path": "backend/src/operations/verificationTarget.local.integration.ts",
+      "line": 30,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "fixture.invalid",
+      "protocol": "https:",
+      "path": "backend/src/operations/verificationTarget.local.integration.ts",
+      "line": 40,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/operations/verificationTarget.local.integration.ts",
+      "line": 44,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "fixture.invalid",
+      "protocol": "https:",
+      "path": "backend/src/operations/verificationTarget.local.integration.ts",
+      "line": 56,
       "credentialsInUrl": false
     },
     {
@@ -19173,6 +19219,13 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/runtimeEventParent.local.integration.ts",
+      "line": 11,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/runtimeIdentity.local.integration.ts",
       "line": 12,
       "credentialsInUrl": false
@@ -19251,77 +19304,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 102,
+      "line": 103,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 102,
+      "line": 103,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 463,
+      "line": 465,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 513,
+      "line": 515,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 602,
+      "line": 604,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 745,
+      "line": 747,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 797,
+      "line": 799,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1465,
+      "line": 1467,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1483,
+      "line": 1485,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1491,
+      "line": 1493,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1495,
+      "line": 1497,
       "credentialsInUrl": false
     },
     {
@@ -25593,14 +25646,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 964,
+      "line": 966,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1301,
+      "line": 1303,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
