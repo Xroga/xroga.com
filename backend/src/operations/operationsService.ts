@@ -257,20 +257,31 @@ export class OperationsService {
   async approveAction(userId: string, actionId: string, decision: 'approved' | 'rejected', reason: string): Promise<DbRow> {
     const action = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable', null);
     if (!action) throw new OperationsServiceError('not_found', 'Action not found', 404);
+    if (action.id !== actionId) throw new OperationsServiceError('unknown', 'Action receipt is invalid', 503);
     const access = await this.access(userId, action.project_id, 'view_product_operations');
     if (action.user_id !== access.ownerId) throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
     if (action.requested_by === userId) throw new OperationsServiceError('forbidden', 'Requester cannot approve this action', 403);
+    const requiredRole = ACTION_DEFINITIONS[action.action_type]?.approvalRole;
+    if (!requiredRole) throw new OperationsServiceError('invalid_state', 'Action does not support approval', 409);
     const approval = await queryOrThrow<DbRow | null>(this.db.from('operations_action_approvals').select('*').eq('action_id', actionId).eq('user_id', access.ownerId).eq('decision', 'pending').maybeSingle(), 'Approval unavailable', null);
-    if (!approval) throw new OperationsServiceError('invalid_state', 'No pending approval exists', 409);
-    if (access.role !== 'admin' && access.role !== approval.required_role) throw new OperationsServiceError('forbidden', `This action requires a ${approval.required_role}`, 403);
-    if (new Date(approval.expires_at).getTime() <= Date.now()) {
-      await this.db.from('operations_action_approvals').update({ decision: 'expired', decided_at: new Date().toISOString() }).eq('id', approval.id);
+    if (!approval || approval.required_role !== requiredRole) throw new OperationsServiceError('invalid_state', 'No matching pending approval exists', 409);
+    if (access.role !== 'admin' && access.role !== requiredRole) throw new OperationsServiceError('forbidden', `This action requires a ${requiredRole}`, 403);
+    if (!Number.isFinite(Date.parse(approval.expires_at)) || Date.parse(approval.expires_at) <= Date.now()) {
       throw new OperationsServiceError('invalid_state', 'Approval expired', 409);
     }
     const nextActionStatus = decision === 'approved' ? 'approved' : 'blocked';
-    await queryOrThrow(this.db.from('operations_action_approvals').update({ decision, reason: reason.slice(0, 500), approver_id: userId, decided_at: new Date().toISOString() }).eq('id', approval.id).select(), 'Approval update failed');
-    const updated = await queryOrThrow<DbRow[]>(this.db.from('operations_actions').update({ status: nextActionStatus, status_reason: decision === 'rejected' ? 'approval_rejected' : null, updated_at: new Date().toISOString() }).eq('id', actionId).select('*'), 'Action update failed');
-    await this.audit({ userId: access.ownerId, actorId: userId, projectId: action.project_id, environmentId: action.environment_id, action: `operations.approval.${decision}`, targetType: 'action', targetId: actionId, outcome: nextActionStatus, reason, correlationId: action.idempotency_key });
+    const { data: updated, error } = await this.db.rpc('decide_operations_action_approval', {
+      p_actor: userId, p_expected: action, p_required_role: requiredRole, p_decision: decision, p_reason: reason.slice(0, 500),
+    });
+    if (error?.code === '42501') throw new OperationsServiceError('forbidden', 'Operation is not permitted', 403);
+    if (error?.code === '40001') throw new OperationsServiceError('conflict', 'Approval state changed', 409);
+    if (error?.code === 'P0001') throw new OperationsServiceError('invalid_state', 'Approval expired', 409);
+    if (error?.code === '22023') throw new OperationsServiceError('precondition_failed', 'Approval request is invalid', 400);
+    if (error || !Array.isArray(updated) || updated.length !== 1 || updated[0]?.id !== actionId || updated[0].status !== nextActionStatus
+      || ['user_id','project_id','environment_id','requested_by','action_type','target_type','target_id','target_version',
+        'action_plan_digest','confirmation_digest','execution_plan','idempotency_key'].some(key => !isDeepStrictEqual(updated[0][key], action[key]))) {
+      throw new OperationsServiceError('unknown', 'Approval persistence could not be verified', 503);
+    }
     return updated[0];
   }
 
