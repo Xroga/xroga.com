@@ -62,11 +62,12 @@
     "remaining": "Storage mirrors and bulk reads, upstream external account/project selection, already-issued credentials, complete lifecycle and KMS remain unresolved. These narrow closures are not whole caller/vault certification or live provider proof."
   },
   "growthExperimentAdmission": {
-    "status": "IN PROGRESS",
+    "status": "VERIFIED_SCOPE",
     "fix": "Assignment snapshots the experiment before authority awaits, locks current actor/project/member and exact experiment, then inserts or reads one owned cohort winner without unique-conflict failure. Existing cohort replays retain their original variant. Exposure locks current parent authority and immutable assignment tuple, records first exposure once using database time and returns the durable winner rather than a stale unexposed pre-read. Canonical view roles and existing experiment status policy are preserved.",
     "localEvidence": "Ten focused admission/boundary/engine tests and31 local SQL owner/parent/role/replay/rollback/browser-denial/migration-replay assertions pass. Actual held member/owner/parent/configuration/assignment mutations, two-client cohort and first-exposure winners, clock-after-lock and both write rollbacks are registered for disposable Supabase CI. Local SQL is not real concurrency or provider proof.",
     "regression": "Combined backend3057-test regression PASS:3039 pass,zero failures,18 registered Windows skips. A subsequent explicit SupabaseClient type annotation in the CI-only integration fixture fixes TS7022 without changing runtime or test assertions. Final typecheck remains separately recorded.",
-    "remaining": "Final-source115-migration CI pending. Subject identity, experiment status policy, event provenance and complete growth lifecycle remain unresolved. Consolidating one removed persistence candidate does not certify a caller."
+    "disposable": "VERIFIED_SCOPE at8ab6e1dd590ac985fdfba8249ac0051948241963, run39143754730:115 fresh/upgrade migrations,149 security tests,3 browser tests,zero failures/skips. Actual assignment/exposure concurrent durable winners, current authority/parent/configuration/assignment changes, database clock, rollback and browser denial pass. All11 workflows and repeated branch/integrated aggregate39143754722 pass. No live provider proof.",
+    "remaining": "Subject identity, experiment status policy, event provenance and complete growth lifecycle remain unresolved. Consolidating one removed persistence candidate does not certify a caller. Final evidence commit is separately verified at exact HEAD."
   },
   "growthLifecycleTransition": {
     "status": "IN PROGRESS",
@@ -227,11 +228,11 @@
     "correction": "Disposable fixture now explicitly seeds a three-attempt budget and waits only until old lease expiry. It asserts lease updated_at is at or after the database pre-release clock and retains live lease,exact10-second duration,competing exclusion,exhausted-attempt and browser-denial assertions. No production timeout or retry limit changed. Final-source rerun required."
   },
   "latestVerifiedSource": {
-    "source": "ea2305700ae5c46ea24f612f9a09fbfcba4161cd",
-    "integrated": "36c4529fa88ef9558b71b5766c2ea239f35f0f01",
-    "aggregateRun": "39126345755",
-    "disposableRun": "39126345772",
-    "result": "All11 workflows PASS. Downloaded branch/integrated36c4529fa88ef9558b71b5766c2ea239f35f0f01 manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable113 fresh/upgrade migrations,148 security tests and3 browser tests pass with zero failures/skips. This is exact-source scoped evidence, not Command007 or Batch1 acceptance. Newer working revisions require their own verification."
+    "source": "8ab6e1dd590ac985fdfba8249ac0051948241963",
+    "integrated": "2bea538c4d3f34a29e9982c2b86714006aad672a",
+    "aggregateRun": "39143754722",
+    "disposableRun": "39143754730",
+    "result": "All11 workflows PASS. Downloaded branch/integrated2bea538c4d3f34a29e9982c2b86714006aad672a manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable115 fresh/upgrade migrations,149 security tests and3 browser tests pass with zero failures/skips. This is exact-source scoped evidence, not Command007 or Batch1 acceptance. Newer working revisions require their own verification."
   },
   "operationsApproval": {
     "status": "IN PROGRESS",
@@ -252,16 +253,16 @@
     "remaining": "Constant release version compatibility is preserved; mutable release state, approval freshness and provider authorization are not certified. New lookup stays REVIEWED_GAP pending full evidence."
   },
   "latestCandidate": {
-    "source": "ea2305700ae5c46ea24f612f9a09fbfcba4161cd",
-    "integrated": "36c4529fa88ef9558b71b5766c2ea239f35f0f01",
-    "aggregateRun": "39126345755",
-    "disposableRun": "39126345772",
+    "source": "8ab6e1dd590ac985fdfba8249ac0051948241963",
+    "integrated": "2bea538c4d3f34a29e9982c2b86714006aad672a",
+    "aggregateRun": "39143754722",
+    "disposableRun": "39143754730",
     "result": "PASS_SCOPED_CI_NOT_BATCH_ACCEPTANCE",
-    "securityPass": 148,
+    "securityPass": 149,
     "securityFail": 0,
     "browserPass": 3,
     "browserFail": 0,
-    "aggregateStatus": "All11 workflows PASS. Downloaded branch/integrated36c4529fa88ef9558b71b5766c2ea239f35f0f01 manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable113 fresh/upgrade migrations,148 security tests and3 browser tests pass with zero failures/skips. This is exact-source scoped evidence, not Command007 or Batch1 acceptance. Newer working revisions require their own verification."
+    "aggregateStatus": "All11 workflows PASS. Downloaded branch/integrated2bea538c4d3f34a29e9982c2b86714006aad672a manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable115 fresh/upgrade migrations,149 security tests and3 browser tests pass with zero failures/skips. This is exact-source scoped evidence, not Command007 or Batch1 acceptance. Newer working revisions require their own verification."
   },
   "historicalFb3Candidate": {
     "source": "fb3a2301e3deb102634fe3aa3693412b58cd2c0d",
@@ -307,16 +308,16 @@
     "aggregateStatus": "PASS: branch139bf16d and integratedc48fc1b0f695e551b40eaa3c864f2012525eb820 repeated full baselines both passed with sourceTreeMutated=false. Disposable/browser failure remains independent and unwaived."
   },
   "latestDisposable": {
-    "source": "ea2305700ae5c46ea24f612f9a09fbfcba4161cd",
-    "integrated": "36c4529fa88ef9558b71b5766c2ea239f35f0f01",
-    "run": "39126345772",
+    "source": "8ab6e1dd590ac985fdfba8249ac0051948241963",
+    "integrated": "2bea538c4d3f34a29e9982c2b86714006aad672a",
+    "run": "39143754730",
     "result": "VERIFIED",
-    "migrations": 113,
-    "securityTests": 148,
+    "migrations": 115,
+    "securityTests": 149,
     "browserTests": 3,
     "failures": 0,
     "skips": 0,
-    "aggregate": "All11 workflows PASS. Downloaded branch/integrated36c4529fa88ef9558b71b5766c2ea239f35f0f01 manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable113 fresh/upgrade migrations,148 security tests and3 browser tests pass with zero failures/skips. This is exact-source scoped evidence, not Command007 or Batch1 acceptance. Newer working revisions require their own verification."
+    "aggregate": "All11 workflows PASS. Downloaded branch/integrated2bea538c4d3f34a29e9982c2b86714006aad672a manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable115 fresh/upgrade migrations,149 security tests and3 browser tests pass with zero failures/skips. This is exact-source scoped evidence, not Command007 or Batch1 acceptance. Newer working revisions require their own verification."
   },
   "overnightEngineering": {
     "status": "IN PROGRESS",
@@ -496,7 +497,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "PHASE1_ONLY: complete source-bound001-006 scoreboard, computed007 evaluator and frozen73-packet/371-baseline mapping; recover existing assignment/exposure overlay with actual115-migration CI; verify grouped final-source branch/integrated baseline. Supplemental specialty owners are approved planning only, original72 unchanged and roadmap pending. Stop for founder review after Phase1. Do not start Phase2 tenant fixes or Phase3/4 implementation.",
+  "nextTask": "STOP_AFTER_PHASE1: implementation source8ab6e1dd passes original001-006, evaluator fixtures, frozen73-packet/371-baseline mapping and actual115-migration overlay proof. Collect final evidence commit's own exact-HEAD acceptance artifact, then stop for founder review. Phase2 requires explicit admission and retains actual007 acceptance; Phase3/4 remain unauthorized. Supplemental owners are planning only, original72 unchanged and roadmap pending.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",

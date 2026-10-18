@@ -1,5 +1,11 @@
 # Command 004 — runtime/dependency truth
 
+## Phase1 revalidation, October18
+
+Original Command004 criteria1–10 pass at `8ab6e1dd590ac985fdfba8249ac0051948241963`, integrated `2bea538c4d3f34a29e9982c2b86714006aad672a`. Aggregate39143754722 and disposable39143754730 pass, all11 workflows successful. Source-bound test identities and criterion results are in `docs/xroga/batch-1/phases/PHASE-1-VERIFIED-EVIDENCE.json` and the canonical scoreboard. Runtime/config integrity passes with169 dependency records,209 environment names,21 reviewed dynamic bindings and explicit readiness/fallback risks. Provider and proposed/active distinctions remain preserved, with no deployment or secret-value inventory.
+
+The final evidence commit receives its own exact-HEAD receipt under `artifacts/phase-1-acceptance/`. The sections below are preserved chronological evidence, including superseded counts, blockers and earlier completion labels. They do not override the Phase1 checkpoint or certify actual007–010, production providers or all Batch1. No merge, deployment or additional spending occurred.
+
 Status: VERIFIED read-only inventory and runtime gates, with recorded risks; no production security/durability certification or deployment.
 
 Starting audited source SHA: `f9d8f0aad68ee6acb37566c6ae5d428f7f7e43da`. Generated inventory records this identity plus exact LF-normalized source/config/tooling hashes for the reviewed overlay. Eventual tested commit/CI SHA must be recorded separately; this starting SHA does not imply that new tooling already existed in that commit.

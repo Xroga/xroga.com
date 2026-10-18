@@ -1,6 +1,6 @@
 # Xroga repository truth map
 
-Source SHA: `def4bcf6b81d5f4beea6f70d8c48cb8ff68b14c1`. Branch observed: `codex/xroga-batch-01`. Audit started: 2026-10-18T16:09:13.038Z.
+Source SHA: `8ab6e1dd590ac985fdfba8249ac0051948241963`. Branch observed: `codex/xroga-batch-01`. Audit started: 2026-10-18T16:26:45.295Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 

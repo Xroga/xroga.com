@@ -1,5 +1,11 @@
 # Command 002 evidence
 
+## Phase1 revalidation, October18
+
+Original Command002 criteria1–10 pass at `8ab6e1dd590ac985fdfba8249ac0051948241963`, integrated `2bea538c4d3f34a29e9982c2b86714006aad672a`. Aggregate39143754722 and disposable39143754730 pass, all11 workflows successful. Source-bound test identities and criterion results are in `docs/xroga/batch-1/phases/PHASE-1-VERIFIED-EVIDENCE.json` and the canonical scoreboard. All119 feature rows and72 missions are mapped. There are zero unowned available-source requirements and eight approved planning-only supplemental owners. Full private transcript semantics and the inaccessible historical shared page remain unverified.
+
+The final evidence commit receives its own exact-HEAD receipt under `artifacts/phase-1-acceptance/`. The sections below are preserved chronological evidence, including superseded counts, blockers and earlier completion labels. They do not override the Phase1 checkpoint or certify actual007–010, production providers or all Batch1. No merge, deployment or additional spending occurred.
+
 ## Original-source continuation (current)
 
 At `d6b6208528c79f47b2dbfa6992233f45e488286c`, the original ZIP and all eight declared file hashes/byte counts were verified. All 119 original feature rows and 72 missions are mapped into the existing ledger, with exact mission Markdown/manifest correspondence; 445 requirements / 527 mappings. All original CSV states remain UNVERIFIED/NOT_RUN; original owner/mission/acceptance/evidence columns are empty. Derived assignments are assessor annotations, not implementation proof. Original 01–10 missions alias stricter Batch One specifications; 11–72 remain future scope. No runtime dependency adopted from the 56 research catalog entries. Private originals stay outside Git.

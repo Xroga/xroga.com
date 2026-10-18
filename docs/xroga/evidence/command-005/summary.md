@@ -1,5 +1,11 @@
 # Command 005 — golden acceptance harness
 
+## Phase1 revalidation, October18
+
+Original Command005 criteria1–10 pass at `8ab6e1dd590ac985fdfba8249ac0051948241963`, integrated `2bea538c4d3f34a29e9982c2b86714006aad672a`. Aggregate39143754722 and disposable39143754730 pass, all11 workflows successful. Source-bound test identities and criterion results are in `docs/xroga/batch-1/phases/PHASE-1-VERIFIED-EVIDENCE.json` and the canonical scoreboard. The trustworthy harness passes. Twelve full product journeys remain BLOCKED_KNOWN_GAP and zero are falsely counted as PASS. Dedicated golden browser and disposable authenticated checks pass at this source without certifying future provider journeys.
+
+The final evidence commit receives its own exact-HEAD receipt under `artifacts/phase-1-acceptance/`. The sections below are preserved chronological evidence, including superseded counts, blockers and earlier completion labels. They do not override the Phase1 checkpoint or certify actual007–010, production providers or all Batch1. No merge, deployment or additional spending occurred.
+
 Status: VERIFIED harness with BLOCKED product journeys; not a production completion claim. Base after verified Command 004: `c5eeeb22cedb1bbfa6542e7c892b5afebee6216d`.
 
 All required IDs are present: GJ-CHAT, GJ-WEB-RESEARCH, GJ-EXISTING-REPO-CODING, GJ-NEW-SAAS, GJ-BUSINESS-READ, GJ-BUSINESS-WRITE, GJ-MIXED-MULTI-OUTCOME, GJ-DOCUMENTS, GJ-WORK-PACK, GJ-AI-EMPLOYEE, GJ-PAID-ANDROID-PUBLISH, GJ-SEO-DRIVE. Matrix counts: PASS 0, FAIL 0, BLOCKED_KNOWN_GAP 12, NOT_APPLICABLE 0. Passing component tests never inflate these counts.

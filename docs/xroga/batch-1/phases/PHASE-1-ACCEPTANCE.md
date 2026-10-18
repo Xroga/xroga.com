@@ -1,6 +1,8 @@
 # Phase 1 acceptance
 
-Status: IN_PROGRESS, final-source CI required. This document is not Batch1 or Command007 acceptance.
+Status: VERIFIED_SCOPE at implementation source `8ab6e1dd590ac985fdfba8249ac0051948241963`, integrated `2bea538c4d3f34a29e9982c2b86714006aad672a`. The collector returned B1_P1_VERIFIED for all60 original Phase1 criteria using aggregate39143754722 and disposable39143754730. All11 workflows passed. This document is not Batch1 or actual Command007 acceptance. The terminal handoff additionally requires the final evidence commit's own exact-HEAD collection under `artifacts/phase-1-acceptance/`.
+
+Every repeated branch/integrated baseline passed21 stages without source mutation. Per run:3057 backend tests,36 baseline guards,105 foundation/security fixtures; frontend1043 branch/1080 integrated. All collected tests passed with zero failures/skips. Both builds/typechecks, frontend lint, frozen dependency compatibility, SQL syntax/order, deterministic inventory/converter and operating policy passed. Disposable proof executed115 fresh/upgrade migrations,149 security/concurrency tests and3 authenticated browser tests, including the assignment/exposure durable-winner case. The overlay is accepted at this exact source, not merely prepared or locally simulated.
 
 The original104 criteria are preserved verbatim in `BATCH-1-CRITERION-SCOREBOARD.json`. Commands001–006 own60 Phase1 criteria. Their existing inventory, source/mission mappings, reproducible baseline, runtime truth, golden harness and operating-policy tests are reused. The eight specialty owners now have explicit founder-approved `SUPP-*` planning IDs, exact source row hashes, scopes, tests and dependencies. They remain PLANNED/NOT_IMPLEMENTED, with roadmap placement pending. The72 original missions are unchanged.
 
@@ -24,4 +26,8 @@ Phase2 owns actual007 acceptance and the frozen371 historical record mappings in
 
 Cost evidence: repository visibility is public and existing workflows use standard Ubuntu GitHub-hosted runners. [GitHub's runner documentation](https://docs.github.com/en/actions/reference/runners/github-hosted-runners) states those public-repository runners are free. No larger runner, paid model call, cloud provisioning, subscription, deployment, DNS or production operation was introduced.
 
-Final result and exact source/run identities are recorded by `PHASE-1-VERIFIED-EVIDENCE.json` and final handoff after actual verification. Until then, do not use B1_P1_VERIFIED.
+`PHASE-1-VERIFIED-EVIDENCE.json` freezes the independently collected implementation checkpoint and every original001–006 result with source hashes, test identities and run references. Each command passes10/10. It remains bound to immutable Git blobs at its recorded SHA, not to future edits. The final exact-HEAD receipt, scorecard and current-state/runtime truth maps are emitted under `artifacts/phase-1-acceptance/` after the evidence commit's own CI, without another tracked-source edit or self-SHA loop.
+
+The two evidence-collector defects found before signing are fixed and tested: actual AST registrations exclude quoted negative-test source, and passing TAP identities use canonical log redaction rather than unredacted substring matches. Both fixture stages are collected. Superseded aggregate39142502747 and39142971026 were cancelled by newer source, not counted as acceptance. Their successful disposable runs remain scoped historical evidence. No failed or missing test was waived.
+
+Full private transcript semantic review and the inaccessible historical shared page remain explicitly unverified in the source register. Original119/72 row integrity and available-source ownership/hash gates pass; no full historical narrative review or feature implementation is claimed.

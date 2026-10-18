@@ -1,5 +1,11 @@
 # Command 001 evidence
 
+## Phase1 revalidation, October18
+
+Original Command001 criteria1–10 pass at `8ab6e1dd590ac985fdfba8249ac0051948241963`, integrated `2bea538c4d3f34a29e9982c2b86714006aad672a`. Aggregate39143754722 and disposable39143754730 pass, all11 workflows successful. Source-bound test identities and criterion results are in `docs/xroga/batch-1/phases/PHASE-1-VERIFIED-EVIDENCE.json` and the canonical scoreboard. Inventory integrity, absent paths, route/queue/migration coverage and deterministic regeneration pass. Fresh exact-HEAD truth maps are separately emitted by the acceptance collector.
+
+The final evidence commit receives its own exact-HEAD receipt under `artifacts/phase-1-acceptance/`. The sections below are preserved chronological evidence, including superseded counts, blockers and earlier completion labels. They do not override the Phase1 checkpoint or certify actual007–010, production providers or all Batch1. No merge, deployment or additional spending occurred.
+
 Assessment: **PASS_WITH_BLOCKERS**. The inventory command is verified; pre-existing runtime/security gaps are recorded rather than fixed or claimed operational here.
 
 Application base SHA: `3b2bad21561e8abcb9a4a3bd0e98a7241d0efc3d`. Branch: `codex/xroga-batch-01`. The application source has not changed; new inventory tooling and its CI registration are an explicit working-tree overlay with source hashes in the inventory. Audit UTC and observed Node/npm versions are in `current-state.json`.

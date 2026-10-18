@@ -1,5 +1,11 @@
 # Command 003 — PASS (credential-free engineering baseline)
 
+## Phase1 revalidation, October18
+
+Original Command003 criteria1–10 pass at `8ab6e1dd590ac985fdfba8249ac0051948241963`, integrated `2bea538c4d3f34a29e9982c2b86714006aad672a`. Aggregate39143754722 and disposable39143754730 pass, all11 workflows successful. Source-bound test identities and criterion results are in `docs/xroga/batch-1/phases/PHASE-1-VERIFIED-EVIDENCE.json` and the canonical scoreboard. Four21-stage manifests prove repeated branch/integrated builds, typechecks, lint, frozen dependencies, mandatory tests and unchanged source. Disposable database/browser results are actual scoped proof, not production parity.
+
+The final evidence commit receives its own exact-HEAD receipt under `artifacts/phase-1-acceptance/`. The sections below are preserved chronological evidence, including superseded counts, blockers and earlier completion labels. They do not override the Phase1 checkpoint or certify actual007–010, production providers or all Batch1. No merge, deployment or additional spending occurred.
+
 Verified code SHA: `9c4fc0a5fa64760c8dbf5dbc1d6a41f0856af3ab`. Tested PR merge SHA: `6d4cfeb0392b131dcdfb08283a5dc02fa7ac9438`. [Successful aggregate CI](https://github.com/Xroga/xroga.com/actions/runs/38389954256); draft [PR 803](https://github.com/Xroga/xroga.com/pull/803). Not a production merge/deployment or Batch One completion.
 
 ## Commands and actual results

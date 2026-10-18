@@ -1,5 +1,19 @@
 {
   "command": "004",
+  "phase1Revalidation": {
+    "result": "PASS_ORIGINAL_10_CRITERIA_NOT_PRODUCT_OR_RELEASE_ACCEPTANCE",
+    "sourceSha": "8ab6e1dd590ac985fdfba8249ac0051948241963",
+    "integratedSha": "2bea538c4d3f34a29e9982c2b86714006aad672a",
+    "aggregateRun": "39143754722",
+    "disposableRun": "39143754730",
+    "criteriaPassed": 10,
+    "criterionIds": "XB01-C004-AC01 through XB01-C004-AC10",
+    "receipt": "docs/xroga/batch-1/phases/PHASE-1-VERIFIED-EVIDENCE.json",
+    "scoreboard": "docs/xroga/batch-1/phases/BATCH-1-CRITERION-SCOREBOARD.json",
+    "finalHeadArtifact": "artifacts/phase-1-acceptance/PHASE-1-VERIFIED-EVIDENCE.json",
+    "historicalFieldsBelowAreNotCurrentProof": true,
+    "productionAuthorized": false
+  },
   "status": "VERIFIED_READ_ONLY_RUNTIME_INVENTORY_WITH_RECORDED_RISKS",
   "result": "PASS",
   "branchCodeSha": "38b426d28b14082868362d46cb3d261610baa74e",
