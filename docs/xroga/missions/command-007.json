@@ -424,7 +424,10 @@
     "supabase/migrations/20261018001500_growth_activation_definition.sql",
     "backend/src/growth/activationEvaluation.local.integration.ts",
     "backend/src/growth/activationEvaluation.test.ts",
-    "supabase/migrations/20261018001600_growth_activation_evaluation.sql"
+    "supabase/migrations/20261018001600_growth_activation_evaluation.sql",
+    "backend/src/growth/lifecycleTransition.local.integration.ts",
+    "backend/src/growth/lifecycleTransition.test.ts",
+    "supabase/migrations/20261018001700_growth_lifecycle_transition.sql"
   ],
   "decisions": {
     "keep": [
@@ -491,7 +494,8 @@
       "supabase/migrations/20261018001300_preview_grant_admission.sql",
       "supabase/migrations/20261018001400_swarm_run_heartbeat.sql",
       "supabase/migrations/20261018001500_growth_activation_definition.sql",
-      "supabase/migrations/20261018001600_growth_activation_evaluation.sql"
+      "supabase/migrations/20261018001600_growth_activation_evaluation.sql",
+      "supabase/migrations/20261018001700_growth_lifecycle_transition.sql"
     ],
     "rollout": "Expand-only staged restrictive policies; do not apply production until full isolated history/upgrade/E2E/staging gates pass. Connected-project SQL generator now restricts memory tables; it is not a platform migration or a retrospective customer rollout. Existing connected schemas require separate approval/catalog-aware compatibility review.",
     "rollback": "Revert private delivery entry points first, retain expanded metadata/data and all prior RLS. Any scoped SQL rollback needs separate review; never re-enable unsafe public/local fallback or delete existing files"

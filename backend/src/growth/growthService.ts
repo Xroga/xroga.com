@@ -187,8 +187,20 @@ export class GrowthService {
   async transitionLifecycle(userId: string, input: { projectId: string; subjectType: 'user'|'product'; subjectId: string; state: string; evidenceReference: string }): Promise<Row> {
     input = { ...input };
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
-    const existing = await query<Row | null>(this.db.from('growth_lifecycle_state').select('version').eq('project_id', input.projectId).eq('subject_type', input.subjectType).eq('subject_id', input.subjectId).maybeSingle(), 'Lifecycle state unavailable', null);
-    const rows = await query<Row[]>(this.db.from('growth_lifecycle_state').upsert({ tenant_id: tenantId, project_id: input.projectId, subject_type: input.subjectType, subject_id: input.subjectId, lifecycle_state: input.state, version: Number(existing?.version ?? 0) + 1, evidence_reference: input.evidenceReference, transitioned_at: new Date().toISOString() }, { onConflict: 'project_id,subject_type,subject_id' }).select('*'), 'Lifecycle transition failed');
+    const roles:OperationsRole[]=['viewer','operator','release_manager','recovery_manager','admin'];
+    const {data:rows,error}=await this.db.rpc('transition_growth_lifecycle',{
+      p_actor:userId,p_tenant:tenantId,p_project:input.projectId,p_subject_type:input.subjectType,p_subject:input.subjectId,
+      p_state:input.state,p_evidence:input.evidenceReference,p_allowed_roles:roles.filter(role=>hasOperationsPermission(role,'manage_automation')),
+    });
+    if(error?.code==='42501')throw new GrowthServiceError('forbidden','Lifecycle transition is not permitted',403);
+    if(error?.code==='40001')throw new GrowthServiceError('conflict','Lifecycle ownership or version changed',409);
+    if(error?.code==='22023')throw new GrowthServiceError('invalid_lifecycle','Lifecycle transition is invalid',400);
+    if(error||!Array.isArray(rows)||rows.length!==1||typeof rows[0]?.id!=='string'||!rows[0].id||rows[0].tenant_id!==tenantId
+      ||rows[0].project_id!==input.projectId||rows[0].subject_type!==input.subjectType||rows[0].subject_id!==input.subjectId
+      ||rows[0].lifecycle_state!==input.state||rows[0].evidence_reference!==input.evidenceReference||!Number.isSafeInteger(rows[0].version)||rows[0].version<1
+      ||typeof rows[0].transitioned_at!=='string'||!Number.isFinite(Date.parse(rows[0].transitioned_at))){
+      throw new GrowthServiceError('storage_unavailable','Lifecycle transition persistence could not be verified',503);
+    }
     return rows[0];
   }
 

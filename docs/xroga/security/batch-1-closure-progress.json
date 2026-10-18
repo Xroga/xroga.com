@@ -53,18 +53,35 @@
     }
   ],
   "additionalSpend": 0,
+  "credentialPersistenceReconciliation": {
+    "status": "VERIFIED",
+    "scope": "Five fixed RPC/client-use candidates only: BYOK admission pair, exact owner/provider/revision CAS, atomic four-row Supabase bundle and its opaque-admission client. No credential runtime code changed.",
+    "source": "696322f0813a4e08b9d324e2bb653dfb2e2d657e",
+    "run": "39124146660",
+    "evidence": "Actual absent/existing two-client revoke races, owner/provider revision separation, malformed metadata/path denial, browser/direct-write/rename denial and bundle tests51-53 pass. Bundle preserves missing-owner absence, chooses one generation, rolls back late stale rows, rejects wrong owner/browser, invalidates individual revoke and clears generic-overwrite association. Runtime/SQL/fixtures unchanged. Producer tracing follows protected req.userId routes or opaque admissions captured by internal provisioning/CWS flows.",
+    "remaining": "Storage mirrors and bulk reads, upstream external account/project selection, already-issued credentials, complete lifecycle and KMS remain unresolved. These narrow closures are not whole caller/vault certification or live provider proof."
+  },
+  "growthLifecycleTransition": {
+    "status": "IN PROGRESS",
+    "fix": "Existing managed transition uses canonical operations manage roles and a service-only current actor/project/member transaction. Conflict updates require the same tenant and atomically increment the current row version, preserving retained activation lineage. Database update time is sampled after conflict locking. Exact returned identity/state/evidence/version/time is required. No separate unscoped version read or tenant-reassigning upsert remains.",
+    "localEvidence": "Eleven focused lifecycle/evaluation/input-snapshot tests and22 local SQL role/owner/foreign-conflict/version/overflow/rollback/replay assertions pass. Backend typecheck passes. Actual two-writer versions and clock, current member/owner revocation, foreign lifecycle mutation during wait, retained lineage, rollback and browser denial prepared.",
+    "regression": "Backend typecheck and combined3055-test regression PASS:3037 pass,zero failures,18 registered Windows skips. Includes activation evaluation112 and lifecycle transition113.",
+    "remaining": "Actual113-migration CI required. Existing allowed transition states and evidence policy are preserved, with complete source/subject lifecycle still unresolved. No provider action or whole-caller certification."
+  },
   "growthActivationEvaluation": {
     "status": "IN PROGRESS",
     "fix": "Existing activation evaluation applies the same event/deployment predicate inside a service-only current-authority transaction. It locks the chosen owned definition, deployment and required event rows, then conditionally upserts lifecycle for the same tenant. It cannot overwrite a foreign conflicting lifecycle. Viewer evaluation and public API shape remain unchanged. Caller validates exact lifecycle owner/project/subject/definition/evidence/version/time and internal source basis.",
     "localEvidence": "Seven focused activation/engine tests and23 local SQL owned/missing/foreign source, viewer compatibility, lifecycle conflict, role/rollback/replay assertions pass. Backend typecheck passes. Actual observed definition/deployment/event/member changes, concurrent same-subject upsert, foreign lifecycle mutation during wait, rollback and browser denial prepared. No provider call.",
-    "remaining": "Combined final-source regression and112-migration CI required. Event/provider provenance, later source supersession, subject history and complete growth lifecycle remain unresolved. Three removed/consolidated persistence candidates are not security certifications."
+    "regression": "Backend typecheck and combined3055-test regression PASS:3037 pass,zero failures,18 registered Windows skips. Includes evaluation112 and lifecycle transition113.",
+    "remaining": "Actual final-source CI required. Event/provider provenance, later source supersession, subject history and complete growth lifecycle remain unresolved. Three removed/consolidated persistence candidates are not security certifications."
   },
   "growthActivationDefinition": {
     "status": "IN PROGRESS",
     "fix": "Existing definition endpoint derives canonical manage roles from the operations permission map. Service-only transaction locks current actor/project/member, verifies admitted tenant, then preserves same-owner upsert behavior while refusing an existing different-tenant row at conflict-update time. It never rewrites tenant ownership. Caller validates every submitted field in exactly one returned definition.",
     "localEvidence": "Ten focused definition/input-snapshot tests and24 local SQL current-role/project/foreign-conflict/owned-update/shape/rollback/replay assertions pass. Backend typecheck passes. Actual current-member and owner revocation, foreign conflict before and during an observed row wait, same-owner concurrent upsert, rollback and browser denial prepared. No provider call.",
     "regression": "Backend typecheck and full3053-test regression PASS:3035 pass,zero failures,18 registered Windows skips.",
-    "remaining": "Actual111-migration source CI required. Replacing owned definitions versus previously evaluated lifecycle evidence, subject/event attribution and complete growth lifecycle remain open. No whole caller certification."
+    "disposable": "VERIFIED_SCOPE at4340f62c, run39125143060: actual current-member/owner revocation, foreign conflict before and during row wait, concurrent owned upsert, rollback and browser denial pass.111 fresh/upgrade migrations,146 security tests and3 browser tests pass with zero failures/skips. All11 workflows pass and downloaded aggregate39125143047 verifies branch and integrated1f31c5cb baselines21 stages twice with no source mutation.",
+    "remaining": "Newer final-branch CI required. Replacing owned definitions versus previously evaluated lifecycle evidence, subject/event attribution and complete growth lifecycle remain open. No whole caller certification."
   },
   "workerHeartbeat": {
     "status": "IN PROGRESS",
@@ -201,11 +218,11 @@
     "correction": "Disposable fixture now explicitly seeds a three-attempt budget and waits only until old lease expiry. It asserts lease updated_at is at or after the database pre-release clock and retains live lease,exact10-second duration,competing exclusion,exhausted-attempt and browser-denial assertions. No production timeout or retry limit changed. Final-source rerun required."
   },
   "latestVerifiedSource": {
-    "source": "696322f0813a4e08b9d324e2bb653dfb2e2d657e",
-    "integrated": "6e6df347ff5d9a023ee7def2e55677cda2c5ccff",
-    "aggregateRun": "39124146691",
-    "disposableRun": "39124146660",
-    "result": "All11 workflows PASS. Downloaded branch/integrated6e6df347ff5d9a023ee7def2e55677cda2c5ccff manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable110 fresh/upgrade migrations,145 security tests and3 browser tests pass with zero failures/skips. This is exact-source scoped evidence, not Command007 or Batch1 acceptance. Newer working revisions require their own verification."
+    "source": "4340f62cc9f8a44144427a9ac503c5f7f3d3d960",
+    "integrated": "1f31c5cb3b15d8a5195a04564bc413db5d63aa21",
+    "aggregateRun": "39125143047",
+    "disposableRun": "39125143060",
+    "result": "All11 workflows PASS. Downloaded branch/integrated1f31c5cb3b15d8a5195a04564bc413db5d63aa21 manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable111 fresh/upgrade migrations,146 security tests and3 browser tests pass with zero failures/skips. This is exact-source scoped evidence, not Command007 or Batch1 acceptance. Newer working revisions require their own verification."
   },
   "operationsApproval": {
     "status": "IN PROGRESS",
@@ -226,16 +243,16 @@
     "remaining": "Constant release version compatibility is preserved; mutable release state, approval freshness and provider authorization are not certified. New lookup stays REVIEWED_GAP pending full evidence."
   },
   "latestCandidate": {
-    "source": "696322f0813a4e08b9d324e2bb653dfb2e2d657e",
-    "integrated": "6e6df347ff5d9a023ee7def2e55677cda2c5ccff",
-    "aggregateRun": "39124146691",
-    "disposableRun": "39124146660",
+    "source": "4340f62cc9f8a44144427a9ac503c5f7f3d3d960",
+    "integrated": "1f31c5cb3b15d8a5195a04564bc413db5d63aa21",
+    "aggregateRun": "39125143047",
+    "disposableRun": "39125143060",
     "result": "PASS_SCOPED_CI_NOT_BATCH_ACCEPTANCE",
-    "securityPass": 145,
+    "securityPass": 146,
     "securityFail": 0,
     "browserPass": 3,
     "browserFail": 0,
-    "aggregateStatus": "All11 workflows PASS. Downloaded branch/integrated6e6df347ff5d9a023ee7def2e55677cda2c5ccff manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable110 fresh/upgrade migrations,145 security tests and3 browser tests pass with zero failures/skips. This is exact-source scoped evidence, not Command007 or Batch1 acceptance. Newer working revisions require their own verification."
+    "aggregateStatus": "All11 workflows PASS. Downloaded branch/integrated1f31c5cb3b15d8a5195a04564bc413db5d63aa21 manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable111 fresh/upgrade migrations,146 security tests and3 browser tests pass with zero failures/skips. This is exact-source scoped evidence, not Command007 or Batch1 acceptance. Newer working revisions require their own verification."
   },
   "historicalFb3Candidate": {
     "source": "fb3a2301e3deb102634fe3aa3693412b58cd2c0d",
@@ -281,16 +298,16 @@
     "aggregateStatus": "PASS: branch139bf16d and integratedc48fc1b0f695e551b40eaa3c864f2012525eb820 repeated full baselines both passed with sourceTreeMutated=false. Disposable/browser failure remains independent and unwaived."
   },
   "latestDisposable": {
-    "source": "696322f0813a4e08b9d324e2bb653dfb2e2d657e",
-    "integrated": "6e6df347ff5d9a023ee7def2e55677cda2c5ccff",
-    "run": "39124146660",
+    "source": "4340f62cc9f8a44144427a9ac503c5f7f3d3d960",
+    "integrated": "1f31c5cb3b15d8a5195a04564bc413db5d63aa21",
+    "run": "39125143060",
     "result": "VERIFIED",
-    "migrations": 110,
-    "securityTests": 145,
+    "migrations": 111,
+    "securityTests": 146,
     "browserTests": 3,
     "failures": 0,
     "skips": 0,
-    "aggregate": "All11 workflows PASS. Downloaded branch/integrated6e6df347ff5d9a023ee7def2e55677cda2c5ccff manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable110 fresh/upgrade migrations,145 security tests and3 browser tests pass with zero failures/skips. This is exact-source scoped evidence, not Command007 or Batch1 acceptance. Newer working revisions require their own verification."
+    "aggregate": "All11 workflows PASS. Downloaded branch/integrated1f31c5cb3b15d8a5195a04564bc413db5d63aa21 manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable111 fresh/upgrade migrations,146 security tests and3 browser tests pass with zero failures/skips. This is exact-source scoped evidence, not Command007 or Batch1 acceptance. Newer working revisions require their own verification."
   },
   "overnightEngineering": {
     "status": "IN PROGRESS",
@@ -371,7 +388,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:378 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:371 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -402,11 +419,11 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
-    "persistenceCandidates": 642,
+    "persistenceCandidates": 641,
     "ownerPredicateCandidates": 151,
     "reviewRequired": 0,
-    "reviewedCandidates": 642,
-    "unresolvedSafetyCandidates": 378,
+    "reviewedCandidates": 641,
+    "unresolvedSafetyCandidates": 371,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -470,7 +487,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Verify published4340f62c growth definition source: aggregate39125143047 and disposable39125143060. Complete growth activation evaluation and manual lifecycle owner/version admission as related independent work while CI runs, then run the combined source regression and publish after preceding aggregate completes.642 reviewed/378 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
+  "nextTask": "Publish the locally verified evaluation112/lifecycle113 changes after all11 verified4340f62c workflows, then verify113 migrations and actual current evidence/member/foreign lifecycle/two-writer version races. Continue experiment assignment/exposure parent authority and remaining credential/worker groups.641 reviewed/371 unresolved,zero unreviewed andzero whole callers certified. Five existing credential and one definition boundary closed only against actual source-bound evidence. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
@@ -504,7 +521,7 @@
       "existingImplementation": "Existing OAuth, BYOK and credential mirrors",
       "missingBehavior": "Atomic save/revoke ordering, one-use PKCE, encrypted vault migration and KMS boundary",
       "acceptanceTest": "Wrong owner, revocation during read/write, replay, rotation and tampering",
-      "pendingCandidates": 81,
+      "pendingCandidates": 76,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/services/integrations/credentialStorageBucket.ts": [
@@ -563,11 +580,8 @@
           "00329f071464b8e43b18",
           "9dee422de25d294a7357",
           "c5490d9431dfdae9ca6a",
-          "a9a5b0016875607c18d6",
-          "e8734242a4326adb80b9",
           "aad6224f275c7da17b55",
           "3fd4baa9d381d8e8ebdb",
-          "bb35f622bdc5f8723e47",
           "c8806caee1b6dcf5dffe",
           "8a0eb63ebffa141243f3",
           "e6d9a5693ccddad6699b",
@@ -583,9 +597,7 @@
           "219ebcffd2df24f5d96c",
           "616340b0d7522ddd6992",
           "20831c35d677b0bb0980",
-          "f18023f7a692ccdd61fe",
-          "b175a5edffc9890a554f",
-          "b1578eeaa39ed0b3affa"
+          "f18023f7a692ccdd61fe"
         ],
         "backend/src/services/integrations/vercelAuth.ts": [
           "c47cd353f14ba5046be8",
@@ -861,7 +873,7 @@
       "existingImplementation": "Existing community roles and growth owner filters",
       "missingBehavior": "Remaining role/parent lineage, replay and external publishing authority",
       "acceptanceTest": "Mixed-field escalation, foreign parents, retry races and no unauthorized provider effects",
-      "pendingCandidates": 45,
+      "pendingCandidates": 43,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/community/service.ts": [
@@ -882,36 +894,34 @@
           "a16a5d06c352a7901267",
           "049cf6f3b8c71da16801",
           "fe39e67000ca4c823db9",
-          "e663024bbb805232e4aa",
           "f06c7a10e85186933e84",
           "24a34ec20e39c5e05b11",
           "3c7c0800d22410ced33f",
           "4283bf27845b180354e4",
           "f3cbd772aa9f8cbdb572",
           "f2dfbe03e9a73e2d27f2",
-          "8496b2d26d6a4f812153",
-          "480739f5379261ecc574",
-          "9d7616ce623a18eb0d4b",
-          "d566257a26c44fb6b045",
-          "d91946e7b11ad248fb3f",
-          "c3ab0506a871be3f5aff",
-          "2df55944e2dfaa43e4d2",
-          "49d5cc4c425d39cd6811",
-          "c6a8499fc2f62a47a6cb",
-          "d19175dc5133e6e9308b",
-          "94841a45445a7d31e84b",
-          "603ca1ca0e29bed6f35a",
-          "91733eef334d9efa461b",
-          "3522df845cc077a7b352",
-          "3360f67036a2f27fc001",
-          "862be649b4bf3b9c1aa8",
-          "fa89250411e853393124",
-          "e69325f68886371575c2",
-          "00710b5223f2913b2bb6",
-          "ae00d81a8b15ffd34a8f",
-          "5da8afd6945527e91068",
-          "a534f017da6d84f07b85",
-          "a5b913d07a3c4b3f8b66"
+          "fba3ec246993cb38ab8d",
+          "a85cc21b6ff0083df5d4",
+          "d2a151148896c4cc08dd",
+          "19698d466429031b3924",
+          "ae2435e4296547f982c8",
+          "876c6be3cfe0b36b0bc2",
+          "bcdb9b2ad0ec78199561",
+          "1afffc078cd2692a93a7",
+          "4d9efaae919de1cb3899",
+          "1bbf9fc4a4d64e0ceaf2",
+          "b8e271c2d4b8b3f99af0",
+          "9e916878c523feacb73e",
+          "601cc202c94a6d74155b",
+          "30bd964098cb53dd25b9",
+          "ed69b922f1cfcb088ee7",
+          "78a1c1ea46ddd084b5c1",
+          "2767db95f48926527f61",
+          "96289f945e08ba3cd07a",
+          "97d13a82464a8eb511f8",
+          "5d297da3b78d02625a08",
+          "fb46c685a95d26e36595",
+          "a7ccd90a654c92e3c6c0"
         ]
       }
     },

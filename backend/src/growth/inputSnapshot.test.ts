@@ -42,6 +42,11 @@ for (const fixture of cases) test(`${fixture.method} retains admitted input acro
       then(resolve: (value: unknown) => unknown) { return Promise.resolve(resolve({ data: [], error: null })); },
     }; return q;
   }, async rpc(name:string,args:Record<string,unknown>) {
+    if(name==='transition_growth_lifecycle'){
+      writes++;const row={project_id:args.p_project,subject_id:args.p_subject,lifecycle_state:args.p_state,evidence_reference:args.p_evidence};
+      for(const[key,value]of Object.entries(fixture.expected))assert.deepEqual(row[key as keyof typeof row],value,key);
+      throw stop;
+    }
     if(name==='define_growth_activation'){
       writes++;const row={project_id:args.p_project,required_event_names:args.p_events};
       for(const[key,value]of Object.entries(fixture.expected))assert.deepEqual(row[key as keyof typeof row],value,key);

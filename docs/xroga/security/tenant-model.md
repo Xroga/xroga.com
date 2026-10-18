@@ -2,9 +2,9 @@
 
 Starting verified policy SHA: 224fb2b38c92e6351429a2c073a95bd265d1378e; evidence checkpoint 3f06da0b. No hosting, billing or production database change. Source report is Command 007 in research/inputs/batch-one-report.txt.
 
-Latest fully reconciled source is `696322f0813a4e08b9d324e2bb653dfb2e2d657e`. Disposable run39124146660 passes110 fresh/upgrade migrations,145 security/concurrency tests and3 authenticated browser tests, with zero failures/skips. All11 source workflows pass. Downloaded aggregate39124146691 manifests each pass21 stages twice on the branch and integrated`6e6df347ff5d9a023ee7def2e55677cda2c5ccff`, with no source mutation. Subsequent growth activation work requires its own exact-source proof.
+Latest fully reconciled source is `4340f62cc9f8a44144427a9ac503c5f7f3d3d960`. Disposable run39125143060 passes111 fresh/upgrade migrations,146 security/concurrency tests and3 authenticated browser tests, with zero failures/skips. All11 source workflows pass. Downloaded aggregate39125143047 manifests each pass21 stages twice on the branch and integrated`1f31c5cb3b15d8a5195a04564bc413db5d63aa21`, with no source mutation. Subsequent activation evaluation/lifecycle work requires its own exact-source proof.
 
-The canonical caller register currently records642 reviewed candidates,zero unreviewed and378 unresolved gaps, with zero whole callers security-certified. Narrow statement/transaction closures require source tracing and actual isolated evidence. They don't certify their entire upstream workflow. The registry has10 named global exceptions. Its count and integrity checks don't establish tenant acceptance. These current records supersede the historical checkpoints below without discarding their failed-run or scope limitations.
+The canonical caller register currently records641 reviewed candidates,zero unreviewed and371 unresolved gaps, with zero whole callers security-certified. Narrow statement/transaction closures require source tracing and actual isolated evidence. They don't certify their entire upstream workflow. The registry has10 named global exceptions. Its count and integrity checks don't establish tenant acceptance. These current records supersede the historical checkpoints below without discarding their failed-run or scope limitations.
 
 ## Additional semantic boundaries under verification
 

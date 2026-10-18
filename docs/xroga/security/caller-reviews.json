@@ -518,7 +518,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "a4c3c278d65b2452b8833407d60858557749890e5fc54d6152436003e54e6610",
+      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
       "callIds": [
         "5d2b5832658fd3299a4b",
         "10f3c1b47a240d3e5eec",
@@ -537,28 +537,26 @@
         "4283bf27845b180354e4",
         "f3cbd772aa9f8cbdb572",
         "f2dfbe03e9a73e2d27f2",
-        "8496b2d26d6a4f812153",
-        "480739f5379261ecc574",
-        "9d7616ce623a18eb0d4b",
-        "d566257a26c44fb6b045",
-        "d91946e7b11ad248fb3f",
-        "c3ab0506a871be3f5aff",
-        "2df55944e2dfaa43e4d2",
-        "49d5cc4c425d39cd6811",
-        "c6a8499fc2f62a47a6cb",
-        "d19175dc5133e6e9308b",
-        "603ca1ca0e29bed6f35a",
-        "91733eef334d9efa461b",
-        "3522df845cc077a7b352",
-        "3360f67036a2f27fc001",
-        "862be649b4bf3b9c1aa8",
-        "fa89250411e853393124",
-        "e69325f68886371575c2",
-        "00710b5223f2913b2bb6",
-        "ae00d81a8b15ffd34a8f",
-        "5da8afd6945527e91068",
-        "a534f017da6d84f07b85",
-        "a5b913d07a3c4b3f8b66"
+        "a85cc21b6ff0083df5d4",
+        "d2a151148896c4cc08dd",
+        "19698d466429031b3924",
+        "ae2435e4296547f982c8",
+        "876c6be3cfe0b36b0bc2",
+        "bcdb9b2ad0ec78199561",
+        "1afffc078cd2692a93a7",
+        "4d9efaae919de1cb3899",
+        "b8e271c2d4b8b3f99af0",
+        "9e916878c523feacb73e",
+        "601cc202c94a6d74155b",
+        "30bd964098cb53dd25b9",
+        "ed69b922f1cfcb088ee7",
+        "78a1c1ea46ddd084b5c1",
+        "2767db95f48926527f61",
+        "96289f945e08ba3cd07a",
+        "97d13a82464a8eb511f8",
+        "5d297da3b78d02625a08",
+        "fb46c685a95d26e36595",
+        "a7ccd90a654c92e3c6c0"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
@@ -3891,9 +3889,9 @@
       "callIds": [
         "bb35f622bdc5f8723e47"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-      "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
+      "reason": "Exact owner/provider/revision save transaction VERIFIED at696322f0813a4e08b9d324e2bb653dfb2e2d657e, disposable39124146660. Actual absent/existing two-client save/revoke races retain tombstones, cross-owner/provider revision reuse and malformed metadata deny, concurrent saves yield one winner, browser RPC and direct BYOK writes/rename bypasses deny. Runtime helper, SQL and fixtures are unchanged. Save arguments derive from an opaque issued admission bound to original owner/provider/env and the canonical private alias policy. Only this encrypted-row CAS closes. Storage mirrors, upstream remote work, external account selection, bulk enumeration, already-issued credentials and complete lifecycle/KMS remain independently unresolved. No provider calls or whole vault certification.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -3912,9 +3910,9 @@
         "a9a5b0016875607c18d6",
         "e8734242a4326adb80b9"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
-      "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
+      "reason": "Fixed admission RPC/client use VERIFIED at696322f0, disposable39124146660: absent/existing save/revoke, exact owner/provider revision separation, malformed provider paths and browser-denial cases pass. Only production consumers are the authenticated provider-key/publish routes or internal provisioning/CWS helpers carrying server owner and captured admission. The service validates allowed provider/env, accepts only a UUID revision and issues a frozen WeakMap-backed owner/provider/env handle. SQL touches only that explicit owner/provider, inserting an empty revoked CAS target when absent. Runtime/SQL/fixtures unchanged. Only admission persistence/client use closes. Remote work before admission, mirrors and full credential lifecycle/KMS remain separate gaps, with no external account ownership or provider certification.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -4152,9 +4150,9 @@
       "callIds": [
         "b175a5edffc9890a554f"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
-      "reason": "Twenty-two focused tests and local SQL probe pass. Real empty-owner admission, two-client winner, late-row rollback, wrong-owner/role, revoke and generic overwrite tests prepared. Final-source CI pending. Legacy exact-ref/role JWT compatibility is consistency only, unbound opaque keys require reconnect. Already-started external actions and complete lifecycle/KMS remain separate. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
+      "reason": "Four-row owner/revision bundle transaction VERIFIED at696322f0813a4e08b9d324e2bb653dfb2e2d657e, disposable39124146660 tests51-53: absent-owner admission does not mutate rows, two clients yield one common generation, a last-row stale revision rolls back all earlier writes, wrong owner/browser cannot save, individual revocation invalidates the bundle, generic single-key overwrite removes association. Runtime/SQL/fixtures unchanged. Only atomic association/persistence closes. Association and legacy JWT decoding do not verify provider identity. Upstream account/project selection, mirrors, already-issued external effects and full lifecycle/KMS remain separately unresolved. No live provider or whole vault certification.",
       "evidence": [
         {
           "path": "backend/src/security/supabaseBundle.local.integration.ts",
@@ -4168,9 +4166,9 @@
       "callIds": [
         "b1578eeaa39ed0b3affa"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
-      "reason": "Twenty-two focused tests and local SQL probe pass. Real empty-owner admission, two-client winner, late-row rollback, wrong-owner/role, revoke and generic overwrite tests prepared. Final-source CI pending. Legacy exact-ref/role JWT compatibility is consistency only, unbound opaque keys require reconnect. Already-started external actions and complete lifecycle/KMS remain separate. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
+      "reason": "Fixed bundle client use VERIFIED at696322f0, disposable39124146660 tests51-53. The client is invoked only after resolving an opaque admission from the private WeakMap. Its frozen owner supplies p_owner_id, the payload has the four fixed providers and captured revisions, and only true acknowledges the existing atomic transaction. Successful save consumes the admission. Protected connect requires issued TenantContext, with internal OAuth/provisioning callers capturing admissions before remote work. Runtime helper and transaction unchanged. Only this fixed client use closes. Full upstream actor/provider account lifecycle, legacy mirror policy, external effects and KMS remain independently open. No whole credential caller certification.",
       "evidence": [
         {
           "path": "backend/src/security/supabaseBundle.local.integration.ts",
@@ -4604,9 +4602,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "a4c3c278d65b2452b8833407d60858557749890e5fc54d6152436003e54e6610",
+      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
       "callIds": [
-        "94841a45445a7d31e84b"
+        "1bbf9fc4a4d64e0ceaf2"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Existing operations authority supplies its admitted project owner. Campaign creation validates exact action tuple and durable link receipt. In-app delivery service-only RPC locks current actor/project/member/campaign/action/approval, requires canonical verified action and matching approval digest/version, admits bounded consent/suppression cohort in one snapshot and atomically commits messages, notifications and completed receipt.",
@@ -4636,7 +4634,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "a4c3c278d65b2452b8833407d60858557749890e5fc54d6152436003e54e6610",
+      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
       "callIds": [
         "fe39e67000ca4c823db9"
       ],
@@ -4684,7 +4682,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "a4c3c278d65b2452b8833407d60858557749890e5fc54d6152436003e54e6610",
+      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
       "callIds": [
         "ea8b430421923fa7f064"
       ],
@@ -4700,7 +4698,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "a4c3c278d65b2452b8833407d60858557749890e5fc54d6152436003e54e6610",
+      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
       "callIds": [
         "88507e6640248f4470fc"
       ],
@@ -4716,7 +4714,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "a4c3c278d65b2452b8833407d60858557749890e5fc54d6152436003e54e6610",
+      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
       "callIds": [
         "6fe29938495992b03de5"
       ],
@@ -4732,7 +4730,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "a4c3c278d65b2452b8833407d60858557749890e5fc54d6152436003e54e6610",
+      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
       "callIds": [
         "a16a5d06c352a7901267"
       ],
@@ -4876,9 +4874,9 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "a4c3c278d65b2452b8833407d60858557749890e5fc54d6152436003e54e6610",
+      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
       "callIds": [
-        "f297ddd27eb12dfa529b"
+        "0130aafeb04e8da2aa3e"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Auth-mounted growth route supplies verified server actor. Existing project-view permission is rechecked against current locked profile/project/member. Service-only outcome transaction locks experiment, exposed assignment and event and verifies exact current owner/project/experiment relations before an insert-or-verified-replay. Service validates returned immutable outcome tuple.",
@@ -5052,13 +5050,13 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "a4c3c278d65b2452b8833407d60858557749890e5fc54d6152436003e54e6610",
+      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
       "callIds": [
         "e663024bbb805232e4aa"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing authenticated growth endpoint supplies server actor and validated project/name/version/events. Manage roles derive from the existing operations permission map. Service-only transaction locks current actor/project/member and validates the tenant, then preserves owned upsert semantics but conditionally refuses an existing foreign tenant row at conflict-update time. Caller validates exactly one returned definition and every submitted field.",
-      "reason": "Ten focused definition/input-snapshot tests and24 local SQL role/owner/foreign-conflict/owned-update/shape/rollback/replay assertions pass. Actual held current member/owner changes, foreign conflict before and during row wait, concurrent same-owner upsert and browser denial prepared. Definition changes versus already evaluated lifecycle evidence and remaining growth lifecycle/source attribution remain unresolved. No whole growth or Command008 certification.",
+      "reason": "Owned definition persistence boundary VERIFIED at4340f62cc9f8a44144427a9ac503c5f7f3d3d960, disposable39125143060:111 fresh/upgrade migrations,146 security tests and3 browser tests pass with zero failures/skips. Actual member and owner revocation deny writes, foreign conflicts before and during row wait preserve the foreign canary, concurrent same-owner upserts retain one identity, rollback and browser denial pass. Runtime invocation, SQL and fixture unchanged. Only current-owner definition upsert closes. Definition changes versus already evaluated lifecycle evidence and complete growth/source attribution remain unresolved. No whole growth or Command008 certification.",
       "evidence": [
         {
           "path": "backend/src/growth/activationDefinition.local.integration.ts",
@@ -5072,7 +5070,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "a4c3c278d65b2452b8833407d60858557749890e5fc54d6152436003e54e6610",
+      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
       "callIds": [
         "f06c7a10e85186933e84"
       ],
@@ -5089,15 +5087,50 @@
           "marker": "activation evaluation requires an exact owned lifecycle"
         }
       ]
-    }
-    ,{
+    },
+    {
       "path": "backend/src/ai/runStore.ts",
       "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
-      "callIds": ["d3903ed4bd1e7cfd75f2"],
+      "callIds": [
+        "d3903ed4bd1e7cfd75f2"
+      ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Private heartbeat timer runs only for locally owned run IDs and captured original generation. Only production creation/resume consumers are the existing pipeline's durable calls, using server actor and owner-checked resume. History hydration never claims local worker identity. This factory passes only issued owner context, server process worker ID and original generation to the dedicated heartbeat helper, with no caller-selected table or mutation payload.",
       "reason": "Source tracing plus actual helper boundary verified at696322f0 disposable39124146660. Focused original-timer test observes the persisted worker/generation, one exact heartbeat call, and safe handling of empty/outage/thrown storage with no provider retry or private diagnostics. Actual DB current-generation/foreign/cancelled and row-lock clock tests pass. Only fixed heartbeat client use is closed. All other run-store writes and external worker/liveness/cancellation semantics retain independent reviews and gaps.",
-      "evidence": [{"path":"backend/src/security/ownedRunHeartbeat.test.ts","marker":"the original run timer binds its heartbeat generation"},{"path":"backend/src/security/swarmHeartbeat.local.integration.ts","marker":"registerSwarmHeartbeatTests"},{"path":"backend/src/ai/pipeline.ts","marker":"await createRunDurable("}]
+      "evidence": [
+        {
+          "path": "backend/src/security/ownedRunHeartbeat.test.ts",
+          "marker": "the original run timer binds its heartbeat generation"
+        },
+        {
+          "path": "backend/src/security/swarmHeartbeat.local.integration.ts",
+          "marker": "registerSwarmHeartbeatTests"
+        },
+        {
+          "path": "backend/src/ai/pipeline.ts",
+          "marker": "await createRunDurable("
+        }
+      ]
+    },
+    {
+      "path": "backend/src/growth/growthService.ts",
+      "sourceSha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
+      "callIds": [
+        "fba3ec246993cb38ab8d"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Existing authenticated managed lifecycle route supplies the server actor and validated project/subject/state/evidence. Canonical manage roles derive from the existing operations permission map. Service-only transaction locks current actor/project/member and conditionally upserts only the same tenant. Existing-row version increments atomically and uses database update time after conflict locking; retained activation lineage is not erased. Caller validates exact returned identity/state/evidence/version/time.",
+      "reason": "Eleven focused lifecycle/evaluation/input-snapshot tests and22 local SQL owner/current-role/foreign-conflict/version/overflow/rollback/replay assertions pass. Actual two-writer versions, current member/owner revocation, foreign tenant mutation during row wait, lineage retention and browser denial prepared. Valid state transition policy and evidence attestation are unchanged, complete source/subject lifecycle remains unresolved. No provider action or whole-caller certification.",
+      "evidence": [
+        {
+          "path": "backend/src/growth/lifecycleTransition.local.integration.ts",
+          "marker": "registerGrowthLifecycleTransitionTests"
+        },
+        {
+          "path": "backend/src/growth/lifecycleTransition.test.ts",
+          "marker": "managed lifecycle transitions require an exact owned versioned receipt"
+        }
+      ]
     }
   ]
 }

@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "4340f62cc9f8a44144427a9ac503c5f7f3d3d960",
-    "sourceTimestampUtc": "2026-10-18T16:47:55+05:00",
-    "auditStartedUtc": "2026-10-18T11:58:23.635Z",
+    "sha": "cb27adefb8a8ffec7136aedc8207f82260e0646e",
+    "sourceTimestampUtc": "2026-10-18T16:58:45+05:00",
+    "auditStartedUtc": "2026-10-18T12:03:42.122Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -12222,7 +12222,7 @@
       "id": "surface:4cd464f7016cf52503dd",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sha256": "a4c3c278d65b2452b8833407d60858557749890e5fc54d6152436003e54e6610",
+      "sha256": "91abde457be1170e41f2a4fa6cb2b59ef39d0413c5b3e0a887c017aa1b595b1b",
       "symbols": [
         "GrowthService",
         "GrowthServiceError",
@@ -12295,6 +12295,8 @@
         "backend/src/growth/growthService.referralBoundary.test.ts:4",
         "backend/src/growth/identity.local.integration.ts:6",
         "backend/src/growth/inputSnapshot.test.ts:4",
+        "backend/src/growth/lifecycleTransition.local.integration.ts:7",
+        "backend/src/growth/lifecycleTransition.test.ts:4",
         "backend/src/growth/outcome.local.integration.ts:7",
         "backend/src/growth/outcomeReceipt.test.ts:4",
         "backend/src/routes/growth.ts:5",
@@ -12347,14 +12349,14 @@
         "backend/src/growth/growthService.ts:175 (user_id)",
         "backend/src/growth/growthService.ts:176 (tenant_id)",
         "backend/src/growth/growthService.ts:177 (tenant_id)",
-        "backend/src/growth/growthService.ts:220 (tenant_id)",
-        "backend/src/growth/growthService.ts:246 (tenant_id)",
-        "backend/src/growth/growthService.ts:266 (tenant_id)",
-        "backend/src/growth/growthService.ts:294 (tenant_id)",
+        "backend/src/growth/growthService.ts:232 (tenant_id)",
+        "backend/src/growth/growthService.ts:258 (tenant_id)",
+        "backend/src/growth/growthService.ts:278 (tenant_id)",
         "backend/src/growth/growthService.ts:306 (tenant_id)",
-        "backend/src/growth/growthService.ts:317 (tenant_id)",
-        "backend/src/growth/growthService.ts:319 (tenant_id)",
-        "backend/src/growth/growthService.ts:344 (tenant_id)"
+        "backend/src/growth/growthService.ts:318 (tenant_id)",
+        "backend/src/growth/growthService.ts:329 (tenant_id)",
+        "backend/src/growth/growthService.ts:331 (tenant_id)",
+        "backend/src/growth/growthService.ts:356 (tenant_id)"
       ],
       "approvalBoundary": [
         "backend/src/growth/growthService.ts#hasOperationsPermission"
@@ -12383,6 +12385,8 @@
         "backend/src/growth/growthService.referralBoundary.test.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/inputSnapshot.test.ts",
+        "backend/src/growth/lifecycleTransition.local.integration.ts",
+        "backend/src/growth/lifecycleTransition.test.ts",
         "backend/src/growth/outcome.local.integration.ts",
         "backend/src/growth/outcomeReceipt.test.ts",
         "backend/src/security/growthReferral.local.integration.ts",
@@ -23570,7 +23574,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:667",
+        "backend/src/security/tenantIsolation.local.integration.ts:669",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -95515,6 +95519,13 @@
       "version": "20261018001600",
       "order": 112,
       "sha256": "603a3caaa6c398a1d59375639fe2fddbefacde5c170df12739bef20c89058fd1"
+    },
+    {
+      "id": "migration:b05b88e1156bf3341717",
+      "sourcePath": "supabase/migrations/20261018001700_growth_lifecycle_transition.sql",
+      "version": "20261018001700",
+      "order": 113,
+      "sha256": "47106309a97034798163ad3b9697037f3edef333a0cbe442aab3ae1b3d709f39"
     }
   ],
   "workflows": [
@@ -103094,6 +103105,20 @@
     {
       "id": "test-suite:7682aaddb1c97b6c65c4",
       "sourcePath": "backend/src/growth/inputSnapshot.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:848281ed6c68db5db619",
+      "sourcePath": "backend/src/growth/lifecycleTransition.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:040e74bd2e34a5138523",
+      "sourcePath": "backend/src/growth/lifecycleTransition.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
