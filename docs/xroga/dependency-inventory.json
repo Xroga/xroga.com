@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d26875f5b853656ecd1e424897876795d6847fbe",
+  "source_sha": "aca4b684759a5922d063625b8af2949d00b336f8",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -536,6 +536,7 @@
         "backend/src/community/remainingMutations.local.integration.ts",
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
+        "backend/src/growth/eventReplay.local.integration.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/routes/github.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
@@ -632,6 +633,7 @@
         "backend/src/community/remainingMutations.local.integration.ts",
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
+        "backend/src/growth/eventReplay.local.integration.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/routes/github.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
@@ -6929,6 +6931,7 @@
         "backend/src/community/remainingMutations.local.integration.ts",
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
+        "backend/src/growth/eventReplay.local.integration.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -9841,6 +9844,7 @@
         "backend/src/config/supabase.ts",
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
+        "backend/src/growth/eventReplay.local.integration.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/index.ts",
         "backend/src/lib/capabilityRegistry.ts",
@@ -10488,6 +10492,7 @@
         "backend/src/community/remainingMutations.local.integration.ts",
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
+        "backend/src/growth/eventReplay.local.integration.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -10541,6 +10546,7 @@
         "backend/src/community/remainingMutations.local.integration.ts",
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
+        "backend/src/growth/eventReplay.local.integration.ts",
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
@@ -11437,7 +11443,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "b4955d2f1d99acff327e61a0b48cea30ebb3a0f9ec407664a389972e777ce758"
+      "sha256": "0f452abb4a8d0c57b0ab38a5ca385385215c163005cd09b61fd2aa51ea7e93c1"
     },
     {
       "path": "Dockerfile.api",
@@ -12148,12 +12154,16 @@
       "sha256": "dbed345936a63bd89d63bfcaec940fdab72ad5a13805606f1bb9a97619e2bbd6"
     },
     {
+      "path": "backend/src/growth/eventReplay.local.integration.ts",
+      "sha256": "be4e5c800a7f36a8811b42d25b5cd27f6eea43b3c31f28923fb1566c5d3a29b8"
+    },
+    {
       "path": "backend/src/growth/growthEngine.ts",
       "sha256": "f6a6b2ae5c12678772ea6e3fbd466bc8e3abc83d11f8850aa561d3846fe969ae"
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sha256": "ba5fdbb3d15b9add7640606c1ca1ee42e662a2320ba8de43aa212f7f32b32f39"
+      "sha256": "a019502f4580464db5215088b42c97f7bca7edddff1ce5bf44ebbb111d794475"
     },
     {
       "path": "backend/src/growth/identity.local.integration.ts",
@@ -12809,7 +12819,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "df8154994fd19d975f72c4ee017d5c0594900bdfcb6b432f5b07744c2c5349ef"
+      "sha256": "db8960739ef4f125e887755f9a52fca621d0eb64078d98a016d6a03d279c6b1f"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -17887,6 +17897,13 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/growth/eventReplay.local.integration.ts",
+      "line": 11,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/growth/identity.local.integration.ts",
       "line": 11,
       "credentialsInUrl": false
@@ -18511,56 +18528,56 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 75,
+      "line": 76,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 75,
+      "line": 76,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 321,
+      "line": 323,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 371,
+      "line": 373,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 460,
+      "line": 462,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 566,
+      "line": 568,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 618,
+      "line": 620,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1270,
+      "line": 1272,
       "credentialsInUrl": false
     },
     {
@@ -23740,7 +23757,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "line": 272,
+      "line": 290,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24741,7 +24758,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1106,
+      "line": 1108,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

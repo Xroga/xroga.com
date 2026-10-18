@@ -22,11 +22,19 @@ jobs:
           --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v6
         with:
           node-version-file: '.node-version'
           cache: npm
       - run: npm ci
+      - name: Bind audit inventory to the actual virtual merge
+        if: github.event_name == 'pull_request'
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: node scripts/ci/prepare-pr-integration.mjs
       - name: Audit integrity and negative scanner fixtures
         run: |
           node scripts/security/audit-tenant-policies.mjs
@@ -39,3 +47,11 @@ jobs:
         run: node --test scripts/security/tenant-rls.database.test.mjs
       - name: Backend context and loopback boundary tests (not live Supabase evidence)
         run: node node_modules/tsx/dist/cli.mjs --test backend/src/security/*.test.ts
+      - name: Preserve exact integrated audit provenance
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tenant-fixture-integration-${{ github.sha }}
+          path: artifacts/batch-01-integration/
+          if-no-files-found: error
+          retention-days: 14

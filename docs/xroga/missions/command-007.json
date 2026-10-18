@@ -369,7 +369,9 @@
     "backend/src/synthesis/projectRuntime/flyProvider.restore.test.ts",
     "backend/src/synthesis/projectRuntime/sessionIdentity.test.ts",
     "supabase/migrations/20261016002300_runtime_session_identity.sql",
-    "backend/src/services/publish/chromeWebStore.authority.test.ts"
+    "backend/src/services/publish/chromeWebStore.authority.test.ts",
+    "backend/src/growth/eventReplay.local.integration.ts",
+    "backend/src/growth/eventReplay.test.ts"
   ],
   "decisions": {
     "keep": [

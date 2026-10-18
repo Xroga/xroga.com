@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { OperationsService, OperationsServiceError } from '../operations/operationsService.js';
@@ -50,13 +51,26 @@ export class GrowthService {
   }
 
   async recordEvent(userId: string, input: { projectId: string; name: string; idempotencyKey: string; environment: 'test'|'preview'|'production'; anonymousId?: string; sessionId?: string; releaseId?: string; deploymentId?: string; campaignId?: string; referralId?: string; experimentId?: string; consentState: 'granted'|'denied'|'unknown'|'not_required'; source: string; evidenceReference: string; metadata?: Record<string, unknown>; occurredAt?: string }): Promise<{ event: Row; duplicate: boolean }> {
+    // Keep the admitted intent stable across ownership and database awaits.
+    try { input = JSON.parse(JSON.stringify(input)); }
+    catch { throw new GrowthServiceError('invalid_event', 'Event payload is invalid', 400); }
     if (!validateEventName(input.name)) throw new GrowthServiceError('invalid_event', 'Event name is not registered or versioned', 400);
+    const payload = { user_id: userId, project_id: input.projectId, event_type: input.name,
+      event_version: Number(input.name.match(/\.v([0-9]+)$/)?.[1] ?? 0), idempotency_key: input.idempotencyKey,
+      environment: input.environment, anonymous_id: input.anonymousId ?? null, session_id: input.sessionId ?? null,
+      release_id: input.releaseId ?? null, deployment_id: input.deploymentId ?? null, campaign_id: input.campaignId ?? null,
+      referral_id: input.referralId ?? null, experiment_id: input.experimentId ?? null, consent_state: input.consentState,
+      source: input.source.slice(0,80), evidence_reference: input.evidenceReference.slice(0,500), metadata: redactGrowthPayload(input.metadata ?? {}) };
     const { tenantId } = await this.access(userId, input.projectId);
+    const matches = (row: Row) => row.tenant_id === tenantId && typeof row.id === 'string' && !!row.id
+      && Object.entries(payload).every(([key,value]) => isDeepStrictEqual(row[key],value))
+      && (!input.occurredAt || Date.parse(row.occurred_at) === Date.parse(input.occurredAt));
+    const replay = (row: Row) => {
+      if (!matches(row)) throw new GrowthServiceError('idempotency_conflict', 'Event key cannot be reused for a different event', 409);
+      return {event:row,duplicate:true};
+    };
     const existing = await query<Row | null>(this.db.from('analytics_events').select('*').eq('tenant_id', tenantId).eq('idempotency_key', input.idempotencyKey).maybeSingle(), 'Event deduplication unavailable', null);
-    if (existing) {
-      if (existing.project_id !== input.projectId) throw new GrowthServiceError('idempotency_conflict', 'Event key cannot be reused for this project', 409);
-      return { event: existing, duplicate: true };
-    }
+    if (existing) return replay(existing);
     if (input.experimentId) {
       const experiment = await query<Row | null>(this.db.from('growth_experiments').select('id').eq('id', input.experimentId).eq('tenant_id', tenantId).eq('project_id', input.projectId).maybeSingle(), 'Event experiment unavailable', null);
       if (!experiment) throw new GrowthServiceError('not_found', 'Event experiment not found', 404);
@@ -78,8 +92,12 @@ export class GrowthService {
         throw new GrowthServiceError('not_found', 'Event referral not found', 404);
       }
     }
-    const version = Number(input.name.match(/\.v([0-9]+)$/)?.[1] ?? 0);
-    const rows = await query<Row[]>(this.db.from('analytics_events').insert({ user_id: userId, tenant_id: tenantId, project_id: input.projectId, event_type: input.name, event_version: version, idempotency_key: input.idempotencyKey, environment: input.environment, anonymous_id: input.anonymousId ?? null, session_id: input.sessionId ?? null, release_id: input.releaseId ?? null, deployment_id: input.deploymentId ?? null, campaign_id: input.campaignId ?? null, referral_id: input.referralId ?? null, experiment_id: input.experimentId ?? null, consent_state: input.consentState, source: input.source.slice(0, 80), evidence_reference: input.evidenceReference.slice(0, 500), metadata: redactGrowthPayload(input.metadata ?? {}), occurred_at: input.occurredAt ?? new Date().toISOString() }).select('*'), 'Event could not be recorded');
+    const {data:rows,error} = await this.db.from('analytics_events').insert({...payload,tenant_id:tenantId,occurred_at:input.occurredAt ?? new Date().toISOString()}).select('*');
+    if (error?.code === '23505') {
+      const winner = await query<Row|null>(this.db.from('analytics_events').select('*').eq('tenant_id',tenantId).eq('idempotency_key',input.idempotencyKey).maybeSingle(),'Event deduplication unavailable',null);
+      if (winner) return replay(winner);
+    }
+    if(error || !rows || rows.length!==1 || !matches(rows[0])) throw new GrowthServiceError('storage_unavailable','Event persistence could not be verified',503);
     return { event: rows[0], duplicate: false };
   }
 

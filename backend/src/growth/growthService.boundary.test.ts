@@ -47,7 +47,7 @@ test('growth replay cannot return another project event and absent replay perfor
   assert.equal(created.duplicate, false); assert.equal(created.event.id, 'new-event');
   assert.equal(created.event.tenant_id, 'actor'); assert.equal(created.event.project_id, 'project');
   assert.equal(inserts, 1);
-  existing = { id: 'same-project-event', project_id: 'project' };
+  existing = { ...created.event, id: 'same-project-event' };
   const replay = await service.recordEvent('actor', input);
   assert.equal(replay.duplicate, true); assert.equal(replay.event.id, 'same-project-event'); assert.equal(inserts, 1);
 });

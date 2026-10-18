@@ -11853,7 +11853,7 @@
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts:5",
         "backend/src/ai/webBudget.ts:1",
         "backend/src/community/service.ts:1",
-        "backend/src/growth/growthService.ts:3",
+        "backend/src/growth/growthService.ts:4",
         "backend/src/lib/resolveIdentity.ts:39",
         "backend/src/operations/operationsService.ts:3",
         "backend/src/routes/billingWebhook.ts:4",
@@ -12180,7 +12180,7 @@
       ],
       "callers": [
         "backend/src/growth/growthEngine.test.ts:3",
-        "backend/src/growth/growthService.ts:5"
+        "backend/src/growth/growthService.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -12212,7 +12212,7 @@
       "id": "surface:4cd464f7016cf52503dd",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sha256": "ba5fdbb3d15b9add7640606c1ca1ee42e662a2320ba8de43aa212f7f32b32f39",
+      "sha256": "a019502f4580464db5215088b42c97f7bca7edddff1ce5bf44ebbb111d794475",
       "symbols": [
         "GrowthService",
         "GrowthServiceError",
@@ -12236,23 +12236,27 @@
         "experiment",
         "hash",
         "linked",
+        "matches",
         "outcome",
+        "payload",
         "query",
         "receipt",
         "reference",
+        "replay",
         "result",
         "row",
         "rows",
         "segment",
         "variant",
-        "version"
+        "winner"
       ],
       "imports": [
         "../config/supabase.js",
         "../operations/operationsService.js",
         "./growthEngine.js",
         "@supabase/supabase-js",
-        "node:crypto"
+        "node:crypto",
+        "node:util"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
@@ -12266,6 +12270,8 @@
         "backend/src/growth/campaignReceipt.local.integration.ts:6",
         "backend/src/growth/delivery.local.integration.ts:1",
         "backend/src/growth/deliveryReceipt.test.ts:1",
+        "backend/src/growth/eventReplay.local.integration.ts:7",
+        "backend/src/growth/eventReplay.test.ts:4",
         "backend/src/growth/growthService.boundary.test.ts:4",
         "backend/src/growth/growthService.campaignReceipt.test.ts:4",
         "backend/src/growth/growthService.identity.test.ts:4",
@@ -12296,11 +12302,11 @@
       ],
       "externalProviderDependencies": [
         "@supabase/supabase-js",
-        "node:crypto"
+        "node:crypto",
+        "node:util"
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/growth/growthService.ts:40 (tenant_id)",
         "backend/src/growth/growthService.ts:41 (tenant_id)",
         "backend/src/growth/growthService.ts:42 (tenant_id)",
         "backend/src/growth/growthService.ts:43 (tenant_id)",
@@ -12308,28 +12314,30 @@
         "backend/src/growth/growthService.ts:45 (tenant_id)",
         "backend/src/growth/growthService.ts:46 (tenant_id)",
         "backend/src/growth/growthService.ts:47 (tenant_id)",
-        "backend/src/growth/growthService.ts:55 (tenant_id)",
-        "backend/src/growth/growthService.ts:61 (tenant_id)",
-        "backend/src/growth/growthService.ts:65 (tenant_id)",
+        "backend/src/growth/growthService.ts:48 (tenant_id)",
         "backend/src/growth/growthService.ts:72 (tenant_id)",
-        "backend/src/growth/growthService.ts:92 (user_id)",
-        "backend/src/growth/growthService.ts:92 (tenant_id)",
+        "backend/src/growth/growthService.ts:75 (tenant_id)",
+        "backend/src/growth/growthService.ts:79 (tenant_id)",
+        "backend/src/growth/growthService.ts:86 (tenant_id)",
+        "backend/src/growth/growthService.ts:97 (tenant_id)",
+        "backend/src/growth/growthService.ts:110 (user_id)",
         "backend/src/growth/growthService.ts:110 (tenant_id)",
-        "backend/src/growth/growthService.ts:113 (user_id)",
-        "backend/src/growth/growthService.ts:113 (tenant_id)",
-        "backend/src/growth/growthService.ts:114 (user_id)",
-        "backend/src/growth/growthService.ts:127 (user_id)",
-        "backend/src/growth/growthService.ts:128 (user_id)",
-        "backend/src/growth/growthService.ts:129 (tenant_id)",
-        "backend/src/growth/growthService.ts:130 (tenant_id)",
-        "backend/src/growth/growthService.ts:168 (tenant_id)",
+        "backend/src/growth/growthService.ts:128 (tenant_id)",
+        "backend/src/growth/growthService.ts:131 (user_id)",
+        "backend/src/growth/growthService.ts:131 (tenant_id)",
+        "backend/src/growth/growthService.ts:132 (user_id)",
+        "backend/src/growth/growthService.ts:145 (user_id)",
+        "backend/src/growth/growthService.ts:146 (user_id)",
+        "backend/src/growth/growthService.ts:147 (tenant_id)",
+        "backend/src/growth/growthService.ts:148 (tenant_id)",
         "backend/src/growth/growthService.ts:186 (tenant_id)",
-        "backend/src/growth/growthService.ts:206 (tenant_id)",
-        "backend/src/growth/growthService.ts:233 (tenant_id)",
-        "backend/src/growth/growthService.ts:245 (tenant_id)",
-        "backend/src/growth/growthService.ts:255 (tenant_id)",
-        "backend/src/growth/growthService.ts:257 (tenant_id)",
-        "backend/src/growth/growthService.ts:269 (tenant_id)"
+        "backend/src/growth/growthService.ts:204 (tenant_id)",
+        "backend/src/growth/growthService.ts:224 (tenant_id)",
+        "backend/src/growth/growthService.ts:251 (tenant_id)",
+        "backend/src/growth/growthService.ts:263 (tenant_id)",
+        "backend/src/growth/growthService.ts:273 (tenant_id)",
+        "backend/src/growth/growthService.ts:275 (tenant_id)",
+        "backend/src/growth/growthService.ts:287 (tenant_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -12344,6 +12352,8 @@
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
         "backend/src/growth/deliveryReceipt.test.ts",
+        "backend/src/growth/eventReplay.local.integration.ts",
+        "backend/src/growth/eventReplay.test.ts",
         "backend/src/growth/growthService.boundary.test.ts",
         "backend/src/growth/growthService.campaignReceipt.test.ts",
         "backend/src/growth/growthService.identity.test.ts",
@@ -15718,7 +15728,7 @@
       "callers": [
         "backend/src/growth/campaignReceipt.local.integration.ts:7",
         "backend/src/growth/delivery.local.integration.ts:1",
-        "backend/src/growth/growthService.ts:4",
+        "backend/src/growth/growthService.ts:5",
         "backend/src/operations/operationsService.owner.test.ts:4",
         "backend/src/routes/operations.ts:9"
       ],
@@ -23470,7 +23480,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:616",
+        "backend/src/security/tenantIsolation.local.integration.ts:618",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -95437,8 +95447,9 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "b4955d2f1d99acff327e61a0b48cea30ebb3a0f9ec407664a389972e777ce758",
+      "sha256": "0f452abb4a8d0c57b0ab38a5ca385385215c163005cd09b61fd2aa51ea7e93c1",
       "sourceEntrypoints": [
+        "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-tenant-policies.mjs",
         "scripts/security/audit-tenant-policies.test.mjs",
         "scripts/security/tenant-rls.database.test.mjs"
@@ -102750,6 +102761,20 @@
       "id": "test-suite:f10ece1dd3669cdcf897",
       "sourcePath": "backend/src/growth/deliveryReceipt.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d28f06d75878f1b26293",
+      "sourcePath": "backend/src/growth/eventReplay.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:dc6fb5431485837d0584",
+      "sourcePath": "backend/src/growth/eventReplay.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
