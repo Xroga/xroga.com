@@ -11,7 +11,7 @@
 import { useRef } from 'react';
 import { Fernway, FernwayFeature, FernwayIcon, type FernwayScreen } from '../apps/Fernway';
 import { NATURAL, beatIndex, type Phase } from '../publish';
-import { Device, Fill, Inspector, Render } from './kit';
+import { Device, Fill, Inspector, Render, clamp, useViewportHeight } from './kit';
 import { Xcard } from './Xcard';
 import s from './Stages.module.css';
 
@@ -25,22 +25,18 @@ const SHOTS: { screen: FernwayScreen; caption: string }[] = [
 
 export function StageAndroid({ beat, phase, playing, acted, act, href }: { beat: string; phase: Phase; playing: boolean; acted: boolean; act: () => void; href: string }) {
   const box = useRef<HTMLDivElement>(null);
+  const vh = useViewportHeight();
   const now = beatIndex('android', beat);
   const at = (id: string) => now >= beatIndex('android', id);
   const layout = at('listing') ? 'c' : at('finding') ? 'b' : 'a';
   const shots = !at('shots') ? 'empty' : beat === 'shots' && playing ? 'rendering' : 'done';
-  const prep: { label: string; done: boolean; working: boolean }[] = [
-    { label: 'App tested in preview', done: at('finding'), working: false },
-    { label: 'Feature graphic', done: at('shots'), working: beat === 'visuals' },
-    { label: 'Phone screenshots', done: at('listing'), working: beat === 'shots' },
-    { label: 'Listing text', done: at('listing'), working: false },
-    { label: 'Android build on your Expo account', done: at('listing'), working: false },
-  ];
+  // short screens: the finished handoff spans the stage under the phone and the listing, so all of it fits one screen
+  const wideHandoff = phase === 'ready' && vh < 860;
   return (
-    <div className={s.android} data-layout={layout}>
+    <div className={s.android} data-layout={layout} data-wide={wideHandoff || undefined}>
       <div className={s.anPhone}>
         <span className={s.objLabel}>Your Android app · Fernway</span>
-        <Device natural={NATURAL.android} maxH={486} kind="android" boxRef={box} overlay={<Inspector box={box} phase={phase} cause={['btn']} effect={['map']} tick={acted} round={20} />}>
+        <Device natural={NATURAL.android} maxH={clamp(340, vh - 420, 486)} kind="android" boxRef={box} overlay={<Inspector box={box} phase={phase} cause={['btn']} effect={['map']} tick={acted} round={20} />}>
           <Fernway saved={acted} live onAction={act} />
         </Device>
       </div>
@@ -57,18 +53,6 @@ export function StageAndroid({ beat, phase, playing, acted, act, href }: { beat:
           <div className={s.anPanel} data-on={layout === 'b' || undefined} aria-hidden={layout !== 'b' || undefined}>
             <span className={s.objLabel}>Preparing your Google Play release</span>
             <div className={s.bench}>
-              <ul className={s.prep}>
-                {prep.map((p) => (
-                  <li key={p.label} data-state={p.done ? 'done' : p.working ? 'working' : 'pending'}>
-                    <i aria-hidden="true" />
-                    {p.label}
-                  </li>
-                ))}
-                <li data-state="owner">
-                  <i aria-hidden="true" />
-                  Data safety and release track: yours
-                </li>
-              </ul>
               <div className={s.artboard}>
                 <figure className={s.fg}>
                   <Fill region={FEATURE} guess={420}>
@@ -100,10 +84,17 @@ export function StageAndroid({ beat, phase, playing, acted, act, href }: { beat:
             <PlayListing />
           </div>
         </div>
-        <div className={s.anCard}>
-          <Xcard dest="android" journey phase={phase} href={href} progress={beat === 'visuals' ? 'Composing the feature graphic' : beat === 'shots' ? 'Rendering phone screenshots' : beat === 'listing' ? 'Drafting the listing text' : undefined} />
-        </div>
+        {!wideHandoff && (
+          <div className={s.anCard}>
+            <Xcard dest="android" journey phase={phase} beat={beat} href={href} />
+          </div>
+        )}
       </div>
+      {wideHandoff && (
+        <div className={s.anHandoff}>
+          <Xcard dest="android" phase={phase} beat={beat} href={href} />
+        </div>
+      )}
     </div>
   );
 }
@@ -128,6 +119,7 @@ function PlayListing({ ghost = false }: { ghost?: boolean }) {
             <b>Fernway</b>
             <small>Fernway Labs</small>
           </span>
+          <em className={s.playInstall}>Not on Google Play yet</em>
         </header>
         <dl className={s.playMeta}>
           <div>
@@ -143,7 +135,6 @@ function PlayListing({ ghost = false }: { ghost?: boolean }) {
             <dd>Maps & navigation</dd>
           </div>
         </dl>
-        <span className={s.playInstall}>Preview · not on Google Play yet</span>
       </div>
       <div className={s.playRight}>
         <div className={s.playShots}>

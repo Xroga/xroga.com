@@ -13,7 +13,7 @@
 import { useRef } from 'react';
 import { Arcset, ArcsetIcon, type ArcsetScreen } from '../apps/Arcset';
 import { NATURAL, beatIndex, phaseReached, type Phase } from '../publish';
-import { Device, Fill, Inspector, Render, Scanline } from './kit';
+import { Device, Fill, Inspector, Render, Scanline, clamp, useViewportHeight } from './kit';
 import { Xcard } from './Xcard';
 import s from './Stages.module.css';
 
@@ -26,6 +26,8 @@ const FULL = { x: 0, y: 0, w: 280, h: 600 };
 
 export function StageIOS({ beat, phase, playing, acted, act, href }: { beat: string; phase: Phase; playing: boolean; acted: boolean; act: () => void; href: string }) {
   const box = useRef<HTMLDivElement>(null);
+  const vh = useViewportHeight();
+  const phoneH = clamp(330, vh - 440, 452);
   const at = (id: string) => beatIndex('ios', beat) >= beatIndex('ios', id);
   const now = beatIndex('ios', beat);
   // the live app visits each screen while it is captured, then returns to the workout
@@ -38,12 +40,12 @@ export function StageIOS({ beat, phase, playing, acted, act, href }: { beat: str
   };
   const composed = phaseReached(phase, 'compose');
   return (
-    <div className={s.ios}>
+    <div className={s.ios} data-ready={phase === 'ready' || undefined}>
       <div className={s.iosLive}>
         <span className={s.objLabel}>Your iPhone app · Arcset</span>
         <Device
           natural={NATURAL.ios}
-          maxH={452}
+          maxH={phoneH}
           kind="phone"
           boxRef={box}
           overlay={
@@ -58,7 +60,7 @@ export function StageIOS({ beat, phase, playing, acted, act, href }: { beat: str
       </div>
 
       <div className={s.iosStudio}>
-        <Xcard dest="ios" phase={phase} href={href} progress={phase === 'produce' ? `Screenshot ${SHOTS.filter((x) => at(x.beat)).length} of 3` : undefined} />
+        <Xcard dest="ios" phase={phase} beat={beat} href={href} />
         <div className={s.shotHead}>
           <b>Screenshots</b>
           <span>6.9″ display · 1320 × 2868</span>
@@ -82,7 +84,7 @@ export function StageIOS({ beat, phase, playing, acted, act, href }: { beat: str
 
       <div className={s.iosStore}>
         <span className={s.objLabel}>App Store page · preview</span>
-        <Device natural={NATURAL.ios} maxH={440} kind="phone">
+        <Device natural={NATURAL.ios} maxH={phoneH - 14} kind="phone">
           <AppStorePage composed={composed} shots={SHOTS.map((_, i) => shotState(i) !== 'empty')} ready={phase === 'ready'} />
         </Device>
       </div>
@@ -115,9 +117,9 @@ function AppStorePage({ composed, shots, ready }: { composed: boolean; shots: bo
       </header>
       <dl className={s.aspFacts}>
         {[
-          ['Ratings', 'New'],
           ['Age', '4+'],
           ['Category', 'Fitness'],
+          ['Developer', 'Arcset'],
           ['Size', '38 MB'],
         ].map(([k, v], i) => (
           <div key={k} style={{ ['--i' as string]: i }}>
@@ -140,13 +142,14 @@ function AppStorePage({ composed, shots, ready }: { composed: boolean; shots: bo
       </div>
       <div className={s.aspNew}>
         <b>What’s New</b>
+        <em>Version 1.0</em>
         <span className={s.aspSkel} data-on={composed || undefined}>
-          <small>Version 1.0 · Rest timer starts the moment a set is logged.</small>
+          <small>A rest timer starts the moment you log a set.</small>
         </span>
       </div>
       <div className={s.aspPrivacy} data-ready={ready || undefined}>
         <b>App Privacy</b>
-        <small>{ready ? 'Answers drafted · waiting for your confirmation' : 'Answers not yet confirmed'}</small>
+        <small>{ready ? 'Shown once you confirm it' : 'Not provided yet'}</small>
       </div>
     </div>
   );

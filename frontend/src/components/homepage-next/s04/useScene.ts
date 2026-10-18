@@ -21,9 +21,11 @@ export function useScene(theater: RefObject<HTMLElement | null>) {
   const [hold, setHold] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [armed, setArmed] = useState(false);
+  /** the visitor paused to study a moment; timers and CSS motion hold until they resume */
+  const [paused, setPaused] = useState(false);
 
-  const r = useRef({ dest, playing, armed, reduced });
-  r.current = { dest, playing, armed, reduced };
+  const r = useRef({ dest, playing, armed, reduced, paused });
+  r.current = { dest, playing, armed, reduced, paused };
   const timers = useRef<number[]>([]);
   const pos = useRef(0);
   const startedAt = useRef(0);
@@ -56,6 +58,7 @@ export function useScene(theater: RefObject<HTMLElement | null>) {
       setBeat(b.id);
       setActed(false);
       setArmed(false);
+      setPaused(false);
       setPlaying(true);
       setHold(!visible.current);
       if (visible.current) schedule(d);
@@ -67,6 +70,7 @@ export function useScene(theater: RefObject<HTMLElement | null>) {
     clear();
     setDest(d);
     setArmed(false);
+    setPaused(false);
     setPlaying(false);
     setHold(false);
     setBeat(id);
@@ -125,11 +129,11 @@ export function useScene(theater: RefObject<HTMLElement | null>) {
               sessionStorage.setItem('s04-v10-seen', '1');
             } catch {}
             play(c.dest);
-          } else if (c.playing && timers.current.length === 0) {
+          } else if (c.playing && !c.paused && timers.current.length === 0) {
             setHold(false);
             schedule(c.dest);
           }
-        } else if (c.playing) {
+        } else if (c.playing && !c.paused && timers.current.length) {
           pos.current += performance.now() - startedAt.current;
           clear();
           setHold(true);
@@ -157,5 +161,24 @@ export function useScene(theater: RefObject<HTMLElement | null>) {
     play(d, SCENES[d].beats.find((b) => b.phase === 'use')!.id);
   };
 
-  return { dest, beat, phase: beatOf(dest, beat).phase, playing, acted, hold, reduced, choose, replay, seek: (id: string) => seek(r.current.dest, id), act };
+  /** pause or resume the walkthrough where it is */
+  const togglePause = () => {
+    const c = r.current;
+    if (!c.playing) return;
+    if (!c.paused) {
+      // bank elapsed time only while the clock is actually running (not while held offscreen)
+      if (timers.current.length) pos.current += performance.now() - startedAt.current;
+      clear();
+      setHold(true);
+      setPaused(true);
+    } else {
+      setPaused(false);
+      if (visible.current) {
+        setHold(false);
+        schedule(c.dest);
+      }
+    }
+  };
+
+  return { paused, togglePause, dest, beat, phase: beatOf(dest, beat).phase, playing, acted, hold, reduced, choose, replay, seek: (id: string) => seek(r.current.dest, id), act };
 }
