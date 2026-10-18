@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "fb3a2301e3deb102634fe3aa3693412b58cd2c0d",
-    "sourceTimestampUtc": "2026-10-18T14:31:26+05:00",
-    "auditStartedUtc": "2026-10-18T09:35:12.364Z",
+    "sha": "a378817661c33e20485f085785c3abde509bb2b9",
+    "sourceTimestampUtc": "2026-10-18T14:40:21+05:00",
+    "auditStartedUtc": "2026-10-18T09:45:37.632Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -15635,7 +15635,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
+      "sha256": "72a199e7bdc28567413ce8e70688bd3d3cc192c4353b4dc706d1476f4152eeba",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -15648,7 +15648,6 @@
         "attributes",
         "availableActions",
         "belongs",
-        "claimed",
         "current",
         "currentVersion",
         "decision",
@@ -15750,6 +15749,7 @@
         "backend/src/growth/delivery.local.integration.ts:1",
         "backend/src/growth/growthService.campaignReceipt.test.ts:5",
         "backend/src/growth/growthService.ts:5",
+        "backend/src/operations/actionAdmission.local.integration.ts:7",
         "backend/src/operations/actionApproval.local.integration.ts:7",
         "backend/src/operations/actionApproval.test.ts:4",
         "backend/src/operations/actionClaim.test.ts:4",
@@ -15820,22 +15820,22 @@
         "backend/src/operations/operationsService.ts:266 (user_id)",
         "backend/src/operations/operationsService.ts:325 (user_id)",
         "backend/src/operations/operationsService.ts:372 (user_id)",
-        "backend/src/operations/operationsService.ts:403 (user_id)",
-        "backend/src/operations/operationsService.ts:433 (user_id)",
-        "backend/src/operations/operationsService.ts:439 (user_id)",
-        "backend/src/operations/operationsService.ts:443 (user_id)",
-        "backend/src/operations/operationsService.ts:447 (user_id)",
+        "backend/src/operations/operationsService.ts:412 (user_id)",
+        "backend/src/operations/operationsService.ts:442 (user_id)",
+        "backend/src/operations/operationsService.ts:448 (user_id)",
         "backend/src/operations/operationsService.ts:452 (user_id)",
-        "backend/src/operations/operationsService.ts:459 (user_id)",
-        "backend/src/operations/operationsService.ts:473 (user_id)",
-        "backend/src/operations/operationsService.ts:477 (tenant_id)",
-        "backend/src/operations/operationsService.ts:486 (user_id)",
-        "backend/src/operations/operationsService.ts:491 (user_id)",
-        "backend/src/operations/operationsService.ts:496 (user_id)",
-        "backend/src/operations/operationsService.ts:502 (user_id)",
-        "backend/src/operations/operationsService.ts:503 (user_id)",
-        "backend/src/operations/operationsService.ts:528 (user_id)",
-        "backend/src/operations/operationsService.ts:529 (user_id)"
+        "backend/src/operations/operationsService.ts:456 (user_id)",
+        "backend/src/operations/operationsService.ts:461 (user_id)",
+        "backend/src/operations/operationsService.ts:468 (user_id)",
+        "backend/src/operations/operationsService.ts:482 (user_id)",
+        "backend/src/operations/operationsService.ts:486 (tenant_id)",
+        "backend/src/operations/operationsService.ts:495 (user_id)",
+        "backend/src/operations/operationsService.ts:500 (user_id)",
+        "backend/src/operations/operationsService.ts:505 (user_id)",
+        "backend/src/operations/operationsService.ts:511 (user_id)",
+        "backend/src/operations/operationsService.ts:512 (user_id)",
+        "backend/src/operations/operationsService.ts:537 (user_id)",
+        "backend/src/operations/operationsService.ts:538 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/operations/operationsService.ts#OperationsPermission",
@@ -15856,6 +15856,7 @@
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
         "backend/src/growth/growthService.campaignReceipt.test.ts",
+        "backend/src/operations/actionAdmission.local.integration.ts",
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionApproval.test.ts",
         "backend/src/operations/actionClaim.test.ts",
@@ -23522,7 +23523,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:630",
+        "backend/src/security/tenantIsolation.local.integration.ts:632",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -95377,6 +95378,13 @@
       "version": "20261018000500",
       "order": 101,
       "sha256": "65e37044f673cfa0921897dfdb0f91940ba2863436fd60277b8c8a419f9c46e2"
+    },
+    {
+      "id": "migration:2e9bdccbd46244238b25",
+      "sourcePath": "supabase/migrations/20261018000600_operations_claim_admission.sql",
+      "version": "20261018000600",
+      "order": 102,
+      "sha256": "ea519d807832685ce35ca6233e82b625818935cb97bff787ee2a65d40402b011"
     }
   ],
   "workflows": [
@@ -103055,6 +103063,13 @@
       "id": "test-suite:c947ec396bf7a93fba06",
       "sourcePath": "backend/src/middleware/admin.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d97140d5c125cfc4bc30",
+      "sourcePath": "backend/src/operations/actionAdmission.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

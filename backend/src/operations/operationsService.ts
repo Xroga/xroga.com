@@ -374,7 +374,16 @@ export class OperationsService {
       const validity = approvalIsValid({ requesterId: action.requested_by, approverId: approval.approver_id, decision: approval.decision, expiresAt: approval.expires_at, approvedTargetVersion: approval.target_version, currentTargetVersion: action.target_version, approvedPlanDigest: approval.action_plan_digest, currentPlanDigest: action.action_plan_digest });
       if (!validity.valid) throw new OperationsServiceError('invalid_state', validity.reason ?? 'Approval invalid', 409);
     }
-    const claimed = await queryOrThrow<DbRow[]>(this.db.rpc('operations_claim_action', { p_action_id: actionId, p_lease_owner: `api:${userId}`, p_lease_seconds: 60 }), 'Action lock unavailable');
+    const roles: OperationsRole[] = ['viewer','operator','release_manager','recovery_manager','admin'];
+    const { data: claimed, error: claimError } = await this.db.rpc('claim_operations_action_admitted', {
+      p_actor: userId, p_expected: action, p_allowed_roles: roles.filter(role => hasOperationsPermission(role, definition.permission)),
+      p_approval_role: definition.approvalRole ?? null, p_confirmation_required: definition.confirmationRequired, p_lease_seconds: 60,
+    });
+    if (claimError) {
+      if (claimError.code === '42501') throw new OperationsServiceError('forbidden', 'Action authority is no longer valid', 403);
+      if (claimError.code === '40001') throw new OperationsServiceError('conflict', 'Action or approval changed before execution', 409);
+      throw new OperationsServiceError('unknown', 'Action lock unavailable', 503);
+    }
     if (!Array.isArray(claimed)) throw new OperationsServiceError('unknown', 'Action claim receipt is invalid', 503);
     if (!claimed.length) {
       const current = await queryOrThrow<DbRow | null>(this.db.from('operations_actions').select('*').eq('id', actionId).maybeSingle(), 'Action unavailable', null);

@@ -3111,7 +3111,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
+      "sourceSha256": "72a199e7bdc28567413ce8e70688bd3d3cc192c4353b4dc706d1476f4152eeba",
       "callIds": [
         "dd0917f84f2764fd0472",
         "c841bcae277927c0b193",
@@ -3133,7 +3133,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
+      "sourceSha256": "72a199e7bdc28567413ce8e70688bd3d3cc192c4353b4dc706d1476f4152eeba",
       "callIds": [
         "cd8790e39c3283f05482",
         "e99258e8fe888ab954f2",
@@ -3160,11 +3160,11 @@
         "b499a6018afaf6b8b490",
         "2623d45568826e06288e",
         "af2e0acf3186708a5107",
-        "c5059553552947bfc301",
-        "a9c75531593a342ee098",
-        "751368bd678bf96a5a24",
-        "bd390e36fde04b316470",
-        "6d39f021a47270680bfc"
+        "9161346d0581fbfaad8e",
+        "13d7e57f647a9fe89268",
+        "2a5c08266e571b1e7639",
+        "55431da0809e4464a684",
+        "88c1af643c697b978061"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
@@ -3182,7 +3182,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
+      "sourceSha256": "72a199e7bdc28567413ce8e70688bd3d3cc192c4353b4dc706d1476f4152eeba",
       "callIds": [
         "58357b840ab8890eba45",
         "9ea21ff62008b510bd7f",
@@ -3198,27 +3198,26 @@
         "8eb5dc91f52c3229d6e2",
         "1aad3ce63a7db7e238dc",
         "a99d23afe5ed24442733",
-        "edcfa9b9cb8a446b1fb4",
-        "60f17fd3a482025faf37",
-        "5a2f0e1a099df46d11db",
-        "7929f50bc9421cb6687e",
-        "cb738c705f5fac37fb7c",
-        "27491fe8f54a4e11fc9b",
-        "12376032529402ee9fe4",
-        "fa36928c4258bc786fd9",
-        "8afd49a6579aaa188ce6",
-        "ab2bc75548341ea8e918",
-        "352be3465f66f9b30be9",
-        "59b139057a85ae290e70",
-        "b7a99d93d52998140510",
-        "6e162811c72d74102837",
-        "972324f7a4446c5c975f",
-        "d3f1dae41d5c646046c0",
-        "98c90a024b8126a1fae1",
-        "2301c247a5634e70eded",
-        "06f72ee3f07c007e620c",
-        "d326eb212795a552e8c2",
-        "171366a84c149df597c9"
+        "ff75ad99a7378546e514",
+        "c094ec5e2121adfafc83",
+        "366ff6508fadbfb4385c",
+        "d58e08bb0c554bc88007",
+        "4cb72ee00f9e81b4dc43",
+        "53f71958f2fd86b074f3",
+        "a881596b8bd5d2f5e1fb",
+        "1cd6a79bba698d443de3",
+        "7baee26f60e97ae2e2d9",
+        "27e3b78a77d290a52ce3",
+        "adfc685b085f88afc9ab",
+        "2651fd506d43d8378b3b",
+        "68b004e8115b535331a7",
+        "938a3f2890b87a702249",
+        "d9b97c932e27dd12518e",
+        "09e5d227dae7ddda9d38",
+        "8cac5728e5b5044ef7bf",
+        "7a2fba005dc51d32a7b8",
+        "7f3552590e8346f827c3",
+        "f80bd20cd5201b1ee248"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
@@ -4772,13 +4771,13 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
+      "sourceSha256": "72a199e7bdc28567413ce8e70688bd3d3cc192c4353b4dc706d1476f4152eeba",
       "callIds": [
-        "c8cfd24bfdf9dd13fc75"
+        "82ab5be2cc1f801c0dca"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing authenticated action executor passes the exact admitted claimed row and server actor. Service-only completion RPC locks current project owner and action, verifies immutable plan/owner/attempt/lease against database time, then commits evidence, run, action and immutable audit together. No provider action or authority admission is performed inside this persistence boundary.",
-      "reason": "Focused wrong receipt and uncertain completion negatives pass.34 local SQL assertions cover changed intent/actor, role denial, expired lease, all four write rollbacks and migration replay. Real HTTP held-row stale-attempt and actual-schema rollback tests prepared, not yet verified. External-effect reconciliation, fresh approval/actor admission and original claim authorization remain unresolved. No whole caller or Command008 certification.",
+      "reason": "Fixed completion-persistence boundary VERIFIED at e47030615e13f75045e4434cddcb1294f05095f3, disposable39114496584: actual four-write rollback, browser-role denial, held-row changed attempt and competing completions pass. SQL and integration fixture are unchanged from that source.34 local SQL assertions and focused exact receipt/uncertain completion negatives also pass. Only atomic persistence of an already-admitted attempt is closed. External-effect reconciliation, mutable target admission, actor/approval lifetime and full executor certification remain separate unresolved requirements. No Command008 acceptance.",
       "evidence": [
         {
           "path": "backend/src/operations/actionCompletion.local.integration.ts",
@@ -4792,7 +4791,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
+      "sourceSha256": "72a199e7bdc28567413ce8e70688bd3d3cc192c4353b4dc706d1476f4152eeba",
       "callIds": [
         "9c17503abb75e1c77b5c"
       ],
@@ -4816,9 +4815,9 @@
       "callIds": [
         "ae85f384a856c9d4ba8c"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
-      "reason": "Loopback changed/expired/outage/misleading metadata and concurrent-claim tests pass without provider execution.15 local SQL assertions and reapply pass. Actual HTTP competing, held-lock expiry and intervening plan mutation cases plus browser-role denial prepared. Session-to-owner provider binding, explicit displayed-intent acknowledgement, unchecked failure persistence and post-provider crash recovery remain unresolved. No whole business-action certification.",
+      "reason": "Fixed pending-confirmation claim boundary VERIFIED at e47030615e13f75045e4434cddcb1294f05095f3, disposable39114496584: actual two-client winner, expiry while blocked, same-digest full-plan mutation, foreign actor and browser-role denial pass. Runtime file, SQL and fixture are unchanged from that source. Loopback intent/outage tests and15 local SQL assertions/replay also pass. Only this owner/plan-bound claim is closed. Session-to-owner provider binding, displayed-intent acknowledgement, failure-record durability and external-success crash recovery remain unresolved. No provider execution or whole business-action certification.",
       "evidence": [
         {
           "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -4832,7 +4831,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
+      "sourceSha256": "72a199e7bdc28567413ce8e70688bd3d3cc192c4353b4dc706d1476f4152eeba",
       "callIds": [
         "724d14962fd8d05f83a7"
       ],
@@ -4852,7 +4851,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "bd191423f7ba7499567b7d2c3f67aeed2624315cbe8ad2ecdfe4e6c54edab8f6",
+      "sourceSha256": "72a199e7bdc28567413ce8e70688bd3d3cc192c4353b4dc706d1476f4152eeba",
       "callIds": [
         "c1345ce45faa24df24f7"
       ],
@@ -4863,6 +4862,22 @@
         {
           "path": "backend/src/operations/actionConfirmation.local.integration.ts",
           "marker": "registerActionConfirmationTests"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/operations/operationsService.ts",
+      "sourceSha256": "72a199e7bdc28567413ce8e70688bd3d3cc192c4353b4dc706d1476f4152eeba",
+      "callIds": [
+        "f240858f2f966f397993"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Authenticated actor and canonical action definitions supply execution permission roles, confirmation requirement and approval role. Service-only admission locks current actor/project/member, exact action intent/state/attempt, current approved receipt and current approver role before reusing the original lease/retry function.",
+      "reason": "Focused claim receipt/error tests and29 local SQL intent/current-role/approval/expiry assertions pass. Actual held actor/approver revocation, plan mutation, approval expiry, exclusion and browser-role tests prepared. Mutable target admission, legacy raw service-role RPC access and post-claim provider effects/recovery remain unresolved. No whole caller certification.",
+      "evidence": [
+        {
+          "path": "backend/src/operations/actionAdmission.local.integration.ts",
+          "marker": "registerActionAdmissionTests"
         }
       ]
     }

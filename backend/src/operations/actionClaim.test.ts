@@ -11,7 +11,7 @@ test('only the exact admitted action and current attempt receipt can reach an ad
     risk_level: 'high', execution_plan: { reason: 'fixture' }, max_attempts: 1, attempt_count: 0, status: 'queued' };
   const running = { ...action, status: 'running', attempt_count: 1, lease_owner: 'api:actor', lease_expires_at: new Date(Date.now() + 60_000).toISOString() };
   let claim: unknown = [running], fallback: Record<string, unknown> = { ...action, status: 'verified' }, reads = 0, effects = 0, writes = 0;
-  let completionPatch: Record<string, unknown> | null = null, completionError = false;
+  let completionPatch: Record<string, unknown> | null = null, completionError = false, claimError: string | null = null;
   const db = {
     async rpc(name: string, args: Record<string, unknown>) {
       if (name === 'complete_operations_action') {
@@ -20,9 +20,10 @@ test('only the exact admitted action and current attempt receipt can reach an ad
         assert.equal(args.p_provider, 'internal_database');
         return { data: [{ ...running, status: 'blocked', evidence_reference: args.p_evidence_id, lease_owner: null, lease_expires_at: null, ...completionPatch }], error: completionError ? { code: '40001' } : null };
       }
-      assert.equal(name, 'operations_claim_action');
-      assert.deepEqual(args, { p_action_id: 'action', p_lease_owner: 'api:actor', p_lease_seconds: 60 });
-      return { data: claim, error: null };
+      assert.equal(name, 'claim_operations_action_admitted');
+      assert.deepEqual(args, { p_actor: 'actor', p_expected: action, p_allowed_roles: ['operator','release_manager','recovery_manager','admin'],
+        p_approval_role: null, p_confirmation_required: true, p_lease_seconds: 60 });
+      return { data: claim, error: claimError ? { code: claimError } : null };
     },
     from(table: string) {
       let patch: Record<string, unknown> = {};
@@ -51,7 +52,12 @@ test('only the exact admitted action and current attempt receipt can reach an ad
     reads = 0; await assert.rejects(service.executeAction('actor', 'action'), { code: 'unknown', statusCode: 503 });
     assert.equal(effects, 0); assert.equal(writes, 0);
   }
-  claim = [];
+  for (const [code, expected] of [['42501','forbidden'],['40001','conflict'],['08006','unknown']]) {
+    claimError = code; reads = 0;
+    await assert.rejects(service.executeAction('actor','action'), { code: expected });
+    assert.equal(effects,0); assert.equal(writes,0);
+  }
+  claimError = null; claim = [];
   for (const patch of [{ user_id: 'foreign' }, { id: 'other' }, { execution_plan: { reason: 'changed' } }]) {
     reads = 0; fallback = { ...action, status: 'verified', ...patch };
     await assert.rejects(service.executeAction('actor', 'action'), { code: 'conflict', statusCode: 409 });
