@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "914121203fb54d8326b3f8dacbdd7e9f27e4a1ac",
-    "sourceTimestampUtc": "2026-10-18T20:53:08+05:00",
-    "auditStartedUtc": "2026-10-18T15:59:16.941Z",
+    "sha": "def4bcf6b81d5f4beea6f70d8c48cb8ff68b14c1",
+    "sourceTimestampUtc": "2026-10-18T20:59:38+05:00",
+    "auditStartedUtc": "2026-10-18T16:09:13.038Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -83850,7 +83850,7 @@
       ],
       "callers": [
         "scripts/ci/baseline.test.mjs:13",
-        "scripts/xroga/verify-phase-one.mjs:7"
+        "scripts/xroga/verify-phase-one.mjs:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -84090,7 +84090,8 @@
       ],
       "callers": [
         "scripts/ci/baseline.test.mjs:11",
-        "scripts/xroga/run-golden-browser.mjs:8"
+        "scripts/xroga/run-golden-browser.mjs:8",
+        "scripts/xroga/verify-phase-one.mjs:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86355,7 +86356,7 @@
       "entryPoints": [],
       "callers": [
         "scripts/xroga/inventory.test.mjs:3",
-        "scripts/xroga/verify-phase-one.mjs:8"
+        "scripts/xroga/verify-phase-one.mjs:10"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -86600,7 +86601,7 @@
       "entryPoints": [],
       "callers": [
         "scripts/xroga/phase-one.test.mjs:4",
-        "scripts/xroga/verify-phase-one.mjs:10",
+        "scripts/xroga/verify-phase-one.mjs:12",
         "scripts/xroga/verify-phase-one.test.mjs:4"
       ],
       "reachable": false,
@@ -86757,7 +86758,7 @@
         "scripts/xroga/phase-one.mjs:7",
         "scripts/xroga/requirements.test.mjs:5",
         "scripts/xroga/validate-requirements-ledger.mjs:4",
-        "scripts/xroga/verify-phase-one.mjs:11"
+        "scripts/xroga/verify-phase-one.mjs:13"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -87175,7 +87176,7 @@
       "callers": [
         "scripts/xroga/check-runtime-config.mjs:8",
         "scripts/xroga/runtime-config.test.mjs:3",
-        "scripts/xroga/verify-phase-one.mjs:9"
+        "scripts/xroga/verify-phase-one.mjs:11"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -87404,20 +87405,24 @@
       "id": "surface:57ac0568ca77895c0177",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/verify-phase-one.mjs",
-      "sha256": "32049a7adfbc4359deda7c7e8e3d1a670041cd8e024f6a4982c9caccb5cc8749",
+      "sha256": "c9cbdb175d513167a777022b13d045deefec006aa542bae2c8f4a43514597c96",
       "symbols": [
         "arg",
+        "ast",
         "baselineFixtureLog",
         "browser",
         "c",
         "collectPhaseEvidence",
         "count",
         "criteria",
+        "criterionFixtureNames",
         "end",
         "evidencePath",
+        "expected",
         "experimentAdmission",
         "files",
         "fixtureLog",
+        "fixtureObserved",
         "gh",
         "git",
         "grouped",
@@ -87459,6 +87464,7 @@
       ],
       "imports": [
         "../ci/compare-baseline-runs.mjs",
+        "../ci/run-baseline.mjs",
         "./inventory.mjs",
         "./phase-one.mjs",
         "./reconcile-requirements.mjs",
@@ -87468,10 +87474,12 @@
         "node:crypto",
         "node:fs",
         "node:path",
-        "node:url"
+        "node:url",
+        "typescript"
       ],
       "runtimeImports": [
         "scripts/ci/compare-baseline-runs.mjs",
+        "scripts/ci/run-baseline.mjs",
         "scripts/xroga/inventory.mjs",
         "scripts/xroga/phase-one.mjs",
         "scripts/xroga/reconcile-requirements.mjs",
@@ -87490,7 +87498,8 @@
         "node:crypto",
         "node:fs",
         "node:path",
-        "node:url"
+        "node:url",
+        "typescript"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -106745,7 +106754,7 @@
     {
       "id": "test-suite:a298216fd7b1cf5a7740",
       "sourcePath": "scripts/xroga/verify-phase-one.test.mjs",
-      "declaredTests": 4,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },

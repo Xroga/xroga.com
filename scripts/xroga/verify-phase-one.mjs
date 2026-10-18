@@ -4,7 +4,9 @@ import {execFileSync} from 'node:child_process';
 import {existsSync,mkdirSync,readFileSync,readdirSync,writeFileSync} from 'node:fs';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import ts from 'typescript';
 import {compareBaselineRuns} from '../ci/compare-baseline-runs.mjs';
+import {redactLog} from '../ci/run-baseline.mjs';
 import {generateInventory,serializedOutputs} from './inventory.mjs';
 import {buildRuntimeInventory,renderRuntimeOutputs} from './runtime-inventory.mjs';
 import {buildPhaseOne,root} from './phase-one.mjs';
@@ -55,6 +57,17 @@ export function validatePhaseReceipt(receipt,bindings){
 export function baselineFixtureLog(files,readLog){
   return files.filter(p=>/(?:inventory-and-ledger-fixtures|baseline-negative-fixtures)\.log$/.test(p)).map(readLog).join('\n');
 }
+export function criterionFixtureNames(source,path='fixture.mjs'){
+  const ast=ts.createSourceFile(path,source,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);
+  return ast.statements.filter(ts.isExpressionStatement).map(s=>s.expression)
+    .filter(e=>ts.isCallExpression(e)&&ts.isIdentifier(e.expression)&&e.expression.text==='test'
+      &&e.arguments[0]&&ts.isStringLiteralLike(e.arguments[0]))
+    .map(e=>e.arguments[0].text);
+}
+export function fixtureObserved(log,name){
+  const expected=redactLog(name);
+  return log.split(/\r?\n/).some(line=>/^ok \d+ - /.test(line)&&line.replace(/^ok \d+ - /,'')===expected);
+}
 
 export function collectPhaseEvidence({source,aggregate,disposable,directory}){
   assert.equal(git(['rev-parse','HEAD']),source,'Collect on the exact candidate checkout');
@@ -71,7 +84,7 @@ export function collectPhaseEvidence({source,aggregate,disposable,directory}){
     for(const row of rows)for(const stage of row.value.results)if(stage.skipped!==undefined)assert.equal(stage.skipped,0,'Mandatory Linux CI tests must not be hidden by skips');}
   const integratedSha=[...grouped.keys()].find(s=>s!==source);
   const fixtureLog=baselineFixtureLog(files,p=>read(directory+'/'+p));
-  for(const name of ['fully valid synthetic ten-criterion proof passes','all eight approved supplemental owners','committed Phase1 mappings cannot silently drift'])assert.ok(fixtureLog.includes(`ok `)&&fixtureLog.includes(name),`Missing executed Phase1 fixture:${name}`);
+  for(const name of ['fully valid synthetic ten-criterion proof passes and computes a nonzero scoped factory count','all eight approved supplemental owners retain exact source scope and remain planning only','committed Phase1 mappings cannot silently drift or omit frozen obligations'])assert.ok(fixtureObserved(fixtureLog,name),`Missing executed Phase1 fixture:${name}`);
   const log=gh(['run','view',disposable,'--log']);
   const migration=log.match(/full_history=(\d+); upgrade=PASS; fresh=PASS; no_production_data=true/);assert.ok(migration);
   const security=log.split(/\r?\n/).filter(line=>line.includes('\tReal tenant authorization and concurrency integration\t')).join('\n');
@@ -83,8 +96,8 @@ export function collectPhaseEvidence({source,aggregate,disposable,directory}){
   assert.equal(ledger.requirements.filter(r=>r.implementation_owner_command.startsWith('LATER_')).length,0);
   assert.equal(ledger.requirements.filter(r=>r.implementation_owner_command.startsWith('SUPP-')).length,8);
   const criteria=buildPhaseOne().scoreboard.filter(c=>c.phase===1).map(c=>{
-    const testIds=[...new Set(c.implementationEvidence.filter(p=>p.endsWith('.mjs')).flatMap(p=>[...read(p).matchAll(/test\('([^']+)'/g)].map(m=>m[1])))];
-    assert.ok(testIds.length);assert.ok(testIds.every(name=>fixtureLog.includes(name)),`Missing executed criterion fixtures:${c.id}`);
+    const testIds=[...new Set(c.implementationEvidence.filter(p=>p.endsWith('.mjs')).flatMap(p=>criterionFixtureNames(read(p),p)))];
+    assert.ok(testIds.length);assert.ok(testIds.every(name=>fixtureObserved(fixtureLog,name)),`Missing executed criterion fixtures:${c.id}`);
     return {...c,status:'PASS',verifiedSourceSha:source,reason:'Actual exact-source repeated branch/integrated baseline and disposable evidence; original criterion wording retained',
       testType:['001','002','004','006'].includes(c.command)?'CI_POSITIVE_NEGATIVE_FIXTURES':'CI_AND_DISPOSABLE',testIds,
       proofIds:[`github:${aggregate}`,`github:${disposable}`]};});

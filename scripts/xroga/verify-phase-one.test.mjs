@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {validatePhaseReceipt,implementationBindingsAtSource,baselineFixtureLog} from './verify-phase-one.mjs';
+import {validatePhaseReceipt,implementationBindingsAtSource,baselineFixtureLog,criterionFixtureNames,fixtureObserved} from './verify-phase-one.mjs';
 import {buildPhaseOne} from './phase-one.mjs';
 function fixture(){return {version:1,collection:'GH_READ_ONLY_EXACT_SOURCE_AND_DOWNLOADED_ARTIFACTS',sourceSha:'a'.repeat(40),integratedSha:'b'.repeat(40),
   aggregateRun:'123',disposableRun:'456',
@@ -29,4 +29,18 @@ test('acceptance collects both baseline failure-propagation and inventory policy
   const files=['branch/baseline-negative-fixtures.log','branch/inventory-and-ledger-fixtures.log','branch/backend-unit-tests.log'];
   const log=baselineFixtureLog(files,p=>p.includes('baseline-negative')?'ok 1 - genuine compiler failure stops baseline':p.includes('inventory-and-ledger')?'ok 1 - valid source-bound criterion proof':'irrelevant');
   assert.ok(log.includes('genuine compiler failure'));assert.ok(log.includes('valid source-bound criterion proof'));assert.ok(!log.includes('irrelevant'));
+});
+test('criterion proof names come from actual AST registrations rather than quoted negative-test source',()=>{
+  const source=`test('registered positive',()=>{const child="test('intentional child failure',()=>{})";});
+    // test('comment is not registered',()=>{});
+    const example="test('quoted example',()=>{})";
+    test("registered negative",()=>{});`;
+  assert.deepEqual(criterionFixtureNames(source),['registered positive','registered negative']);
+});
+test('passing fixture identity uses canonical redaction and cannot accept a failing or merely mentioned test',()=>{
+  const name='artifact logs redact bearer tokens, database credentials and explicit secret assignments';
+  assert.equal(fixtureObserved('ok 13 - artifact logs redact Bearer [REDACTED], database credentials and explicit secret assignments',name),true);
+  assert.equal(fixtureObserved('# Subtest: '+name,name),false);
+  assert.equal(fixtureObserved('not ok 13 - '+name,name),false);
+  assert.equal(fixtureObserved('ok 13 - '+name+' forged suffix',name),false);
 });
