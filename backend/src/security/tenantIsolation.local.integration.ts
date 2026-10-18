@@ -89,6 +89,7 @@ import { registerRuntimeIdentityTests } from './runtimeIdentity.local.integratio
 import { registerRuntimeProjectBindingTests } from './runtimeProjectBinding.local.integration.js';
 import { registerGrowthIdentityTests } from '../growth/identity.local.integration.js';
 import { registerBillingBudgetTests } from '../services/billingBudget.local.integration.js';
+import { registerBillingOwnershipTests } from '../services/billingOwnership.local.integration.js';
 import { registerBuildProjectReceiptTests } from './buildProjectReceipt.local.integration.js';
 import { registerGrowthEventReplayTests } from '../growth/eventReplay.local.integration.js';
 import { registerChatBoundaryTests } from './chatBoundary.local.integration.js';
@@ -146,6 +147,7 @@ registerRuntimeIdentityTests(admin, () => users);
 registerRuntimeProjectBindingTests(admin, () => users, request);
 registerGrowthIdentityTests(admin);
 registerBillingBudgetTests(admin);
+registerBillingOwnershipTests(admin);
 registerBuildProjectReceiptTests(admin, () => users);
 registerGrowthEventReplayTests(admin, () => users);
 registerChatBoundaryTests(admin, () => users, request);
@@ -1467,13 +1469,28 @@ test('real webhook delivery acknowledges only durable completion and serializes 
 
 test('real membership callbacks preserve existing ownership and reject competing tenant creation',async(t)=>{
   const [owner,other]=users;
+  const oldApi=process.env.WHOP_API_KEY,oldRedirect=process.env.WHOP_REDIRECT_URL;
+  process.env.WHOP_API_KEY='synthetic-disposable-only';process.env.WHOP_REDIRECT_URL='https://xroga.com/workspace?billing=success';
+  t.after(()=>{
+    oldApi===undefined?delete process.env.WHOP_API_KEY:process.env.WHOP_API_KEY=oldApi;
+    oldRedirect===undefined?delete process.env.WHOP_REDIRECT_URL:process.env.WHOP_REDIRECT_URL=oldRedirect;
+  });
+  const realFetch=globalThis.fetch;
+  t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
+    const url=new URL(String(input));
+    if(url.origin==='https://api.whop.com'){
+      const user=users.find(user=>url.pathname===`/api/v1/checkout_configurations/ch_fixture_${user.id}`);assert.ok(user);
+      return Response.json({id:`ch_fixture_${user.id}`,account_id:'biz_qhYONL4RebGX96',plan:{id:'plan_hlV1A10I5QfSP'},mode:'payment',metadata:{xroga_user_id:user.id,source:'xroga',plan_tier:'spark',xroga_checkout_id:'synthetic_nonce'}});
+    }
+    assert.equal(url.origin,'http://127.0.0.1:54321');return realFetch(input,init);
+  });
   const previousPlan=process.env.WHOP_PLAN_ID,previousCompany=process.env.WHOP_COMPANY_ID;
   process.env.WHOP_PLAN_ID='plan_hlV1A10I5QfSP';process.env.WHOP_COMPANY_ID='biz_qhYONL4RebGX96';
   t.after(()=>{previousPlan===undefined?delete process.env.WHOP_PLAN_ID:process.env.WHOP_PLAN_ID=previousPlan;previousCompany===undefined?delete process.env.WHOP_COMPANY_ID:process.env.WHOP_COMPANY_ID=previousCompany;});
   const membership=`mem_fixture_${randomUUID()}`;
   await insert('whop_memberships',{user_id:other.id,whop_membership_id:membership,whop_plan_id:'plan_hlV1A10I5QfSP',whop_account_id:'biz_qhYONL4RebGX96',status:'active'});
   const read=async(id:string)=>{const r=await admin.from('whop_memberships').select('*').eq('whop_membership_id',id).single();assert.equal(r.error,null);return r.data;};
-  const event=(id:string,user:string)=>({type:'membership.activated' as const,account_id:'biz_qhYONL4RebGX96',data:{id,plan_id:'plan_hlV1A10I5QfSP',status:'active',metadata:{xroga_user_id:user,source:'xroga',plan_tier:'spark'}}});
+  const event=(id:string,user:string)=>({type:'membership.activated' as const,account_id:'biz_qhYONL4RebGX96',data:{id,plan_id:'plan_hlV1A10I5QfSP',checkout_configuration_id:`ch_fixture_${user}`,status:'active',metadata:{xroga_user_id:user,source:'xroga',plan_tier:'spark'}}});
   const before=await read(membership);
   await assert.rejects(BillingService.handleWebhookEvent(event(membership,owner.id),'fixture'),/membership_owner_mismatch/);
   assert.deepEqual(await read(membership),before);

@@ -7,18 +7,14 @@ import {
 } from '../config/supabase.js';
 
 import {
-  syncPlanBudget,
-} from '../ai/quota.js';
-
-import {
   GALACTIC_PLANS,
   getPlanByTier,
 } from '../config/plans.js';
 
 import {
-  activatePaidCycle,
   getProviderEntitlementStatus,
 } from '../ai/providerBudget.js';
+import {readWhopCheckoutOwner,whopCheckoutOwnerFromResponse} from './whopCheckoutOwnership.js';
 
 
 export const WHOP_API_VERSION_DATE =
@@ -45,10 +41,6 @@ const APPROVED_PLAN_ID =
 
 const APPROVED_REDIRECT_URL =
   'https://xroga.com/workspace?billing=success';
-
-
-const memoryFulfilledPayments =
-  new Set<string>();
 
 
 export type WhopEventType =
@@ -1119,6 +1111,17 @@ export class BillingService {
       planId,
     );
 
+    const checkoutId=pickString(payload,'id');
+    try{
+      const scope={checkoutId,accountId,planId};
+      const owner=payload.metadata===undefined||payload.metadata===null
+        ?await readWhopCheckoutOwner({...scope,apiKey,apiVersion:WHOP_API_VERSION_DATE})
+        :whopCheckoutOwnerFromResponse(payload,scope);
+      if(owner.userId!==userId)throw new Error('checkout_owner_mismatch');
+    }catch{
+      throw new BillingServiceError('plan_mismatch','Checkout ownership could not be verified',503);
+    }
+
 
     return {
       purchaseUrl:
@@ -1128,11 +1131,7 @@ export class BillingService {
         ),
 
       checkoutConfigurationId:
-        pickString(
-          payload,
-          'id',
-        ) ||
-        null,
+        checkoutId,
     };
   }
 
@@ -1387,10 +1386,8 @@ export class BillingService {
     }
 
 
-    const data =
-      nestedRecord(
-        event.data,
-      );
+    // Provider identity and content must stay one immutable intent across awaits.
+    const data = JSON.parse(JSON.stringify(nestedRecord(event.data))) as Record<string,unknown>;
 
 
     const accountId =
@@ -1634,37 +1631,6 @@ export class BillingService {
     }
 
 
-    const {
-      data:
-        profile,
-
-      error:
-        profileError,
-    } =
-      await getSupabaseAdmin()
-        .from(
-          'profiles',
-        )
-        .select(
-          'id',
-        )
-        .eq(
-          'id',
-          userId,
-        )
-        .maybeSingle();
-
-
-    if (
-      profileError ||
-      !profile
-    ) {
-      throw new Error(
-        'invalid_user',
-      );
-    }
-
-
     const startsAt =
       parseDate(
         data.paid_at,
@@ -1730,6 +1696,39 @@ export class BillingService {
         'manage_url',
       );
 
+    // A signature establishes the provider, not the app user named by metadata.
+    // Existing receipts/memberships retain legacy owner authority. First claims
+    // must match the exact canonical checkout created with server-owned metadata.
+    if(!process.env.SUPABASE_SERVICE_ROLE_KEY)throw new Error('billing_authority_unavailable');
+    const db=getSupabaseAdmin();
+    const previous=await db.from('whop_payment_fulfillments').select('user_id,whop_payment_id').eq('whop_payment_id',paymentId).maybeSingle();
+    if(previous.error)throw new Error('payment_fulfillment_failed');
+    let knownOwner:string|undefined;
+    let checkoutNeedsReadback=false;
+    if(previous.data!==null){
+      if(previous.data.whop_payment_id!==paymentId||typeof previous.data.user_id!=='string')throw new Error('payment_owner_mismatch');
+      knownOwner=previous.data.user_id;
+    }else if(membershipId){
+      const existing=await db.from('whop_memberships').select('user_id,whop_membership_id,whop_plan_id,whop_account_id,whop_checkout_configuration_id').eq('whop_membership_id',membershipId).maybeSingle();
+      if(existing.error)throw new Error('payment_fulfillment_failed');
+      if(existing.data!==null){
+        if(existing.data.whop_membership_id!==membershipId||existing.data.whop_plan_id!==planId
+          ||existing.data.whop_account_id!==(process.env.WHOP_COMPANY_ID?.trim()||APPROVED_ACCOUNT_ID)
+          ||typeof existing.data.user_id!=='string')throw new Error('payment_owner_mismatch');
+        knownOwner=existing.data.user_id;
+        checkoutNeedsReadback=Boolean(checkoutId&&checkoutId!==existing.data.whop_checkout_configuration_id);
+      }
+    }
+    if(!knownOwner||checkoutNeedsReadback){
+      const {apiKey,accountId,planId:configuredPlan}=requiredConfig();
+      const checkoutOwner=(await readWhopCheckoutOwner({checkoutId,apiKey,accountId,planId:configuredPlan,apiVersion:WHOP_API_VERSION_DATE})).userId;
+      if(knownOwner&&knownOwner!==checkoutOwner)throw new Error('payment_owner_mismatch');
+      knownOwner=checkoutOwner;
+    }
+    if(knownOwner!==userId)throw new Error('payment_owner_mismatch');
+    const profile=await db.from('profiles').select('id').eq('id',userId).maybeSingle();
+    if(profile.error||profile.data?.id!==userId)throw new Error('invalid_user');
+
 
     /*
      * Production / Supabase path.
@@ -1744,7 +1743,7 @@ export class BillingService {
 
         error,
       } =
-        await getSupabaseAdmin()
+      await db
           .rpc(
             'fulfill_whop_payment',
             {
@@ -1806,49 +1805,10 @@ export class BillingService {
       // A second write could race a newer cycle and cannot be repaired by replay.
 
 
-      return Boolean(
-        fulfilled,
-      );
+      if(typeof fulfilled!=='boolean')throw new Error('payment_fulfillment_failed');
+      return fulfilled;
     }
-
-
-    /*
-     * In-memory / test fallback.
-     */
-    if (
-      memoryFulfilledPayments
-        .has(
-          paymentId,
-        )
-    ) {
-      return false;
-    }
-
-
-    memoryFulfilledPayments
-      .add(
-        paymentId,
-      );
-
-
-    await activatePaidCycle({
-      userId,
-
-      providerReference:
-        `whop:payment:${paymentId}`,
-
-      startsAt,
-      endsAt,
-    });
-
-
-    await syncPlanBudget(
-      userId,
-      'spark',
-    );
-
-
-    return true;
+    throw new Error('billing_authority_unavailable');
   }
 
 
@@ -1907,7 +1867,9 @@ export class BillingService {
       );
 
 
-    let persistedIdentifiers: { whop_plan_id?: string; whop_account_id?: string } = {};
+    const checkout=nestedRecord(data.checkout_configuration);
+    const checkoutId=pickString(data,'checkout_configuration_id')||pickString(checkout,'id')||pickString(membership,'checkout_configuration_id');
+    let persistedIdentifiers: { whop_plan_id?: string; whop_account_id?: string; whop_checkout_configuration_id?: string|null } = {};
     // The signed provider event establishes its source, not permission to move
     // an existing membership to the actor named in its metadata.
     if (membershipId) {
@@ -1921,7 +1883,7 @@ export class BillingService {
             'whop_memberships',
           )
           .select(
-            'user_id,whop_plan_id,whop_account_id',
+            'user_id,whop_membership_id,whop_plan_id,whop_account_id,whop_checkout_configuration_id',
           )
           .eq(
             'whop_membership_id',
@@ -1931,11 +1893,20 @@ export class BillingService {
 
 
       if (ownershipError) throw new Error('membership_sync_failed');
-      if (existing?.user_id) {
+      if (existing!==null) {
+        if(typeof existing.user_id!=='string'||!existing.user_id||existing.whop_membership_id!==membershipId
+          ||!existing.whop_plan_id||!existing.whop_account_id)throw new Error('membership_owner_mismatch');
         if (userId && userId !== existing.user_id) throw new Error('membership_owner_mismatch');
         userId = existing.user_id;
         persistedIdentifiers = existing;
       }
+    }
+
+    if(membershipId&&(!persistedIdentifiers.whop_account_id||(checkoutId&&checkoutId!==persistedIdentifiers.whop_checkout_configuration_id))){
+      const {apiKey,accountId,planId}=requiredConfig();
+      const owner=await readWhopCheckoutOwner({checkoutId,apiKey,accountId,planId,apiVersion:WHOP_API_VERSION_DATE});
+      if(userId&&userId!==owner.userId)throw new Error('membership_owner_mismatch');
+      userId=owner.userId;
     }
 
 
@@ -1976,10 +1947,7 @@ export class BillingService {
         null,
 
       whop_checkout_configuration_id:
-        pickString(
-          data,
-          'checkout_configuration_id',
-        ) ||
+        checkoutId || persistedIdentifiers.whop_checkout_configuration_id ||
         null,
 
       whop_plan_id:
@@ -2060,6 +2028,9 @@ export class BillingService {
 
 
     if (!row.whop_plan_id || !row.whop_account_id) throw new Error('membership_identity_unavailable');
+    if(row.whop_account_id!==(process.env.WHOP_COMPANY_ID?.trim()||APPROVED_ACCOUNT_ID)
+      ||(persistedIdentifiers.whop_plan_id&&row.whop_plan_id!==persistedIdentifiers.whop_plan_id)
+      ||(!persistedIdentifiers.whop_plan_id&&row.whop_plan_id!==(process.env.WHOP_PLAN_ID?.trim()||APPROVED_PLAN_ID)))throw new Error('membership_owner_mismatch');
     // Insert-ignore closes the lookup/insert race. The following mutation must
     // match both the provider ID and its persisted owner and return one row.
     const db = getSupabaseAdmin();
@@ -2071,7 +2042,7 @@ export class BillingService {
       .eq('whop_membership_id', membershipId).eq('user_id', userId)
       .select('whop_membership_id').maybeSingle();
     if (updated.error) throw new Error('membership_sync_failed');
-    if (!updated.data) throw new Error('membership_owner_mismatch');
+    if (!updated.data||updated.data.whop_membership_id!==membershipId) throw new Error('membership_owner_mismatch');
 
 
     if (
@@ -2091,9 +2062,6 @@ export class BillingService {
 
 
 export function resetBillingMemoryForTests(): void {
-  memoryFulfilledPayments
-    .clear();
-
   verifiedPlanUntil =
     0;
 }

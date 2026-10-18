@@ -1,27 +1,27 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "b729caca1db11d84c3bbc144d64058139f3dab936b999871b634acbde42243f6",
+  "reviewRegistrySha256": "e29ce32625b6fbc1c2cdde0a334c0c0c106b4adee75ab52ec7c763ffe4a1ef30",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 162,
-    "persistenceCandidates": 638,
+    "privilegedFactorySites": 161,
+    "persistenceCandidates": 639,
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
-    "reviewedCandidates": 638,
-    "unresolvedSafetyCandidates": 365,
+    "reviewedCandidates": 639,
+    "unresolvedSafetyCandidates": 358,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 123,
+    "SCOPED_BOUNDARY": 131,
     "NARROW_EXCEPTION": 10,
     "NOT_PERSISTENCE": 140,
-    "REVIEWED_GAP": 365
+    "REVIEWED_GAP": 358
   },
   "acceptance": {
     "version": 1,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 140,
-    "unresolvedCandidateBoundaries": 498,
+    "unresolvedCandidateBoundaries": 499,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -412,11 +412,11 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-8adf0cd72f102c66"
+        "id": "OB-5c4b1cc6ac7ed495"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-a582cdd6898c81f0"
+        "id": "OB-1fd3e19d33afecdd"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -2341,11 +2341,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
+        "reason": "Narrow eight-boundary reconciliation at412f0417719e59c0e855925da59e553eed1d8755, actual disposable39160669358 passes157 security and3 browser tests, aggregate39160669384 passes both complete repeated source baselines with actual integrated4461334bcd72d2e23c5bccf3fc4f3653263c4af7. Independently authenticated structured proof already certifies these exact eight operations from the real chat API, create collision, competing resume, foreign/browser RPC denial, completion/cancellation race, stale generation and terminal/conversation injection cases. resumeRunDurable/getRunAsync/persistConversationOnly/persistToSupabase were traced through issued pipeline context, authenticated swarm conversation writes and the private admitted record/generation map. This changes only the stale manual classification, not production source or previously verified test semantics. Other worker producers, project admission interleavings, callback adapters and complete007.5 remain separate unresolved obligations. Notification QoS and universal external-effect authority are not inferred from these fixed run-store boundaries.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -2354,6 +2354,14 @@
           {
             "path": "backend/src/ai/runStore.resume.test.ts",
             "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
+          },
+          {
+            "path": "backend/src/security/chatBoundary.local.integration.ts",
+            "marker": "real chat conversation API preserves own messages and denies foreign reads writes cancellation and forged body identity"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "actual run store uses fresh authority and competing resumes retain the admitted winner"
           }
         ]
       }
@@ -2366,11 +2374,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
+        "reason": "Narrow eight-boundary reconciliation at412f0417719e59c0e855925da59e553eed1d8755, actual disposable39160669358 passes157 security and3 browser tests, aggregate39160669384 passes both complete repeated source baselines with actual integrated4461334bcd72d2e23c5bccf3fc4f3653263c4af7. Independently authenticated structured proof already certifies these exact eight operations from the real chat API, create collision, competing resume, foreign/browser RPC denial, completion/cancellation race, stale generation and terminal/conversation injection cases. resumeRunDurable/getRunAsync/persistConversationOnly/persistToSupabase were traced through issued pipeline context, authenticated swarm conversation writes and the private admitted record/generation map. This changes only the stale manual classification, not production source or previously verified test semantics. Other worker producers, project admission interleavings, callback adapters and complete007.5 remain separate unresolved obligations. Notification QoS and universal external-effect authority are not inferred from these fixed run-store boundaries.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -2379,6 +2387,14 @@
           {
             "path": "backend/src/ai/runStore.resume.test.ts",
             "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
+          },
+          {
+            "path": "backend/src/security/chatBoundary.local.integration.ts",
+            "marker": "real chat conversation API preserves own messages and denies foreign reads writes cancellation and forged body identity"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "actual run store uses fresh authority and competing resumes retain the admitted winner"
           }
         ]
       }
@@ -2391,11 +2407,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
+        "reason": "Narrow eight-boundary reconciliation at412f0417719e59c0e855925da59e553eed1d8755, actual disposable39160669358 passes157 security and3 browser tests, aggregate39160669384 passes both complete repeated source baselines with actual integrated4461334bcd72d2e23c5bccf3fc4f3653263c4af7. Independently authenticated structured proof already certifies these exact eight operations from the real chat API, create collision, competing resume, foreign/browser RPC denial, completion/cancellation race, stale generation and terminal/conversation injection cases. resumeRunDurable/getRunAsync/persistConversationOnly/persistToSupabase were traced through issued pipeline context, authenticated swarm conversation writes and the private admitted record/generation map. This changes only the stale manual classification, not production source or previously verified test semantics. Other worker producers, project admission interleavings, callback adapters and complete007.5 remain separate unresolved obligations. Notification QoS and universal external-effect authority are not inferred from these fixed run-store boundaries.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -2404,6 +2420,14 @@
           {
             "path": "backend/src/ai/runStore.resume.test.ts",
             "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
+          },
+          {
+            "path": "backend/src/security/chatBoundary.local.integration.ts",
+            "marker": "real chat conversation API preserves own messages and denies foreign reads writes cancellation and forged body identity"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "actual run store uses fresh authority and competing resumes retain the admitted winner"
           }
         ]
       }
@@ -2416,11 +2440,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
+        "reason": "Narrow eight-boundary reconciliation at412f0417719e59c0e855925da59e553eed1d8755, actual disposable39160669358 passes157 security and3 browser tests, aggregate39160669384 passes both complete repeated source baselines with actual integrated4461334bcd72d2e23c5bccf3fc4f3653263c4af7. Independently authenticated structured proof already certifies these exact eight operations from the real chat API, create collision, competing resume, foreign/browser RPC denial, completion/cancellation race, stale generation and terminal/conversation injection cases. resumeRunDurable/getRunAsync/persistConversationOnly/persistToSupabase were traced through issued pipeline context, authenticated swarm conversation writes and the private admitted record/generation map. This changes only the stale manual classification, not production source or previously verified test semantics. Other worker producers, project admission interleavings, callback adapters and complete007.5 remain separate unresolved obligations. Notification QoS and universal external-effect authority are not inferred from these fixed run-store boundaries.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -2429,6 +2453,14 @@
           {
             "path": "backend/src/ai/runStore.resume.test.ts",
             "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
+          },
+          {
+            "path": "backend/src/security/chatBoundary.local.integration.ts",
+            "marker": "real chat conversation API preserves own messages and denies foreign reads writes cancellation and forged body identity"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "actual run store uses fresh authority and competing resumes retain the admitted winner"
           }
         ]
       }
@@ -2441,11 +2473,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
+        "reason": "Narrow eight-boundary reconciliation at412f0417719e59c0e855925da59e553eed1d8755, actual disposable39160669358 passes157 security and3 browser tests, aggregate39160669384 passes both complete repeated source baselines with actual integrated4461334bcd72d2e23c5bccf3fc4f3653263c4af7. Independently authenticated structured proof already certifies these exact eight operations from the real chat API, create collision, competing resume, foreign/browser RPC denial, completion/cancellation race, stale generation and terminal/conversation injection cases. resumeRunDurable/getRunAsync/persistConversationOnly/persistToSupabase were traced through issued pipeline context, authenticated swarm conversation writes and the private admitted record/generation map. This changes only the stale manual classification, not production source or previously verified test semantics. Other worker producers, project admission interleavings, callback adapters and complete007.5 remain separate unresolved obligations. Notification QoS and universal external-effect authority are not inferred from these fixed run-store boundaries.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -2454,6 +2486,14 @@
           {
             "path": "backend/src/ai/runStore.resume.test.ts",
             "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
+          },
+          {
+            "path": "backend/src/security/chatBoundary.local.integration.ts",
+            "marker": "real chat conversation API preserves own messages and denies foreign reads writes cancellation and forged body identity"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "actual run store uses fresh authority and competing resumes retain the admitted winner"
           }
         ]
       }
@@ -2466,11 +2506,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
+        "reason": "Narrow eight-boundary reconciliation at412f0417719e59c0e855925da59e553eed1d8755, actual disposable39160669358 passes157 security and3 browser tests, aggregate39160669384 passes both complete repeated source baselines with actual integrated4461334bcd72d2e23c5bccf3fc4f3653263c4af7. Independently authenticated structured proof already certifies these exact eight operations from the real chat API, create collision, competing resume, foreign/browser RPC denial, completion/cancellation race, stale generation and terminal/conversation injection cases. resumeRunDurable/getRunAsync/persistConversationOnly/persistToSupabase were traced through issued pipeline context, authenticated swarm conversation writes and the private admitted record/generation map. This changes only the stale manual classification, not production source or previously verified test semantics. Other worker producers, project admission interleavings, callback adapters and complete007.5 remain separate unresolved obligations. Notification QoS and universal external-effect authority are not inferred from these fixed run-store boundaries.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -2479,6 +2519,14 @@
           {
             "path": "backend/src/ai/runStore.resume.test.ts",
             "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
+          },
+          {
+            "path": "backend/src/security/chatBoundary.local.integration.ts",
+            "marker": "real chat conversation API preserves own messages and denies foreign reads writes cancellation and forged body identity"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "actual run store uses fresh authority and competing resumes retain the admitted winner"
           }
         ]
       }
@@ -2633,11 +2681,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
+        "reason": "Narrow eight-boundary reconciliation at412f0417719e59c0e855925da59e553eed1d8755, actual disposable39160669358 passes157 security and3 browser tests, aggregate39160669384 passes both complete repeated source baselines with actual integrated4461334bcd72d2e23c5bccf3fc4f3653263c4af7. Independently authenticated structured proof already certifies these exact eight operations from the real chat API, create collision, competing resume, foreign/browser RPC denial, completion/cancellation race, stale generation and terminal/conversation injection cases. resumeRunDurable/getRunAsync/persistConversationOnly/persistToSupabase were traced through issued pipeline context, authenticated swarm conversation writes and the private admitted record/generation map. This changes only the stale manual classification, not production source or previously verified test semantics. Other worker producers, project admission interleavings, callback adapters and complete007.5 remain separate unresolved obligations. Notification QoS and universal external-effect authority are not inferred from these fixed run-store boundaries.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -2646,6 +2694,14 @@
           {
             "path": "backend/src/ai/runStore.resume.test.ts",
             "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
+          },
+          {
+            "path": "backend/src/security/chatBoundary.local.integration.ts",
+            "marker": "real chat conversation API preserves own messages and denies foreign reads writes cancellation and forged body identity"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "actual run store uses fresh authority and competing resumes retain the admitted winner"
           }
         ]
       }
@@ -2658,11 +2714,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
+        "reason": "Narrow eight-boundary reconciliation at412f0417719e59c0e855925da59e553eed1d8755, actual disposable39160669358 passes157 security and3 browser tests, aggregate39160669384 passes both complete repeated source baselines with actual integrated4461334bcd72d2e23c5bccf3fc4f3653263c4af7. Independently authenticated structured proof already certifies these exact eight operations from the real chat API, create collision, competing resume, foreign/browser RPC denial, completion/cancellation race, stale generation and terminal/conversation injection cases. resumeRunDurable/getRunAsync/persistConversationOnly/persistToSupabase were traced through issued pipeline context, authenticated swarm conversation writes and the private admitted record/generation map. This changes only the stale manual classification, not production source or previously verified test semantics. Other worker producers, project admission interleavings, callback adapters and complete007.5 remain separate unresolved obligations. Notification QoS and universal external-effect authority are not inferred from these fixed run-store boundaries.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -2671,6 +2727,14 @@
           {
             "path": "backend/src/ai/runStore.resume.test.ts",
             "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
+          },
+          {
+            "path": "backend/src/security/chatBoundary.local.integration.ts",
+            "marker": "real chat conversation API preserves own messages and denies foreign reads writes cancellation and forged body identity"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "actual run store uses fresh authority and competing resumes retain the admitted winner"
           }
         ]
       }
@@ -8290,15 +8354,15 @@
       }
     },
     {
-      "id": "286bc857714c82f17839",
+      "id": "5410b5e5969f852f3712",
       "path": "backend/src/services/BillingService.ts",
-      "line": 682,
+      "line": 674,
       "enclosing": "verifyWhopWebhookSignature",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "These three expressions are Buffer.from conversions of webhook signing material or candidate signatures inside the raw-body HMAC verifier; they do not call a database or credential store.",
         "reason": "The verifier checks a bounded timestamp and uses timingSafeEqual after equal-length validation. This classification only removes false persistence candidates; it does not certify webhook authority, provider metadata, or subsequent membership writes.",
@@ -8311,15 +8375,15 @@
       }
     },
     {
-      "id": "47650e2cf3cc7a9cb97a",
+      "id": "5c45cbefef78c4a5a862",
       "path": "backend/src/services/BillingService.ts",
-      "line": 695,
+      "line": 687,
       "enclosing": "verifyWhopWebhookSignature",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "These three expressions are Buffer.from conversions of webhook signing material or candidate signatures inside the raw-body HMAC verifier; they do not call a database or credential store.",
         "reason": "The verifier checks a bounded timestamp and uses timingSafeEqual after equal-length validation. This classification only removes false persistence candidates; it does not certify webhook authority, provider metadata, or subsequent membership writes.",
@@ -8332,15 +8396,15 @@
       }
     },
     {
-      "id": "c7ed0ee2e36c6c8eaf43",
+      "id": "4e302f5858ffdf862b1d",
       "path": "backend/src/services/BillingService.ts",
-      "line": 754,
+      "line": 746,
       "enclosing": "verifyWhopWebhookSignature",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "These three expressions are Buffer.from conversions of webhook signing material or candidate signatures inside the raw-body HMAC verifier; they do not call a database or credential store.",
         "reason": "The verifier checks a bounded timestamp and uses timingSafeEqual after equal-length validation. This classification only removes false persistence candidates; it does not certify webhook authority, provider metadata, or subsequent membership writes.",
@@ -8353,15 +8417,15 @@
       }
     },
     {
-      "id": "bcf1e04eaa94fcd2b425",
+      "id": "65db4eed01a31a6246a6",
       "path": "backend/src/services/BillingService.ts",
-      "line": 1152,
+      "line": 1151,
       "enclosing": "createCustomerPortal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "All production callers of createCustomerPortal/getUserBillingStatus are in routes/billing.ts and pass req.userId; index.ts mounts that router behind authMiddleware. Neither route admits a body/query owner or membership identifier. Helpers have no exported injected database client.",
         "reason": "Fixed membership projections restrict the server-issued actor and select only its latest subscription. Portal URLs are limited to HTTPS Whop destinations without userinfo. This records the inspected read boundary and caller provenance, not certification of every entitlement helper or provider callback.",
@@ -8378,15 +8442,15 @@
       }
     },
     {
-      "id": "45eeadd879c4d719c11d",
+      "id": "2bbbfe810492a3523176",
       "path": "backend/src/services/BillingService.ts",
-      "line": 1152,
+      "line": 1151,
       "enclosing": "createCustomerPortal",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "All production callers of createCustomerPortal/getUserBillingStatus are in routes/billing.ts and pass req.userId; index.ts mounts that router behind authMiddleware. Neither route admits a body/query owner or membership identifier. Helpers have no exported injected database client.",
         "reason": "Fixed membership projections restrict the server-issued actor and select only its latest subscription. Portal URLs are limited to HTTPS Whop destinations without userinfo. This records the inspected read boundary and caller provenance, not certification of every entitlement helper or provider callback.",
@@ -8403,15 +8467,15 @@
       }
     },
     {
-      "id": "65834d9357acbb12a84d",
+      "id": "a92e4aa005e04bb5cbe9",
       "path": "backend/src/services/BillingService.ts",
-      "line": 1220,
+      "line": 1219,
       "enclosing": "getUserBillingStatus",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "All production callers of createCustomerPortal/getUserBillingStatus are in routes/billing.ts and pass req.userId; index.ts mounts that router behind authMiddleware. Neither route admits a body/query owner or membership identifier. Helpers have no exported injected database client.",
         "reason": "Fixed membership projections restrict the server-issued actor and select only its latest subscription. Portal URLs are limited to HTTPS Whop destinations without userinfo. This records the inspected read boundary and caller provenance, not certification of every entitlement helper or provider callback.",
@@ -8428,15 +8492,15 @@
       }
     },
     {
-      "id": "4247256e8f4c4793be3e",
+      "id": "65a5f4799150827de19e",
       "path": "backend/src/services/BillingService.ts",
-      "line": 1220,
+      "line": 1219,
       "enclosing": "getUserBillingStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
         "authority": "All production callers of createCustomerPortal/getUserBillingStatus are in routes/billing.ts and pass req.userId; index.ts mounts that router behind authMiddleware. Neither route admits a body/query owner or membership identifier. Helpers have no exported injected database client.",
         "reason": "Fixed membership projections restrict the server-issued actor and select only its latest subscription. Portal URLs are limited to HTTPS Whop destinations without userinfo. This records the inspected read boundary and caller provenance, not certification of every entitlement helper or provider callback.",
@@ -8453,18 +8517,117 @@
       }
     },
     {
-      "id": "b05e41f8f6ba770ee40c",
+      "id": "fd7ae7cab6529f4fb459",
       "path": "backend/src/services/BillingService.ts",
-      "line": 1644,
+      "line": 1703,
+      "enclosing": "fulfillPayment",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
+      "semanticReview": {
+        "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
+        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "evidence": [
+          {
+            "path": "backend/src/services/BillingService.test.ts",
+            "marker": "membership callback denies a foreign owner"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real Whop fulfillment rolls back foreign membership collisions"
+          },
+          {
+            "path": "backend/src/services/BillingService.checkoutOwnership.test.ts",
+            "marker": "billing first claims, stored parents, replay"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4e027991ba45aac9e16d",
+      "path": "backend/src/services/BillingService.ts",
+      "line": 1704,
+      "enclosing": "fulfillPayment",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "whop_payment_fulfillments",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
+      "semanticReview": {
+        "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
+        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "evidence": [
+          {
+            "path": "backend/src/services/BillingService.test.ts",
+            "marker": "membership callback denies a foreign owner"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real Whop fulfillment rolls back foreign membership collisions"
+          },
+          {
+            "path": "backend/src/services/BillingService.checkoutOwnership.test.ts",
+            "marker": "billing first claims, stored parents, replay"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b52db4c851f3dea1748b",
+      "path": "backend/src/services/BillingService.ts",
+      "line": 1712,
+      "enclosing": "fulfillPayment",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "whop_memberships",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
+      "semanticReview": {
+        "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
+        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
+        "evidence": [
+          {
+            "path": "backend/src/services/BillingService.test.ts",
+            "marker": "membership callback denies a foreign owner"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real Whop fulfillment rolls back foreign membership collisions"
+          },
+          {
+            "path": "backend/src/services/BillingService.checkoutOwnership.test.ts",
+            "marker": "billing first claims, stored parents, replay"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
+          }
+        ]
+      }
+    },
+    {
+      "id": "099c4eef2a21db12099d",
+      "path": "backend/src/services/BillingService.ts",
+      "line": 1729,
       "enclosing": "fulfillPayment",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
-        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
+        "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
+        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8473,48 +8636,31 @@
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
             "marker": "real Whop fulfillment rolls back foreign membership collisions"
-          }
-        ]
-      }
-    },
-    {
-      "id": "e7b9dbdcf629027dc864",
-      "path": "backend/src/services/BillingService.ts",
-      "line": 1644,
-      "enclosing": "fulfillPayment",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
-      "semanticReview": {
-        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
-        "evidence": [
-          {
-            "path": "backend/src/services/BillingService.test.ts",
-            "marker": "membership callback denies a foreign owner"
           },
           {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real Whop fulfillment rolls back foreign membership collisions"
+            "path": "backend/src/services/BillingService.checkoutOwnership.test.ts",
+            "marker": "billing first claims, stored parents, replay"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
           }
         ]
       }
     },
     {
-      "id": "d25e2a7bfb9c46b63136",
+      "id": "363aaa2323ae3945da87",
       "path": "backend/src/services/BillingService.ts",
-      "line": 1747,
+      "line": 1746,
       "enclosing": "fulfillPayment",
       "kind": "RPC_CANDIDATE",
       "target": "fulfill_whop_payment",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
-        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
+        "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
+        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8523,48 +8669,31 @@
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
             "marker": "real Whop fulfillment rolls back foreign membership collisions"
-          }
-        ]
-      }
-    },
-    {
-      "id": "22f42a26e3ba5039379f",
-      "path": "backend/src/services/BillingService.ts",
-      "line": 1747,
-      "enclosing": "fulfillPayment",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
-      "semanticReview": {
-        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
-        "evidence": [
-          {
-            "path": "backend/src/services/BillingService.test.ts",
-            "marker": "membership callback denies a foreign owner"
           },
           {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real Whop fulfillment rolls back foreign membership collisions"
+            "path": "backend/src/services/BillingService.checkoutOwnership.test.ts",
+            "marker": "billing first claims, stored parents, replay"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
           }
         ]
       }
     },
     {
-      "id": "76ae3b0bf5943ddc497f",
+      "id": "756de29153249d2fac2a",
       "path": "backend/src/services/BillingService.ts",
-      "line": 1919,
+      "line": 1881,
       "enclosing": "syncMembership",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
-        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
+        "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
+        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8573,23 +8702,31 @@
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
             "marker": "real Whop fulfillment rolls back foreign membership collisions"
+          },
+          {
+            "path": "backend/src/services/BillingService.checkoutOwnership.test.ts",
+            "marker": "billing first claims, stored parents, replay"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
           }
         ]
       }
     },
     {
-      "id": "e14049093a9f9e59f9a4",
+      "id": "3bf2f7d4aadc2706ceb1",
       "path": "backend/src/services/BillingService.ts",
-      "line": 1919,
+      "line": 1881,
       "enclosing": "syncMembership",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
-        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
+        "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
+        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8598,23 +8735,31 @@
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
             "marker": "real Whop fulfillment rolls back foreign membership collisions"
+          },
+          {
+            "path": "backend/src/services/BillingService.checkoutOwnership.test.ts",
+            "marker": "billing first claims, stored parents, replay"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
           }
         ]
       }
     },
     {
-      "id": "86f2172a1d35a127cd1f",
+      "id": "05c0b2493c01eed93637",
       "path": "backend/src/services/BillingService.ts",
-      "line": 2065,
+      "line": 2036,
       "enclosing": "syncMembership",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
-        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
+        "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
+        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8623,23 +8768,31 @@
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
             "marker": "real Whop fulfillment rolls back foreign membership collisions"
+          },
+          {
+            "path": "backend/src/services/BillingService.checkoutOwnership.test.ts",
+            "marker": "billing first claims, stored parents, replay"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
           }
         ]
       }
     },
     {
-      "id": "5c848b31c07edd31de1f",
+      "id": "87702decca37439d7217",
       "path": "backend/src/services/BillingService.ts",
-      "line": 2066,
+      "line": 2037,
       "enclosing": "syncMembership",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
-        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
+        "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
+        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8648,23 +8801,31 @@
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
             "marker": "real Whop fulfillment rolls back foreign membership collisions"
+          },
+          {
+            "path": "backend/src/services/BillingService.checkoutOwnership.test.ts",
+            "marker": "billing first claims, stored parents, replay"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
           }
         ]
       }
     },
     {
-      "id": "d4d06add80a5e50beafa",
+      "id": "8b10b8683a2118a013b9",
       "path": "backend/src/services/BillingService.ts",
-      "line": 2070,
+      "line": 2041,
       "enclosing": "syncMembership",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "semanticReview": {
-        "authority": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
-        "reason": "Confirmed membership owner overwrite and transactional cross-owner fulfillment are corrected with new negative tests and a compatible function replacement, pending final real CI. First-binding metadata provenance across actual Whop renewal variants, staged compatibility and full signed-route integration remain unverified. No claim that signature alone proves arbitrary metadata ownership, no live payments or provider test account used. Sixth-source billing correction removes redundant post-fulfillment and deactivation budget writes. Existing locked canonical cycle SQL decides whether paid remains active or expired state becomes free. Focused true/replayed fulfillment and deactivation tests pass, actual dedicated paid/expiry/replay test prepared. Provider event ordering, initial account binding and full billing lifecycle remain unresolved. Seventh-source preserves stored required plan/account identifiers in partial events, correcting actual disposable membership_sync_failed. Original paid-cycle preservation/expiry/replay test retained, next-source real verification pending. Full provider ordering and initial account authority remain unresolved.",
+        "authority": "The sole production callback verifies raw-body HMAC and approved account. Existing payment receipts and memberships preserve stored owner authority. A first payment or membership claim now requires an exact fixed-host canonical checkout readback binding account, plan and server metadata. A new checkout parent on an existing membership requires the same owner, and partial callbacks preserve the stored parent. Only the existing owner-fenced fulfillment transaction changes budgets.",
+        "reason": "Two negative tests failed before the repair by accepting a different user from server-issued checkout metadata, then pass with canonical readback. This demonstrates the missing app-owner binding in synthetic transport, not a live Whop exploit. Eighteen focused billing tests pass, including first-owner positives, foreign/missing account or metadata, absent checkout, store/provider outage, replacement parent, legacy receipt replay and exact boolean fulfillment receipt. The new signed raw HTTP and actual database test has not run yet. Provider lookup metadata requires checkout_configuration:basic:read in the primary SDK contract, permission is not asserted configured. No live provider request, credential change or new billing store. Keep this group unverified until actual source-bound integration and consumer proof.",
         "evidence": [
           {
             "path": "backend/src/services/BillingService.test.ts",
@@ -8673,6 +8834,14 @@
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
             "marker": "real Whop fulfillment rolls back foreign membership collisions"
+          },
+          {
+            "path": "backend/src/services/BillingService.checkoutOwnership.test.ts",
+            "marker": "billing first claims, stored parents, replay"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "marker": "real signed billing callbacks bind first owners"
           }
         ]
       }

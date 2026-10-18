@@ -398,7 +398,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:365 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:358 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -428,12 +428,12 @@
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 162,
-    "persistenceCandidates": 638,
+    "privilegedFactorySites": 161,
+    "persistenceCandidates": 639,
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
-    "reviewedCandidates": 638,
-    "unresolvedSafetyCandidates": 365,
+    "reviewedCandidates": 639,
+    "unresolvedSafetyCandidates": 358,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -510,20 +510,9 @@
       "existingImplementation": "Existing run store, worker leases and owner persistence",
       "missingBehavior": "Project lineage and full callback/side-effect lifecycle; execute new DB races",
       "acceptanceTest": "Run row-lock races, same-process delayed callbacks, resume/cancel/outage negatives",
-      "pendingCandidates": 8,
+      "pendingCandidates": 0,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
-      "callersByPath": {
-        "backend/src/ai/runStore.ts": [
-          "72d1173732e44759c7d0",
-          "6c170d46c524d271ecf8",
-          "e0aa5a734250805488a8",
-          "1a529d92aa80b6c6c159",
-          "1d8b0198237de162e7c8",
-          "a382df5bb9ba28546a20",
-          "d86c7dc76cda33115c93",
-          "5ab24c997d1e653f7c8a"
-        ]
-      }
+      "callersByPath": {}
     },
     {
       "rootCause": "credentials-oauth",
@@ -712,7 +701,7 @@
       "existingImplementation": "Existing billing functions and provider reservations",
       "missingBehavior": "Remaining source-bound billing/budget replay, numeric and caller authority gaps",
       "acceptanceTest": "Concurrent replay, foreign account, failed reservation/settlement and compensation",
-      "pendingCandidates": 31,
+      "pendingCandidates": 32,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/providerBudget.ts": [
@@ -742,15 +731,16 @@
           "8d7582310ee0460ac163"
         ],
         "backend/src/services/BillingService.ts": [
-          "b05e41f8f6ba770ee40c",
-          "e7b9dbdcf629027dc864",
-          "d25e2a7bfb9c46b63136",
-          "22f42a26e3ba5039379f",
-          "76ae3b0bf5943ddc497f",
-          "e14049093a9f9e59f9a4",
-          "86f2172a1d35a127cd1f",
-          "5c848b31c07edd31de1f",
-          "d4d06add80a5e50beafa"
+          "fd7ae7cab6529f4fb459",
+          "4e027991ba45aac9e16d",
+          "b52db4c851f3dea1748b",
+          "099c4eef2a21db12099d",
+          "363aaa2323ae3945da87",
+          "756de29153249d2fac2a",
+          "3bf2f7d4aadc2706ceb1",
+          "05c0b2493c01eed93637",
+          "87702decca37439d7217",
+          "8b10b8683a2118a013b9"
         ]
       }
     },

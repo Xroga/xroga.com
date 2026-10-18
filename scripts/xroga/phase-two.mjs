@@ -52,6 +52,7 @@ export function buildPhaseTwo({reviewDecisions}={}){
       const old=previous.get(id);assert.ok(old,`Missing approved caller provenance:${id}`);
       const selector=remappings.get(id)??old;
       let next=callers.filter(c=>c.path===selector.path&&c.enclosing===selector.enclosing&&c.kind===selector.kind&&c.target===selector.target);
+      if(selector.currentCallerId)next=next.filter(c=>c.id===selector.currentCallerId);
       if(next.length>1&&!remappings.has(id)){
         // Moving an unchanged method shifts its source-position IDs. Preserve
         // operation order only after byte-identical method and equal peer-count
@@ -65,6 +66,15 @@ export function buildPhaseTwo({reviewDecisions}={}){
       assert.equal(next.length,1,`Changed caller needs explicit semantic remapping:${id}`);
       return [next[0].id];
     }))]}));
+    for(const extension of decision?.callerExtensions??[]){
+      const origin=previous.get(extension.baselineCallerId),current=byId.get(extension.currentCallerId);
+      const obligation=mapping.find(m=>m.baselineCallerId===extension.baselineCallerId);
+      assert.ok(obligation&&origin&&current&&origin.path===p.baselinePath&&current.path===origin.path
+        &&current.enclosing===origin.enclosing&&extension.reason?.length>=40,'New caller lacks its frozen same-method obligation');
+      assert.equal(decision.sourceSha256,hash(read(p.baselinePath)),'New caller extension source drift');
+      assert.ok(!mapping.some(m=>m.currentCallerIds.includes(current.id)),'Duplicate caller extension');
+      obligation.currentCallerIds.push(current.id);
+    }
     const ids=[...new Set(mapping.flatMap(m=>m.currentCallerIds))];
     for(const id of ids)assert.ok(byId.has(id),`Unreconciled frozen caller:${id}`);
     return {id:p.id,family:p.family,sourcePath:p.baselinePath,sourceSha256:hash(read(p.baselinePath)),

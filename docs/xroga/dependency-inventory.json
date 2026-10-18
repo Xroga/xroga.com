@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2bdcb835fb618e1e369385ecd932c8ac7c0499ff",
+  "source_sha": "412f0417719e59c0e855925da59e553eed1d8755",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -583,6 +583,7 @@
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
+        "backend/src/services/billingOwnership.local.integration.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/browserVerificationAdapter.ts",
@@ -624,8 +625,10 @@
         "VERCEL_OAUTH_CLIENT_ID",
         "VERCEL_OAUTH_CLIENT_SECRET",
         "VERCEL_OAUTH_SCOPES",
+        "WHOP_API_KEY",
         "WHOP_COMPANY_ID",
         "WHOP_PLAN_ID",
+        "WHOP_REDIRECT_URL",
         "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
         "XB01_LOCAL_DATABASE_URL",
@@ -700,6 +703,7 @@
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
+        "backend/src/services/billingOwnership.local.integration.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/browserVerificationAdapter.ts",
@@ -1812,7 +1816,11 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/services/BillingService.ts"
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/BillingService.ts",
+        "backend/src/services/billingBudget.local.integration.ts",
+        "backend/src/services/billingOwnership.local.integration.ts",
+        "backend/src/services/whopCheckoutOwnership.ts"
       ],
       "hostnames": [
         "api.whop.com"
@@ -1821,12 +1829,19 @@
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
+        "CI",
+        "CLOUDFLARE_R2_PRIVATE_BUCKET",
+        "E2E_BACKEND_URL",
+        "SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_URL",
         "WHOP_API_KEY",
         "WHOP_COMPANY_ID",
         "WHOP_PLAN_ID",
         "WHOP_REDIRECT_URL",
-        "WHOP_WEBHOOK_SECRET"
+        "WHOP_WEBHOOK_SECRET",
+        "XB01_DISPOSABLE_SUPABASE",
+        "XB01_LOCAL_DATABASE_URL"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -1840,7 +1855,11 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/services/BillingService.ts"
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/BillingService.ts",
+        "backend/src/services/billingBudget.local.integration.ts",
+        "backend/src/services/billingOwnership.local.integration.ts",
+        "backend/src/services/whopCheckoutOwnership.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -3173,8 +3192,10 @@
         "SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
+        "WHOP_API_KEY",
         "WHOP_COMPANY_ID",
         "WHOP_PLAN_ID",
+        "WHOP_REDIRECT_URL",
         "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
         "XB01_LOCAL_DATABASE_URL"
@@ -4473,8 +4494,10 @@
         "SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
+        "WHOP_API_KEY",
         "WHOP_COMPANY_ID",
         "WHOP_PLAN_ID",
+        "WHOP_REDIRECT_URL",
         "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
         "XB01_LOCAL_DATABASE_URL"
@@ -7055,6 +7078,7 @@
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
+        "backend/src/services/billingOwnership.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -7069,6 +7093,7 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
@@ -7170,6 +7195,7 @@
       "dependency_ids": [
         "r2",
         "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
         "endpoint-example-invalid",
         "endpoint-public-example-invalid"
       ]
@@ -7499,6 +7525,7 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
         "endpoint-example-invalid",
         "endpoint-public-example-invalid"
       ]
@@ -9696,6 +9723,7 @@
       "dependency_ids": [
         "supabase",
         "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
         "endpoint-example-invalid",
         "endpoint-fixture-supabase-co",
         "endpoint-public-example-invalid"
@@ -10015,6 +10043,7 @@
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
+        "backend/src/services/billingOwnership.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -10032,6 +10061,7 @@
       "dependency_ids": [
         "supabase",
         "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
@@ -10482,7 +10512,10 @@
       "consuming_sources": [
         "backend/src/config/envSecrets.ts",
         "backend/src/lib/platformReady.ts",
-        "backend/src/services/BillingService.ts"
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/BillingService.ts",
+        "backend/src/services/billingBudget.local.integration.ts",
+        "backend/src/services/billingOwnership.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -10492,19 +10525,25 @@
       "requiredness": "CONDITIONAL_ON_CAPABILITY",
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
+        "DESTRUCTURED_ENV_READER",
         "REVIEWED_DYNAMIC_BINDING",
         "SECRET_HELPER_CALL",
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-api-whop-com"
+        "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
       "name": "WHOP_COMPANY_ID",
       "consuming_sources": [
         "backend/src/security/tenantIsolation.local.integration.ts",
-        "backend/src/services/BillingService.ts"
+        "backend/src/services/BillingService.ts",
+        "backend/src/services/billingBudget.local.integration.ts",
+        "backend/src/services/billingOwnership.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -10514,6 +10553,7 @@
       "requiredness": "OPTIONAL_OR_DEFAULTED",
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
+        "DESTRUCTURED_ENV_READER",
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
@@ -10527,7 +10567,9 @@
       "name": "WHOP_PLAN_ID",
       "consuming_sources": [
         "backend/src/security/tenantIsolation.local.integration.ts",
-        "backend/src/services/BillingService.ts"
+        "backend/src/services/BillingService.ts",
+        "backend/src/services/billingBudget.local.integration.ts",
+        "backend/src/services/billingOwnership.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -10537,6 +10579,7 @@
       "requiredness": "OPTIONAL_OR_DEFAULTED",
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
+        "DESTRUCTURED_ENV_READER",
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
@@ -10549,7 +10592,10 @@
     {
       "name": "WHOP_REDIRECT_URL",
       "consuming_sources": [
-        "backend/src/services/BillingService.ts"
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/BillingService.ts",
+        "backend/src/services/billingBudget.local.integration.ts",
+        "backend/src/services/billingOwnership.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -10559,10 +10605,14 @@
       "requiredness": "OPTIONAL_OR_DEFAULTED",
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
+        "DESTRUCTURED_ENV_READER",
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-api-whop-com"
+        "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -10572,7 +10622,8 @@
         "backend/src/lib/platformReady.ts",
         "backend/src/routes/billingWebhook.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
-        "backend/src/services/BillingService.ts"
+        "backend/src/services/BillingService.ts",
+        "backend/src/services/billingOwnership.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -10582,6 +10633,7 @@
       "requiredness": "CONDITIONAL_ON_CAPABILITY",
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
+        "DESTRUCTURED_ENV_READER",
         "REVIEWED_DYNAMIC_BINDING",
         "SECRET_HELPER_CALL",
         "STATIC_ENV_READER"
@@ -10677,6 +10729,7 @@
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
+        "backend/src/services/billingOwnership.local.integration.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -10691,6 +10744,7 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
@@ -10752,6 +10806,7 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-public-example-invalid"
@@ -13080,7 +13135,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a"
+      "sha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13100,11 +13155,15 @@
     },
     {
       "path": "backend/src/services/BillingService.ts",
-      "sha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d"
+      "sha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2"
     },
     {
       "path": "backend/src/services/billingBudget.local.integration.ts",
-      "sha256": "bdaf2de76ca5252e6468da4448ff6235b08390479cd2d956a68b858f11d1c631"
+      "sha256": "2bbae56aa6fba9cf13645be45b585a256a17efccebf5330cafe0e03fa4063757"
+    },
+    {
+      "path": "backend/src/services/billingOwnership.local.integration.ts",
+      "sha256": "6315688eff3d99636ab31c3958e9284ca51f8a2628dbb41dc217c6227e756d0e"
     },
     {
       "path": "backend/src/services/ensureUserRecords.ts",
@@ -13329,6 +13388,10 @@
     {
       "path": "backend/src/services/userProvisioningCache.ts",
       "sha256": "c262c8251cfd21cf345a517e445ed7e017eedc4a73fc429ed5a6885b88fcb201"
+    },
+    {
+      "path": "backend/src/services/whopCheckoutOwnership.ts",
+      "sha256": "8486898ec1017c24118b9dec0b103c7ad54e453f2df7aa59d47772e6a890a642"
     },
     {
       "path": "backend/src/synthesis/acceptanceCompiler.ts",
@@ -18982,56 +19045,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 96,
+      "line": 97,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 96,
+      "line": 97,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 451,
+      "line": 453,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 501,
+      "line": 503,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 590,
+      "line": 592,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 733,
+      "line": 735,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 785,
+      "line": 787,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1453,
+      "line": 1455,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 1473,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.whop.com",
+      "protocol": "https:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 1481,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 1485,
       "credentialsInUrl": false
     },
     {
@@ -19066,14 +19150,14 @@
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/services/BillingService.ts",
-      "line": 32,
+      "line": 28,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/BillingService.ts",
-      "line": 47,
+      "line": 43,
       "credentialsInUrl": false
     },
     {
@@ -19081,6 +19165,62 @@
       "protocol": "http:",
       "path": "backend/src/services/billingBudget.local.integration.ts",
       "line": 10,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/services/billingBudget.local.integration.ts",
+      "line": 17,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.whop.com",
+      "protocol": "https:",
+      "path": "backend/src/services/billingBudget.local.integration.ts",
+      "line": 28,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/services/billingBudget.local.integration.ts",
+      "line": 32,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/services/billingOwnership.local.integration.ts",
+      "line": 11,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/services/billingOwnership.local.integration.ts",
+      "line": 21,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/services/billingOwnership.local.integration.ts",
+      "line": 24,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.whop.com",
+      "protocol": "https:",
+      "path": "backend/src/services/billingOwnership.local.integration.ts",
+      "line": 41,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/services/billingOwnership.local.integration.ts",
+      "line": 46,
       "credentialsInUrl": false
     },
     {
@@ -19529,6 +19669,13 @@
       "protocol": "https:",
       "path": "backend/src/services/referralService.ts",
       "line": 7,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.whop.com",
+      "protocol": "https:",
+      "path": "backend/src/services/whopCheckoutOwnership.ts",
+      "line": 29,
       "credentialsInUrl": false
     },
     {
@@ -25212,14 +25359,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 952,
+      "line": 954,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1289,
+      "line": 1291,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25228,13 +25375,6 @@
       "path": "backend/src/security/usageAccounting.local.integration.ts",
       "line": 23,
       "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/services/BillingService.ts",
-      "line": 51,
-      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

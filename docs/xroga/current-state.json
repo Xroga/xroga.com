@@ -5927,7 +5927,7 @@
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:27",
         "backend/src/security/tenantIsolation.local.integration.ts:31",
-        "backend/src/services/BillingService.ts:18",
+        "backend/src/services/BillingService.ts:14",
         "backend/src/services/integrations/businessAction.ts:11",
         "backend/src/services/integrations/businessRead.ts:7"
       ],
@@ -6487,8 +6487,7 @@
         "backend/src/routes/phase1.ts:17",
         "backend/src/routes/phase1BusinessPreflight.ts:3",
         "backend/src/security/quotaEvidence.local.integration.ts:5",
-        "backend/src/services/BillingService.budget.test.ts:4",
-        "backend/src/services/BillingService.ts:9"
+        "backend/src/services/BillingService.budget.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -11768,7 +11767,7 @@
       "callers": [
         "backend/src/ai/quota.test.ts:11",
         "backend/src/ai/quota.ts:9",
-        "backend/src/services/BillingService.ts:13",
+        "backend/src/services/BillingService.ts:9",
         "backend/src/services/ensureUserRecords.ts:1"
       ],
       "reachable": true,
@@ -17950,7 +17949,8 @@
       "callers": [
         "backend/src/index.ts:24",
         "backend/src/routes/billingWebhook.test.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:6"
+        "backend/src/security/tenantIsolation.local.integration.ts:6",
+        "backend/src/services/billingOwnership.local.integration.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -17975,7 +17975,8 @@
       ],
       "testCoverage": [
         "backend/src/routes/billingWebhook.test.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/billingOwnership.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21523,7 +21524,7 @@
       "id": "surface:9b0c1b5d45c8637e2209",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/BillingService.ts",
-      "sha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "symbols": [
         "APPROVED_ACCOUNT_ID",
         "APPROVED_PLAN_ID",
@@ -21550,26 +21551,30 @@
         "checkout",
         "checkoutId",
         "checkoutIdempotencyKey",
+        "checkoutNeedsReadback",
+        "checkoutOwner",
         "companyId",
         "data",
         "date",
         "db",
         "encoded",
         "endsAt",
+        "existing",
         "expected",
         "fiveMinuteWindow",
         "historical",
         "inserted",
         "isPaid",
         "key",
+        "knownOwner",
         "manageUrl",
         "memberId",
         "membership",
         "membershipId",
-        "memoryFulfilledPayments",
         "metadata",
         "mismatch",
         "nestedRecord",
+        "owner",
         "ownerId",
         "parseDate",
         "payload",
@@ -21578,6 +21583,8 @@
         "pickString",
         "plan",
         "planId",
+        "previous",
+        "profile",
         "purchaseUrl",
         "redirect",
         "redirectUrl",
@@ -21586,6 +21593,7 @@
         "response",
         "row",
         "safeWhopUrl",
+        "scope",
         "startsAt",
         "supported",
         "timestampSeconds",
@@ -21603,16 +21611,16 @@
       ],
       "imports": [
         "../ai/providerBudget.js",
-        "../ai/quota.js",
         "../config/plans.js",
         "../config/supabase.js",
+        "./whopCheckoutOwnership.js",
         "node:crypto"
       ],
       "runtimeImports": [
         "backend/src/ai/providerBudget.ts",
-        "backend/src/ai/quota.ts",
         "backend/src/config/plans.ts",
-        "backend/src/config/supabase.ts"
+        "backend/src/config/supabase.ts",
+        "backend/src/services/whopCheckoutOwnership.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -21623,13 +21631,15 @@
         "backend/src/routes/billingWebhook.ts:3",
         "backend/src/security/tenantIsolation.local.integration.ts:41",
         "backend/src/services/BillingService.budget.test.ts:3",
+        "backend/src/services/BillingService.checkoutOwnership.test.ts:3",
         "backend/src/services/BillingService.test.ts:4",
         "backend/src/services/billingBudget.local.integration.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [
         "profiles",
-        "whop_memberships"
+        "whop_memberships",
+        "whop_payment_fulfillments"
       ],
       "externalProviderDependencies": [
         "declared-host:api.whop.com",
@@ -21638,17 +21648,16 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/services/BillingService.ts:1152 (user_id)",
-        "backend/src/services/BillingService.ts:1220 (user_id)",
-        "backend/src/services/BillingService.ts:2070 (user_id)"
+        "backend/src/services/BillingService.ts:1151 (user_id)",
+        "backend/src/services/BillingService.ts:1219 (user_id)",
+        "backend/src/services/BillingService.ts:2041 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [
         "backend/src/services/BillingService.ts#BillingService",
         "backend/src/services/BillingService.ts#BillingServiceError",
         "backend/src/services/BillingService.ts#BillingStatus",
-        "backend/src/services/BillingService.ts#resetBillingMemoryForTests",
-        "backend/src/services/BillingService.ts#syncPlanBudget"
+        "backend/src/services/BillingService.ts#resetBillingMemoryForTests"
       ],
       "evidenceBoundary": [
         "backend/src/services/BillingService.ts#WhopEventType",
@@ -21660,6 +21669,7 @@
         "backend/src/routes/billingWebhook.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/BillingService.budget.test.ts",
+        "backend/src/services/BillingService.checkoutOwnership.test.ts",
         "backend/src/services/BillingService.test.ts",
         "backend/src/services/billingBudget.local.integration.ts"
       ],
@@ -23595,7 +23605,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:783",
+        "backend/src/security/tenantIsolation.local.integration.ts:785",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -26418,6 +26428,51 @@
         "backend/src/lib/authRoundTrips.test.ts",
         "backend/src/security/provisioningReceipt.local.integration.ts",
         "backend/src/services/ensureUserRecords.receipt.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:c7ad32e7d2ffe4d4c19a",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/services/whopCheckoutOwnership.ts",
+      "sha256": "8486898ec1017c24118b9dec0b103c7ad54e453f2df7aa59d47772e6a890a642",
+      "symbols": [
+        "CheckoutOwner",
+        "CheckoutScope",
+        "checkout",
+        "metadata",
+        "plan",
+        "readWhopCheckoutOwner",
+        "record",
+        "response",
+        "unavailable",
+        "value",
+        "whopCheckoutOwnerFromResponse"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/services/BillingService.ts:17",
+        "backend/src/services/whopCheckoutOwnership.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/whopCheckoutOwnership.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -86759,7 +86814,7 @@
       "id": "surface:59ea753bbe7364873503",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/phase-two.mjs",
-      "sha256": "d8aa83577ef5a4fd740fe37307fb29be48f363a04dceb12078c16b632244a982",
+      "sha256": "88d80b2052091c43243be1ec2743f5e0560ba154e771205e7c6d646e433a4578",
       "symbols": [
         "approved",
         "assertUnchangedEnclosing",
@@ -86769,10 +86824,12 @@
         "buildPhaseTwo",
         "byId",
         "callers",
+        "current",
         "d",
         "decision",
         "decisions",
         "enclosingText",
+        "extension",
         "frozen",
         "frozenPath",
         "hash",
@@ -86783,8 +86840,10 @@
         "mapping",
         "matches",
         "next",
+        "obligation",
         "old",
         "ordinal",
+        "origin",
         "packets",
         "peers",
         "previous",
@@ -104650,6 +104709,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:f90deeab6cb0f02ccc98",
+      "sourcePath": "backend/src/services/BillingService.checkoutOwnership.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:91e85398e5908426ad0b",
       "sourcePath": "backend/src/services/BillingService.test.ts",
       "declaredTests": 13,
@@ -104659,6 +104725,13 @@
     {
       "id": "test-suite:88c04d034354c98ddf8a",
       "sourcePath": "backend/src/services/billingBudget.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:46f8e861fa7823f4cd28",
+      "sourcePath": "backend/src/services/billingOwnership.local.integration.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
@@ -105094,6 +105167,13 @@
       "id": "test-suite:7beed17cacfbd1c14ba4",
       "sourcePath": "backend/src/services/systemErrorLog.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:808205228f691cbf2c7c",
+      "sourcePath": "backend/src/services/whopCheckoutOwnership.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

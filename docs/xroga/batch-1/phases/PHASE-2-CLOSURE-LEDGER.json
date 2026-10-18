@@ -1911,7 +1911,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3024,7 +3024,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -3906,7 +3906,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4061,7 +4061,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4174,7 +4174,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4409,7 +4409,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4580,7 +4580,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4932,7 +4932,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5185,7 +5185,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5254,7 +5254,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5534,7 +5534,7 @@
       "id": "B1-P2-a582cdd6898c81f0",
       "family": "billing-budget",
       "sourcePath": "backend/src/services/BillingService.ts",
-      "sourceSha256": "ad5a6af78c8ab3ea27a4d4ac0f34829c99e4ba9a5536a937edb006f78128fe8d",
+      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
       "baselineCallerIds": [
         "b05e41f8f6ba770ee40c",
         "e7b9dbdcf629027dc864",
@@ -5547,85 +5547,126 @@
         "d4d06add80a5e50beafa"
       ],
       "currentCallerIds": [
-        "b05e41f8f6ba770ee40c",
-        "e7b9dbdcf629027dc864",
-        "d25e2a7bfb9c46b63136",
-        "22f42a26e3ba5039379f",
-        "76ae3b0bf5943ddc497f",
-        "e14049093a9f9e59f9a4",
-        "86f2172a1d35a127cd1f",
-        "5c848b31c07edd31de1f",
-        "d4d06add80a5e50beafa"
+        "099c4eef2a21db12099d",
+        "fd7ae7cab6529f4fb459",
+        "4e027991ba45aac9e16d",
+        "b52db4c851f3dea1748b",
+        "363aaa2323ae3945da87",
+        "756de29153249d2fac2a",
+        "3bf2f7d4aadc2706ceb1",
+        "05c0b2493c01eed93637",
+        "87702decca37439d7217",
+        "8b10b8683a2118a013b9"
       ],
       "mapping": [
         {
           "baselineCallerId": "b05e41f8f6ba770ee40c",
           "currentCallerIds": [
-            "b05e41f8f6ba770ee40c"
+            "099c4eef2a21db12099d"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e7b9dbdcf629027dc864",
           "currentCallerIds": [
-            "e7b9dbdcf629027dc864"
+            "fd7ae7cab6529f4fb459",
+            "4e027991ba45aac9e16d",
+            "b52db4c851f3dea1748b"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "d25e2a7bfb9c46b63136",
           "currentCallerIds": [
-            "d25e2a7bfb9c46b63136"
+            "363aaa2323ae3945da87"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "22f42a26e3ba5039379f",
           "currentCallerIds": [
-            "22f42a26e3ba5039379f"
+            "fd7ae7cab6529f4fb459"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "76ae3b0bf5943ddc497f",
           "currentCallerIds": [
-            "76ae3b0bf5943ddc497f"
+            "756de29153249d2fac2a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e14049093a9f9e59f9a4",
           "currentCallerIds": [
-            "e14049093a9f9e59f9a4"
+            "3bf2f7d4aadc2706ceb1"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "86f2172a1d35a127cd1f",
           "currentCallerIds": [
-            "86f2172a1d35a127cd1f"
+            "05c0b2493c01eed93637"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "5c848b31c07edd31de1f",
           "currentCallerIds": [
-            "5c848b31c07edd31de1f"
+            "87702decca37439d7217"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "d4d06add80a5e50beafa",
           "currentCallerIds": [
-            "d4d06add80a5e50beafa"
+            "8b10b8683a2118a013b9"
           ],
           "change": "RETAINED"
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-a582cdd6898c81f0",
+        "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "DEMONSTRATED_FIRST_OWNER_BINDING_GAP_FIXED_PENDING_REAL_SIGNED_DATABASE_PROOF",
+        "actorTrace": "Raw-body Whop HMAC establishes provider provenance, not the user claimed by callback metadata. Existing payment/membership receipts retain canonical owner identity. First claims read the exact existing Whop checkout resource with approved account/plan and server-issued metadata before any entitlement or membership write. Changed checkout parents require the same canonical owner. Existing service-only owner-fenced fulfillment SQL is reused without a new table or budget engine.",
+        "invariant": "A signed callback cannot choose an app user different from the server-issued checkout owner. Partial legacy events preserve known parent identity. Owner lookup outages or permission-hidden metadata deny first claims, while durable payment replay remains independent of provider lookup. Concurrent foreign membership winners and payment collisions remain governed by the existing SQL transaction.",
+        "callerExtensions": [
+          {
+            "baselineCallerId": "e7b9dbdcf629027dc864",
+            "currentCallerId": "4e027991ba45aac9e16d",
+            "reason": "New payment-receipt lookup reuses the original fulfillment authority obligation to retain canonical owner provenance before profile access and replay."
+          },
+          {
+            "baselineCallerId": "e7b9dbdcf629027dc864",
+            "currentCallerId": "b52db4c851f3dea1748b",
+            "reason": "New exact membership lookup reuses the original fulfillment authority obligation for legacy renewal owner and checkout-parent validation. This is not an additional packet or certification."
+          }
+        ],
+        "evidence": [
+          {
+            "path": "backend/src/services/BillingService.checkoutOwnership.test.ts",
+            "type": "FOCUSED_TEST",
+            "result": "TWO_PRE_FIX_MISSING_REJECTIONS_THEN_PASS",
+            "scope": "Synthetic canonical checkout transport, not a live Whop exploit or provider acceptance"
+          },
+          {
+            "path": "backend/src/services/billingOwnership.local.integration.ts",
+            "type": "SIGNED_HTTP_DISPOSABLE_DATABASE_TEST",
+            "result": "NOT_EXECUTED_AT_RECORD_CREATION",
+            "scope": "Actual signed router, foreign first claims, concurrent payment receipts, replay, membership parent, outage and retry. Only provider lookup is synthetic."
+          }
+        ],
+        "remaining": [
+          "Run final-source actual disposable SQL and signed callback case, including unchanged rollback/browser denial tests",
+          "Verify actual configured checkout metadata read permission only before future provider activation, no live key or permission change in Phase2",
+          "Keep Command008 settlement/action authority and provider ordering outside this narrow tenant-owner repair"
+        ]
+      },
       "actor": {
         "existingTrace": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
         "currentSemanticVerification": "PENDING"
@@ -5645,14 +5686,14 @@
         {
           "path": "backend/src/services/BillingService.test.ts",
           "marker": "membership callback denies a foreign owner",
-          "sourceSha256": "c644c8238f119ce74a3a39f885d1264374f051c0696d7c6cf3da90e94cd57b26",
+          "sourceSha256": "85de5ee14eeeda31e07404469a4d009e591183bde158efe8229ba9930149c8d2",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6141,7 +6182,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6230,7 +6271,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
+          "sourceSha256": "663dabbe2e717c633a7d36189c55ee594564636c52976c7b05472123aad740f8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }

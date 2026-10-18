@@ -10,13 +10,16 @@ test('Phase2 retains all73 packets and371 historical identities without certifyi
   assert.ok(r.packets.every(p=>p.state==='EVIDENCE_GAP'&&p.proofIds.length===0));
   assert.ok(r.packets.flatMap(p=>p.independentLaterObligations).every(o=>o.phase>2));
   assert.ok(r.criteria.every(c=>c.status==='BLOCKED'));assert.equal(r.criteria.length,10);
-  assert.equal(r.packets.filter(p=>p.semanticProgress).length,9);
+  assert.equal(r.packets.filter(p=>p.semanticProgress).length,10);
   assert.ok(r.packets.filter(p=>p.semanticProgress).every(p=>p.executionStatus==='IN_PROGRESS'&&p.state==='EVIDENCE_GAP'));
   const identity=JSON.parse(readFileSync(resolve(root,'docs/xroga/security/privileged-callers.json'),'utf8')).callers.find(c=>c.path==='backend/src/growth/growthService.ts'&&c.target==='link_growth_identity');
   const oldIdentity=r.packets.flatMap(p=>p.mapping).filter(m=>m.currentCallerIds.includes(identity.id));
   assert.equal(oldIdentity.length,2,'Both original insert and refresh obligations survive atomic consolidation');
   const event=JSON.parse(readFileSync(resolve(root,'docs/xroga/security/privileged-callers.json'),'utf8')).callers.find(c=>c.path==='backend/src/growth/growthService.ts'&&c.target==='record_growth_event');
   assert.equal(r.packets.flatMap(p=>p.mapping).filter(m=>m.currentCallerIds.includes(event.id)).length,2,'Both original event insert and conflict-winner obligations survive the transaction');
+  const billing=r.packets.find(p=>p.id==='B1-P2-a582cdd6898c81f0');
+  assert.equal(billing.baselineCallerIds.length,9);assert.equal(billing.currentCallerIds.length,10);
+  assert.equal(billing.mapping.find(m=>m.baselineCallerId==='e7b9dbdcf629027dc864').currentCallerIds.length,3,'New receipt reads retain their original authority obligation');
   assert.equal(r.phase3Started,false);assert.equal(r.additionalSpend,0);
   assert.notEqual(r.baselineEvidence.headSource,r.baselineEvidence.actualDisposableCheckout,'Historical virtual-merge evidence cannot be relabeled as a head-only checkout');
   assert.equal(readFileSync(resolve(root,path),'utf8').replace(/\r\n/g,'\n'),text);
@@ -26,7 +29,10 @@ test('Phase2 semantic progress rejects changed source, unknown or duplicate pack
   for(const mutate of [r=>r.decisions[0].sourceSha256='0'.repeat(64),r=>r.decisions[0].packetId='unknown',
     r=>r.decisions.push(r.decisions[0]),r=>r.decisions[0].executionStatus='CLOSED',
     r=>r.decisions.find(d=>d.relatedSourceBindings).relatedSourceBindings[0].sha256='0'.repeat(64),
-    r=>r.callerRemappings[0].reason='unproven']){
+    r=>r.callerRemappings[0].reason='unproven',
+    r=>r.callerRemappings[0].currentCallerId='not-a-current-call',
+    r=>r.decisions.find(d=>d.callerExtensions).callerExtensions[0].currentCallerId='not-a-current-call',
+    r=>r.decisions.find(d=>d.callerExtensions).callerExtensions[0].baselineCallerId='not-an-original-obligation']){
     const next=structuredClone(original);mutate(next);assert.throws(()=>buildPhaseTwo({reviewDecisions:next}));
   }
 });
