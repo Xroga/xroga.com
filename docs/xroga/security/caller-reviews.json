@@ -3,10 +3,10 @@
   "reviews": [
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "callIds": [
-        "e04b294245cb6657cdbb",
-        "b6df0b190fb35e254f16"
+        "8a660a7f24e3ba1896fe",
+        "a30dcc38aea849794f51"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Both production consumers are authMiddleware-mounted swarm history and dashboard ship-analytics handlers passing server req.userId. The sole privileged query filters that exact owner. Returned rows and hot cache entries must match owner, persisted IDs are checked and malformed statuses are excluded. Hydration never replaces an admitted local worker object. No write or external effect occurs at these two sites.",
@@ -24,10 +24,10 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "callIds": [
-        "cbda964648a33f5f44ec",
-        "cef7e4bdd68cb2fe472e"
+        "e01cf111d89bb2bea5f8",
+        "60145a721f2277556f55"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Sole production polling consumer runs inside the authenticated swarm execution's asynchronous attempt scope, captures original server actor/run, checks admission before polling and aborts on missing or stale authority. Query filters exact owner/run, validates returned identities and known status, matches admitted generation/worker and rechecks the local object after await. It reads status only and never grants a new worker lease or credential.",
@@ -3513,11 +3513,11 @@
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "sourceSha256": "fedef9b8b70d903da34eb1fe64b19e7a70d934899569bf7c2617d1f0d5d9ec8c",
+      "sourceSha256": "24c0936a0ab96725aa4cf51ec4442ee43c6e3b65a7c4bf0947342868cf98f45c",
       "callIds": [
-        "017d368d4424af12091a",
-        "b336e84428d499d0c013",
-        "205409245abcca322256"
+        "4a137f14f1e4f94e1cc1",
+        "6e570ac3ee9df8f9f57d",
+        "a9847b3b791a298d2cb5"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
@@ -3629,9 +3629,9 @@
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "sourceSha256": "fedef9b8b70d903da34eb1fe64b19e7a70d934899569bf7c2617d1f0d5d9ec8c",
+      "sourceSha256": "24c0936a0ab96725aa4cf51ec4442ee43c6e3b65a7c4bf0947342868cf98f45c",
       "callIds": [
-        "e03585d107361a9dfe3d"
+        "045a3aadab5321045fdf"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "New fixed RPC requires issued TenantContext, owner, worker and attempt generation; database row lock validates owner, generation, status and sequence before updating only execution columns.",
@@ -3791,18 +3791,17 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "callIds": [
-        "895a61d6a49f1cfdee31",
-        "50edc8bae8f27dacf910",
-        "a4bce2e2c16c58ec90ed",
-        "eeecad9a21d8290f2cd2",
-        "d870b789568c8679b1db",
-        "a761046ffcd795c11469",
-        "7010a652832f63b0118f",
-        "9529bcfda8915bda983c",
-        "7c6de2f866995527e1af",
-        "fbb59bd297140ddd00e7"
+        "d3903ed4bd1e7cfd75f2",
+        "72d1173732e44759c7d0",
+        "6c170d46c524d271ecf8",
+        "e0aa5a734250805488a8",
+        "1a529d92aa80b6c6c159",
+        "1d8b0198237de162e7c8",
+        "a382df5bb9ba28546a20",
+        "d86c7dc76cda33115c93",
+        "5ab24c997d1e653f7c8a"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
@@ -3975,10 +3974,10 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "callIds": [
-        "9922c3c9683a553fc38e",
-        "e49fc8fc43c3164c23c4"
+        "6e03bd438807135843ad",
+        "c2c9bee315a611e1a474"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Sole production caller routes/swarm.ts cancel handler is mounted behind authMiddleware in index.ts. It passes verified req.userId, never body owner, and checks owner-bound run admission. This exact service-only cancel_swarm_run_owned RPC atomically updates only the supplied owner/run in running state, clears worker generation and returns database-clock receipt. The wrapper validates exact owner/run/status/output/iteration before success. Scope is this fixed database transition, not arbitrary service-role callers.",
@@ -4983,9 +4982,9 @@
       "callIds": [
         "8fde4920c7d2097b67bc"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated existing rule endpoint supplies server actor and project. Canonical action definitions still derive approval policy and validate high-risk compatibility. Service-only creation locks current actor/project/member, verifies owner/project and bounded rule shape, then commits the rule and mandatory immutable audit together. Caller checks every submitted field in exactly one returned row. No action executes during creation.",
-      "reason": "Eleven focused creation/intent/admission tests and42 local SQL shape/owner/role/duplicate/two-write rollback/replay assertions pass. Actual held-member revocation and project owner mutation, two-client same-key exclusion, write rollbacks, exact audit and browser denial prepared for disposable CI. Later rule mutation, project-wide stop/create concurrency and full automation lifecycle remain unresolved. No whole caller certification.",
+      "reason": "Fixed creation persistence boundary VERIFIED atd60292bbd91b552ba2bef33ceb48368e4b1c15c5, disposable39123094921:108 fresh/upgrade migrations,143 security tests and3 browser tests pass with zero failures/skips. Actual held current-member revocation and owner mutation reject both writes, concurrent same-key creators yield one rule/audit and one conflict, both write failures roll back, exact redacted audit and browser denial pass. Invocation, SQL and fixture unchanged. Only creation persistence closes. Later rule mutation, stop/create concurrency and full automation lifecycle remain unresolved. No whole caller certification.",
       "evidence": [
         {
           "path": "backend/src/operations/automationCreation.local.integration.ts",
@@ -5003,9 +5002,9 @@
       "callIds": [
         "5b51043946a26a6a0adf"
       ],
-      "disposition": "REVIEWED_GAP",
+      "disposition": "SCOPED_BOUNDARY",
       "authority": "Only an exact verified running action claim reaches this owner/project/target-filtered resource read. After any claim wait, the fetched row must match target ID, server owner/project and exact finite integer planned version before the existing HTTP adapter can execute. Missing, misbound or stale rows complete as blocked through the existing atomic evidence/run/action/audit transaction.",
-      "reason": "Two focused claim/target tests pass, including substituted parent/ID and changed/malformed versions with zero adapter calls, plus valid unchanged target compatibility via a synthetic adapter. Actual held claim with resource version or tenant/project mutation and durable blocked evidence prepared. Post-read target/provider lifetime, URL writers without generation increments, DNS/redirect/address egress and full Command010 acceptance remain unresolved. No provider calls, no whole caller certification.",
+      "reason": "Exact post-claim read boundary VERIFIED atd60292bbd91b552ba2bef33ceb48368e4b1c15c5, disposable39123094921. Actual claim waits followed by resource version or tenant/project mutation produce durable blocked run/evidence without reaching the adapter. Two focused tests reject substituted parent/ID and changed/malformed versions, and preserve valid unchanged-target compatibility via a synthetic adapter. Invocation and fixture unchanged. Only owner/project/target/version read binding closes. Post-read target/provider lifetime, URL writers without generation increments, DNS/redirect/address egress and full Command010 acceptance remain unresolved. No live provider calls or whole caller certification.",
       "evidence": [
         {
           "path": "backend/src/operations/verificationTarget.test.ts",
@@ -5034,6 +5033,26 @@
         {
           "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
           "marker": "preview grant input and returned capability stay bound"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/security/ownedRunPersistence.ts",
+      "sourceSha256": "24c0936a0ab96725aa4cf51ec4442ee43c6e3b65a7c4bf0947342868cf98f45c",
+      "callIds": [
+        "563c55ccb99efaf6f69b"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Only the existing local run heartbeat supplies captured owner/run, server worker UUID and original generation. Helper requires an original issued tenant context. Service-only transaction locks exact owner/run, requires running state with no completion and exact worker/generation, updates heartbeat only using database time after lock, and returns a strictly validated identity/status/timestamp receipt. No attempt creation, sequence/state replay or provider call.",
+      "reason": "Four focused helper/timer/creation/authority tests and21 local SQL receipt/state/owner/worker/generation/rollback/replay assertions pass. Timer consumes storage rejection with a fixed diagnostic rather than unhandled rejection or private database message. Actual observed lock-clock, replacement/cancellation, foreign canary, rollback and browser denial prepared. Lost heartbeat does not independently fence an already-started provider effect; complete worker liveness/cancellation and external recovery remain unresolved. No whole worker certification.",
+      "evidence": [
+        {
+          "path": "backend/src/security/ownedRunHeartbeat.test.ts",
+          "marker": "the original run timer binds its heartbeat generation"
+        },
+        {
+          "path": "backend/src/security/swarmHeartbeat.local.integration.ts",
+          "marker": "registerSwarmHeartbeatTests"
         }
       ]
     }

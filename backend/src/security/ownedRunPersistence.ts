@@ -2,6 +2,21 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { requireTenantContext, type TenantContext } from './tenantContext.js';
 import { TenantAccessError } from './tenantErrors.js';
 
+/** Refresh only the original worker generation, using database time after lock. */
+export async function heartbeatOwnedRunAttempt(client:SupabaseClient,context:TenantContext,runId:string,workerId:string,generation:string):Promise<void>{
+  const scope=requireTenantContext(context);
+  const {data,error}=await client.rpc('heartbeat_swarm_run_attempt',{
+    p_run_id:runId,p_owner_id:scope.userId,p_worker_id:workerId,p_generation:generation,
+  });
+  if(error)throw new TenantAccessError(503,'RESOURCE_ACCESS_UNAVAILABLE');
+  if(Array.isArray(data)&&data.length===0)throw Object.assign(new Error('The execution attempt is no longer authoritative.'),{code:'RUN_STATE_CONFLICT'});
+  if(!Array.isArray(data)||data.length!==1||data[0]?.id!==runId||data[0]?.user_id!==scope.userId
+    ||data[0]?.worker_id!==workerId||data[0]?.lease_generation!==generation||data[0]?.status!=='running'
+    ||typeof data[0]?.heartbeat_at!=='string'||!Number.isFinite(Date.parse(data[0].heartbeat_at))){
+    throw new TenantAccessError(503,'RESOURCE_ACCESS_UNAVAILABLE');
+  }
+}
+
 /** Update an existing execution attempt under a database row lock, never upsert. */
 export async function persistOwnedRunAttempt(client: SupabaseClient, context: TenantContext,
   runId: string, workerId: string, generation: string, state: Record<string, unknown>): Promise<void> {

@@ -9,7 +9,7 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { createTenantContext } from '../security/tenantContext.js';
-import { persistOwnedRunAttempt } from '../security/ownedRunPersistence.js';
+import { heartbeatOwnedRunAttempt, persistOwnedRunAttempt } from '../security/ownedRunPersistence.js';
 import { isEngineeringArtifact } from './engineeringArtifact.js';
 import { redactOperationsValue } from '../operations/operationsEngine.js';
 import {
@@ -130,38 +130,12 @@ async function persistRunHeartbeat(
     return;
   }
 
-  const {
-    error,
-  } =
-    await getSupabaseAdmin()
-      .from(
-        'swarm_runs',
-      )
-      .update({
-        heartbeat_at:
-          new Date()
-            .toISOString(),
-      })
-      .eq(
-        'id',
-        runId,
-      )
-      .eq(
-        'status',
-        'running',
-      )
-      .eq(
-        'worker_id',
-        RUN_WORKER_ID,
-      ).eq('user_id', rec.userId).eq('lease_generation', generation);
-
-  if (
-    error
-  ) {
-    console.warn(
-      '[runStore] heartbeat failed:',
-      error.message,
-    );
+  try {
+    await heartbeatOwnedRunAttempt(getSupabaseAdmin(),createTenantContext({userId:rec.userId,via:'persisted_owner'}),runId,RUN_WORKER_ID,generation);
+  } catch {
+    // A periodic bookkeeping failure grants no authority, retries no provider
+    // effect and must not leak database diagnostics or reject without a handler.
+    console.warn('[runStore] heartbeat was not acknowledged');
   }
 }
 

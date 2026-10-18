@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a0affa5a71989bc75153623ae46fdfa251530653",
+  "source_sha": "a3e8c7a9a7273c7bc52d89a3bdba508410450d2c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -556,6 +556,7 @@
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
@@ -570,6 +571,7 @@
         "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
+        "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/systemErrorLog.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
@@ -666,6 +668,7 @@
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
@@ -680,6 +683,7 @@
         "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
+        "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/systemErrorLog.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
@@ -7015,6 +7019,7 @@
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
@@ -7029,6 +7034,7 @@
         "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
+        "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
@@ -9646,6 +9652,7 @@
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
@@ -9653,6 +9660,7 @@
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
+        "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts"
       ],
@@ -9961,6 +9969,7 @@
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
@@ -9975,6 +9984,7 @@
         "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
+        "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/systemErrorLog.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
@@ -10616,6 +10626,7 @@
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
@@ -10630,6 +10641,7 @@
         "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
+        "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/systemErrorLog.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
@@ -10683,12 +10695,14 @@
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
+        "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts"
@@ -11908,7 +11922,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f"
+      "sha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9"
     },
     {
       "path": "backend/src/ai/runTrace.ts",
@@ -12916,7 +12930,7 @@
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "sha256": "fedef9b8b70d903da34eb1fe64b19e7a70d934899569bf7c2617d1f0d5d9ec8c"
+      "sha256": "24c0936a0ab96725aa4cf51ec4442ee43c6e3b65a7c4bf0947342868cf98f45c"
     },
     {
       "path": "backend/src/security/ownedTerminalPersistence.ts",
@@ -12925,6 +12939,10 @@
     {
       "path": "backend/src/security/ownership.ts",
       "sha256": "8b240ab552b5d1134b69bad79c31827d4a3854a623b7d045adbb0f45e556dc11"
+    },
+    {
+      "path": "backend/src/security/previewGrantAdmission.local.integration.ts",
+      "sha256": "2ed8be81fb77731af5adde7da3f9c528ef9fc90677be559b9837d36b45f48c73"
     },
     {
       "path": "backend/src/security/profileDeletion.local.integration.ts",
@@ -12991,6 +13009,10 @@
       "sha256": "c57dd72444f4f20685706cec630f492b514f6147f5a43455cddefa6de1c76a50"
     },
     {
+      "path": "backend/src/security/swarmHeartbeat.local.integration.ts",
+      "sha256": "02524f2598ad9cb4a3172985631873fdf0a294e34c0e30791374a2ffe358be29"
+    },
+    {
       "path": "backend/src/security/systemErrorLog.local.integration.ts",
       "sha256": "fd485a34075fcd7bd18d7912f00d0d57d3a8c4dc1c3ff67c2b615b621324fe59"
     },
@@ -13004,7 +13026,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "9813eaaef778ced891d08f5665c9c7e5894b6fd2a07c11c98708644e3d8cca9a"
+      "sha256": "74960e3629cc5ca2042891e5fe35f9482967fd7832933119c23c4bb8a01169f2"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13396,7 +13418,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020"
+      "sha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4"
     },
     {
       "path": "backend/src/synthesis/livePreview/types.ts",
@@ -18705,6 +18727,13 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/previewGrantAdmission.local.integration.ts",
+      "line": 14,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/profileDeletion.local.integration.ts",
       "line": 16,
       "credentialsInUrl": false
@@ -18831,6 +18860,13 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/swarmHeartbeat.local.integration.ts",
+      "line": 13,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/systemErrorLog.local.integration.ts",
       "line": 10,
       "credentialsInUrl": false
@@ -18839,56 +18875,56 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 89,
+      "line": 91,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 89,
+      "line": 91,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 364,
+      "line": 368,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 414,
+      "line": 418,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 503,
+      "line": 507,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 609,
+      "line": 613,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 661,
+      "line": 665,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1329,
+      "line": 1333,
       "credentialsInUrl": false
     },
     {
@@ -23613,7 +23649,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 1286,
+      "line": 1260,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25069,14 +25105,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 828,
+      "line": 832,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1165,
+      "line": 1169,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

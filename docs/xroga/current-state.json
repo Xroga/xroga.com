@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "a0affa5a71989bc75153623ae46fdfa251530653",
-    "sourceTimestampUtc": "2026-10-18T16:17:44+05:00",
-    "auditStartedUtc": "2026-10-18T11:20:41.828Z",
+    "sha": "a3e8c7a9a7273c7bc52d89a3bdba508410450d2c",
+    "sourceTimestampUtc": "2026-10-18T16:29:25+05:00",
+    "auditStartedUtc": "2026-10-18T11:35:28.760Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -7014,7 +7014,7 @@
       "id": "surface:ec198557da445d2b1385",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "sha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "symbols": [
         "AdmittedRunAttempt",
         "MAX_EVENTS_PER_RUN",
@@ -7163,6 +7163,7 @@
         "backend/src/routes/swarm.ts:14",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:8",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts:8",
+        "backend/src/security/ownedRunHeartbeat.test.ts:7",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:6",
         "backend/src/security/runTraceAttempt.local.integration.ts:7",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts:7",
@@ -7186,12 +7187,11 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/runStore.ts:136 (user_id)",
-        "backend/src/ai/runStore.ts:487 (user_id)",
-        "backend/src/ai/runStore.ts:803 (user_id)",
-        "backend/src/ai/runStore.ts:917 (user_id)",
-        "backend/src/ai/runStore.ts:1200 (user_id)",
-        "backend/src/ai/runStore.ts:1349 (user_id)"
+        "backend/src/ai/runStore.ts:461 (user_id)",
+        "backend/src/ai/runStore.ts:777 (user_id)",
+        "backend/src/ai/runStore.ts:891 (user_id)",
+        "backend/src/ai/runStore.ts:1174 (user_id)",
+        "backend/src/ai/runStore.ts:1323 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -7224,6 +7224,7 @@
         "backend/src/routes/swarm.notificationAuthority.test.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
+        "backend/src/security/ownedRunHeartbeat.test.ts",
         "backend/src/security/recoveryMemoryRead.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
@@ -20931,9 +20932,10 @@
       "id": "surface:9f90d9fb1a702b164831",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/ownedRunPersistence.ts",
-      "sha256": "fedef9b8b70d903da34eb1fe64b19e7a70d934899569bf7c2617d1f0d5d9ec8c",
+      "sha256": "24c0936a0ab96725aa4cf51ec4442ee43c6e3b65a7c4bf0947342868cf98f45c",
       "symbols": [
         "OwnedUniversalRecordKind",
+        "heartbeatOwnedRunAttempt",
         "inserted",
         "persistOwnedExecutionState",
         "persistOwnedRun",
@@ -20963,7 +20965,9 @@
         "backend/src/ai/buildOutcomeMemory.test.ts:13",
         "backend/src/ai/buildOutcomeMemory.ts:3",
         "backend/src/ai/runStore.ts:12",
+        "backend/src/security/ownedRunHeartbeat.test.ts:5",
         "backend/src/security/ownedRunPersistence.test.ts:4",
+        "backend/src/security/swarmHeartbeat.local.integration.ts:8",
         "backend/src/security/tenantIsolation.local.integration.ts:10",
         "backend/src/synthesis/projectRuntime/store.ts:11",
         "backend/src/synthesis/universalPersistence.ts:25"
@@ -20975,14 +20979,16 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/security/ownedRunPersistence.ts:64 (user_id)"
+        "backend/src/security/ownedRunPersistence.ts:79 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/buildOutcomeMemory.test.ts",
+        "backend/src/security/ownedRunHeartbeat.test.ts",
         "backend/src/security/ownedRunPersistence.test.ts",
+        "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -21276,6 +21282,7 @@
         "backend/src/routes/terminalSessions.failure.test.ts:6",
         "backend/src/routes/terminalSessions.ts:16",
         "backend/src/routes/vercel.ts:4",
+        "backend/src/security/ownedRunHeartbeat.test.ts:4",
         "backend/src/security/ownedRunPersistence.test.ts:5",
         "backend/src/security/ownedRunPersistence.ts:2",
         "backend/src/security/ownedTerminalPersistence.test.ts:4",
@@ -21287,6 +21294,7 @@
         "backend/src/security/repositorySnapshot.local.integration.ts:8",
         "backend/src/security/runtimeProjectBinding.test.ts:13",
         "backend/src/security/serviceRoleGuard.ts:2",
+        "backend/src/security/swarmHeartbeat.local.integration.ts:7",
         "backend/src/security/tenantContext.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:15",
         "backend/src/security/tenantIsolation.local.integration.ts:8",
@@ -21351,6 +21359,7 @@
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
+        "backend/src/security/ownedRunHeartbeat.test.ts",
         "backend/src/security/ownedRunPersistence.test.ts",
         "backend/src/security/ownedTerminalPersistence.test.ts",
         "backend/src/security/ownership.test.ts",
@@ -21358,6 +21367,7 @@
         "backend/src/security/provisioningReceipt.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.test.ts",
+        "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/tenantContext.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
@@ -23549,7 +23559,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:659",
+        "backend/src/security/tenantIsolation.local.integration.ts:663",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -29047,7 +29057,7 @@
       "id": "surface:b1a640e240cb2100e3b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/livePreview/store.ts",
-      "sha256": "962553cea9874b66aa6a338373c828643d6919855049462d2637ecef07235020",
+      "sha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "symbols": [
         "candidate",
         "context",
@@ -29055,6 +29065,7 @@
         "getLatestLivePreviewGrant",
         "getLivePreviewGrant",
         "grant",
+        "loaded",
         "mapGrant",
         "now",
         "previewId",
@@ -29085,6 +29096,7 @@
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:26",
         "backend/src/routes/projectRuntime.ts:21",
+        "backend/src/security/previewGrantAdmission.local.integration.ts:9",
         "backend/src/security/tenantIsolation.local.integration.ts:40",
         "backend/src/synthesis/livePreview/coordinator.ts:28",
         "backend/src/synthesis/livePreview/index.ts:3",
@@ -29101,8 +29113,8 @@
         "backend/src/synthesis/livePreview/store.ts#authorizedPreviewTarget"
       ],
       "tenantBoundary": [
-        "backend/src/synthesis/livePreview/store.ts:246 (user_id)",
-        "backend/src/synthesis/livePreview/store.ts:331 (user_id)"
+        "backend/src/synthesis/livePreview/store.ts:242 (user_id)",
+        "backend/src/synthesis/livePreview/store.ts:327 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/synthesis/livePreview/store.ts#authorizedPreviewTarget"
@@ -29110,6 +29122,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/livePreview/store.receipt.test.ts"
       ],
@@ -30434,6 +30447,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:139",
+        "backend/src/security/previewGrantAdmission.local.integration.ts:7",
         "backend/src/security/runtimeIdentity.local.integration.ts:7",
         "backend/src/security/runtimeProjectBinding.local.integration.ts:3",
         "backend/src/security/runtimeProjectBinding.test.ts:6",
@@ -30483,6 +30497,7 @@
         "backend/src/synthesis/projectRuntime/store.ts#event"
       ],
       "testCoverage": [
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.test.ts",
@@ -30559,6 +30574,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.test.ts",
@@ -94515,9 +94531,9 @@
   ],
   "scheduledJobs": [
     {
-      "id": "schedule:f323a195bdf183642fb2",
+      "id": "schedule:bc50454638b236bdfd87",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "line": 187,
+      "line": 161,
       "kind": "setInterval",
       "symbol": "claimLocalRun",
       "reachable": true,
@@ -95460,6 +95476,20 @@
       "version": "20261018001200",
       "order": 108,
       "sha256": "86e5531b02564a0eecc9f1cd3ac92f50e18dfde16c8963d6f51aa9130f67a7b3"
+    },
+    {
+      "id": "migration:681b1136fcbb93c3793d",
+      "sourcePath": "supabase/migrations/20261018001300_preview_grant_admission.sql",
+      "version": "20261018001300",
+      "order": 109,
+      "sha256": "57cef12a292fc1b55dde7773fd3ccaadf3a2de8463bc239a1129d03da8e294a4"
+    },
+    {
+      "id": "migration:421c0b86248453b3d93f",
+      "sourcePath": "supabase/migrations/20261018001400_swarm_run_heartbeat.sql",
+      "version": "20261018001400",
+      "order": 110,
+      "sha256": "1822e67dac84e7bb6f4bd85a24faceefb43dea65880923659f6d92bde241f1dd"
     }
   ],
   "workflows": [
@@ -95689,9 +95719,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:d532c10884942591130b",
+      "id": "finding:80419b92dbb1f5e6811d",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "line": 773,
+      "line": 747,
       "kind": "STUB",
       "reachable": true,
       "state": "PARTIAL",
@@ -103634,6 +103664,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:487bd9a133096938b053",
+      "sourcePath": "backend/src/security/ownedRunHeartbeat.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9e4fbec6266f2a8ae08d",
       "sourcePath": "backend/src/security/ownedRunPersistence.test.ts",
       "declaredTests": 6,
@@ -103651,6 +103688,13 @@
       "id": "test-suite:202b022e2f1c32eef410",
       "sourcePath": "backend/src/security/ownership.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8a695cc9f22d59f9c49f",
+      "sourcePath": "backend/src/security/previewGrantAdmission.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -103763,6 +103807,13 @@
       "id": "test-suite:30aa81a5268a9c0b613e",
       "sourcePath": "backend/src/security/supabaseBundle.local.integration.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:3eafc2792a72be018881",
+      "sourcePath": "backend/src/security/swarmHeartbeat.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

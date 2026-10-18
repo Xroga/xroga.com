@@ -53,6 +53,18 @@
     }
   ],
   "additionalSpend": 0,
+  "workerHeartbeat": {
+    "status": "IN PROGRESS",
+    "fix": "Existing run timer captures its server owner/run/worker/generation and calls a service-only heartbeat transaction. It locks the exact owned run, requires the current running uncompleted generation, updates only heartbeat using database time after lock and validates the exact returned identity/status/timestamp. Timer catches storage rejection with a fixed diagnostic. Existing attempt-state RPC cannot serve as a heartbeat: exact replays do not refresh time, while advancing state/event sequence would replay unrelated snapshots.",
+    "localEvidence": "Four focused heartbeat/timer/creation/authority tests and21 local SQL role/current-generation/state/rollback/replay assertions pass. Original timer is exercised with mocked intervals and valid/empty/outage/thrown transport responses without network/provider calls. Actual lock-clock, replacement/cancellation, foreign canary, rollback and browser denial prepared.",
+    "regression": "Backend typecheck and combined3052-test regression PASS:3034 pass,zero failures,18 registered Windows skips. Includes both preview admission109 and heartbeat110 changes.",
+    "remaining": "Actual110-migration CI required. An unacknowledged heartbeat grants no new authority but does not independently cancel already-started provider work. Full worker liveness/cancellation, external effects and crash recovery remain unresolved."
+  },
+  "rulePreviewTargetDisposable": {
+    "source": "d60292bbd91b552ba2bef33ceb48368e4b1c15c5",
+    "run": "39123094921",
+    "result": "PASS:108 fresh/upgrade migrations,143 security tests and3 browser tests,zero failures/skips. Actual rule current-member/owner races, same-key exclusion and rollback, held preview input persistence and latest/revoked reads, plus target mutation during claim pass. Two unchanged rule-creation and post-claim target-read boundaries closed narrowly. Aggregate39123094918 PASS: downloaded branch and integrated22b92140 manifests each21 stages twice,sourceTreeMutated=false. All11 workflows pass. New109 preview transaction and110 heartbeat require their own CI."
+  },
   "previewGrantAdmission": {
     "status": "IN PROGRESS",
     "fix": "Existing grant creation uses a service-only transaction locking the exact current owner/session. Full session JSON and owner/project/session/provider/status/runtime columns must match. The session must remain running and interactive with the declared HTTP port. Database time after locking rejects grant or session expiry before insertion. Existing input snapshot, exact returned receipt and independent gateway signature/session checks remain in place.",
@@ -174,11 +186,11 @@
     "correction": "Disposable fixture now explicitly seeds a three-attempt budget and waits only until old lease expiry. It asserts lease updated_at is at or after the database pre-release clock and retains live lease,exact10-second duration,competing exclusion,exhausted-attempt and browser-denial assertions. No production timeout or retry limit changed. Final-source rerun required."
   },
   "latestVerifiedSource": {
-    "source": "25295230cc26995d56e6717b9afc7c431795212a",
-    "integrated": "590f64a2a27ec9ac091755f0fc92e3261b882257",
-    "aggregateRun": "39121745923",
-    "disposableRun": "39121745945",
-    "result": "All11 workflows PASS. Downloaded branch/integrated manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable107 fresh/upgrade migrations,141 security tests and3 browser tests pass with zero failures/skips. Automation admission persistence closed narrowly. Rule creation108, preview and target changes need their own CI. Command007 strict acceptance remains blocked."
+    "source": "d60292bbd91b552ba2bef33ceb48368e4b1c15c5",
+    "integrated": "22b92140c8163995f9e5857126fdd37f6f2c4766",
+    "aggregateRun": "39123094918",
+    "disposableRun": "39123094921",
+    "result": "All11 workflows PASS. Downloaded branch/integrated manifests each pass21 stages twice,zero failed exits and sourceTreeMutated=false. Disposable108 fresh/upgrade migrations,143 security tests and3 browser tests pass with zero failures/skips. Rule creation persistence and exact post-claim target read closed narrowly. New109 preview admission and110 heartbeat need their own CI. Command007 strict acceptance remains blocked."
   },
   "operationsApproval": {
     "status": "IN PROGRESS",
@@ -199,16 +211,16 @@
     "remaining": "Constant release version compatibility is preserved; mutable release state, approval freshness and provider authorization are not certified. New lookup stays REVIEWED_GAP pending full evidence."
   },
   "latestCandidate": {
-    "source": "25295230cc26995d56e6717b9afc7c431795212a",
-    "integrated": "590f64a2a27ec9ac091755f0fc92e3261b882257",
-    "aggregateRun": "39121745923",
-    "disposableRun": "39121745945",
+    "source": "d60292bbd91b552ba2bef33ceb48368e4b1c15c5",
+    "integrated": "22b92140c8163995f9e5857126fdd37f6f2c4766",
+    "aggregateRun": "39123094918",
+    "disposableRun": "39123094921",
     "result": "PASS_SCOPED_CI_NOT_BATCH_ACCEPTANCE",
-    "securityPass": 141,
+    "securityPass": 143,
     "securityFail": 0,
     "browserPass": 3,
     "browserFail": 0,
-    "aggregateStatus": "PASS: downloaded branch and integrated21 stages twice,sourceTreeMutated=false. All11 workflows pass.108-migration rule creation, preview and target changes require their own verification."
+    "aggregateStatus": "PASS: downloaded branch and integrated21 stages twice,sourceTreeMutated=false. All11 workflows pass.110-migration preview admission/heartbeat changes require their own verification."
   },
   "historicalFb3Candidate": {
     "source": "fb3a2301e3deb102634fe3aa3693412b58cd2c0d",
@@ -254,16 +266,16 @@
     "aggregateStatus": "PASS: branch139bf16d and integratedc48fc1b0f695e551b40eaa3c864f2012525eb820 repeated full baselines both passed with sourceTreeMutated=false. Disposable/browser failure remains independent and unwaived."
   },
   "latestDisposable": {
-    "source": "25295230cc26995d56e6717b9afc7c431795212a",
-    "integrated": "590f64a2a27ec9ac091755f0fc92e3261b882257",
-    "run": "39121745945",
+    "source": "d60292bbd91b552ba2bef33ceb48368e4b1c15c5",
+    "integrated": "22b92140c8163995f9e5857126fdd37f6f2c4766",
+    "run": "39123094921",
     "result": "VERIFIED",
-    "migrations": 107,
-    "securityTests": 141,
+    "migrations": 108,
+    "securityTests": 143,
     "browserTests": 3,
     "failures": 0,
     "skips": 0,
-    "aggregate": "Aggregate39121745923 PASS: downloaded branch25295230/integrated590f64a2 manifests each21 stages twice,zero failed exits,sourceTreeMutated=false. All11 source workflows pass. Atomic rule creation108, preview and target changes require their own CI."
+    "aggregate": "Aggregate39123094918 PASS: downloaded branchd60292bb/integrated22b92140 manifests each21 stages twice,zero failed exits,sourceTreeMutated=false. All11 source workflows pass. Preview admission109 and heartbeat110 require their own CI."
   },
   "overnightEngineering": {
     "status": "IN PROGRESS",
@@ -344,7 +356,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:386 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:384 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -376,10 +388,10 @@
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
     "persistenceCandidates": 645,
-    "ownerPredicateCandidates": 155,
+    "ownerPredicateCandidates": 153,
     "reviewRequired": 0,
     "reviewedCandidates": 645,
-    "unresolvedSafetyCandidates": 386,
+    "unresolvedSafetyCandidates": 384,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -443,7 +455,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Finish target-receipt regression, then push the grouped rule creation, preview grant and target verification commits after independently verified25295230 CI. Verify108 migrations, actual current-member/owner changes, competing rule key/rollback, persisted held preview input and target-change-during-claim negatives. Continue worker lifecycle, growth parent mutation and operations recovery.645 reviewed/386 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
+  "nextTask": "Push the locally verified preview session admission and database-clock worker heartbeat after all11 independently verifiedd60292bb workflows. Verify110 migrations and actual session-change/expiry and heartbeat replacement/cancellation/clock races. Next fix growth activation definition current-role/project and foreign-conflict upsert mutation using existing authority.645 reviewed/384 unresolved,zero unreviewed andzero whole callers certified. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
@@ -460,16 +472,18 @@
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/runStore.ts": [
-          "895a61d6a49f1cfdee31",
-          "50edc8bae8f27dacf910",
-          "a4bce2e2c16c58ec90ed",
-          "eeecad9a21d8290f2cd2",
-          "d870b789568c8679b1db",
-          "a761046ffcd795c11469",
-          "7010a652832f63b0118f",
-          "9529bcfda8915bda983c",
-          "7c6de2f866995527e1af",
-          "fbb59bd297140ddd00e7"
+          "d3903ed4bd1e7cfd75f2",
+          "72d1173732e44759c7d0",
+          "6c170d46c524d271ecf8",
+          "e0aa5a734250805488a8",
+          "1a529d92aa80b6c6c159",
+          "1d8b0198237de162e7c8",
+          "a382df5bb9ba28546a20",
+          "d86c7dc76cda33115c93",
+          "5ab24c997d1e653f7c8a"
+        ],
+        "backend/src/security/ownedRunPersistence.ts": [
+          "563c55ccb99efaf6f69b"
         ]
       }
     },
@@ -585,7 +599,7 @@
       "existingImplementation": "Existing prepared plan, confirmation, operations services and scheduler",
       "missingBehavior": "Account/target/digest/spend/receipt integration and complete caller provenance",
       "acceptanceTest": "Changed plan/target, expired/revoked approval, duplicate claims, unauthorized spend",
-      "pendingCandidates": 65,
+      "pendingCandidates": 63,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/operations/operationsService.ts": [
@@ -624,7 +638,6 @@
           "9cd0878995ac81bc7fa1",
           "0790e2862f113cd5cb2a",
           "1087d778492ba0d90fe8",
-          "5b51043946a26a6a0adf",
           "2911d37adf1475f417aa",
           "31c477708b626e5ae6b1",
           "8cdd04617aa0332099d0",
@@ -638,7 +651,6 @@
           "4ba0ca7ad1c556cea41b",
           "09ef892d8c2ce312509d",
           "6cc4c8844f6d1a5e575c",
-          "8fde4920c7d2097b67bc",
           "101c25c8bf0d04a3d6ee",
           "ca3d605bac7cc0acb742",
           "5168c80257e8d4f829be"

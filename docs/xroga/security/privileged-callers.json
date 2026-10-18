@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ae4589e3555b7381cf3361c4f2736bac34b1f992a3ba3d7331de8aa3dbc2c9e7",
+  "reviewRegistrySha256": "4a0d22b7f0731118f2828e39d5c5e551904ad87c4d5e424b6637f26b25c5a882",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -9,19 +9,19 @@
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
     "persistenceCandidates": 645,
-    "ownerPredicateCandidates": 155,
+    "ownerPredicateCandidates": 153,
     "reviewRequired": 0,
     "reviewedCandidates": 645,
-    "unresolvedSafetyCandidates": 386,
+    "unresolvedSafetyCandidates": 384,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 109,
+    "SCOPED_BOUNDARY": 111,
     "NARROW_EXCEPTION": 10,
     "NOT_PERSISTENCE": 140,
-    "REVIEWED_GAP": 386
+    "REVIEWED_GAP": 384
   },
   "callers": [
     {
@@ -1560,40 +1560,15 @@
       }
     },
     {
-      "id": "895a61d6a49f1cfdee31",
+      "id": "d3903ed4bd1e7cfd75f2",
       "path": "backend/src/ai/runStore.ts",
-      "line": 136,
-      "enclosing": "persistRunHeartbeat",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "swarm_runs",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
-      "semanticReview": {
-        "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
-        "evidence": [
-          {
-            "path": "backend/src/ai/runStore.authority.test.ts",
-            "marker": "worker persistence and cancellation fail closed"
-          },
-          {
-            "path": "backend/src/ai/runStore.resume.test.ts",
-            "marker": "old asynchronous callbacks cannot borrow a resumed attempt"
-          }
-        ]
-      }
-    },
-    {
-      "id": "50edc8bae8f27dacf910",
-      "path": "backend/src/ai/runStore.ts",
-      "line": 136,
+      "line": 134,
       "enclosing": "persistRunHeartbeat",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": true,
+      "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
@@ -1610,15 +1585,15 @@
       }
     },
     {
-      "id": "a4bce2e2c16c58ec90ed",
+      "id": "72d1173732e44759c7d0",
       "path": "backend/src/ai/runStore.ts",
-      "line": 486,
+      "line": 460,
       "enclosing": "resumeRunDurable",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
@@ -1635,15 +1610,15 @@
       }
     },
     {
-      "id": "eeecad9a21d8290f2cd2",
+      "id": "6c170d46c524d271ecf8",
       "path": "backend/src/ai/runStore.ts",
-      "line": 487,
+      "line": 461,
       "enclosing": "resumeRunDurable",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
@@ -1660,15 +1635,15 @@
       }
     },
     {
-      "id": "d870b789568c8679b1db",
+      "id": "e0aa5a734250805488a8",
       "path": "backend/src/ai/runStore.ts",
-      "line": 797,
+      "line": 771,
       "enclosing": "persistConversationOnly",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
@@ -1685,15 +1660,15 @@
       }
     },
     {
-      "id": "a761046ffcd795c11469",
+      "id": "1a529d92aa80b6c6c159",
       "path": "backend/src/ai/runStore.ts",
-      "line": 803,
+      "line": 777,
       "enclosing": "persistConversationOnly",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
@@ -1710,15 +1685,15 @@
       }
     },
     {
-      "id": "7010a652832f63b0118f",
+      "id": "1d8b0198237de162e7c8",
       "path": "backend/src/ai/runStore.ts",
-      "line": 915,
+      "line": 889,
       "enclosing": "getRunAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
@@ -1735,15 +1710,15 @@
       }
     },
     {
-      "id": "9529bcfda8915bda983c",
+      "id": "a382df5bb9ba28546a20",
       "path": "backend/src/ai/runStore.ts",
-      "line": 917,
+      "line": 891,
       "enclosing": "getRunAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
@@ -1760,15 +1735,15 @@
       }
     },
     {
-      "id": "9922c3c9683a553fc38e",
+      "id": "6e03bd438807135843ad",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1085,
+      "line": 1059,
       "enclosing": "requestRunCancellation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Sole production caller routes/swarm.ts cancel handler is mounted behind authMiddleware in index.ts. It passes verified req.userId, never body owner, and checks owner-bound run admission. This exact service-only cancel_swarm_run_owned RPC atomically updates only the supplied owner/run in running state, clears worker generation and returns database-clock receipt. The wrapper validates exact owner/run/status/output/iteration before success. Scope is this fixed database transition, not arbitrary service-role callers.",
         "reason": "SCOPED_BOUNDARY evidence at aca4b684759a5922d063625b8af2949d00b336f8, disposable39108753363: real tests9/10/12 pass owner spoofing, stale receipt, anonymous/authenticated RPC denial, two independent concurrent claims with one transition and learning blocked on a resumed parent epoch. The route, RPC, wrapper and tests are unchanged at05e20e6d. Loopback receipt corruption/outage tests also pass. Narrow cancellation-transition acceptance only. Physical provider cancellation, full worker lifecycle, immediate JWT revocation and best-effort learning availability remain separate unresolved obligations.",
@@ -1781,15 +1756,15 @@
       }
     },
     {
-      "id": "e49fc8fc43c3164c23c4",
+      "id": "c2c9bee315a611e1a474",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1091,
+      "line": 1065,
       "enclosing": "requestRunCancellation",
       "kind": "RPC_CANDIDATE",
       "target": "cancel_swarm_run_owned",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Sole production caller routes/swarm.ts cancel handler is mounted behind authMiddleware in index.ts. It passes verified req.userId, never body owner, and checks owner-bound run admission. This exact service-only cancel_swarm_run_owned RPC atomically updates only the supplied owner/run in running state, clears worker generation and returns database-clock receipt. The wrapper validates exact owner/run/status/output/iteration before success. Scope is this fixed database transition, not arbitrary service-role callers.",
         "reason": "SCOPED_BOUNDARY evidence at aca4b684759a5922d063625b8af2949d00b336f8, disposable39108753363: real tests9/10/12 pass owner spoofing, stale receipt, anonymous/authenticated RPC denial, two independent concurrent claims with one transition and learning blocked on a resumed parent epoch. The route, RPC, wrapper and tests are unchanged at05e20e6d. Loopback receipt corruption/outage tests also pass. Narrow cancellation-transition acceptance only. Physical provider cancellation, full worker lifecycle, immediate JWT revocation and best-effort learning availability remain separate unresolved obligations.",
@@ -1802,15 +1777,15 @@
       }
     },
     {
-      "id": "cbda964648a33f5f44ec",
+      "id": "e01cf111d89bb2bea5f8",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1194,
+      "line": 1168,
       "enclosing": "isRunCancellationRequested",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Sole production polling consumer runs inside the authenticated swarm execution's asynchronous attempt scope, captures original server actor/run, checks admission before polling and aborts on missing or stale authority. Query filters exact owner/run, validates returned identities and known status, matches admitted generation/worker and rechecks the local object after await. It reads status only and never grants a new worker lease or credential.",
         "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification.",
@@ -1827,15 +1802,15 @@
       }
     },
     {
-      "id": "cef7e4bdd68cb2fe472e",
+      "id": "60145a721f2277556f55",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1200,
+      "line": 1174,
       "enclosing": "isRunCancellationRequested",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Sole production polling consumer runs inside the authenticated swarm execution's asynchronous attempt scope, captures original server actor/run, checks admission before polling and aborts on missing or stale authority. Query filters exact owner/run, validates returned identities and known status, matches admitted generation/worker and rechecks the local object after await. It reads status only and never grants a new worker lease or credential.",
         "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification.",
@@ -1852,15 +1827,15 @@
       }
     },
     {
-      "id": "e04b294245cb6657cdbb",
+      "id": "8a660a7f24e3ba1896fe",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1343,
+      "line": 1317,
       "enclosing": "listRunsForUserAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Both production consumers are authMiddleware-mounted swarm history and dashboard ship-analytics handlers passing server req.userId. The sole privileged query filters that exact owner. Returned rows and hot cache entries must match owner, persisted IDs are checked and malformed statuses are excluded. Hydration never replaces an admitted local worker object. No write or external effect occurs at these two sites.",
         "reason": "Verified at5c7e8dcf1413e3e4cfa698f6926fea5b993d6e34 disposable39110916568, real historical-state test93 checks normalized legacy states, foreign cold reads and foreign history canary denial. Focused historyAdmission and persistedStatus tests cover substituted owner/invalid state and delayed read versus admitted local object. Only fixed read/factory boundaries closed. Cache freshness, account-deletion retention, immediate JWT revocation and entire worker lifecycle remain separate open obligations.",
@@ -1877,15 +1852,15 @@
       }
     },
     {
-      "id": "b6df0b190fb35e254f16",
+      "id": "a30dcc38aea849794f51",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1349,
+      "line": 1323,
       "enclosing": "listRunsForUserAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Both production consumers are authMiddleware-mounted swarm history and dashboard ship-analytics handlers passing server req.userId. The sole privileged query filters that exact owner. Returned rows and hot cache entries must match owner, persisted IDs are checked and malformed statuses are excluded. Hydration never replaces an admitted local worker object. No write or external effect occurs at these two sites.",
         "reason": "Verified at5c7e8dcf1413e3e4cfa698f6926fea5b993d6e34 disposable39110916568, real historical-state test93 checks normalized legacy states, foreign cold reads and foreign history canary denial. Focused historyAdmission and persistedStatus tests cover substituted owner/invalid state and delayed read versus admitted local object. Only fixed read/factory boundaries closed. Cache freshness, account-deletion retention, immediate JWT revocation and entire worker lifecycle remain separate open obligations.",
@@ -1902,15 +1877,15 @@
       }
     },
     {
-      "id": "7c6de2f866995527e1af",
+      "id": "d86c7dc76cda33115c93",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1528,
+      "line": 1502,
       "enclosing": "persistToSupabase",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
@@ -1927,15 +1902,15 @@
       }
     },
     {
-      "id": "fbb59bd297140ddd00e7",
+      "id": "5ab24c997d1e653f7c8a",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1601,
+      "line": 1575,
       "enclosing": "persistToSupabase",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
+      "sourceSha256": "d2091d59891480263a5734618dc3ef7b6fe7f54c0bb7b2ee402bae78a1f7e5f9",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
@@ -5340,11 +5315,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_resources",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
       "semanticReview": {
         "authority": "Only an exact verified running action claim reaches this owner/project/target-filtered resource read. After any claim wait, the fetched row must match target ID, server owner/project and exact finite integer planned version before the existing HTTP adapter can execute. Missing, misbound or stale rows complete as blocked through the existing atomic evidence/run/action/audit transaction.",
-        "reason": "Two focused claim/target tests pass, including substituted parent/ID and changed/malformed versions with zero adapter calls, plus valid unchanged target compatibility via a synthetic adapter. Actual held claim with resource version or tenant/project mutation and durable blocked evidence prepared. Post-read target/provider lifetime, URL writers without generation increments, DNS/redirect/address egress and full Command010 acceptance remain unresolved. No provider calls, no whole caller certification.",
+        "reason": "Exact post-claim read boundary VERIFIED atd60292bbd91b552ba2bef33ceb48368e4b1c15c5, disposable39123094921. Actual claim waits followed by resource version or tenant/project mutation produce durable blocked run/evidence without reaching the adapter. Two focused tests reject substituted parent/ID and changed/malformed versions, and preserve valid unchanged-target compatibility via a synthetic adapter. Invocation and fixture unchanged. Only owner/project/target/version read binding closes. Post-read target/provider lifetime, URL writers without generation increments, DNS/redirect/address egress and full Command010 acceptance remain unresolved. No live provider calls or whole caller certification.",
         "evidence": [
           {
             "path": "backend/src/operations/verificationTarget.test.ts",
@@ -5736,11 +5711,11 @@
       "kind": "RPC_CANDIDATE",
       "target": "create_operations_automation_rule",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
       "semanticReview": {
         "authority": "Authenticated existing rule endpoint supplies server actor and project. Canonical action definitions still derive approval policy and validate high-risk compatibility. Service-only creation locks current actor/project/member, verifies owner/project and bounded rule shape, then commits the rule and mandatory immutable audit together. Caller checks every submitted field in exactly one returned row. No action executes during creation.",
-        "reason": "Eleven focused creation/intent/admission tests and42 local SQL shape/owner/role/duplicate/two-write rollback/replay assertions pass. Actual held-member revocation and project owner mutation, two-client same-key exclusion, write rollbacks, exact audit and browser denial prepared for disposable CI. Later rule mutation, project-wide stop/create concurrency and full automation lifecycle remain unresolved. No whole caller certification.",
+        "reason": "Fixed creation persistence boundary VERIFIED atd60292bbd91b552ba2bef33ceb48368e4b1c15c5, disposable39123094921:108 fresh/upgrade migrations,143 security tests and3 browser tests pass with zero failures/skips. Actual held current-member revocation and owner mutation reject both writes, concurrent same-key creators yield one rule/audit and one conflict, both write failures roll back, exact redacted audit and browser denial pass. Invocation, SQL and fixture unchanged. Only creation persistence closes. Later rule mutation, stop/create concurrency and full automation lifecycle remain unresolved. No whole caller certification.",
         "evidence": [
           {
             "path": "backend/src/operations/automationCreation.local.integration.ts",
@@ -7394,15 +7369,40 @@
       }
     },
     {
-      "id": "e03585d107361a9dfe3d",
+      "id": "563c55ccb99efaf6f69b",
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "line": 9,
+      "line": 8,
+      "enclosing": "heartbeatOwnedRunAttempt",
+      "kind": "RPC_CANDIDATE",
+      "target": "heartbeat_swarm_run_attempt",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "24c0936a0ab96725aa4cf51ec4442ee43c6e3b65a7c4bf0947342868cf98f45c",
+      "semanticReview": {
+        "authority": "Only the existing local run heartbeat supplies captured owner/run, server worker UUID and original generation. Helper requires an original issued tenant context. Service-only transaction locks exact owner/run, requires running state with no completion and exact worker/generation, updates heartbeat only using database time after lock, and returns a strictly validated identity/status/timestamp receipt. No attempt creation, sequence/state replay or provider call.",
+        "reason": "Four focused helper/timer/creation/authority tests and21 local SQL receipt/state/owner/worker/generation/rollback/replay assertions pass. Timer consumes storage rejection with a fixed diagnostic rather than unhandled rejection or private database message. Actual observed lock-clock, replacement/cancellation, foreign canary, rollback and browser denial prepared. Lost heartbeat does not independently fence an already-started provider effect; complete worker liveness/cancellation and external recovery remain unresolved. No whole worker certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/ownedRunHeartbeat.test.ts",
+            "marker": "the original run timer binds its heartbeat generation"
+          },
+          {
+            "path": "backend/src/security/swarmHeartbeat.local.integration.ts",
+            "marker": "registerSwarmHeartbeatTests"
+          }
+        ]
+      }
+    },
+    {
+      "id": "045a3aadab5321045fdf",
+      "path": "backend/src/security/ownedRunPersistence.ts",
+      "line": 24,
       "enclosing": "persistOwnedRunAttempt",
       "kind": "RPC_CANDIDATE",
       "target": "persist_swarm_run_attempt",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "fedef9b8b70d903da34eb1fe64b19e7a70d934899569bf7c2617d1f0d5d9ec8c",
+      "sourceSha256": "24c0936a0ab96725aa4cf51ec4442ee43c6e3b65a7c4bf0947342868cf98f45c",
       "semanticReview": {
         "authority": "New fixed RPC requires issued TenantContext, owner, worker and attempt generation; database row lock validates owner, generation, status and sequence before updating only execution columns.",
         "reason": "Narrow fixed-RPC transition boundary only. Real421a6b10 run38791937032 passed completion/cancellation, same-worker/new-generation, transferred-worker, wrong-owner/missing/browser and terminal-replay cases. Its sole unrelated failure was BYOK fixture leakage. RPC/SQL behavior is unchanged on this source, while the separate generic writer now snapshots mutable input. Parent project and full caller admission remain separately unresolved. No full Command007 or scheduler certification.",
@@ -7415,15 +7415,15 @@
       }
     },
     {
-      "id": "017d368d4424af12091a",
+      "id": "4a137f14f1e4f94e1cc1",
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "line": 61,
+      "line": 76,
       "enclosing": "persistOwnerBoundRecord",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "fedef9b8b70d903da34eb1fe64b19e7a70d934899569bf7c2617d1f0d5d9ec8c",
+      "sourceSha256": "24c0936a0ab96725aa4cf51ec4442ee43c6e3b65a7c4bf0947342868cf98f45c",
       "semanticReview": {
         "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
         "reason": "Insert-ignore prevents transferring a globally keyed row; subsequent update or append-only verification constrains both key and actor and requires exactly one row. Mutation verification also binds run/project. Parent authority and provenance at wrapper callers remain separate review obligations, not inferred from these helper predicates.",
@@ -7440,15 +7440,15 @@
       }
     },
     {
-      "id": "b336e84428d499d0c013",
+      "id": "6e570ac3ee9df8f9f57d",
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "line": 63,
+      "line": 78,
       "enclosing": "persistOwnerBoundRecord",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "fedef9b8b70d903da34eb1fe64b19e7a70d934899569bf7c2617d1f0d5d9ec8c",
+      "sourceSha256": "24c0936a0ab96725aa4cf51ec4442ee43c6e3b65a7c4bf0947342868cf98f45c",
       "semanticReview": {
         "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
         "reason": "Insert-ignore prevents transferring a globally keyed row; subsequent update or append-only verification constrains both key and actor and requires exactly one row. Mutation verification also binds run/project. Parent authority and provenance at wrapper callers remain separate review obligations, not inferred from these helper predicates.",
@@ -7465,15 +7465,15 @@
       }
     },
     {
-      "id": "205409245abcca322256",
+      "id": "a9847b3b791a298d2cb5",
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "line": 63,
+      "line": 78,
       "enclosing": "persistOwnerBoundRecord",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "fedef9b8b70d903da34eb1fe64b19e7a70d934899569bf7c2617d1f0d5d9ec8c",
+      "sourceSha256": "24c0936a0ab96725aa4cf51ec4442ee43c6e3b65a7c4bf0947342868cf98f45c",
       "semanticReview": {
         "authority": "The injected client cannot supply identity: requireTenantContext verifies the issued context and row.user_id must equal its actor before any write. Table/key selection is internal through finite inspected wrappers.",
         "reason": "Insert-ignore prevents transferring a globally keyed row; subsequent update or append-only verification constrains both key and actor and requires exactly one row. Mutation verification also binds run/project. Parent authority and provenance at wrapper callers remain separate review obligations, not inferred from these helper predicates.",
