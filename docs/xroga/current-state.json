@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "e47030615e13f75045e4434cddcb1294f05095f3",
-    "sourceTimestampUtc": "2026-10-18T14:13:29+05:00",
-    "auditStartedUtc": "2026-10-18T09:19:17.831Z",
+    "sha": "4b66bfa7ceab29252832278fc55911fe162eeb0a",
+    "sourceTimestampUtc": "2026-10-18T14:20:48+05:00",
+    "auditStartedUtc": "2026-10-18T09:28:38.915Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -15752,6 +15752,7 @@
         "backend/src/operations/actionApproval.local.integration.ts:7",
         "backend/src/operations/actionApproval.test.ts:4",
         "backend/src/operations/actionClaim.test.ts:4",
+        "backend/src/operations/actionClaimClock.local.integration.ts:7",
         "backend/src/operations/actionCompletion.local.integration.ts:7",
         "backend/src/operations/actionIntent.local.integration.ts:7",
         "backend/src/operations/actionIntent.test.ts:4",
@@ -15855,6 +15856,7 @@
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionApproval.test.ts",
         "backend/src/operations/actionClaim.test.ts",
+        "backend/src/operations/actionClaimClock.local.integration.ts",
         "backend/src/operations/actionCompletion.local.integration.ts",
         "backend/src/operations/actionIntent.local.integration.ts",
         "backend/src/operations/actionIntent.test.ts",
@@ -23515,7 +23517,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:626",
+        "backend/src/security/tenantIsolation.local.integration.ts:628",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -95356,6 +95358,13 @@
       "version": "20261018000300",
       "order": 99,
       "sha256": "0cdb903dbd1afeb0bfc04957e6a1002ea5ed08970a1966c5104944b8c42a40cd"
+    },
+    {
+      "id": "migration:ecda3ae6dbc3910ec7a5",
+      "sourcePath": "supabase/migrations/20261018000400_operations_claim_clock.sql",
+      "version": "20261018000400",
+      "order": 100,
+      "sha256": "3c28578dee9029e17cba93396a427dcaea2ac8a31b1f5c15f44d583bb7e57294"
     }
   ],
   "workflows": [
@@ -103059,6 +103068,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:26f656aae6bc7bd64469",
+      "sourcePath": "backend/src/operations/actionClaimClock.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:6f2d45063feb0d40aeb6",
       "sourcePath": "backend/src/operations/actionCompletion.local.integration.ts",
       "declaredTests": 2,
@@ -103110,7 +103126,7 @@
     {
       "id": "test-suite:7f4e08bacdb7018ce702",
       "sourcePath": "backend/src/operations/operationsSchema.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

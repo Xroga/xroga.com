@@ -53,6 +53,19 @@
     }
   ],
   "additionalSpend": 0,
+  "operationsClaimClock": {
+    "status": "IN PROGRESS",
+    "fix": "Existing claim API retains advisory exclusion, allowed retry states and attempt bound. Current action is locked before a single clock_timestamp admits and starts the lease. Null/blank lease parameters fail closed. No replacement scheduler or provider execution.",
+    "localEvidence": "18 local SQL assertions and migration replay pass, eight schema tests pass. Actual held-row expiry, fresh lease duration, competing advisory rejection, exhausted attempts and browser denial prepared for disposable CI.",
+    "remaining": "Execution-time current actor and approval authority, exact mutable target admission and provider crash recovery remain unresolved. No caller certification."
+  },
+  "latestVerifiedSource": {
+    "source": "e47030615e13f75045e4434cddcb1294f05095f3",
+    "integrated": "5bfe5f4add655ed57d98266b5d126879471ab8e4",
+    "aggregateRun": "39114496575",
+    "disposableRun": "39114496584",
+    "result": "All11 workflows PASS. Disposable98 fresh/upgrade migrations,131 security tests and3 browser tests pass with zero failures/skips. Completion competing-writer and rollback, exact release/deployment draft ownership and business-confirmation lock/expiry/intent races now pass. Subsequent approval transaction and claim-clock changes require new final-source verification. Command007 strict acceptance remains blocked."
+  },
   "operationsApproval": {
     "status": "IN PROGRESS",
     "fix": "Existing approval method derives the required role from canonical action definitions and calls a service-only transaction. Current actor profile/project/membership, exact confirmed plan and pending approval are locked and checked before approval, action status and immutable audit are committed together. Existing global admin and member admin rules are preserved; owner/operator is not promoted to release/recovery approver.",
@@ -101,16 +114,16 @@
     "aggregateStatus": "PASS: branch139bf16d and integratedc48fc1b0f695e551b40eaa3c864f2012525eb820 repeated full baselines both passed with sourceTreeMutated=false. Disposable/browser failure remains independent and unwaived."
   },
   "latestDisposable": {
-    "source": "5c7e8dcf1413e3e4cfa698f6926fea5b993d6e34",
-    "integrated": "10a78f99bdc8c78a8fa578571737dbce87fc8597",
-    "run": "39110916568",
+    "source": "e47030615e13f75045e4434cddcb1294f05095f3",
+    "integrated": "5bfe5f4add655ed57d98266b5d126879471ab8e4",
+    "run": "39114496584",
     "result": "VERIFIED",
-    "migrations": 96,
-    "securityTests": 125,
+    "migrations": 98,
+    "securityTests": 131,
     "browserTests": 3,
     "failures": 0,
     "skips": 0,
-    "aggregate": "Disposable scope PASS125 tests plus96 fresh/upgrade migrations and3 browsers; tenant fixture39110916513 PASS. Aggregate39110916526 FAILED branch runtime inventory: tenantIsolation.local.integration.ts hash was stale after fixture registration. Integrated10a78f99bdc8c78a8fa578571737dbce87fc8597 passed twice. Regenerate and verify final-source inventory, never treat the integrated result as branch acceptance. Later operations-intent/claim changes require their own CI."
+    "aggregate": "Aggregate39114496575 PASS: downloaded manifests show branch e4703061 and integrated5bfe5f4 each21 stages twice,zero nonzero exits,sourceTreeMutated=false. All11 source workflows pass. Subsequent approval transaction and lease-clock fixes still require their own exact-source CI."
   },
   "overnightEngineering": {
     "status": "IN PROGRESS",
