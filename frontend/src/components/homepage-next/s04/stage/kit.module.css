@@ -49,16 +49,42 @@
     var(--btn) left 0 top 37% / calc(2.4px * var(--s, 1)) 9% no-repeat,
     var(--btn) right 0 top 29% / calc(2.4px * var(--s, 1)) 14% no-repeat;
 }
-/* a Pixel-class Android phone: flat sides, even slim bezel, softer corners than the iPhone */
+/* a Pixel-class Android phone, front view: an even slim black border round a punch-hole display, flat satin-aluminium
+   sides catching the light at the edges, power and volume keys on the right. Measures in the app's natural px times
+   the device scale --s: display corners 28, border 6.6, band 2.4; no brand marks. */
 .device[data-kind='android'] {
-  border-radius: 34px;
+  isolation: isolate;
+  border-radius: calc(28px * var(--s, 1));
   box-shadow:
-    0 0 0 7px #0f1211,
-    0 0 0 8px #4a5250,
-    0 0 0 9px #0b0d0c,
-    0 1px 0 9px rgba(255, 255, 255, 0.08),
     0 60px 80px -40px rgba(0, 0, 0, 0.95),
     0 30px 50px -36px rgba(60, 160, 100, 0.3);
+}
+.device[data-kind='android']::before {
+  content: '';
+  position: absolute;
+  inset: calc(-9px * var(--s, 1));
+  z-index: -1;
+  border: calc(2.4px * var(--s, 1)) solid transparent;
+  border-radius: calc(37px * var(--s, 1));
+  background:
+    linear-gradient(#050605, #050605) padding-box,
+    linear-gradient(90deg, #565d59 0%, #9aa29d 5%, #3f4441 13%, #2a2e2c 50%, #3f4441 87%, #9aa29d 95%, #565d59 100%) border-box;
+  box-shadow:
+    inset 0 0 0 calc(0.7px * var(--s, 1)) rgba(255, 255, 255, 0.06),
+    0 0 0 0.5px rgba(0, 0, 0, 0.7);
+}
+.device[data-kind='android']::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: calc(-10.6px * var(--s, 1));
+  z-index: -2;
+  --key: linear-gradient(90deg, #3d433f, #77807b 50%, #3d433f);
+  background:
+    var(--key) right 0 top 22% / calc(2.4px * var(--s, 1)) 7% no-repeat,
+    var(--key) right 0 top 34% / calc(2.4px * var(--s, 1)) 13% no-repeat;
 }
 .device[data-kind='landscape'] {
   border-radius: 34px;
@@ -87,7 +113,7 @@
   border-radius: calc(40px * var(--s, 1));
 }
 .screen[data-kind='android'] {
-  border-radius: 28px;
+  border-radius: calc(28px * var(--s, 1));
 }
 .screen[data-kind='landscape'] {
   border-radius: 26px;

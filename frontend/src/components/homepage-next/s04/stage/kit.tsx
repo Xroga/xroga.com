@@ -41,8 +41,10 @@ export function useWidth(ref: RefObject<HTMLElement | null>, guess: number) {
   return w;
 }
 
-/** the iPhone frame outside the display, in natural px per side: black border 6.2 + titanium band 2.6 (kit.module.css) */
+/** the frame outside the display, in natural px per side (kit.module.css): the iPhone's black border 6.2 + titanium
+ *  band 2.6; the Pixel-class Android phone's black border 6.6 + aluminium band 2.4 */
 const IPHONE_EDGE = 8.8;
+const ANDROID_EDGE = 9;
 
 /** scales natural-size content to fit `maxW` (measured from the parent) and `maxH` */
 export function Device({
@@ -64,9 +66,9 @@ export function Device({
 }) {
   const host = useRef<HTMLDivElement>(null);
   const w = useWidth(host, natural.w);
-  // the iPhone's bezel and titanium band scale with the device (natural px per side); the others keep a fixed frame
-  const frame = kind === 'phone' ? 0 : kind === 'android' ? 16 : kind === 'landscape' ? 20 : 2;
-  const band = kind === 'phone' ? 2 * IPHONE_EDGE : 0;
+  // both phones' bezels and bands scale with the device (natural px per side); the others keep a fixed frame
+  const frame = kind === 'phone' || kind === 'android' ? 0 : kind === 'landscape' ? 20 : 2;
+  const band = kind === 'phone' ? 2 * IPHONE_EDGE : kind === 'android' ? 2 * ANDROID_EDGE : 0;
   const scale = Math.max(0.2, Math.min((w - frame) / (natural.w + band), (maxH - frame) / (natural.h + band), 1.25));
   return (
     <div ref={host} className={`${k.host} ${className ?? ''}`}>

@@ -173,6 +173,19 @@ test('App Store: two authentic iPhones lead the scene at a size set by the scree
   assert.doesNotMatch(ios, /\{ k: '(Ratings?|Reviews?|Downloads?|Chart)'/i);
 });
 
+test('Google Play: the Android phone leads at the App Store phone scale, in a proportional Pixel-class frame', () => {
+  const an = src('stage/StageAndroid.tsx');
+  const kitCss = src('stage/kit.module.css');
+  const stages = src('stage/Stages.module.css');
+  assert.match(an, /maxH=\{phoneH\}/);
+  assert.match(an, /clamp\(420, vh - 336, 640\)/, 'same desktop sizing rule as the App Store phones');
+  assert.match(src('stage/kit.tsx'), /const ANDROID_EDGE = 9;/);
+  for (const m of ['border-radius: calc(28px * var(--s, 1))', 'inset: calc(-9px * var(--s, 1))', 'border: calc(2.4px * var(--s, 1)) solid transparent']) assert.ok(kitCss.includes(m), m);
+  // the listing keeps at least its original width; on short screens the phone steps back at the handoff to fit one view
+  assert.match(stages, /minmax\(0, max\(300px, var\(--phone-w, 300px\)\)\) minmax\(0, 1fr\)/);
+  assert.match(stages, /\.android\[data-wide\] \.anDev \{[^}]*scale\(var\(--back, 1\)\)/);
+});
+
 test('head: one entrance, only when S04 arrives from below, never under reduced motion; a tall studio still starts', () => {
   const shell = src('S04Publish.tsx');
   assert.match(shell, /matchMedia\('\(prefers-reduced-motion: reduce\)'\)\.matches\) return;/);

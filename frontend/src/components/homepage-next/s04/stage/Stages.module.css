@@ -1013,9 +1013,11 @@
 }
 
 /* ================================================================== Google Play */
+/* the phone column is at least the original 300 px and grows to the phone (--phone-w, StageAndroid), so the listing
+   keeps its width where the phone is smaller */
 .android {
   display: grid;
-  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, max(300px, var(--phone-w, 300px))) minmax(0, 1fr);
   align-items: start;
   column-gap: 36px;
 }
@@ -1345,9 +1347,25 @@
 .chrome[data-layout='c'] {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
+/* short screens, at the handoff: the phone steps back to the listing's height (--back, StageAndroid) and gives the
+   height it no longer uses to the handoff, which rises in once the phone has settled */
+.anDev {
+  /* full column width: the device measures this box to size itself */
+  justify-self: stretch;
+  width: 100%;
+  min-width: 0;
+  transform-origin: 50% 0;
+  transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+}
 .android[data-wide] .anPhone {
-  /* the finished phone is scaled back (0.94); give its unused layout height to the handoff below */
-  margin-bottom: -22px;
+  transform: none;
+}
+.android[data-wide] .anDev {
+  transform: scale(var(--back, 1));
+  margin-bottom: calc((var(--back, 1) - 1) * var(--phone-h, 0px));
+}
+.android[data-wide] .anHandoff .handoff {
+  animation-delay: 380ms;
 }
 .anHandoff {
   grid-column: 1 / -1;
@@ -1850,6 +1868,7 @@
   .anPanel,
   .chPanel,
   .anPhone,
+  .anDev,
   .chrome,
   .access,
   .accessRows li,

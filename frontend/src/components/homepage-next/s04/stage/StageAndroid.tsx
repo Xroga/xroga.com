@@ -8,10 +8,10 @@
  *  C (compose → ready)   the Google Play listing preview built from those assets, and the release handoff.
  * The app's own action: Save offline downloads the trail map (progress, badge, snackbar).
  */
-import { useRef } from 'react';
+import { useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { Fernway, FernwayFeature, FernwayIcon, type FernwayScreen } from '../apps/Fernway';
 import { NATURAL, beatIndex, type Phase } from '../publish';
-import { Device, Fill, Inspector, Render, clamp, useViewportHeight } from './kit';
+import { Device, Fill, Inspector, Render, clamp, useViewport } from './kit';
 import { Xcard } from './Xcard';
 import s from './Stages.module.css';
 
@@ -25,24 +25,38 @@ const SHOTS: { screen: FernwayScreen; caption: string }[] = [
 
 export function StageAndroid({ beat, phase, playing, acted, act, href }: { beat: string; phase: Phase; playing: boolean; acted: boolean; act: () => void; href: string }) {
   const box = useRef<HTMLDivElement>(null);
-  const vh = useViewportHeight();
+  const main = useRef<HTMLDivElement>(null);
+  const { w: vw, h: vh } = useViewport();
   const now = beatIndex('android', beat);
   const at = (id: string) => now >= beatIndex('android', id);
   const layout = at('listing') ? 'c' : at('finding') ? 'b' : 'a';
   const shots = !at('shots') ? 'empty' : beat === 'shots' && playing ? 'rendering' : 'done';
   // short screens: the finished handoff spans the stage under the phone and the listing, so all of it fits one screen
   const wideHandoff = phase === 'ready' && vh < 860;
+  // the phone leads at the App Store phones' scale: as tall as the whole scene still fitting one view (desktop), at its
+  // full size when the stage stacks. On short screens it steps back at the handoff to the listing's height.
+  const phoneH = vw <= 760 ? 600 : vw <= 1080 ? 560 : vh <= 860 ? clamp(380, vh - 274, 560) : clamp(420, vh - 336, 640);
+  const phoneW = Math.round((phoneH * 318) / 658) + 6;
+  const mainH = useHeight(main);
+  const back = wideHandoff && mainH ? clamp(0.5, (mainH - 26) / phoneH, 0.94) : 1;
   return (
-    <div className={s.android} data-layout={layout} data-wide={wideHandoff || undefined}>
+    <div
+      className={s.android}
+      data-layout={layout}
+      data-wide={wideHandoff || undefined}
+      style={{ ['--phone-w' as string]: `${phoneW}px`, ['--phone-h' as string]: `${phoneH}px`, ['--back' as string]: back }}
+    >
       <div className={s.anPhone}>
         <span className={s.objLabel}>Your Android app · Fernway</span>
-        <Device natural={NATURAL.android} maxH={clamp(340, vh - 420, 486)} kind="android" boxRef={box} overlay={<Inspector box={box} phase={phase} cause={['btn']} effect={['map']} tick={acted} round={20} />}>
-          <Fernway saved={acted} live onAction={act} />
-        </Device>
+        <div className={s.anDev}>
+          <Device natural={NATURAL.android} maxH={phoneH} kind="android" boxRef={box} overlay={<Inspector box={box} phase={phase} cause={['btn']} effect={['map']} tick={acted} round={20} />}>
+            <Fernway saved={acted} live onAction={act} />
+          </Device>
+        </div>
       </div>
 
       <div className={s.anRight}>
-        <div className={s.anMain}>
+        <div className={s.anMain} ref={main}>
           {/* A: the destination, in outline */}
           <div className={s.anPanel} data-on={layout === 'a' || undefined} aria-hidden={layout !== 'a' || undefined}>
             <span className={s.objLabel}>Google Play listing · prepared by Xroga</span>
@@ -97,6 +111,19 @@ export function StageAndroid({ beat, phase, playing, acted, act, href }: { beat:
       )}
     </div>
   );
+}
+
+/** an element's measured height (0 before mount) */
+function useHeight(ref: RefObject<HTMLElement | null>) {
+  const [h, setH] = useState(0);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setH(e.contentRect.height));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [ref]);
+  return h;
 }
 
 /** a Google Play listing as it would read, built from the prepared assets (or in outline before they exist) */
