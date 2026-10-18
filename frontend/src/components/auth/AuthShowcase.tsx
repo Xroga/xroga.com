@@ -2,8 +2,15 @@
 
 import Image from 'next/image';
 import {
-  AppWindow, Bot, CheckCircle2, ChevronRight, Code2, Globe2, Pause, Plane,
-  Play, PlugZap, Rocket, Search, Sparkles, TestTube2, TrendingUp,
+  Bot,
+  Globe2,
+  Plane,
+  PlugZap,
+  Rocket,
+  Search,
+  Sparkles,
+  TestTube2,
+  TrendingUp,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -11,7 +18,7 @@ import styles from './AuthPowerPanel.module.css';
 
 const SLIDE_COUNT = 4;
 const INTRO_DURATION_MS = 5200;
-const FEATURE_DURATION_MS = 6200;
+const FEATURE_DURATION_MS = 6400;
 
 const COMPANY_MARKS = [
   { name: 'GitHub', src: '/brand/logos/github.svg' },
@@ -22,19 +29,8 @@ const COMPANY_MARKS = [
   { name: 'Anthropic', src: '/brand/logos/anthropic.svg' },
 ] as const;
 
-const BUILD_STAGES = [
-  { label: 'Talk', icon: Sparkles },
-  { label: 'Research', icon: Search },
-  { label: 'Build', icon: Code2 },
-  { label: 'Test', icon: TestTube2 },
-  { label: 'Ship', icon: Rocket },
-] as const;
-
-const EMPLOYEE_ROLES = ['Research', 'Content', 'Operations', 'Development', 'Customer'] as const;
-
 export function AuthShowcase() {
   const [activeSlide, setActiveSlide] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -46,68 +42,53 @@ export function AuthShowcase() {
   }, []);
 
   useEffect(() => {
-    if (paused || reducedMotion) return;
+    if (reducedMotion) return;
     const duration = activeSlide === 0 ? INTRO_DURATION_MS : FEATURE_DURATION_MS;
     const timer = window.setTimeout(
       () => setActiveSlide((current) => (current + 1) % SLIDE_COUNT),
       duration,
     );
     return () => window.clearTimeout(timer);
-  }, [activeSlide, paused, reducedMotion]);
+  }, [activeSlide, reducedMotion]);
 
   return (
-    <section
-      className={styles.panel}
-      aria-label="Xroga capability story"
-      aria-roledescription="carousel"
-    >
+    <section className={styles.panel} aria-label="Xroga capability story" aria-roledescription="carousel">
       <header className={styles.header}>
         <Image src="/brand/xroga-orb-wordmark-dark-v3.webp" alt="Xroga" width={168} height={54}
           priority unoptimized className={styles.logo} />
-        <div className={styles.headerControls}>
-          <span className={styles.slideCount}>0{activeSlide + 1} / 0{SLIDE_COUNT}</span>
-          <button type="button" className={styles.pauseButton}
-            onClick={() => setPaused((current) => !current)}
-            aria-label={paused ? 'Resume capability slides' : 'Pause capability slides'}>
-            {paused ? <Play aria-hidden="true" /> : <Pause aria-hidden="true" />}
-          </button>
-        </div>
       </header>
 
       <div className={styles.viewport} aria-live="polite">
         <article className={`${styles.slide} ${styles.introSlide} ${activeSlide === 0 ? styles.active : ''}`}
           aria-hidden={activeSlide !== 0}>
-          <div className={styles.introGlow} aria-hidden="true" />
+          <Image src="/brand/auth-stories/idea-to-business.webp" alt="A luminous idea opening into a complete working business"
+            fill priority sizes="(max-width: 1279px) 100vw, 44vw" className={styles.fullBleedArt} />
+          <div className={styles.artVeil} aria-hidden="true" />
           <div className={styles.introCopy}>
-            <p className={styles.eyebrow}><Sparkles aria-hidden="true" /> One workspace. Every stage.</p>
-            <h2>Convert your ideas into <em>working businesses.</em></h2>
-            <p>Describe what you want. Xroga researches, builds, tests, ships, and grows it with you.</p>
+            <p className={styles.eyebrow}><Sparkles aria-hidden="true" /> One idea. A complete business.</p>
+            <h2>Imagine it.<br /><em>Xroga makes it real.</em></h2>
+            <p>Start with a conversation. Move into research, a working product, testing, launch, and growth.</p>
           </div>
-          <div className={styles.swipeCue}>See what Xroga can do <ChevronRight aria-hidden="true" /></div>
         </article>
 
         <article className={`${styles.slide} ${styles.buildSlide} ${activeSlide === 1 ? styles.active : ''}`}
           aria-hidden={activeSlide !== 1}>
           <div className={styles.sceneCopy}>
-            <p className={styles.eyebrow}><Rocket aria-hidden="true" /> From prompt to production</p>
-            <h2>Build it. Test it.<br /><em>Ship it everywhere.</em></h2>
-            <p>Turn a simple conversation into working web, iOS, Android, desktop, or API products—with automatic testing and publishing support.</p>
+            <p className={styles.eyebrow}><Rocket aria-hidden="true" /> From idea to every screen</p>
+            <h2>Build once.<br /><em>Launch everywhere.</em></h2>
+            <p>Web, mobile, tablet, desktop, and APIs—built, tested like a real user, repaired, and prepared for release.</p>
           </div>
-          <div className={styles.buildStudio} aria-label="Xroga build workflow">
-            <div className={styles.stageRail}>
-              {BUILD_STAGES.map(({ label, icon: Icon }) => (
-                <span className={styles.stage} key={label}><i><Icon aria-hidden="true" /></i>{label}</span>
-              ))}
-            </div>
-            <div className={styles.browserMock} aria-hidden="true">
-              <div className={styles.browserBar}><i /><i /><i /><span>xroga.com/preview</span></div>
-              <div className={styles.browserBody}>
-                <AppWindow className={styles.floatingIcon} />
-                <CheckCircle2 className={styles.successIcon} />
-                <span className={styles.testLine}>Acting as a real user…</span>
-                <b>18 flows verified</b>
-              </div>
-            </div>
+          <div className={styles.visualStage}>
+            <figure className={styles.heroArt}>
+              <Image src="/brand/auth-stories/publish-everywhere.webp" alt="One product delivered across web, phone, tablet, and desktop"
+                fill sizes="(max-width: 1279px) 90vw, 38vw" className={styles.artImage} />
+              <figcaption><Rocket aria-hidden="true" /> Every screen. One product.</figcaption>
+            </figure>
+            <figure className={styles.secondaryArt}>
+              <Image src="/brand/auth-stories/ai-testing.webp" alt="AI inspecting, finding, and repairing a product experience"
+                fill sizes="(max-width: 700px) 42vw, 17vw" className={styles.artImage} />
+              <figcaption><TestTube2 aria-hidden="true" /> AI-tested</figcaption>
+            </figure>
           </div>
         </article>
 
@@ -115,44 +96,49 @@ export function AuthShowcase() {
           aria-hidden={activeSlide !== 2}>
           <div className={styles.sceneCopy}>
             <p className={styles.eyebrow}><PlugZap aria-hidden="true" /> Connected intelligence</p>
-            <h2>1,500+ apps.<br /><em>One place to work.</em></h2>
-            <p>Connect approved tools and custom MCPs. Research the web and X, run live browser automations, plan travel, and move work forward.</p>
+            <h2>Everything you use.<br /><em>Working together.</em></h2>
+            <p>Connect 1,500+ apps and custom MCPs. Research, browse, create, plan travel, and move approved work forward.</p>
           </div>
-          <div className={styles.logoCloud} aria-label="Supported integration examples">
-            {COMPANY_MARKS.map((company) => (
-              <span className={styles.logoTile} key={company.name} title={company.name}>
-                <Image src={company.src} alt={company.name} width={32} height={32} unoptimized />
-              </span>
-            ))}
-          </div>
-          <div className={styles.automationStrip}>
-            <span><Globe2 aria-hidden="true" /> Web &amp; X research</span>
-            <span><Plane aria-hidden="true" /> Travel &amp; flights</span>
-            <span><Bot aria-hidden="true" /> Browser automation</span>
+          <div className={styles.visualStage}>
+            <figure className={styles.heroArt}>
+              <Image src="/brand/auth-stories/connected-work.webp" alt="A connected constellation of work applications around one intelligence core"
+                fill sizes="(max-width: 1279px) 90vw, 38vw" className={styles.artImage} />
+              <div className={styles.logoRibbon} aria-label="Supported integration examples">
+                {COMPANY_MARKS.map((company) => (
+                  <span key={company.name} title={company.name}>
+                    <Image src={company.src} alt={company.name} width={22} height={22} unoptimized />
+                  </span>
+                ))}
+              </div>
+            </figure>
+            <figure className={`${styles.secondaryArt} ${styles.travelArt}`}>
+              <Image src="/brand/auth-stories/research-travel.webp" alt="AI researching the web and planning a connected travel journey"
+                fill sizes="(max-width: 700px) 42vw, 17vw" className={styles.artImage} />
+              <figcaption><Globe2 aria-hidden="true" /> Research <Plane aria-hidden="true" /> Travel</figcaption>
+            </figure>
           </div>
         </article>
 
         <article className={`${styles.slide} ${styles.growthSlide} ${activeSlide === 3 ? styles.active : ''}`}
           aria-hidden={activeSlide !== 3}>
           <div className={styles.sceneCopy}>
-            <p className={styles.eyebrow}><TrendingUp aria-hidden="true" /> Build, operate, grow</p>
-            <h2>AI employees for<br /><em>real business work.</em></h2>
-            <p>Specialized workers research, create, operate, support, and grow your business across SEO, AEO, and GEO.</p>
+            <p className={styles.eyebrow}><Bot aria-hidden="true" /> Specialized intelligence</p>
+            <h2>Your AI team.<br /><em>Your next stage of growth.</em></h2>
+            <p>Specialized Xroga employees research, create, operate, support customers, and improve how your business is discovered.</p>
           </div>
-          <div className={styles.growthGrid}>
-            <div className={styles.chartCard} aria-label="Illustrative discoverability trend">
-              <span className={styles.growthBadge}><TrendingUp aria-hidden="true" /> +42%</span>
-              <svg viewBox="0 0 260 100" role="img" aria-label="Illustrative upward growth graph">
-                <path className={styles.graphLine} d="M4 90 C35 82 43 57 73 62 S112 77 139 45 S180 52 204 27 S235 26 256 7" />
-              </svg>
-              <small>Illustrative visibility signals</small>
-            </div>
-            <div className={styles.employeeCard}>
-              <div className={styles.employeeHeading}><Bot aria-hidden="true" /><span>Xroga AI Employees</span></div>
-              <div className={styles.employeeRoles}>
-                {EMPLOYEE_ROLES.map((role) => <span key={role}>{role}</span>)}
-              </div>
-            </div>
+          <div className={`${styles.visualStage} ${styles.employeeStage}`}>
+            <figure className={styles.heroArt}>
+              <Image src="/brand/auth-stories/xroga-employees.webp" alt="A colorful team of specialized Xroga AI employees"
+                fill sizes="(max-width: 1279px) 90vw, 38vw" className={styles.artImage} />
+              <figcaption><Bot aria-hidden="true" /> Research · Content · Operations · Development · Customer</figcaption>
+            </figure>
+            <figure className={`${styles.secondaryArt} ${styles.visibilityArt}`}>
+              <Image src="/brand/auth-stories/seo-aeo-geo.webp" alt="Brand visibility expanding through search, answer engines, and geographic intelligence"
+                fill sizes="(max-width: 700px) 42vw, 17vw" className={styles.artImage} />
+              <figcaption className={styles.visibilityLabels}>
+                <span><Search aria-hidden="true" /> SEO</span><span>AEO</span><span><TrendingUp aria-hidden="true" /> GEO</span>
+              </figcaption>
+            </figure>
           </div>
         </article>
       </div>

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { test } from 'node:test';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
@@ -19,28 +19,44 @@ test('signup is a focused black two-column surface without the duplicate login p
 test('the signup story rotates through four focused Xroga capability scenes', () => {
   assert.match(showcase, /const SLIDE_COUNT = 4/);
   assert.match(showcase, /const INTRO_DURATION_MS = 5200/);
-  assert.match(showcase, /const FEATURE_DURATION_MS = 6200/);
+  assert.match(showcase, /const FEATURE_DURATION_MS = 6400/);
   assert.match(showcase, /window\.setTimeout/);
   assert.match(showcase, /window\.clearTimeout/);
-  assert.match(showcase, /if \(paused \|\| reducedMotion\) return/);
+  assert.match(showcase, /if \(reducedMotion\) return/);
   assert.match(showcase, /aria-roledescription="carousel"/);
-  assert.match(showcase, /Pause capability slides/);
   assert.match(showcase, /Choose a capability slide/);
+  assert.doesNotMatch(showcase, /Pause capability slides|Resume capability slides|slideCount/);
 
   for (const phrase of [
-    'Convert your ideas into',
-    'simple conversation',
-    'Ship it everywhere',
+    'Imagine it',
+    'Launch everywhere',
     '1,500+ apps',
-    'Web &amp; X research',
-    'Xroga AI Employees',
-    'SEO, AEO, and GEO',
+    'Research',
+    'Your AI team',
+    'SEO',
+    'AEO',
+    'GEO',
   ]) {
     assert.ok(showcase.includes(phrase), `${phrase} is missing from the signup power panel`);
   }
 });
 
-test('integration marks are local official assets and the growth percentage is labelled illustrative', () => {
+test('the story uses seven optimized generated images plus local official integration marks', () => {
+  for (const image of [
+    'idea-to-business.webp',
+    'publish-everywhere.webp',
+    'ai-testing.webp',
+    'connected-work.webp',
+    'research-travel.webp',
+    'xroga-employees.webp',
+    'seo-aeo-geo.webp',
+  ]) {
+    assert.ok(showcase.includes(`/brand/auth-stories/${image}`), `${image} is missing from the story`);
+    const imageUrl = new URL(`../../../public/brand/auth-stories/${image}`, import.meta.url);
+    assert.ok(existsSync(imageUrl), `${image} does not exist in public assets`);
+    assert.ok(statSync(imageUrl).size < 200_000, `${image} was not optimized for signup delivery`);
+  }
+
   for (const logo of ['github.svg', 'vercel.svg', 'supabase.svg', 'openai.svg', 'gitlab.svg', 'anthropic.svg']) {
     assert.ok(showcase.includes(`/brand/logos/${logo}`), `${logo} is missing`);
     assert.ok(
@@ -48,9 +64,8 @@ test('integration marks are local official assets and the growth percentage is l
       `${logo} does not exist in public assets`,
     );
   }
-  assert.match(showcase, /Illustrative discoverability trend/);
-  assert.match(showcase, /Illustrative visibility signals/);
   assert.doesNotMatch(showcase, /https?:\/\//);
+  assert.doesNotMatch(showcase, /\bgraph\b|\bchart\b|Code2|browserMock/i);
 });
 
 test('the capability panel stays usable on phones and respects reduced motion', () => {
@@ -61,5 +76,5 @@ test('the capability panel stays usable on phones and respects reduced motion', 
   assert.match(styles, /\.slide\.active/);
   assert.match(styles, /@media \(max-width: 480px\)/);
   assert.match(styles, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(styles, /\.graphLine \{ stroke-dashoffset: 0; \}/);
+  assert.match(styles, /\.fullBleedArt,\s*\n\s*\.secondaryArt \{ animation: none; \}/);
 });
