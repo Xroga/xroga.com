@@ -29,7 +29,7 @@ import { clearGitHubConnection, getGitHubToken, saveGitHubConnection, saveGitHub
 import { clearVercelConnection, getVercelToken, saveVercelConnection } from '../services/integrations/vercelAuth.js';
 import { clearPkceSession, clearProviderToken, consumePkceSession, loadProviderToken, storePkceSession, storeProviderToken } from '../services/integrations/oauthPkceStore.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
-import { captureAdmittedRunAttempt, createRunDurable, getRun, activeRunIds, resumeRunDurable, withRunAttempt, appendRunEvent, persistRunState } from '../ai/runStore.js';
+import { captureAdmittedRunAttempt, createRunDurable, getRun, getRunAsync, listRunsForUserAsync, activeRunIds, resumeRunDurable, withRunAttempt, appendRunEvent, persistRunState } from '../ai/runStore.js';
 import { GrowthService } from '../growth/growthService.js';
 import { storeProjectFile } from '../services/storage/projectFiles.js';
 import { ownedFile } from '../services/storage/privateFileDelivery.js';
@@ -780,6 +780,22 @@ test('real growth relation checks reject foreign segments and misbound experimen
   const ownEvent = await service.recordEvent(owner.id, { projectId: owner.project, name: 'identity.linked.v1', idempotencyKey: randomUUID(), environment: 'test', consentState: 'granted', source: 'fixture', evidenceReference: 'fixture', experimentId: experiment });
   const accepted = await service.recordExperimentOutcome(owner.id, { ...input, eventId: ownEvent.event.id });
   assert.equal(accepted.event_id, ownEvent.event.id); assert.equal(accepted.assignment_id, assignment);
+});
+
+test('real historical run states hydrate truthfully and remain owner scoped',async()=>{
+  const owner=users[0],other=users[1];
+  const expected=new Map<string,string>();
+  for(const [status,normalized] of [['pending','running'],['verifying','running'],['failed','error'],['completed','complete'],['cancelled','cancelled']]){
+    const id=randomUUID();await insert('swarm_runs',{id,user_id:owner.id,prompt:'Historical state fixture',status});
+    expected.set(id,normalized);
+    assert.equal((await getRunAsync(id,owner.id,true))?.status,normalized);
+    assert.equal(await getRunAsync(id,other.id,true),null);
+  }
+  const foreignId=randomUUID();await insert('swarm_runs',{id:foreignId,user_id:other.id,prompt:'FOREIGN_HISTORY_CANARY',status:'failed'});
+  const history=await listRunsForUserAsync(owner.id,200);
+  for(const [id,status] of expected)assert.equal(history.find(row=>row.id===id)?.status,status);
+  assert.ok(history.length>=5);assert.ok(history.every(row=>row.userId===owner.id));
+  assert.ok(!history.some(row=>row.id===foreignId||row.prompt==='FOREIGN_HISTORY_CANARY'));
 });
 
 test('real durable creation cannot overwrite existing same-owner or foreign runs',async()=>{

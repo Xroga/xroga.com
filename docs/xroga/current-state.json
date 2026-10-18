@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "aa5b47059f048ba6f3ce7f4daff482f332f2f456",
-    "sourceTimestampUtc": "2026-10-18T12:56:09+05:00",
-    "auditStartedUtc": "2026-10-18T07:59:13.414Z",
+    "sha": "05e20e6d22107212803b5f67ba663e6576aa2a33",
+    "sourceTimestampUtc": "2026-10-18T12:59:51+05:00",
+    "auditStartedUtc": "2026-10-18T08:15:38.541Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -7014,7 +7014,7 @@
       "id": "surface:ec198557da445d2b1385",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "sha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "symbols": [
         "AdmittedRunAttempt",
         "MAX_EVENTS_PER_RUN",
@@ -7083,6 +7083,8 @@
         "persistTimers",
         "persistToSupabase",
         "persisted",
+        "persistedRunStates",
+        "persistedRunStatus",
         "query",
         "rec",
         "record",
@@ -7099,6 +7101,7 @@
         "schedulePersist",
         "scope",
         "snapshot",
+        "status",
         "supabase",
         "terminalCorrection",
         "terminalPersistence",
@@ -7138,10 +7141,13 @@
         "backend/src/ai/pipeline.ts:81",
         "backend/src/ai/runReconciler.test.ts:12",
         "backend/src/ai/runStore.authority.test.ts:5",
+        "backend/src/ai/runStore.cancellationRace.test.ts:5",
+        "backend/src/ai/runStore.cancellationRead.test.ts:5",
         "backend/src/ai/runStore.cancellationReceipt.test.ts:5",
         "backend/src/ai/runStore.conversationReceipt.test.ts:5",
         "backend/src/ai/runStore.creation.test.ts:5",
         "backend/src/ai/runStore.historyAdmission.test.ts:5",
+        "backend/src/ai/runStore.persistedStatus.test.ts:5",
         "backend/src/ai/runStore.resume.test.ts:12",
         "backend/src/ai/runStore.terminalLearning.test.ts:5",
         "backend/src/ai/runStore.test.ts:4",
@@ -7183,9 +7189,9 @@
         "backend/src/ai/runStore.ts:136 (user_id)",
         "backend/src/ai/runStore.ts:487 (user_id)",
         "backend/src/ai/runStore.ts:803 (user_id)",
-        "backend/src/ai/runStore.ts:905 (user_id)",
-        "backend/src/ai/runStore.ts:1193 (user_id)",
-        "backend/src/ai/runStore.ts:1338 (user_id)"
+        "backend/src/ai/runStore.ts:917 (user_id)",
+        "backend/src/ai/runStore.ts:1200 (user_id)",
+        "backend/src/ai/runStore.ts:1349 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -7202,10 +7208,13 @@
         "backend/src/ai/failRun.test.ts",
         "backend/src/ai/runReconciler.test.ts",
         "backend/src/ai/runStore.authority.test.ts",
+        "backend/src/ai/runStore.cancellationRace.test.ts",
+        "backend/src/ai/runStore.cancellationRead.test.ts",
         "backend/src/ai/runStore.cancellationReceipt.test.ts",
         "backend/src/ai/runStore.conversationReceipt.test.ts",
         "backend/src/ai/runStore.creation.test.ts",
         "backend/src/ai/runStore.historyAdmission.test.ts",
+        "backend/src/ai/runStore.persistedStatus.test.ts",
         "backend/src/ai/runStore.resume.test.ts",
         "backend/src/ai/runStore.terminalLearning.test.ts",
         "backend/src/ai/runStore.test.ts",
@@ -20786,7 +20795,7 @@
       "id": "surface:a4155784ae7c0ed40bf5",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/boundedPublicGet.ts",
-      "sha256": "4e65815a53307b4e4941e305bd84ab9eac9ea0720e71a84b4f5b7b2278dad76c",
+      "sha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44",
       "symbols": [
         "EgressPolicyError",
         "PublicAddress",
@@ -102403,6 +102412,20 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:967e59ded3999f493f77",
+      "sourcePath": "backend/src/ai/runStore.cancellationRace.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:5c3e17114004561102da",
+      "sourcePath": "backend/src/ai/runStore.cancellationRead.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:867e8669053fd187f8ea",
       "sourcePath": "backend/src/ai/runStore.cancellationReceipt.test.ts",
       "declaredTests": 1,
@@ -102426,6 +102449,13 @@
     {
       "id": "test-suite:4506240ce73123c6bfd9",
       "sourcePath": "backend/src/ai/runStore.historyAdmission.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7d24f61873e5661594d3",
+      "sourcePath": "backend/src/ai/runStore.persistedStatus.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
@@ -103247,7 +103277,7 @@
     {
       "id": "test-suite:a81f16421b56a04b9ee6",
       "sourcePath": "backend/src/security/boundedPublicGet.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -103464,7 +103494,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 67,
+      "declaredTests": 68,
       "skipLocations": [],
       "focusLocations": []
     },

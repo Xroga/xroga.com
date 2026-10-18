@@ -105,3 +105,17 @@ test('invalid limits fail before DNS or transport', async () => {
   }
   assert.deepEqual(hosts, []);
 });
+
+test('caller mutation during DNS cannot enlarge the admitted byte budget', async () => {
+  let enter!: () => void, release!: () => void;
+  const entered = new Promise<void>(resolve => { enter = resolve; });
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  const options = { ...limits, timeoutMs: 5000 };
+  const body = response(['123456']);
+  const { io } = fixture([body]);
+  io.resolve = async () => { enter(); await gate; return [{ address: '8.8.8.8', family: 4 }]; };
+  const pending = boundedPublicGet('https://example.com', options, io);
+  const rejected = assert.rejects(pending, /Egress byte limit exceeded/);
+  await entered; options.maxBytes = 1024; release();
+  await rejected; assert.equal(body.destroyed, true);
+});

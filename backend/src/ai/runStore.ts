@@ -879,6 +879,18 @@ export function getRun(
   );
 }
 
+// Preserve schema-supported legacy evidence without inventing successful completion.
+const persistedRunStates = {
+  pending: 'running', planning: 'running', building: 'running', reviewing: 'running',
+  testing: 'running', verifying: 'running', running: 'running',
+  completed: 'complete', complete: 'complete', failed: 'error', error: 'error', cancelled: 'cancelled',
+} as const;
+
+function persistedRunStatus(value: unknown): SwarmRunRecord['status'] | null {
+  return typeof value === 'string' && Object.hasOwn(persistedRunStates, value)
+    ? persistedRunStates[value as keyof typeof persistedRunStates] : null;
+}
+
 /** Hot cache first; fall back to Supabase for cold starts / other instances. */
 export async function getRunAsync(
   runId: string,
@@ -914,6 +926,11 @@ export async function getRunAsync(
       return null;
     }
     if (data.id !== runId || data.user_id !== ownerId) return null;
+    const status = persistedRunStatus(data.status);
+    if (!status) {
+      if (fresh) throw new Error('Run authority is unavailable.');
+      return null;
+    }
 
     const rec: SwarmRunRecord = {
       id:
@@ -928,17 +945,7 @@ export async function getRunAsync(
           '',
         ),
 
-      status:
-        data.status ===
-        'error'
-          ? 'error'
-          : data.status ===
-            'cancelled'
-            ? 'cancelled'
-            : data.status ===
-              'running'
-              ? 'running'
-              : 'complete',
+      status,
 
       output:
         (
@@ -1192,7 +1199,7 @@ export async function isRunCancellationRequested(
     } =
       await supabase
         .from('swarm_runs')
-        .select('status,lease_generation,worker_id')
+        .select('id,user_id,status,lease_generation,worker_id')
         .eq(
           'id',
           runId,
@@ -1200,7 +1207,11 @@ export async function isRunCancellationRequested(
         .eq('user_id', userId)
         .maybeSingle();
 
-    if (error || !data) throw new Error('Run authority is unavailable.');
+    if (error || !data || data.id !== runId || data.user_id !== userId ||
+        !['running', 'complete', 'completed', 'error', 'cancelled'].includes(data.status) ||
+        (scope && (scope.record !== runs.get(runId) || scope.record !== hot))) {
+      throw new Error('Run authority is unavailable.');
+    }
     const generation = hot && attemptGenerations.get(hot);
     if (data.status !== 'cancelled' && generation &&
       (data.lease_generation !== generation || (data.status === 'running' && data.worker_id !== RUN_WORKER_ID))) {
@@ -1344,13 +1355,7 @@ export async function listRunsForUserAsync(
         )
         .in(
           'status',
-          [
-            'running',
-            'complete',
-            'completed',
-            'error',
-            'cancelled',
-          ],
+          Object.keys(persistedRunStates),
         )
         .order(
           'created_at',
@@ -1372,6 +1377,8 @@ export async function listRunsForUserAsync(
       data.flatMap(
         (row) => {
           if (row.user_id !== userId || typeof row.id !== 'string' || !row.id) return [];
+          const status = persistedRunStatus(row.status);
+          if (!status) return [];
           const current = runs.get(row.id);
           if (current && current.userId !== userId) return [];
           if (current && attemptGenerations.has(current)) return [current];
@@ -1392,17 +1399,7 @@ export async function listRunsForUserAsync(
                 '',
               ),
 
-            status:
-              row.status ===
-              'error'
-                ? 'error'
-                : row.status ===
-                  'cancelled'
-                  ? 'cancelled'
-                  : row.status ===
-                    'running'
-                    ? 'running'
-                    : 'complete',
+            status,
 
             output:
               (

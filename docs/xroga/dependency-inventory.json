@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "aa5b47059f048ba6f3ce7f4daff482f332f2f456",
+  "source_sha": "05e20e6d22107212803b5f67ba663e6576aa2a33",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11775,7 +11775,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16"
+      "sha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f"
     },
     {
       "path": "backend/src/ai/runTrace.ts",
@@ -12707,11 +12707,11 @@
     },
     {
       "path": "backend/src/security/boundedPublicGet.ts",
-      "sha256": "4e65815a53307b4e4941e305bd84ab9eac9ea0720e71a84b4f5b7b2278dad76c"
+      "sha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44"
     },
     {
       "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
-      "sha256": "c8ecd16423a72174a3ff9bbeac504d137d3f91527ac9abc8c4115629c526ffdd"
+      "sha256": "8d83ef970808ad4abf9d7fad0dffc0ce3317a321da789e7f3bd06de3fe20e889"
     },
     {
       "path": "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -12819,7 +12819,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "db8960739ef4f125e887755f9a52fca621d0eb64078d98a016d6a03d279c6b1f"
+      "sha256": "e3956c7e75bbd6c44da31ad161830693e876a838459cf362bf41c6d1c086b20c"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -18577,7 +18577,7 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1272,
+      "line": 1281,
       "credentialsInUrl": false
     },
     {
@@ -23302,7 +23302,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 1275,
+      "line": 1286,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24758,7 +24758,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1108,
+      "line": 1117,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

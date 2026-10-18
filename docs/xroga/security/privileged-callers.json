@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "c8abe4bb0321f8b243a855f30e2ca5a1bb3d1d72eff2d28350fce9dba5f82ae8",
+  "reviewRegistrySha256": "7706f06c2d08489001f9074bcd107d3e85256ffd82f15f4d228424bed0aa9543",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -12,16 +12,16 @@
     "ownerPredicateCandidates": 160,
     "reviewRequired": 0,
     "reviewedCandidates": 660,
-    "unresolvedSafetyCandidates": 417,
+    "unresolvedSafetyCandidates": 416,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 93,
+    "SCOPED_BOUNDARY": 94,
     "NARROW_EXCEPTION": 10,
     "NOT_PERSISTENCE": 140,
-    "REVIEWED_GAP": 417
+    "REVIEWED_GAP": 416
   },
   "callers": [
     {
@@ -1568,10 +1568,10 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1593,10 +1593,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1618,10 +1618,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1643,10 +1643,10 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1668,10 +1668,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1693,10 +1693,10 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1710,18 +1710,18 @@
       }
     },
     {
-      "id": "b6307e91cbe4456df72e",
+      "id": "7010a652832f63b0118f",
       "path": "backend/src/ai/runStore.ts",
-      "line": 903,
+      "line": 915,
       "enclosing": "getRunAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1735,18 +1735,18 @@
       }
     },
     {
-      "id": "9068cc3c3a3d43572339",
+      "id": "9529bcfda8915bda983c",
       "path": "backend/src/ai/runStore.ts",
-      "line": 905,
+      "line": 917,
       "enclosing": "getRunAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1760,18 +1760,18 @@
       }
     },
     {
-      "id": "c15d549616080c99b045",
+      "id": "9922c3c9683a553fc38e",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1078,
+      "line": 1085,
       "enclosing": "requestRunCancellation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1785,39 +1785,39 @@
       }
     },
     {
-      "id": "8c10c4794ee82ad23d08",
+      "id": "e49fc8fc43c3164c23c4",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1084,
+      "line": 1091,
       "enclosing": "requestRunCancellation",
       "kind": "RPC_CANDIDATE",
       "target": "cancel_swarm_run_owned",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
-        "authority": "Authenticated run cancellation supplies the server actor to cancel_swarm_run_owned, which conditionally transitions only its owned running row, clears the old worker epoch and returns database-clock terminal evidence. The route validates exact owner/run/status/iteration receipt before success or learning.",
-        "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+        "authority": "Sole production caller routes/swarm.ts cancel handler is mounted behind authMiddleware in index.ts. It passes verified req.userId, never body owner, and checks owner-bound run admission. This exact service-only cancel_swarm_run_owned RPC atomically updates only the supplied owner/run in running state, clears worker generation and returns database-clock receipt. The wrapper validates exact owner/run/status/output/iteration before success. Scope is this fixed database transition, not arbitrary service-role callers.",
+        "reason": "SCOPED_BOUNDARY evidence at aca4b684759a5922d063625b8af2949d00b336f8, disposable39108753363: real tests9/10/12 pass owner spoofing, stale receipt, anonymous/authenticated RPC denial, two independent concurrent claims with one transition and learning blocked on a resumed parent epoch. The route, RPC, wrapper and tests are unchanged at05e20e6d. Loopback receipt corruption/outage tests also pass. Narrow cancellation-transition acceptance only. Physical provider cancellation, full worker lifecycle, immediate JWT revocation and best-effort learning availability remain separate unresolved obligations.",
         "evidence": [
           {
             "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
-            "marker": "real worker learning fence binds owner"
+            "marker": "real concurrent cancellation claims produce one receipt"
           }
         ]
       }
     },
     {
-      "id": "281fa5f0b0e2578a4413",
+      "id": "cbda964648a33f5f44ec",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1187,
+      "line": 1194,
       "enclosing": "isRunCancellationRequested",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1831,18 +1831,18 @@
       }
     },
     {
-      "id": "802f509bd4e2869a5584",
+      "id": "cef7e4bdd68cb2fe472e",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1193,
+      "line": 1200,
       "enclosing": "isRunCancellationRequested",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1856,18 +1856,18 @@
       }
     },
     {
-      "id": "fbb883c6ec93bb927082",
+      "id": "e04b294245cb6657cdbb",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1332,
+      "line": 1343,
       "enclosing": "listRunsForUserAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1881,18 +1881,18 @@
       }
     },
     {
-      "id": "6f7915fc18e24fb190f7",
+      "id": "b6df0b190fb35e254f16",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1338,
+      "line": 1349,
       "enclosing": "listRunsForUserAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1906,18 +1906,18 @@
       }
     },
     {
-      "id": "6e8604e226f545e3bbda",
+      "id": "7c6de2f866995527e1af",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1531,
+      "line": 1528,
       "enclosing": "persistToSupabase",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -1931,18 +1931,18 @@
       }
     },
     {
-      "id": "1ab496a614183176fa46",
+      "id": "fbb59bd297140ddd00e7",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1604,
+      "line": 1601,
       "enclosing": "persistToSupabase",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-        "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+        "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
         "evidence": [
           {
             "path": "backend/src/ai/runStore.authority.test.ts",
@@ -7718,15 +7718,15 @@
       }
     },
     {
-      "id": "c918befd08426d6bc94f",
+      "id": "5383a9cea2b6b4c93a63",
       "path": "backend/src/security/boundedPublicGet.ts",
-      "line": 128,
+      "line": 130,
       "enclosing": "boundedPublicGet",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "4e65815a53307b4e4941e305bd84ab9eac9ea0720e71a84b4f5b7b2278dad76c",
+      "sourceSha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44",
       "semanticReview": {
         "authority": "This candidate is Node Buffer.from converting an already received stream chunk before byte accounting. No database, storage bucket, identity or service-role client is accessed at this expression.",
         "reason": "Source tracing proves a byte conversion rather than persistence. The enclosing inactive GET helper has separate SSRF and byte/time fixtures, but this disposition certifies neither future callers nor complete egress policy.",

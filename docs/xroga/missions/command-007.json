@@ -372,7 +372,10 @@
     "backend/src/services/publish/chromeWebStore.authority.test.ts",
     "backend/src/growth/eventReplay.local.integration.ts",
     "backend/src/growth/eventReplay.test.ts",
-    "backend/src/growth/inputSnapshot.test.ts"
+    "backend/src/growth/inputSnapshot.test.ts",
+    "backend/src/ai/runStore.cancellationRace.test.ts",
+    "backend/src/ai/runStore.cancellationRead.test.ts",
+    "backend/src/ai/runStore.persistedStatus.test.ts"
   ],
   "decisions": {
     "keep": [

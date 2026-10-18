@@ -5,7 +5,7 @@ import { test, type TestContext } from 'node:test';
 import pg from 'pg';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { buildOutcomeFromTerminalRun, SupabaseBuildOutcomeStore } from '../ai/buildOutcomeMemory.js';
-import { requestRunCancellation } from '../ai/runStore.js';
+import { isRunCancellationRequested, requestRunCancellation } from '../ai/runStore.js';
 
 type FixtureUser = { id: string; token: string };
 function guard(): void {
@@ -77,7 +77,10 @@ export function registerBuildOutcomeAttemptTests(admin: SupabaseClient, getUsers
   async function cancelledFixture(t: TestContext) {
     const f = await fixture(t);
     assert.equal((await admin.from('swarm_runs').update({ status: 'running', completed_at: null }).eq('id', f.runId).eq('user_id', f.owner.id)).error, null);
+    assert.equal(await isRunCancellationRequested(f.runId, f.owner.id), false);
+    await assert.rejects(isRunCancellationRequested(f.runId, f.other.id), /Run authority is unavailable/);
     assert.equal(await requestRunCancellation(f.runId, f.owner.id), true);
+    assert.equal(await isRunCancellationRequested(f.runId, f.owner.id), true);
     const run = await admin.from('swarm_runs').select('*').eq('id', f.runId).eq('user_id', f.owner.id).single();
     const saved = await admin.from('build_outcomes').select('*').eq('run_id', f.runId).eq('user_id', f.owner.id).single();
     assert.equal(run.error, null); assert.equal(saved.error, null);

@@ -94,6 +94,8 @@ const transport: PublicGetTransport = {
 /** Credential-free GET only. All redirects share one deadline and byte bound. */
 export async function boundedPublicGet(raw: string, options: PublicGetOptions,
   io: PublicGetTransport = transport): Promise<PublicGetResult> {
+  // Retain the limits validated at admission across DNS, headers and body IO.
+  options = { ...options };
   const maxRedirects = options.maxRedirects ?? 3;
   if (!Number.isSafeInteger(options.maxBytes) || options.maxBytes < 1 || options.maxBytes > 32 * 1024 * 1024
     || !Number.isSafeInteger(options.timeoutMs) || options.timeoutMs < 1 || options.timeoutMs > 60_000

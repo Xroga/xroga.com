@@ -48,9 +48,9 @@
     },
     {
       "path": "backend/src/security/boundedPublicGet.ts",
-      "sourceSha256": "4e65815a53307b4e4941e305bd84ab9eac9ea0720e71a84b4f5b7b2278dad76c",
+      "sourceSha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44",
       "callIds": [
-        "c918befd08426d6bc94f"
+        "5383a9cea2b6b4c93a63"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "This candidate is Node Buffer.from converting an already received stream chunk before byte accounting. No database, storage bucket, identity or service-role client is accessed at this expression.",
@@ -3775,7 +3775,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "callIds": [
         "895a61d6a49f1cfdee31",
         "50edc8bae8f27dacf910",
@@ -3783,19 +3783,19 @@
         "eeecad9a21d8290f2cd2",
         "d870b789568c8679b1db",
         "a761046ffcd795c11469",
-        "b6307e91cbe4456df72e",
-        "9068cc3c3a3d43572339",
-        "c15d549616080c99b045",
-        "281fa5f0b0e2578a4413",
-        "802f509bd4e2869a5584",
-        "fbb883c6ec93bb927082",
-        "6f7915fc18e24fb190f7",
-        "6e8604e226f545e3bbda",
-        "1ab496a614183176fa46"
+        "7010a652832f63b0118f",
+        "9529bcfda8915bda983c",
+        "9922c3c9683a553fc38e",
+        "cbda964648a33f5f44ec",
+        "cef7e4bdd68cb2fe472e",
+        "e04b294245cb6657cdbb",
+        "b6df0b190fb35e254f16",
+        "7c6de2f866995527e1af",
+        "fbb59bd297140ddd00e7"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
-      "reason": "Complete/fail generation-bound learning and real stale-worker lock race verified at f4b7acf4 disposable38817558178. New cancellation uses DB-clock terminal receipt and separate locked learning RPC, focused tests pass, exact-source disposable pending. History hydration preserves admitted object identity while refreshing non-admitted records. Resume repository/branch/root and database project binding now use durable checkpoint evidence,19 focused tests pass. Remaining obligations include atomic generation fencing of canonical checkpoint saves, notification deduplication/delivery receipts and external cancellation guarantees. No complete scheduler or tenant certification.",
+      "reason": "Cancellation transition and learning races pass real disposable39108753363 ataca4b684. The exact cancellation RPC has a separate narrow closure. Canonical checkpoint generation fencing is independently verified by its own source-bound register entries. Current polling correction adds exact returned owner/run/known-state checks and rechecks the admitted local object after the read, with15 focused runStore tests including observed delayed response versus local resume passing. Extended actual owner/foreign cancellation polling is prepared for next-source CI. History hydration retains admitted identity and durable resume lineage. Notification deduplication/delivery, authority over already-started external work and complete worker lifecycle remain unresolved. No complete scheduler or tenant certification.",
       "evidence": [
         {
           "path": "backend/src/ai/runStore.authority.test.ts",
@@ -3964,17 +3964,17 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "8fa26ee1e6018bad106c533254941c02e9cf0fd4f041d82211b5a4056f5a7b16",
+      "sourceSha256": "e8763a33ddf484413d5ee74a153a7fda9ef90e64ece0f3c1cafa47b638781b1f",
       "callIds": [
-        "8c10c4794ee82ad23d08"
+        "e49fc8fc43c3164c23c4"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Authenticated run cancellation supplies the server actor to cancel_swarm_run_owned, which conditionally transitions only its owned running row, clears the old worker epoch and returns database-clock terminal evidence. The route validates exact owner/run/status/iteration receipt before success or learning.",
-      "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Sole production caller routes/swarm.ts cancel handler is mounted behind authMiddleware in index.ts. It passes verified req.userId, never body owner, and checks owner-bound run admission. This exact service-only cancel_swarm_run_owned RPC atomically updates only the supplied owner/run in running state, clears worker generation and returns database-clock receipt. The wrapper validates exact owner/run/status/output/iteration before success. Scope is this fixed database transition, not arbitrary service-role callers.",
+      "reason": "SCOPED_BOUNDARY evidence at aca4b684759a5922d063625b8af2949d00b336f8, disposable39108753363: real tests9/10/12 pass owner spoofing, stale receipt, anonymous/authenticated RPC denial, two independent concurrent claims with one transition and learning blocked on a resumed parent epoch. The route, RPC, wrapper and tests are unchanged at05e20e6d. Loopback receipt corruption/outage tests also pass. Narrow cancellation-transition acceptance only. Physical provider cancellation, full worker lifecycle, immediate JWT revocation and best-effort learning availability remain separate unresolved obligations.",
       "evidence": [
         {
           "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
-          "marker": "real worker learning fence binds owner"
+          "marker": "real concurrent cancellation claims produce one receipt"
         }
       ]
     },

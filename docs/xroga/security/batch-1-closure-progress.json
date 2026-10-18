@@ -54,16 +54,16 @@
   ],
   "additionalSpend": 0,
   "latestDisposable": {
-    "source": "aca4b684759a5922d063625b8af2949d00b336f8",
-    "integrated": "1e50aa58cb4da326fa0ae47c654e7d4bc17b3871",
-    "run": "39108753363",
+    "source": "05e20e6d22107212803b5f67ba663e6576aa2a33",
+    "integrated": "601157beab1dfdf43518b491dbcdb3c208587f3c",
+    "run": "39109742231",
     "result": "VERIFIED",
     "migrations": 96,
-    "securityTests": 123,
+    "securityTests": 124,
     "browserTests": 3,
     "failures": 0,
     "skips": 0,
-    "aggregate": "Independent Supabase scope PASS. Not all workflows green: tenant-fixture audit compares a newer virtual merge to branch-generated inventory and fails. Next-source reuses existing validated integration projection, retains original tests and exports source provenance."
+    "aggregate": "All11 workflows PASS at05e20e6d including repeated branch/integrated39109742210, Supabase39109742231 and corrected tenant fixture39109742243. Later cancellation-polling, historical status and egress snapshot source is not certified by these results."
   },
   "overnightEngineering": {
     "status": "IN PROGRESS",
@@ -93,7 +93,7 @@
       "diagnosticsAndCache": "Next source: platform logger stores fixed categories/known labels only, discards arbitrary metadata and unverified attribution, registers exact global scope. Three focused tests and actual persistence test prepared. Inactive tenant cache now validates bounded payload, exact digest/expiry and acknowledged writes, three focused tests pass. Cache project/context variation and lifecycle remain open.",
       "benchmarkEvidence": "Next source: strict finite numeric/boolean/time evidence validation before aggregate routing/storage, safe errors and truthful partial persistence count. Missing storage acknowledgement returns failed/benchmark_persistence_unverified because operationsService otherwise stamps verified durable action evidence.55 focused tests pass after correction. No paid benchmarks executed, actual producer provenance/budget/replay and real DB acceptance remain open.",
       "previewDrain": "Next source: adapter closes and drains its existing preview queue before final revision/completion. Typed authority loss and timeout fail closed; subsequent events cannot save or emit. Sixteen focused tests pass. Already-started physical provider work is not undone or certified.",
-      "localVerification": "Current eighth-source local backend3013 tests/2995 pass/0 fail/18 registered skips. Backend typecheck passes.96 migrations inventoried. Final-source real concurrency and repeated CI remain required.",
+      "localVerification": "Cancellation-polling source local backend3025 tests/3007 pass/0 fail/18 registered Windows skips, backend typecheck PASS. Subsequent historical-status change passes16 focused runStore tests and inactive bounded-GET limit snapshot passes8 focused tests. These later changes require final-source CI.96 migrations inventoried. Zero-skip repeated Linux CI remains required.",
       "secondBatchVerification": "VERIFIED54abe997 disposable38824268139:87 migrations/100 security/3 browser,zero failures/skips. Five exact unchanged caller candidates closed: software checkpoint RPC, worker revision RPC/factory, diagnostic factory/insert. Other reviewed callers remain unresolved where lifecycle/provider/complete recovery evidence is absent.",
       "thirdBatch": "READY FOR CI: existing community comment and post update/delete/moderation now use service-only transactional current-role/parent locks and exact receipts, existing permissions unchanged.13 focused tests,39 PGlite assertions/reapply pass, two real concurrent-role/parent/lock modules prepared. Canonical recovery compares durable columns and executable control data; project/session reads bind returned identity and immutable snapshots, delayed-read/write mutation tests pass and three real tests prepared. Generic credential decoding rejects malformed envelopes, immutable provider row identity controls deployment egress, manual provisioning tuple now uses one snapshot. Provisioning requires issued context plus exact inserted-row readback; one real bootstrap/paid-row preservation test prepared. Shared record writers validate exact returned IDs. Completed provider reservation settlement failure keeps hold and returns non-retryable typed uncertainty. No full caller certification from focused or simulated tests.",
       "fourthBatch": "READY FOR CI: repository index header+children now transactional full replacement and single-snapshot load,45 local SQL assertions/replay. Community remaining mutation RPC23 assertions and read visibility RPC24 assertions/replay with focused tests and prepared real races. Trace binds original admitted worker generation including terminal state, redacts immutable diagnostics,18 SQL assertions/replay; best effort remains explicit. Removed unused generic OAuth fallback/upload/refresh, issued policy setter and exact receipt retained. Provisioning missing username repaired. Fly delete network/nonconfirmed HTTP responses now reject before destroyed state/event,21 focused mock-provider tests pass. No real provider calls or whole-caller security certification.",
@@ -107,7 +107,11 @@
       "eighthBatch": "IN PROGRESS: immutable normalized event intent, actor/project/consent/reference/metadata replay equivalence, exact persisted receipt and unique-conflict winner verification reuse existing analytics_events unique index. Six focused tests pass; actual two-HTTP-request observed PostgreSQL lock/replay test prepared. Tenant fixture reuses existing exact-head/base-lineage integration projection, with original audit/SQL/security tests unchanged and provenance artifact retained.",
       "dependencyRefresh": "2026-10-18 actual npm audits unchanged severity totals: aggregate43 total20high0critical, backend35/15high, frontend12/7high (overlap). Registry latest braces3.0.3 and node-forge1.4.0 unchanged. Existing hash-bound downstream fixes remain, no npm finding waived or audit-clean claim.",
       "growthInputSnapshot": "READY FOR CI: ten additional growth methods snapshot input before their first database or authority await. Activation/segment arrays and experiment variant objects are copied, identity evidence stays fixed through insert/update. Eleven focused tests pass, including delayed-authority mutation and exact receipts. Existing event replay snapshot is retained. No database membership-revocation, parent mutation, provider or whole-caller certification follows from this in-process proof.",
-      "seventhAggregate": "VERIFIED GitHub aggregate39108753337 reports success for branch aca4b684 and its separate integrated candidate. Downloaded artifacts retained locally. Tenant fixture39108753387 failure remains unwaived and is addressed by the next-source integration projection."
+      "seventhAggregate": "VERIFIED GitHub aggregate39108753337 reports success for branch aca4b684 and integrated1e50aa58cb4da326fa0ae47c654e7d4bc17b3871. Downloaded manifests bind both exact sources. Tenant fixture39108753387 failure remains recorded; corrected fixture39109742243 passes at05e20e6d.",
+      "cancellationPolling": "READY FOR CI: exact owner/run and known status required in cancellation reads, admitted local attempt rechecked after awaiting the response.15 focused tests pass including delayed read versus resumed local attempt. Initial test harness hang caused by production singleton cached across two fixture servers, resolved by separate test files without changing production singleton. Existing real cancellation test extended with same-owner running/cancelled and foreign-owner polling. Full final-source CI remains required.",
+      "cancellationClosure": "One exact fixed cancellation RPC candidate closed SCOPED_BOUNDARY from unchanged transition plus realaca4b684 tests9/10/12 in39108753363 and focused receipt/outage tests.416 caller candidates unresolved; no whole privileged caller or Command007 certified.",
+      "historicalRunState": "READY FOR CI: cold/history hydration explicitly maps12 schema-supported states, keeps legacy failed as error and pending/planning/building/reviewing/testing/verifying as running, and rejects malformed status rather than inventing complete.16 focused runStore tests pass. Real legacy-state and foreign-owner test prepared. No historical row rewritten or new worker admitted.",
+      "eighthBatchVerification": "VERIFIED05e20e6d: all11 workflows pass, disposable124 security tests/3 browser/96 fresh-upgrade migrations/zero failures-skips. Repeated branch/integrated39109742210 PASS. Tenant fixture's exact-head/base-lineage projection now passes with original SQL/security assertions unchanged."
     }
   },
   "replayCorrection": {
@@ -137,7 +141,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:417 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:416 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -156,12 +160,12 @@
     "result": "PASS twice on both branch and integrated candidate"
   },
   "verifiedBaseline": {
-    "branch": "7d12bf426118660c9adfe7d6c7447d99c6e4eb24",
-    "integrated": "fcbddfd42373081a6751b326e9bfa6dfbb56b091",
-    "aggregateCi": "38827153531",
-    "isolatedCi": "38827153400",
+    "branch": "05e20e6d22107212803b5f67ba663e6576aa2a33",
+    "integrated": "601157beab1dfdf43518b491dbcdb3c208587f3c",
+    "aggregateCi": "39109742210",
+    "isolatedCi": "39109742231",
     "workflows": 11,
-    "securityTests": 112,
+    "securityTests": 124,
     "newSourceCertified": false
   },
   "counts": {
@@ -172,7 +176,7 @@
     "ownerPredicateCandidates": 160,
     "reviewRequired": 0,
     "reviewedCandidates": 660,
-    "unresolvedSafetyCandidates": 417,
+    "unresolvedSafetyCandidates": 416,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -216,7 +220,7 @@
     "byokRevision": "Eleven focused tests and45 local SQL assertions pass; four real cases pending. Upstream admission and bulk enumeration gaps remain.",
     "budget": "Fourteen focused tests pass for exact replay/settlement evidence and uncertain-hold retention. Extended real replay assertions pending.",
     "approvals": "Sixteen focused/golden fixtures pass; canonical command acceptance incomplete",
-    "egress": "Seven synthetic transport tests pass; inactive, no runtime integration"
+    "egress": "Eight synthetic transport tests pass including immutable limits across DNS await; inactive, no runtime integration"
   },
   "commands": {
     "001": "Existing reproducible inventory; regenerate for changed source",
@@ -236,7 +240,7 @@
     "Production KMS NOT_VERIFIED",
     "Commercial hosting eligibility remains separate launch issue"
   ],
-  "nextTask": "Finish eighth-source local validation and push, then verify real concurrent event replay plus every final-source branch/integrated/tenant-fixture workflow.417 unresolved caller candidates remain including new conflict-winner read awaiting actual CI. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
+  "nextTask": "Verify next-source real owner/foreign cancellation polling, legacy-state cold/history reads and event concurrency plus every branch/integrated suite.05e20e6d all11 workflows already PASS. Continue416 unresolved callers, starting worker lifecycle and growth parent mutation races. Preserve original007 dependency and provider/schema/KMS blockers for008-010.",
   "additionalWork": {
     "oauth": "Atomic ten-minute one-use session admission before all three callbacks. Sixteen focused and115 local SQL assertions pass; actual concurrent DB acceptance pending.",
     "upstreamCredentialAdmission": "Existing revision carried across Expo and one-click Supabase remote preparation. Ten credential and three publish regressions pass. Multi-key atomicity and work before entry point remain gaps.",
@@ -249,7 +253,7 @@
       "existingImplementation": "Existing run store, worker leases and owner persistence",
       "missingBehavior": "Project lineage and full callback/side-effect lifecycle; execute new DB races",
       "acceptanceTest": "Run row-lock races, same-process delayed callbacks, resume/cancel/outage negatives",
-      "pendingCandidates": 16,
+      "pendingCandidates": 15,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/runStore.ts": [
@@ -259,16 +263,15 @@
           "eeecad9a21d8290f2cd2",
           "d870b789568c8679b1db",
           "a761046ffcd795c11469",
-          "b6307e91cbe4456df72e",
-          "9068cc3c3a3d43572339",
-          "c15d549616080c99b045",
-          "8c10c4794ee82ad23d08",
-          "281fa5f0b0e2578a4413",
-          "802f509bd4e2869a5584",
-          "fbb883c6ec93bb927082",
-          "6f7915fc18e24fb190f7",
-          "6e8604e226f545e3bbda",
-          "1ab496a614183176fa46"
+          "7010a652832f63b0118f",
+          "9529bcfda8915bda983c",
+          "9922c3c9683a553fc38e",
+          "cbda964648a33f5f44ec",
+          "cef7e4bdd68cb2fe472e",
+          "e04b294245cb6657cdbb",
+          "b6df0b190fb35e254f16",
+          "7c6de2f866995527e1af",
+          "fbb59bd297140ddd00e7"
         ]
       }
     },
