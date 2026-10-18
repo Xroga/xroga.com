@@ -1,111 +1,117 @@
-# S05 · Beyond what you've seen
+# S05 · The capability universe
 
-The homepage's closing capability section: a heading, one line, and two rails of compact, motion-designed tiles that
-show how far Xroga reaches beyond what S00 to S04 already demonstrate. Components: `frontend/src/components/homepage-next/s05`.
+The homepage's closing capability section: "The possibilities go further.", one line, and two rails of compact,
+art-directed capability tiles that show how far Xroga reaches beyond S00 to S04. Rebuilt after the founder rejected
+the first version (8c69ab94: flat background, ordinary type, small muted diagrams).
 
-## Reference study (Aiven hover recording, 17 s, 1898 × 900)
+Files: `frontend/src/components/homepage-next/s05/`: `capabilities.ts` (content), `art.ts` (thirteen compositions),
+`S05.css` (one stylesheet scoped under `.s5`), `S05Capabilities.tsx` (section and rails), `s05.test.ts`.
 
-Studied frame by frame (30 fps strips); the recording itself is kept locally, not in the repository.
+## Reference analysis (Aiven hover recording, measured on full-resolution frames)
 
-- The grid never moves: hairline borders shared between tiles, square corners, four columns, two rows, all eight
-  capabilities visible at once.
-- Each tile: bold title, one short line, one flat symbol anchored lower right and running off the tile's bottom edge;
-  one accent colour plus neutral greys; no gradients or glows.
-- Pointer enters: the surface lifts from near-black to dark grey within one or two frames (under 100 ms); the border
-  and text do not change.
-- Active: the symbol saturates and its parts move with the capability's character: stepped sequences (chevrons lit one
-  after another, slashes alternating), spreads (braces opening around an asterisk), travel (dots along dashed orbits),
-  blooms (an asterisk expanding). Motion continues while hovered.
-- Pointer leaves: the symbol returns to its muted rest within about 150 to 300 ms, with no stray parts.
+1. **Typography:** pure white (#ffffff) bold titles at about 7 % of the tile width (30 px on a 437 px tile), one short
+   grey line, generous padding. Nothing competes with the title.
+2. **Memorable graphics:** few, large, flat shapes in one saturated accent plus neutral grey (violet braces round a
+   grey asterisk, three chevrons, two slashes). No gradients, glows or detail.
+3. **Art share:** 55 to 65 % of the tile width, about 22 % of its height, anchored lower right and running off the edge.
+   The painted pixels are only 3 to 9 % of the tile, yet read as the tile's identity because they are saturated.
+4. **Hover surface:** near-black rgb(4, 7, 14) lifts to dark grey rgb(29, 28, 31) within one or two frames.
+5. **Timing:** the surface and colour respond within about 70 ms; parts move in stepped sequences of about 200 to
+   270 ms per step and loop while hovered; on leave everything returns within about 150 to 300 ms.
+6. **Bright and dark:** a black field with one saturated accent per tile; white type is the only other bright element.
+7. **Not generic:** each symbol is unique to its product and abstract enough to be art rather than an icon set.
+8. **Containment:** motion stays inside the art band; the copy never moves.
+9. **Rhythm:** an unbroken hairline grid with equal tiles; variety comes only from the art.
+10. **Adapted for Xroga:** white titles with real weight; saturated accent art that already reads at rest; an obvious
+    surface lift on hover; one distinct, purposeful movement per tile; fast return on leave. Not adapted: Aiven's
+    shapes, symbols, wording or code.
 
-What S05 takes is the interaction standard: a stable grid, an immediate surface response, muted colour at rest and
-saturated colour in use, and one distinct movement per tile. The artwork, wording and identity are Xroga's own.
+## Visual system
 
-## Composition (Phase A)
+- **Background:** ink base (#07090e) with a sapphire light behind the heading, a violet floor light under the rails, a
+  faint cyan reflection, static micro grain, and fades to S04 above and the next section below.
+- **Typography:** eyebrow "The capability universe"; headline at 38 to 64 px, weight 640, tracking -0.048 em, with the
+  key phrase "go further." in one restrained cool light (blue into lavender); a one-line outcome lede.
+- **Tiles:** 300 × 252 (288 × 248 at 1280, up to 300 × 262 on phones), radius 20, a graphite surface with a top
+  highlight; white 21 px titles; on hover the surface lifts and catches a little of the tile's own colour from below
+  the art, and the edge takes the accent.
+- **Art vocabulary (art.ts):** one 300 × 160 canvas per tile anchored to the lower edge and running off it; graphite
+  panels, one light "paper" tone for high-contrast surfaces, thick round strokes, 10 to 16 radii; each tile an accent
+  pair from eight hues (electric blue, cobalt, cyan, violet, lavender, emerald, gold, coral) at 86 % strength at rest
+  and full strength on hover. The same vocabulary covers abstract compositions (chain, triggers, templates) and
+  miniature product surfaces (boarding pass, invoice, IDE, dashboard), so the thirteen read as one family.
+- **Motion:** entrances are choreographed with staggered delays and springs (300 to 1300 ms); leaving returns every
+  piece together in 280 ms without overshoot. CSS only (transform, opacity, stroke offsets); the on-state is a DOM
+  attribute (no React re-render); nothing animates unless a tile is on; reduced motion shows the finished state.
 
-Three candidates were rendered on the real page at 1440 × 900 and 390 × 844 with the same content:
+| Tile | Composition | On hover, focus or tap |
+| --- | --- | --- |
+| Travel & Bookings | boarding pass over a route map, gold destination | the route draws while a plane rides it; the destination lands and pulses; the pass lifts |
+| Email & Calendars | envelope beside a calendar | the envelope straightens and opens; the letter rises, travels into the calendar and becomes an event |
+| CRM & Support | contact record beside a pipeline board | the record links to the board; the deal moves to the next stage; the status turns green |
+| Payments & Accounting | card over an invoice ledger | the card squares up; the ledger lines reconcile; the total is checked |
+| Workflow Templates | preset board with three loose modules | the modules snap into their slots and the preset label appears |
+| Workflows & Triggers | scheduled trigger, condition, two outcomes | the schedule ring turns; a signal crosses the condition, which turns, and lights the chosen outcome (loop) |
+| Coding & Repositories | miniature IDE: tree, highlighted code, pending diff, branch | the line highlight moves; the removed line clears and the green change slides in; a branch and commit appear; the check turns green |
+| Custom APIs & MCPs | your tool (connector hub) and Xroga, authorization shield | the two dock; the shield seats between them; data flows along the path (loop) |
+| Web3 & Blockchain | three isometric blocks on a chain, an empty slot | the blocks ripple; the chain lights gold; a new gold block drops into the slot |
+| Hackathons & Projects | requirements checklist, milestone rail, lowered flag | requirements tick off; progress runs the milestones; the flag goes up and waves |
+| Desktop Applications | a cascade of three app windows over a dock | the cascade snaps into a split view; the dock apps hop |
+| Domains & Infrastructure | address bar, globe, servers, database | the route resolves with a pulse; the servers light; the address goes https and the lock closes |
+| Live Operations | dashboard with an incident spike | the gauge fills; the spike clears into a steady line with a running telemetry pulse; the services report green |
 
-| Candidate | Tile | Visible per row (1440) | Finding |
-| --- | --- | --- | --- |
-| A · ledger: hairline-joined tiles | 272 × 236 | 4.8 | Most disciplined and cohesive; tiles a little tall, two-line titles |
-| B · plates: separate rounded cards | 256 × 228 | 5.1 | Reads as a generic SaaS card grid |
-| C · wide: landscape tiles, art right | 336 × 188 | 3.9 | Most compact, but copy wraps to three lines and the art shrinks |
+## Studies (Phase A of the rebuild)
 
-Chosen: A, refined to 288 × 220 (titles on one line, art clear of the copy, about 4.5 tiles visible per row), with the
-corner numbers removed. At 1920 × 1080 the whole section fits one screen.
-
-## Motion language
-
-Rest: each graphic in neutrals tinted toward its accent, with the accent muted (62 %). On hover, keyboard focus or
-tap: the surface lifts (170 ms), the accent saturates and the pieces move (300 to 700 ms, longer for stepped
-sequences), loops only while the tile is on, and everything returns on leave. CSS only (transform, opacity, stroke
-offsets); the on-state is a DOM attribute, so hovering never re-renders React; nothing animates when no tile is on.
-Reduced motion shows the finished state without travel.
-
-| Tile | Movement |
-| --- | --- |
-| Travel & Bookings | the route draws while a marker rides it; the destination lands; the itinerary settles |
-| Email & Calendars | the envelope opens; the message travels into a calendar slot; the time marks align |
-| CRM & Support | contacts link to the record one by one; the support status advances |
-| Payments & Accounting | the card squares up; ledger lines reconcile; the total is checked |
-| Workflow Templates | scattered modules snap into the template's slots |
-| Workflows & Triggers | a signal leaves the trigger, turns the condition and reaches the outcome (loop) |
-| Custom APIs & MCPs | the two ports dock; a data path opens and flows (loop) |
-| Web3 & Blockchain | the blocks align into a chain; the links light; a new block joins |
-| Hackathons & Projects | progress steps through the milestones until the flag goes up |
-| Desktop Applications | overlapping windows separate into a tidy workspace |
-| Domains & Infrastructure | the links resolve; a check passes through; the lock closes |
-| Live Operations | a telemetry pulse runs the health line (loop); the services report in |
-
-Colour: four families on the homepage's dark base: blue (glacier, sapphire, signal), violet (periwinkle, violet,
-ultraviolet), green-cyan (seafoam, cyan, aqua, emerald), warm (amber, coral).
+- **Headline**, rendered at 1440: "Beyond what you've seen." (strong but leans on context), "More to Xroga than meets
+  the eye." (longest, a familiar idiom), "The possibilities go further." (chosen: the most confident line, it states
+  the section's purpose on its own, and the light on "go further." balances the line).
+- **Art direction:** abstract geometry alone was striking but vague for capabilities such as payments or coding;
+  miniature interfaces alone turned into a dashboard gallery; the chosen hybrid uses one vocabulary for both.
+- **Fit:** with the eyebrow just under the navigation, both rails are in view at 1440 × 900 and 1920 × 1080; at
+  1280 × 800 the second rail ends 24 px below the fold rather than shrinking the tiles.
 
 ## Rails
 
-Native horizontal scrollers with snap points (trackpad, touch and keyboard behave as the platform expects); labelled
-arrow buttons page through each rail; a mouse can drag; ArrowLeft/ArrowRight move between tiles, Home/End to the ends.
-A rail fades only on a side with more to show; on phones it runs to the screen edge so the next tile shows. No auto
-drift: a manually controlled rail reads better than a conveyor, and nothing moves while the visitor reads.
+Native horizontal scrollers with snap points; labelled arrows page by the tiles in view; a mouse can drag; ArrowLeft,
+ArrowRight, Home and End move between tiles; touch swipes; a tap plays a tile once. The rails run to the right edge of
+the screen, so the next tile shows the row continues without a fade over its text. No auto drift.
 
 ## Coverage map
 
-Founder capability map (A to Z, 30 sections) against the homepage:
-
-| Capability | Where it is told |
+| Capability (founder map) | Where it is told |
 | --- | --- |
-| One workspace, intelligence and routing (1, 2) | S00 Hero; S01 |
-| Web research, X/Twitter intelligence (3) | S01 Research & Decide (X where configured) |
-| Files and data (4) | S01 Files & Data |
-| Integration ecosystem, in-workspace connections (5, 6) | S01 card details; S05 Custom APIs & MCPs |
-| Custom plugins and MCPs (7) | S05 Custom APIs & MCPs |
-| Travel and bookings (8) | S05 Travel & Bookings (planning; booking transactions are not claimed) |
-| Email and productivity (9) | S05 Email & Calendars |
-| CRM and business admin (10) | S05 CRM & Support; S05 Payments & Accounting |
-| Automation and recurring workflows (11) | S05 Workflow Templates; S05 Workflows & Triggers; S01 Automate Work |
-| Building products, existing products, UI (12 to 14) | S00; S01 Build Software |
-| Databases, auth, infrastructure, domains, DNS, HTTPS (15, 16) | S05 Domains & Infrastructure |
-| Browser automation, testing and repair (17, 18) | S02; S01 Browser & Testing |
+| One workspace, intelligence (1, 2), universal vision (30) | S00, S01 |
+| Research, X/Twitter, files and data (3, 4) | S01 |
+| Integrations, connections, custom MCPs (5 to 7) | S01 details; S05 Custom APIs & MCPs |
+| Travel (8), email (9), CRM and admin (10) | S05 Travel & Bookings, Email & Calendars, CRM & Support, Payments & Accounting |
+| Automation (11) | S05 Workflow Templates, Workflows & Triggers; S01 Automate Work |
+| Building products, UI (12, 14) | S00, S01 Build Software |
+| Existing products and code (13) | S05 Coding & Repositories; S01 Build Software |
+| Databases, auth, domains, DNS, HTTPS (15, 16) | S05 Domains & Infrastructure |
+| Browser automation, testing (17, 18) | S02, S01 Browser & Testing |
 | Web deployment (19) | S01 Launch Anywhere |
-| Android, iOS, Chrome (20) | S04 |
+| Mobile and extension releases (20) | S04 |
 | Desktop releases (20) | S05 Desktop Applications |
-| Web3 and hackathons (21, 22) | S05 Web3 & Blockchain; S05 Hackathons & Projects |
-| Launch, SEO, acquisition, monetization (23 to 25) | S03 |
-| Operations Centre (26) | S05 Live Operations; S01 Keep Work Running |
-| Persistent context, reusable skills (27) | S01 Keep Work Running; S05 Workflow Templates |
-| Screenshot to website, voice, across devices | S01 Build Software details (already told; not repeated) |
-| Free access and transparent usage (28) | Pricing |
-| Permissions, ownership (29) | S01 details; S04 owner steps; S05 note |
-| Universal execution vision (30) | S00 |
+| Web3, hackathons (21, 22) | S05 Web3 & Blockchain, Hackathons & Projects |
+| Launch, SEO, growth (23 to 25) | S03 |
+| Operations (26), continuity (27) | S05 Live Operations; S01 Keep Work Running |
+| Usage and capacity (28) | Pricing |
+| Permissions and ownership (29) | S01 details, S04 owner steps, S05 note |
 
 ## Truth
 
 Most S05 capabilities work through accounts the visitor connects, or are still expanding
 (`docs/product/PUBLIC-CLAIM-VERIFICATION.md`). Every line says what Xroga helps with; nothing claims a booking made, a
-payment taken, an approval won, an uptime figure or a recovered system. One section-level note carries the boundary:
-illustrative examples; many capabilities work through accounts and services you connect; availability varies.
+payment taken, an approval won, an uptime figure or a recovered system; the coding tile is an illustrative visual, not
+a recorded execution. One section-level note carries the boundary.
 
-## Legacy sections after S05
+## Legacy sections after S05 (founder decision, untouched here)
 
-`HomepageClient` still renders older sections after S05 (Power Stories, Workspace Tour, All-in-One, Intelligence and
-Stack Studio, Showcase, Ship Stack, Enterprise Proof, Pricing Preview, Ownership Proof, FAQ) before the closing CTA
-and footer. They are untouched here; whether they stay is a separate founder decision.
+`HomepageClient` still renders, between S05 and the closing CTA and footer: `HomepagePowerStories`,
+`HomepageWorkspaceTour`, `HomepageAllInOne` (wrapper `#product`), `XrogaIntelligenceSection` + `HomepageStackStudio`,
+`HomepageShowcase` (`#showcase`), `HomepageShipStack` (`#how-xroga-works`), `HomepageEnterpriseProof`,
+`HomepagePricingPreview`, `HomepageOwnershipProof` and `HomepageFaqSection`. Dependencies checked: each component is
+used only on the homepage; nothing in the site links to the `#product`, `#showcase` or `#how-xroga-works` anchors;
+the homepage structured data is a plain WebPage with no FAQ schema. Removing them is a separate, reversible change to
+`HomepageClient.tsx` (the component files can stay); the FAQ and pricing preview carry content worth relocating
+rather than losing.
