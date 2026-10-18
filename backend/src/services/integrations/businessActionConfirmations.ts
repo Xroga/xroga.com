@@ -646,44 +646,15 @@ export async function confirmBusinessAction(
     );
   }
 
-  const claimedAt =
-    new Date()
-      .toISOString();
-
   const {
     data: claimed,
     error: claimError,
   } =
     await db
-      .from(
-        'business_action_confirmations',
-      )
-      .update(
-        {
-          status:
-            'executing',
-
-          claimed_at:
-            claimedAt,
-        },
-      )
-      .eq(
-        'id',
-        id,
-      )
-      .eq(
-        'user_id',
-        userId,
-      )
-      .eq(
-        'status',
-        'pending',
-      )
-      .eq('plan_digest', row.plan_digest)
-      .gt('expires_at', claimedAt)
-      .select(
-        'id,user_id,status,plan,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code',
-      )
+      .rpc('claim_business_action_confirmation', {
+        p_owner: userId, p_id: id, p_digest: row.plan_digest,
+        p_plan: row.plan, p_expires: row.expires_at,
+      })
       .maybeSingle();
 
   if (

@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "a6f18af3f43db7f6119db7264888696406e3dc11",
-    "sourceTimestampUtc": "2026-10-18T13:55:00+05:00",
-    "auditStartedUtc": "2026-10-18T08:57:17.679Z",
+    "sha": "cc09d46898355ebe0f7eaa163fbeb21234e9f56a",
+    "sourceTimestampUtc": "2026-10-18T13:58:01+05:00",
+    "auditStartedUtc": "2026-10-18T09:03:49.989Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -21810,7 +21810,7 @@
       "id": "surface:0315124fb31feefa3fcb",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "symbols": [
         "CONFIRMATION_TTL_MS",
         "ConfirmationRow",
@@ -21818,7 +21818,6 @@
         "SafeBusinessActionConfirmation",
         "UUID_PATTERN",
         "cancelBusinessActionConfirmation",
-        "claimedAt",
         "claimedRow",
         "clean",
         "cleanConfirmationId",
@@ -21868,10 +21867,9 @@
         "backend/src/services/integrations/businessActionConfirmations.ts:386 (user_id)",
         "backend/src/services/integrations/businessActionConfirmations.ts:466 (user_id)",
         "backend/src/services/integrations/businessActionConfirmations.ts:552 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:657 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:733 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:810 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:882 (user_id)"
+        "backend/src/services/integrations/businessActionConfirmations.ts:704 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:781 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:853 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/businessActionConfirmations.ts#CONFIRMATION_TTL_MS",
@@ -23512,7 +23510,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:622",
+        "backend/src/security/tenantIsolation.local.integration.ts:624",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -95339,6 +95337,13 @@
       "version": "20261018000100",
       "order": 97,
       "sha256": "05a454fd9a4a51758e76feebc13a0cfd0c903d54593ed54daadbe9f4b0f70095"
+    },
+    {
+      "id": "migration:cb69b81bf4ef301408fc",
+      "sourcePath": "supabase/migrations/20261018000200_business_confirmation_claim.sql",
+      "version": "20261018000200",
+      "order": 98,
+      "sha256": "ff38a84ef33d414ec6407165ee9cfec2a4fdbd3e735bf134b71e95ef003835a2"
     }
   ],
   "workflows": [
@@ -103347,6 +103352,13 @@
     {
       "id": "test-suite:5eda967fa924a1bcc3d2",
       "sourcePath": "backend/src/security/buildProjectReceipt.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:0f3bb3ae8c8f587480b1",
+      "sourcePath": "backend/src/security/businessConfirmationClaim.local.integration.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

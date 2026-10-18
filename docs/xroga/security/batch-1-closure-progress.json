@@ -53,6 +53,12 @@
     }
   ],
   "additionalSpend": 0,
+  "businessConfirmationClaim": {
+    "status": "IN PROGRESS",
+    "fix": "Existing confirmation table now has a service-only claim RPC. It locks exact owner/ID, binds full reviewed plan/digest/expiry/display metadata and checks clock_timestamp after obtaining the lock. No application-clock admission and no provider execution in SQL.",
+    "localEvidence": "Loopback changed/expired/outage/misleading/concurrent cases pass with no provider calls.15 PGlite SQL assertions and migration replay pass. Actual HTTP competing claims, expiry while waiting and intervening same-digest plan mutation plus browser-role denial prepared, not yet executed.",
+    "remaining": "Actual final-source integration, provider session ownership, displayed-intent acknowledgement, post-claim expiry, failure-record durability and external-success crash reconciliation.659 reviewed/410 unresolved, no added certification."
+  },
   "operationsTargetOwnership": {
     "status": "IN PROGRESS",
     "fix": "Release version lookup now verifies actual owner/project/resource receipt instead of returning1 without a query. Deployment repair lookup uses existing owned deployment version. No release promotion, deployment or provider call was executed.",
@@ -196,7 +202,7 @@
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
     "persistenceCandidates": 659,
-    "ownerPredicateCandidates": 161,
+    "ownerPredicateCandidates": 160,
     "reviewRequired": 0,
     "reviewedCandidates": 659,
     "unresolvedSafetyCandidates": 410,
@@ -497,10 +503,10 @@
           "134d721e6f9615596c9c",
           "406dc3bc9886c695d266",
           "0ffad26428a284894b4b",
-          "4a8ad3298a6845cef73d",
-          "0e22a55cfea376535195",
-          "b9fb76e8b1209d52b5bb",
-          "a069ca2973370ece67d9"
+          "ae85f384a856c9d4ba8c",
+          "ad474fc1aee6723385dd",
+          "0e2f237c402443967a5c",
+          "8074f7eefc4ec3159e26"
         ]
       }
     },

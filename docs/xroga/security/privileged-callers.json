@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "23a76bffb6e7ae42b71179c0fe0a0ab8c9c8eb931c437515b12dc0f8357fa34f",
+  "reviewRegistrySha256": "b5e9abc91bcf11e2d7668e91cb872b38ab6e6d1690432617ddc71bb3fd1e8515",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_INCOMPLETE_CALLER_REVIEW_AND_ISOLATED_STAGING_PROOF",
   "counts": {
@@ -9,7 +9,7 @@
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
     "persistenceCandidates": 659,
-    "ownerPredicateCandidates": 161,
+    "ownerPredicateCandidates": 160,
     "reviewRequired": 0,
     "reviewedCandidates": 659,
     "unresolvedSafetyCandidates": 410,
@@ -8575,10 +8575,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -8596,10 +8596,10 @@
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -8617,10 +8617,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -8638,10 +8638,10 @@
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -8659,10 +8659,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -8680,10 +8680,10 @@
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -8701,10 +8701,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -8722,10 +8722,10 @@
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -8743,10 +8743,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -8764,10 +8764,10 @@
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -8777,18 +8777,43 @@
       }
     },
     {
-      "id": "4a8ad3298a6845cef73d",
+      "id": "ae85f384a856c9d4ba8c",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 657,
+      "line": 653,
+      "enclosing": "confirmBusinessAction",
+      "kind": "RPC_CANDIDATE",
+      "target": "claim_business_action_confirmation",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
+      "semanticReview": {
+        "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
+        "reason": "Loopback changed/expired/outage/misleading metadata and concurrent-claim tests pass without provider execution.15 local SQL assertions and reapply pass. Actual HTTP competing, held-lock expiry and intervening plan mutation cases plus browser-role denial prepared. Session-to-owner provider binding, explicit displayed-intent acknowledgement, unchecked failure persistence and post-provider crash recovery remain unresolved. No whole business-action certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
+            "marker": "registerBusinessConfirmationClaimTests"
+          },
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry and admit one concurrent claimant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ad474fc1aee6723385dd",
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "line": 704,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -8798,18 +8823,18 @@
       }
     },
     {
-      "id": "0e22a55cfea376535195",
+      "id": "0e2f237c402443967a5c",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 733,
+      "line": 781,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -8819,39 +8844,18 @@
       }
     },
     {
-      "id": "b9fb76e8b1209d52b5bb",
+      "id": "8074f7eefc4ec3159e26",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 810,
+      "line": 853,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
+      "sourceSha256": "85499fd123325eb8f74f0ecadeb316e3fca8dadf56786f6f8b6e00c7d4b0eb0c",
       "semanticReview": {
         "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
-        "evidence": [
-          {
-            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
-            "marker": "confirmation claims bind owner, reviewed digest and expiry"
-          }
-        ]
-      }
-    },
-    {
-      "id": "a069ca2973370ece67d9",
-      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 882,
-      "enclosing": "confirmBusinessAction",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "business_action_confirmations",
-      "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
-      "sourceSha256": "c617ff7b4f41212671a85aa96901d4dc40cbaf520fe252943706a827d3b76d82",
-      "semanticReview": {
-        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-        "reason": "Claim now compares the reviewed plan digest and expiry timestamp and verifies returned owner/id/status. Loopback race tests pass. Remaining gaps: database-time expiry at execution, session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
