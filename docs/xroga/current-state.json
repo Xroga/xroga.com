@@ -12232,7 +12232,7 @@
       "id": "surface:4cd464f7016cf52503dd",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73",
+      "sha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "symbols": [
         "GrowthService",
         "GrowthServiceError",
@@ -12262,14 +12262,12 @@
         "query",
         "receipt",
         "reference",
-        "replay",
         "result",
         "roles",
         "row",
         "rows",
         "segment",
-        "variant",
-        "winner"
+        "variant"
       ],
       "imports": [
         "../config/supabase.js",
@@ -12298,6 +12296,7 @@
         "backend/src/growth/campaignReceipt.local.integration.ts:6",
         "backend/src/growth/delivery.local.integration.ts:1",
         "backend/src/growth/deliveryReceipt.test.ts:1",
+        "backend/src/growth/eventParentAdmission.test.ts:4",
         "backend/src/growth/eventReplay.local.integration.ts:7",
         "backend/src/growth/eventReplay.test.ts:4",
         "backend/src/growth/experimentAdmission.local.integration.ts:7",
@@ -12351,21 +12350,20 @@
         "backend/src/growth/growthService.ts:48 (tenant_id)",
         "backend/src/growth/growthService.ts:49 (tenant_id)",
         "backend/src/growth/growthService.ts:50 (tenant_id)",
-        "backend/src/growth/growthService.ts:74 (tenant_id)",
+        "backend/src/growth/growthService.ts:70 (tenant_id)",
+        "backend/src/growth/growthService.ts:73 (tenant_id)",
         "backend/src/growth/growthService.ts:77 (tenant_id)",
-        "backend/src/growth/growthService.ts:81 (tenant_id)",
-        "backend/src/growth/growthService.ts:88 (tenant_id)",
-        "backend/src/growth/growthService.ts:99 (tenant_id)",
-        "backend/src/growth/growthService.ts:173 (user_id)",
-        "backend/src/growth/growthService.ts:174 (user_id)",
-        "backend/src/growth/growthService.ts:175 (tenant_id)",
-        "backend/src/growth/growthService.ts:176 (tenant_id)",
-        "backend/src/growth/growthService.ts:231 (tenant_id)",
-        "backend/src/growth/growthService.ts:257 (tenant_id)",
-        "backend/src/growth/growthService.ts:277 (tenant_id)",
-        "backend/src/growth/growthService.ts:363 (tenant_id)",
-        "backend/src/growth/growthService.ts:365 (tenant_id)",
-        "backend/src/growth/growthService.ts:390 (tenant_id)"
+        "backend/src/growth/growthService.ts:84 (tenant_id)",
+        "backend/src/growth/growthService.ts:176 (user_id)",
+        "backend/src/growth/growthService.ts:177 (user_id)",
+        "backend/src/growth/growthService.ts:178 (tenant_id)",
+        "backend/src/growth/growthService.ts:179 (tenant_id)",
+        "backend/src/growth/growthService.ts:234 (tenant_id)",
+        "backend/src/growth/growthService.ts:260 (tenant_id)",
+        "backend/src/growth/growthService.ts:280 (tenant_id)",
+        "backend/src/growth/growthService.ts:366 (tenant_id)",
+        "backend/src/growth/growthService.ts:368 (tenant_id)",
+        "backend/src/growth/growthService.ts:393 (tenant_id)"
       ],
       "approvalBoundary": [
         "backend/src/growth/growthService.ts#hasOperationsPermission"
@@ -12386,6 +12384,7 @@
         "backend/src/growth/campaignReceipt.local.integration.ts",
         "backend/src/growth/delivery.local.integration.ts",
         "backend/src/growth/deliveryReceipt.test.ts",
+        "backend/src/growth/eventParentAdmission.test.ts",
         "backend/src/growth/eventReplay.local.integration.ts",
         "backend/src/growth/eventReplay.test.ts",
         "backend/src/growth/experimentAdmission.local.integration.ts",
@@ -23596,7 +23595,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:781",
+        "backend/src/security/tenantIsolation.local.integration.ts:783",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -84219,6 +84218,7 @@
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/ci/validate-migrations.mjs",
         "scripts/security/audit-tenant-policies.mjs",
+        "scripts/xroga/inventory.mjs",
         "scripts/xroga/mission-check.mjs",
         "scripts/xroga/run-golden-browser.mjs",
         "scripts/xroga/validate-golden-journeys.mjs"
@@ -86305,13 +86305,15 @@
         "zod"
       ],
       "runtimeImports": [],
-      "entryPoints": [],
+      "entryPoints": [
+        "scripts/xroga/inventory.mjs"
+      ],
       "callers": [
         "scripts/xroga/inventory.mjs:7",
         "scripts/xroga/inventory.test.mjs:4",
         "scripts/xroga/requirements-schema.mjs:2"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "zod"
@@ -86324,11 +86326,11 @@
       "testCoverage": [
         "scripts/xroga/inventory.test.mjs"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -86481,12 +86483,14 @@
         "scripts/ci/toolchain.mjs",
         "scripts/xroga/inventory-schema.mjs"
       ],
-      "entryPoints": [],
+      "entryPoints": [
+        "scripts/xroga/inventory.mjs"
+      ],
       "callers": [
         "scripts/xroga/inventory.test.mjs:3",
         "scripts/xroga/verify-phase-one.mjs:10"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:child_process",
@@ -86513,7 +86517,7 @@
       "confidence": "HIGH",
       "reason": "Upcoming capability presentation; operational backend not demonstrated.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -96162,6 +96166,13 @@
       "version": "20261018002200",
       "order": 118,
       "sha256": "47fb8eeab8930302e1af08a4d66bb03e3ca64336f32dcb0c8c7389f10166ffdf"
+    },
+    {
+      "id": "migration:1b4c6ca61cf81c2c1807",
+      "sourcePath": "supabase/migrations/20261019000100_growth_event_parent_admission.sql",
+      "version": "20261019000100",
+      "order": 119,
+      "sha256": "28e7843561a76b98071e02d896c33039f1ba3f32ab42699081fc0dab485e0db2"
     }
   ],
   "workflows": [
@@ -96271,10 +96282,11 @@
     {
       "id": "workflow:cd0effce06f425599e96",
       "sourcePath": ".github/workflows/unit-tests.yml",
-      "sha256": "29ad4cf950a8f333fb92477ddef9d0976fc1242600420442ec9e9a2ab6fb21b6",
+      "sha256": "5a174daa65b809bb9e3759036cddcca5bd6533c7cf3127f6b2d946434a83efd6",
       "sourceEntrypoints": [
         "scripts/ci/compare-baseline-runs.mjs",
         "scripts/ci/prepare-pr-integration.mjs",
+        "scripts/xroga/inventory.mjs",
         "scripts/xroga/phase-two.mjs"
       ],
       "hasSchedule": false
@@ -99766,7 +99778,7 @@
       "sourcePath": "scripts/xroga/inventory-schema.mjs",
       "line": 3,
       "kind": "PLACEHOLDER",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99776,7 +99788,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 120,
       "kind": "TODO",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99786,7 +99798,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 120,
       "kind": "FIXME",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99796,7 +99808,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 120,
       "kind": "STUB",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99806,7 +99818,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 120,
       "kind": "PLACEHOLDER",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99816,7 +99828,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 120,
       "kind": "MOCK",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99826,7 +99838,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 240,
       "kind": "PLACEHOLDER",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99836,7 +99848,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 240,
       "kind": "PLACEHOLDER",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99846,7 +99858,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 252,
       "kind": "MOCK",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99856,7 +99868,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 252,
       "kind": "TODO",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99866,7 +99878,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 252,
       "kind": "PLACEHOLDER",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99876,7 +99888,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 252,
       "kind": "SIMULATION",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99886,7 +99898,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 272,
       "kind": "PLACEHOLDER",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99896,7 +99908,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 276,
       "kind": "TODO",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99906,7 +99918,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 277,
       "kind": "TODO",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99916,7 +99928,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 353,
       "kind": "PLACEHOLDER",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -99926,7 +99938,7 @@
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 353,
       "kind": "SIMULATED",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -103684,9 +103696,16 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:06705ae41aaf0ccc450d",
+      "sourcePath": "backend/src/growth/eventParentAdmission.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:d28f06d75878f1b26293",
       "sourcePath": "backend/src/growth/eventReplay.local.integration.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104367,6 +104386,13 @@
     {
       "id": "test-suite:c07592278230f501e87f",
       "sourcePath": "backend/src/security/businessConfirmationFinish.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:b59c3fa307e0b01f7fc1",
+      "sourcePath": "backend/src/security/chatBoundary.local.integration.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

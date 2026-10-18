@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "9f03742d262ef288fe00ccc23e4431f88c9fb4fa2b0491f85d389954d7ce7c14",
+  "reviewRegistrySha256": "b729caca1db11d84c3bbc144d64058139f3dab936b999871b634acbde42243f6",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -12,16 +12,16 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 638,
-    "unresolvedSafetyCandidates": 366,
+    "unresolvedSafetyCandidates": 365,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 122,
+    "SCOPED_BOUNDARY": 123,
     "NARROW_EXCEPTION": 10,
     "NOT_PERSISTENCE": 140,
-    "REVIEWED_GAP": 366
+    "REVIEWED_GAP": 365
   },
   "acceptance": {
     "version": 1,
@@ -3794,11 +3794,11 @@
       "kind": "RPC_CANDIDATE",
       "target": "record_growth_event",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "semanticReview": {
-        "authority": "Original authenticated actor and normalized immutable event intent are retained across project authority awaits. Existing tenant/idempotency unique index serializes concurrent inserts. A losing unique-conflict request re-reads the winning row with exact tenant/key predicates and verifies actor/project/payload before returning a duplicate.",
-        "reason": "Focused changed-intent, owner, consent, timestamp, metadata ordering, receipt corruption and concurrent-conflict tests pass. Real two-HTTP-request observed PostgreSQL insert-lock test prepared. Mutable membership and experiment/campaign reference races, event provenance and reward qualification remain unresolved. No whole event-writer certification. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
+        "authority": "Only production caller is the authenticated growth events route supplying req.userId. Project authority resolves tenant owner. Immutable normalized intent is passed to service-only record_growth_event, which locks current actor/project/member and exact campaign/experiment/referral/release/deployment tuples before insertion or replay. Exact receipt binds actor, tenant, project, key, labels, payload and optional timestamp. No fallback direct insert or early replay remains.",
+        "reason": "Narrow007 event RPC verified at2bdcb835fb618e1e369385ecd932c8ac7c0499ff, disposable39159378263:119 migrations,156 real security tests and3 browser tests pass. Actual seven competing parent/member locks deny stale events; same-owner/current-member positives, cross-project and forged tenant denial, exact replay/concurrent winner, rollback, browser-role denial and unchanged rewards pass. The source-bound evaluator validates this boundary. The same source branch baseline fails only inventory-drift after build/type/lint/unit success, so full phase acceptance remains blocked pending corrected source CI. Event/provider truth, reward qualification, future008 authority and unrelated growth writers are not certified by analytics labels.",
         "evidence": [
           {
             "path": "backend/src/growth/eventReplay.local.integration.ts",

@@ -7928,15 +7928,15 @@
       "path": "backend/src/growth/growthService.ts",
       "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Focused changed-intent, owner, consent, timestamp, metadata ordering, receipt corruption and concurrent-conflict tests pass. Real two-HTTP-request observed PostgreSQL insert-lock test prepared. Mutable membership and experiment/campaign reference races, event provenance and reward qualification remain unresolved. No whole event-writer certification. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
-      "authorityTrace": "Original authenticated actor and normalized immutable event intent are retained across project authority awaits. Existing tenant/idempotency unique index serializes concurrent inserts. A losing unique-conflict request re-reads the winning row with exact tenant/key predicates and verifies actor/project/payload before returning a duplicate.",
+      "reason": "Narrow007 event RPC verified at2bdcb835fb618e1e369385ecd932c8ac7c0499ff, disposable39159378263:119 migrations,156 real security tests and3 browser tests pass. Actual seven competing parent/member locks deny stale events; same-owner/current-member positives, cross-project and forged tenant denial, exact replay/concurrent winner, rollback, browser-role denial and unchanged rewards pass. The source-bound evaluator validates this boundary. The same source branch baseline fails only inventory-drift after build/type/lint/unit success, so full phase acceptance remains blocked pending corrected source CI. Event/provider truth, reward qualification, future008 authority and unrelated growth writers are not certified by analytics labels.",
+      "authorityTrace": "Only production caller is the authenticated growth events route supplying req.userId. Project authority resolves tenant owner. Immutable normalized intent is passed to service-only record_growth_event, which locks current actor/project/member and exact campaign/experiment/referral/release/deployment tuples before insertion or replay. Exact receipt binds actor, tenant, project, key, labels, payload and optional timestamp. No fallback direct insert or early replay remains.",
       "proofIds": [],
       "existingEvidence": [
         {

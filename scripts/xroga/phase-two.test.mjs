@@ -42,9 +42,11 @@ test('both baseline jobs reject stale Phase2 evidence hashes before browser inst
   const jobs=workflow.slice(workflow.indexOf('jobs:')).split(/\r?\n  integrated-candidate:/);
   assert.equal(jobs.length,2);
   for(const job of jobs){
-    const check=job.indexOf('run: node scripts/xroga/phase-two.mjs');
+    const check=job.indexOf('node scripts/xroga/phase-two.mjs');
     assert.ok(check>=0);assert.ok(check<job.indexOf('run: npx playwright install'));
     assert.ok(check<job.indexOf('npm run verify:baseline'));
+    const inventory=job.indexOf('node scripts/xroga/inventory.mjs --check');
+    assert.ok(inventory>check&&inventory<job.indexOf('run: npx playwright install'),'Reject source inventory drift before browser installation and full regression');
     assert.equal(job.match(/npm run verify:baseline/g)?.length,2,'Both complete baseline repetitions remain mandatory');
   }
 });

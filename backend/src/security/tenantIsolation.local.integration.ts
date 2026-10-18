@@ -91,6 +91,7 @@ import { registerGrowthIdentityTests } from '../growth/identity.local.integratio
 import { registerBillingBudgetTests } from '../services/billingBudget.local.integration.js';
 import { registerBuildProjectReceiptTests } from './buildProjectReceipt.local.integration.js';
 import { registerGrowthEventReplayTests } from '../growth/eventReplay.local.integration.js';
+import { registerChatBoundaryTests } from './chatBoundary.local.integration.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -147,6 +148,7 @@ registerGrowthIdentityTests(admin);
 registerBillingBudgetTests(admin);
 registerBuildProjectReceiptTests(admin, () => users);
 registerGrowthEventReplayTests(admin, () => users);
+registerChatBoundaryTests(admin, () => users, request);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }

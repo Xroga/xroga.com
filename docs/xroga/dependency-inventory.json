@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "330df04b6d9b19d121e248d9622f0628dfbd242f",
+  "source_sha": "2bdcb835fb618e1e369385ecd932c8ac7c0499ff",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -558,6 +558,7 @@
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
+        "backend/src/security/chatBoundary.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
@@ -674,6 +675,7 @@
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
+        "backend/src/security/chatBoundary.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
@@ -7029,6 +7031,7 @@
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
+        "backend/src/security/chatBoundary.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
@@ -9986,6 +9989,7 @@
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
+        "backend/src/security/chatBoundary.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
@@ -10648,6 +10652,7 @@
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
+        "backend/src/security/chatBoundary.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
@@ -11603,7 +11608,7 @@
     },
     {
       "path": ".github/workflows/unit-tests.yml",
-      "sha256": "29ad4cf950a8f333fb92477ddef9d0976fc1242600420442ec9e9a2ab6fb21b6"
+      "sha256": "5a174daa65b809bb9e3759036cddcca5bd6533c7cf3127f6b2d946434a83efd6"
     },
     {
       "path": ".github/workflows/vercel-build-check.yml",
@@ -12339,7 +12344,7 @@
     },
     {
       "path": "backend/src/growth/eventReplay.local.integration.ts",
-      "sha256": "be4e5c800a7f36a8811b42d25b5cd27f6eea43b3c31f28923fb1566c5d3a29b8"
+      "sha256": "f41956f651c4c46c00e0ca08c89f5611dac11c38978f19963c3bf9cbe81aa8c0"
     },
     {
       "path": "backend/src/growth/experimentAdmission.local.integration.ts",
@@ -12351,7 +12356,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sha256": "f85eb68aaa4cbb692a8a100fa5210c826669b773fb6c7cf1e5638ac7f69bcf73"
+      "sha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c"
     },
     {
       "path": "backend/src/growth/identity.local.integration.ts",
@@ -12962,6 +12967,10 @@
       "sha256": "9ee39d62ab7780d2a93da87398de7e0257c6a796eccb3b8e21e93ba5aaf946bd"
     },
     {
+      "path": "backend/src/security/chatBoundary.local.integration.ts",
+      "sha256": "44c3393ad6aa60977bd4d32fc8304ae02aba715d9a4301a9fdd7d9a54aebd6a7"
+    },
+    {
       "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
       "sha256": "6ae3a77e6c4551ca3fc6657b1eff6334c757a9a163d4ac3ed4d53f2c00257a69"
     },
@@ -13071,7 +13080,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a"
+      "sha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -18174,6 +18183,13 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/growth/eventReplay.local.integration.ts",
+      "line": 34,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/growth/experimentAdmission.local.integration.ts",
       "line": 12,
       "credentialsInUrl": false
@@ -18776,6 +18792,13 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/chatBoundary.local.integration.ts",
+      "line": 8,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
       "line": 13,
       "credentialsInUrl": false
@@ -18959,56 +18982,56 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 95,
+      "line": 96,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 95,
+      "line": 96,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 449,
+      "line": 451,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 499,
+      "line": 501,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 588,
+      "line": 590,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 731,
+      "line": 733,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 783,
+      "line": 785,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1451,
+      "line": 1453,
       "credentialsInUrl": false
     },
     {
@@ -24188,7 +24211,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "line": 393,
+      "line": 396,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25189,14 +25212,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 950,
+      "line": 952,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1287,
+      "line": 1289,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

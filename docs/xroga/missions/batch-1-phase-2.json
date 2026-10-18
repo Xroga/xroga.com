@@ -13,6 +13,8 @@
     "backend/src/security/ownership.test.ts",
     "backend/src/security/tenantIsolation.integration.test.ts",
     "backend/src/security/tenantIsolation.local.integration.ts",
+    "backend/src/security/chatBoundary.local.integration.ts",
+    "docs/xroga/batch-1/phases/PHASE-2-ACCESS-MATRIX.md",
     "frontend/src/app/api/release/route.ts",
     "frontend/src/lib/releaseIdentity.ts",
     "frontend/src/lib/releaseIdentity.test.ts",

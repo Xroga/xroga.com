@@ -398,7 +398,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:366 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:365 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -433,7 +433,7 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 638,
-    "unresolvedSafetyCandidates": 366,
+    "unresolvedSafetyCandidates": 365,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 10
   },
@@ -883,7 +883,7 @@
       "existingImplementation": "Existing community roles and growth owner filters",
       "missingBehavior": "Remaining role/parent lineage, replay and external publishing authority",
       "acceptanceTest": "Mixed-field escalation, foreign parents, retry races and no unauthorized provider effects",
-      "pendingCandidates": 38,
+      "pendingCandidates": 37,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/community/service.ts": [
@@ -900,7 +900,6 @@
           "53e04f9e265e59db81e5",
           "714fd3e95dccdeeb7cfa",
           "c4b48546dd042cc91bf0",
-          "7da72c17fc2cd9b645f6",
           "d837c5ed2b4022b6e71c",
           "954c42fd1a2437f38ed5",
           "126ec04bb2325ac5e091",

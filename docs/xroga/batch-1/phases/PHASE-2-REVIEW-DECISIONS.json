@@ -26,11 +26,12 @@
       "packetId":"B1-P2-235593db1d7f94e0",
       "sourceSha256":"9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
       "executionStatus":"IN_PROGRESS",
-      "finding":"DEMONSTRATED_STALE_EVENT_PARENT_CREATION_AND_REPLAY_FIXED_PENDING_REAL_LOCK_PROOF",
+      "finding":"DEMONSTRATED_STALE_EVENT_PARENT_CREATION_AND_REPLAY_FIXED_REAL_LOCK_PROOF_RECONCILED",
+      "priorVerifiedTenantScope":{"sourceSha":"2bdcb835fb618e1e369385ecd932c8ac7c0499ff","disposableRun":"39159378263","securityTests":156,"migrations":119,"browserTests":3,"scope":"Narrow event RPC only, not full Phase2 or unrelated growth writers. Branch baseline inventory-drift remains a recorded integration failure."},
       "actorTrace":"Authenticated growth mount supplies req.userId. OperationsService.permissions resolves project owner. Service-only record_growth_event rechecks and holds actor/project/member and exact campaign/experiment/referral/release/deployment tuples through insertion or replay, preserving normalized actor intent and the existing unique index.",
       "invariant":"A parent transfer or membership revocation that wins the database lock cannot admit a stale event or replay. Same-owner and viewer creation, normalized duplicate intent, exact receipt and historical paused/completed labels remain supported. Analytics labels grant no reward or execution authority.",
       "evidence":[{"path":"backend/src/growth/eventParentAdmission.test.ts","type":"FOCUSED_TEST","result":"PRE_FIX_FAILED_MISSING_REJECTION_THEN_PASSED","scope":"Stale snapshot cannot return replay or perform unguarded insert"},{"path":"backend/src/growth/eventReplay.local.integration.ts","type":"DISPOSABLE_LOCK_TEST","result":"NEW_CURRENT_PARENT_CASE_NOT_EXECUTED_AT_RECORD_CREATION","scope":"Observed parent/member locks, forged tenant, browser denial, duplicate/distinct HTTP concurrency, rollback and unchanged rewards"}],
-      "remaining":["Execute final-source real locks and unchanged referral-trigger regression","Reconcile broad growth packet without certifying unrelated writes","Phase3 authority and provider provenance are not inferred from analytics labels"]
+      "remaining":["Final-source regression and inventory correction remain required","Reconcile broad growth packet without certifying unrelated writes","Phase3 authority and provider provenance are not inferred from analytics labels"]
     },
     {
       "packetId":"B1-P2-08a1009a4a9b93a5",

@@ -1911,7 +1911,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3024,7 +3024,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -3906,7 +3906,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4061,7 +4061,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4174,7 +4174,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4409,7 +4409,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4580,7 +4580,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4932,7 +4932,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5185,7 +5185,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5254,7 +5254,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5652,7 +5652,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6141,7 +6141,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6230,7 +6230,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "822c5fd2c107d19afaa2723fe91162e702a5b6d63263f2b0fb65a594f1c2ed2a",
+          "sourceSha256": "d2c040082086c956a76006f9415975c7a4d94dd04e3515c1970fb0eb3b35473a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7761,7 +7761,15 @@
         "packetId": "B1-P2-235593db1d7f94e0",
         "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
         "executionStatus": "IN_PROGRESS",
-        "finding": "DEMONSTRATED_STALE_EVENT_PARENT_CREATION_AND_REPLAY_FIXED_PENDING_REAL_LOCK_PROOF",
+        "finding": "DEMONSTRATED_STALE_EVENT_PARENT_CREATION_AND_REPLAY_FIXED_REAL_LOCK_PROOF_RECONCILED",
+        "priorVerifiedTenantScope": {
+          "sourceSha": "2bdcb835fb618e1e369385ecd932c8ac7c0499ff",
+          "disposableRun": "39159378263",
+          "securityTests": 156,
+          "migrations": 119,
+          "browserTests": 3,
+          "scope": "Narrow event RPC only, not full Phase2 or unrelated growth writers. Branch baseline inventory-drift remains a recorded integration failure."
+        },
         "actorTrace": "Authenticated growth mount supplies req.userId. OperationsService.permissions resolves project owner. Service-only record_growth_event rechecks and holds actor/project/member and exact campaign/experiment/referral/release/deployment tuples through insertion or replay, preserving normalized actor intent and the existing unique index.",
         "invariant": "A parent transfer or membership revocation that wins the database lock cannot admit a stale event or replay. Same-owner and viewer creation, normalized duplicate intent, exact receipt and historical paused/completed labels remain supported. Analytics labels grant no reward or execution authority.",
         "evidence": [
@@ -7779,7 +7787,7 @@
           }
         ],
         "remaining": [
-          "Execute final-source real locks and unchanged referral-trigger regression",
+          "Final-source regression and inventory correction remain required",
           "Reconcile broad growth packet without certifying unrelated writes",
           "Phase3 authority and provider provenance are not inferred from analytics labels"
         ]

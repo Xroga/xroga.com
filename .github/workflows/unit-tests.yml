@@ -34,7 +34,9 @@ jobs:
       - run: npm ci
 
       - name: Verify frozen Phase 2 register before expensive regression
-        run: node scripts/xroga/phase-two.mjs
+        run: |
+          node scripts/xroga/phase-two.mjs
+          node scripts/xroga/inventory.mjs --check
 
       - name: Install pinned browser for existing local browser integration tests
         env:
@@ -80,7 +82,9 @@ jobs:
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: node scripts/ci/prepare-pr-integration.mjs
       - name: Verify integrated Phase 2 register before expensive regression
-        run: node scripts/xroga/phase-two.mjs
+        run: |
+          node scripts/xroga/phase-two.mjs
+          node scripts/xroga/inventory.mjs --check
       - name: Install the same pinned browser for integrated regression
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
