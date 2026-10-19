@@ -1,11 +1,13 @@
-.panel { position: relative; height: 100%; min-height: 650px; overflow: hidden; isolation: isolate; border: 1px solid #ffffff20; border-radius: 22px; background: #061019; color: #f8fafc; font-family: Arial, Helvetica, sans-serif; }
+.panel { position: relative; display: flex; flex-direction: column; height: 100%; min-height: 730px; overflow: hidden; isolation: isolate; border: 1px solid #ffffff20; border-radius: 22px; background: #061019; color: #f8fafc; font-family: Arial, Helvetica, sans-serif; }
 .pattern { position: absolute; inset: 0 0 23%; overflow: hidden; background-image: linear-gradient(180deg, #f0f4f2 0%, #e7eeeecc 12%, transparent 50%, #061019 99%), repeating-linear-gradient(90deg, #ffffffa8 0px, #ffffff12 3px, #001324bb 13px, #00132400 17px); background-blend-mode: normal; }
 .pattern::after { content: ''; position: absolute; inset: 0; background: linear-gradient(160deg, transparent 20%, #06101900 35%, #061019e6 74%, #061019 95%); }
 .header { position: absolute; top: 23px; left: 25px; z-index: 2; display: flex; align-items: center; gap: 8px; color: #111820; font-size: 17px; font-weight: 600; letter-spacing: -.06em; }
 .header img { width: 160px; height: 60px; object-fit: contain; }
 .capabilities { position: absolute; top: 123px; left: 26px; right: 26px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .capabilities button { display: grid; gap: 5px; padding: 13px 16px; text-align: left; border: 1px solid #ffffff45; border-radius: 16px; color: #f7fafc; background: #061019b8; backdrop-filter: blur(14px); cursor: pointer; transition: border-color .18s, background .18s; }
-.capabilities button:hover, .capabilities button[aria-pressed='true'] { border-color: #fff; background: #0b2336e8; }
+.capabilities button:hover { border-color: var(--card-accent); }
+.capabilities button[aria-pressed='true'] { border-color: var(--card-accent); background: color-mix(in srgb, var(--card-accent) 32%, #061019); box-shadow: inset 0 0 0 1px var(--card-accent), 0 5px 22px #0003; }
+.capabilities button[aria-pressed='true'] svg { color: var(--card-accent); }
 .capabilities button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .capabilities svg { width: 22px; height: 22px; margin-bottom: 7px; color: #d1e7ed; }
 .capabilities strong { font-size: 18px; font-weight: 500; }
@@ -25,6 +27,14 @@
 .dots button:focus-visible { outline: 2px solid #d5f8ff; outline-offset: 3px; border-radius: 3px; }
 @keyframes reveal { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 700px) { .panel { min-height: 600px; } .copyArea { left: 23px; right: 23px; bottom: 19px; } .story h2 { font-size: 34px; } .description { font-size: 11px; } .pattern { bottom: 27%; } .capabilities { top: 105px; left: 23px; right: 23px; } .capabilities button { padding: 11px 13px; } }
-@media (max-width: 700px) { .panel { min-height: 660px; } }
-@media (max-width: 380px) { .panel { min-height: 710px; } }
+.header { position: relative; top: auto; left: auto; align-self: flex-start; margin: 20px 26px; padding: 0 10px; border: 1px solid #ffffff22; border-radius: 13px; background: #04111ee6; box-shadow: 0 6px 22px #0002; }
+.header img { filter: drop-shadow(0 1px 2px #c1d7eb44); }
+.capabilities { position: relative; top: auto; left: auto; right: auto; margin: 0 26px; }
+.voicePrompt { position: relative; margin: 18px 26px 0; color: #c5d4de; font-size: 12px; line-height: 1.65; }
+.voicePrompt strong { color: #fff; font-weight: 500; }
+.copyArea { position: relative; right: auto; bottom: auto; left: auto; margin-top: auto; padding: 24px 26px 20px; }
+.features { display: flex; flex-wrap: wrap; gap: 6px; margin: 15px 0 0; padding: 0; list-style: none; }
+.features li { border: 1px solid #ffffff25; border-radius: 6px; padding: 5px 8px; background: #ffffff08; color: #c5d5e0; font-size: 10px; line-height: 1.4; }
+.dots { margin-top: 14px; }
+@media (max-width: 700px) { .panel { min-height: 0; } .header { margin: 20px 23px; } .capabilities { margin: 0 23px; } .copyArea { padding: 22px 23px 18px; } .voicePrompt { margin: 17px 23px 0; } }
 @media (prefers-reduced-motion: reduce) { .story { animation: none; } }

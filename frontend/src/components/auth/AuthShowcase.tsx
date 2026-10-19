@@ -2,14 +2,14 @@
 
 import Image from 'next/image';
 import { Plus, ScanSearch, Globe2, SquareTerminal } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { type CSSProperties, useEffect, useState } from 'react';
 import styles from './AuthPowerPanel.module.css';
 
 const STORIES = [
-  { label: 'From a conversation to something real', title: 'Your next big idea.', accent: 'Built with Xroga.', description: 'Think out loud. Research the possibilities, shape your idea, and turn your conversation into a working project.', color: '#22c9e8' },
-  { label: 'Build · test · repair', title: 'Build for every screen.', accent: 'Keep moving forward.', description: 'Create responsive apps, test in the browser, and work through fixes. Keep long-running projects moving from the first version to launch.', color: '#8b83f6' },
-  { label: 'Connected apps · browser workflows', title: 'Less busywork.', accent: 'More possibility.', description: 'Bring your apps and custom MCP tools together. Research, plan, and run browser workflows, with approvals for sensitive actions.', color: '#eda46c' },
-  { label: 'AI employees · SEO · AEO · GEO', title: 'Your team for', accent: 'what comes next.', description: 'Put specialized AI employees to work on research, content, operations, and development. Build a stronger presence across search and AI discovery.', color: '#69cbb0' },
+  { label: 'Create · write · organize', title: 'Your next big idea.', accent: 'Built with Xroga.', description: 'Start with a conversation. Create tasks, images, documents, presentations, and spreadsheets. Turn ideas into plans, content, and work you can share.', features: ['Images & documents', 'Slides & spreadsheets', 'Blogs & content', 'Tasks & project plans'], color: '#22c9e8' },
+  { label: 'Code · test · repair · launch', title: 'Build for every screen.', accent: 'Keep moving forward.', description: 'Build websites and responsive apps. Test real browser interactions, find UI and functional errors, and work through repairs on long-running projects.', features: ['Web & mobile projects', 'Browser testing', 'Debugging & repairs', 'Deployment workflows'], color: '#8b83f6' },
+  { label: 'Find · connect · automate', title: 'Your tools, together.', accent: 'Less busywork.', description: 'Find answers and files, connect apps and custom MCP tools, and automate browser workflows. Put specialized AI employees to work across your business.', features: ['App integrations & MCP', 'Answers & file search', 'Live browser automation', 'Specialized AI employees'], color: '#eda46c' },
+  { label: 'Research · discover · grow', title: 'Explore every angle.', accent: 'Move with insight.', description: 'Research the web and X, compare sources, and plan travel. Create content for SEO, AEO, and GEO, with approval before sensitive actions or purchases.', features: ['Web & X research', 'Travel & flight planning', 'SEO · AEO · GEO', 'Business & content growth'], color: '#69cbb0' },
 ] as const;
 
 const CAPABILITIES = [
@@ -45,11 +45,12 @@ export function AuthShowcase() {
       onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false); }}>
       <div className={styles.pattern} aria-hidden="true" style={{ backgroundColor: STORIES[activeSlide].color }} />
       <header className={styles.header}>
-        <Image src="/brand/xroga-orb-wordmark-v2.webp" alt="Xroga" width={160} height={60} priority />
+        <Image src="/brand/xroga-orb-wordmark-dark-v3.webp" alt="Xroga" width={160} height={60} priority />
       </header>
       <nav className={styles.capabilities} aria-label="Explore Xroga capabilities">
         {CAPABILITIES.map(({ title, description, icon: Icon, slide }) => (
           <button key={title} type="button" onClick={() => setActiveSlide(slide)}
+            style={{ '--card-accent': STORIES[slide].color } as CSSProperties}
             aria-pressed={activeSlide === slide}>
             <Icon aria-hidden="true" />
             <strong>{title}</strong>
@@ -57,12 +58,16 @@ export function AuthShowcase() {
           </button>
         ))}
       </nav>
+      <p className={styles.voicePrompt}>Describe your idea in your language.<br /><strong>Speak with voice, or simply type.</strong></p>
       <div className={styles.copyArea}>
         {STORIES.map((story, index) => (
           <article key={story.title} className={styles.story} hidden={activeSlide !== index}>
             <p className={styles.eyebrow}><span />{story.label}</p>
             <h2>{story.title}<br /><em>{story.accent}</em></h2>
             <p className={styles.description}>{story.description}</p>
+            <ul className={styles.features} aria-label={`${story.label} features`}>
+              {story.features.map(feature => <li key={feature}>{feature}</li>)}
+            </ul>
           </article>
         ))}
         <nav className={styles.dots} aria-label="Choose a capability slide">

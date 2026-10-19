@@ -21,7 +21,7 @@
   position: relative;
   isolation: isolate;
 }
-.particles { position: fixed; z-index: -1; inset: 0; pointer-events: none; background: #fff; opacity: .18; mask: radial-gradient(circle at 50% 50%, white 1.5px, transparent 2px) 50% 50% / 20px 20px, url('/brand/particle-noise-mask.png') 256px 50% / 256px 256px; mask-composite: intersect; animation: particleFlicker 20s infinite linear; }
+.particles { position: fixed; z-index: -1; inset: 0; pointer-events: none; background: #fff; opacity: .5; mask: radial-gradient(circle at 50% 50%, white 2px, transparent 2.5px) 50% 50% / 20px 20px, url('/brand/particle-noise-mask.png') 256px 50% / 256px 256px; mask-composite: intersect; animation: particleFlicker 20s infinite linear; }
 @keyframes particleFlicker { to { mask-position: 50% 50%, 0 50%; } }
 .shell { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 440px); justify-content: space-between; gap: 70px; width: 100%; max-width: 1060px; }
 .story { min-width: 0; min-height: 650px; overflow: hidden; border-radius: 18px; }
