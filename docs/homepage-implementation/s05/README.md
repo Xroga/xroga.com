@@ -105,16 +105,20 @@ Most S05 capabilities work through accounts the visitor connects, or are still e
 payment taken, an approval won, an uptime figure or a recovered system; the coding tile is an illustrative visual, not
 a recorded execution. One section-level note carries the boundary.
 
-## Legacy sections after S05 (founder decision, untouched here)
+## Post-S05 homepage cleanup (founder-approved October 19, 2026)
 
-`HomepageClient` still renders, between S05 and the closing CTA and footer: `HomepagePowerStories`,
-`HomepageWorkspaceTour`, `HomepageAllInOne` (wrapper `#product`), `XrogaIntelligenceSection` + `HomepageStackStudio`,
-`HomepageShowcase` (`#showcase`), `HomepageShipStack` (`#how-xroga-works`), `HomepageEnterpriseProof`,
-`HomepagePricingPreview`, `HomepageOwnershipProof` and `HomepageFaqSection`. Dependencies checked: each component is
-used only on the homepage; nothing in the site links to the `#product`, `#showcase` or `#how-xroga-works` anchors;
-the homepage structured data is a plain WebPage with no FAQ schema. Removing them is a separate, reversible change to
-`HomepageClient.tsx` (the component files can stay); the FAQ and pricing preview carry content worth relocating
-rather than losing.
+The homepage now goes directly from `<S05Capabilities />` to the existing community-and-signup closing frame
+("Build with other builders. / Build what's yours."), followed by the shared `MarketingFooter` supplied by
+`PublicMarketingChrome`. The closing frame retains the existing ambient Squares Terminal backdrop, feedback modal,
+community/docs links and authenticated signup routing.
+
+Removed from the homepage render tree: `HomepagePowerStories`, `HomepageWorkspaceTour`, `HomepageAllInOne`,
+`XrogaIntelligenceSection`, `HomepageStackStudio`, `HomepageShowcase`, `HomepageShipStack`,
+`HomepageEnterpriseProof`, `HomepagePricingPreview`, `HomepageOwnershipProof` and `HomepageFaqSection`.
+The old `#product`, `#showcase` and `#how-xroga-works` wrappers also disappear; no homepage navigation
+relies on them. Their source files are preserved for other routes or potential reuse; this is a reversible,
+homepage-only unmount. Pricing and documentation still have their standalone routes. Homepage SEO metadata remains,
+and there was no FAQPage structured-data block to remove.
 
 ## Final precision pass (after founder review against the Aiven recording of 2026-10-19)
 
