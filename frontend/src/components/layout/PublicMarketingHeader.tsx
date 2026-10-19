@@ -184,12 +184,18 @@ export function PublicMarketingHeader() {
     if (process.env.NEXT_PUBLIC_NAVLAB !== '1') return;
     const concept = new URLSearchParams(window.location.search).get('nav');
     const root = rootRef.current;
-    if ((concept !== 'a' && concept !== 'b') || !root) return;
+    if ((concept !== 'a' && concept !== 'b' && concept !== 'lens') || !root) return;
     let lab: { destroy: () => void } | undefined;
     let gone = false;
-    void import('./nav/lab').then((m) => {
-      if (!gone) lab = m.mountLab(concept, root);
-    });
+    if (concept === 'lens') {
+      void import('./nav/lens').then((m) => {
+        if (!gone) lab = m.mountLens(root);
+      });
+    } else {
+      void import('./nav/lab').then((m) => {
+        if (!gone) lab = m.mountLab(concept, root);
+      });
+    }
     return () => {
       gone = true;
       lab?.destroy();

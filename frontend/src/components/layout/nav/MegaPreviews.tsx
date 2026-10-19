@@ -7,7 +7,7 @@
  * their content. Everything here is illustrative: no customer work, no real metrics, no claim of a finished release.
  */
 import Link from 'next/link';
-import { useState, type ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { CONNECT_GROUPS, CONNECT_MORE, type ConnectBrand } from './navData';
 
@@ -55,72 +55,205 @@ function Win({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-/* ---------------------------------------------------------------- Product: one request, executed and verified */
-export function ProductPreview({ active }: { active: string }) {
-  return (
-    <div className="xn-pv xp-product" data-focus={active} aria-hidden="true">
-      <div className="xp-flow">
-        <div className="xp-stage">
-          <div className="xp-stage-k">
-            <i />
-            Request
-          </div>
-          <div className="xp-req" data-z="workspace">
-            <span className="xp-avatar">Y</span>
+/* ---------------------------------------------------------------- Product: one task inside a miniature Xroga workspace */
+// Each Product link opens the matching view of the same task (Request -> Coordinated execution -> Verified outcome), so
+// the preview answers the link: the window, rail and stage track stay put while the view's content resolves into place.
+const PV_GH: ConnectBrand = { name: 'GitHub', slug: 'github', color: 'ffffff', category: '' };
+const PV_STRIPE: ConnectBrand = { name: 'Stripe', slug: 'stripe', color: '635BFF', category: '' };
+const PV_VERCEL: ConnectBrand = { name: 'Vercel', slug: 'vercel', color: 'ffffff', category: '' };
+const PRODUCT_VIEWS = ['overview', 'workspace', 'intelligence', 'verification', 'integrations', 'ownership'] as const;
+type ProductView = (typeof PRODUCT_VIEWS)[number];
+// which stage of the task each view sits in: 0 request, 1 execution, 2 verified
+const VIEW_STAGE: Record<ProductView, number> = { overview: 2, workspace: 0, intelligence: 1, integrations: 1, verification: 2, ownership: 2 };
+const VIEW_TITLE: Record<ProductView, string> = {
+  overview: 'Task · Add Stripe checkout',
+  workspace: 'Workspace',
+  intelligence: 'Plan',
+  verification: 'Evidence',
+  integrations: 'Tools for this task',
+  ownership: 'your-org/store',
+};
+const RailIcon = ({ d }: { d: string }) => (
+  <svg viewBox="0 0 16 16" aria-hidden="true">
+    <path d={d} />
+  </svg>
+);
+const RAIL: { view: ProductView; d: string }[] = [
+  { view: 'workspace', d: 'M2.5 4.5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v4.5a2 2 0 0 1-2 2H7l-3 2.5v-2.5h0a2 2 0 0 1-1.5-2z' },
+  { view: 'intelligence', d: 'M3 8a1.5 1.5 0 1 0 3 0 1.5 1.5 0 1 0-3 0M10 3.5a1.5 1.5 0 1 0 3 0 1.5 1.5 0 1 0-3 0M10 12.5a1.5 1.5 0 1 0 3 0 1.5 1.5 0 1 0-3 0M6 7.5l4-3M6 8.5l4 3' },
+  { view: 'verification', d: 'M8 2 3 4v4c0 3 2.2 5 5 6 2.8-1 5-3 5-6V4zM5.8 8.2l1.6 1.6 3-3.2' },
+  { view: 'integrations', d: 'M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 11h4M11 9v4' },
+  { view: 'ownership', d: 'M5 3v10M5 9c0-2 6-1 6-4M11 3.5v1.5M5 3a1.5 1.5 0 1 0 0 .01M5 13a1.5 1.5 0 1 0 0 .01M11 3a1.5 1.5 0 1 0 0 .01' },
+];
+
+function ProductView({ view }: { view: ProductView }) {
+  switch (view) {
+    case 'workspace':
+      return (
+        <div className="xq-view xq-chat">
+          <div className="xq-msg is-you">
+            <b>You</b>
             <p>Add Stripe checkout to my store and test the payment flow.</p>
           </div>
+          <div className="xq-msg is-x">
+            <b>Xroga</b>
+            <p>I’ll read the cart code, add checkout with your Stripe account in test mode, then run the payment flow in a test browser.</p>
+            <span className="xq-chip">Plan · 3 steps</span>
+          </div>
+          <div className="xq-composer">Reply to Xroga…</div>
         </div>
-        <div className="xp-stage">
-          <div className="xp-stage-k">
-            <i />
-            Execution
+      );
+    case 'intelligence':
+      return (
+        <div className="xq-view xq-plan">
+          <svg className="xq-paths" viewBox="0 0 300 150" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M58 75 C 100 75, 100 22, 140 22" />
+            <path d="M58 75 C 100 75, 100 75, 140 75" />
+            <path className="is-run" d="M58 75 C 100 75, 100 128, 140 128" />
+          </svg>
+          <div className="xq-node is-req">
+            <small>Request</small>
+            <b>Stripe checkout</b>
           </div>
-          <div className="xp-plan" data-z="intelligence">
-            <div className="xp-step is-done">
+          <div className="xq-steps">
+            <div className="xq-step is-done">
               <i />
-              Read the store’s cart and orders code
+              Read cart and orders code
             </div>
-            <div className="xp-step is-done">
+            <div className="xq-step is-done">
               <i />
-              Add checkout with your Stripe account
+              Add Stripe checkout
             </div>
-            <div className="xp-step is-run">
+            <div className="xq-step is-run">
               <i />
-              Run the payment flow in a test browser
+              Run the payment flow
             </div>
-          </div>
-          <div className="xp-apps" data-z="integrations">
-            <span>
-              <b className="xp-mark is-gh" />
-              GitHub
-            </span>
-            <span>
-              <b className="xp-mark is-stripe" />
-              Stripe
-            </span>
-            <span>
-              <b className="xp-mark is-vercel" />
-              Vercel
-            </span>
           </div>
         </div>
-        <div className="xp-stage">
-          <div className="xp-stage-k">
+      );
+    case 'verification':
+      return (
+        <div className="xq-view xq-evidence">
+          <div className="xq-check">
             <i />
-            Verified outcome
+            <span>Build</span>
+            <em>passed</em>
           </div>
-          <div className="xp-checks" data-z="verification">
-            <span className="is-ok">Build</span>
-            <span className="is-ok">Tests</span>
-            <span className="is-ok">Checkout preview</span>
+          <div className="xq-check">
+            <i />
+            <span>Unit tests</span>
+            <em>24 passed</em>
           </div>
-          <div className="xp-repo" data-z="ownership">
+          <div className="xq-check">
+            <i />
+            <span>Checkout in a test browser</span>
+            <em>passed</em>
+          </div>
+          <div className="xq-shot">
+            <div className="xq-shot-bar">store.test / checkout</div>
+            <div className="xq-shot-body">
+              <b>Payment succeeded</b>
+              <span>Test mode · card ending 4242</span>
+            </div>
+          </div>
+        </div>
+      );
+    case 'integrations':
+      return (
+        <div className="xq-view xq-tools">
+          {[
+            { b: PV_GH, what: 'Read and write your-org/store' },
+            { b: PV_STRIPE, what: 'Checkout in test mode' },
+            { b: PV_VERCEL, what: 'Preview deployment' },
+          ].map(({ b, what }) => (
+            <div className="xq-tool" key={b.name}>
+              <span className="xq-tool-mark">
+                <BrandMark brand={b} size={16} />
+              </span>
+              <span>
+                <b>{b.name}</b>
+                <em>{what}</em>
+              </span>
+            </div>
+          ))}
+          <p className="xq-note">You choose what to connect and authorize.</p>
+        </div>
+      );
+    case 'ownership':
+      return (
+        <div className="xq-view xq-repo">
+          <div className="xq-branch">
             <BranchIcon />
-            <span>
-              your-org/store · <b>feat/checkout</b>
-            </span>
-            <em>Ready for your review</em>
+            feat/checkout
           </div>
+          {[
+            ['a41c9e2', 'Read cart and order totals'],
+            ['7d03b18', 'Add Stripe checkout session'],
+            ['e95f2c4', 'Test the payment flow'],
+          ].map(([h, m]) => (
+            <div className="xq-commit" key={h}>
+              <code>{h}</code>
+              <span>{m}</span>
+            </div>
+          ))}
+          <div className="xq-pr">
+            <b>Pull request</b>
+            <span>
+              <i className="xq-add">+184</i> <i className="xq-del">−12</i> · Ready for your review
+            </span>
+          </div>
+        </div>
+      );
+    default:
+      return (
+        <div className="xq-view xq-overview">
+          {[
+            ['Request', 'Add Stripe checkout and test the payment flow'],
+            ['Execution', 'Three steps with GitHub, Stripe and Vercel'],
+            ['Verified', 'Build, tests and a checkout run in a test browser'],
+          ].map(([k, v], n) => (
+            <div className={`xq-card is-s${n}`} key={k}>
+              <small>{k}</small>
+              <span>{v}</span>
+            </div>
+          ))}
+        </div>
+      );
+  }
+}
+
+export function ProductPreview({ active }: { active: string }) {
+  const view: ProductView = (PRODUCT_VIEWS as readonly string[]).includes(active) ? (active as ProductView) : 'overview';
+  const stage = VIEW_STAGE[view];
+  const railAt = RAIL.findIndex((r) => r.view === view);
+  return (
+    <div className="xn-pv xq" data-view={view} aria-hidden="true">
+      <div className="xq-win">
+        <div className="xq-top">
+          <i />
+          <i />
+          <i />
+          <span>Xroga · {VIEW_TITLE[view]}</span>
+          <em data-stage={stage}>{stage === 2 ? 'Verified' : stage === 1 ? 'Running' : 'New'}</em>
+        </div>
+        <div className="xq-main">
+          <div className="xq-rail" style={{ '--at': railAt } as CSSProperties} data-on={railAt >= 0 || undefined}>
+            {RAIL.map((r) => (
+              <span key={r.view} data-on={r.view === view || undefined}>
+                <RailIcon d={r.d} />
+              </span>
+            ))}
+          </div>
+          <div className="xq-stage">
+            <ProductView view={view} key={view} />
+          </div>
+        </div>
+        <div className="xq-track">
+          {['Request', 'Execution', 'Verified'].map((s, n) => (
+            <span key={s} data-on={n <= stage || undefined} data-now={n === stage || undefined}>
+              {s}
+            </span>
+          ))}
         </div>
       </div>
     </div>

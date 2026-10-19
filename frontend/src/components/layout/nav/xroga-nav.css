@@ -84,7 +84,7 @@
   padding: 0 4px;
   margin-left: -4px;
 }
-.xn-lockup span {
+.xn-lockup > span {
   display: block;
   height: 30px;
   background: url('/brand/xroga-orb-wordmark-dark-v3.webp') no-repeat;
@@ -820,6 +820,543 @@
   font: 600 10.5px var(--font-inter), system-ui, sans-serif;
   font-style: normal;
   color: #9cc3ff;
+}
+
+/* Product: one task in a miniature Xroga workspace; each link resolves its own view of it */
+.xn-pv.xq {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+.xq-win {
+  display: grid;
+  grid-template-rows: 32px minmax(0, 1fr) 38px;
+  height: 100%;
+  border-radius: 13px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #11151b, #0c0f13);
+  box-shadow:
+    inset 0 1px 0 rgba(236, 233, 226, 0.07),
+    inset 0 0 0 1px rgba(236, 233, 226, 0.08),
+    0 24px 40px -26px rgba(0, 0, 0, 0.95);
+}
+.xq-top {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px 0 12px;
+  box-shadow: inset 0 -1px 0 rgba(236, 233, 226, 0.07);
+}
+.xq-top > i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2a313b;
+}
+.xq-top span {
+  margin-left: 7px;
+  font-size: 11.5px;
+  font-weight: 560;
+  color: #aab2bf;
+  white-space: nowrap;
+}
+.xq-top em {
+  margin-left: auto;
+  padding: 3px 7px;
+  border-radius: 6px;
+  font: 600 9.5px/1 var(--font-xv-mono), ui-monospace, monospace;
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9aa4b2;
+  background: rgba(236, 233, 226, 0.05);
+  transition:
+    color 240ms ease,
+    background 240ms ease;
+}
+.xq-top em[data-stage='1'] {
+  color: #a9c6ff;
+  background: rgba(64, 120, 255, 0.14);
+}
+.xq-top em[data-stage='2'] {
+  color: #9fe3cd;
+  background: rgba(122, 214, 188, 0.12);
+}
+.xq-main {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  min-height: 0;
+}
+.xq-rail {
+  position: relative;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 6px;
+  padding: 10px 0;
+  box-shadow: inset -1px 0 0 rgba(236, 233, 226, 0.06);
+}
+.xq-rail::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: rgba(64, 120, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(111, 157, 255, 0.42);
+  opacity: 0;
+  transform: translateY(calc(var(--at, 0) * 32px));
+  transition:
+    transform 380ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 200ms ease;
+}
+.xq-rail[data-on]::before {
+  opacity: 1;
+}
+.xq-rail span {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+}
+.xq-rail svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: #677180;
+  stroke-width: 1.35;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 220ms ease;
+}
+.xq-rail span[data-on] svg {
+  stroke: #eef1f6;
+}
+.xq-stage {
+  position: relative;
+  min-height: 0;
+  padding: 13px 13px 12px;
+  overflow: hidden;
+}
+.xq-view {
+  height: 100%;
+}
+.xq-view > * {
+  animation: xqIn 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.xq-view > :nth-child(2) {
+  animation-delay: 55ms;
+}
+.xq-view > :nth-child(3) {
+  animation-delay: 110ms;
+}
+.xq-view > :nth-child(4) {
+  animation-delay: 165ms;
+}
+.xq-view > :nth-child(5) {
+  animation-delay: 220ms;
+}
+@keyframes xqIn {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+}
+.xq-track {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  align-items: center;
+  padding: 0 12px;
+  box-shadow: inset 0 1px 0 rgba(236, 233, 226, 0.07);
+}
+.xq-track span {
+  position: relative;
+  padding-top: 7px;
+  font: 600 9.5px/1 var(--font-xv-mono), ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #5c6673;
+  transition: color 240ms ease;
+}
+.xq-track span::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(236, 233, 226, 0.08);
+  transition: background 300ms ease;
+}
+.xq-track span[data-on] {
+  color: #9aa4b2;
+}
+.xq-track span[data-on]::before {
+  background: #4f86ff;
+}
+.xq-track span[data-now] {
+  color: #eef1f6;
+}
+.xq[data-view='overview'] .xq-track span[data-on]::before,
+.xq[data-view='verification'] .xq-track span[data-on]::before,
+.xq[data-view='ownership'] .xq-track span[data-on]::before {
+  background: linear-gradient(90deg, #4f86ff, #7ad6bc);
+}
+
+/* overview: the task in three stages */
+.xq-overview {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+.xq-card {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #151a21;
+  box-shadow: inset 0 0 0 1px rgba(236, 233, 226, 0.06);
+}
+.xq-card small {
+  font: 600 9.5px/1 var(--font-xv-mono), ui-monospace, monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9aa4b2;
+}
+.xq-card.is-s1 small {
+  color: #8fb3ff;
+}
+.xq-card.is-s2 small {
+  color: #7ad6bc;
+}
+.xq-card span {
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: #e3e7ed;
+}
+
+/* workspace: the conversation */
+.xq-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.xq-msg {
+  padding: 9px 11px;
+  border-radius: 11px;
+  background: #171c24;
+  box-shadow: inset 0 0 0 1px rgba(236, 233, 226, 0.06);
+}
+.xq-msg b {
+  font: 600 9.5px/1 var(--font-xv-mono), ui-monospace, monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7f8896;
+}
+.xq-msg p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #e3e7ed;
+}
+.xq-msg.is-you {
+  margin-left: 22px;
+}
+.xq-msg.is-x {
+  margin-right: 8px;
+  background: rgba(40, 104, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(111, 157, 255, 0.22);
+}
+.xq-msg.is-x b {
+  color: #8fb3ff;
+}
+.xq-chip {
+  display: inline-block;
+  margin-top: 7px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  font: 600 10px/1.2 var(--font-xv-mono), ui-monospace, monospace;
+  color: #a9c6ff;
+  background: rgba(64, 120, 255, 0.14);
+}
+.xq-composer {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  margin-top: auto;
+  padding: 0 11px;
+  border-radius: 9px;
+  font-size: 12px;
+  color: #6a7483;
+  box-shadow: inset 0 0 0 1px rgba(236, 233, 226, 0.09);
+}
+
+/* intelligence: the plan as a coordinated graph */
+.xq-plan {
+  position: relative;
+}
+.xq-paths {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.xq-paths path {
+  fill: none;
+  stroke: rgba(236, 233, 226, 0.2);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+.xq-paths path.is-run {
+  stroke: #6f9dff;
+  stroke-dasharray: 4 5;
+  animation: xqFlow 900ms linear infinite;
+}
+@keyframes xqFlow {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+.xq-node {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 31%;
+  padding: 9px 9px;
+  border-radius: 10px;
+  transform: translateY(-50%);
+  background: #171c24;
+  box-shadow: inset 0 0 0 1px rgba(111, 157, 255, 0.35);
+}
+.xq-node small {
+  display: block;
+  font: 600 9.5px/1 var(--font-xv-mono), ui-monospace, monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8fb3ff;
+}
+.xq-node b {
+  display: block;
+  margin-top: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #eef1f6;
+}
+.xq-steps {
+  position: absolute;
+  left: 47%;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  align-items: center;
+}
+.xq-step {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 9px;
+  border-radius: 9px;
+  font-size: 11.5px;
+  line-height: 1.25;
+  color: #cfd5de;
+  background: #141920;
+  box-shadow: inset 0 0 0 1px rgba(236, 233, 226, 0.07);
+}
+.xq-step i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7ad6bc;
+}
+.xq-step.is-run {
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(111, 157, 255, 0.45);
+}
+.xq-step.is-run i {
+  background: #6f9dff;
+  box-shadow: 0 0 0 3px rgba(111, 157, 255, 0.2);
+}
+
+/* verification: the evidence */
+.xq-evidence {
+  display: grid;
+  gap: 7px;
+  align-content: start;
+}
+.xq-check {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  font-size: 12px;
+  color: #dfe3ea;
+  background: #141920;
+  box-shadow: inset 0 0 0 1px rgba(236, 233, 226, 0.06);
+}
+.xq-check i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #7ad6bc url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.2 8.4 6.8 11 11.8 5.6' fill='none' stroke='%23062019' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / 11px no-repeat;
+}
+.xq-check em {
+  font: 600 10px/1 var(--font-xv-mono), ui-monospace, monospace;
+  font-style: normal;
+  color: #7ad6bc;
+}
+.xq-shot {
+  margin-top: 3px;
+  border-radius: 9px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(236, 233, 226, 0.1);
+}
+.xq-shot-bar {
+  padding: 5px 9px;
+  font: 500 10px/1.2 var(--font-xv-mono), ui-monospace, monospace;
+  color: #7d8794;
+  background: #161b22;
+}
+.xq-shot-body {
+  display: grid;
+  gap: 2px;
+  padding: 11px 12px 12px 34px;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7.5' fill='%2316a34a'/><path d='M4.4 8.3 6.9 10.8 11.6 5.8' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>") 12px 13px / 15px no-repeat,
+    linear-gradient(180deg, #f6f7f9, #eceff3);
+}
+.xq-shot-body b {
+  font-size: 12.5px;
+  color: #0e1726;
+}
+.xq-shot-body span {
+  font-size: 11px;
+  color: #5b6472;
+}
+
+/* integrations: the tools this task uses */
+.xq-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.xq-tool {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #141920;
+  box-shadow: inset 0 0 0 1px rgba(236, 233, 226, 0.06);
+}
+.xq-tool-mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #1f252e;
+  box-shadow: inset 0 0 0 1px rgba(236, 233, 226, 0.08);
+}
+.xq-tool > span:last-child {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.xq-tool b {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #eef1f6;
+}
+.xq-tool em {
+  font-style: normal;
+  font-size: 11.5px;
+  color: #9aa4b2;
+}
+.xq-note {
+  margin: auto 0 0;
+  font-size: 11px;
+  color: #6f7a8a;
+}
+
+/* ownership: the repository */
+.xq-repo {
+  display: grid;
+  gap: 7px;
+  align-content: start;
+}
+.xq-branch {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 6px;
+  padding: 5px 9px;
+  border-radius: 7px;
+  font: 500 11.5px/1 var(--font-xv-mono), ui-monospace, monospace;
+  color: #cfe0ff;
+  background: rgba(64, 120, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(111, 157, 255, 0.3);
+}
+.xq-branch svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: #8fb3ff;
+  stroke-width: 1.4;
+}
+.xq-commit {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #dfe3ea;
+  background: #141920;
+}
+.xq-commit code {
+  font: 500 10.5px/1 var(--font-xv-mono), ui-monospace, monospace;
+  color: #8fb3ff;
+}
+.xq-pr {
+  display: grid;
+  gap: 3px;
+  margin-top: 2px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #151a21;
+  box-shadow: inset 0 0 0 1px rgba(122, 214, 188, 0.28);
+}
+.xq-pr b {
+  font-size: 12.5px;
+  color: #eef1f6;
+}
+.xq-pr span {
+  font-size: 11.5px;
+  color: #9aa4b2;
+}
+.xq-pr i {
+  font: 600 10.5px/1 var(--font-xv-mono), ui-monospace, monospace;
+  font-style: normal;
+}
+.xq-add {
+  color: #7ad6bc;
+}
+.xq-del {
+  color: #e0827a;
 }
 
 /* Build: one browser, six product types */
