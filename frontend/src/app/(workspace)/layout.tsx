@@ -20,13 +20,9 @@ export default async function WorkspaceLayout({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const profile = user
-    ? (await supabase
-      .from('profiles')
-      .select('onboarding, display_name')
-      .eq('id', user.id)
-      .single()).data
-    : null;
+  const setup = user ? await supabase.rpc('read_current_profile_setup') : { data: null, error: null };
+  if (setup.error || (setup.data && setup.data.id !== user?.id)) throw new Error('Profile setup unavailable');
+  const profile = setup.data;
 
   if (user) {
     if (profile && shouldRouteToOnboarding(normalizeOnboarding(profile.onboarding))) {

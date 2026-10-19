@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "7be4403096a3c782520a52464f544e36212c587e",
+  "source_sha": "aa2ee7e45aea48d6de2930d0ab1c40a4ff8fcc4e",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -567,6 +567,7 @@
         "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
+        "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
@@ -626,6 +627,7 @@
         "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
         "NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF",
         "NODE_ENV",
+        "REQUIRE_REMOTE_AUTH_CHECK",
         "SUPABASE_ANON_KEY",
         "SUPABASE_OAUTH_CALLBACK_URL",
         "SUPABASE_OAUTH_CLIENT_ID",
@@ -703,6 +705,7 @@
         "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
+        "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
@@ -1330,6 +1333,7 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/routes/github.ts",
+        "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/publish/electronSecrets.ts",
         "backend/src/services/publish/nonWebShip.ts"
@@ -1341,14 +1345,18 @@
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
+        "CI",
         "FRONTEND_URL",
         "GITHUB_CLIENT_ID",
         "GITHUB_CLIENT_SECRET",
         "GITHUB_OAUTH_CALLBACK_URL",
         "NETLIFY_ACCESS_TOKEN",
         "NODE_ENV",
+        "REQUIRE_REMOTE_AUTH_CHECK",
+        "SUPABASE_URL",
         "VERCEL_API_KEY",
         "VERCEL_MANAGED_PROJECT_NAME",
+        "XB01_DISPOSABLE_SUPABASE",
         "XROGA_GITHUB_BOT_EMAIL",
         "XROGA_GITHUB_BOT_NAME"
       ],
@@ -1365,6 +1373,7 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/routes/github.ts",
+        "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/publish/electronSecrets.ts",
         "backend/src/services/publish/nonWebShip.ts"
@@ -6726,7 +6735,6 @@
         "backend/src/lib/promoAccess.ts",
         "backend/src/lib/promptResponseCache.ts",
         "backend/src/lib/resilience/circuitBreaker.ts",
-        "backend/src/lib/resolveIdentity.ts",
         "backend/src/organicIntelligence/intelligence.ts",
         "backend/src/synthesis/livePreview/signing.ts"
       ],
@@ -6805,7 +6813,6 @@
         "PROMPT_CACHE_MAX",
         "PROMPT_CACHE_TTL_MS",
         "REPLICATE_API_TOKEN",
-        "REQUIRE_REMOTE_AUTH_CHECK",
         "RESEND_API_KEY",
         "RESPEECHER_API_KEY",
         "RIME_API_KEY",
@@ -6870,7 +6877,6 @@
         "backend/src/lib/promoAccess.ts",
         "backend/src/lib/promptResponseCache.ts",
         "backend/src/lib/resilience/circuitBreaker.ts",
-        "backend/src/lib/resolveIdentity.ts",
         "backend/src/organicIntelligence/intelligence.ts",
         "backend/src/synthesis/livePreview/signing.ts"
       ],
@@ -7183,6 +7189,7 @@
         "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
+        "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
@@ -7227,6 +7234,7 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1",
+        "endpoint-api-github-com",
         "endpoint-api-vercel-com",
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
@@ -9570,7 +9578,8 @@
     {
       "name": "REQUIRE_REMOTE_AUTH_CHECK",
       "consuming_sources": [
-        "backend/src/lib/resolveIdentity.ts"
+        "backend/src/lib/resolveIdentity.ts",
+        "backend/src/security/githubConsumer.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -9583,7 +9592,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "runtime-controls-and-conditional-aliases"
+        "endpoint-127-0-0-1",
+        "endpoint-api-github-com"
       ]
     },
     {
@@ -10182,6 +10192,7 @@
         "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
+        "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
@@ -10231,6 +10242,7 @@
       "dependency_ids": [
         "supabase",
         "endpoint-127-0-0-1",
+        "endpoint-api-github-com",
         "endpoint-api-vercel-com",
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
@@ -10891,6 +10903,7 @@
         "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
+        "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
@@ -10936,6 +10949,7 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1",
+        "endpoint-api-github-com",
         "endpoint-api-vercel-com",
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
@@ -13240,7 +13254,7 @@
     },
     {
       "path": "backend/src/security/confirmationMetadata.local.integration.ts",
-      "sha256": "3a7e87960f12db0ac4b87c07932348aa2efd1f9e2964f10b6493e8d1e574ed3d"
+      "sha256": "dbae3271b1dbcad601e9ea13cdc0721accf94bc1f089a13b933ff4c49027e9b4"
     },
     {
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
@@ -13256,7 +13270,11 @@
     },
     {
       "path": "backend/src/security/frontendScope.local.integration.ts",
-      "sha256": "d6dbadef25767eb9364773931c52b8bd4096709ee33f7ca326f8365f4c3e651c"
+      "sha256": "ba4ed782d2165a92705642c44de6126f6ce29b052f529eb65e1ed454217da1d6"
+    },
+    {
+      "path": "backend/src/security/githubConsumer.local.integration.ts",
+      "sha256": "b8474b291e6aa0aa046638fecd044a000ffa85ad7cc833e45cdcfc4a71c696bf"
     },
     {
       "path": "backend/src/security/growthReferral.local.integration.ts",
@@ -13380,7 +13398,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f"
+      "sha256": "5229909a5a861ab7bdd721b82e1d9ef17be06cb88957d691c4382574856dad37"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -14164,7 +14182,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/layout.tsx",
-      "sha256": "fd2a2158b7c7c3a1c3319d0f393630751bde12f4cafbaec41ffab905e4f58304"
+      "sha256": "4f4c3cd46dd888ca83cc7c0cc7517b61d1cd520f0191c225776f12e764d1d084"
     },
     {
       "path": "frontend/src/app/(shell)/settings/page.tsx",
@@ -14176,7 +14194,7 @@
     },
     {
       "path": "frontend/src/app/(workspace)/layout.tsx",
-      "sha256": "30ae792edc888b89b7c8849cc6c07294564a599b265070abe115846996471e61"
+      "sha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810"
     },
     {
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -14440,7 +14458,7 @@
     },
     {
       "path": "frontend/src/app/onboarding/page.tsx",
-      "sha256": "f567e423e315e0acefde74830fc6a7a6d2d00045bcca042e98150a1623a6dd09"
+      "sha256": "ad060ff937f7ed8d90560c583c3fa178a05630429f9450d116facfaadeb97d40"
     },
     {
       "path": "frontend/src/app/opengraph-image.tsx",
@@ -19239,14 +19257,42 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/frontendScope.local.integration.ts",
-      "line": 27,
+      "line": 28,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/frontendScope.local.integration.ts",
-      "line": 29,
+      "line": 30,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/githubConsumer.local.integration.ts",
+      "line": 15,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/githubConsumer.local.integration.ts",
+      "line": 28,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/security/githubConsumer.local.integration.ts",
+      "line": 37,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/githubConsumer.local.integration.ts",
+      "line": 58,
       "credentialsInUrl": false
     },
     {
@@ -19505,77 +19551,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 111,
+      "line": 112,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 111,
+      "line": 112,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 518,
+      "line": 520,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 568,
+      "line": 570,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 657,
+      "line": 659,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 826,
+      "line": 828,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 884,
+      "line": 886,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1571,
+      "line": 1573,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1589,
+      "line": 1591,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1597,
+      "line": 1599,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1601,
+      "line": 1603,
       "credentialsInUrl": false
     },
     {
@@ -25839,6 +25885,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/security/githubConsumer.local.integration.ts",
+      "line": 30,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/security/ownedTerminalPersistence.ts",
       "line": 4,
       "scope": "MODULE_LIFETIME",
@@ -25896,14 +25949,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1070,
+      "line": 1072,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1407,
+      "line": 1409,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

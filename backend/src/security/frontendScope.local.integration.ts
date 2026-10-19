@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {createHmac,randomUUID} from 'node:crypto';
 import {test} from 'node:test';
 import {createRequire} from 'node:module';
-import type {SupabaseClient} from '@supabase/supabase-js';
+import {createClient,type SupabaseClient} from '@supabase/supabase-js';
 // Use the frontend's existing SSR dependency, regardless of npm hoisting.
 type Cookie={name:string;value:string;options:{maxAge?:number}};
 const createServerClient=createRequire(new URL('../../../frontend/package.json',import.meta.url))('@supabase/ssr').createServerClient as
@@ -14,8 +14,8 @@ const createServerClient=createRequire(new URL('../../../frontend/package.json',
 export function registerFrontendScopeTests(admin:SupabaseClient):void{
  test('real server page reads bind verified cookies to own profile and current role despite forged query ownership',async t=>{
   assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
-  const actors:{id:string;email:string;label:string}[]=[],password=`Synthetic-${randomUUID()}!`,cookies=new Map<string,string>();
-  t.after(async()=>{for(const actor of actors)assert.equal((await admin.auth.admin.deleteUser(actor.id)).error,null);});
+  const actors:{id:string;email:string;label:string}[]=[],password=`Synthetic-${randomUUID()}!`,cookies=new Map<string,string>();let publicPost:string|undefined;
+  t.after(async()=>{if(publicPost)assert.equal((await admin.from('community_posts').delete().eq('id',publicPost)).error,null);for(const actor of actors)assert.equal((await admin.auth.admin.deleteUser(actor.id)).error,null);});
   const complete={status:'completed',currentStep:'complete'},pending={status:'in_progress',currentStep:'build_type'};
   for(let i=0;i<2;i++){
    const email=i===1?'hello@xroga.com':`server-scope-${randomUUID()}@example.invalid`,label=`SSR_SCOPE_${i}_${randomUUID().replaceAll('-','')}`;
@@ -23,6 +23,7 @@ export function registerFrontendScopeTests(admin:SupabaseClient):void{
    actors.push({id:created.data.user.id,email,label});assert.equal((await admin.from('profiles').update({role:i===0?'owner':'member',display_name:label,onboarding:i===0?complete:pending}).eq('id',created.data.user.id)).error,null);
   }
   const [owner,member]=actors;
+  const post=await admin.from('community_posts').insert({author_id:owner.id,category:'question',title:'Disposable public profile boundary',body:'Synthetic local scope fixture only.'}).select('id').single();assert.equal(post.error,null);publicPost=post.data!.id;
   const client=createServerClient(process.env.SUPABASE_URL!,process.env.SUPABASE_ANON_KEY!,{cookies:{getAll:()=>[...cookies].map(([name,value])=>({name,value})),setAll:values=>{for(const {name,value,options}of values){if(options.maxAge===0)cookies.delete(name);else cookies.set(name,value);}}}});
   const page=async(path:string)=>fetch(`http://127.0.0.1:3000${path}`,{headers:{Cookie:[...cookies].map(([name,value])=>`${name}=${value}`).join('; ')},redirect:'manual',signal:AbortSignal.timeout(30_000)});
   const uiRedirect=async(response:Response,target:string,foreignLabel=owner.label)=>{
@@ -32,14 +33,22 @@ export function registerFrontendScopeTests(admin:SupabaseClient):void{
    assert.equal(response.status,200);const body=await response.text();assert.ok(body.includes('id="__next-page-redirect"'));assert.ok(body.includes(`content="1;url=${target}"`)||body.includes(`content="0;url=${target}"`));assert.ok(!body.includes(foreignLabel));
   };
   const role=async(expected:string)=>{const r=await client.rpc('current_community_role');assert.equal(r.error,null);assert.equal(r.data,expected);};
+  const setup=async(actor:typeof owner,state:typeof complete)=>{
+   const r=await client.rpc('read_current_profile_setup');assert.equal(r.error,null);assert.deepEqual(r.data,{id:actor.id,display_name:actor.label,onboarding:state});
+   assert.equal((await client.from('profiles').select('onboarding').eq('id',actor.id)).error?.code,'42501','Private column must remain unavailable even on a visible profile row');
+   const forged=await client.rpc('read_current_profile_setup',{p_user_id:actors.find(a=>a.id!==actor.id)!.id});assert.ok(forged.error);assert.equal(forged.data,null);
+  };
+  const anonymousClient=createClient(process.env.SUPABASE_URL!,process.env.SUPABASE_ANON_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});assert.ok((await anonymousClient.rpc('read_current_profile_setup')).error);
   const anonymous=await page('/onboarding');assert.ok([302,303,307,308].includes(anonymous.status));assert.match(anonymous.headers.get('location')??'',/\/auth\/login/);
   assert.equal((await client.auth.signInWithPassword({email:owner.email,password})).error,null);assert.equal((await client.auth.getUser()).data.user?.id,owner.id);await role('owner');
+  await setup(owner,complete);assert.ok(cookies.size>0);
   for(const path of ['/dashboard','/workspace']){
-   const response=await page(`${path}?userId=${member.id}&tenantId=${member.id}`);assert.equal(response.status,200);const body=await response.text();assert.ok(body.includes(owner.label));assert.ok(!body.includes(member.label));
+   const response=await page(`${path}?userId=${member.id}&tenantId=${member.id}`);assert.equal(response.status,200);const body=await response.text();assert.ok(body.includes(owner.label),`${path} must render its exact verified profile label`);assert.ok(!body.includes(member.label));
   }
   const completed=await page(`/onboarding?userId=${member.id}`);await uiRedirect(completed,'/workspace',member.label);
   for(const path of ['/admin','/admin/community']){const response=await page(`${path}?userId=${member.id}&role=member`);assert.equal(response.status,200);assert.ok(!(await response.text()).includes('Community staff only'));}
   assert.equal((await client.auth.signOut()).error,null);assert.equal((await client.auth.signInWithPassword({email:member.email,password})).error,null);assert.equal((await client.auth.getUser()).data.user?.id,member.id);await role('member');
+  await setup(member,pending);const publicProfile=await client.from('profiles').select('id,display_name').eq('id',owner.id).single();assert.equal(publicProfile.error,null);assert.deepEqual(publicProfile.data,{id:owner.id,display_name:owner.label});assert.equal((await client.from('profiles').select('onboarding').eq('id',owner.id)).error?.code,'42501');
   const onboarding=await page(`/onboarding?userId=${owner.id}&role=owner`);assert.equal(onboarding.status,200);assert.ok((await onboarding.text()).includes('Set up Xroga'));
   assert.equal((await admin.from('profiles').update({onboarding:complete}).eq('id',member.id)).error,null);
   const denied=await page(`/admin?userId=${owner.id}&role=owner`);await uiRedirect(denied,'/dashboard');

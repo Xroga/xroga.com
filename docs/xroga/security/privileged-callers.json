@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "8de21d61ddad83a498dcf47cabbede6fd8b26ea1a11d0c3a8fb9f652ed93a984",
+  "reviewRegistrySha256": "8772ce72a7db4222f8bd52f3c8cf7319124302515d7bf4be8240810ad4772b73",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -12,16 +12,16 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 123,
+    "unresolvedSafetyCandidates": 126,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 13
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 349,
+    "SCOPED_BOUNDARY": 346,
     "NARROW_EXCEPTION": 27,
     "NOT_PERSISTENCE": 140,
-    "REVIEWED_GAP": 123
+    "REVIEWED_GAP": 126
   },
   "acceptance": {
     "version": 1,
@@ -320,15 +320,15 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-3fef146cddcc1c87"
+        "id": "OB-3e5bd946bdcacd12"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-a3d2069f500069a2"
+        "id": "OB-49626f1bf7036db9"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-40649f35fbc89457"
+        "id": "OB-16364610c1ccefe6"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -1269,6 +1269,18 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "71e802345b31b6d2fd5f"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "3ea0392dbd30934afb02"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "5740af96dff28fda6f3f"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "40dcc370930a78bd99cd"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -2748,19 +2760,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "9297f8f20c4be94c3742"
-      },
-      {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "c2126cd594624a77ed05"
-      },
-      {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "83779ac5d4b86b4ed00a"
-      },
-      {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4e796f9c87acb51a5f6b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -2780,8 +2780,8 @@
     "currentCallers": 639,
     "structuredVerified": 140,
     "structuredUnproven": 499,
-    "manualUnresolved": 123,
-    "manualUnsupported": 376,
+    "manualUnresolved": 126,
+    "manualUnsupported": 373,
     "agreedVerified": 140,
     "proofAwaitingManualReconciliation": 0
   },
@@ -16307,18 +16307,18 @@
       }
     },
     {
-      "id": "9297f8f20c4be94c3742",
+      "id": "3ea0392dbd30934afb02",
       "path": "frontend/src/app/(shell)/layout.tsx",
-      "line": 36,
+      "line": 35,
       "enclosing": "ShellLayout",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "profiles",
+      "kind": "RPC_CANDIDATE",
+      "target": "read_current_profile_setup",
       "ownerPredicateCandidate": false,
-      "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "fd2a2158b7c7c3a1c3319d0f393630751bde12f4cafbaec41ffab905e4f58304",
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "4f4c3cd46dd888ca83cc7c0cc7517b61d1cd520f0191c225776f12e764d1d084",
       "semanticReview": {
-        "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
-        "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+        "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+        "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
         "evidence": [
           {
             "path": "frontend/src/lib/supabase/server.ts",
@@ -16326,24 +16326,28 @@
           },
           {
             "path": "frontend/src/app/(shell)/layout.tsx",
-            "marker": ".eq('id', user.id)"
+            "marker": "read_current_profile_setup"
+          },
+          {
+            "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+            "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
           }
         ]
       }
     },
     {
-      "id": "c2126cd594624a77ed05",
+      "id": "5740af96dff28fda6f3f",
       "path": "frontend/src/app/(workspace)/layout.tsx",
-      "line": 24,
+      "line": 23,
       "enclosing": "WorkspaceLayout",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "profiles",
+      "kind": "RPC_CANDIDATE",
+      "target": "read_current_profile_setup",
       "ownerPredicateCandidate": false,
-      "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "30ae792edc888b89b7c8849cc6c07294564a599b265070abe115846996471e61",
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
       "semanticReview": {
-        "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
-        "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+        "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+        "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
         "evidence": [
           {
             "path": "frontend/src/lib/supabase/server.ts",
@@ -16351,7 +16355,11 @@
           },
           {
             "path": "frontend/src/app/(workspace)/layout.tsx",
-            "marker": ".eq('id', user.id)"
+            "marker": "read_current_profile_setup"
+          },
+          {
+            "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+            "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
           }
         ]
       }
@@ -16466,18 +16474,18 @@
       }
     },
     {
-      "id": "4e796f9c87acb51a5f6b",
+      "id": "40dcc370930a78bd99cd",
       "path": "frontend/src/app/onboarding/page.tsx",
       "line": 28,
       "enclosing": "OnboardingPage",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "profiles",
+      "kind": "RPC_CANDIDATE",
+      "target": "read_current_profile_setup",
       "ownerPredicateCandidate": false,
-      "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f567e423e315e0acefde74830fc6a7a6d2d00045bcca042e98150a1623a6dd09",
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "ad060ff937f7ed8d90560c583c3fa178a05630429f9450d116facfaadeb97d40",
       "semanticReview": {
-        "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
-        "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+        "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+        "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
         "evidence": [
           {
             "path": "frontend/src/lib/supabase/server.ts",
@@ -16485,7 +16493,11 @@
           },
           {
             "path": "frontend/src/app/onboarding/page.tsx",
-            "marker": ".eq('id', user.id)"
+            "marker": "read_current_profile_setup"
+          },
+          {
+            "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+            "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
           }
         ]
       }

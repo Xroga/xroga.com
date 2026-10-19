@@ -27,7 +27,7 @@ export function registerConfirmationMetadataTests(admin:SupabaseClient,getUsers:
   const read=await request(`${route(own)}?userId=${other.id}`,owner.token);assert.equal(read.status,200);const safe=(await read.json() as {confirmation:Record<string,unknown>}).confirmation;assert.equal(safe.id,own);assert.equal(safe.summary,plan.summary);assert.equal(safe.plan,undefined);assert.equal(safe.user_id,undefined);
   for(const [suffix,method]of [['','GET'],['/confirm','POST'],['/cancel','POST']]){
    assert.equal((await request(route(own)+suffix,undefined,method)).status,401);
-   assert.equal((await request(route(foreign)+suffix,owner.token,method,{userId:other.id,tenantId:other.id})).status,404);
+   assert.equal((await request(route(foreign)+suffix,owner.token,method,method==='GET'?undefined:{userId:other.id,tenantId:other.id})).status,404);
   }
   const cancelled=await Promise.all(Array.from({length:3},()=>request(route(own)+'/cancel',owner.token,'POST',{userId:other.id})));for(const response of cancelled){assert.equal(response.status,200);assert.equal((await response.json() as {confirmation:{status:string}}).confirmation.status,'cancelled');}
   const cancelRow=await persisted(own);assert.equal(cancelRow.status,'cancelled');assert.equal(cancelRow.claimed_at,null);assert.ok(Number.isFinite(Date.parse(cancelRow.completed_at)));assert.deepEqual(cancelRow.plan,plan);

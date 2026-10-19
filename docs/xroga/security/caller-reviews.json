@@ -1548,13 +1548,13 @@
     },
     {
       "path": "frontend/src/app/(shell)/layout.tsx",
-      "sourceSha256": "fd2a2158b7c7c3a1c3319d0f393630751bde12f4cafbaec41ffab905e4f58304",
+      "sourceSha256": "4f4c3cd46dd888ca83cc7c0cc7517b61d1cd520f0191c225776f12e764d1d084",
       "callIds": [
-        "9297f8f20c4be94c3742"
+        "3ea0392dbd30934afb02"
       ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
-      "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+      "disposition": "REVIEWED_GAP",
+      "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+      "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
       "evidence": [
         {
           "path": "frontend/src/lib/supabase/server.ts",
@@ -1562,19 +1562,43 @@
         },
         {
           "path": "frontend/src/app/(shell)/layout.tsx",
-          "marker": ".eq('id', user.id)"
+          "marker": "read_current_profile_setup"
+        },
+        {
+          "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+          "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "frontend/src/app/(shell)/layout.tsx",
+        "sourceSha256": "fd2a2158b7c7c3a1c3319d0f393630751bde12f4cafbaec41ffab905e4f58304",
+        "callIds": [
+          "9297f8f20c4be94c3742"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
+        "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/supabase/server.ts",
+            "marker": "config.publishableKey"
+          },
+          {
+            "path": "frontend/src/app/(shell)/layout.tsx",
+            "marker": ".eq('id', user.id)"
+          }
+        ]
+      }
     },
     {
       "path": "frontend/src/app/(workspace)/layout.tsx",
-      "sourceSha256": "30ae792edc888b89b7c8849cc6c07294564a599b265070abe115846996471e61",
+      "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
       "callIds": [
-        "c2126cd594624a77ed05"
+        "5740af96dff28fda6f3f"
       ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
-      "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+      "disposition": "REVIEWED_GAP",
+      "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+      "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
       "evidence": [
         {
           "path": "frontend/src/lib/supabase/server.ts",
@@ -1582,19 +1606,43 @@
         },
         {
           "path": "frontend/src/app/(workspace)/layout.tsx",
-          "marker": ".eq('id', user.id)"
+          "marker": "read_current_profile_setup"
+        },
+        {
+          "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+          "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "frontend/src/app/(workspace)/layout.tsx",
+        "sourceSha256": "30ae792edc888b89b7c8849cc6c07294564a599b265070abe115846996471e61",
+        "callIds": [
+          "c2126cd594624a77ed05"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
+        "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/supabase/server.ts",
+            "marker": "config.publishableKey"
+          },
+          {
+            "path": "frontend/src/app/(workspace)/layout.tsx",
+            "marker": ".eq('id', user.id)"
+          }
+        ]
+      }
     },
     {
       "path": "frontend/src/app/onboarding/page.tsx",
-      "sourceSha256": "f567e423e315e0acefde74830fc6a7a6d2d00045bcca042e98150a1623a6dd09",
+      "sourceSha256": "ad060ff937f7ed8d90560c583c3fa178a05630429f9450d116facfaadeb97d40",
       "callIds": [
-        "4e796f9c87acb51a5f6b"
+        "40dcc370930a78bd99cd"
       ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
-      "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+      "disposition": "REVIEWED_GAP",
+      "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+      "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
       "evidence": [
         {
           "path": "frontend/src/lib/supabase/server.ts",
@@ -1602,9 +1650,33 @@
         },
         {
           "path": "frontend/src/app/onboarding/page.tsx",
-          "marker": ".eq('id', user.id)"
+          "marker": "read_current_profile_setup"
+        },
+        {
+          "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+          "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "frontend/src/app/onboarding/page.tsx",
+        "sourceSha256": "f567e423e315e0acefde74830fc6a7a6d2d00045bcca042e98150a1623a6dd09",
+        "callIds": [
+          "4e796f9c87acb51a5f6b"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
+        "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/supabase/server.ts",
+            "marker": "config.publishableKey"
+          },
+          {
+            "path": "frontend/src/app/onboarding/page.tsx",
+            "marker": ".eq('id', user.id)"
+          }
+        ]
+      }
     },
     {
       "path": "frontend/src/app/(shell)/admin/page.tsx",

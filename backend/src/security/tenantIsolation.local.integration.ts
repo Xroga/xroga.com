@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { before, after, test } from 'node:test';
 import { randomUUID, createHash, createHmac } from 'node:crypto';
 import express from 'express';
+import {registerGithubConsumerTests} from './githubConsumer.local.integration.js';
 import billingWebhookRouter from '../routes/billingWebhook.js';
 import { createClient } from '@supabase/supabase-js';
 import { createTenantContext, type TenantContext } from './tenantContext.js';
@@ -178,6 +179,7 @@ registerConnectedAccountRouteTests(() => users);
 registerOAuthWrapperOwnershipTests(admin);
 registerRuntimeEventParentTests(admin,()=>users);
 registerAdminReadTests(admin,request);
+registerGithubConsumerTests(admin,()=>users);
 registerVercelRefreshAccountTests(admin,request);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
