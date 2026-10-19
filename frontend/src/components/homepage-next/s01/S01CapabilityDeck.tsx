@@ -13,7 +13,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, FocusEvent, PointerEvent as ReactPointerEvent } from 'react';
 import { useReducedMotion } from 'motion/react';
-import dynamic from 'next/dynamic';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { CAPABILITIES, SECTION, type CapabilityId } from './capabilities.data';
 import { CapabilityCard } from './CapabilityCard';
@@ -21,8 +20,15 @@ import { CapabilityFocus, type FocusRequest } from './CapabilityFocus';
 import { TRACK_VH, clamp, computeLayout, deckFrame, restProgress, withHeading, type DeckLayout } from './deckMotion';
 import s from './S01.module.css';
 
-/* the star field loads only with the desktop deck, and never on the server */
-const GalaxyField = dynamic(() => import('./GalaxyField').then((m) => m.GalaxyField), { ssr: false });
+/* A locally masked dot lattice replaces the former GPU galaxy. It is decorative,
+ * never captures the pointer, and is used by desktop, mobile and reduced-motion modes. */
+function PrecisionField() {
+  return (
+    <div className={s.precisionField} aria-hidden="true">
+      <span className={s.precisionDots} />
+    </div>
+  );
+}
 
 type Mode = 'deck' | 'carousel' | 'static';
 
@@ -58,7 +64,7 @@ interface StageProps {
 const transformOf = (c: { x: number; y: number; z: number; rx: number; ry: number; rz: number; s: number }) =>
   `translate3d(${c.x.toFixed(2)}px, ${c.y.toFixed(2)}px, ${c.z.toFixed(2)}px) rotateX(${c.rx.toFixed(2)}deg) rotateZ(${c.rz.toFixed(2)}deg) rotateY(${(c.ry + 180).toFixed(2)}deg) scale(${c.s.toFixed(4)})`;
 
-function DeckStage({ layout: base, onExplore, detail, reduced }: StageProps & { reduced: boolean }) {
+function DeckStage({ layout: base, onExplore, detail }: StageProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
@@ -275,7 +281,7 @@ function DeckStage({ layout: base, onExplore, detail, reduced }: StageProps & { 
         <header ref={headRef} className={s.head}>
           <Heading inStage />
         </header>
-        <GalaxyField className={s.galaxy} reduced={reduced} />
+        <PrecisionField />
         <div ref={lightRef} className={s.lights} aria-hidden>
           <i data-pool="cool" />
           <i data-pool="warm" />
@@ -456,6 +462,7 @@ function Gallery({ mode, onExplore, detail }: GalleryProps) {
   if (mode === 'static') {
     return (
       <div className={s.flow}>
+        <PrecisionField />
         <header className={s.headFlow}>
           <Heading />
         </header>
@@ -476,6 +483,7 @@ function Gallery({ mode, onExplore, detail }: GalleryProps) {
   const activeCap = CAPABILITIES[active];
   return (
     <div className={s.flow}>
+      <PrecisionField />
       <header className={s.headFlow}>
         <Heading />
       </header>
@@ -531,6 +539,21 @@ export function S01CapabilityDeck() {
     return () => io.disconnect();
     // the deck replaces the first-paint heading once it has measured, so the observer re-attaches then
   }, [view.mode, !!view.layout]);
+  // Only paint the drifting noise while the capability section is near the viewport.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) section.setAttribute('data-field-active', '');
+      else section.removeAttribute('data-field-active');
+    }, { rootMargin: '10% 0px' });
+    observer.observe(section);
+    return () => {
+      observer.disconnect();
+      section.removeAttribute('data-field-active');
+    };
+  }, []);
+
   const focusRef = useRef<FocusRequest | null>(null);
 
   useEffect(() => {
@@ -582,10 +605,11 @@ export function S01CapabilityDeck() {
   return (
     <section ref={sectionRef} id="capabilities" className={s.section} aria-labelledby="s01-title" data-mode={view.mode}>
       {view.mode === 'deck' && view.layout ? (
-        <DeckStage layout={view.layout} {...shared} reduced={!!reduce} />
+        <DeckStage layout={view.layout} {...shared} />
       ) : view.mode === 'deck' ? (
         // first paint before measuring: a static heading so the section never renders empty
         <div className={s.flow}>
+          <PrecisionField />
           <header className={s.headFlow}>
             <Heading />
           </header>
