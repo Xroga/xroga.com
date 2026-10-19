@@ -2,11 +2,11 @@
 
 import {
   ArrowRight,
+  CheckCircle2,
   Eye,
   EyeOff,
   LockKeyhole,
   Mail,
-  Sparkles,
   UserRound,
 } from 'lucide-react';
 
@@ -60,13 +60,14 @@ import {
 
 import {
   AuthDivider,
-  AuthGradientButton,
   AuthModernCard,
   AuthModernInput,
   AuthModernLabel,
   AuthSocialButton,
   AuthSwitchText,
 } from './AuthModern';
+
+import styles from './SignupForm.module.css';
 
 const THEME_SWATCHES: Record<
   CoreThemeId,
@@ -552,78 +553,53 @@ export function SignupForm() {
 
   if (success) {
     return (
-      <AuthModernCard
-        eyebrow={
-          <>
-            <Sparkles
-              className="
-                h-3.5
-                w-3.5
-                text-[#006aff]
-              "
-            />
-
-            Account ready
-          </>
-        }
-        title={`Welcome, ${displayName}!`}
-        subtitle={
-          confirmationRequired
-            ? 'One final step before your workspace is ready.'
-            : 'Your Xroga workspace is ready.'
-        }
-      >
-        <div
-          className="
-            rounded-[18px]
-
-            border
-            border-[#006aff]/20
-
-            bg-[#006aff]/8
-
-            px-5
-            py-5
-
-            text-center
-          "
+      <div className={styles.signupCard}>
+        <AuthModernCard
+          eyebrow={
+            <span className={styles.kicker}>
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+              Account ready
+            </span>
+          }
+          title={`Welcome, ${displayName}!`}
+          subtitle={
+            confirmationRequired
+              ? 'One final step before your workspace is ready.'
+              : 'Your Xroga workspace is ready.'
+          }
         >
-          <p
+          <div
             className="
-              text-[13px]
-              font-semibold
-              leading-relaxed
-
-              text-[var(--auth-text)]
+              rounded-[18px]
+              border border-emerald-400/20
+              bg-emerald-400/8
+              px-5 py-5 text-center
             "
           >
-            {confirmationRequired
-              ? 'Check your email to confirm your account, then sign in.'
-              : 'Account created. Taking you to your workspace…'}
-          </p>
-        </div>
-      </AuthModernCard>
+            <p className="text-[13px] font-semibold leading-relaxed text-[var(--auth-text)]">
+              {confirmationRequired
+                ? 'Check your email to confirm your account, then sign in.'
+                : 'Account created. Taking you to your workspace…'}
+            </p>
+          </div>
+        </AuthModernCard>
+      </div>
     );
   }
 
   return (
-    <AuthModernCard
-      eyebrow={
-        <>
-          <Sparkles
-            className="
-              h-3.5
-              w-3.5
-              text-[#006aff]
-            "
-          />
+    <div className={styles.signupCard}>
+      <AuthModernCard
+        eyebrow={
+          <span className={styles.kicker}>
+            <span className={styles.kickerMarker} aria-hidden="true" />
+            Join the next generation workspace
+          </span>
+        }
+        title="Create your account"
+        subtitle="One account for everything you build with Xroga."
+      >
 
-          Join the next generation workspace
-        </>
-      }
-      title="Create your account"
-      subtitle="Start building with Xroga and personalise your workspace before you begin."
-    >
       <AuthSocialButton
         onClick={
           handleGitHub
@@ -632,6 +608,7 @@ export function SignupForm() {
           oauthLoading ||
           loading
         }
+        className={styles.githubButton}
       >
         <GitHubIcon
           className="
@@ -662,230 +639,9 @@ export function SignupForm() {
         onSubmit={
           handleSignup
         }
-        className="
-          space-y-3
-        "
+        className={styles.form}
       >
-        {/*
-         * Workspace theme
-         */}
-        <div>
-          <AuthModernLabel>
-            Workspace theme
-          </AuthModernLabel>
 
-          <div
-            className="
-              grid
-              grid-cols-4
-              gap-2
-            "
-          >
-            {THEME_OPTIONS.map(
-              (option) => {
-                const selected =
-                  theme ===
-                  option.id;
-
-                const swatch =
-                  THEME_SWATCHES[
-                    option.id
-                  ];
-
-                return (
-                  <button
-                    key={
-                      option.id
-                    }
-                    type="button"
-                    onClick={() =>
-                      selectTheme(
-                        option.id
-                      )
-                    }
-                    aria-pressed={
-                      selected
-                    }
-                    className={cn(
-                      'relative',
-
-                      'flex',
-                      'h-[58px]',
-                      'min-w-0',
-
-                      'flex-col',
-
-                      'justify-between',
-
-                      'rounded-[13px]',
-
-                      'border',
-
-                      'px-3',
-                      'py-2',
-
-                      'text-left',
-
-                      'transition-all',
-                      'duration-200',
-
-                      selected
-                        ? [
-                            'border-[#006aff]',
-                            'bg-[#006aff]/10',
-                            'shadow-[0_6px_18px_rgba(0,106,255,0.10)]',
-                            'ring-1',
-                            'ring-[#006aff]/15',
-                          ].join(
-                            ' '
-                          )
-                        : [
-                            'border-[var(--auth-border)]',
-                            'bg-[var(--auth-input)]',
-                            'hover:border-[var(--auth-border-strong)]',
-                            'hover:bg-[var(--auth-input-hover)]',
-                          ].join(
-                            ' '
-                          )
-                    )}
-                  >
-                    <span
-                      className="
-                        h-[17px]
-                        w-[17px]
-
-                        rounded-full
-
-                        border
-                        border-black/10
-
-                        shadow-sm
-                      "
-                      style={{
-                        background:
-                          swatch.background,
-
-                        color:
-                          swatch.foreground,
-                      }}
-                    />
-
-                    <span
-                      className="
-                        truncate
-
-                        text-[10px]
-                        font-semibold
-
-                        text-[var(--auth-text)]
-                      "
-                    >
-                      {option.label}
-                    </span>
-                  </button>
-                );
-              }
-            )}
-          </div>
-        </div>
-
-        {/*
-         * Profile avatars
-         */}
-        <div>
-          <AuthModernLabel>
-            Profile
-          </AuthModernLabel>
-
-          <div
-            className="
-              flex
-              items-center
-              gap-2
-            "
-          >
-            {XROGA_PROFILE_AVATARS
-              .slice(
-                0,
-                6
-              )
-              .map(
-                (
-                  avatar
-                ) => {
-                  const selected =
-                    avatarUrl ===
-                    avatar.url;
-
-                  return (
-                    <button
-                      key={
-                        avatar.url
-                      }
-                      type="button"
-                      onClick={() =>
-                        setAvatarUrl(
-                          avatar.url
-                        )
-                      }
-                      aria-label="Select profile avatar"
-                      aria-pressed={
-                        selected
-                      }
-                      className={cn(
-                        'relative',
-
-                        'h-[45px]',
-                        'w-[45px]',
-
-                        'shrink-0',
-
-                        'overflow-hidden',
-
-                        'rounded-[12px]',
-
-                        'border-2',
-
-                        'bg-[var(--auth-input)]',
-
-                        'transition-all',
-                        'duration-200',
-
-                        selected
-                          ? [
-                              'border-[#006aff]',
-                              'scale-[1.03]',
-                              'shadow-[0_6px_18px_rgba(0,106,255,0.18)]',
-                            ].join(
-                              ' '
-                            )
-                          : [
-                              'border-transparent',
-                              'opacity-75',
-                              'hover:opacity-100',
-                            ].join(
-                              ' '
-                            )
-                      )}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={
-                          avatar.url
-                        }
-                        alt=""
-                        className="
-                          h-full
-                          w-full
-                          object-cover
-                        "
-                      />
-                    </button>
-                  );
-                }
-              )}
-          </div>
-        </div>
 
         {/*
          * Name and email side-by-side
@@ -1153,26 +909,77 @@ export function SignupForm() {
           </div>
         ) : null}
 
-        <AuthGradientButton
+        <section className={styles.setupGroup} aria-label="Personalise your workspace">
+          <div className={styles.setupHeader}>
+            <strong>Personalise your workspace</strong>
+            <span>Theme and profile</span>
+          </div>
+
+          <div className={styles.setupGrid}>
+            <div>
+              <AuthModernLabel>Workspace theme</AuthModernLabel>
+              <div className={styles.themeGrid}>
+                {THEME_OPTIONS.map((option) => {
+                  const selected = theme === option.id;
+                  const swatch = THEME_SWATCHES[option.id];
+
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => selectTheme(option.id)}
+                      aria-pressed={selected}
+                      className={cn(styles.themeOption, selected && styles.themeOptionSelected)}
+                    >
+                      <span
+                        className={styles.themeSwatch}
+                        style={{ background: swatch.background, color: swatch.foreground }}
+                      />
+                      <span className={styles.themeLabel}>{option.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <AuthModernLabel>Profile</AuthModernLabel>
+              <div className={styles.avatarRow}>
+                {XROGA_PROFILE_AVATARS.slice(0, 6).map((avatar) => {
+                  const selected = avatarUrl === avatar.url;
+
+                  return (
+                    <button
+                      key={avatar.url}
+                      type="button"
+                      onClick={() => setAvatarUrl(avatar.url)}
+                      aria-label="Select profile avatar"
+                      aria-pressed={selected}
+                      className={cn(styles.avatarOption, selected && styles.avatarOptionSelected)}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={avatar.url} alt="" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <button
           type="submit"
+          className={styles.galaxyButton}
           disabled={
             loading ||
             oauthLoading
           }
         >
-          {loading
-            ? 'Creating account…'
-            : 'Create account'}
-
-          {!loading ? (
-            <Sparkles
-              className="
-                h-4
-                w-4
-              "
-            />
-          ) : null}
-        </AuthGradientButton>
+          <span className={styles.galaxyContent}>
+            <span>{loading ? 'Creating account…' : 'Create account'}</span>
+            {!loading ? <ArrowRight className={styles.galaxyIcon} aria-hidden="true" /> : null}
+          </span>
+        </button>
       </form>
 
       <AuthSwitchText
@@ -1182,6 +989,7 @@ export function SignupForm() {
           nextPath
         )}`}
       />
-    </AuthModernCard>
+      </AuthModernCard>
+    </div>
   );
 }

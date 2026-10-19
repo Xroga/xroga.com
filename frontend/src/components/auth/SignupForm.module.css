@@ -1,0 +1,33 @@
+.signupCard { width: 100%; }
+.signupCard header { margin-bottom: 20px; }
+.signupCard header > p { margin-top: 9px; font-size: 12px; }
+.kicker { font-size: 10px; }
+.kickerMarker { display: none; }
+.modeSwitch { display: none; }
+.githubButton { height: 43px !important; border-radius: 9px !important; background: #111 !important; }
+.githubButton:hover { background: #1c1c1c !important; }
+.form { display: grid; gap: 14px; }
+.setupGroup { border-top: 1px solid #242424; padding-top: 13px; }
+.setupHeader { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.setupHeader strong { font-size: 11px; font-weight: 500; color: #bbb; }
+.setupHeader span { font-size: 9px; color: #777; }
+.setupGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: end; }
+.themeGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.themeOption { display: flex; flex-direction: column; gap: 5px; align-items: center; min-width: 0; padding: 5px 2px; border: 1px solid transparent; border-radius: 7px; color: #999; cursor: pointer; background: #111; transition: border-color .15s; }
+.themeOption:hover { border-color: #555; }
+.themeOptionSelected { border-color: #888; color: #fff; }
+.themeSwatch { width: 13px; height: 13px; border: 1px solid #555; border-radius: 50%; }
+.themeLabel { font-size: 8px; }
+.avatarRow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+.avatarOption { aspect-ratio: 1; min-width: 0; overflow: hidden; border: 1px solid transparent; border-radius: 8px; background: #111; opacity: .7; cursor: pointer; transition: opacity .15s; }
+.avatarOption:hover { opacity: 1; }
+.avatarOptionSelected { opacity: 1; border-color: #aaa; }
+.avatarOption img { width: 100%; height: 100%; object-fit: cover; }
+.galaxyButton { width: 100%; min-height: 44px; padding: 10px 18px; color: #fff; cursor: pointer; transition: background .18s, transform .18s; }
+.galaxyButton:disabled { opacity: .5; cursor: not-allowed; }
+.galaxyButton:focus-visible { outline: 2px solid #aaa; outline-offset: 3px; }
+.galaxyContent { display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 13px; font-weight: 600; }
+.galaxyIcon { width: 16px; height: 16px; }
+.galaxyGlow, .galaxyStars { display: none; }
+@media (max-width: 380px) { .setupGrid { grid-template-columns: 1fr; } .avatarRow { max-width: 190px; } }
+@media (prefers-reduced-motion: reduce) { .galaxyButton, .themeOption, .avatarOption { transition: none; } }
