@@ -84207,40 +84207,52 @@
       "id": "surface:276c4109416eb12460ad",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/prepare-pr-integration.mjs",
-      "sha256": "2d366ee8b37c47d16a83cbee65103465981475939a6ec06492294c30fcf20081",
+      "sha256": "b54679d21d96b947c798549f829063e9ceb2c014ec5c81cbc896d9d7b874c6b1",
       "symbols": [
         "args",
         "baseSnapshotIsAncestor",
         "changed",
+        "current",
         "git",
         "identity",
         "main",
+        "original",
+        "originalCalls",
         "outputs",
         "parents",
         "path",
+        "projectVanishedNonPersistenceReviews",
+        "projected",
+        "registryPath",
+        "retired",
+        "reviews",
         "target",
         "validateIntegrationIdentity"
       ],
       "imports": [
+        "../security/audit-tenant-policies.mjs",
         "./toolchain.mjs",
         "node:child_process",
+        "node:crypto",
         "node:fs",
         "node:path",
         "node:url"
       ],
       "runtimeImports": [
-        "scripts/ci/toolchain.mjs"
+        "scripts/ci/toolchain.mjs",
+        "scripts/security/audit-tenant-policies.mjs"
       ],
       "entryPoints": [
         "scripts/ci/prepare-pr-integration.mjs"
       ],
       "callers": [
-        "scripts/ci/prepare-pr-integration.test.mjs:3"
+        "scripts/ci/prepare-pr-integration.test.mjs:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:child_process",
+        "node:crypto",
         "node:fs",
         "node:path",
         "node:url"
@@ -84452,7 +84464,7 @@
         "scripts/ci/check-installed-dependencies.mjs:6",
         "scripts/ci/check-lockfile-integrity.mjs:5",
         "scripts/ci/check-test-skips.mjs:7",
-        "scripts/ci/prepare-pr-integration.mjs:5",
+        "scripts/ci/prepare-pr-integration.mjs:6",
         "scripts/ci/register-existing-skips.mjs:5",
         "scripts/ci/run-baseline.mjs:7",
         "scripts/ci/validate-migrations.mjs:5",
@@ -85331,9 +85343,12 @@
         "scripts/security/caller-reviews.mjs"
       ],
       "entryPoints": [
+        "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-tenant-policies.mjs"
       ],
       "callers": [
+        "scripts/ci/prepare-pr-integration.mjs:7",
+        "scripts/ci/prepare-pr-integration.test.mjs:5",
         "scripts/security/audit-tenant-policies.test.mjs:3"
       ],
       "reachable": true,
@@ -85358,6 +85373,7 @@
         "scripts/security/audit-tenant-policies.mjs#receipts"
       ],
       "testCoverage": [
+        "scripts/ci/prepare-pr-integration.test.mjs",
         "scripts/security/audit-tenant-policies.test.mjs"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -85414,6 +85430,7 @@
         "scripts/security/tenant-acceptance.mjs"
       ],
       "entryPoints": [
+        "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-tenant-policies.mjs"
       ],
       "callers": [
@@ -85990,6 +86007,7 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
+        "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-tenant-policies.mjs",
         "scripts/xroga/phase-two.mjs"
       ],
@@ -107477,7 +107495,7 @@
     {
       "id": "test-suite:29dc8a9e57d60e0e7b24",
       "sourcePath": "scripts/ci/prepare-pr-integration.test.mjs",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

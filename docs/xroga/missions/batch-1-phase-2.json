@@ -9,6 +9,8 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "scripts/ci/prepare-pr-integration.mjs",
+    "scripts/ci/prepare-pr-integration.test.mjs",
     "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
     "backend/src/services/integrations/supabaseProvision.ts",
     "backend/src/security/deliveryEvidenceRead.local.integration.ts",
