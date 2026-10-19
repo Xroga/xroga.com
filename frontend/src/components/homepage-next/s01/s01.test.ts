@@ -462,22 +462,19 @@ test('one S01 narrative: no separate six-item strip or footer disclaimer; its us
   assert.equal(CAPABILITIES.length, 8);
 });
 
-test('Galaxy field: budgeted, behind the cards, never takes the pointer, released on unmount', () => {
-  const g = read('./GalaxyField.tsx');
-  assert.match(g, /GALAXY_SCALE = 0\.5;/);
-  assert.match(g, /GALAXY_FRAME_MS = 1000 \/ 30;/);
-  assert.match(g, /new IntersectionObserver/);
-  assert.match(g, /document\.hidden/);
-  assert.match(g, /if \(reduced\) \{\s*draw\(4000\);/, 'reduced motion: one static frame');
-  assert.match(g, /GALAXY_PROBE_LIMIT_MS/);
-  assert.match(g, /loseContext\(\)/);
-  assert.doesNotMatch(g, /mousemove|addEventListener\('mouse/);
-  assert.match(g, /saturation: 0\.12,/);
-  const css = read('./S01.module.css');
-  assert.match(css, /\.galaxy \{[\s\S]*?pointer-events: none;[\s\S]*?mask-image/);
+test('S01 noise-masked particles replace the galaxy only in the capability background', () => {
   const deck = read('./S01CapabilityDeck.tsx');
-  assert.match(deck, /dynamic\(\(\) => import\('\.\/GalaxyField'\)[\s\S]*?ssr: false/);
+  const css = read('./S01.module.css');
+  assert.doesNotMatch(deck, /GalaxyField|next\\/dynamic/);
+  assert.doesNotMatch(css, /\\.galaxy\\s*\\{/);
+  assert.match(css, /\\.particles\\s*\\{[\\s\\S]*?pointer-events: none;/);
+  assert.match(css, /--particle-pitch: 20px;/);
+  assert.match(css, /mask-composite: intersect, intersect;/);
+  assert.match(css, /noise-mask\\.svg/);
+  assert.match(css, /animation: s01NoisePass 20s linear infinite;/);
+  assert.match(css, /@media \\(prefers-reduced-motion: reduce\\) \\{[\\s\\S]*?\\.particles \\{\\s*animation: none;/);
+  assert.match(css, /@media \\(max-width: 1024px\\), \\(pointer: coarse\\)/);
   const stage = deck.slice(deck.indexOf('function DeckStage('), deck.indexOf('function Gallery('));
-  assert.ok(stage.indexOf('<GalaxyField') < stage.indexOf('<ol className={s.deck}'), 'the field is behind the cards');
-  assert.doesNotMatch(deck.slice(deck.indexOf('function Gallery(')), /<GalaxyField/, 'no WebGL field on phones and tablets');
+  assert.ok(stage.indexOf('className={s.particles}') < stage.indexOf('<ol className={s.deck}'), 'field precedes cards');
+  assert.equal((deck.match(/<div className=\\{s\\.particles\\}/g) ?? []).length, 4, 'all modes keep a local background');
 });
