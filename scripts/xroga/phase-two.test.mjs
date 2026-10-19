@@ -10,11 +10,11 @@ test('Phase2 retains all73 packets and371 historical identities without certifyi
   assert.ok(r.packets.every(p=>p.state==='EVIDENCE_GAP'&&p.proofIds.length===0));
   assert.ok(r.packets.flatMap(p=>p.independentLaterObligations).every(o=>o.phase>2));
   assert.ok(r.criteria.every(c=>c.status==='BLOCKED'));assert.equal(r.criteria.length,10);
-  assert.equal(r.packets.filter(p=>p.semanticProgress).length,23);
+  assert.equal(r.packets.filter(p=>p.semanticProgress).length,25);
   const pkce=r.packets.find(p=>p.id==='B1-P2-d068943836963a9c');
   assert.equal(pkce.currentCallerIds.length,16);
-  assert.equal(pkce.semanticProgress.verifiedCurrentCallerIds.length,6);
-  assert.equal(pkce.semanticProgress.remainingCurrentCallerIds.length,10);
+  assert.equal(pkce.semanticProgress.verifiedCurrentCallerIds.length,16);
+  assert.equal(pkce.semanticProgress.remainingCurrentCallerIds.length,0);
   assert.equal(new Set([...pkce.semanticProgress.verifiedCurrentCallerIds,...pkce.semanticProgress.remainingCurrentCallerIds]).size,16,'Narrow PKCE proof retains every original token/storage obligation');
   const selfAccount=r.packets.find(p=>p.id==='B1-P2-8df15cca7cda10a6');
   assert.equal(selfAccount.currentCallerIds.length,1);

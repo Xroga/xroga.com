@@ -5,8 +5,7 @@ import { createHash } from 'node:crypto';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { root } from '../ci/toolchain.mjs';
-import { applyCallerReviews } from './caller-reviews.mjs';
-import { evaluateTenantAcceptance } from './tenant-acceptance.mjs';
+import { applyCallerReviews, evaluateCallerClosure } from './caller-reviews.mjs';
 const ts = createRequire(import.meta.url)('typescript');
 const hash = value => createHash('sha256').update(value).digest('hex');
 const normalized = value => value.replace(/\r\n/g,'\n');
@@ -82,10 +81,11 @@ export function buildTenantAudit({admissionOverride,observationOverride}={}) {
   if(admissionOverride&&admissionOverride.sourceSha!==sourceSha)throw new Error('External acceptance snapshot does not match current HEAD');
   const approvedExceptions=(observed.exceptions??[]).filter(e=>{const actual=registeredExceptions.get(e.id);return actual&&actual.source===e.path
     &&Array.isArray(e.operations)&&e.operations.length&&e.operations.every(op=>actual.action.split('/').includes(op));});
-  const evaluated=evaluateTenantAcceptance({...admission,sourceSha,callers},{readAsset:path=>existsSync(join(root,path))?read(path):null,receipts:observed.receipts,exceptions:approvedExceptions,expectedSourceSha:sourceSha});
+  const closure=evaluateCallerClosure(callers,admission,{readAsset:path=>existsSync(join(root,path))?read(path):null,receipts:observed.receipts,exceptions:approvedExceptions,expectedSourceSha:sourceSha});
+  const evaluated=closure.acceptance;
   const {callers:boundaryResults,...acceptance}=evaluated;
   const counts={observedTables:tableNames.size,rlsEnabled:observation.tables.filter(row=>row.rls_enabled).length,privilegedFactorySites:callers.filter(row=>row.kind==='PRIVILEGED_FACTORY').length,persistenceCandidates:callers.length,ownerPredicateCandidates:callers.filter(row=>row.ownerPredicateCandidate).length,reviewRequired:outcomes.REVIEW_REQUIRED,reviewedCandidates:callers.length-outcomes.REVIEW_REQUIRED,unresolvedSafetyCandidates:outcomes.REVIEW_REQUIRED+outcomes.REVIEWED_GAP,certifiedScopedPrivilegedCallers:evaluated.certifiedScopedPrivilegedCallers,registeredNarrowGlobalExceptions:exceptions};
-  const report={version:'1.1',schemaObservationSha256:hash(read(metadataPath)),reviewRegistrySha256:hash(read(registryPath)),scope:'STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION',releaseGate:evaluated.result==='PASS'?'PASS':'BLOCKED_CRITERION_EVIDENCE',counts,outcomes,acceptance,callers};
+  const report={version:'1.1',schemaObservationSha256:hash(read(metadataPath)),reviewRegistrySha256:hash(read(registryPath)),scope:'STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION',releaseGate:evaluated.result==='PASS'?'PASS':'BLOCKED_CRITERION_EVIDENCE',counts,outcomes,acceptance,reviewAgreement:closure.counts,callers};
   const escape=value=>String(value??'none').replaceAll('|','/').replaceAll('\n',' ');
   const tableRows=observation.tables.map(row=>{
     const owners=row.columns.filter(column=>['user_id','tenant_id','owner_id','author_id','member_user_id'].includes(column.name)||(row.table_name==='profiles'&&column.name==='id'));

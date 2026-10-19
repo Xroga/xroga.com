@@ -380,7 +380,18 @@
           "Execute new actual database case at final source",
           "Reconcile unchanged legacy retention/upsert callers separately",
           "Do not equate this narrow fix with whole-factory certification"
-        ]
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [],
+          "remainingCurrentCallerIds": [
+            "2c882ba9923d4ba6229b",
+            "f78c85803ca9f116a8ac"
+          ],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        }
       },
       "actor": {
         "existingTrace": "Terminal run outcome capture uses its supplied run identity, issued context and owner-bound run key persistence. Retention deletes only that owner's rows older than its cutoff.",
@@ -1026,7 +1037,7 @@
         "packetId": "B1-P2-d87d5c8270aa4666",
         "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
         "executionStatus": "IN_PROGRESS",
-        "finding": "FOREIGN_ADMIN_ROLE_RECEIPT_ACCEPTED_IN_ACTUAL_MIDDLEWARE_TRANSPORT_TEST_FIXED_PENDING_REAL_ROLE_PROOF",
+        "finding": "FOREIGN_ADMIN_ROLE_RECEIPT_ACCEPTED_IN_ACTUAL_MIDDLEWARE_TRANSPORT_TEST_FIXED_VERIFIED_AT_7BE44030",
         "originalCriteria": [
           2,
           4,
@@ -1058,10 +1069,30 @@
           }
         ],
         "remaining": [
-          "Execute actual role/endpoint case and final-source branch/integrated regression",
-          "Bind six narrow existing admin/readiness caller proofs and the two shared guard calls without certifying unrelated endpoints",
-          "This does not promise retroactive revocation of already admitted reads, founder-exclusive/AAL2 policy, new grants,009 custody or production readiness"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "900b714de6b6407ee20d",
+            "8f0a6deb321279d0013d",
+            "e433173f7cb36532848e",
+            "ad80bf6a15ca34880fe0"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "FOREIGN_ADMIN_ROLE_RECEIPT_ACCEPTED_IN_ACTUAL_MIDDLEWARE_TRANSPORT_TEST_FIXED_PENDING_REAL_ROLE_PROOF",
+          "remaining": [
+            "Execute actual role/endpoint case and final-source branch/integrated regression",
+            "Bind six narrow existing admin/readiness caller proofs and the two shared guard calls without certifying unrelated endpoints",
+            "This does not promise retroactive revocation of already admitted reads, founder-exclusive/AAL2 policy, new grants,009 custody or production readiness"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Index mounts this router behind authMiddleware and adminMiddleware. Fixed named global exceptions read system_errors and deployment_status, with no writes or client-selected table.",
@@ -1899,7 +1930,7 @@
         "packetId": "B1-P2-b2b55b7ff19b02a8",
         "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
         "executionStatus": "IN_PROGRESS",
-        "finding": "SHARED_REACHABLE_PREFLIGHT_WRITE_GAP_REPRODUCED_FIXED_PENDING_REAL_GROUPED_PROOF",
+        "finding": "SHARED_REACHABLE_PREFLIGHT_WRITE_GAP_REPRODUCED_FIXED_VERIFIED_AT_7BE44030",
         "originalCriteria": [
           2,
           4,
@@ -1934,11 +1965,63 @@
           }
         ],
         "remaining": [
-          "Execute final-source fresh/upgrade/reapply and all grouped growth/campaign lock/receipt tests. Earlier949 five-operation proof is preserved but is not changed-source campaign evidence.",
-          "Reconcile already proven growth RPCs without reopening unchanged event, identity, activation or lifecycle code",
-          "Assess other original growth read/global suppression/lifecycle obligations separately, no whole-service or Phase3 certificate"
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
         ],
-        "rollback": "Withhold all affected growth mutation endpoints before withdrawing admission. No data rewrite or Phase3 implementation. Do not restore known unguarded writes as an enabled rollback."
+        "rollback": "Withhold all affected growth mutation endpoints before withdrawing admission. No data rewrite or Phase3 implementation. Do not restore known unguarded writes as an enabled rollback.",
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "521d206b28f660c52ca7",
+            "743b3ec38209de66a8b6",
+            "70674fcabb7973d0909c",
+            "98a51063b8117bbc2ad1",
+            "65173e083c611fe4f8ad",
+            "0c64adfe8bac8c6f9e8a",
+            "4c4c5151a644e1afd480",
+            "85b6a438c447d6293ab3",
+            "7057f486ce219b8cb4c6",
+            "11101077dd0d8ad1cb7f",
+            "811dc82be398940450c6",
+            "726c74dca42ecc8a2ffd",
+            "0c978c7dd2ea1c9022b2",
+            "6efe9ed2d629814df975",
+            "794709739cc0e5521650",
+            "717772bdfa767350a841",
+            "e9affb30cb83590d28be",
+            "9726445c0a4a7cda3bda",
+            "76c55e5deb7620670685",
+            "96be9ed395634c138d83",
+            "8dad92c642517f05ae1f",
+            "14bd3db0414cf876a35b",
+            "200047d1798ccfd468b9",
+            "8600abc47537b2cf1c9b",
+            "10c1d1d8765eab85bc19",
+            "f0f58b1e06ee91798dac",
+            "3bdc281a980196f12202",
+            "3377b5be8d0cd2c38534",
+            "56c3de7b9aaeb0fd5c08",
+            "c18fe72f81a6751f45e3",
+            "82223c2c7121f34b24ee",
+            "433b2c2c1af6b0381df9",
+            "94f33371236cc89ec8ee",
+            "43c5eaf5044f58e2679c",
+            "4b2dc212df4188628ab4",
+            "4f53c9e6b293715ac217"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "SHARED_REACHABLE_PREFLIGHT_WRITE_GAP_REPRODUCED_FIXED_PENDING_REAL_GROUPED_PROOF",
+          "remaining": [
+            "Execute final-source fresh/upgrade/reapply and all grouped growth/campaign lock/receipt tests. Earlier949 five-operation proof is preserved but is not changed-source campaign evidence.",
+            "Reconcile already proven growth RPCs without reopening unchanged event, identity, activation or lifecycle code",
+            "Assess other original growth read/global suppression/lifecycle obligations separately, no whole-service or Phase3 certificate"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
@@ -1995,7 +2078,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -2270,9 +2353,47 @@
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-84b9011a0d2b4754",
+        "sourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "UNCHANGED_CONFIRMATION_METADATA_BOUNDARY_TARGETED_POSITIVE_PROOF_PREPARED",
+        "actorTrace": "The auth-mounted phase1 router obtains actor only from requireUserId(req). Create is reached only after the existing prepared execution returns confirmation_required. Read, cancel and confirm ignore request-body owner and apply exact server actor plus confirmation ID. Private expiry updates reuse only owner-bound rows. Claim binds full plan, digest, expiry and current pending status. The original finish routine binds immutable claimed identity and plan. No production code changed.",
+        "invariant": "Creation, metadata reads, expiry, cancellation and terminal outcomes must remain on the original owner's confirmation. Concurrent claims admit one immutable original plan. Malformed digest must fail before any account lookup or provider action.",
+        "evidence": [
+          {
+            "path": "backend/src/security/confirmationMetadata.local.integration.ts",
+            "type": "REAL_AUTH_DATABASE_HTTP_TEST_PREPARED",
+            "result": "NOT_EXECUTED",
+            "scope": "Valid canonical fixture creation and exact stored owner/plan, altered plan rejection, safe metadata HTTP projection, unsigned and foreign denial, concurrent cancel and replay, expiry, two competing invalid-digest confirmations with one safe failure receipt and exact foreign preservation. Existing real claim/finish contention tests remain separate proof."
+          }
+        ],
+        "remaining": [
+          "Run actual changed-source disposable and full branch/integrated verification",
+          "Map only exact original007 metadata/claim boundaries. Remote execution/account policy and complete008 authority stay independent."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [],
+          "remainingCurrentCallerIds": [
+            "c37a93be0605e64b3156",
+            "94fb30ec710f32d062c2",
+            "36d0fbfc5ddf864ad6ea",
+            "bda77ff34ad9e973cbde",
+            "a1e1f647efb6e7002993",
+            "7c2970e3ea0940d5d136",
+            "986c86eebabfae033939",
+            "884cad1975974abc0599",
+            "b6708d08741254f6da06",
+            "85d5a147aa59e4f62e68"
+          ],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        }
+      },
       "actor": {
         "existingTrace": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
         "currentSemanticVerification": "PENDING"
@@ -2581,9 +2702,28 @@
           }
         ],
         "remaining": [
-          "Bind final-source receipts, preserve separate RPC and caller obligations",
-          "External effects and full provider lifecycle are not certified by these checkpoint boundaries"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "b5df26e09290b7336e88",
+            "cf3bf4daeb128ba98911",
+            "d1853a0190149ebf0ef1"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "UNCHANGED_SOFTWARE_CHECKPOINT_LOADER_AND_ISSUED_FACTORY_PROOF_RECONCILED",
+          "remaining": [
+            "Bind final-source receipts, preserve separate RPC and caller obligations",
+            "External effects and full provider lifecycle are not certified by these checkpoint boundaries"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Checkpoint load filters owner/run and validates row owner/run/project/repository/base/status against embedded shape. Sole production adapter captures current admitted worker and wraps both injected/default stores with immutable run/project/repository/base recovery identity shared by Service and preview. Writes now use separate parent-row-locked generation RPC.",
@@ -2671,9 +2811,27 @@
           }
         ],
         "remaining": [
-          "Bind final-source receipts, preserve separate checkpoint writes and other worker callers",
-          "Do not infer whole worker or provider-effect completion from checkpoint reads"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "6cb302dec6a7d693df42",
+            "09b6dc142ebd7f16df10"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "UNCHANGED_EXECUTION_RECOVERY_OWNER_AND_PRODUCER_PROOF_RECONCILED",
+          "remaining": [
+            "Bind final-source receipts, preserve separate checkpoint writes and other worker callers",
+            "Do not infer whole worker or provider-effect completion from checkpoint reads"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "This record covers only canonical checkpoint load. SupabaseExecutionStateStore builds issued tenant context from constructor userId, filters owner/run and validates stored owner/run/project against embedded state. Writes have a separate issued-attempt row-lock disposition.",
@@ -3067,7 +3225,33 @@
         "remaining": [
           "Reconcile owner provenance for the remaining budget callers instead of treating this parent fix as all16 caller certification",
           "Keep universal spend/settlement authority and dormant activatePaidCycle activation in Phase3"
-        ]
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "590df28cdc2b297e03b6",
+            "39a1f4163240597da04d",
+            "613d8e71ddafb0d6bd0c",
+            "a80e4804742dfd6bcc0a",
+            "6285818c6e8220770b29",
+            "090fe734dc5d1d3dc6e3",
+            "3f66673813dee0d85b85",
+            "746985044f7d3ee62aff",
+            "b5a82155e981259a207e",
+            "564673e6f6b21c690fce"
+          ],
+          "remainingCurrentCallerIds": [
+            "00d351afbe045a136c66",
+            "254a91383e3a8af0310b",
+            "e030677c7ecb6b0dd90e",
+            "e35278adbe80b78c8d41",
+            "5ed8ef26b72e26561f26",
+            "3fc72ec34d884b871909"
+          ],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        }
       },
       "actor": {
         "existingTrace": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
@@ -3197,7 +3381,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -3538,7 +3722,30 @@
           "Execute actual disposable refresh/account race and final-source regression",
           "Reconcile only original tenant/account boundaries with full immediate caller provenance. Keep provider deployment authority,008 approvals,009 custody and010 egress separate.",
           "Retain all historical packet identities and all unproven caller dispositions until authenticated proof is collected."
-        ]
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "2ae451e4fa2142cb3d3b",
+            "533babcf253a3df300ac",
+            "50cfec47a00c8f934d4c",
+            "9536d36325c5502652c0",
+            "ff1b1bd1a685d5e751ee",
+            "bc094f879c6c567e670b",
+            "5c8cf02d349ac91cfb0e",
+            "ae203bf10a8747bfd6de",
+            "52bb46e68e4a103d4782"
+          ],
+          "remainingCurrentCallerIds": [
+            "c47cd353f14ba5046be8",
+            "2d2eae5cbd895d303fc1",
+            "0a6d81aa80ada5c7b14d",
+            "832762c1055a84889f0d"
+          ],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        }
       },
       "actor": {
         "existingTrace": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
@@ -3992,9 +4199,26 @@
           }
         ],
         "remaining": [
-          "Attach new source-bound receipt without rewriting unchanged production code",
-          "Public image content safety and orphan cleanup are distinct from foreign-owner overwrite prevention, no private-file claim"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "3056dc2554f54604f101"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "UNCHANGED_TENANT_GUARD_PRIOR_DATABASE_PROOF_RECONCILED",
+          "remaining": [
+            "Attach new source-bound receipt without rewriting unchanged production code",
+            "Public image content safety and orphan cleanup are distinct from foreign-owner overwrite prevention, no private-file claim"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Read the upload helper, browser client, hook, modal, profile endpoint and Storage policies. Browser getUser derives the first key segment and RLS independently restricts writes. No service key is used. Profile success follows an acknowledged API write only.",
@@ -4099,10 +4323,27 @@
           }
         ],
         "remaining": [
-          "Attach exact new source-bound receipts and actual HTTP tests",
-          "Review each service caller mapping without promoting the whole injected SDK",
-          "Feed cursor freshness is not permission to weaken tenant or private-note guards"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "01f39061a52818afb131"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "UNCHANGED_COMMUNITY_FIELD_PARENT_ROLE_GUARDS_PRIOR_REAL_LOCK_PROOF_RECONCILED",
+          "remaining": [
+            "Attach exact new source-bound receipts and actual HTTP tests",
+            "Review each service caller mapping without promoting the whole injected SDK",
+            "Feed cursor freshness is not permission to weaken tenant or private-note guards"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
@@ -4126,7 +4367,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4259,7 +4500,7 @@
         "packetId": "B1-P2-aca46b7ed6cc0fa7",
         "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
         "executionStatus": "IN_PROGRESS",
-        "finding": "EVENT_PARENT_VERIFIED_AT_397C_SECRET_RECEIPT_REJECTION_FIXED_PENDING_CHANGED_SOURCE_PROOF",
+        "finding": "EVENT_PARENT_VERIFIED_AT_397C_SECRET_RECEIPT_REJECTION_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "The existing SupabaseProjectRuntimeStore.appendEvent inserts user/project/session values into the fixed event table. Current disposable catalog has only event PK and Auth-user FK, with owner-only browser SELECT policy. It has no session-parent relationship. A synthetic SQL probe using the exact original table definitions accepts an owner's event referencing a foreign session. This establishes a service-write parent gap, not a browser write bypass or foreign-payload disclosure. All eleven original store callers remain open unless separately proven.",
         "invariant": "A new session-bearing event must hold the current session and match both its owner and logical project at the decisive write. Missing, deleted, foreign or different-project sessions deny. Existing session-less logical-project events remain supported.",
         "relatedSourceBindings": [
@@ -4311,10 +4552,37 @@
           "scope": "Actual concurrent owner-separated secret keys, checked save/delete receipts, deletion isolation/idempotency, browser denial and owner/session manager consumer all pass. Exact-source externally authenticated reconciliation proves the eight remaining runtime calls and four OAuth primitive calls,296 total verified and343 unproven boundaries. Aggregate39236357964 fails three unrelated dated organic-intelligence assertions, retained rather than waived."
         },
         "remaining": [
-          "Verify the grouped regression correction and newly expanded same-owner restore/fork/event receipt assertions at final source",
-          "Preserve separate original criterion2/4/6/10 gaps and009 custody/rotation/migration obligations",
-          "Do not label the failed893b aggregate or pending later source as full Phase2 acceptance"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "8fc7cf5dd562db7dcd3a",
+            "ed5cdf592a4a0494dc20",
+            "530ec12058ab9d32794b",
+            "419bf279075e606b8b1f",
+            "8da826b4f1382152e9e9",
+            "6fb334291b6218b12f4c",
+            "f4643ffb0f1224d7da80",
+            "67ce8a604d6d6502cc94",
+            "87f57b0ac97d6b473fa3",
+            "99b6b7ce0de9df1778a6",
+            "8bea5ef54bd825f8e224"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "EVENT_PARENT_VERIFIED_AT_397C_SECRET_RECEIPT_REJECTION_FIXED_PENDING_CHANGED_SOURCE_PROOF",
+          "remaining": [
+            "Verify the grouped regression correction and newly expanded same-owner restore/fork/event receipt assertions at final source",
+            "Preserve separate original criterion2/4/6/10 gaps and009 custody/rotation/migration obligations",
+            "Do not label the failed893b aggregate or pending later source as full Phase2 acceptance"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
@@ -4341,7 +4609,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4454,7 +4722,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4526,9 +4794,41 @@
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-079a87ae5cea7b51",
+        "sourceSha256": "ec92f541a194e0c3c03ef5c12d9afc6e6052aadc7ca9d5e2b6ebf27d6c260b0d",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "EXISTING_REGISTERED_PLATFORM_HEALTH_EXCEPTION_REAL_PROOF_PREPARED",
+        "actorTrace": "Existing SupabaseProviderHealthStore uses only registered platform_provider_health, a fixed model_provider_health select/upsert. The schema is platform model counters and normalized failure kind, with no tenant or customer record. Internal providerRuntime transitions and startup hydration are the producers/consumer. No public data API or connected-account credential selector is added.",
+        "invariant": "Only fixed diagnostic fields cross the global persistence boundary. Anonymous and both authenticated browser actors cannot read or modify the global row. Extra object fields must never become persisted private data.",
+        "evidence": [
+          {
+            "path": "backend/src/security/platformHealth.local.integration.ts",
+            "type": "REAL_DISPOSABLE_GLOBAL_EXCEPTION_TEST_PREPARED",
+            "result": "NOT_EXECUTED",
+            "scope": "Actual existing store save/load for one known model, exact counters and fixed projection, all browser role read/upsert/delete denial and unchanged rows. Original row restored in cleanup. No model call or live provider proof."
+          }
+        ],
+        "remaining": [
+          "Execute actual disposable proof and bind the four narrow existing query/factory exception sites",
+          "Do not infer paid provider health or add a fictitious owner column to platform-global counters"
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [],
+          "remainingCurrentCallerIds": [
+            "b7e87dfbceb281533b94",
+            "80f1202165fac508ccee",
+            "05bb5458554f43b160c1",
+            "fe7e6e4fe911ed9a75e1"
+          ],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        }
+      },
       "actor": {
         "existingTrace": "Fixed platform model_provider_health table and model_id conflict key hold aggregate counters and enumerated failure classifications, not user prompts or connected-account credentials. Inspected providerRuntime load/save, transition recording, failure normalization and provider health tests.",
         "currentSemanticVerification": "PENDING"
@@ -4630,10 +4930,27 @@
           "XB01-C008-AC10"
         ],
         "remaining": [
-          "Bind destructive self-account intent to the existing canonical authority in Phase3",
-          "Do not claim atomic logout/MFA or complete FK/Storage/provider cleanup from this tenant boundary",
-          "Final-source authenticated evidence is still required for overall Phase2 acceptance"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "f060c7afeb1437072a23"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "UNCHANGED_SELF_ACCOUNT_TENANT_ADMISSION_EXISTING_REAL_AUTH_PROOF_RECONCILED",
+          "remaining": [
+            "Bind destructive self-account intent to the existing canonical authority in Phase3",
+            "Do not claim atomic logout/MFA or complete FK/Storage/provider cleanup from this tenant boundary",
+            "Final-source authenticated evidence is still required for overall Phase2 acceptance"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Destructive account deletion requires issued owner context, exact DELETE confirmation and a fresh Auth getUser response matching that owner immediately before admin deletion. It never accepts an independently supplied target user ID.",
@@ -4722,7 +5039,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4817,9 +5134,30 @@
           "B1-P2-1b75dad6d83a1d53"
         ],
         "remaining": [
-          "Attach new source-bound receipt and map related private-helper boundaries",
-          "Cache membership alone must never be represented as entitlement or fresh-session proof"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "d81d114079399f02921b",
+            "d46f45e4d48e21c33f23",
+            "b400ffbb7ca6a45da97c",
+            "9468aac7c7e2d3afe674",
+            "a809258d83da1283fc3a"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "UNCHANGED_ISSUED_ACTOR_PROVISIONING_PRIOR_REAL_PROOF_RECONCILED",
+          "remaining": [
+            "Attach new source-bound receipt and map related private-helper boundaries",
+            "Cache membership alone must never be represented as entitlement or fresh-session proof"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
@@ -4893,7 +5231,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5228,7 +5566,47 @@
           "Reconcile only the precisely demonstrated read sites; preserve shared constructor and mutation obligations until all their actual receivers are proven",
           "Keep authority, vault custody, egress and other later obligations separate"
         ],
-        "rollback": "Test/evidence preparation only. No production source, schema or data change to roll back."
+        "rollback": "Test/evidence preparation only. No production source, schema or data change to roll back.",
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "e99258e8fe888ab954f2",
+            "2c208df1de69d1f07815",
+            "7b8df2255ca0983e614a",
+            "09bb9c60fbd0fd04be96",
+            "5787838213972784b847",
+            "5c17851ca38b07bb7ffb",
+            "2888bfffa0c836cfe4d0",
+            "6c91bf08973230eae654",
+            "209cb80277f955a0b2ef",
+            "049ee8c1e87f4ac7f5d8",
+            "6f59ac6dda85bb3fbb9c",
+            "b44752820b98684f3403",
+            "cad9b3cf4560fbd519a6",
+            "80f60224ace1fcf16149",
+            "67c858caffe8cc6b8a2d",
+            "15864a27c46a501fafd1",
+            "230afc26fd02a5f73e5c",
+            "1482b8a9c1d9ae835bdb",
+            "267d14135fb3bd1d98a1",
+            "42fc90e399eed5c0de97",
+            "044cf8649bf888fbbc93",
+            "b499a6018afaf6b8b490",
+            "2623d45568826e06288e",
+            "af2e0acf3186708a5107",
+            "24a309847f8eca992cc6",
+            "7508855b6526c9b0573b",
+            "4ba0ca7ad1c556cea41b",
+            "09ef892d8c2ce312509d",
+            "6cc4c8844f6d1a5e575c"
+          ],
+          "remainingCurrentCallerIds": [
+            "cd8790e39c3283f05482"
+          ],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        }
       },
       "actor": {
         "existingTrace": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
@@ -5281,7 +5659,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5534,7 +5912,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5603,7 +5981,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5981,7 +6359,7 @@
         "packetId": "B1-P2-a582cdd6898c81f0",
         "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
         "executionStatus": "IN_PROGRESS",
-        "finding": "DEMONSTRATED_FIRST_OWNER_BINDING_GAP_FIXED_PENDING_REAL_SIGNED_DATABASE_PROOF",
+        "finding": "DEMONSTRATED_FIRST_OWNER_BINDING_GAP_FIXED_VERIFIED_AT_7BE44030",
         "actualVerification": {
           "sourceSha": "b9bd2828cf325b5b2088601019abc604f1018d4d",
           "disposableRun": "39163904198",
@@ -6021,10 +6399,36 @@
           }
         ],
         "remaining": [
-          "Run final-source actual disposable SQL and signed callback case, including unchanged rollback/browser denial tests",
-          "Verify actual configured checkout metadata read permission only before future provider activation, no live key or permission change in Phase2",
-          "Keep Command008 settlement/action authority and provider ordering outside this narrow tenant-owner repair"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "099c4eef2a21db12099d",
+            "fd7ae7cab6529f4fb459",
+            "4e027991ba45aac9e16d",
+            "b52db4c851f3dea1748b",
+            "363aaa2323ae3945da87",
+            "756de29153249d2fac2a",
+            "3bf2f7d4aadc2706ceb1",
+            "05c0b2493c01eed93637",
+            "87702decca37439d7217",
+            "8b10b8683a2118a013b9"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "DEMONSTRATED_FIRST_OWNER_BINDING_GAP_FIXED_PENDING_REAL_SIGNED_DATABASE_PROOF",
+          "remaining": [
+            "Run final-source actual disposable SQL and signed callback case, including unchanged rollback/browser denial tests",
+            "Verify actual configured checkout metadata read permission only before future provider activation, no live key or permission change in Phase2",
+            "Keep Command008 settlement/action authority and provider ordering outside this narrow tenant-owner repair"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "The only production handleWebhookEvent caller verifies the provider HMAC before invoking it, and the service verifies the approved account. First payment ownership uses source/plan/UUID/profile-checked provider metadata created by server checkout. Existing membership identity must agree with stored ownership; insert-ignore and an owner-bound update close competing callback claims.",
@@ -6052,7 +6456,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6183,9 +6587,31 @@
           }
         ],
         "remaining": [
-          "Attach final-source signed and direct-browser proof for the explicit narrow exception",
-          "Do not exempt raw shared factories, uncertain recovery policy or universal financial authority"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "d6ad5ae8bdb2a0a4e3b1",
+            "f4820eadd2737e8f1dd6",
+            "c3960cde434d4b5ff038",
+            "dd938b6a5379ea36386a",
+            "cc6e0a6545effa5f63ea",
+            "5d11d486dbd8eb6d0c68"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "SOURCE_TRACED_SIGNED_DELIVERY_EXCEPTION_VERIFIED_AT_AAEFE",
+          "remaining": [
+            "Attach final-source signed and direct-browser proof for the explicit narrow exception",
+            "Do not exempt raw shared factories, uncertain recovery policy or universal financial authority"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "This intentionally unauthenticated provider callback verifies raw-body HMAC and timestamp before DB access. Fixed provider plus delivery ID and digest bind duplicate lookup; a failed delivery retry now requires one returned claim row before processing. Ordinary clients cannot access these server-only delivery records.",
@@ -6402,7 +6828,7 @@
         "packetId": "B1-P2-d068943836963a9c",
         "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
         "executionStatus": "IN_PROGRESS",
-        "finding": "SIX_ISSUED_CONTEXT_PKCE_CALLS_PROVEN_TEN_ORIGINAL_TOKEN_AND_STORAGE_CALLS_RETAINED_OPEN",
+        "finding": "ALL_SIXTEEN_ISSUED_OWNER_PKCE_TOKEN_AND_STORAGE_CALLS_PROVEN_AT_7BE44030",
         "actorTrace": "index.ts authenticates GitHub, Supabase, Vercel and publishing mounts. Start/callback/disconnect producers require the original issued TenantContext and pass it unchanged to the four fixed provider PKCE wrappers. Store/consume/clear derive only its verified owner. SQL binds exact owner/provider/authorization revision, current one-use state and database expiry. Raw token/policy and shared storage primitives are separate callers and remain unresolved.",
         "invariant": "Foreign actor/provider/state, cloned context, replay and revoked or replaced session must not save, consume or clear another owner's authorization session. A PKCE session is not an external account credential or consequential-action grant.",
         "actualVerification": {
@@ -6414,18 +6840,16 @@
           "scope": "New existing-wrapper test with fresh real Auth actors plus unchanged two-client concurrency/expiry/replacement/browser-role tests. Synthetic token payloads, no OAuth provider exchange or account operation."
         },
         "verifiedCurrentCallerIds": [
+          "b8d0ad5c152e8ec1c565",
+          "5d90ff0ff5c303419423",
+          "71763251ce3650f64a42",
+          "efdb39bc229d1fb04151",
           "e7db064acbe958d8fd76",
           "0a50f29a357989f22449",
           "b2603393f6e57aa8c372",
           "b94338b6bb001b7e55ce",
           "4ed0f34665473f6b62ce",
-          "288a27a7d2a5f5cd103e"
-        ],
-        "remainingCurrentCallerIds": [
-          "b8d0ad5c152e8ec1c565",
-          "5d90ff0ff5c303419423",
-          "71763251ce3650f64a42",
-          "efdb39bc229d1fb04151",
+          "288a27a7d2a5f5cd103e",
           "180631f7a6bd706af8d0",
           "14438be451fcb7f3bbe1",
           "c14b0badea7dd2cc312f",
@@ -6433,6 +6857,7 @@
           "7595558fe3d8cbd76faa",
           "3028f7fe3ff9804dd3e6"
         ],
+        "remainingCurrentCallerIds": [],
         "evidence": [
           {
             "path": "backend/src/security/oauthWrapperOwnership.local.integration.ts",
@@ -6466,10 +6891,42 @@
           "XB01-C009-AC12"
         ],
         "remaining": [
-          "Reconcile ten original token/policy/shared storage callers and every selected external account producer",
-          "Bind exact changed-source receipts before whole007 acceptance",
-          "Do not implement008/009 or claim complete provider-account selection from the six PKCE calls"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "b8d0ad5c152e8ec1c565",
+            "5d90ff0ff5c303419423",
+            "71763251ce3650f64a42",
+            "efdb39bc229d1fb04151",
+            "e7db064acbe958d8fd76",
+            "0a50f29a357989f22449",
+            "b2603393f6e57aa8c372",
+            "b94338b6bb001b7e55ce",
+            "4ed0f34665473f6b62ce",
+            "288a27a7d2a5f5cd103e",
+            "180631f7a6bd706af8d0",
+            "14438be451fcb7f3bbe1",
+            "c14b0badea7dd2cc312f",
+            "4325b87a6699a71f0325",
+            "7595558fe3d8cbd76faa",
+            "3028f7fe3ff9804dd3e6"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "SIX_ISSUED_CONTEXT_PKCE_CALLS_PROVEN_TEN_ORIGINAL_TOKEN_AND_STORAGE_CALLS_RETAINED_OPEN",
+          "remaining": [
+            "Reconcile ten original token/policy/shared storage callers and every selected external account producer",
+            "Bind exact changed-source receipts before whole007 acceptance",
+            "Do not implement008/009 or claim complete provider-account selection from the six PKCE calls"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
@@ -6632,7 +7089,7 @@
         "packetId": "B1-P2-680a665952e714b9",
         "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
         "executionStatus": "IN_PROGRESS",
-        "finding": "LEGACY_MIRROR_WRITER_MISSING_ISSUED_CONTEXT_FIXED_PENDING_REAL_PROOF",
+        "finding": "LEGACY_MIRROR_WRITER_MISSING_ISSUED_CONTEXT_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "No production caller of this legacy writer exists. Absence of callers is not certification. The export now requires original server-issued TenantContext before bucket inspection or upload and derives its object owner from that context. Fixed bucket and owner/github.json path remain. Payload is serialized before the first await. Seven existing canonical read/delete boundaries remain byte-identical and their previous evidence is retained.",
         "invariant": "Unissued primitive, body object or cloned context cannot inspect a privileged bucket or overwrite an owner mirror. Issued context writes only its exact owner path. A mirror never establishes canonical connection authority.",
         "evidence": [
@@ -6650,9 +7107,32 @@
           }
         ],
         "remaining": [
-          "Execute final-source disposable Storage and branch/integrated regression before certifying the three writer sites",
-          "Preserve independent Phase3 custody and live provider lifecycle obligations"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "541c1bc5f61f88e7c873",
+            "254a09774311f04897b1",
+            "1ac34398173cf0fedf3a",
+            "9b97e6de9a2c6c753011",
+            "d12c617bb45c7981e210",
+            "9e95745053a0044758eb",
+            "474d98f6d07da849e67a"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "LEGACY_MIRROR_WRITER_MISSING_ISSUED_CONTEXT_FIXED_PENDING_REAL_PROOF",
+          "remaining": [
+            "Execute final-source disposable Storage and branch/integrated regression before certifying the three writer sites",
+            "Preserve independent Phase3 custody and live provider lifecycle obligations"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
@@ -6674,7 +7154,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6763,7 +7243,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
+          "sourceSha256": "80e9b9be7d1004dfb45b1edcc26836c44a0e597d39392b4985db903b3782c18f",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6810,14 +7290,14 @@
       "id": "B1-P2-f8cb123dcb4c4a53",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
+      "sourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
       "baselineCallerIds": [
         "d84df34ff692e4fb31c1",
         "bda2ddc16c7864ef18d8"
       ],
       "currentCallerIds": [
         "d84df34ff692e4fb31c1",
-        "3182a013220000508dad"
+        "3ca8e5d316bd9fafc9fe"
       ],
       "mapping": [
         {
@@ -6830,7 +7310,7 @@
         {
           "baselineCallerId": "bda2ddc16c7864ef18d8",
           "currentCallerIds": [
-            "3182a013220000508dad"
+            "3ca8e5d316bd9fafc9fe"
           ],
           "change": "RETAINED"
         }
@@ -6855,7 +7335,7 @@
         {
           "path": "backend/src/security/serviceRoleGuard.test.ts",
           "marker": "unregistered or prototype-derived global operations fail",
-          "sourceSha256": "0ab1026041e51d2244c00239956f3c50ee868a1f1b9aebeb3a3c04106713ac39",
+          "sourceSha256": "04bce1c77703a8dc3edd921e31b9cb0172620d1abeee1b123c00b4ad46af3db3",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6916,7 +7396,7 @@
         "packetId": "B1-P2-08a1009a4a9b93a5",
         "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
         "executionStatus": "IN_PROGRESS",
-        "finding": "DEMONSTRATED_ORPHAN_MIRROR_GRANT_FIXED_PENDING_REAL_DATABASE_PROOF",
+        "finding": "DEMONSTRATED_ORPHAN_MIRROR_GRANT_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "GitHub mirror path is owner-derived, but both canonical rows could be absent while the helper treated a private object as authority. A delayed legacy object after canonical deletion could restore credential access. Missing/error/revoked authority now denies. A matching active github_integrations or legacy user_integrations grant remains supported and is rechecked after download.",
         "invariant": "Private storage is a mirror, never a grant when canonical authority is absent. Owner and canonical token must match at use. Do not remove objects, rotate keys or claim new vault encryption.",
         "evidence": [
@@ -6934,10 +7414,29 @@
           }
         ],
         "remaining": [
-          "Execute final-source real orphan case and all existing rotation/revocation regressions",
-          "Storage-only orphaned connections require explicit reconnect through existing flows, no silent credential migration",
-          "Whole consumer provenance, connected-account authority and Phase3 custody remain separate"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "d87e4598104184aa00dd",
+            "2d83b6fa32b99099b19e",
+            "da8ff71a038a365d4e60"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "DEMONSTRATED_ORPHAN_MIRROR_GRANT_FIXED_PENDING_REAL_DATABASE_PROOF",
+          "remaining": [
+            "Execute final-source real orphan case and all existing rotation/revocation regressions",
+            "Storage-only orphaned connections require explicit reconnect through existing flows, no silent credential migration",
+            "Whole consumer provenance, connected-account authority and Phase3 custody remain separate"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission.",
@@ -7203,14 +7702,38 @@
           }
         ],
         "remaining": [
-          "Bind final-source121-migration fresh/upgrade/reapply and five-wait receipts, preserving the now passing d9 proof",
-          "Reconcile authenticated producer through current-parent and existing scheduler/attempt writers before whole007.5 acceptance",
-          "Other worker writers and provider-account consumers remain independent, no authority or vault implementation"
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
         ],
         "previousVerification": {
           "sourceSha": "b762157a21e9c709aba3d8a6a87b9c83f88cc617",
           "disposableRun": "39168773496",
           "scope": "Existing owner/generation/lease, chat and original foreign-project preflight cases pass. This does not prove the new current-parent write invariant."
+        },
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "cb05c4e7cb4f3b73155f",
+            "eeb2bd25e4456d58a465",
+            "8796931131b8f3173ef9",
+            "24e9a07a40a70d9bd103",
+            "e81906b392bf21ef067d",
+            "3e4ef8e15d7b836d3557",
+            "b47a9af1f31012f1a675",
+            "9a5ebc5d27638e21a19f"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "DEMONSTRATED_WORKER_PROJECT_WAIT_ADMISSION_FIXED_REAL_DATABASE_PROOF_AT_D9B13E09",
+          "remaining": [
+            "Bind final-source121-migration fresh/upgrade/reapply and five-wait receipts, preserving the now passing d9 proof",
+            "Reconcile authenticated producer through current-parent and existing scheduler/attempt writers before whole007.5 acceptance",
+            "Other worker writers and provider-account consumers remain independent, no authority or vault implementation"
+          ]
         }
       },
       "actor": {
@@ -7467,7 +7990,35 @@
           "Execute the added real private-object test and full exact-source regression",
           "Reconcile all remaining upstream account-selection consumers independently",
           "No Phase3 encryption, key rotation, credential migration or external provider call"
-        ]
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "3696472e5c2e79ec3877",
+            "793cd087bfe58a1323e9",
+            "b2c86b6db6573be9213f",
+            "e5b57581e4457cd58ff2",
+            "f77c97eed440f2d836c0",
+            "f651340939c0fe9a8786",
+            "912679b2d70aeb54860e",
+            "8e483e5db88e334d4fd9",
+            "2714bcb8dd844631154a",
+            "b11077c6032271361558",
+            "208413eede9db532d440",
+            "4bbd68abc608cd40cf5e",
+            "b13ab17aa7429003241b",
+            "281beef588e15d39be66",
+            "251a8f22c720652f36a5",
+            "0671bfb9368569581fba",
+            "7dd7b79ecd7c4840a960"
+          ],
+          "remainingCurrentCallerIds": [
+            "ee377e28847a820d3e60"
+          ],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        }
       },
       "actor": {
         "existingTrace": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -7577,7 +8128,7 @@
         "packetId": "B1-P2-d3895e94f03fa522",
         "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
         "executionStatus": "IN_PROGRESS",
-        "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_PENDING_REAL_PROOF",
+        "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",
         "invariant": "No orphaned private object may become a BYOK key, status or deploy environment entry without matching database authority. Canonical disappearance during the download must fail closed.",
         "evidence": [
@@ -7595,10 +8146,27 @@
           }
         ],
         "remaining": [
-          "Execute real final-source case and existing epoch/revision races",
-          "Caller identity and custody for all other provider consumers remain independent",
-          "No customer data or credential row was migrated or deleted"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "2ce84a51bf89c83602d6"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_PENDING_REAL_PROOF",
+          "remaining": [
+            "Execute real final-source case and existing epoch/revision races",
+            "Caller identity and custody for all other provider consumers remain independent",
+            "No customer data or credential row was migrated or deleted"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -8277,7 +8845,7 @@
         "packetId": "B1-P2-05e42140dd947e21",
         "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
         "executionStatus": "IN_PROGRESS",
-        "finding": "DEMONSTRATED_STALE_PARENT_WRITE_FIXED_PENDING_REAL_LOCK_PROOF",
+        "finding": "DEMONSTRATED_STALE_PARENT_WRITE_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "Authenticated growth route supplies req.userId. Existing OperationsService.permissions preflight supplies the observed project owner. The former two service-role writes did not recheck that owner or current membership at commit. New service-only link_growth_identity locks current actor profile, project and membership through one first-owner-preserving identity mutation.",
         "invariant": "Project transfer or membership revocation that wins the row lock must deny a later stale identity write. Concurrent first claims cannot transfer another user's binding. Exact receipt must retain actor, tenant, parent, anonymous key and evidence.",
         "evidence": [
@@ -8295,9 +8863,26 @@
           }
         ],
         "remaining": [
-          "Execute new real locks and unchanged competing-first-claim test at final source",
-          "Anonymous-key possession is not end-user attribution proof. No reward, consent, authority or Phase3 completion is inferred."
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "726c74dca42ecc8a2ffd"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "DEMONSTRATED_STALE_PARENT_WRITE_FIXED_PENDING_REAL_LOCK_PROOF",
+          "remaining": [
+            "Execute new real locks and unchanged competing-first-claim test at final source",
+            "Anonymous-key possession is not end-user attribution proof. No reward, consent, authority or Phase3 completion is inferred."
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Authenticated project member passes existing project access check. Insert-ignore chooses the unique tenant/project/anonymous identity winner. Subsequent evidence refresh matches that tuple and exact authenticated user, with exact receipt validation. A competing actor cannot overwrite the winning binding.",
@@ -8383,10 +8968,27 @@
           }
         ],
         "remaining": [
-          "Final-source regression and inventory correction remain required",
-          "Reconcile broad growth packet without certifying unrelated writes",
-          "Phase3 authority and provider provenance are not inferred from analytics labels"
-        ]
+          "Verify the current changed-source regression and both-record acceptance pipeline. Prior pending caller proof above is genuinely verified at7be44030.",
+          "Preserve every independent original frozen obligation. No whole-packet, provider-production, authority, custody or egress certificate follows from these caller dispositions."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "811dc82be398940450c6"
+          ],
+          "remainingCurrentCallerIds": [],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalVerificationNotes": {
+          "finding": "DEMONSTRATED_STALE_EVENT_PARENT_CREATION_AND_REPLAY_FIXED_REAL_LOCK_PROOF_RECONCILED",
+          "remaining": [
+            "Final-source regression and inventory correction remain required",
+            "Reconcile broad growth packet without certifying unrelated writes",
+            "Phase3 authority and provider provenance are not inferred from analytics labels"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Original authenticated actor and normalized immutable event intent are retained across project authority awaits. Existing tenant/idempotency unique index serializes concurrent inserts. A losing unique-conflict request re-reads the winning row with exact tenant/key predicates and verifies actor/project/payload before returning a duplicate.",

@@ -8,4 +8,8 @@ test('unregistered or prototype-derived global operations fail before constructi
   assert.equal(globalServiceExceptions.signed_whop_delivery_receipts.source,'backend/src/routes/billingWebhook.ts');
   assert.equal(globalServiceExceptions.signed_whop_delivery_receipts.table,'webhook_deliveries');
   assert.equal(globalServiceExceptions.signed_whop_delivery_receipts.action,'insert/select/update');
+  assert.equal(globalServiceExceptions.readiness_profile_probe.source,'backend/src/security/serviceRoleGuard.ts');
+  assert.equal(globalServiceExceptions.readiness_profile_probe.action,'select');
+  assert.equal(globalServiceExceptions.readiness_profile_probe.columns,'id');
+  assert.equal(globalServiceExceptions.readiness_profile_probe.limit,1);
 });

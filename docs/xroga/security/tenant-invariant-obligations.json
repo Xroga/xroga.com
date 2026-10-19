@@ -81,8 +81,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Primitive and three narrow business/planner post-completion consumers VERIFIED at54abe997a2bbccd97796131b98519747c8c60c21 disposable38824268139, including distinct completed-attempt ledger receipts and missing owner-row fail-closed without ledger mutation. Complete cost/model provenance, completed-output recovery and cross-invocation provider deduplication remain open. New shared provider-reservation failure marker awaits next-source verification. Not Command008 acceptance or permission to spend.",
-      "authorityTrace": "Helper requires issued TenantContext and sends only its owner with validated immutable receipt/model/role/token/cost evidence to service-only record_ai_usage_atomic. SQL locks existing owner usage row and reuses existing increment/merge/ledger functions with the locked current plan. Same receipt requires identical payload and cannot increment twice.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "The sole persistUsageAccounting consumer is recordCompletedProviderUsage, which creates issued persisted-owner context from the original server actor. Its only three production callers are business read, business action and semantic planner, passing input.userId, not model output. Phase1 handlers derive that actor from req.userId. Stored confirmation execution passes the same original actor only after exact claimed owner/ID validation. The primitive validates issued context, snapshots receipt evidence, sends only context owner to the fixed RPC and checks exact owner/model/amount/period/ledger receipt. SQL locks that owner usage row and scopes receipt replay, increment, merge and ledger write to it atomically. Actual wrapper test proves two owners using the same UUID have separate receipts, supplied input owner cannot replace context, a cloned foreign context cannot write, and replay/conflicting evidence preserve exact rows. Existing real consumer and transaction tests prove missing-owner failure, browser-role denial, concurrent replay and four rollback injection points.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -92,6 +92,15 @@
         {
           "path": "backend/src/security/usageAccounting.local.integration.ts",
           "marker": "prepared atomic accounting serializes receipts"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "8c7615ae94f3ecbfe8ed",
+            "224d992ddd99b8389fed"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -604,8 +613,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Fixed malformed/negative limits, raw metadata/wildcard projections and false-empty outage success. Existing operations redactor filters known secret formats in selected diagnostic strings. Four focused route/middleware tests and backend typecheck pass, including real HTTP ordinary-role denial, bounded query construction and sanitized503 errors. Final-source integration and comprehensive arbitrary free-text secret disclosure remain unresolved. Named exceptions and pattern redaction are not universal secrecy guarantees.",
-      "authorityTrace": "Index mounts this router behind authMiddleware and adminMiddleware. Fixed named global exceptions read system_errors and deployment_status, with no writes or client-selected table.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Existing authenticated current DB admin/owner only. Three fixed bounded read-only diagnostic queries, never body-selected actor or arbitrary table. Actual member/anonymous/forged metadata/query denial, legitimate cross-fixture global admin reads, redaction and same-JWT post-demotion denial. Exact fixture records remain unchanged. Production evidence is explicitly unknown/synthetic, no deployment or production acceptance.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -615,6 +624,17 @@
         {
           "path": "backend/src/routes/admin.test.ts",
           "marker": "admin diagnostics deny non-admins"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "900b714de6b6407ee20d",
+            "8f0a6deb321279d0013d",
+            "e433173f7cb36532848e",
+            "ad80bf6a15ca34880fe0"
+          ],
+          "disposition": "NARROW_EXCEPTION"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -691,13 +711,24 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Inactive cache only, no production callers found. Bounded exact payload/digest/expiry/write receipt tested locally and real cross-tenant identical prompt isolation/acknowledgement VERIFIED at54abe997a2bbccd97796131b98519747c8c60c21 disposable38824268139. Project/context/permission-version variation and account-deletion cleanup remain unresolved, no context-sensitive production activation.",
-      "authorityTrace": "Both cache operations require issued context and derive the key from server userId plus normalized prompt. The database is keyed by that digest; an omitted or forged context fails before query.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Both existing exported helpers require an original issued TenantContext, including before factory access. The server constructs the SHA256 key from a fixed version prefix, that exact authenticated user ID and bounded trimmed prompt. Both persistence operations use only that key. Reads validate the key twice, bounded content and finite bounded expiry. Upsert checks exact key, content, feature and expiry receipt. No arbitrary caller key, tenant fallback, public reader, project ownership inference or provider selection exists.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/services/responseCache.ts",
           "marker": "tenantResponseCacheKey"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "7c567b2757768a6b3070",
+            "eae08a12333a1ad49fc8",
+            "2f640cfaedce8074a9e5",
+            "f67653e309c9b2076efa"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -802,13 +833,22 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Read authorization is deliberate and not tenant-project access. Evidence summary/reference redaction and freshness, role revocation during reads and live readiness semantics remain gaps. Other mutating routes delegate to separately reviewed OperationsService.",
-      "authorityTrace": "The two direct persistence candidates are the readiness route, separately guarded by adminMiddleware, using the named authorized_release_readiness global exception and fixed columns/limit50. Index requires auth for the router.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Existing authenticated current DB admin/owner only. Three fixed bounded read-only diagnostic queries, never body-selected actor or arbitrary table. Actual member/anonymous/forged metadata/query denial, legitimate cross-fixture global admin reads, redaction and same-JWT post-demotion denial. Exact fixture records remain unchanged. Production evidence is explicitly unknown/synthetic, no deployment or production acceptance.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/routes/operations.ts",
           "marker": "authorized_release_readiness"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "e23a6715863cc22fbccf",
+            "6ac8a018f3c309f7f133"
+          ],
+          "disposition": "NARROW_EXCEPTION"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -859,8 +899,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Null/replay fixes verified atc659262f. New source scopes campaign segments before creation/processing, checks experiment tenant against project authority, constrains assignment reads/writes and requires same-tenant/project/experiment outcome events. Event campaign/experiment references are checked before insert. Three focused boundary tests pass; real relation fixture pending CI. Remaining gaps: TOCTOU and mutable parent rows, member mutation permissions, other event/subject relationships, cross-project suppression conflict key, changed-intent replay, notification recipient eligibility, durable approval/lease/idempotency and partial delivery recovery. Candidates remain gaps, not security-certified. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
-      "authorityTrace": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "This single default constructor only obtains a server SDK handle, stores it in a private readonly field and shares that same handle with OperationsService. It performs no resource query, has no request owner argument, exposes no client through an endpoint and stores no per-user context. The sole production instance is the auth-mounted growth router. Every enabled method takes that verified req.userId, resolves current project permissions and tenant, and either filters its selected reads or uses a bounded service-only current-actor transaction. All43 non-factory persistence sites at this exact source have independent accepted scoped proof before this constructor is eligible. The router uses the default factory on real HTTP positive/negative cases. Injected test clients alone are not the source of its certification.\nThe authenticated growth router supplies original req.userId. Existing access derives canonical project owner and current view permission. All eight overview queries use that exact tenant/project. experimentResult first resolves the experiment internally, then authorizes its project and verifies its tenant before returning anything. Assignments constrain that experiment and tenant. Outcome rows carry no tenant column and are used only when their assignment ID exists in the authorized tenant assignment map. The result is a fixed aggregate, not raw rows or identities. No read performs a mutation or external action.\nThe same auth-mounted event handler supplies original req.userId. The immutable event intent and current access derive the tenant. The internal replay read uses tenant/idempotency and verifies every payload field including original actor/project, never returning early. Experiment/campaign reads require exact tenant/project/ID. Referral read requires and checks the full project attribution tuple. Every path still enters the already proven record_growth_event transaction, which locks current project, member and every referenced parent. Neither the four preliminary rows nor an old replay are returned before that decisive admission and exact receipt verification.\nAuth-mounted growth routes supply req.userId and validated project input. Existing access derives current tenant and canonical view/manage roles. Each of the five methods now writes only through write_growth_record_admitted. SQL locks current actor role, project owner and membership, enforces operation roles and writes explicit owner/project fields. recommend reads only exact owned project incidents/deployment/lifecycle and tenant-wide actor suppression. Those reads remain internal until SQL rechecks and locks the complete selected basis and current authority. A changed basis fails closed. Every returned persisted record is checked for ID, tenant, project and expected fields. Suppression returns only its original public projection.\nThe authenticated route supplies original actor and validated project/segment intent. access uses current canonical manage permission. The preliminary segment read is exact tenant/project/active and never returned independently. Creation uses only shared admitted write with current actor/project/member and active owned segment held through the insert. Original createAction still performs its existing separate admission and returns an exact actor/owner/project/target/version/idempotency receipt. Link admission again locks current actor/project/member, the exact owned pending campaign and its exact canonical action/requester/target/version/key before writing only the evidence reference. Both returned records are checked for complete original payload and identity. A failed action never reaches link, and a failed link never becomes successful delivery.\nThe sole production GrowthService constructor is the auth-mounted growth router. Each handler uses verified req.userId, with validated resource IDs, never a body actor. access delegates existing OperationsService permissions and derives tenant from the current project owner. This exact unchanged method performs no external provider call. Its internal parent lookup is not returned before authorization. Tenant/project comparisons precede the service-only SQL transaction, whose current project, role and relevant parent locks decide the write. Returned receipts are checked against the admitted owner/parent and operation before any service result. processCampaign additionally requires the existing canonical approved action, current campaign/segment, in-app channel and exact bounded counters. No new approval or delivery mechanism is inferred.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -870,6 +910,45 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "521d206b28f660c52ca7",
+            "743b3ec38209de66a8b6",
+            "70674fcabb7973d0909c",
+            "98a51063b8117bbc2ad1",
+            "65173e083c611fe4f8ad",
+            "0c64adfe8bac8c6f9e8a",
+            "4c4c5151a644e1afd480",
+            "85b6a438c447d6293ab3",
+            "7057f486ce219b8cb4c6",
+            "11101077dd0d8ad1cb7f",
+            "0c978c7dd2ea1c9022b2",
+            "6efe9ed2d629814df975",
+            "794709739cc0e5521650",
+            "717772bdfa767350a841",
+            "e9affb30cb83590d28be",
+            "9726445c0a4a7cda3bda",
+            "76c55e5deb7620670685",
+            "96be9ed395634c138d83",
+            "8dad92c642517f05ae1f",
+            "14bd3db0414cf876a35b",
+            "200047d1798ccfd468b9",
+            "8600abc47537b2cf1c9b",
+            "10c1d1d8765eab85bc19",
+            "f0f58b1e06ee91798dac",
+            "3bdc281a980196f12202",
+            "56c3de7b9aaeb0fd5c08",
+            "82223c2c7121f34b24ee",
+            "433b2c2c1af6b0381df9",
+            "94f33371236cc89ec8ee",
+            "43c5eaf5044f58e2679c",
+            "4b2dc212df4188628ab4",
+            "4f53c9e6b293715ac217"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -933,13 +1012,32 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Deletion concurrency/rollback/role denial verified at f4b7acf4 disposable38817558178. New creation transaction serializes this API's owner/repository saves and rolls back required child failures,20 local SQL assertions pass, real disposable tests pending. Focused file-read owner substitution and outage negatives pass. Remaining gaps: other legacy repository writers do not share this advisory lock, retried creates without repository identity can duplicate, generic detail DB failure versus not-found semantics and live file/provider acceptance remain. No whole-router security certification.",
-      "authorityTrace": "Router requires issued tenantContext and overwrites req.userId. Direct project queries bind user_id. File/code reads join projects!inner(user_id) in the child SELECT and validate exact returned parent identity, with safe503 for authority outage. Create uses one actor-bound transaction for project/message/activity. Private delivery retains canonical helpers.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "The auth-mounted router revalidates the issued TenantContext and overwrites req.userId from it before obtaining the tenant admin client. Collection and detail apply user_id from that context in the decisive database SELECT. Detail includes only files of the owner-filtered parent in the same query. Client owner/project query fields do not affect that predicate. Operations membership is deliberately not general source-file ownership. No write or external effect occurs in these four sites.\nIndex authenticates the projects mount and router middleware replaces request identity from the original issued context. These four factory sites each revalidate that context. Create/delete have only their separately proven fixed owner-bound atomic RPC recipient, with exact owner receipt. File/code handlers first bind project ID plus server owner, fail on authority lookup errors, then independently inner-join current parent owner in the same file query, validate each returned project/parent identity and remove authority metadata from output. Code also fixes file_type. No object key/body owner can choose another parent. Existing real own files/code positives, all three foreign endpoint denials, forged create owner, authenticated file delivery and atomic save/delete concurrency/rollback prove these eight existing boundaries. No object-storage provider request is needed for these database file projection paths.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/security/tenantIsolation.integration.test.ts",
           "marker": "project creation denies unavailable repository transaction without independent child writes"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "a1602e2131ac55ae41f2",
+            "b0fcef8a6524e67436e8",
+            "3e189d48b17db98a088f",
+            "7305a5f03336a229a8ac",
+            "99fbb1f3e5395b85b5b3",
+            "e83d9ad87d86fa040e65",
+            "3f1a0da9608e9aca5b55",
+            "a54bea8420a398ba79d6",
+            "b6a9fecfb2865406fae7",
+            "5d3d469f5d8690de76d4",
+            "9531cc94128f41d7f873",
+            "9971c1ad86935d8ef2f2"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -1160,8 +1258,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
-      "authorityTrace": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.\nActive public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -1171,6 +1269,34 @@
         {
           "path": "backend/src/ai/providerBudget.test.ts",
           "marker": "production cannot authorize provider execution using process-memory accounting"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "00d351afbe045a136c66",
+            "254a91383e3a8af0310b",
+            "e030677c7ecb6b0dd90e",
+            "e35278adbe80b78c8d41",
+            "5ed8ef26b72e26561f26",
+            "3fc72ec34d884b871909"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        {
+          "callIds": [
+            "590df28cdc2b297e03b6",
+            "39a1f4163240597da04d",
+            "613d8e71ddafb0d6bd0c",
+            "a80e4804742dfd6bcc0a",
+            "6285818c6e8220770b29",
+            "090fe734dc5d1d3dc6e3",
+            "3f66673813dee0d85b85",
+            "746985044f7d3ee62aff",
+            "b5a82155e981259a207e",
+            "564673e6f6b21c690fce"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -1273,13 +1399,38 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
-      "authorityTrace": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.\nExisting authenticated Vercel, integration and Supabase OAuth handlers use req.userId and the admitted pipeline uses opts.userId. Publishing status and GitHub deployment helpers propagate that same actor. Delivery reads the authenticated owned revision before using its userId, not model/body identity. getVercelToken/getVercelUsername/isVercelConnected/live verification and project selection share loadVercelConnection exact owner/provider predicates. Reads never revive an absent or revoked canonical connection from mirrors. Single-flight is keyed by owner. Refresh leases update only that owner/provider/observed refresh token; cleanup restores only its exact marker. Native refresh observes the canonical revision and known account before provider response and the atomic save CAS retains both. Only clearVercelConnection invokes private mirror deletion using the original authenticated context owner. Actual distinct-account rows, concurrent same-owner and foreign-owner refresh, foreign input denial before transport, held response against authenticated disconnect, unchanged tombstone/foreign row and exact foreign mirror bytes exercise these seven persistence boundaries.\nThe sole production clearVercelConnection caller is authenticated Vercel disconnect with the original req.tenantContext. requireTenantContext and getTenantSupabaseAdmin both validate that original issued context before the fixed owner/vercel upsert. The owner-inclusive conflict key cannot revoke another account. Empty token, fresh revision and revoked tombstone are persisted before clearing the same context PKCE session and owner-namespace mirror. Actual authenticated disconnect, other-owner retention and stale refresh persistence denial exercise this function. No body field can choose its actor or provider.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
           "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "c47cd353f14ba5046be8",
+            "2d2eae5cbd895d303fc1",
+            "0a6d81aa80ada5c7b14d",
+            "832762c1055a84889f0d"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        {
+          "callIds": [
+            "2ae451e4fa2142cb3d3b",
+            "533babcf253a3df300ac",
+            "50cfec47a00c8f934d4c",
+            "9536d36325c5502652c0",
+            "ff1b1bd1a685d5e751ee",
+            "bc094f879c6c567e670b",
+            "5c8cf02d349ac91cfb0e",
+            "ae203bf10a8747bfd6de",
+            "52bb46e68e4a103d4782"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -1307,13 +1458,29 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Durable authorization epoch, atomic callback save/revoke and real two-client integration verified atc659262f. Settings/default-repo now change only metadata, require an exact active-owner receipt and never rewrite plaintext token mirrors. Three focused GitHub tests pass; new actual settings owner/race integration pending. Primitive userId provenance, metadata versus reconnect/target races, already-issued tokens, existing legacy copies and external GitHub revocation remain unresolved. No complete CredentialVault acceptance.",
-      "authorityTrace": "Inspected complete connection helper, token store, schema bootstrap and route disconnect boundary. Queries bind internal userId. Existing primary empty-token row is now authoritative, failed DB reads cannot fall back, saves require primary DB success and disconnect retains revocation before mirror cleanup. Reconnect explicitly writes the primary row.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "All immediate getGitHubToken consumers were traced. Auth-mounted GitHub, publish, showcase and phase1 use req.userId. Non-web release, signing, repository export, GitHub integration and deployment use the same captured authenticated/pipeline owner. Semantic planner passes original input.userId, not model output. Software-agent implementation binds requireUserId once in createXrogaSoftwareAgentBindings, ignores tool-supplied identity, and propagates that lexical actor through repository and production adapters to persistSoftwareReviewBranch. Primary and fixed-provider legacy reads filter this exact actor. Errors, revoked/empty primary and orphan mirrors deny fallback. Actual two-owner canonical and legacy positives, forged-query authenticated status, revocation/reconnect, private storage and canonical disappearance denial establish the selected token boundary.\nThe only production saveGitHubConnection consumer is auth-mounted GitHub connect. It verifies signed state for req.userId, requires original issued context, consumes exact owner one-use PKCE and carries its revision. Provider account comes from validated api.github.com/user using the newly exchanged token, never body owner or account. The existing atomic SQL saves matching owner/revision/provider account to both primary and legacy rows. The only production clearGitHubConnection consumer is authenticated disconnect with req.userId. Revoke atomically tombstones both connection rows and pending session before exact owner-namespace mirror cleanup. Actual two-owner wrapper, replay/replacement/rollback/expiry and disconnect/reconnect cases establish only these persistence primitives.\nAuthenticated settings route passes req.userId, not body userId, with parsed repository strategy/name. The other production consumer is setGithubDefaultRepo after githubDeploy selected or created a repository with the same original user integration token. Its parent entry points retain server owner from authenticated routes or admitted pipeline. saveGitHubSettings only updates two metadata columns on that exact owner active-token row and requires exactly one matching owner receipt. No access token, epoch or private mirror is rewritten. Actual HTTP foreign-body test, unchanged foreign row, concurrent canonical revoke and absent/revoked-row negatives prove this boundary. Remote repository permission and consequential publication remain separate.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
           "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "d5146ca43cf901817c09",
+            "8bbc1aefc2e270847934",
+            "ff751d80f168344fe806",
+            "7f998fefa7c4a4af4629",
+            "4e72ed7e46664a864fcd",
+            "d8c7d0bde0dddf656d0c",
+            "8a200819c73b59f40fe6",
+            "9cfcc5a519e6e0cda19a",
+            "2c1e9775b28e4419ca8c"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -1342,8 +1509,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Ten focused failure, projection and collision tests pass. Runtime privileged schema bootstrap, staged migration parity, same-owner concurrent repository stickiness/stale updates, external repository authority and staged revocation remain gaps. These owner predicates and disposable cross-owner tests do not certify every lifecycle or production safety.",
-      "authorityTrace": "Inspected the full router, authenticated index mount, issued tenant-context guard, schema bootstrap and owner-bound persistence helper. All route reads/deletes bind context user_id, detail operations bind id, and allocation also binds repo. Failed metadata/allocation reads now stop before mutation. Responses retain metadata-only list/write projections.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Index authentication and router requireTenantContext supply the original actor. Metadata allocation filters owner/repository, list filters owner plus optional repo and detail/preflight/delete bind owner/ID. persistOwnedTerminal clones the issued-owner row, retains first-owner identity and exact ID receipt, with insert-only repository/number/time through concurrent saves. Actual owner list/restore/update/delete/replay, forged owner fields, anonymous denial, foreign restore/autosave/delete denial, metadata-only responses, sticky repository, exact own transcript and unchanged full foreign receipt combine with existing simultaneous winner and collision tests. Local repository labels do not certify external GitHub permissions.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -1353,6 +1520,23 @@
         {
           "path": "backend/src/routes/terminalSessions.ts",
           "marker": "requireTenantContext(req.tenantContext).userId"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "353aa869f7c46574b7a6",
+            "a44351534b1e472fcc1b",
+            "5f85e2c8fe1c1bcc806a",
+            "32194de7f306b25c263e",
+            "fe2b40928ccad9e7722c",
+            "6a8fca079e604babba7e",
+            "9057963d67ac418166aa",
+            "29ab82dab73ce027acf1",
+            "41c10cc00083a0678ee1",
+            "c9362c0020f645f8eada"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -1373,13 +1557,22 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Verified01bd0716 disposable38822065088 proves simultaneous same-ID saves preserve the winning repository/number/created identity and foreign-owner attempts leave the row unchanged. Exact ID/projection negatives pass. Content updates remain last-writer-wins without client revision CAS, internal rows accept arbitrary fields and lifecycle/staging proof remains open. No full terminal caller certification.",
-      "authorityTrace": "Inspected full helper and terminal router caller. Issued context must match row.user_id, insert ignores primary-key collisions, subsequent update binds both id and user_id, and dynamic return projection accepts only an explicit metadata allowlist. Missing owner-bound result fails closed.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "The two production calls are the authenticated terminal router initial save and bounded compatibility retry. Both pass its actual issued TenantContext. The helper revalidates that context, snapshots the complete row and requires row.user_id to equal context owner. Its first upsert ignores conflicts and cannot replace another owner. Its subsequent content update uses exact ID plus owner and excludes insert-only owner/repository/number/creation identity. Missing owned row denies and returned ID plus metadata-only allowlist are checked. No private transcript is projected by the write receipt.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/security/ownedTerminalPersistence.test.ts",
           "marker": "terminal autosave ignores collisions, scopes updates and returns only requested metadata"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "ca2e291f7b6ac805445e",
+            "aa68762dad5ac84c6092"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -1609,13 +1802,21 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Focused failure tests pass, but real Storage isolation and final-source CI are pending. Public avatars are not private-file delivery. Server MIME/size enforcement, orphan reconciliation after failed profile saves, account-switch races and full browser interaction proof remain separate gaps.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
       "authorityTrace": "Read the upload helper, browser client, hook, modal, profile endpoint and Storage policies. Browser getUser derives the first key segment and RLS independently restricts writes. No service key is used. Profile success follows an acknowledged API write only.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "frontend/src/lib/avatarPersistence.test.ts",
           "marker": "avatar authentication and upload failures never save a fallback profile"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "3056dc2554f54604f101"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -5077,8 +5278,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "b06c054 disposable38825649174 individually passed comment/post mutation and recovery tests but full run failed provisioning. New remaining CRUD and held read-snapshot modules await final-source CI. Cursor serialization, whole-feed snapshot consistency and complete lifecycle remain separate. No whole-community certification.",
-      "authorityTrace": "Server routes derive optional/public viewer or authenticated actor identity. Mutation RPCs lock actor and parent, preserve exact existing field permissions and return receipts. Visibility/private read RPCs evaluate current role with content in one statement. Public identity projections and aggregate counts remain separate queries.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "The only production CommunityService constructor is the optional-auth community router. Its readonly SDK never escapes the class. Every exact query recipient is separately reconciled above: actor/parent-locked field mutations, current visibility, exact self/vote identity, fixed public projections or registered current-staff reads. No arbitrary table/operation is exposed by the router. The actual HTTP mixed-field case invokes this default constructor; actual injected real DB cases independently cover every recipient. This is full recipient tracing, not factory certification from one passing service call.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5088,6 +5289,14 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "01f39061a52818afb131"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -5117,8 +5326,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
-      "authorityTrace": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Generic revision producers are two issued-owner runtime handlers which first load exact owner/project snapshot and exact owner/project/session, plus private delivery lifecycle writes whose only production publish/deploy producers are authenticated delivery routes and whose service first loads that exact owner/project revision. History restore/fork also load exact owner/project/revision first, with no current production caller. The generic exported persistence wrapper has no production consumer. Active pipeline/preview workers instead use the separately proven admitted-attempt RPC. The snapshot fixes project/run/OutcomeContract before await and exact receipt binds owner/project/run/fingerprint/revision. Existing database trigger locks an attached current database project through the run where present. Logical project IDs remain owner-namespaced text and are not cast to projects UUIDs. No user body chooses durable owner or replaces run identity.\nThe sole production runtime manager factory is used by authenticated runtime routes or livePreview coordinator. Routes derive owner from original issued context, load owner-bound revision and bind requested project/session before provider access. Coordinator producers are the same pipeline, route and admitted-attempt agent bridge. Manager retains that owner, loads exact owner/session and derives event project/session from the retained row. The only selected current provider is the internal Fly adapter, which constructs owner/project/class/provider identity from supplied server input rather than provider JSON. Pipeline delivery events use its issued actor and admitted software project. The separate user-triggered delivery service gets server req.userId from its auth-mounted route and loads exact owner/project revision before session-less events. Dormant history helpers also load exact owner/project/revision first. Session persistence validates first-owner immutable identity and exact receipt. New SQL holds exact current session owner/project on event insertion.\nThe only production ProjectSecretManager constructor is ProjectRuntimeManager with retained server owner. Its factory receives the authenticated runtime route owner or admitted coordinator owner, whose exact producers are hash bound above. Enabled exec/start/log loads exact owner/session before deriving the logical project from that row. No requested provider/default account selects these secrets. Save/read/delete keys contain original owner plus logical project/name/scope. Save/delete helpers currently have no production mutation consumer outside that retained-owner secret manager. The new real test exercises those existing helpers directly with isolated Auth actors, not a fabricated public endpoint. Current browser roles cannot read/write/delete these rows. No fallback exists.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5128,6 +5337,24 @@
         {
           "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
           "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "8fc7cf5dd562db7dcd3a",
+            "ed5cdf592a4a0494dc20",
+            "530ec12058ab9d32794b",
+            "419bf279075e606b8b1f",
+            "8da826b4f1382152e9e9",
+            "6fb334291b6218b12f4c",
+            "f4643ffb0f1224d7da80",
+            "67ce8a604d6d6502cc94",
+            "87f57b0ac97d6b473fa3",
+            "99b6b7ce0de9df1778a6",
+            "8bea5ef54bd825f8e224"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -5337,8 +5564,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Eight focused notification tests pass, actual failed-notification test now also asserts forged context cannot insert. Prior safe-copy real test passed7d12bf42, current-source real test pending. Cross-process terminal-to-notification race, delivery replay, provider URL/content provenance and historical raw rows remain open.",
-      "authorityTrace": "Only reachable build consumers pass original authenticated request tenant context after terminal persistence authority. Primitive rejects cloned/unissued context before client access, snapshots payload and validates returned owner/id. Failure logs use a fixed category and shipped copy requires confirmed GitHub push.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "The only active production callers of the notification wrappers are authenticated swarm completion/failure handlers. They pass requireTenantContext(req.tenantContext), never a body owner or recipient. Video wrappers currently have no production consumer, but their primitive still requires that same original issued context. pushNotification validates the context before factory access, snapshots the bounded caller intent and writes only the context user_id. It checks returned owner and nonempty ID before acknowledging. There is no alternate owner argument or fallback identity.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5348,6 +5575,15 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "988c4217a8b8b781b43c",
+            "30281b1cf819bb604048"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -5371,13 +5607,25 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
       "authorityTrace": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/security/provisioningReceipt.local.integration.ts",
           "marker": "registerProvisioningReceiptTests"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "d81d114079399f02921b",
+            "d46f45e4d48e21c33f23",
+            "b400ffbb7ca6a45da97c",
+            "9468aac7c7e2d3afe674",
+            "a809258d83da1283fc3a"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -5484,8 +5732,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
-      "authorityTrace": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.\nThe fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5495,6 +5743,48 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "cd8790e39c3283f05482"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        {
+          "callIds": [
+            "e99258e8fe888ab954f2",
+            "2c208df1de69d1f07815",
+            "7b8df2255ca0983e614a",
+            "09bb9c60fbd0fd04be96",
+            "5787838213972784b847",
+            "5c17851ca38b07bb7ffb",
+            "2888bfffa0c836cfe4d0",
+            "6c91bf08973230eae654",
+            "209cb80277f955a0b2ef",
+            "049ee8c1e87f4ac7f5d8",
+            "6f59ac6dda85bb3fbb9c",
+            "b44752820b98684f3403",
+            "cad9b3cf4560fbd519a6",
+            "80f60224ace1fcf16149",
+            "67c858caffe8cc6b8a2d",
+            "15864a27c46a501fafd1",
+            "230afc26fd02a5f73e5c",
+            "1482b8a9c1d9ae835bdb",
+            "267d14135fb3bd1d98a1",
+            "42fc90e399eed5c0de97",
+            "044cf8649bf888fbbc93",
+            "b499a6018afaf6b8b490",
+            "2623d45568826e06288e",
+            "af2e0acf3186708a5107",
+            "24a309847f8eca992cc6",
+            "7508855b6526c9b0573b",
+            "4ba0ca7ad1c556cea41b",
+            "09ef892d8c2ce312509d",
+            "6cc4c8844f6d1a5e575c"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -5532,8 +5822,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
-      "authorityTrace": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.\nThe sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5543,6 +5833,37 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "9fc45d30478dc34f0ea6",
+            "1087d778492ba0d90fe8",
+            "2911d37adf1475f417aa",
+            "31c477708b626e5ae6b1",
+            "7bf8a723f11bf121e654",
+            "a5e91bac1a6cb8ed6bd0",
+            "777506055ab8972780cc",
+            "9e56a2c47c6fae03a7d4",
+            "101c25c8bf0d04a3d6ee",
+            "5168c80257e8d4f829be"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        {
+          "callIds": [
+            "58357b840ab8890eba45",
+            "9ea21ff62008b510bd7f",
+            "b88fc4f8215d76b34ea8",
+            "82752ae689b24bd04b63",
+            "fd2a647124264e9a2f63",
+            "9cd0878995ac81bc7fa1",
+            "0790e2862f113cd5cb2a",
+            "8cdd04617aa0332099d0",
+            "06e83cfecb1ce0da5c95"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -5634,8 +5955,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved.",
-      "authorityTrace": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.\nThe only production asynchronous readers are the existing pipeline hydration and session-history steps. Both retain its original server opts.userId, which is checked against issued actor at pipeline entry, never a model-supplied owner. These selected platform fallback queries include exact owner/repository and, for project memory, branch. Returned rows revalidate their owner and complete namespace before use, clone file structures and discard invalid/control-role session content. The project cache key includes the same authenticated UUID namespace and returns clones. No selected read mutates durable memory or performs an external provider operation.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5649,6 +5970,24 @@
         {
           "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
           "marker": "registerRecoveryMemoryReadTests"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "d30b589aad03f57a5e34",
+            "7b2ab76ab16f67d4bc3f",
+            "ab26b537916b9c6dae85",
+            "9a21725abae3843c4e12"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        {
+          "callIds": [
+            "c5dfa39288196ad28fb9",
+            "9645b6cbe302cd3fd49a"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -5673,8 +6012,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved.",
-      "authorityTrace": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.\nThe only production asynchronous readers are the existing pipeline hydration and session-history steps. Both retain its original server opts.userId, which is checked against issued actor at pipeline entry, never a model-supplied owner. These selected platform fallback queries include exact owner/repository and, for project memory, branch. Returned rows revalidate their owner and complete namespace before use, clone file structures and discard invalid/control-role session content. The project cache key includes the same authenticated UUID namespace and returns clones. No selected read mutates durable memory or performs an external provider operation.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5688,6 +6027,24 @@
         {
           "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
           "marker": "registerRecoveryMemoryReadTests"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "278f199f6ac90620ad7f",
+            "162926698a1e1b553196",
+            "3dae213a685f6a044dad",
+            "014baaf3ebb696f48dd4"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        {
+          "callIds": [
+            "f4b4398d7c1562f69f44",
+            "2ee02eb3c8608df30614"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -5872,8 +6229,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Ten original token/policy/shared storage calls remain open after the six issued-context PKCE calls are separately proven. Actual wrapper epoch/revision and private cleanup cases now pass atd9b13e09 disposable39171571259, but complete token-consumer provenance, selected external accounts, shared cleanup producers and policy concurrency still need exact source-bound disposition.009 custody is preserved separately and no whole-file certification is made.",
-      "authorityTrace": "Production caller trace retains Supabase/Vercel epoch tokens, issued-context PKCE start/consume, explicit disconnect cleanup, and exact global/toolkit policy preferences. Removed unused generic refresh, upload and fallback-download helpers. No legacy object is deleted by read cleanup.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "saveOAuthConnection is consumed only by the epoch branch of storeProviderToken and saveVercelConnection. Supabase callbacks derive original issued actor and consume its exact one-use session. Vercel callback independently equates context and req.userId, obtains remote account only through the newly exchanged token and carries its consumed revision. Refresh captures exact current owner/provider/revision/refresh before provider I/O and CAS rejects changed authority. The compatibility server rotation branch performs no external exchange. SQL holds exact owner/provider and expiry/revision. loadProviderToken is consumed only by fixed-provider Supabase access/refresh and canonical plugin preferences. Supabase route owners are authenticated req.userId or checked context. Management-token helper consumers are the authenticated integrations route and issued-owner pipeline. Policy getter consumers are authenticated integrations route and business action inputs from authenticated phase1 route or exact owner/digest-checked durable confirmation claim. No token or body owner is substituted by these consumers. No Storage mirror participates in authority.\nThe only production clearProviderToken consumer is clearSupabaseOAuth, which derives userId from original requireTenantContext. Its only route consumer independently checks that context against req.userId before disconnect. Provider is the fixed supabase_oauth constant. The private unexported removePath has only clearProviderToken and clearPkceSession consumers. Both derive validated owner/provider paths, with no traversal characters, in the one fixed private bucket. The remaining PKCE producer chain is separately source-bound above.\nOnly these two SQL/factory sites occur in storeProviderToken policy-preference branch. Epoch token writes return through saveOAuthConnection before these sites. The sole policy setter consumer is the authenticated integrations route, which passes req.tenantContext and validated enum/toolkit, never an owner from its body. Setter requires the original context and derives exact owner and canonical global/toolkit provider namespace. This branch only accepts known preference enum, null refresh token and exact mode/type/scope/toolkit metadata. It validates every persisted owner/provider/value/metadata receipt.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5883,6 +6240,23 @@
         {
           "path": "backend/src/security/oauthSession.local.integration.ts",
           "marker": "real two-client OAuth claims"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "b8d0ad5c152e8ec1c565",
+            "5d90ff0ff5c303419423",
+            "71763251ce3650f64a42",
+            "efdb39bc229d1fb04151",
+            "180631f7a6bd706af8d0",
+            "14438be451fcb7f3bbe1",
+            "c14b0badea7dd2cc312f",
+            "4325b87a6699a71f0325",
+            "7595558fe3d8cbd76faa",
+            "3028f7fe3ff9804dd3e6"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -5947,13 +6321,27 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
-      "authorityTrace": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "The legacy writer has no production call site. Its safety is enforced at the export, not inferred from dormancy: original issued TenantContext is required synchronously before bucket/client access. Owner is taken only from the issued context and fixed owner/github.json path. JSON serialization captures bytes before the first asynchronous step. Both initial and missing-bucket retry use exactly that captured owner path and payload. Private bucket admission remains mandatory. No connection authority is granted by the mirror.\nOnly production mirror readers are getGitHubToken and getGitHubStorageMeta, with the already traced original authenticated/pipeline actor. The sole deletion consumer is clearGitHubConnection from authenticated GitHub disconnect. Fixed bucket and owner/github.json path do not accept client-controlled object keys. Both canonical authority reads filter the same owner and the legacy provider is fixed github. Authority is checked before and after download, exact token equality binds mirror metadata, and failures, empty/revoked primary and orphan mirrors deny. Actual legacy-positive private reads/status, foreign user/browser denial, canonical removal during a completed download, authenticated own disconnect and exact foreign mirror bytes cover these read/cleanup boundaries.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "541c1bc5f61f88e7c873",
+            "254a09774311f04897b1",
+            "1ac34398173cf0fedf3a",
+            "9b97e6de9a2c6c753011",
+            "d12c617bb45c7981e210",
+            "9e95745053a0044758eb",
+            "474d98f6d07da849e67a"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -6054,13 +6442,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-76148b2177594e89",
+      "id": "OB-4622a56704746b05",
       "callerIds": [
         "d84df34ff692e4fb31c1",
-        "3182a013220000508dad"
+        "3ca8e5d316bd9fafc9fe"
       ],
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
+      "sourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6081,13 +6469,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-91cdd46ad87a05f1",
+      "id": "OB-2606df81d5ee8813",
       "callerIds": [
-        "428afb8386c4474f5abb",
-        "331a1be3d1ee639d294f"
+        "cfd6a567629e5ea8ea8d",
+        "e1a9ecc6141d3fe69902"
       ],
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
+      "sourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [
@@ -6250,13 +6638,23 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
-      "authorityTrace": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Only production mirror readers are getGitHubToken and getGitHubStorageMeta, with the already traced original authenticated/pipeline actor. The sole deletion consumer is clearGitHubConnection from authenticated GitHub disconnect. Fixed bucket and owner/github.json path do not accept client-controlled object keys. Both canonical authority reads filter the same owner and the legacy provider is fixed github. Authority is checked before and after download, exact token equality binds mirror metadata, and failures, empty/revoked primary and orphan mirrors deny. Actual legacy-positive private reads/status, foreign user/browser denial, canonical removal during a completed download, authenticated own disconnect and exact foreign mirror bytes cover these read/cleanup boundaries.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
           "marker": "revocation"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "d87e4598104184aa00dd",
+            "2d83b6fa32b99099b19e",
+            "da8ff71a038a365d4e60"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -6558,8 +6956,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
-      "authorityTrace": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.\nPrivate saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -6569,6 +6967,36 @@
         {
           "path": "backend/src/security/providerKeyRevision.local.integration.ts",
           "marker": "real provider revision binds exact owner"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "ee377e28847a820d3e60"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        {
+          "callIds": [
+            "3696472e5c2e79ec3877",
+            "793cd087bfe58a1323e9",
+            "b2c86b6db6573be9213f",
+            "e5b57581e4457cd58ff2",
+            "f77c97eed440f2d836c0",
+            "f651340939c0fe9a8786",
+            "912679b2d70aeb54860e",
+            "8e483e5db88e334d4fd9",
+            "2714bcb8dd844631154a",
+            "b11077c6032271361558",
+            "208413eede9db532d440",
+            "4bbd68abc608cd40cf5e",
+            "b13ab17aa7429003241b",
+            "281beef588e15d39be66",
+            "251a8f22c720652f36a5",
+            "0671bfb9368569581fba",
+            "7dd7b79ecd7c4840a960"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -6588,8 +7016,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
-      "authorityTrace": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -6599,6 +7027,14 @@
         {
           "path": "backend/src/security/providerKeyRevision.local.integration.ts",
           "marker": "real provider revision binds exact owner"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "2ce84a51bf89c83602d6"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -6767,13 +7203,22 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
-      "authorityTrace": "Explicit authenticated disconnect passes issued TenantContext. Custom provider enumeration reads only that owner database rows and legacy Storage object names with bounded pagination, never downloads secrets, and fails closed when complete enumeration cannot be established. Exact selected provider revocations retain existing CAS tombstones.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
           "marker": "bulk custom revocation enumerates"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "9f316f0cfad5794c27c5",
+            "965d682f9f5d530bb929"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -6904,13 +7349,21 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Twenty-two focused tests and local SQL probe pass. Real empty-owner admission, two-client winner, late-row rollback, wrong-owner/role, revoke and generic overwrite tests prepared. Final-source CI pending. Legacy exact-ref/role JWT compatibility is consistency only, unbound opaque keys require reconnect. Already-started external actions and complete lifecycle/KMS remain separate. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
-      "authorityTrace": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "snapshotSupabaseRows is private and called only by prepareSupabaseBundleWrite and readUserSupabaseBundle. Canonical readers use original server owner from authenticated integration/status/publish routes, the issued-owner pipeline, or their same-owner provisioning wrappers. connectUserSupabase requires the issued context. OAuth and explicit one-click preparation retain that original req.userId and capture admission before remote work. The query is the fixed four provider rows with exact user_id and validates every returned owner, provider, metadata and revision. Normal reads never download orphan authority. Only explicit reconnect inspects that owner private object path, strips association claims and rechecks current revisions after the downloads. A read-only snapshot cannot activate these bytes. The later save uses the separately accepted opaque admission and atomic generation transaction.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/security/supabaseBundle.local.integration.ts",
           "marker": "registerSupabaseBundleTests"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "c0ae76586326abbbba08"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -6930,13 +7383,21 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Twenty-two focused tests and local SQL probe pass. Real empty-owner admission, two-client winner, late-row rollback, wrong-owner/role, revoke and generic overwrite tests prepared. Final-source CI pending. Legacy exact-ref/role JWT compatibility is consistency only, unbound opaque keys require reconnect. Already-started external actions and complete lifecycle/KMS remain separate. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
-      "authorityTrace": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "snapshotSupabaseRows is private and called only by prepareSupabaseBundleWrite and readUserSupabaseBundle. Canonical readers use original server owner from authenticated integration/status/publish routes, the issued-owner pipeline, or their same-owner provisioning wrappers. connectUserSupabase requires the issued context. OAuth and explicit one-click preparation retain that original req.userId and capture admission before remote work. The query is the fixed four provider rows with exact user_id and validates every returned owner, provider, metadata and revision. Normal reads never download orphan authority. Only explicit reconnect inspects that owner private object path, strips association claims and rechecks current revisions after the downloads. A read-only snapshot cannot activate these bytes. The later save uses the separately accepted opaque admission and atomic generation transaction.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/security/supabaseBundle.local.integration.ts",
           "marker": "registerSupabaseBundleTests"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "27483f27b03af7e1669b"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -6956,13 +7417,21 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Twenty-two focused tests and local SQL probe pass. Real empty-owner admission, two-client winner, late-row rollback, wrong-owner/role, revoke and generic overwrite tests prepared. Final-source CI pending. Legacy exact-ref/role JWT compatibility is consistency only, unbound opaque keys require reconnect. Already-started external actions and complete lifecycle/KMS remain separate. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
-      "authorityTrace": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "snapshotSupabaseRows is private and called only by prepareSupabaseBundleWrite and readUserSupabaseBundle. Canonical readers use original server owner from authenticated integration/status/publish routes, the issued-owner pipeline, or their same-owner provisioning wrappers. connectUserSupabase requires the issued context. OAuth and explicit one-click preparation retain that original req.userId and capture admission before remote work. The query is the fixed four provider rows with exact user_id and validates every returned owner, provider, metadata and revision. Normal reads never download orphan authority. Only explicit reconnect inspects that owner private object path, strips association claims and rechecks current revisions after the downloads. A read-only snapshot cannot activate these bytes. The later save uses the separately accepted opaque admission and atomic generation transaction.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/security/supabaseBundle.local.integration.ts",
           "marker": "registerSupabaseBundleTests"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "78fbb99c106916e565c3"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -7148,13 +7617,21 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
       "authorityTrace": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/security/provisioningReceipt.local.integration.ts",
           "marker": "registerProvisioningReceiptTests"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "11ad5fbfe51e297ef01f"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -7174,13 +7651,21 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Prior b06c054 disposable38825649174 exposed missing required username on recovery insert. Current insert matches existing auth trigger fallback, preserves ignore-duplicates role/usage semantics, focused regression passes and actual persisted-username assertion added. Real rerun pending. Cached existence is not entitlement, revoked local-JWT lifecycle and concurrent deletion remain separate.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
       "authorityTrace": "Sole authenticated middleware caller passes original issued tenant context. Profile and usage selects validate returned owner. Insert-ignore never overwrites existing roles/usage; newly created rows require exact owner readback before process existence cache marking. Raw persistence errors are not logged by middleware.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/security/provisioningReceipt.local.integration.ts",
           "marker": "registerProvisioningReceiptTests"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "b9522b3f509a2215c4b8"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -7770,13 +8255,21 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Focused receipt and local SQL tests pass, actual canonical approval/rollback/two-client delivery/replay/foreign/stale/role tests prepared. Email remains unsupported. Legacy uncertain deliveries fail closed for recovery; no retroactive consent revocation or external provider delivery certification. Sixth-source evidence: first anonymous identity claim uses insert-ignore, exact actor-bound evidence refresh and validated receipt. Focused competing-user tests pass and actual concurrent claims prepared. Anonymous possession and membership-revocation serialization remain open. Canonical campaign adapter capability omission found by real CI and repaired without relaxing approval. Eighth-source event API snapshots normalized intent and binds actor/project/content on replay, checks exact returned row and verifies a concurrent unique-key winner before returning duplicate. Focused tests pass, real observed concurrent insert test prepared. Membership/reference lifecycle and verified event provenance remain unresolved.",
-      "authorityTrace": "Existing operations authority supplies its admitted project owner. Campaign creation validates exact action tuple and durable link receipt. In-app delivery service-only RPC locks current actor/project/member/campaign/action/approval, requires canonical verified action and matching approval digest/version, admits bounded consent/suppression cohort in one snapshot and atomically commits messages, notifications and completed receipt.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "The sole production GrowthService constructor is the auth-mounted growth router. Each handler uses verified req.userId, with validated resource IDs, never a body actor. access delegates existing OperationsService permissions and derives tenant from the current project owner. This exact unchanged method performs no external provider call. Its internal parent lookup is not returned before authorization. Tenant/project comparisons precede the service-only SQL transaction, whose current project, role and relevant parent locks decide the write. Returned receipts are checked against the admitted owner/parent and operation before any service result. processCampaign additionally requires the existing canonical approved action, current campaign/segment, in-app channel and exact bounded counters. No new approval or delivery mechanism is inferred.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/growth/delivery.local.integration.ts",
           "marker": "registerGrowthDeliveryTests"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "8b7dee00f82b7660ecc3"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -7827,13 +8320,21 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Pre-fix focused stale-parent test failed because the old two writes accepted an ownership transfer after preflight. Three focused identity tests and15 synthetic SQL assertions now pass. Existing actual competing-claim proof is retained, while the new real project-transfer/member-revocation lock test requires final-source CI. Anonymous-key possession and end-user attribution are not certified. No whole growth service or Phase3 authority claim.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
       "authorityTrace": "Authenticated growth route supplies the immutable server actor. Existing OperationsService preflight selects the project owner, then service-only link_growth_identity rechecks and locks current profile, owner and membership through a first-owner-preserving atomic identity write. Exact returned actor, tenant, project, anonymous key and evidence are validated. There is no direct-write fallback.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/growth/identity.local.integration.ts",
           "marker": "registerGrowthIdentityTests"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "726c74dca42ecc8a2ffd"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -8607,8 +9108,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Ten focused admission/boundary/engine tests and31 local SQL owner/parent/role/replay/receipt/rollback assertions pass. Actual two-client cohort and exposure winners, held authority/parent/configuration/assignment mutations, both write rollbacks and browser-role denial prepared for disposable CI. Subject identity, experiment status policy, event provenance and complete growth lifecycle remain unresolved. No provider calls or whole-caller certification.",
-      "authorityTrace": "Authenticated growth endpoints retain the server actor and snapshot the loaded experiment or assignment before authority awaits. Existing canonical project-view roles are rechecked under current profile/project/member locks. Assignment locks and compares the complete experiment snapshot, then inserts or reads the unique owned cohort winner. Exposure locks the current owned experiment and exact immutable assignment tuple, writes first exposure once and returns the durable winning row on retries. Exact receipt checks reject substituted identity, variant, timestamps or evidence.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "The sole production GrowthService constructor is the auth-mounted growth router. Each handler uses verified req.userId, with validated resource IDs, never a body actor. access delegates existing OperationsService permissions and derives tenant from the current project owner. This exact unchanged method performs no external provider call. Its internal parent lookup is not returned before authorization. Tenant/project comparisons precede the service-only SQL transaction, whose current project, role and relevant parent locks decide the write. Returned receipts are checked against the admitted owner/parent and operation before any service result. processCampaign additionally requires the existing canonical approved action, current campaign/segment, in-app channel and exact bounded counters. No new approval or delivery mechanism is inferred.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -8618,6 +9119,14 @@
         {
           "path": "backend/src/growth/experimentAdmission.test.ts",
           "marker": "experiment assignment and exposure require owned exact receipts"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "3377b5be8d0cd2c38534"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -8637,8 +9146,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Ten focused admission/boundary/engine tests and31 local SQL owner/parent/role/replay/receipt/rollback assertions pass. Actual two-client cohort and exposure winners, held authority/parent/configuration/assignment mutations, both write rollbacks and browser-role denial prepared for disposable CI. Subject identity, experiment status policy, event provenance and complete growth lifecycle remain unresolved. No provider calls or whole-caller certification.",
-      "authorityTrace": "Authenticated growth endpoints retain the server actor and snapshot the loaded experiment or assignment before authority awaits. Existing canonical project-view roles are rechecked under current profile/project/member locks. Assignment locks and compares the complete experiment snapshot, then inserts or reads the unique owned cohort winner. Exposure locks the current owned experiment and exact immutable assignment tuple, writes first exposure once and returns the durable winning row on retries. Exact receipt checks reject substituted identity, variant, timestamps or evidence.",
+      "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
+      "authorityTrace": "The sole production GrowthService constructor is the auth-mounted growth router. Each handler uses verified req.userId, with validated resource IDs, never a body actor. access delegates existing OperationsService permissions and derives tenant from the current project owner. This exact unchanged method performs no external provider call. Its internal parent lookup is not returned before authorization. Tenant/project comparisons precede the service-only SQL transaction, whose current project, role and relevant parent locks decide the write. Returned receipts are checked against the admitted owner/parent and operation before any service result. processCampaign additionally requires the existing canonical approved action, current campaign/segment, in-app channel and exact bounded counters. No new approval or delivery mechanism is inferred.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -8648,6 +9157,14 @@
         {
           "path": "backend/src/growth/experimentAdmission.test.ts",
           "marker": "experiment assignment and exposure require owned exact receipts"
+        }
+      ],
+      "manualPartitions": [
+        {
+          "callIds": [
+            "c18fe72f81a6751f45e3"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."

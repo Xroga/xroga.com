@@ -38,7 +38,7 @@ jobs:
       - name: Audit integrity and negative scanner fixtures
         run: |
           node scripts/security/audit-tenant-policies.mjs
-          node --test scripts/security/audit-tenant-policies.test.mjs
+          node --test scripts/security/audit-tenant-policies.test.mjs scripts/security/caller-reviews.closure.test.mjs
       - name: Actual PostgreSQL target-schema fresh and upgrade policy assertions
         env:
           CI: 'true'

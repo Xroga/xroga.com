@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { discoverPersistenceCalls,main,authenticateObservedReceipts } from './audit-tenant-policies.mjs';
+import { discoverPersistenceCalls,main,authenticateObservedReceipts,buildTenantAudit } from './audit-tenant-policies.mjs';
 import { createHash } from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import { applyCallerReviews } from './caller-reviews.mjs';
@@ -62,4 +62,21 @@ test('external CI observations require independently retrieved source status log
   assert.equal(authenticateObservedReceipts([receipt],source,remote).length,1);
   for(const patch of [{sourceSha:'b'.repeat(40)},{artifactSha256:'0'.repeat(64)},{runId:'fake'},{passedTests:['fabricated denial']}])assert.throws(()=>authenticateObservedReceipts([{...receipt,...patch}],source,remote));
   assert.throws(()=>authenticateObservedReceipts([receipt],source,()=>({metadata:{headSha:source,status:'completed',conclusion:'failure'},log})));
+});
+
+test('actual repository gate cannot pass while either existing caller record system is unresolved',()=>{
+  const outputs=buildTenantAudit(),report=JSON.parse(outputs.get('docs/xroga/security/privileged-callers.json'));
+  assert.ok(report.counts.persistenceCandidates>0);
+  assert.equal(report.reviewAgreement.currentCallers,report.counts.persistenceCandidates);
+  if(report.reviewAgreement.manualUnresolved||report.reviewAgreement.manualUnsupported||report.acceptance.unresolvedCandidateBoundaries){
+    assert.equal(report.releaseGate,'BLOCKED_CRITERION_EVIDENCE');assert.equal(report.acceptance.result,'BLOCKED');
+    assert.ok(report.acceptance.criteria.filter(c=>['XB01-C007-AC02','XB01-C007-AC10'].includes(c.id)).every(c=>c.status==='BLOCKED'));
+  }else assert.equal(report.releaseGate,report.acceptance.result==='PASS'?'PASS':'BLOCKED_CRITERION_EVIDENCE');
+  assert.deepEqual(report.acceptance.criteria.map(c=>c.text),[
+    'Every tenant-bearing table is in rls-audit.md.','Every privileged caller is scoped or explicitly exempt.',
+    'Cross-tenant negative tests cover all high-risk resource classes.','No protected endpoint trusts client-supplied ownership without verification.',
+    'Background run ownership survives queue/job boundaries.','Provider connection selection is owner scoped.',
+    'CI executes tenant isolation tests.','Migration passes fresh DB and upgrade-path tests.',
+    'No existing legitimate same-tenant journey is broken.','Security review contains zero unexplained service-role bypasses.',
+  ]);
 });

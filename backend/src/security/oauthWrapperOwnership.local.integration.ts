@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
+import {setTimeout as delay} from 'node:timers/promises';
 import {test} from 'node:test';
 import {createClient,type SupabaseClient} from '@supabase/supabase-js';
 import {createTenantContext,type TenantContext} from './tenantContext.js';
@@ -7,9 +8,30 @@ import {storePkceSession,consumePkceSession,clearPkceSession,saveOAuthConnection
 import {ensurePrivateOAuthBucket} from '../services/integrations/credentialStorageBucket.js';
 import {getSupabaseOAuthAccessToken} from '../services/integrations/supabaseAuth.js';
 import {getVercelToken} from '../services/integrations/vercelAuth.js';
+import {prepareUserProviderKeyWrite,saveUserProviderKey,getUserProviderKey,deleteUserProviderKey} from '../services/integrations/userProviderKeys.js';
 
 /** Actual existing wrapper + Auth/DB/storage behavior. No OAuth provider call. */
 export function registerOAuthWrapperOwnershipTests(admin:SupabaseClient):void{
+  test('real CWS credential wrapper binds consumed OAuth owner admission and rejects foreign cloned revoked and replayed writes',async t=>{
+    assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
+    const actors:{id:string;context:TenantContext}[]=[],paths:string[]=[];
+    t.after(async()=>{if(paths.length)assert.equal((await admin.storage.from('xroga-github-tokens').remove(paths)).error,null);for(const actor of actors)assert.equal((await admin.auth.admin.deleteUser(actor.id)).error,null);});
+    for(let i=0;i<2;i++){const created=await admin.auth.admin.createUser({email:`cws-wrapper-${randomUUID()}@example.invalid`,email_confirm:true});assert.equal(created.error,null);assert.ok(created.data.user);actors.push({id:created.data.user.id,context:createTenantContext({userId:created.data.user.id,via:'persisted_owner'})});paths.push(`${created.data.user.id}/vault-apikey_cws_oauth.json`);}
+    const [owner,other]=actors,provider='cws_oauth',rowProvider='apikey_cws_oauth';
+    const authorize=async(actor:typeof owner)=>{const state=randomUUID();await storePkceSession(actor.context,'cws_oauth_pkce',{state,verifier:'synthetic',redirect_uri:'http://127.0.0.1/callback',created_at:new Date().toISOString()});const receipt=await consumePkceSession(actor.context,'cws_oauth_pkce',state);assert.ok(receipt?.authorization_revision);assert.equal(await consumePkceSession(actor.context,'cws_oauth_pkce',state),null);return prepareUserProviderKeyWrite(actor.id,provider,{cwsAuthorizationRevision:receipt.authorization_revision});};
+    const read=async(actor:typeof owner)=>{const row=await admin.from('user_integrations').select('*').eq('user_id',actor.id).eq('provider',rowProvider).single();assert.equal(row.error,null);return row.data!;};
+    const values=actors.map((actor,index)=>JSON.stringify({clientId:`synthetic-${index}`,clientSecret:'SYNTHETIC_NOT_A_PROVIDER_SECRET',refreshToken:`SYNTHETIC_${actor.id}`}));
+    for(const[index,actor]of actors.entries()){const admission=await authorize(actor);const saved=await saveUserProviderKey(actor.id,provider,values[index],{writeAdmission:admission});assert.equal(saved.connected,true);assert.equal(await getUserProviderKey(actor.id,provider),values[index]);await assert.rejects(saveUserProviderKey(actor.id,provider,values[index],{writeAdmission:admission}),{code:'CREDENTIAL_WRITE_CONFLICT'});}
+    const before=await read(owner),foreign=await read(other),admission=await authorize(owner);
+    await assert.rejects(saveUserProviderKey(other.id,provider,values[0],{writeAdmission:admission}),{code:'CREDENTIAL_WRITE_CONFLICT'});
+    await assert.rejects(saveUserProviderKey(owner.id,provider,values[0],{writeAdmission:{...admission}}),{code:'CREDENTIAL_WRITE_CONFLICT'});
+    // New authorization advances only its revision, never another owner's key.
+    assert.equal((await read(owner)).access_token,before.access_token);assert.deepEqual(await read(other),foreign);
+    await deleteUserProviderKey(owner.context,provider);const revoked=await read(owner);assert.equal(revoked.access_token,'');assert.equal(revoked.metadata.revoked,true);
+    await assert.rejects(saveUserProviderKey(owner.id,provider,values[0],{writeAdmission:admission}),{code:'CREDENTIAL_WRITE_CONFLICT'});assert.deepEqual(await read(owner),revoked);assert.equal(await getUserProviderKey(owner.id,provider),null);assert.deepEqual(await read(other),foreign);
+    const reconnect=await authorize(owner);await saveUserProviderKey(owner.id,provider,values[0],{writeAdmission:reconnect});assert.equal(await getUserProviderKey(owner.id,provider),values[0]);assert.deepEqual(await read(other),foreign);
+    for(const actor of actors){const expected=await read(actor);let durable=false;for(let i=0;i<100;i++){const mirror=await admin.storage.from('xroga-github-tokens').download(`${actor.id}/vault-apikey_cws_oauth.json`);if(!mirror.error&&JSON.parse(await mirror.data.text()).access_token===expected.access_token){durable=true;break;}await delay(20);}assert.equal(durable,true,'Actual asynchronous mirror completes before fixture cleanup');}
+  });
   test('real OAuth wrappers retain issued owner provider revision and revocation across one-use sessions',async t=>{
     assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
     const actors:{id:string;context:TenantContext}[]=[],paths:string[]=[],bucket='xroga-github-tokens';

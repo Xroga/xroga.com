@@ -398,7 +398,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:330 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:123 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -433,7 +433,7 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 330,
+    "unresolvedSafetyCandidates": 123,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 13
   },
@@ -520,92 +520,25 @@
       "existingImplementation": "Existing OAuth, BYOK and credential mirrors",
       "missingBehavior": "Atomic save/revoke ordering, one-use PKCE, encrypted vault migration and KMS boundary",
       "acceptanceTest": "Wrong owner, revocation during read/write, replay, rotation and tampering",
-      "pendingCandidates": 70,
+      "pendingCandidates": 9,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/services/integrations/credentialStorageBucket.ts": [
           "36f74cf393d92fc17a74"
         ],
-        "backend/src/services/integrations/githubAuth.ts": [
-          "d5146ca43cf901817c09",
-          "8bbc1aefc2e270847934",
-          "ff751d80f168344fe806",
-          "7f998fefa7c4a4af4629",
-          "4e72ed7e46664a864fcd",
-          "d8c7d0bde0dddf656d0c",
-          "8a200819c73b59f40fe6",
-          "9cfcc5a519e6e0cda19a",
-          "2c1e9775b28e4419ca8c"
-        ],
         "backend/src/services/integrations/githubDeploy.ts": [
           "b4b2b91f3280a140691a",
           "48c115e3fcc79a824240"
         ],
-        "backend/src/services/integrations/githubTokenStore.ts": [
-          "541c1bc5f61f88e7c873",
-          "254a09774311f04897b1",
-          "1ac34398173cf0fedf3a",
-          "d87e4598104184aa00dd",
-          "2d83b6fa32b99099b19e",
-          "da8ff71a038a365d4e60",
-          "9b97e6de9a2c6c753011",
-          "d12c617bb45c7981e210",
-          "9e95745053a0044758eb",
-          "474d98f6d07da849e67a"
-        ],
-        "backend/src/services/integrations/oauthPkceStore.ts": [
-          "b8d0ad5c152e8ec1c565",
-          "5d90ff0ff5c303419423",
-          "71763251ce3650f64a42",
-          "efdb39bc229d1fb04151",
-          "180631f7a6bd706af8d0",
-          "14438be451fcb7f3bbe1",
-          "c14b0badea7dd2cc312f",
-          "4325b87a6699a71f0325",
-          "7595558fe3d8cbd76faa",
-          "3028f7fe3ff9804dd3e6"
-        ],
         "backend/src/services/integrations/userProviderKeys.ts": [
-          "3696472e5c2e79ec3877",
-          "793cd087bfe58a1323e9",
-          "b2c86b6db6573be9213f",
-          "e5b57581e4457cd58ff2",
-          "2ce84a51bf89c83602d6",
-          "f77c97eed440f2d836c0",
-          "f651340939c0fe9a8786",
           "ee377e28847a820d3e60",
-          "77b006f82faf88017a2c",
-          "912679b2d70aeb54860e",
-          "8e483e5db88e334d4fd9",
-          "2714bcb8dd844631154a",
-          "b11077c6032271361558",
-          "9f316f0cfad5794c27c5",
-          "965d682f9f5d530bb929",
-          "208413eede9db532d440",
-          "4bbd68abc608cd40cf5e",
-          "b13ab17aa7429003241b",
-          "281beef588e15d39be66",
-          "251a8f22c720652f36a5",
-          "0671bfb9368569581fba",
-          "7dd7b79ecd7c4840a960",
-          "c0ae76586326abbbba08",
-          "27483f27b03af7e1669b",
-          "78fbb99c106916e565c3"
+          "77b006f82faf88017a2c"
         ],
         "backend/src/services/integrations/vercelAuth.ts": [
           "c47cd353f14ba5046be8",
           "2d2eae5cbd895d303fc1",
-          "2ae451e4fa2142cb3d3b",
-          "533babcf253a3df300ac",
-          "50cfec47a00c8f934d4c",
-          "9536d36325c5502652c0",
-          "ff1b1bd1a685d5e751ee",
-          "bc094f879c6c567e670b",
-          "5c8cf02d349ac91cfb0e",
           "0a6d81aa80ada5c7b14d",
-          "832762c1055a84889f0d",
-          "ae203bf10a8747bfd6de",
-          "52bb46e68e4a103d4782"
+          "832762c1055a84889f0d"
         ]
       }
     },
@@ -615,65 +548,23 @@
       "existingImplementation": "Existing prepared plan, confirmation, operations services and scheduler",
       "missingBehavior": "Account/target/digest/spend/receipt integration and complete caller provenance",
       "acceptanceTest": "Changed plan/target, expired/revoked approval, duplicate claims, unauthorized spend",
-      "pendingCandidates": 63,
+      "pendingCandidates": 23,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/operations/operationsService.ts": [
           "cd8790e39c3283f05482",
-          "e99258e8fe888ab954f2",
-          "2c208df1de69d1f07815",
-          "7b8df2255ca0983e614a",
-          "09bb9c60fbd0fd04be96",
-          "5787838213972784b847",
-          "5c17851ca38b07bb7ffb",
-          "2888bfffa0c836cfe4d0",
-          "6c91bf08973230eae654",
-          "209cb80277f955a0b2ef",
-          "049ee8c1e87f4ac7f5d8",
-          "6f59ac6dda85bb3fbb9c",
-          "b44752820b98684f3403",
-          "cad9b3cf4560fbd519a6",
-          "80f60224ace1fcf16149",
-          "67c858caffe8cc6b8a2d",
-          "15864a27c46a501fafd1",
-          "230afc26fd02a5f73e5c",
-          "1482b8a9c1d9ae835bdb",
-          "267d14135fb3bd1d98a1",
-          "42fc90e399eed5c0de97",
-          "044cf8649bf888fbbc93",
-          "b499a6018afaf6b8b490",
-          "2623d45568826e06288e",
-          "af2e0acf3186708a5107",
-          "58357b840ab8890eba45",
-          "9ea21ff62008b510bd7f",
-          "b88fc4f8215d76b34ea8",
-          "82752ae689b24bd04b63",
-          "fd2a647124264e9a2f63",
           "f175f84e5afd902c17c0",
           "9fc45d30478dc34f0ea6",
-          "9cd0878995ac81bc7fa1",
-          "0790e2862f113cd5cb2a",
           "1087d778492ba0d90fe8",
           "2911d37adf1475f417aa",
           "31c477708b626e5ae6b1",
-          "8cdd04617aa0332099d0",
           "7bf8a723f11bf121e654",
           "a5e91bac1a6cb8ed6bd0",
           "777506055ab8972780cc",
           "9e56a2c47c6fae03a7d4",
-          "06e83cfecb1ce0da5c95",
-          "24a309847f8eca992cc6",
-          "7508855b6526c9b0573b",
-          "4ba0ca7ad1c556cea41b",
-          "09ef892d8c2ce312509d",
-          "6cc4c8844f6d1a5e575c",
           "101c25c8bf0d04a3d6ee",
           "ca3d605bac7cc0acb742",
           "5168c80257e8d4f829be"
-        ],
-        "backend/src/routes/operations.ts": [
-          "e23a6715863cc22fbccf",
-          "6ac8a018f3c309f7f133"
         ],
         "backend/src/services/integrations/businessActionConfirmations.ts": [
           "c37a93be0605e64b3156",
@@ -695,24 +586,14 @@
       "existingImplementation": "Existing billing functions and provider reservations",
       "missingBehavior": "Remaining source-bound billing/budget replay, numeric and caller authority gaps",
       "acceptanceTest": "Concurrent replay, foreign account, failed reservation/settlement and compensation",
-      "pendingCandidates": 16,
+      "pendingCandidates": 6,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/providerBudget.ts": [
           "00d351afbe045a136c66",
           "254a91383e3a8af0310b",
-          "590df28cdc2b297e03b6",
-          "39a1f4163240597da04d",
-          "613d8e71ddafb0d6bd0c",
-          "a80e4804742dfd6bcc0a",
-          "6285818c6e8220770b29",
-          "090fe734dc5d1d3dc6e3",
-          "3f66673813dee0d85b85",
-          "746985044f7d3ee62aff",
           "e030677c7ecb6b0dd90e",
           "e35278adbe80b78c8d41",
-          "b5a82155e981259a207e",
-          "564673e6f6b21c690fce",
           "5ed8ef26b72e26561f26",
           "3fc72ec34d884b871909"
         ]
@@ -724,7 +605,7 @@
       "existingImplementation": "Existing owner checks, project/file stores and runtime",
       "missingBehavior": "Inherited parent identity, durable receipt, revision and runtime ownership gaps",
       "acceptanceTest": "Wrong parent, orphan, stale revision, failed persistence and cross-tenant download",
-      "pendingCandidates": 76,
+      "pendingCandidates": 49,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/buildImprovementMemory.ts": [
@@ -746,8 +627,6 @@
         ],
         "backend/src/ai/projectMemory.ts": [
           "278f199f6ac90620ad7f",
-          "f4b4398d7c1562f69f44",
-          "2ee02eb3c8608df30614",
           "162926698a1e1b553196",
           "3dae213a685f6a044dad",
           "014baaf3ebb696f48dd4"
@@ -755,24 +634,8 @@
         "backend/src/ai/sessionMemory.ts": [
           "d30b589aad03f57a5e34",
           "7b2ab76ab16f67d4bc3f",
-          "c5dfa39288196ad28fb9",
-          "9645b6cbe302cd3fd49a",
           "ab26b537916b9c6dae85",
           "9a21725abae3843c4e12"
-        ],
-        "backend/src/routes/projects.ts": [
-          "a1602e2131ac55ae41f2",
-          "b0fcef8a6524e67436e8",
-          "3e189d48b17db98a088f",
-          "7305a5f03336a229a8ac",
-          "99fbb1f3e5395b85b5b3",
-          "e83d9ad87d86fa040e65",
-          "3f1a0da9608e9aca5b55",
-          "a54bea8420a398ba79d6",
-          "b6a9fecfb2865406fae7",
-          "5d3d469f5d8690de76d4",
-          "9531cc94128f41d7f873",
-          "9971c1ad86935d8ef2f2"
         ],
         "backend/src/services/memory/buildMemory.ts": [
           "661ce57ea5e40d34292d",
@@ -812,19 +675,6 @@
           "f163510c6f5c4132c05f",
           "73ab17f7a209cc26cc6b"
         ],
-        "backend/src/synthesis/projectRuntime/store.ts": [
-          "8fc7cf5dd562db7dcd3a",
-          "ed5cdf592a4a0494dc20",
-          "530ec12058ab9d32794b",
-          "419bf279075e606b8b1f",
-          "8da826b4f1382152e9e9",
-          "6fb334291b6218b12f4c",
-          "f4643ffb0f1224d7da80",
-          "67ce8a604d6d6502cc94",
-          "87f57b0ac97d6b473fa3",
-          "99b6b7ce0de9df1778a6",
-          "8bea5ef54bd825f8e224"
-        ],
         "backend/src/synthesis/universalEntrypoint.ts": [
           "10b5e279dd241e2f40ec"
         ],
@@ -843,51 +693,9 @@
       "existingImplementation": "Existing community roles and growth owner filters",
       "missingBehavior": "Remaining role/parent lineage, replay and external publishing authority",
       "acceptanceTest": "Mixed-field escalation, foreign parents, retry races and no unauthorized provider effects",
-      "pendingCandidates": 37,
+      "pendingCandidates": 0,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
-      "callersByPath": {
-        "backend/src/community/service.ts": [
-          "01f39061a52818afb131"
-        ],
-        "backend/src/growth/growthService.ts": [
-          "521d206b28f660c52ca7",
-          "743b3ec38209de66a8b6",
-          "70674fcabb7973d0909c",
-          "98a51063b8117bbc2ad1",
-          "65173e083c611fe4f8ad",
-          "0c64adfe8bac8c6f9e8a",
-          "4c4c5151a644e1afd480",
-          "85b6a438c447d6293ab3",
-          "7057f486ce219b8cb4c6",
-          "11101077dd0d8ad1cb7f",
-          "726c74dca42ecc8a2ffd",
-          "0c978c7dd2ea1c9022b2",
-          "6efe9ed2d629814df975",
-          "794709739cc0e5521650",
-          "717772bdfa767350a841",
-          "e9affb30cb83590d28be",
-          "9726445c0a4a7cda3bda",
-          "76c55e5deb7620670685",
-          "96be9ed395634c138d83",
-          "8dad92c642517f05ae1f",
-          "14bd3db0414cf876a35b",
-          "200047d1798ccfd468b9",
-          "8600abc47537b2cf1c9b",
-          "10c1d1d8765eab85bc19",
-          "8b7dee00f82b7660ecc3",
-          "f0f58b1e06ee91798dac",
-          "3bdc281a980196f12202",
-          "3377b5be8d0cd2c38534",
-          "56c3de7b9aaeb0fd5c08",
-          "c18fe72f81a6751f45e3",
-          "82223c2c7121f34b24ee",
-          "433b2c2c1af6b0381df9",
-          "94f33371236cc89ec8ee",
-          "43c5eaf5044f58e2679c",
-          "4b2dc212df4188628ab4",
-          "4f53c9e6b293715ac217"
-        ]
-      }
+      "callersByPath": {}
     },
     {
       "rootCause": "other-source-bound-boundaries",
@@ -895,7 +703,7 @@
       "existingImplementation": "Existing services and source-bound register",
       "missingBehavior": "Inspect the exact remaining reason for each listed caller, grouping shared helpers",
       "acceptanceTest": "Per-caller negative verification proportional to risk",
-      "pendingCandidates": 68,
+      "pendingCandidates": 36,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/benchmarkRunner.ts": [
@@ -925,10 +733,6 @@
           "a11bf3e4f0c999a36b58",
           "952ba0881d01437685bf"
         ],
-        "backend/src/ai/usageAccounting.ts": [
-          "8c7615ae94f3ecbfe8ed",
-          "224d992ddd99b8389fed"
-        ],
         "backend/src/ai/webBudget.ts": [
           "6d55007bf3ddd2edc540",
           "d97bbed18063d9cc41d7",
@@ -936,12 +740,6 @@
         ],
         "backend/src/lib/resolveIdentity.ts": [
           "6d485d911da834f03448"
-        ],
-        "backend/src/routes/admin.ts": [
-          "900b714de6b6407ee20d",
-          "8f0a6deb321279d0013d",
-          "e433173f7cb36532848e",
-          "ad80bf6a15ca34880fe0"
         ],
         "backend/src/routes/dashboard.ts": [
           "2a2b04bfcdf9721a6f51",
@@ -952,47 +750,12 @@
           "7ea068acaab899c1c99e",
           "b4f7c7e759ffc010fe2f"
         ],
-        "backend/src/routes/terminalSessions.ts": [
-          "353aa869f7c46574b7a6",
-          "a44351534b1e472fcc1b",
-          "5f85e2c8fe1c1bcc806a",
-          "32194de7f306b25c263e",
-          "fe2b40928ccad9e7722c",
-          "6a8fca079e604babba7e",
-          "9057963d67ac418166aa",
-          "29ab82dab73ce027acf1",
-          "41c10cc00083a0678ee1",
-          "c9362c0020f645f8eada"
-        ],
-        "backend/src/security/ownedTerminalPersistence.ts": [
-          "ca2e291f7b6ac805445e",
-          "aa68762dad5ac84c6092"
-        ],
         "backend/src/security/serviceRoleGuard.ts": [
           "d84df34ff692e4fb31c1",
-          "3182a013220000508dad"
-        ],
-        "backend/src/services/ensureUserRecords.ts": [
-          "d81d114079399f02921b",
-          "d46f45e4d48e21c33f23",
-          "b400ffbb7ca6a45da97c",
-          "11ad5fbfe51e297ef01f",
-          "9468aac7c7e2d3afe674",
-          "a809258d83da1283fc3a",
-          "b9522b3f509a2215c4b8"
+          "3ca8e5d316bd9fafc9fe"
         ],
         "backend/src/services/integrations/supabaseProvision.ts": [
           "b1d69d6354dd94af3c3e"
-        ],
-        "backend/src/services/notificationService.ts": [
-          "988c4217a8b8b781b43c",
-          "30281b1cf819bb604048"
-        ],
-        "backend/src/services/responseCache.ts": [
-          "7c567b2757768a6b3070",
-          "eae08a12333a1ad49fc8",
-          "2f640cfaedce8074a9e5",
-          "f67653e309c9b2076efa"
         ],
         "backend/src/synthesis/livePreview/store.ts": [
           "260f546643a88434ec35",
@@ -1002,9 +765,6 @@
           "8418218a6fdf978626d1",
           "e7d0d54375645a30b30f",
           "790ce21b600ea4bd4f9d"
-        ],
-        "frontend/src/lib/avatarPersistence.ts": [
-          "3056dc2554f54604f101"
         ]
       }
     }

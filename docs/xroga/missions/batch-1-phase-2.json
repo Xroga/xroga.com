@@ -7,6 +7,13 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "backend/src/security/serviceRoleGuard.test.ts",
+    "scripts/security/caller-reviews.mjs",
+    "scripts/security/caller-reviews.closure.test.mjs",
+    ".github/workflows/xroga-tenant-security.yml",
+    "backend/src/security/frontendScope.local.integration.ts",
+    "backend/src/security/confirmationMetadata.local.integration.ts",
+    "backend/src/security/platformHealth.local.integration.ts",
     "backend/src/security/credentialReadMatrix.local.integration.ts",
     "backend/src/services/integrations/githubTokenStore.writerContext.test.ts",
     "backend/src/operations/readMatrix.local.integration.ts",

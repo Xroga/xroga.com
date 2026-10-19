@@ -5933,6 +5933,7 @@
         "backend/src/routes/billing.ts:5",
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:27",
+        "backend/src/security/confirmationMetadata.local.integration.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:31",
         "backend/src/services/BillingService.ts:14",
         "backend/src/services/integrations/businessAction.ts:11",
@@ -5971,6 +5972,7 @@
         "backend/src/ai/providerBudget.evidence.test.ts",
         "backend/src/ai/providerBudget.settlement.test.ts",
         "backend/src/ai/providerBudget.test.ts",
+        "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -6096,7 +6098,8 @@
       ],
       "callers": [
         "backend/src/ai/providerHealthStore.test.ts:3",
-        "backend/src/ai/providerRuntime.ts:3"
+        "backend/src/ai/providerRuntime.ts:3",
+        "backend/src/security/platformHealth.local.integration.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -6109,7 +6112,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/ai/providerHealthStore.test.ts"
+        "backend/src/ai/providerHealthStore.test.ts",
+        "backend/src/security/platformHealth.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -6293,7 +6297,8 @@
         "backend/src/ai/providerBudget.settlement.test.ts",
         "backend/src/ai/providerHealthStore.test.ts",
         "backend/src/ai/providerRuntime.test.ts",
-        "backend/src/lib/resilience/retry.test.ts"
+        "backend/src/lib/resilience/retry.test.ts",
+        "backend/src/security/platformHealth.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21228,7 +21233,7 @@
       "id": "surface:e31c62507c56bf4fa325",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
+      "sha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
       "symbols": [
         "getGlobalSupabaseAdmin",
         "getTenantSupabaseAdmin",
@@ -21263,6 +21268,7 @@
         "backend/src/routes/projects.ts:3",
         "backend/src/security/communityPublicException.test.ts:5",
         "backend/src/security/ownership.ts:2",
+        "backend/src/security/platformHealth.local.integration.ts:7",
         "backend/src/security/serviceRoleGuard.test.ts:3",
         "backend/src/security/tenantContext.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.ts:9",
@@ -21286,6 +21292,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/communityPublicException.test.ts",
+        "backend/src/security/platformHealth.local.integration.ts",
         "backend/src/security/serviceRoleGuard.test.ts",
         "backend/src/security/tenantContext.test.ts"
       ],
@@ -21355,7 +21362,7 @@
         "backend/src/routes/terminalSessions.failure.test.ts:6",
         "backend/src/routes/terminalSessions.ts:16",
         "backend/src/routes/vercel.ts:4",
-        "backend/src/security/oauthWrapperOwnership.local.integration.ts:5",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts:6",
         "backend/src/security/ownedRunHeartbeat.test.ts:4",
         "backend/src/security/ownedRunPersistence.test.ts:5",
         "backend/src/security/ownedRunPersistence.ts:2",
@@ -21905,6 +21912,7 @@
       "callers": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:9",
         "backend/src/routes/phase1.ts:63",
+        "backend/src/security/confirmationMetadata.local.integration.ts:6",
         "backend/src/services/integrations/businessAction.digest.test.ts:4",
         "backend/src/services/integrations/businessActionConfirmations.ts:12"
       ],
@@ -21936,6 +21944,7 @@
       ],
       "testCoverage": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+        "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/services/integrations/businessAction.digest.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -21996,6 +22005,7 @@
       ],
       "callers": [
         "backend/src/routes/phase1.ts:74",
+        "backend/src/security/confirmationMetadata.local.integration.ts:5",
         "backend/src/services/integrations/businessAction.digest.test.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:4"
       ],
@@ -22033,6 +22043,7 @@
         "backend/src/services/integrations/businessActionConfirmations.ts#verifyPlanDigest"
       ],
       "testCoverage": [
+        "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/services/integrations/businessAction.digest.test.ts",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts"
       ],
@@ -22467,7 +22478,7 @@
       ],
       "callers": [
         "backend/src/security/credentialReadMatrix.local.integration.ts:7",
-        "backend/src/security/oauthWrapperOwnership.local.integration.ts:7",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts:8",
         "backend/src/security/supabaseBundle.local.integration.ts:6",
         "backend/src/security/tenantIsolation.local.integration.ts:27",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:6",
@@ -23591,7 +23602,7 @@
       ],
       "callers": [
         "backend/src/routes/github.ts:7",
-        "backend/src/security/oauthWrapperOwnership.local.integration.ts:6",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:30",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:6",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:4",
@@ -23670,7 +23681,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:876",
+        "backend/src/security/tenantIsolation.local.integration.ts:882",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -23769,7 +23780,7 @@
       "callers": [
         "backend/src/lib/platformReady.ts:8",
         "backend/src/routes/supabaseOAuth.ts:11",
-        "backend/src/security/oauthWrapperOwnership.local.integration.ts:8",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts:9",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:7",
@@ -24182,6 +24193,7 @@
         "backend/src/routes/publish.ts:13",
         "backend/src/routes/supabaseOAuth.ts:28",
         "backend/src/security/credentialReadMatrix.local.integration.ts:6",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts:11",
         "backend/src/security/providerKeyRevision.local.integration.ts:6",
         "backend/src/security/supabaseBundle.local.integration.ts:5",
         "backend/src/security/tenantIsolation.local.integration.ts:11",
@@ -24230,6 +24242,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/credentialReadMatrix.local.integration.ts",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
@@ -24384,7 +24397,7 @@
         "backend/src/routes/integrations.ts:27",
         "backend/src/routes/supabaseOAuth.ts:35",
         "backend/src/routes/vercel.ts:5",
-        "backend/src/security/oauthWrapperOwnership.local.integration.ts:9",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts:10",
         "backend/src/security/tenantIsolation.local.integration.ts:29",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:5",
         "backend/src/services/integrations/githubDeploy.ts:16",
@@ -84238,7 +84251,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "05bf50462e18c442dc55e101b65ac0d60f07dcaefd1412e71932a8c9f6466c00",
+      "sha256": "dd773abb80ae89a47e9de848a38e03f5cb4681d4bf6410fb0a5625b7cbf3fa2c",
       "symbols": [
         "after",
         "append",
@@ -85160,7 +85173,7 @@
       "id": "surface:df5a69bd66236469cf20",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/audit-tenant-policies.mjs",
-      "sha256": "dd9fe9a43aa8546362b4aab13f92157284c7bcfa52f2b6af63dd2832ec7d2947",
+      "sha256": "fdd57864f9eb4aa88e5c06ee66a0407f7c01b2f3beebe711cef1bdb687d5c34e",
       "symbols": [
         "actual",
         "additionalRows",
@@ -85176,6 +85189,7 @@
         "catalog",
         "catalogNames",
         "chain",
+        "closure",
         "counts",
         "discoverPersistenceCalls",
         "enclosing",
@@ -85237,7 +85251,6 @@
       "imports": [
         "../ci/toolchain.mjs",
         "./caller-reviews.mjs",
-        "./tenant-acceptance.mjs",
         "node:child_process",
         "node:crypto",
         "node:fs",
@@ -85247,8 +85260,7 @@
       ],
       "runtimeImports": [
         "scripts/ci/toolchain.mjs",
-        "scripts/security/caller-reviews.mjs",
-        "scripts/security/tenant-acceptance.mjs"
+        "scripts/security/caller-reviews.mjs"
       ],
       "entryPoints": [
         "scripts/security/audit-tenant-policies.mjs"
@@ -85291,38 +85303,73 @@
       "id": "surface:48d5db220184df85a8de",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/caller-reviews.mjs",
-      "sha256": "5e3d8715ae4fef0b60755ad08576d3fc8a8c5b0a87679ab29bb791be895d4736",
+      "sha256": "2c9f776299c1fb3cdd9dcefffc0e6c0cbd30ec4ce6feee29e6e5bff5414ca8e4",
       "symbols": [
+        "acceptance",
+        "agreementBlocked",
         "applyCallerReviews",
         "byId",
         "candidate",
+        "compatible",
         "dispositions",
+        "evaluateCallerClosure",
+        "evidence",
+        "group",
+        "groups",
         "id",
+        "ids",
+        "manualCriteria",
+        "obligationId",
+        "obligations",
+        "origin",
         "proof",
         "record",
+        "records",
+        "result",
         "reviews",
+        "rows",
+        "seen",
         "source",
+        "states",
+        "structured",
+        "structuredCallerReviewRecords",
+        "structuredVerified",
+        "unresolvedManual",
+        "unsupported",
         "validPath"
       ],
-      "imports": [],
-      "runtimeImports": [],
+      "imports": [
+        "./tenant-acceptance.mjs",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "scripts/security/tenant-acceptance.mjs"
+      ],
       "entryPoints": [
         "scripts/security/audit-tenant-policies.mjs"
       ],
       "callers": [
         "scripts/security/audit-tenant-policies.mjs:8",
-        "scripts/security/audit-tenant-policies.test.mjs:6"
+        "scripts/security/audit-tenant-policies.test.mjs:6",
+        "scripts/security/caller-reviews.closure.test.mjs:4",
+        "scripts/xroga/phase-one.mjs:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "scripts/security/caller-reviews.mjs#evidence",
+        "scripts/security/caller-reviews.mjs#structuredVerified"
+      ],
       "testCoverage": [
-        "scripts/security/audit-tenant-policies.test.mjs"
+        "scripts/security/audit-tenant-policies.test.mjs",
+        "scripts/security/caller-reviews.closure.test.mjs"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -85879,7 +85926,8 @@
         "scripts/xroga/phase-two.mjs"
       ],
       "callers": [
-        "scripts/security/audit-tenant-policies.mjs:9",
+        "scripts/security/caller-reviews.closure.test.mjs:5",
+        "scripts/security/caller-reviews.mjs:1",
         "scripts/security/tenant-acceptance.test.mjs:4",
         "scripts/xroga/phase-one.mjs:8",
         "scripts/xroga/phase-two.mjs:7"
@@ -85900,6 +85948,7 @@
         "scripts/security/tenant-acceptance.mjs#receiptMap"
       ],
       "testCoverage": [
+        "scripts/security/caller-reviews.closure.test.mjs",
         "scripts/security/tenant-acceptance.test.mjs"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -86817,7 +86866,7 @@
       "id": "surface:4aa5a1c1163a2875d77b",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/phase-one.mjs",
-      "sha256": "934b211a76cd1eea938a83b92453da0ee45649c98363e71de209ecf7e37f8164",
+      "sha256": "8b95c8d7c799a078cb2f0072cfba9ea4ff63646afa73a9beab585a3228c48cb7",
       "symbols": [
         "approvedFrozen",
         "basePath",
@@ -86849,6 +86898,7 @@
         "verified"
       ],
       "imports": [
+        "../security/caller-reviews.mjs",
         "../security/tenant-acceptance.mjs",
         "./reconcile-requirements.mjs",
         "./verify-phase-one.mjs",
@@ -86860,6 +86910,7 @@
         "node:url"
       ],
       "runtimeImports": [
+        "scripts/security/caller-reviews.mjs",
         "scripts/security/tenant-acceptance.mjs",
         "scripts/xroga/reconcile-requirements.mjs",
         "scripts/xroga/verify-phase-one.mjs"
@@ -87844,7 +87895,7 @@
       ],
       "entryPoints": [],
       "callers": [
-        "scripts/xroga/phase-one.mjs:9",
+        "scripts/xroga/phase-one.mjs:10",
         "scripts/xroga/verify-phase-one.test.mjs:3"
       ],
       "reachable": false,
@@ -96499,7 +96550,7 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "0f452abb4a8d0c57b0ab38a5ca385385215c163005cd09b61fd2aa51ea7e93c1",
+      "sha256": "957cdf0f75f7dc516b3d9fcab1c0df908d27a41622fc2df1eb3dc5e07301255d",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-tenant-policies.mjs",
@@ -104624,6 +104675,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:af898d36ab78ce9d86ad",
+      "sourcePath": "backend/src/security/confirmationMetadata.local.integration.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:67decdfc40fb1832dc51",
       "sourcePath": "backend/src/security/connectedAccountRoutes.local.integration.ts",
       "declaredTests": 1,
@@ -104641,6 +104699,13 @@
       "id": "test-suite:640551d38883d98b1bdc",
       "sourcePath": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d8181ec88e6e2712a84b",
+      "sourcePath": "backend/src/security/frontendScope.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104668,7 +104733,7 @@
     {
       "id": "test-suite:018cd0700357335ae0e1",
       "sourcePath": "backend/src/security/oauthWrapperOwnership.local.integration.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104697,6 +104762,13 @@
       "id": "test-suite:202b022e2f1c32eef410",
       "sourcePath": "backend/src/security/ownership.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:b9d70f75192f738faed9",
+      "sourcePath": "backend/src/security/platformHealth.local.integration.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -107260,6 +107332,13 @@
     {
       "id": "test-suite:391d343edda2653fa467",
       "sourcePath": "scripts/security/audit-tenant-policies.test.mjs",
+      "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:b441f6ccbad579f7b851",
+      "sourcePath": "scripts/security/caller-reviews.closure.test.mjs",
       "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []

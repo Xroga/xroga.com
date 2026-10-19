@@ -6,6 +6,7 @@ import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {parseCommandRequirements} from './reconcile-requirements.mjs';
 import {tenantCriteria} from '../security/tenant-acceptance.mjs';
+import {structuredCallerReviewRecords} from '../security/caller-reviews.mjs';
 import {validatePhaseReceipt,implementationBindingsAtSource,evidencePath} from './verify-phase-one.mjs';
 
 export const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
@@ -49,12 +50,13 @@ export function buildPhaseOne(){
     implementationEvidence:fixtures[command.number]??[],testType:'FINAL_SOURCE_CI_REQUIRED',proofIds:[],
     ...(verified?.criteria.find(c=>c.id===cid(command.number,i+1))??{})})));
   const phase2=approvedFrozen;
-  const obligations=reviews.reviews.map(record=>({id:`OB-${hash(record.path+':'+[...record.callIds].sort().join(',')).slice(0,16)}`,
+  const obligations=structuredCallerReviewRecords(reviews).map(record=>({id:record.id,
     callerIds:record.callIds,path:record.path,sourceSha256:record.sourceSha256,
-    state:record.disposition==='NOT_PERSISTENCE'?'NOT_PERSISTENCE':'EVIDENCE_GAP',legacyDispositionPreserved:record.disposition,
+    state:record.legacyDisposition==='NOT_PERSISTENCE'?'NOT_PERSISTENCE':'EVIDENCE_GAP',legacyDispositionPreserved:record.legacyDisposition,
     criterionIds:[cid('007',2),cid('007',10)],actorOrigin:'UNPROVEN_IN_STRUCTURED_RECEIPT',ownerBinding:'UNPROVEN_IN_STRUCTURED_RECEIPT',
     reason:record.reason,authorityTrace:record.authority,proofIds:[],
     existingEvidence:record.evidence,
+    ...(record.manualPartitions?{manualPartitions:record.manualPartitions}:{}),
     ...(record.disposition==='NOT_PERSISTENCE'?{review:{...record.evidence[0],sha256:hash(read(record.evidence[0].path))}}:{}),
     note:'Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code.'}));
   const outputs=new Map([
