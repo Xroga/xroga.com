@@ -62,7 +62,7 @@ async function saveToUserProject(
       .filter((m) => m.role === 'user' || m.role === 'assistant')
       .map((m) => ({ role: m.role, content: m.content.slice(0, 8000) }))
       .slice(-40);
-    const { error } = await client.from('xroga_session_memory').upsert(
+    const { data, error } = await client.from('xroga_session_memory').upsert(
       {
         xroga_user_id: userId,
         repo: keyRepo(repo),
@@ -70,8 +70,8 @@ async function saveToUserProject(
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'xroga_user_id,repo' },
-    );
-    if (error) {
+    ).select('xroga_user_id,repo').single();
+    if (error || data?.xroga_user_id !== userId || data.repo !== keyRepo(repo)) {
       console.warn('[sessionMemory] user project save unavailable');
       return false;
     }
@@ -113,6 +113,7 @@ export async function saveSessionHistory(
   repo: string | null | undefined,
   messages: SessionMessage[],
 ): Promise<void> {
+  messages = messages.map(message => ({ ...message }));
   const savedUser = await saveToUserProject(userId, repo, messages);
   if (savedUser) return;
 
@@ -123,7 +124,7 @@ export async function saveSessionHistory(
       .filter((m) => m.role === 'user' || m.role === 'assistant')
       .map((m) => ({ role: m.role, content: m.content.slice(0, 8000) }))
       .slice(-40);
-    await supabase.from('session_memory').upsert(
+    const { data, error } = await supabase.from('session_memory').upsert(
       {
         user_id: userId,
         repo: keyRepo(repo),
@@ -131,7 +132,8 @@ export async function saveSessionHistory(
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'user_id,repo' },
-    );
+    ).select('user_id,repo').single();
+    if (error || data?.user_id !== userId || data.repo !== keyRepo(repo)) throw new Error('Session memory receipt unavailable');
   } catch (err) {
     console.warn('[sessionMemory] platform save unavailable');
   }

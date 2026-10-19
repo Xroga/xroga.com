@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { discoverPersistenceCalls,main,authenticateObservedReceipts,buildTenantAudit } from './audit-tenant-policies.mjs';
+import { discoverPersistenceCalls,main,authenticateObservedReceipts,loadObservedRun,buildTenantAudit } from './audit-tenant-policies.mjs';
 import { createHash } from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import { applyCallerReviews } from './caller-reviews.mjs';
@@ -62,6 +62,18 @@ test('external CI observations require independently retrieved source status log
   assert.equal(authenticateObservedReceipts([receipt],source,remote).length,1);
   for(const patch of [{sourceSha:'b'.repeat(40)},{artifactSha256:'0'.repeat(64)},{runId:'fake'},{passedTests:['fabricated denial']}])assert.throws(()=>authenticateObservedReceipts([{...receipt,...patch}],source,remote));
   assert.throws(()=>authenticateObservedReceipts([receipt],source,()=>({metadata:{headSha:source,status:'completed',conclusion:'failure'},log})));
+});
+
+test('direct job log observations retain independent run job hash and exact test authentication',()=>{
+  const source='a'.repeat(40),log='2026-10-19T00:00:00Z ok 1 - exact owned denial\n';
+  const receipt={runId:'123',jobId:'456',logFormat:'GITHUB_JOB_LOG',sourceSha:source,artifactSha256:createHash('sha256').update(log).digest('hex'),passedTests:['exact owned denial']};
+  const metadata={headSha:source,status:'completed',conclusion:'success'},job={id:456,run_id:123,status:'completed',conclusion:'success'};
+  const remote=(m=metadata,j=job,l=log)=>(runId,r)=>loadObservedRun(runId,r,args=>args[0]==='run'?JSON.stringify(m):args[1].endsWith('/logs')?l:JSON.stringify(j));
+  assert.equal(authenticateObservedReceipts([receipt],source,remote()).length,1);
+  for(const patch of [{run_id:124},{id:457},{status:'in_progress'},{conclusion:'failure'}])assert.throws(()=>authenticateObservedReceipts([receipt],source,remote(metadata,{...job,...patch})));
+  assert.throws(()=>authenticateObservedReceipts([receipt],source,remote({...metadata,headSha:'b'.repeat(40)})));
+  assert.throws(()=>authenticateObservedReceipts([receipt],source,remote(metadata,job,'truncated log')));
+  for(const patch of [{jobId:'fake'},{logFormat:'LOCAL_RECONSTRUCTION'},{jobId:undefined},{passedTests:['fabricated proof']}])assert.throws(()=>authenticateObservedReceipts([{...receipt,...patch}],source,remote()));
 });
 
 test('actual repository gate cannot pass while either existing caller record system is unresolved',()=>{

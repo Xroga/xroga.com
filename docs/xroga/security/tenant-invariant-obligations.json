@@ -183,15 +183,15 @@
       "path": "backend/src/ai/benchmarkRunner.ts",
       "sourceSha256": "dbc904d809e4c1ea171b0f15eb9d1706028562a848807498e8f8f32747a51184",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Current source validates finite numeric/boolean/time result evidence before insert and reports partial persistence without retrying the provider.55 focused tests pass. Platform-global upstream benchmark approval/budget, registered scope, real database receipts, authentic producer provenance and replay remain unresolved. No paid benchmark ran in this mission.",
-      "authorityTrace": "SupabaseBenchmarkResultStore receives the Operations benchmark adapter's database client and inserts aggregate model/case performance without user or credential fields.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Existing authorized operations benchmark adapter stores fixed validated platform measurement fields only. The deterministic catalog supplies cases. No customer prompt, file, user/project identity, credential or raw provider result is persisted. This exception never authorizes model execution or paid provider use. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "Existing OperationsService authorized action/claim selects its fixed benchmark adapter, deterministic model/case catalog and existing caps. This record method does not execute models. It validates and inserts only fixed platform measurement flags, identifiers and numeric counters. No owner argument, customer prompt/source or credential is persisted. This exception authorizes only metadata persistence, never paid execution.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -237,15 +237,15 @@
       "path": "backend/src/ai/buildOutcomeMemory.ts",
       "sourceSha256": "e4293f5b85893e529653b7cc86ca9aae5c13bc65dc634b1ace67bf4e2569941a",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Parent run admission, same-owner concurrent overwrite, evidence validity and retention policy remain open. Foreign-collision tests prove the helper, not full learning provenance.",
-      "authorityTrace": "Terminal run outcome capture uses its supplied run identity, issued context and owner-bound run key persistence. Retention deletes only that owner's rows older than its cutoff.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original adapter sites only: its issued factory, fixed attempt/cancellation RPC selector and owner-filtered retention. Existing real two-owner collision and concurrent first claims preserve exact owner rows. Real worker/cancellation receipts reject foreign owner, browser role, malformed evidence and changed terminal data. Observed PostgreSQL lock waits prove resumed epochs deny both delayed paths without changing saved evidence. Retention preserves the other owner expired row. No new code, test or architecture is needed for these existing invariants, and no unrelated telemetry, model routing or Phase3 authority is certified. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "The only production recordTerminalBuildOutcomeFailOpen consumers are runStore terminal persistence and canonical cancellation. Both use the persisted run owner and construct this adapter with immutable worker-generation or cancellation evidence. upsert snapshots the owner into an issued persisted-owner context before asynchronous work, builds the row synchronously, and selects only the two fixed service-only SQL receipts. The SQL locks the exact owner/run, validates current generation or canonical cancellation and exact completed time/output/terminal fields, and returns a strict boolean. A resumed epoch or owner mismatch cannot write. The separate import-compatible branch uses the existing owned universal record RPC, never a worker-generation certificate. Retention deletes only the captured context owner and expired timestamp, without deleting by run ID alone.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -318,15 +318,15 @@
       "path": "backend/src/routes/dashboard.ts",
       "sourceSha256": "7950a1c0c04fcb2d97104151c1c07a8a59655473fdfeefcd004722020b888360",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "The corrupt foreign-project label gap is fixed: selected parent user_id must independently equal the server user before its name is returned. Focused projection tests pass and real dashboard corruption coverage is added. Database failures still appear as empty optional activity; complete metadata/redaction and source-identity lifecycle remain gaps.",
-      "authorityTrace": "Index mounts dashboard behind authMiddleware; overview queries activity_logs by req.userId and joins projects(name), returning mapped activity.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Two exact read/factory sites already have actual HTTP positive and negative proof. The existing fixture contains nonempty own and project-less activity, a corrupt cross-owner project reference and a separate foreign activity row. Dashboard preserves legitimate project-less activity while excluding the foreign project name. The same inspected source enforces the current actor filter and only bounded public response fields. No source change, new test or broader dashboard certificate is required. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "The auth-mounted dashboard summary derives userId exclusively from req.userId. Its only raw persistence query reads eight current-owner activity rows and a bounded joined project name/user_id projection. The response exposes a joined name only when that project user_id equals the same server owner. An owner-attributed activity row referencing a different owner project remains an activity entry but loses the private joined project name. No request actor, arbitrary joined fields or mutation is accepted.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -346,15 +346,15 @@
       "path": "backend/src/routes/github.ts",
       "sourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
-      "authorityTrace": "Authenticated status/settings use req.userId. Settings now delegates to metadata-only saveGitHubSettings, requires a single exact active-owner receipt, returns409 for missing/revoked rows and safe503 for persistence errors. Status resolves the canonical token then legacy metadata.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original status read/factory sites only. Actual private Storage fixture returns owner connected status despite the opposite actor query, does not expose its canary token and returns disconnected for the other real Auth actor despite a forged owner query. Actual disconnect and delayed mirror proof leaves subsequent status disconnected. Browser download/signing and public-object access are denied. Remaining deployment consumer revalidation is an independent obligation, not inherited from this status projection. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "The auth-mounted status handler uses req.userId for canonical token selection, exact github_integrations metadata, private Storage metadata and exact user_integrations github provider metadata. An absent or revoked canonical credential returns connected:false before private metadata projection. Only connected state, username, fixed repository strategy and default repository are returned, never token material. Provider account identity comes from that owner canonical GitHub grant and matching private mirror, not the forged query actor or another account default.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -373,15 +373,15 @@
       "path": "backend/src/services/integrations/githubDeploy.ts",
       "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Loopback negative tests prove revocation/reconnect during metadata lookup and unavailable metadata deny admission. Remaining gaps include revocation after the final check, caller/target provenance, legacy metadata authority and external publishing approvals. This is not full credential lifecycle certification.",
-      "authorityTrace": "getIntegration obtains the canonical user-bound GitHub token, reads owner-scoped settings without selecting a token, denies metadata errors, then rechecks the canonical credential before repository inspection/deploy helpers consume it.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Two exact private consumer read/factory sites, supplementing rather than inheriting the OAuth helper proof. The real Auth/HTTP/database fixture seeds distinct real owners, sees the exact respective synthetic bearer at the actual refusing consumer, rejects anonymous access, and ignores forged opposite-user query parameters. Real database disconnect or replacement during the delivered metadata response and a database outage prevent any provider call. Exact other-owner rows remain unchanged and a current legitimate owner reconnect works. This establishes account selection at the consumer, not live provider success, custody or post-dispatch cancellation guarantees. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "The private integration reader is used only by the existing authenticated GitHub routes and admitted pipeline consumer. Original server actor is retained for canonical token and owner-filtered metadata, then canonical token is re-read after metadata. Missing, disconnected, replaced or unavailable authority returns no integration, before ghFetch. The actual repo-state router uses authenticated req.userId regardless of query actor and passes this exact selected token to its existing repository reader. Fixed owner metadata cannot replace the credential. The provider stub refuses every GET without forwarding any network call.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -769,15 +769,15 @@
       "path": "backend/src/ai/measuredEvidence.ts",
       "sourceSha256": "61a2c74c7050dc736f4beab1b83c38bd28931d36163da1ed520f4e7b75f3c365",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "New source removes truthy Boolean and numeric/default coercions, validates all measurements before routing aggregation and replaces raw database failure reasons with fixed safe text.55 focused tests pass. Global reader scope, real database acceptance and authentic benchmark producer provenance remain open, no model-quality claim inferred from synthetic cases.",
-      "authorityTrace": "supabaseBenchmarkResults reads global model_benchmark_runs with a2000-row bound, maps numeric benchmark fields and feeds cached aggregation to the existing model router.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Internal bounded platform benchmark aggregates for model routing. Only fixed validated model/case identifiers, executable result flags, counts, timing and cost are mapped. No prompts, source files, tenant IDs, credentials or provider payloads. No public raw-results endpoint or customer query. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "Only fixed internal benchmark result loading, bounded to2000 ordered rows and mapped/validated platform measurement fields before caching or routing. No tenant, prompt, file, credential or raw provider payload is mapped or returned. No public raw-results endpoint.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -1059,15 +1059,15 @@
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
       "sourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
-      "authorityTrace": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -1109,14 +1109,14 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-a26f798a697bc8a6",
+      "id": "OB-0fbb2964e9911f44",
       "callerIds": [
-        "6d55007bf3ddd2edc540",
-        "d97bbed18063d9cc41d7",
-        "5a8e3957447bad08faa1"
+        "3a079bb3694a289488d7",
+        "cb5da87d32bfae7b42b8",
+        "b3cacfdb187f1405097d"
       ],
       "path": "backend/src/ai/webBudget.ts",
-      "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d",
+      "sourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -1125,13 +1125,21 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "No hard-limit acceptance: missing store skips accounting, lookup errors can produce a null cycle, and failures are logged. Full caller ownership, provider reservation coverage, numeric validation and reconciliation after partial writes remain open. Do not use this telemetry as proof of zero spend.",
+      "reason": "A held real-SDK loopback cycle lookup reproduced mutable input producing one owner cycle with another owner user/provider/request tuple. The input is now captured before awaiting. A composite current cycle-owner foreign key fences the decisive insert against parent changes and retains existing null-cycle deletion behavior. Actual changed-source PostgreSQL lock, actor-isolation, browser-denial and exact receipt evidence is still required. This remains an original007 gap, not a spending-policy certificate.",
       "authorityTrace": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/ai/webBudget.ts",
           "marker": "recordWebSpend"
+        },
+        {
+          "path": "backend/src/security/webAccounting.local.integration.ts",
+          "marker": "real web accounting retains captured owner intent and cycle ownership across an observed database lock wait"
+        },
+        {
+          "path": "supabase/migrations/20261019000700_web_usage_cycle_owner.sql",
+          "marker": "xroga_web_usage_cycle_owner_fkey"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -1259,7 +1267,7 @@
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
-      "authorityTrace": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.\nActive public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
+      "authorityTrace": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.\nActive public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.\nReservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -1275,11 +1283,7 @@
         {
           "callIds": [
             "00d351afbe045a136c66",
-            "254a91383e3a8af0310b",
-            "e030677c7ecb6b0dd90e",
-            "e35278adbe80b78c8d41",
-            "5ed8ef26b72e26561f26",
-            "3fc72ec34d884b871909"
+            "254a91383e3a8af0310b"
           ],
           "disposition": "REVIEWED_GAP"
         },
@@ -1295,6 +1299,15 @@
             "746985044f7d3ee62aff",
             "b5a82155e981259a207e",
             "564673e6f6b21c690fce"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
+        },
+        {
+          "callIds": [
+            "e030677c7ecb6b0dd90e",
+            "e35278adbe80b78c8d41",
+            "5ed8ef26b72e26561f26",
+            "3fc72ec34d884b871909"
           ],
           "disposition": "SCOPED_BOUNDARY"
         }
@@ -1400,7 +1413,7 @@
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
-      "authorityTrace": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.\nExisting authenticated Vercel, integration and Supabase OAuth handlers use req.userId and the admitted pipeline uses opts.userId. Publishing status and GitHub deployment helpers propagate that same actor. Delivery reads the authenticated owned revision before using its userId, not model/body identity. getVercelToken/getVercelUsername/isVercelConnected/live verification and project selection share loadVercelConnection exact owner/provider predicates. Reads never revive an absent or revoked canonical connection from mirrors. Single-flight is keyed by owner. Refresh leases update only that owner/provider/observed refresh token; cleanup restores only its exact marker. Native refresh observes the canonical revision and known account before provider response and the atomic save CAS retains both. Only clearVercelConnection invokes private mirror deletion using the original authenticated context owner. Actual distinct-account rows, concurrent same-owner and foreign-owner refresh, foreign input denial before transport, held response against authenticated disconnect, unchanged tombstone/foreign row and exact foreign mirror bytes exercise these seven persistence boundaries.\nThe sole production clearVercelConnection caller is authenticated Vercel disconnect with the original req.tenantContext. requireTenantContext and getTenantSupabaseAdmin both validate that original issued context before the fixed owner/vercel upsert. The owner-inclusive conflict key cannot revoke another account. Empty token, fresh revision and revoked tombstone are persisted before clearing the same context PKCE session and owner-namespace mirror. Actual authenticated disconnect, other-owner retention and stale refresh persistence denial exercise this function. No body field can choose its actor or provider.",
+      "authorityTrace": "The only enabled HTTP connection producer is the auth-mounted Vercel callback, which retains req.userId and its consumed PKCE authorization revision. External refresh retains the original canonical owner/provider/account/revision and delegates the same fixed OAuth CAS. Both OAuth branches return before the legacy mirror writer. The compatibility direct rotation observes the current exact owner/provider and expected refresh token before CAS. The non-OAuth internal personal-token compatibility branch builds a fixed owner/provider row and private fixed owner/vercel.json mirror, with no client endpoint accepting a different owner. The private writer has no other call site and cannot select arbitrary paths or buckets. Mirror reads independently revalidate canonical connection and cannot restore absent or revoked authority.\nExisting authenticated Vercel, integration and Supabase OAuth handlers use req.userId and the admitted pipeline uses opts.userId. Publishing status and GitHub deployment helpers propagate that same actor. Delivery reads the authenticated owned revision before using its userId, not model/body identity. getVercelToken/getVercelUsername/isVercelConnected/live verification and project selection share loadVercelConnection exact owner/provider predicates. Reads never revive an absent or revoked canonical connection from mirrors. Single-flight is keyed by owner. Refresh leases update only that owner/provider/observed refresh token; cleanup restores only its exact marker. Native refresh observes the canonical revision and known account before provider response and the atomic save CAS retains both. Only clearVercelConnection invokes private mirror deletion using the original authenticated context owner. Actual distinct-account rows, concurrent same-owner and foreign-owner refresh, foreign input denial before transport, held response against authenticated disconnect, unchanged tombstone/foreign row and exact foreign mirror bytes exercise these seven persistence boundaries.\nThe sole production clearVercelConnection caller is authenticated Vercel disconnect with the original req.tenantContext. requireTenantContext and getTenantSupabaseAdmin both validate that original issued context before the fixed owner/vercel upsert. The owner-inclusive conflict key cannot revoke another account. Empty token, fresh revision and revoked tombstone are persisted before clearing the same context PKCE session and owner-namespace mirror. Actual authenticated disconnect, other-owner retention and stale refresh persistence denial exercise this function. No body field can choose its actor or provider.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -1416,7 +1429,7 @@
             "0a6d81aa80ada5c7b14d",
             "832762c1055a84889f0d"
           ],
-          "disposition": "REVIEWED_GAP"
+          "disposition": "SCOPED_BOUNDARY"
         },
         {
           "callIds": [
@@ -1585,15 +1598,15 @@
       "path": "frontend/src/app/(shell)/layout.tsx",
       "sourceSha256": "4f4c3cd46dd888ca83cc7c0cc7517b61d1cd520f0191c225776f12e764d1d084",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
-      "authorityTrace": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -1619,15 +1632,15 @@
       "path": "frontend/src/app/(workspace)/layout.tsx",
       "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
-      "authorityTrace": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -1653,15 +1666,15 @@
       "path": "frontend/src/app/onboarding/page.tsx",
       "sourceSha256": "ad060ff937f7ed8d90560c583c3fa178a05630429f9450d116facfaadeb97d40",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
-      "authorityTrace": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5384,15 +5397,15 @@
       "path": "backend/src/synthesis/projectRuntime/projectHistory.ts",
       "sourceSha256": "54471e2a22a019698a8f5607569a60b260d98466aaedf68515429162bf9f336b",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "History reads and cloning are not independent proof of authenticated caller identity, destination logical-project ownership or repository permission when preservation is requested. Event payload redaction, all consumers and deployed recovery remain unverified. Classified as a reviewed gap rather than certifying filters as sufficient authorization.",
-      "authorityTrace": "Read complete history/restore/fork implementation. Fixed-table reads bind user/project and exact revision where applicable. The shared snapshot guard now fails before cloning or writing a misbound revision. Clone deliberately detaches runtime and defaults repository preservation off for forks.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Six exact existing history read/factory sites, not a dormant-path exemption. The real disposable test reads a nonempty owned revision and event history, returns no other-owner revision or events, rejects changed embedded project/run/contract identities, and proves rejected restoration creates neither revision nor event. Legitimate restore and fork preserve exact original owner/project receipts and leave the historical source unchanged. Current production endpoint admission is separately enforced by its runtime store routes. No new endpoint, cross-user sharing, historical read revocation guarantee or external action is introduced. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "These three private history readers accept explicit internal server owner/project coordinates. Source tracing finds no auth-bypassing public router or background caller: loadProjectRevision is consumed by this module restore/fork helpers, while list readers have no production HTTP consumer. Every selected query constrains exact user_id and project_id, with exact revision_id or optional session_id where applicable. Revision restoration checks persisted row owner/project/run against both embedded project and contract before use. Foreign or malformed revision state cannot be cloned, forked or emitted as an authorized receipt. Runtime event reads filter owner/project/session and only return that historical namespace. These helpers do not create actor authority or confer permission to another owner resources.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5450,15 +5463,15 @@
       "path": "backend/src/ai/providerHealthStore.ts",
       "sourceSha256": "ec92f541a194e0c3c03ef5c12d9afc6e6052aadc7ca9d5e2b6ebf27d6c260b0d",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Persistence is best-effort and restoration casts database enum values without runtime validation. Full recording-caller/BYOK account isolation, real database restoration and staged restart coverage remain unverified. In-memory transition tests do not certify these boundaries.",
-      "authorityTrace": "Fixed platform model_provider_health table and model_id conflict key hold aggregate counters and enumerated failure classifications, not user prompts or connected-account credentials. Inspected providerRuntime load/save, transition recording, failure normalization and provider health tests.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Inspected server-only platform model circuit aggregates; no user/tenant/customer fields or raw failure text. Not connected-account credentials. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "Existing internal platform model counters, no tenant/customer/prompt/credential data. Fixed store projection and model conflict key, called only by providerRuntime transition persistence and startup hydration. No client-selected operation or public raw table endpoint. Real save/load and all browser-role read/upsert/delete denial are mandatory. Exact pre-test global row is restored. This exception certifies no provider liveness or external connected account.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5650,15 +5663,15 @@
       "path": "backend/src/lib/resolveIdentity.ts",
       "sourceSha256": "b7fbd7ac5636b5c49e1e94bc1c85f374886806defcaf3dbff9aa6ac29ebf7230",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Local JWT verification remains the default and accepts unexpired tokens without immediate remote revocation checks; REQUIRE_REMOTE_AUTH_CHECK is not silently enabled here. Founder server gate is separate. Sensitive operation freshness and account-deletion lifecycle remain unresolved, not waived by this factory classification.",
-      "authorityTrace": "Single discovered privileged factory is used only for auth.getUser(token), not a caller-selected table. Token fingerprints deduplicate concurrent remote verification and entries are removed on settlement. Callers receive canonical identity, not supplied user_metadata ownership.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact authentication factory site. The actual disposable Auth test forces the remote path for both real issued tokens, verifies concurrent byte-identical requests resolve only their respective real subject, rejects empty and forged tokens and fails closed during verification outage. Existing authenticated endpoint fixtures independently prove the consumer uses this server actor and rejects anonymous/foreign operations. No zero-delay sign-out revocation or privileged user-administration permission is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "This fixed SDK factory bootstraps actor identity by asking Auth getUser with the supplied bearer, not by querying arbitrary owner records. It returns only the Auth-verified subject/email. The auth middleware creates the issued tenant context from this resolved identity. No body userId, service-role user enumeration, caller-provided subject or cached authorization is used. In-flight work is keyed by a token hash and removed on settlement, so different users cannot share a result.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5835,7 +5848,7 @@
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
-      "authorityTrace": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.\nThe sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
+      "authorityTrace": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.\nThe sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.\ncurrentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5850,8 +5863,6 @@
       "manualPartitions": [
         {
           "callIds": [
-            "9fc45d30478dc34f0ea6",
-            "1087d778492ba0d90fe8",
             "2911d37adf1475f417aa",
             "31c477708b626e5ae6b1",
             "7bf8a723f11bf121e654",
@@ -5874,6 +5885,13 @@
             "0790e2862f113cd5cb2a",
             "8cdd04617aa0332099d0",
             "06e83cfecb1ce0da5c95"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
+        },
+        {
+          "callIds": [
+            "9fc45d30478dc34f0ea6",
+            "1087d778492ba0d90fe8"
           ],
           "disposition": "SCOPED_BOUNDARY"
         }
@@ -5948,17 +5966,17 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-aeb04ec4bd9ce357",
+      "id": "OB-9a16bc7d34216aa8",
       "callerIds": [
         "d30b589aad03f57a5e34",
-        "7b2ab76ab16f67d4bc3f",
-        "c5dfa39288196ad28fb9",
-        "9645b6cbe302cd3fd49a",
-        "ab26b537916b9c6dae85",
-        "9a21725abae3843c4e12"
+        "ac8f40ddd4a161a16cdb",
+        "624de55167fdf2321f9e",
+        "1ef1d3af12bbfcd2c188",
+        "6490d83cf96f9cca168e",
+        "78bf7f66609885faaceb"
       ],
       "path": "backend/src/ai/sessionMemory.ts",
-      "sourceSha256": "412f07c9519db8594f26e00ef13492a36d62c0796bab001bb40ff0f06ccfbfca",
+      "sourceSha256": "d42622f91cd218c0509a6d77f8223890a2afed7222ffa93a57d3482da064c851",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -5982,22 +6000,26 @@
         {
           "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
           "marker": "registerRecoveryMemoryReadTests"
+        },
+        {
+          "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+          "marker": "real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage"
         }
       ],
       "manualPartitions": [
         {
           "callIds": [
             "d30b589aad03f57a5e34",
-            "7b2ab76ab16f67d4bc3f",
-            "ab26b537916b9c6dae85",
-            "9a21725abae3843c4e12"
+            "ac8f40ddd4a161a16cdb",
+            "6490d83cf96f9cca168e",
+            "78bf7f66609885faaceb"
           ],
           "disposition": "REVIEWED_GAP"
         },
         {
           "callIds": [
-            "c5dfa39288196ad28fb9",
-            "9645b6cbe302cd3fd49a"
+            "624de55167fdf2321f9e",
+            "1ef1d3af12bbfcd2c188"
           ],
           "disposition": "SCOPED_BOUNDARY"
         }
@@ -6005,17 +6027,17 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-c10dcba465926510",
+      "id": "OB-7c2f132fe54be33a",
       "callerIds": [
         "278f199f6ac90620ad7f",
         "f4b4398d7c1562f69f44",
         "2ee02eb3c8608df30614",
-        "162926698a1e1b553196",
-        "3dae213a685f6a044dad",
-        "014baaf3ebb696f48dd4"
+        "b321103d0cf501326d72",
+        "046abf28f9d69dee5112",
+        "1828007517113aa44702"
       ],
       "path": "backend/src/ai/projectMemory.ts",
-      "sourceSha256": "a8185a6b2e6ae8ac82bb4ca9b20572292070afa996d92553cb4012765de5f391",
+      "sourceSha256": "5296a4cecbca3c2a4d7c19e7eb98d3120677af212eadaf2bcaf7766915a68125",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6039,15 +6061,19 @@
         {
           "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
           "marker": "registerRecoveryMemoryReadTests"
+        },
+        {
+          "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+          "marker": "real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage"
         }
       ],
       "manualPartitions": [
         {
           "callIds": [
             "278f199f6ac90620ad7f",
-            "162926698a1e1b553196",
-            "3dae213a685f6a044dad",
-            "014baaf3ebb696f48dd4"
+            "b321103d0cf501326d72",
+            "046abf28f9d69dee5112",
+            "1828007517113aa44702"
           ],
           "disposition": "REVIEWED_GAP"
         },
@@ -6366,15 +6392,15 @@
       "path": "backend/src/services/integrations/credentialStorageBucket.ts",
       "sourceSha256": "691ccba36714dcb82060acdb4dc296e7e0a63b12540e6f1fe98e770a30a1c381",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Privacy is independently rechecked after create or duplicate, and catalogue failure denies upload. This is not an identity issuer or new CredentialVault. Complete upstream caller review and staged storage compatibility remain outstanding; do not infer authorization of every token caller from this configuration guard.",
-      "authorityTrace": "Internal fixed-bucket configuration admission, no supplied tenant/table/object path. Reads catalogue and, only when absent, retains the existing BYOK server bootstrap allowance of a private 64KiB bucket. It never changes an existing public or unknown-policy bucket.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Internal fixed xroga-github-tokens private-bucket admission for existing credential writers only. Returns a boolean, not bucket metadata or objects. Never accepts a bucket name, makes an existing bucket public, silently repairs its policy or grants object reads. Rechecks actual privacy after creation/concurrent duplicate. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "Only the existing internal GitHub/Vercel/BYOK credential writers invoke this fixed private-bucket admission. No endpoint calls it directly and no bucket argument exists. It returns only a privacy boolean, never bucket metadata or credential objects. Existing public buckets are refused without upload or policy change. Creation is private and a second actual bucket listing validates success or a concurrent duplicate. Browser private download/signing/public access remains denied.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -6841,15 +6867,15 @@
       "path": "backend/src/ai/buildOutcomeMemory.ts",
       "sourceSha256": "e4293f5b85893e529653b7cc86ca9aae5c13bc65dc634b1ace67bf4e2569941a",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
-      "authorityTrace": "Learning adapter uses captured worker generation or a distinct database-generated cancellation receipt. Separate service-only functions lock the canonical run and deny stale or foreign terminal evidence before writing the existing build_outcomes table. No client/model field grants generation authority.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original adapter sites only: its issued factory, fixed attempt/cancellation RPC selector and owner-filtered retention. Existing real two-owner collision and concurrent first claims preserve exact owner rows. Real worker/cancellation receipts reject foreign owner, browser role, malformed evidence and changed terminal data. Observed PostgreSQL lock waits prove resumed epochs deny both delayed paths without changing saved evidence. Retention preserves the other owner expired row. No new code, test or architecture is needed for these existing invariants, and no unrelated telemetry, model routing or Phase3 authority is certified. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "The only production recordTerminalBuildOutcomeFailOpen consumers are runStore terminal persistence and canonical cancellation. Both use the persisted run owner and construct this adapter with immutable worker-generation or cancellation evidence. upsert snapshots the owner into an issued persisted-owner context before asynchronous work, builds the row synchronously, and selects only the two fixed service-only SQL receipts. The SQL locks the exact owner/run, validates current generation or canonical cancellation and exact completed time/output/terminal fields, and returns a strict boolean. A resumed epoch or owner mismatch cannot write. The separate import-compatible branch uses the existing owned universal record RPC, never a worker-generation certificate. Retention deletes only the captured context owner and expired timestamp, without deleting by run ID alone.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -6969,7 +6995,7 @@
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
-      "authorityTrace": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.\nPrivate saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
+      "authorityTrace": "The existing CWS callback starts and consumes the original issued-owner PKCE session, then captures prepareUserProviderKeyWrite for that exact owner and cws_oauth provider. The process-local unforgeable admission holds owner/provider/env plus canonical revision and OAuth-receipt flag. The shared save client is used only after matching that handle. OAuth receipt selects the fixed save_cws_oauth_key_if_current RPC. Both save branches encrypt with the existing envelope and require true CAS receipt before optional owner mirror. No browser value can choose the owner of that callback. Ordinary BYOK callers retain their separate exact-owner CAS and HTTP proof.\nPrivate saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -6986,7 +7012,7 @@
           "callIds": [
             "ee377e28847a820d3e60"
           ],
-          "disposition": "REVIEWED_GAP"
+          "disposition": "SCOPED_BOUNDARY"
         },
         {
           "callIds": [
@@ -7154,15 +7180,15 @@
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Focused CWS tests deny changes before exchange and before encrypted persistence. Local SQL checks cover lost revision, duplicate save, revoke, reconnect and receipt expiry. Actual two-client CI is pending. Complete caller admission, legacy cryptography and external provider revocation remain open. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
-      "authorityTrace": "CWS callback consumes the exact owner/state before provider I/O and obtains an issued BYOK admission only when the current revision matches the consumed epoch. save_cws_oauth_key_if_current locks that owner/key, checks the unexpired consumed receipt, then delegates encrypted metadata validation and revision CAS to the existing BYOK RPC.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Two remaining shared-save/CWS RPC sites only. Actual helper positives for two disposable owners preserve own decrypted values and reject foreign or cloned admissions, consumed handle replay and revoke-raced save, retaining exact foreign row. Fresh original-owner PKCE reconnect succeeds. Mirrors finish before cleanup. No OAuth-provider request, external app identity assertion, vault replacement or live custody claim. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "The existing CWS callback starts and consumes the original issued-owner PKCE session, then captures prepareUserProviderKeyWrite for that exact owner and cws_oauth provider. The process-local unforgeable admission holds owner/provider/env plus canonical revision and OAuth-receipt flag. The shared save client is used only after matching that handle. OAuth receipt selects the fixed save_cws_oauth_key_if_current RPC. Both save branches encrypt with the existing envelope and require true CAS receipt before optional owner mirror. No browser value can choose the owner of that callback. Ordinary BYOK callers retain their separate exact-owner CAS and HTTP proof.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -8555,15 +8581,15 @@
       "path": "backend/src/operations/operationsService.ts",
       "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Focused absent and substituted resource/owner/project receipt negatives pass. Actual owned versus foreign release/deployment draft test prepared with no provider execution. Existing constant release version is preserved, mutable release state/approval freshness and actual provider promotion remain unresolved. No complete release caller certification.",
-      "authorityTrace": "Existing action creation and execution use currentTargetVersion after authenticated project access. Release lookup now requires exact resource ID, current owner and project, and validates all three returned fields before action creation. Previously the release branch returned version1 without any resource lookup.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original private target/replay read sites only, no source changes. Existing actual release/deployment fixtures preserve a legitimate release-manager membership, reject foreign targets and admit the exact owned drafts without adapter runs. Actual owned automation target executes once, verified replay returns the same receipt and foreign replay denies. Existing misbound persisted action denial preserves private receipts and authority. Dynamic lookup SQL is fixed and owner/project-filtered at the same caller. This does not certify remaining internal mutation adapters or create a post-admission authority policy. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "authorityTrace": "currentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.",
       "proofIds": [],
       "existingEvidence": [
         {

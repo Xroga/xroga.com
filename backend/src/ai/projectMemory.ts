@@ -157,7 +157,7 @@ async function saveToDb(mem: ProjectMemory): Promise<ProjectMemoryPersistence> {
   try {
     const userClient = await getUserSupabaseAdmin(mem.userId);
     if (userClient) {
-      const { error } = await userClient.from('xroga_project_memory').upsert(
+      const { data, error } = await userClient.from('xroga_project_memory').upsert(
         {
           xroga_user_id: mem.userId,
           repo: normalizeRepo(mem.repo),
@@ -172,8 +172,8 @@ async function saveToDb(mem: ProjectMemory): Promise<ProjectMemoryPersistence> {
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'xroga_user_id,repo,branch' },
-      );
-      if (!error) return 'user_project';
+      ).select('xroga_user_id,repo,branch').single();
+      if (!error && data?.xroga_user_id === mem.userId && data.repo === normalizeRepo(mem.repo) && data.branch === mem.branch) return 'user_project';
       console.warn('[projectMemory] user project save unavailable');
     }
   } catch (err) {
@@ -183,7 +183,7 @@ async function saveToDb(mem: ProjectMemory): Promise<ProjectMemoryPersistence> {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return 'memory_only';
 
   const supabase = getSupabaseAdmin();
-  const { error } = await supabase.from('project_memory').upsert(
+  const { data, error } = await supabase.from('project_memory').upsert(
     {
       user_id: mem.userId,
       repo: normalizeRepo(mem.repo),
@@ -198,8 +198,8 @@ async function saveToDb(mem: ProjectMemory): Promise<ProjectMemoryPersistence> {
       updated_at: new Date().toISOString(),
     },
     { onConflict: 'user_id,repo,branch' },
-  );
-  if (error) {
+  ).select('user_id,repo,branch').single();
+  if (error || data?.user_id !== mem.userId || data.repo !== normalizeRepo(mem.repo) || data.branch !== mem.branch) {
     throw new Error('Platform project-memory write unavailable.');
   }
   return 'platform';

@@ -398,7 +398,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:126 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:75 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -433,7 +433,7 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 126,
+    "unresolvedSafetyCandidates": 75,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 16
   },
@@ -520,27 +520,9 @@
       "existingImplementation": "Existing OAuth, BYOK and credential mirrors",
       "missingBehavior": "Atomic save/revoke ordering, one-use PKCE, encrypted vault migration and KMS boundary",
       "acceptanceTest": "Wrong owner, revocation during read/write, replay, rotation and tampering",
-      "pendingCandidates": 9,
+      "pendingCandidates": 0,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
-      "callersByPath": {
-        "backend/src/services/integrations/credentialStorageBucket.ts": [
-          "111e6abf2b97a49b75f3"
-        ],
-        "backend/src/services/integrations/githubDeploy.ts": [
-          "b4b2b91f3280a140691a",
-          "48c115e3fcc79a824240"
-        ],
-        "backend/src/services/integrations/userProviderKeys.ts": [
-          "ee377e28847a820d3e60",
-          "77b006f82faf88017a2c"
-        ],
-        "backend/src/services/integrations/vercelAuth.ts": [
-          "c47cd353f14ba5046be8",
-          "2d2eae5cbd895d303fc1",
-          "0a6d81aa80ada5c7b14d",
-          "832762c1055a84889f0d"
-        ]
-      }
+      "callersByPath": {}
     },
     {
       "rootCause": "approvals-external-actions",
@@ -548,14 +530,11 @@
       "existingImplementation": "Existing prepared plan, confirmation, operations services and scheduler",
       "missingBehavior": "Account/target/digest/spend/receipt integration and complete caller provenance",
       "acceptanceTest": "Changed plan/target, expired/revoked approval, duplicate claims, unauthorized spend",
-      "pendingCandidates": 23,
+      "pendingCandidates": 10,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/operations/operationsService.ts": [
           "cd8790e39c3283f05482",
-          "f175f84e5afd902c17c0",
-          "9fc45d30478dc34f0ea6",
-          "1087d778492ba0d90fe8",
           "2911d37adf1475f417aa",
           "31c477708b626e5ae6b1",
           "7bf8a723f11bf121e654",
@@ -565,18 +544,6 @@
           "101c25c8bf0d04a3d6ee",
           "ca3d605bac7cc0acb742",
           "5168c80257e8d4f829be"
-        ],
-        "backend/src/services/integrations/businessActionConfirmations.ts": [
-          "c37a93be0605e64b3156",
-          "94fb30ec710f32d062c2",
-          "36d0fbfc5ddf864ad6ea",
-          "bda77ff34ad9e973cbde",
-          "a1e1f647efb6e7002993",
-          "7c2970e3ea0940d5d136",
-          "986c86eebabfae033939",
-          "884cad1975974abc0599",
-          "b6708d08741254f6da06",
-          "85d5a147aa59e4f62e68"
         ]
       }
     },
@@ -586,16 +553,12 @@
       "existingImplementation": "Existing billing functions and provider reservations",
       "missingBehavior": "Remaining source-bound billing/budget replay, numeric and caller authority gaps",
       "acceptanceTest": "Concurrent replay, foreign account, failed reservation/settlement and compensation",
-      "pendingCandidates": 6,
+      "pendingCandidates": 2,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/providerBudget.ts": [
           "00d351afbe045a136c66",
-          "254a91383e3a8af0310b",
-          "e030677c7ecb6b0dd90e",
-          "e35278adbe80b78c8d41",
-          "5ed8ef26b72e26561f26",
-          "3fc72ec34d884b871909"
+          "254a91383e3a8af0310b"
         ]
       }
     },
@@ -605,17 +568,12 @@
       "existingImplementation": "Existing owner checks, project/file stores and runtime",
       "missingBehavior": "Inherited parent identity, durable receipt, revision and runtime ownership gaps",
       "acceptanceTest": "Wrong parent, orphan, stale revision, failed persistence and cross-tenant download",
-      "pendingCandidates": 49,
+      "pendingCandidates": 40,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/buildImprovementMemory.ts": [
           "cf1ee4207ba21ac496ac",
           "b85bc952750476ba5d75"
-        ],
-        "backend/src/ai/buildOutcomeMemory.ts": [
-          "2c882ba9923d4ba6229b",
-          "09c21b79800aca71c43f",
-          "f78c85803ca9f116a8ac"
         ],
         "backend/src/ai/buildOutcomeRoutingMemory.ts": [
           "5e75a66eaa35941a01e5",
@@ -627,15 +585,15 @@
         ],
         "backend/src/ai/projectMemory.ts": [
           "278f199f6ac90620ad7f",
-          "162926698a1e1b553196",
-          "3dae213a685f6a044dad",
-          "014baaf3ebb696f48dd4"
+          "b321103d0cf501326d72",
+          "046abf28f9d69dee5112",
+          "1828007517113aa44702"
         ],
         "backend/src/ai/sessionMemory.ts": [
           "d30b589aad03f57a5e34",
-          "7b2ab76ab16f67d4bc3f",
-          "ab26b537916b9c6dae85",
-          "9a21725abae3843c4e12"
+          "ac8f40ddd4a161a16cdb",
+          "6490d83cf96f9cca168e",
+          "78bf7f66609885faaceb"
         ],
         "backend/src/services/memory/buildMemory.ts": [
           "661ce57ea5e40d34292d",
@@ -667,14 +625,6 @@
           "371f13126c4ab7aab2dc",
           "74cc6545383bea8e320f"
         ],
-        "backend/src/synthesis/projectRuntime/projectHistory.ts": [
-          "949efba83cbbfbfc99ca",
-          "372d392279bd2762ded0",
-          "1920604a889551eb4f02",
-          "60655c54ecbb30292812",
-          "f163510c6f5c4132c05f",
-          "73ab17f7a209cc26cc6b"
-        ],
         "backend/src/synthesis/universalEntrypoint.ts": [
           "10b5e279dd241e2f40ec"
         ],
@@ -703,22 +653,9 @@
       "existingImplementation": "Existing services and source-bound register",
       "missingBehavior": "Inspect the exact remaining reason for each listed caller, grouping shared helpers",
       "acceptanceTest": "Per-caller negative verification proportional to risk",
-      "pendingCandidates": 39,
+      "pendingCandidates": 23,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
-        "backend/src/ai/benchmarkRunner.ts": [
-          "9506c72ea0f341c2a492"
-        ],
-        "backend/src/ai/measuredEvidence.ts": [
-          "2f512a182d41df743ba7",
-          "fd966b75f6a38bb90f05"
-        ],
-        "backend/src/ai/providerHealthStore.ts": [
-          "b7e87dfbceb281533b94",
-          "80f1202165fac508ccee",
-          "05bb5458554f43b160c1",
-          "fe7e6e4fe911ed9a75e1"
-        ],
         "backend/src/ai/quota.ts": [
           "3faa7ece6a312b431802",
           "09c18505660bd25e7f05",
@@ -734,21 +671,9 @@
           "952ba0881d01437685bf"
         ],
         "backend/src/ai/webBudget.ts": [
-          "6d55007bf3ddd2edc540",
-          "d97bbed18063d9cc41d7",
-          "5a8e3957447bad08faa1"
-        ],
-        "backend/src/lib/resolveIdentity.ts": [
-          "6d485d911da834f03448"
-        ],
-        "backend/src/routes/dashboard.ts": [
-          "2a2b04bfcdf9721a6f51",
-          "2c2f746e6c99a355ea8c"
-        ],
-        "backend/src/routes/github.ts": [
-          "8a4f5a61a698f969e941",
-          "7ea068acaab899c1c99e",
-          "b4f7c7e759ffc010fe2f"
+          "3a079bb3694a289488d7",
+          "cb5da87d32bfae7b42b8",
+          "b3cacfdb187f1405097d"
         ],
         "backend/src/security/serviceRoleGuard.ts": [
           "d84df34ff692e4fb31c1",
@@ -765,15 +690,6 @@
           "8418218a6fdf978626d1",
           "e7d0d54375645a30b30f",
           "790ce21b600ea4bd4f9d"
-        ],
-        "frontend/src/app/(shell)/layout.tsx": [
-          "3ea0392dbd30934afb02"
-        ],
-        "frontend/src/app/(workspace)/layout.tsx": [
-          "5740af96dff28fda6f3f"
-        ],
-        "frontend/src/app/onboarding/page.tsx": [
-          "40dcc370930a78bd99cd"
         ]
       }
     }

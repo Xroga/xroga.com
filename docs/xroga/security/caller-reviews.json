@@ -164,15 +164,53 @@
       "callIds": [
         "9506c72ea0f341c2a492"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "SupabaseBenchmarkResultStore receives the Operations benchmark adapter's database client and inserts aggregate model/case performance without user or credential fields.",
-      "reason": "Current source validates finite numeric/boolean/time result evidence before insert and reports partial persistence without retrying the provider.55 focused tests pass. Platform-global upstream benchmark approval/budget, registered scope, real database receipts, authentic producer provenance and replay remain unresolved. No paid benchmark ran in this mission.",
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "Existing OperationsService authorized action/claim selects its fixed benchmark adapter, deterministic model/case catalog and existing caps. This record method does not execute models. It validates and inserts only fixed platform measurement flags, identifiers and numeric counters. No owner argument, customer prompt/source or credential is persisted. This exception authorizes only metadata persistence, never paid execution.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Existing authorized operations benchmark adapter stores fixed validated platform measurement fields only. The deterministic catalog supplies cases. No customer prompt, file, user/project identity, credential or raw provider result is persisted. This exception never authorizes model execution or paid provider use. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/ai/benchmarkRunner.ts",
           "marker": "SupabaseBenchmarkResultStore"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/ai/benchmarkRunner.ts",
+        "sourceSha256": "dbc904d809e4c1ea171b0f15eb9d1706028562a848807498e8f8f32747a51184",
+        "callIds": [
+          "9506c72ea0f341c2a492"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "SupabaseBenchmarkResultStore receives the Operations benchmark adapter's database client and inserts aggregate model/case performance without user or credential fields.",
+        "reason": "Current source validates finite numeric/boolean/time result evidence before insert and reports partial persistence without retrying the provider.55 focused tests pass. Platform-global upstream benchmark approval/budget, registered scope, real database receipts, authentic producer provenance and replay remain unresolved. No paid benchmark ran in this mission.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/benchmarkRunner.ts",
+            "marker": "SupabaseBenchmarkResultStore"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-596d4c8ceb15c1a7"
+        ],
+        "passedTests": [
+          "real platform benchmark exception retains only fixed measurement fields and browser roles cannot read or alter rows"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Current source validates finite numeric/boolean/time result evidence before insert and reports partial persistence without retrying the provider.55 focused tests pass. Platform-global upstream benchmark approval/budget, registered scope, real database receipts, authentic producer provenance and replay remain unresolved. No paid benchmark ran in this mission.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -198,15 +236,59 @@
         "2c882ba9923d4ba6229b",
         "f78c85803ca9f116a8ac"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Terminal run outcome capture uses its supplied run identity, issued context and owner-bound run key persistence. Retention deletes only that owner's rows older than its cutoff.",
-      "reason": "Parent run admission, same-owner concurrent overwrite, evidence validity and retention policy remain open. Foreign-collision tests prove the helper, not full learning provenance.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The only production recordTerminalBuildOutcomeFailOpen consumers are runStore terminal persistence and canonical cancellation. Both use the persisted run owner and construct this adapter with immutable worker-generation or cancellation evidence. upsert snapshots the owner into an issued persisted-owner context before asynchronous work, builds the row synchronously, and selects only the two fixed service-only SQL receipts. The SQL locks the exact owner/run, validates current generation or canonical cancellation and exact completed time/output/terminal fields, and returns a strict boolean. A resumed epoch or owner mismatch cannot write. The separate import-compatible branch uses the existing owned universal record RPC, never a worker-generation certificate. Retention deletes only the captured context owner and expired timestamp, without deleting by run ID alone.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original adapter sites only: its issued factory, fixed attempt/cancellation RPC selector and owner-filtered retention. Existing real two-owner collision and concurrent first claims preserve exact owner rows. Real worker/cancellation receipts reject foreign owner, browser role, malformed evidence and changed terminal data. Observed PostgreSQL lock waits prove resumed epochs deny both delayed paths without changing saved evidence. Retention preserves the other owner expired row. No new code, test or architecture is needed for these existing invariants, and no unrelated telemetry, model routing or Phase3 authority is certified. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/ai/buildOutcomeMemory.ts",
           "marker": "BUILD_OUTCOME_RETENTION_MS"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/ai/buildOutcomeMemory.ts",
+        "sourceSha256": "e4293f5b85893e529653b7cc86ca9aae5c13bc65dc634b1ace67bf4e2569941a",
+        "callIds": [
+          "2c882ba9923d4ba6229b",
+          "f78c85803ca9f116a8ac"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Terminal run outcome capture uses its supplied run identity, issued context and owner-bound run key persistence. Retention deletes only that owner's rows older than its cutoff.",
+        "reason": "Parent run admission, same-owner concurrent overwrite, evidence validity and retention policy remain open. Foreign-collision tests prove the helper, not full learning provenance.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/buildOutcomeMemory.ts",
+            "marker": "BUILD_OUTCOME_RETENTION_MS"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-0d0935cb8679da57:observed-owner-attempt-learning-and-retention"
+        ],
+        "passedTests": [
+          "real sanitized outcome learning record cannot transfer owner on a run-ID collision",
+          "real outcome retention deletes only expired records owned by its captured actor",
+          "real worker learning fence binds owner, epoch and exact terminal evidence",
+          "real cancellation receipt rejects stale evidence, owner spoofing and browser execution",
+          "real two-session worker learning write blocked on parent lock loses to resumed epoch",
+          "real two-session cancellation learning write blocked on parent lock loses to resumed epoch"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Parent run admission, same-owner concurrent overwrite, evidence validity and retention policy remain open. Foreign-collision tests prove the helper, not full learning provenance.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
     },
     {
       "path": "backend/src/ai/buildOutcomeRoutingMemory.ts",
@@ -249,15 +331,54 @@
         "2a2b04bfcdf9721a6f51",
         "2c2f746e6c99a355ea8c"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Index mounts dashboard behind authMiddleware; overview queries activity_logs by req.userId and joins projects(name), returning mapped activity.",
-      "reason": "The corrupt foreign-project label gap is fixed: selected parent user_id must independently equal the server user before its name is returned. Focused projection tests pass and real dashboard corruption coverage is added. Database failures still appear as empty optional activity; complete metadata/redaction and source-identity lifecycle remain gaps.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The auth-mounted dashboard summary derives userId exclusively from req.userId. Its only raw persistence query reads eight current-owner activity rows and a bounded joined project name/user_id projection. The response exposes a joined name only when that project user_id equals the same server owner. An owner-attributed activity row referencing a different owner project remains an activity entry but loses the private joined project name. No request actor, arbitrary joined fields or mutation is accepted.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Two exact read/factory sites already have actual HTTP positive and negative proof. The existing fixture contains nonempty own and project-less activity, a corrupt cross-owner project reference and a separate foreign activity row. Dashboard preserves legitimate project-less activity while excluding the foreign project name. The same inspected source enforces the current actor filter and only bounded public response fields. No source change, new test or broader dashboard certificate is required. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/routes/dashboard.activity.test.ts",
           "marker": "dashboard project labels require independently matching parent ownership"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/routes/dashboard.ts",
+        "sourceSha256": "7950a1c0c04fcb2d97104151c1c07a8a59655473fdfeefcd004722020b888360",
+        "callIds": [
+          "2a2b04bfcdf9721a6f51",
+          "2c2f746e6c99a355ea8c"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Index mounts dashboard behind authMiddleware; overview queries activity_logs by req.userId and joins projects(name), returning mapped activity.",
+        "reason": "The corrupt foreign-project label gap is fixed: selected parent user_id must independently equal the server user before its name is returned. Focused projection tests pass and real dashboard corruption coverage is added. Database failures still appear as empty optional activity; complete metadata/redaction and source-identity lifecycle remain gaps.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/dashboard.activity.test.ts",
+            "marker": "dashboard project labels require independently matching parent ownership"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-91df3b12ce63c292:observed-owner-dashboard-activity"
+        ],
+        "passedTests": [
+          "profile activity keeps own and project-less entries but redacts a corrupt foreign project join"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "The corrupt foreign-project label gap is fixed: selected parent user_id must independently equal the server user before its name is returned. Focused projection tests pass and real dashboard corruption coverage is added. Database failures still appear as empty optional activity; complete metadata/redaction and source-identity lifecycle remain gaps.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
     },
     {
       "path": "backend/src/routes/github.ts",
@@ -267,15 +388,56 @@
         "7ea068acaab899c1c99e",
         "b4f7c7e759ffc010fe2f"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Authenticated status/settings use req.userId. Settings now delegates to metadata-only saveGitHubSettings, requires a single exact active-owner receipt, returns409 for missing/revoked rows and safe503 for persistence errors. Status resolves the canonical token then legacy metadata.",
-      "reason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The auth-mounted status handler uses req.userId for canonical token selection, exact github_integrations metadata, private Storage metadata and exact user_integrations github provider metadata. An absent or revoked canonical credential returns connected:false before private metadata projection. Only connected state, username, fixed repository strategy and default repository are returned, never token material. Provider account identity comes from that owner canonical GitHub grant and matching private mirror, not the forged query actor or another account default.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original status read/factory sites only. Actual private Storage fixture returns owner connected status despite the opposite actor query, does not expose its canary token and returns disconnected for the other real Auth actor despite a forged owner query. Actual disconnect and delayed mirror proof leaves subsequent status disconnected. Browser download/signing and public-object access are denied. Remaining deployment consumer revalidation is an independent obligation, not inherited from this status projection. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/routes/github.ts",
           "marker": "repo_strategy"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/routes/github.ts",
+        "sourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
+        "callIds": [
+          "8a4f5a61a698f969e941",
+          "7ea068acaab899c1c99e",
+          "b4f7c7e759ffc010fe2f"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Authenticated status/settings use req.userId. Settings now delegates to metadata-only saveGitHubSettings, requires a single exact active-owner receipt, returns409 for missing/revoked rows and safe503 for persistence errors. Status resolves the canonical token then legacy metadata.",
+        "reason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/github.ts",
+            "marker": "repo_strategy"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-fba3a9a069050e3f:observed-owner-github-status"
+        ],
+        "passedTests": [
+          "real private OAuth storage cannot be downloaded or signed by browser roles or another tenant",
+          "real GitHub disconnect persists owner-bound revocation despite a delayed legacy mirror"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
@@ -284,15 +446,54 @@
         "b4b2b91f3280a140691a",
         "48c115e3fcc79a824240"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "getIntegration obtains the canonical user-bound GitHub token, reads owner-scoped settings without selecting a token, denies metadata errors, then rechecks the canonical credential before repository inspection/deploy helpers consume it.",
-      "reason": "Loopback negative tests prove revocation/reconnect during metadata lookup and unavailable metadata deny admission. Remaining gaps include revocation after the final check, caller/target provenance, legacy metadata authority and external publishing approvals. This is not full credential lifecycle certification.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The private integration reader is used only by the existing authenticated GitHub routes and admitted pipeline consumer. Original server actor is retained for canonical token and owner-filtered metadata, then canonical token is re-read after metadata. Missing, disconnected, replaced or unavailable authority returns no integration, before ghFetch. The actual repo-state router uses authenticated req.userId regardless of query actor and passes this exact selected token to its existing repository reader. Fixed owner metadata cannot replace the credential. The provider stub refuses every GET without forwarding any network call.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Two exact private consumer read/factory sites, supplementing rather than inheriting the OAuth helper proof. The real Auth/HTTP/database fixture seeds distinct real owners, sees the exact respective synthetic bearer at the actual refusing consumer, rejects anonymous access, and ignores forged opposite-user query parameters. Real database disconnect or replacement during the delivered metadata response and a database outage prevent any provider call. Exact other-owner rows remain unchanged and a current legitimate owner reconnect works. This establishes account selection at the consumer, not live provider success, custody or post-dispatch cancellation guarantees. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/githubDeploy.ts",
           "marker": "async function getIntegration"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/services/integrations/githubDeploy.ts",
+        "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
+        "callIds": [
+          "b4b2b91f3280a140691a",
+          "48c115e3fcc79a824240"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "getIntegration obtains the canonical user-bound GitHub token, reads owner-scoped settings without selecting a token, denies metadata errors, then rechecks the canonical credential before repository inspection/deploy helpers consume it.",
+        "reason": "Loopback negative tests prove revocation/reconnect during metadata lookup and unavailable metadata deny admission. Remaining gaps include revocation after the final check, caller/target provenance, legacy metadata authority and external publishing approvals. This is not full credential lifecycle certification.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubDeploy.ts",
+            "marker": "async function getIntegration"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-812abbd1d9e8178e:observed-actual-github-repository-consumer"
+        ],
+        "passedTests": [
+          "real GitHub repository consumer selects only authenticated owner credentials and rejects metadata-time disconnect replacement and outage"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Loopback negative tests prove revocation/reconnect during metadata lookup and unavailable metadata deny admission. Remaining gaps include revocation after the final check, caller/target provenance, legacy metadata authority and external publishing approvals. This is not full credential lifecycle certification.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
     },
     {
       "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
@@ -632,9 +833,9 @@
         "2f512a182d41df743ba7",
         "fd966b75f6a38bb90f05"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "supabaseBenchmarkResults reads global model_benchmark_runs with a2000-row bound, maps numeric benchmark fields and feeds cached aggregation to the existing model router.",
-      "reason": "New source removes truthy Boolean and numeric/default coercions, validates all measurements before routing aggregation and replaces raw database failure reasons with fixed safe text.55 focused tests pass. Global reader scope, real database acceptance and authentic benchmark producer provenance remain open, no model-quality claim inferred from synthetic cases.",
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "Only fixed internal benchmark result loading, bounded to2000 ordered rows and mapped/validated platform measurement fields before caching or routing. No tenant, prompt, file, credential or raw provider payload is mapped or returned. No public raw-results endpoint.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Internal bounded platform benchmark aggregates for model routing. Only fixed validated model/case identifiers, executable result flags, counts, timing and cost are mapped. No prompts, source files, tenant IDs, credentials or provider payloads. No public raw-results endpoint or customer query. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/ai/measuredEvidence.ts",
@@ -650,6 +851,55 @@
           "5a64876f70c81d99e294": "fd966b75f6a38bb90f05"
         },
         "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
+      },
+      "historicalReview": {
+        "path": "backend/src/ai/measuredEvidence.ts",
+        "sourceSha256": "61a2c74c7050dc736f4beab1b83c38bd28931d36163da1ed520f4e7b75f3c365",
+        "callIds": [
+          "2f512a182d41df743ba7",
+          "fd966b75f6a38bb90f05"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "supabaseBenchmarkResults reads global model_benchmark_runs with a2000-row bound, maps numeric benchmark fields and feeds cached aggregation to the existing model router.",
+        "reason": "New source removes truthy Boolean and numeric/default coercions, validates all measurements before routing aggregation and replaces raw database failure reasons with fixed safe text.55 focused tests pass. Global reader scope, real database acceptance and authentic benchmark producer provenance remain open, no model-quality claim inferred from synthetic cases.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/measuredEvidence.ts",
+            "marker": "export async function supabaseBenchmarkResults"
+          }
+        ],
+        "platformExceptionSourceMapping": {
+          "base": "30d94a26ad1a84060216939b79e197b4896c2d0a",
+          "beforeHash": "611a945fb7fa975f1ecab77d5b5589141d9f245fe49cba6901d92744147f350a",
+          "afterHash": "61a2c74c7050dc736f4beab1b83c38bd28931d36163da1ed520f4e7b75f3c365",
+          "mapping": {
+            "c663e216c5611944484e": "2f512a182d41df743ba7",
+            "5a64876f70c81d99e294": "fd966b75f6a38bb90f05"
+          },
+          "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-912bd572b95dab17"
+        ],
+        "passedTests": [
+          "real platform benchmark exception retains only fixed measurement fields and browser roles cannot read or alter rows"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "New source removes truthy Boolean and numeric/default coercions, validates all measurements before routing aggregation and replaces raw database failure reasons with fixed safe text.55 focused tests pass. Global reader scope, real database acceptance and authentic benchmark producer provenance remain open, no model-quality claim inferred from synthetic cases.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
       }
     },
     {
@@ -1052,15 +1302,65 @@
         "b6708d08741254f6da06",
         "85d5a147aa59e4f62e68"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
-      "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
           "marker": "confirmation claims bind owner, reviewed digest and expiry"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "sourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+        "callIds": [
+          "c37a93be0605e64b3156",
+          "94fb30ec710f32d062c2",
+          "36d0fbfc5ddf864ad6ea",
+          "bda77ff34ad9e973cbde",
+          "a1e1f647efb6e7002993",
+          "7c2970e3ea0940d5d136",
+          "986c86eebabfae033939",
+          "884cad1975974abc0599",
+          "b6708d08741254f6da06",
+          "85d5a147aa59e4f62e68"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-84b9011a0d2b4754:observed-owned-confirmation-metadata-claim"
+        ],
+        "passedTests": [
+          "real confirmation metadata preserves owner scope through create read cancel expiry and concurrent rejected execution",
+          "foreign durable business confirmations cannot be read approved or cancelled by changing IDs",
+          "real confirmation claim binds complete reviewed plan and checks expiry after contended row locks",
+          "real confirmation finish binds the original claim and admits one immutable terminal outcome"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
     },
     {
       "path": "backend/src/ai/quota.ts",
@@ -1085,21 +1385,47 @@
     },
     {
       "path": "backend/src/ai/webBudget.ts",
-      "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d",
+      "sourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
       "callIds": [
-        "6d55007bf3ddd2edc540",
-        "d97bbed18063d9cc41d7",
-        "5a8e3957447bad08faa1"
+        "3a079bb3694a289488d7",
+        "cb5da87d32bfae7b42b8",
+        "b3cacfdb187f1405097d"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
-      "reason": "No hard-limit acceptance: missing store skips accounting, lookup errors can produce a null cycle, and failures are logged. Full caller ownership, provider reservation coverage, numeric validation and reconciliation after partial writes remain open. Do not use this telemetry as proof of zero spend.",
+      "reason": "A held real-SDK loopback cycle lookup reproduced mutable input producing one owner cycle with another owner user/provider/request tuple. The input is now captured before awaiting. A composite current cycle-owner foreign key fences the decisive insert against parent changes and retains existing null-cycle deletion behavior. Actual changed-source PostgreSQL lock, actor-isolation, browser-denial and exact receipt evidence is still required. This remains an original007 gap, not a spending-policy certificate.",
       "evidence": [
         {
           "path": "backend/src/ai/webBudget.ts",
           "marker": "recordWebSpend"
+        },
+        {
+          "path": "backend/src/security/webAccounting.local.integration.ts",
+          "marker": "real web accounting retains captured owner intent and cycle ownership across an observed database lock wait"
+        },
+        {
+          "path": "supabase/migrations/20261019000700_web_usage_cycle_owner.sql",
+          "marker": "xroga_web_usage_cycle_owner_fkey"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/ai/webBudget.ts",
+        "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d",
+        "callIds": [
+          "6d55007bf3ddd2edc540",
+          "d97bbed18063d9cc41d7",
+          "5a8e3957447bad08faa1"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
+        "reason": "No hard-limit acceptance: missing store skips accounting, lookup errors can produce a null cycle, and failures are logged. Full caller ownership, provider reservation coverage, numeric validation and reconciliation after partial writes remain open. Do not use this telemetry as proof of zero spend.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/webBudget.ts",
+            "marker": "recordWebSpend"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts",
@@ -1168,11 +1494,7 @@
       "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
       "callIds": [
         "00d351afbe045a136c66",
-        "254a91383e3a8af0310b",
-        "e030677c7ecb6b0dd90e",
-        "e35278adbe80b78c8d41",
-        "5ed8ef26b72e26561f26",
-        "3fc72ec34d884b871909"
+        "254a91383e3a8af0310b"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
@@ -1270,9 +1592,9 @@
         "0a6d81aa80ada5c7b14d",
         "832762c1055a84889f0d"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
-      "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The only enabled HTTP connection producer is the auth-mounted Vercel callback, which retains req.userId and its consumed PKCE authorization revision. External refresh retains the original canonical owner/provider/account/revision and delegates the same fixed OAuth CAS. Both OAuth branches return before the legacy mirror writer. The compatibility direct rotation observes the current exact owner/provider and expected refresh token before CAS. The non-OAuth internal personal-token compatibility branch builds a fixed owner/provider row and private fixed owner/vercel.json mirror, with no client endpoint accepting a different owner. The private writer has no other call site and cannot select arbitrary paths or buckets. Mirror reads independently revalidate canonical connection and cannot restore absent or revoked authority.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Four remaining fixed writer/factory sites. Actual direct owner and other-owner saves retain distinct credentials, legitimate owner rotation/reconnect works and stale expected refresh after authenticated disconnect rejects. Actual native refresh proves exact account and owner retention, separate owner single-flight, foreign refresh denial before transport, and held response losing to disconnect without changing the canonical tombstone or foreign rows/mirror bytes. These tests use real local database and Storage with a refusing or synthetic provider, never live OAuth. Independent Phase3 encrypted custody, migration and lifecycle obligations remain open. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
@@ -1297,6 +1619,67 @@
           "52bb46e68e4a103d4782"
         ],
         "disposition": "REVIEWED_GAP"
+      },
+      "historicalReview": {
+        "path": "backend/src/services/integrations/vercelAuth.ts",
+        "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
+        "callIds": [
+          "c47cd353f14ba5046be8",
+          "2d2eae5cbd895d303fc1",
+          "0a6d81aa80ada5c7b14d",
+          "832762c1055a84889f0d"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
+        "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-a62986ae34b4c118",
+          "callIds": [
+            "c47cd353f14ba5046be8",
+            "2d2eae5cbd895d303fc1",
+            "2ae451e4fa2142cb3d3b",
+            "533babcf253a3df300ac",
+            "50cfec47a00c8f934d4c",
+            "9536d36325c5502652c0",
+            "ff1b1bd1a685d5e751ee",
+            "bc094f879c6c567e670b",
+            "5c8cf02d349ac91cfb0e",
+            "0a6d81aa80ada5c7b14d",
+            "832762c1055a84889f0d",
+            "ae203bf10a8747bfd6de",
+            "52bb46e68e4a103d4782"
+          ],
+          "disposition": "REVIEWED_GAP"
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-a62986ae34b4c118:observed-vercel-connection-and-private-mirror-writers"
+        ],
+        "passedTests": [
+          "real Vercel refresh persistence cannot overwrite a disconnect or another owner",
+          "real Vercel refresh retains exact account ownership and rejects foreign refresh and post-disconnect response without mirror resurrection"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
       }
     },
     {
@@ -1562,9 +1945,9 @@
       "callIds": [
         "3ea0392dbd30934afb02"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
-      "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "frontend/src/lib/supabase/server.ts",
@@ -1581,13 +1964,13 @@
       ],
       "historicalReview": {
         "path": "frontend/src/app/(shell)/layout.tsx",
-        "sourceSha256": "fd2a2158b7c7c3a1c3319d0f393630751bde12f4cafbaec41ffab905e4f58304",
+        "sourceSha256": "4f4c3cd46dd888ca83cc7c0cc7517b61d1cd520f0191c225776f12e764d1d084",
         "callIds": [
-          "9297f8f20c4be94c3742"
+          "3ea0392dbd30934afb02"
         ],
-        "disposition": "SCOPED_BOUNDARY",
-        "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
-        "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+        "disposition": "REVIEWED_GAP",
+        "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+        "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
         "evidence": [
           {
             "path": "frontend/src/lib/supabase/server.ts",
@@ -1595,9 +1978,55 @@
           },
           {
             "path": "frontend/src/app/(shell)/layout.tsx",
-            "marker": ".eq('id', user.id)"
+            "marker": "read_current_profile_setup"
+          },
+          {
+            "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+            "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
           }
-        ]
+        ],
+        "historicalReview": {
+          "path": "frontend/src/app/(shell)/layout.tsx",
+          "sourceSha256": "fd2a2158b7c7c3a1c3319d0f393630751bde12f4cafbaec41ffab905e4f58304",
+          "callIds": [
+            "9297f8f20c4be94c3742"
+          ],
+          "disposition": "SCOPED_BOUNDARY",
+          "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
+          "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+          "evidence": [
+            {
+              "path": "frontend/src/lib/supabase/server.ts",
+              "marker": "config.publishableKey"
+            },
+            {
+              "path": "frontend/src/app/(shell)/layout.tsx",
+              "marker": ".eq('id', user.id)"
+            }
+          ]
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-3e5bd946bdcacd12:observed-actual-next-server-owner-role"
+        ],
+        "passedTests": [
+          "real server page reads bind verified cookies to own profile and current role despite forged query ownership"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
       }
     },
     {
@@ -1606,9 +2035,9 @@
       "callIds": [
         "5740af96dff28fda6f3f"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
-      "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "frontend/src/lib/supabase/server.ts",
@@ -1625,13 +2054,13 @@
       ],
       "historicalReview": {
         "path": "frontend/src/app/(workspace)/layout.tsx",
-        "sourceSha256": "30ae792edc888b89b7c8849cc6c07294564a599b265070abe115846996471e61",
+        "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
         "callIds": [
-          "c2126cd594624a77ed05"
+          "5740af96dff28fda6f3f"
         ],
-        "disposition": "SCOPED_BOUNDARY",
-        "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
-        "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+        "disposition": "REVIEWED_GAP",
+        "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+        "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
         "evidence": [
           {
             "path": "frontend/src/lib/supabase/server.ts",
@@ -1639,9 +2068,55 @@
           },
           {
             "path": "frontend/src/app/(workspace)/layout.tsx",
-            "marker": ".eq('id', user.id)"
+            "marker": "read_current_profile_setup"
+          },
+          {
+            "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+            "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
           }
-        ]
+        ],
+        "historicalReview": {
+          "path": "frontend/src/app/(workspace)/layout.tsx",
+          "sourceSha256": "30ae792edc888b89b7c8849cc6c07294564a599b265070abe115846996471e61",
+          "callIds": [
+            "c2126cd594624a77ed05"
+          ],
+          "disposition": "SCOPED_BOUNDARY",
+          "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
+          "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+          "evidence": [
+            {
+              "path": "frontend/src/lib/supabase/server.ts",
+              "marker": "config.publishableKey"
+            },
+            {
+              "path": "frontend/src/app/(workspace)/layout.tsx",
+              "marker": ".eq('id', user.id)"
+            }
+          ]
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-49626f1bf7036db9:observed-actual-next-server-owner-role"
+        ],
+        "passedTests": [
+          "real server page reads bind verified cookies to own profile and current role despite forged query ownership"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
       }
     },
     {
@@ -1650,9 +2125,9 @@
       "callIds": [
         "40dcc370930a78bd99cd"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
-      "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "frontend/src/lib/supabase/server.ts",
@@ -1669,13 +2144,13 @@
       ],
       "historicalReview": {
         "path": "frontend/src/app/onboarding/page.tsx",
-        "sourceSha256": "f567e423e315e0acefde74830fc6a7a6d2d00045bcca042e98150a1623a6dd09",
+        "sourceSha256": "ad060ff937f7ed8d90560c583c3fa178a05630429f9450d116facfaadeb97d40",
         "callIds": [
-          "4e796f9c87acb51a5f6b"
+          "40dcc370930a78bd99cd"
         ],
-        "disposition": "SCOPED_BOUNDARY",
-        "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
-        "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+        "disposition": "REVIEWED_GAP",
+        "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+        "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
         "evidence": [
           {
             "path": "frontend/src/lib/supabase/server.ts",
@@ -1683,9 +2158,55 @@
           },
           {
             "path": "frontend/src/app/onboarding/page.tsx",
-            "marker": ".eq('id', user.id)"
+            "marker": "read_current_profile_setup"
+          },
+          {
+            "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+            "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
           }
-        ]
+        ],
+        "historicalReview": {
+          "path": "frontend/src/app/onboarding/page.tsx",
+          "sourceSha256": "f567e423e315e0acefde74830fc6a7a6d2d00045bcca042e98150a1623a6dd09",
+          "callIds": [
+            "4e796f9c87acb51a5f6b"
+          ],
+          "disposition": "SCOPED_BOUNDARY",
+          "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
+          "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+          "evidence": [
+            {
+              "path": "frontend/src/lib/supabase/server.ts",
+              "marker": "config.publishableKey"
+            },
+            {
+              "path": "frontend/src/app/onboarding/page.tsx",
+              "marker": ".eq('id', user.id)"
+            }
+          ]
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-16364610c1ccefe6:observed-actual-next-server-owner-role"
+        ],
+        "passedTests": [
+          "real server page reads bind verified cookies to own profile and current role despite forged query ownership"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
       }
     },
     {
@@ -3803,9 +4324,9 @@
         "f163510c6f5c4132c05f",
         "73ab17f7a209cc26cc6b"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Read complete history/restore/fork implementation. Fixed-table reads bind user/project and exact revision where applicable. The shared snapshot guard now fails before cloning or writing a misbound revision. Clone deliberately detaches runtime and defaults repository preservation off for forks.",
-      "reason": "History reads and cloning are not independent proof of authenticated caller identity, destination logical-project ownership or repository permission when preservation is requested. Event payload redaction, all consumers and deployed recovery remain unverified. Classified as a reviewed gap rather than certifying filters as sufficient authorization.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "These three private history readers accept explicit internal server owner/project coordinates. Source tracing finds no auth-bypassing public router or background caller: loadProjectRevision is consumed by this module restore/fork helpers, while list readers have no production HTTP consumer. Every selected query constrains exact user_id and project_id, with exact revision_id or optional session_id where applicable. Revision restoration checks persisted row owner/project/run against both embedded project and contract before use. Foreign or malformed revision state cannot be cloned, forked or emitted as an authorized receipt. Runtime event reads filter owner/project/session and only return that historical namespace. These helpers do not create actor authority or confer permission to another owner resources.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Six exact existing history read/factory sites, not a dormant-path exemption. The real disposable test reads a nonempty owned revision and event history, returns no other-owner revision or events, rejects changed embedded project/run/contract identities, and proves rejected restoration creates neither revision nor event. Legitimate restore and fork preserve exact original owner/project receipts and leave the historical source unchanged. Current production endpoint admission is separately enforced by its runtime store routes. No new endpoint, cross-user sharing, historical read revocation guarantee or external action is introduced. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -3815,7 +4336,54 @@
           "path": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
           "marker": "forking canonical project state changes project identity and detaches repository/runtime state"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/synthesis/projectRuntime/projectHistory.ts",
+        "sourceSha256": "54471e2a22a019698a8f5607569a60b260d98466aaedf68515429162bf9f336b",
+        "callIds": [
+          "949efba83cbbfbfc99ca",
+          "372d392279bd2762ded0",
+          "1920604a889551eb4f02",
+          "60655c54ecbb30292812",
+          "f163510c6f5c4132c05f",
+          "73ab17f7a209cc26cc6b"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Read complete history/restore/fork implementation. Fixed-table reads bind user/project and exact revision where applicable. The shared snapshot guard now fails before cloning or writing a misbound revision. Clone deliberately detaches runtime and defaults repository preservation off for forks.",
+        "reason": "History reads and cloning are not independent proof of authenticated caller identity, destination logical-project ownership or repository permission when preservation is requested. Event payload redaction, all consumers and deployed recovery remain unverified. Classified as a reviewed gap rather than certifying filters as sufficient authorization.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+            "marker": "forking canonical project state changes project identity and detaches repository/runtime state"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-c69ab864b825c827:observed-owner-revision-history"
+        ],
+        "passedTests": [
+          "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "History reads and cloning are not independent proof of authenticated caller identity, destination logical-project ownership or repository permission when preservation is requested. Event payload redaction, all consumers and deployed recovery remain unverified. Classified as a reviewed gap rather than certifying filters as sufficient authorization.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
     },
     {
       "path": "backend/src/ai/runReconciler.ts",
@@ -3849,15 +4417,56 @@
         "05bb5458554f43b160c1",
         "fe7e6e4fe911ed9a75e1"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Fixed platform model_provider_health table and model_id conflict key hold aggregate counters and enumerated failure classifications, not user prompts or connected-account credentials. Inspected providerRuntime load/save, transition recording, failure normalization and provider health tests.",
-      "reason": "Persistence is best-effort and restoration casts database enum values without runtime validation. Full recording-caller/BYOK account isolation, real database restoration and staged restart coverage remain unverified. In-memory transition tests do not certify these boundaries.",
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "Existing internal platform model counters, no tenant/customer/prompt/credential data. Fixed store projection and model conflict key, called only by providerRuntime transition persistence and startup hydration. No client-selected operation or public raw table endpoint. Real save/load and all browser-role read/upsert/delete denial are mandatory. Exact pre-test global row is restored. This exception certifies no provider liveness or external connected account.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Inspected server-only platform model circuit aggregates; no user/tenant/customer fields or raw failure text. Not connected-account credentials. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/ai/providerHealthStore.test.ts",
           "marker": "the restored average latency is not redefined by the first call after a restart"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/ai/providerHealthStore.ts",
+        "sourceSha256": "ec92f541a194e0c3c03ef5c12d9afc6e6052aadc7ca9d5e2b6ebf27d6c260b0d",
+        "callIds": [
+          "b7e87dfbceb281533b94",
+          "80f1202165fac508ccee",
+          "05bb5458554f43b160c1",
+          "fe7e6e4fe911ed9a75e1"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Fixed platform model_provider_health table and model_id conflict key hold aggregate counters and enumerated failure classifications, not user prompts or connected-account credentials. Inspected providerRuntime load/save, transition recording, failure normalization and provider health tests.",
+        "reason": "Persistence is best-effort and restoration casts database enum values without runtime validation. Full recording-caller/BYOK account isolation, real database restoration and staged restart coverage remain unverified. In-memory transition tests do not certify these boundaries.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerHealthStore.test.ts",
+            "marker": "the restored average latency is not redefined by the first call after a restart"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-079a87ae5cea7b51"
+        ],
+        "passedTests": [
+          "real registered platform health exception persists fixed model counters and denies every browser role"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Persistence is best-effort and restoration casts database enum values without runtime validation. Full recording-caller/BYOK account isolation, real database restoration and staged restart coverage remain unverified. In-memory transition tests do not certify these boundaries.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
     },
     {
       "path": "backend/src/routes/notifications.ts",
@@ -4074,15 +4683,53 @@
       "callIds": [
         "6d485d911da834f03448"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Single discovered privileged factory is used only for auth.getUser(token), not a caller-selected table. Token fingerprints deduplicate concurrent remote verification and entries are removed on settlement. Callers receive canonical identity, not supplied user_metadata ownership.",
-      "reason": "Local JWT verification remains the default and accepts unexpired tokens without immediate remote revocation checks; REQUIRE_REMOTE_AUTH_CHECK is not silently enabled here. Founder server gate is separate. Sensitive operation freshness and account-deletion lifecycle remain unresolved, not waived by this factory classification.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "This fixed SDK factory bootstraps actor identity by asking Auth getUser with the supplied bearer, not by querying arbitrary owner records. It returns only the Auth-verified subject/email. The auth middleware creates the issued tenant context from this resolved identity. No body userId, service-role user enumeration, caller-provided subject or cached authorization is used. In-flight work is keyed by a token hash and removed on settlement, so different users cannot share a result.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact authentication factory site. The actual disposable Auth test forces the remote path for both real issued tokens, verifies concurrent byte-identical requests resolve only their respective real subject, rejects empty and forged tokens and fails closed during verification outage. Existing authenticated endpoint fixtures independently prove the consumer uses this server actor and rejects anonymous/foreign operations. No zero-delay sign-out revocation or privileged user-administration permission is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/lib/resolveIdentity.ts",
+        "sourceSha256": "b7fbd7ac5636b5c49e1e94bc1c85f374886806defcaf3dbff9aa6ac29ebf7230",
+        "callIds": [
+          "6d485d911da834f03448"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Single discovered privileged factory is used only for auth.getUser(token), not a caller-selected table. Token fingerprints deduplicate concurrent remote verification and entries are removed on settlement. Callers receive canonical identity, not supplied user_metadata ownership.",
+        "reason": "Local JWT verification remains the default and accepts unexpired tokens without immediate remote revocation checks; REQUIRE_REMOTE_AUTH_CHECK is not silently enabled here. Founder server gate is separate. Sensitive operation freshness and account-deletion lifecycle remain unresolved, not waived by this factory classification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real profile column grants reject self-promotion"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-c50cf0358cebe527:observed-actual-auth-subject-bootstrap"
+        ],
+        "passedTests": [
+          "real remote identity factory derives each subject from Auth and rejects absent forged or unavailable verification"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Local JWT verification remains the default and accepts unexpired tokens without immediate remote revocation checks; REQUIRE_REMOTE_AUTH_CHECK is not silently enabled here. Founder server gate is separate. Sensitive operation freshness and account-deletion lifecycle remain unresolved, not waived by this factory classification.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
@@ -4166,8 +4813,6 @@
       "path": "backend/src/operations/operationsService.ts",
       "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
       "callIds": [
-        "9fc45d30478dc34f0ea6",
-        "1087d778492ba0d90fe8",
         "2911d37adf1475f417aa",
         "31c477708b626e5ae6b1",
         "7bf8a723f11bf121e654",
@@ -4260,16 +4905,16 @@
     },
     {
       "path": "backend/src/ai/sessionMemory.ts",
-      "sourceSha256": "412f07c9519db8594f26e00ef13492a36d62c0796bab001bb40ff0f06ccfbfca",
+      "sourceSha256": "d42622f91cd218c0509a6d77f8223890a2afed7222ffa93a57d3482da064c851",
       "callIds": [
         "d30b589aad03f57a5e34",
-        "7b2ab76ab16f67d4bc3f",
-        "ab26b537916b9c6dae85",
-        "9a21725abae3843c4e12"
+        "ac8f40ddd4a161a16cdb",
+        "6490d83cf96f9cca168e",
+        "78bf7f66609885faaceb"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
-      "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved.",
+      "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
       "evidence": [
         {
           "path": "backend/src/ai/pipeline.ts",
@@ -4282,33 +4927,76 @@
         {
           "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
           "marker": "registerRecoveryMemoryReadTests"
+        },
+        {
+          "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+          "marker": "real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage"
         }
       ],
       "structuredOrigin": {
-        "id": "OB-aeb04ec4bd9ce357",
+        "id": "OB-9a16bc7d34216aa8",
+        "callIds": [
+          "d30b589aad03f57a5e34",
+          "ac8f40ddd4a161a16cdb",
+          "624de55167fdf2321f9e",
+          "1ef1d3af12bbfcd2c188",
+          "6490d83cf96f9cca168e",
+          "78bf7f66609885faaceb"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "memoryReceiptSourceHistory": {
+        "path": "backend/src/ai/sessionMemory.ts",
+        "sourceSha256": "412f07c9519db8594f26e00ef13492a36d62c0796bab001bb40ff0f06ccfbfca",
         "callIds": [
           "d30b589aad03f57a5e34",
           "7b2ab76ab16f67d4bc3f",
-          "c5dfa39288196ad28fb9",
-          "9645b6cbe302cd3fd49a",
           "ab26b537916b9c6dae85",
           "9a21725abae3843c4e12"
         ],
-        "disposition": "REVIEWED_GAP"
+        "disposition": "REVIEWED_GAP",
+        "authority": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
+        "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "marker": "loadSessionHistory(opts.userId"
+          },
+          {
+            "path": "backend/src/ai/sessionMemory.ts",
+            "marker": "onConflict: 'xroga_user_id,repo'"
+          },
+          {
+            "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
+            "marker": "registerRecoveryMemoryReadTests"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-aeb04ec4bd9ce357",
+          "callIds": [
+            "d30b589aad03f57a5e34",
+            "7b2ab76ab16f67d4bc3f",
+            "c5dfa39288196ad28fb9",
+            "9645b6cbe302cd3fd49a",
+            "ab26b537916b9c6dae85",
+            "9a21725abae3843c4e12"
+          ],
+          "disposition": "REVIEWED_GAP"
+        }
       }
     },
     {
       "path": "backend/src/ai/projectMemory.ts",
-      "sourceSha256": "a8185a6b2e6ae8ac82bb4ca9b20572292070afa996d92553cb4012765de5f391",
+      "sourceSha256": "5296a4cecbca3c2a4d7c19e7eb98d3120677af212eadaf2bcaf7766915a68125",
       "callIds": [
         "278f199f6ac90620ad7f",
-        "162926698a1e1b553196",
-        "3dae213a685f6a044dad",
-        "014baaf3ebb696f48dd4"
+        "b321103d0cf501326d72",
+        "046abf28f9d69dee5112",
+        "1828007517113aa44702"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
-      "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved.",
+      "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
       "evidence": [
         {
           "path": "backend/src/ai/projectMemory.ts",
@@ -4321,19 +5009,62 @@
         {
           "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
           "marker": "registerRecoveryMemoryReadTests"
+        },
+        {
+          "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+          "marker": "real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage"
         }
       ],
       "structuredOrigin": {
-        "id": "OB-c10dcba465926510",
+        "id": "OB-7c2f132fe54be33a",
         "callIds": [
           "278f199f6ac90620ad7f",
           "f4b4398d7c1562f69f44",
           "2ee02eb3c8608df30614",
+          "b321103d0cf501326d72",
+          "046abf28f9d69dee5112",
+          "1828007517113aa44702"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "memoryReceiptSourceHistory": {
+        "path": "backend/src/ai/projectMemory.ts",
+        "sourceSha256": "a8185a6b2e6ae8ac82bb4ca9b20572292070afa996d92553cb4012765de5f391",
+        "callIds": [
+          "278f199f6ac90620ad7f",
           "162926698a1e1b553196",
           "3dae213a685f6a044dad",
           "014baaf3ebb696f48dd4"
         ],
-        "disposition": "REVIEWED_GAP"
+        "disposition": "REVIEWED_GAP",
+        "authority": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
+        "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/projectMemory.ts",
+            "marker": "onConflict: 'xroga_user_id,repo,branch'"
+          },
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "marker": "const saved = await setProjectMemoryDurable({"
+          },
+          {
+            "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
+            "marker": "registerRecoveryMemoryReadTests"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-c10dcba465926510",
+          "callIds": [
+            "278f199f6ac90620ad7f",
+            "f4b4398d7c1562f69f44",
+            "2ee02eb3c8608df30614",
+            "162926698a1e1b553196",
+            "3dae213a685f6a044dad",
+            "014baaf3ebb696f48dd4"
+          ],
+          "disposition": "REVIEWED_GAP"
+        }
       }
     },
     {
@@ -4667,9 +5398,9 @@
       "callIds": [
         "111e6abf2b97a49b75f3"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Internal fixed-bucket configuration admission, no supplied tenant/table/object path. Reads catalogue and, only when absent, retains the existing BYOK server bootstrap allowance of a private 64KiB bucket. It never changes an existing public or unknown-policy bucket.",
-      "reason": "Privacy is independently rechecked after create or duplicate, and catalogue failure denies upload. This is not an identity issuer or new CredentialVault. Complete upstream caller review and staged storage compatibility remain outstanding; do not infer authorization of every token caller from this configuration guard.",
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "Only the existing internal GitHub/Vercel/BYOK credential writers invoke this fixed private-bucket admission. No endpoint calls it directly and no bucket argument exists. It returns only a privacy boolean, never bucket metadata or credential objects. Existing public buckets are refused without upload or policy change. Creation is private and a second actual bucket listing validates success or a concurrent duplicate. Browser private download/signing/public access remains denied.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Internal fixed xroga-github-tokens private-bucket admission for existing credential writers only. Returns a boolean, not bucket metadata or objects. Never accepts a bucket name, makes an existing bucket public, silently repairs its policy or grants object reads. Rechecks actual privacy after creation/concurrent duplicate. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
@@ -4688,6 +5419,58 @@
           "36f74cf393d92fc17a74": "111e6abf2b97a49b75f3"
         },
         "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
+      },
+      "historicalReview": {
+        "path": "backend/src/services/integrations/credentialStorageBucket.ts",
+        "sourceSha256": "691ccba36714dcb82060acdb4dc296e7e0a63b12540e6f1fe98e770a30a1c381",
+        "callIds": [
+          "111e6abf2b97a49b75f3"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Internal fixed-bucket configuration admission, no supplied tenant/table/object path. Reads catalogue and, only when absent, retains the existing BYOK server bootstrap allowance of a private 64KiB bucket. It never changes an existing public or unknown-policy bucket.",
+        "reason": "Privacy is independently rechecked after create or duplicate, and catalogue failure denies upload. This is not an identity issuer or new CredentialVault. Complete upstream caller review and staged storage compatibility remain outstanding; do not infer authorization of every token caller from this configuration guard.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthPkceStore.test.ts",
+            "marker": "unavailable bucket catalogue fails closed"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real credential writer refuses a public bucket"
+          }
+        ],
+        "platformExceptionSourceMapping": {
+          "base": "30d94a26ad1a84060216939b79e197b4896c2d0a",
+          "beforeHash": "1bc5d086c48e89ac22228bfcfff44bcd072dc3311bbec15cabd4390eaa2e579d",
+          "afterHash": "691ccba36714dcb82060acdb4dc296e7e0a63b12540e6f1fe98e770a30a1c381",
+          "mapping": {
+            "36f74cf393d92fc17a74": "111e6abf2b97a49b75f3"
+          },
+          "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-be8d86c56649fa71"
+        ],
+        "passedTests": [
+          "real private OAuth storage cannot be downloaded or signed by browser roles or another tenant",
+          "real credential writer refuses a public bucket without uploading or silently repairing it"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Privacy is independently rechecked after create or duplicate, and catalogue failure denies upload. This is not an identity issuer or new CredentialVault. Complete upstream caller review and staged storage compatibility remain outstanding; do not infer authorization of every token caller from this configuration guard.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
       }
     },
     {
@@ -5079,15 +5862,58 @@
       "callIds": [
         "09c21b79800aca71c43f"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Learning adapter uses captured worker generation or a distinct database-generated cancellation receipt. Separate service-only functions lock the canonical run and deny stale or foreign terminal evidence before writing the existing build_outcomes table. No client/model field grants generation authority.",
-      "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The only production recordTerminalBuildOutcomeFailOpen consumers are runStore terminal persistence and canonical cancellation. Both use the persisted run owner and construct this adapter with immutable worker-generation or cancellation evidence. upsert snapshots the owner into an issued persisted-owner context before asynchronous work, builds the row synchronously, and selects only the two fixed service-only SQL receipts. The SQL locks the exact owner/run, validates current generation or canonical cancellation and exact completed time/output/terminal fields, and returns a strict boolean. A resumed epoch or owner mismatch cannot write. The separate import-compatible branch uses the existing owned universal record RPC, never a worker-generation certificate. Retention deletes only the captured context owner and expired timestamp, without deleting by run ID alone.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original adapter sites only: its issued factory, fixed attempt/cancellation RPC selector and owner-filtered retention. Existing real two-owner collision and concurrent first claims preserve exact owner rows. Real worker/cancellation receipts reject foreign owner, browser role, malformed evidence and changed terminal data. Observed PostgreSQL lock waits prove resumed epochs deny both delayed paths without changing saved evidence. Retention preserves the other owner expired row. No new code, test or architecture is needed for these existing invariants, and no unrelated telemetry, model routing or Phase3 authority is certified. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
           "marker": "real worker learning fence binds owner"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/ai/buildOutcomeMemory.ts",
+        "sourceSha256": "e4293f5b85893e529653b7cc86ca9aae5c13bc65dc634b1ace67bf4e2569941a",
+        "callIds": [
+          "09c21b79800aca71c43f"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Learning adapter uses captured worker generation or a distinct database-generated cancellation receipt. Separate service-only functions lock the canonical run and deny stale or foreign terminal evidence before writing the existing build_outcomes table. No client/model field grants generation authority.",
+        "reason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+            "marker": "real worker learning fence binds owner"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-cd65173763d747dd:observed-owner-attempt-learning-and-retention"
+        ],
+        "passedTests": [
+          "real sanitized outcome learning record cannot transfer owner on a run-ID collision",
+          "real outcome retention deletes only expired records owned by its captured actor",
+          "real worker learning fence binds owner, epoch and exact terminal evidence",
+          "real cancellation receipt rejects stale evidence, owner spoofing and browser execution",
+          "real two-session worker learning write blocked on parent lock loses to resumed epoch",
+          "real two-session cancellation learning write blocked on parent lock loses to resumed epoch"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Focused negative and exact-receipt tests pass. New real disposable concurrency, rollback and role-denial tests are prepared but not yet executed on this source. This remains unresolved pending exact-source evidence and review of remaining caller obligations.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
     },
     {
       "path": "backend/src/ai/runStore.ts",
@@ -5147,9 +5973,9 @@
       "callIds": [
         "ee377e28847a820d3e60"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
-      "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The existing CWS callback starts and consumes the original issued-owner PKCE session, then captures prepareUserProviderKeyWrite for that exact owner and cws_oauth provider. The process-local unforgeable admission holds owner/provider/env plus canonical revision and OAuth-receipt flag. The shared save client is used only after matching that handle. OAuth receipt selects the fixed save_cws_oauth_key_if_current RPC. Both save branches encrypt with the existing envelope and require true CAS receipt before optional owner mirror. No browser value can choose the owner of that callback. Ordinary BYOK callers retain their separate exact-owner CAS and HTTP proof.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Two remaining shared-save/CWS RPC sites only. Actual helper positives for two disposable owners preserve own decrypted values and reject foreign or cloned admissions, consumed handle replay and revoke-raced save, retaining exact foreign row. Fresh original-owner PKCE reconnect succeeds. Mirrors finish before cleanup. No OAuth-provider request, external app identity assertion, vault replacement or live custody claim. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -5183,6 +6009,72 @@
           "7dd7b79ecd7c4840a960"
         ],
         "disposition": "REVIEWED_GAP"
+      },
+      "historicalReview": {
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+        "callIds": [
+          "ee377e28847a820d3e60"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
+        "reason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+            "marker": "rejects a concurrent revoke"
+          },
+          {
+            "path": "backend/src/security/providerKeyRevision.local.integration.ts",
+            "marker": "real provider revision binds exact owner"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-26a5ba63b4d15be0",
+          "callIds": [
+            "3696472e5c2e79ec3877",
+            "793cd087bfe58a1323e9",
+            "b2c86b6db6573be9213f",
+            "e5b57581e4457cd58ff2",
+            "f77c97eed440f2d836c0",
+            "f651340939c0fe9a8786",
+            "ee377e28847a820d3e60",
+            "912679b2d70aeb54860e",
+            "8e483e5db88e334d4fd9",
+            "2714bcb8dd844631154a",
+            "b11077c6032271361558",
+            "208413eede9db532d440",
+            "4bbd68abc608cd40cf5e",
+            "b13ab17aa7429003241b",
+            "281beef588e15d39be66",
+            "251a8f22c720652f36a5",
+            "0671bfb9368569581fba",
+            "7dd7b79ecd7c4840a960"
+          ],
+          "disposition": "REVIEWED_GAP"
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-26a5ba63b4d15be0:observed-owned-cws-save-wrapper"
+        ],
+        "passedTests": [
+          "real CWS credential wrapper binds consumed OAuth owner admission and rejects foreign cloned revoked and replayed writes"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Revision CAS and opaque owner/provider/env admission across Expo and one-click Supabase remote preparation have focused negative tests. Four real disposable cases await CI. Work before these entry points, multi-key atomicity, bulk custom enumeration, already-issued credentials, encryption/KMS and full caller lifecycle remain unresolved. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
       }
     },
     {
@@ -5328,15 +6220,53 @@
       "callIds": [
         "77b006f82faf88017a2c"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "CWS callback consumes the exact owner/state before provider I/O and obtains an issued BYOK admission only when the current revision matches the consumed epoch. save_cws_oauth_key_if_current locks that owner/key, checks the unexpired consumed receipt, then delegates encrypted metadata validation and revision CAS to the existing BYOK RPC.",
-      "reason": "Focused CWS tests deny changes before exchange and before encrypted persistence. Local SQL checks cover lost revision, duplicate save, revoke, reconnect and receipt expiry. Actual two-client CI is pending. Complete caller admission, legacy cryptography and external provider revocation remain open. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The existing CWS callback starts and consumes the original issued-owner PKCE session, then captures prepareUserProviderKeyWrite for that exact owner and cws_oauth provider. The process-local unforgeable admission holds owner/provider/env plus canonical revision and OAuth-receipt flag. The shared save client is used only after matching that handle. OAuth receipt selects the fixed save_cws_oauth_key_if_current RPC. Both save branches encrypt with the existing envelope and require true CAS receipt before optional owner mirror. No browser value can choose the owner of that callback. Ordinary BYOK callers retain their separate exact-owner CAS and HTTP proof.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Two remaining shared-save/CWS RPC sites only. Actual helper positives for two disposable owners preserve own decrypted values and reject foreign or cloned admissions, consumed handle replay and revoke-raced save, retaining exact foreign row. Fresh original-owner PKCE reconnect succeeds. Mirrors finish before cleanup. No OAuth-provider request, external app identity assertion, vault replacement or live custody claim. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
           "marker": "CWS carries the consumed epoch"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/services/integrations/userProviderKeys.ts",
+        "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+        "callIds": [
+          "77b006f82faf88017a2c"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "CWS callback consumes the exact owner/state before provider I/O and obtains an issued BYOK admission only when the current revision matches the consumed epoch. save_cws_oauth_key_if_current locks that owner/key, checks the unexpired consumed receipt, then delegates encrypted metadata validation and revision CAS to the existing BYOK RPC.",
+        "reason": "Focused CWS tests deny changes before exchange and before encrypted persistence. Local SQL checks cover lost revision, duplicate save, revoke, reconnect and receipt expiry. Actual two-client CI is pending. Complete caller admission, legacy cryptography and external provider revocation remain open. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
+            "marker": "CWS carries the consumed epoch"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-44f48289b4f20191:observed-owned-cws-save-wrapper"
+        ],
+        "passedTests": [
+          "real CWS credential wrapper binds consumed OAuth owner admission and rejects foreign cloned revoked and replayed writes"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Focused CWS tests deny changes before exchange and before encrypted persistence. Local SQL checks cover lost revision, duplicate save, revoke, reconnect and receipt expiry. Actual two-client CI is pending. Complete caller admission, legacy cryptography and external provider revocation remain open. Current-source private credential aliases reject browser-public prefixes at save and final deployment egress, canonical public Supabase URL/anon retained. Fifteen focused credential tests pass. Historical unsafe aliases fail closed without record deletion. This does not prevent arbitrary generated code deliberately exposing server variables or establish live KMS/provider acceptance.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
     },
     {
       "path": "backend/src/ai/runStore.ts",
@@ -6525,9 +7455,9 @@
       "callIds": [
         "f175f84e5afd902c17c0"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Existing action creation and execution use currentTargetVersion after authenticated project access. Release lookup now requires exact resource ID, current owner and project, and validates all three returned fields before action creation. Previously the release branch returned version1 without any resource lookup.",
-      "reason": "Focused absent and substituted resource/owner/project receipt negatives pass. Actual owned versus foreign release/deployment draft test prepared with no provider execution. Existing constant release version is preserved, mutable release state/approval freshness and actual provider promotion remain unresolved. No complete release caller certification.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "currentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original private target/replay read sites only, no source changes. Existing actual release/deployment fixtures preserve a legitimate release-manager membership, reject foreign targets and admit the exact owned drafts without adapter runs. Actual owned automation target executes once, verified replay returns the same receipt and foreign replay denies. Existing misbound persisted action denial preserves private receipts and authority. Dynamic lookup SQL is fixed and owner/project-filtered at the same caller. This does not certify remaining internal mutation adapters or create a post-admission authority policy. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
         {
           "path": "backend/src/operations/actionIntent.local.integration.ts",
@@ -6537,7 +7467,51 @@
           "path": "backend/src/operations/operationsService.owner.test.ts",
           "marker": "release target lookup validates the returned owner project and resource identity"
         }
-      ]
+      ],
+      "historicalReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "f175f84e5afd902c17c0"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Existing action creation and execution use currentTargetVersion after authenticated project access. Release lookup now requires exact resource ID, current owner and project, and validates all three returned fields before action creation. Previously the release branch returned version1 without any resource lookup.",
+        "reason": "Focused absent and substituted resource/owner/project receipt negatives pass. Actual owned versus foreign release/deployment draft test prepared with no provider execution. Existing constant release version is preserved, mutable release state/approval freshness and actual provider promotion remain unresolved. No complete release caller certification.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/actionIntent.local.integration.ts",
+            "marker": "real release and deployment actions require the owned project target before creating drafts"
+          },
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "release target lookup validates the returned owner project and resource identity"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-79b4c59a6db06651:observed-canonical-target-and-replay-read"
+        ],
+        "passedTests": [
+          "real release and deployment actions require the owned project target before creating drafts",
+          "real action claim executes only the owned disposable automation rule once",
+          "misbound persisted operations actions cannot leak a receipt or grant confirmation or approval"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Focused absent and substituted resource/owner/project receipt negatives pass. Actual owned versus foreign release/deployment draft test prepared with no provider execution. Existing constant release version is preserved, mutable release state/approval freshness and actual provider promotion remain unresolved. No complete release caller certification.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -7519,10 +8493,10 @@
     },
     {
       "path": "backend/src/ai/sessionMemory.ts",
-      "sourceSha256": "412f07c9519db8594f26e00ef13492a36d62c0796bab001bb40ff0f06ccfbfca",
+      "sourceSha256": "d42622f91cd218c0509a6d77f8223890a2afed7222ffa93a57d3482da064c851",
       "callIds": [
-        "c5dfa39288196ad28fb9",
-        "9645b6cbe302cd3fd49a"
+        "624de55167fdf2321f9e",
+        "1ef1d3af12bbfcd2c188"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The only production asynchronous readers are the existing pipeline hydration and session-history steps. Both retain its original server opts.userId, which is checked against issued actor at pipeline entry, never a model-supplied owner. These selected platform fallback queries include exact owner/repository and, for project memory, branch. Returned rows revalidate their owner and complete namespace before use, clone file structures and discard invalid/control-role session content. The project cache key includes the same authenticated UUID namespace and returns clones. No selected read mutates durable memory or performs an external provider operation.",
@@ -7594,21 +8568,110 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-aeb04ec4bd9ce357",
+        "id": "OB-9a16bc7d34216aa8",
         "callIds": [
           "d30b589aad03f57a5e34",
-          "7b2ab76ab16f67d4bc3f",
-          "c5dfa39288196ad28fb9",
-          "9645b6cbe302cd3fd49a",
-          "ab26b537916b9c6dae85",
-          "9a21725abae3843c4e12"
+          "ac8f40ddd4a161a16cdb",
+          "624de55167fdf2321f9e",
+          "1ef1d3af12bbfcd2c188",
+          "6490d83cf96f9cca168e",
+          "78bf7f66609885faaceb"
         ],
         "disposition": "REVIEWED_GAP"
+      },
+      "memoryReceiptSourceHistory": {
+        "path": "backend/src/ai/sessionMemory.ts",
+        "sourceSha256": "412f07c9519db8594f26e00ef13492a36d62c0796bab001bb40ff0f06ccfbfca",
+        "callIds": [
+          "c5dfa39288196ad28fb9",
+          "9645b6cbe302cd3fd49a"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "The only production asynchronous readers are the existing pipeline hydration and session-history steps. Both retain its original server opts.userId, which is checked against issued actor at pipeline entry, never a model-supplied owner. These selected platform fallback queries include exact owner/repository and, for project memory, branch. Returned rows revalidate their owner and complete namespace before use, clone file structures and discard invalid/control-role session content. The project cache key includes the same authenticated UUID namespace and returns clones. No selected read mutates durable memory or performs an external provider operation.",
+        "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact platform memory read/factory sites across the two files, not their writers or external connected-project branches. Existing actual isolated users with identical repository keys, distinct branch, malformed file data, control roles, missing keys and clone mutation prove own recovery plus negative isolation. The customer-Supabase query/account, write receipts, append ordering and external-provider acceptance remain open, with their original obligations preserved. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "marker": "loadSessionHistory(opts.userId"
+          },
+          {
+            "path": "backend/src/ai/sessionMemory.ts",
+            "marker": "onConflict: 'xroga_user_id,repo'"
+          },
+          {
+            "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
+            "marker": "registerRecoveryMemoryReadTests"
+          }
+        ],
+        "historicalReview": {
+          "path": "backend/src/ai/sessionMemory.ts",
+          "sourceSha256": "412f07c9519db8594f26e00ef13492a36d62c0796bab001bb40ff0f06ccfbfca",
+          "callIds": [
+            "d30b589aad03f57a5e34",
+            "7b2ab76ab16f67d4bc3f",
+            "c5dfa39288196ad28fb9",
+            "9645b6cbe302cd3fd49a",
+            "ab26b537916b9c6dae85",
+            "9a21725abae3843c4e12"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
+          "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "loadSessionHistory(opts.userId"
+            },
+            {
+              "path": "backend/src/ai/sessionMemory.ts",
+              "marker": "onConflict: 'xroga_user_id,repo'"
+            },
+            {
+              "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
+              "marker": "registerRecoveryMemoryReadTests"
+            }
+          ]
+        },
+        "command007Proof": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "inputArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/input.json",
+          "inputSha256": "4e613fdd16d97c44fd1c61080204897a3193fbeaa42285d15022aa3e35ad73b0",
+          "observationsArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/observations.json",
+          "observationsSha256": "b60fe2a441d1f45052021957966d3ec28cdad3848fd3fc765f7cbd711ebb3bf0",
+          "resultArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "resultSha256": "967f9ced90db90fde241e17dc60533a55d223779e270eb0b8747f4430d079818",
+          "obligationIds": [
+            "OB-aeb04ec4bd9ce357:observed-platform-memory-read"
+          ],
+          "passedTests": [
+            "real session history reads isolate owner repository and reject persisted control roles"
+          ],
+          "scope": "EXACT_ORIGINAL_007_CALLER_SCOPE_ONLY_NOT_WHOLE_SERVICE_OR_LATER_PHASE_ACCEPTANCE"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Existing frozen obligations remain authoritative and unchanged. This metadata does not reclassify an unresolved007 obligation, schedule new work or implement008/009/010.",
+          "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
+        },
+        "structuredOrigin": {
+          "id": "OB-aeb04ec4bd9ce357",
+          "callIds": [
+            "d30b589aad03f57a5e34",
+            "7b2ab76ab16f67d4bc3f",
+            "c5dfa39288196ad28fb9",
+            "9645b6cbe302cd3fd49a",
+            "ab26b537916b9c6dae85",
+            "9a21725abae3843c4e12"
+          ],
+          "disposition": "REVIEWED_GAP"
+        }
       }
     },
     {
       "path": "backend/src/ai/projectMemory.ts",
-      "sourceSha256": "a8185a6b2e6ae8ac82bb4ca9b20572292070afa996d92553cb4012765de5f391",
+      "sourceSha256": "5296a4cecbca3c2a4d7c19e7eb98d3120677af212eadaf2bcaf7766915a68125",
       "callIds": [
         "f4b4398d7c1562f69f44",
         "2ee02eb3c8608df30614"
@@ -7683,16 +8746,105 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-c10dcba465926510",
+        "id": "OB-7c2f132fe54be33a",
         "callIds": [
           "278f199f6ac90620ad7f",
           "f4b4398d7c1562f69f44",
           "2ee02eb3c8608df30614",
-          "162926698a1e1b553196",
-          "3dae213a685f6a044dad",
-          "014baaf3ebb696f48dd4"
+          "b321103d0cf501326d72",
+          "046abf28f9d69dee5112",
+          "1828007517113aa44702"
         ],
         "disposition": "REVIEWED_GAP"
+      },
+      "memoryReceiptSourceHistory": {
+        "path": "backend/src/ai/projectMemory.ts",
+        "sourceSha256": "a8185a6b2e6ae8ac82bb4ca9b20572292070afa996d92553cb4012765de5f391",
+        "callIds": [
+          "f4b4398d7c1562f69f44",
+          "2ee02eb3c8608df30614"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "The only production asynchronous readers are the existing pipeline hydration and session-history steps. Both retain its original server opts.userId, which is checked against issued actor at pipeline entry, never a model-supplied owner. These selected platform fallback queries include exact owner/repository and, for project memory, branch. Returned rows revalidate their owner and complete namespace before use, clone file structures and discard invalid/control-role session content. The project cache key includes the same authenticated UUID namespace and returns clones. No selected read mutates durable memory or performs an external provider operation.",
+        "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact platform memory read/factory sites across the two files, not their writers or external connected-project branches. Existing actual isolated users with identical repository keys, distinct branch, malformed file data, control roles, missing keys and clone mutation prove own recovery plus negative isolation. The customer-Supabase query/account, write receipts, append ordering and external-provider acceptance remain open, with their original obligations preserved. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/projectMemory.ts",
+            "marker": "onConflict: 'xroga_user_id,repo,branch'"
+          },
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "marker": "const saved = await setProjectMemoryDurable({"
+          },
+          {
+            "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
+            "marker": "registerRecoveryMemoryReadTests"
+          }
+        ],
+        "historicalReview": {
+          "path": "backend/src/ai/projectMemory.ts",
+          "sourceSha256": "a8185a6b2e6ae8ac82bb4ca9b20572292070afa996d92553cb4012765de5f391",
+          "callIds": [
+            "278f199f6ac90620ad7f",
+            "f4b4398d7c1562f69f44",
+            "2ee02eb3c8608df30614",
+            "162926698a1e1b553196",
+            "3dae213a685f6a044dad",
+            "014baaf3ebb696f48dd4"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
+          "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/projectMemory.ts",
+              "marker": "onConflict: 'xroga_user_id,repo,branch'"
+            },
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "const saved = await setProjectMemoryDurable({"
+            },
+            {
+              "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
+              "marker": "registerRecoveryMemoryReadTests"
+            }
+          ]
+        },
+        "command007Proof": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "inputArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/input.json",
+          "inputSha256": "4e613fdd16d97c44fd1c61080204897a3193fbeaa42285d15022aa3e35ad73b0",
+          "observationsArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/observations.json",
+          "observationsSha256": "b60fe2a441d1f45052021957966d3ec28cdad3848fd3fc765f7cbd711ebb3bf0",
+          "resultArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "resultSha256": "967f9ced90db90fde241e17dc60533a55d223779e270eb0b8747f4430d079818",
+          "obligationIds": [
+            "OB-c10dcba465926510:observed-platform-memory-read"
+          ],
+          "passedTests": [
+            "real project memory reads isolate owner repository branch and reject malformed persisted files"
+          ],
+          "scope": "EXACT_ORIGINAL_007_CALLER_SCOPE_ONLY_NOT_WHOLE_SERVICE_OR_LATER_PHASE_ACCEPTANCE"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Existing frozen obligations remain authoritative and unchanged. This metadata does not reclassify an unresolved007 obligation, schedule new work or implement008/009/010.",
+          "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
+        },
+        "structuredOrigin": {
+          "id": "OB-c10dcba465926510",
+          "callIds": [
+            "278f199f6ac90620ad7f",
+            "f4b4398d7c1562f69f44",
+            "2ee02eb3c8608df30614",
+            "162926698a1e1b553196",
+            "3dae213a685f6a044dad",
+            "014baaf3ebb696f48dd4"
+          ],
+          "disposition": "REVIEWED_GAP"
+        }
       }
     },
     {
@@ -7815,6 +8967,244 @@
           "7dd7b79ecd7c4840a960"
         ],
         "disposition": "REVIEWED_GAP"
+      }
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "callIds": [
+        "e030677c7ecb6b0dd90e",
+        "e35278adbe80b78c8d41",
+        "5ed8ef26b72e26561f26",
+        "3fc72ec34d884b871909"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Reservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Four fallback/release RPC/factory sites. Two fresh actual Auth users begin with no cycle and acquire separate fixed free cycles via the real reservation wrapper fallback. Passing another owner with the reservation leaves exact reservations and cycles unchanged. Matching owner releases its hold, replay preserves exact rows, another actor hold/cycle remains unchanged and timeout keeps that actor hold pending_reconciliation. Existing observed cycle-parent and browser billing denial proofs are retained. Dormant paid activation, full008 spending authority and acknowledgement/recovery reliability remain independent. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/providerBudget.evidence.test.ts",
+          "marker": "malformed durable reservation evidence never reaches provider execution"
+        },
+        {
+          "path": "backend/src/ai/providerBudget.test.ts",
+          "marker": "production cannot authorize provider execution using process-memory accounting"
+        }
+      ],
+      "structuredOrigin": {
+        "id": "OB-392b9b628a9b92be",
+        "callIds": [
+          "00d351afbe045a136c66",
+          "254a91383e3a8af0310b",
+          "590df28cdc2b297e03b6",
+          "39a1f4163240597da04d",
+          "613d8e71ddafb0d6bd0c",
+          "a80e4804742dfd6bcc0a",
+          "6285818c6e8220770b29",
+          "090fe734dc5d1d3dc6e3",
+          "3f66673813dee0d85b85",
+          "746985044f7d3ee62aff",
+          "e030677c7ecb6b0dd90e",
+          "e35278adbe80b78c8d41",
+          "b5a82155e981259a207e",
+          "564673e6f6b21c690fce",
+          "5ed8ef26b72e26561f26",
+          "3fc72ec34d884b871909"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "historicalReview": {
+        "path": "backend/src/ai/providerBudget.ts",
+        "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+        "callIds": [
+          "00d351afbe045a136c66",
+          "254a91383e3a8af0310b",
+          "e030677c7ecb6b0dd90e",
+          "e35278adbe80b78c8d41",
+          "5ed8ef26b72e26561f26",
+          "3fc72ec34d884b871909"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+        "reason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-392b9b628a9b92be",
+          "callIds": [
+            "00d351afbe045a136c66",
+            "254a91383e3a8af0310b",
+            "590df28cdc2b297e03b6",
+            "39a1f4163240597da04d",
+            "613d8e71ddafb0d6bd0c",
+            "a80e4804742dfd6bcc0a",
+            "6285818c6e8220770b29",
+            "090fe734dc5d1d3dc6e3",
+            "3f66673813dee0d85b85",
+            "746985044f7d3ee62aff",
+            "e030677c7ecb6b0dd90e",
+            "e35278adbe80b78c8d41",
+            "b5a82155e981259a207e",
+            "564673e6f6b21c690fce",
+            "5ed8ef26b72e26561f26",
+            "3fc72ec34d884b871909"
+          ],
+          "disposition": "REVIEWED_GAP"
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-392b9b628a9b92be:observed-owned-free-fallback-failed-reservation"
+        ],
+        "passedTests": [
+          "real failed reservation wrapper releases only the matching owner and retains uncertain holds"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
+    },
+    {
+      "path": "backend/src/operations/operationsService.ts",
+      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "callIds": [
+        "9fc45d30478dc34f0ea6",
+        "1087d778492ba0d90fe8"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "currentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original private target/replay read sites only, no source changes. Existing actual release/deployment fixtures preserve a legitimate release-manager membership, reject foreign targets and admit the exact owned drafts without adapter runs. Actual owned automation target executes once, verified replay returns the same receipt and foreign replay denies. Existing misbound persisted action denial preserves private receipts and authority. Dynamic lookup SQL is fixed and owner/project-filtered at the same caller. This does not certify remaining internal mutation adapters or create a post-admission authority policy. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+      "evidence": [
+        {
+          "path": "backend/src/operations/operationsService.owner.test.ts",
+          "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+        }
+      ],
+      "structuredOrigin": {
+        "id": "OB-4bd11f790ddabef6",
+        "callIds": [
+          "58357b840ab8890eba45",
+          "9ea21ff62008b510bd7f",
+          "b88fc4f8215d76b34ea8",
+          "82752ae689b24bd04b63",
+          "fd2a647124264e9a2f63",
+          "9fc45d30478dc34f0ea6",
+          "9cd0878995ac81bc7fa1",
+          "0790e2862f113cd5cb2a",
+          "1087d778492ba0d90fe8",
+          "2911d37adf1475f417aa",
+          "31c477708b626e5ae6b1",
+          "8cdd04617aa0332099d0",
+          "7bf8a723f11bf121e654",
+          "a5e91bac1a6cb8ed6bd0",
+          "777506055ab8972780cc",
+          "9e56a2c47c6fae03a7d4",
+          "06e83cfecb1ce0da5c95",
+          "101c25c8bf0d04a3d6ee",
+          "5168c80257e8d4f829be"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "historicalReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "9fc45d30478dc34f0ea6",
+          "1087d778492ba0d90fe8",
+          "2911d37adf1475f417aa",
+          "31c477708b626e5ae6b1",
+          "7bf8a723f11bf121e654",
+          "a5e91bac1a6cb8ed6bd0",
+          "777506055ab8972780cc",
+          "9e56a2c47c6fae03a7d4",
+          "101c25c8bf0d04a3d6ee",
+          "5168c80257e8d4f829be"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-4bd11f790ddabef6",
+          "callIds": [
+            "58357b840ab8890eba45",
+            "9ea21ff62008b510bd7f",
+            "b88fc4f8215d76b34ea8",
+            "82752ae689b24bd04b63",
+            "fd2a647124264e9a2f63",
+            "9fc45d30478dc34f0ea6",
+            "9cd0878995ac81bc7fa1",
+            "0790e2862f113cd5cb2a",
+            "1087d778492ba0d90fe8",
+            "2911d37adf1475f417aa",
+            "31c477708b626e5ae6b1",
+            "8cdd04617aa0332099d0",
+            "7bf8a723f11bf121e654",
+            "a5e91bac1a6cb8ed6bd0",
+            "777506055ab8972780cc",
+            "9e56a2c47c6fae03a7d4",
+            "06e83cfecb1ce0da5c95",
+            "101c25c8bf0d04a3d6ee",
+            "5168c80257e8d4f829be"
+          ],
+          "disposition": "REVIEWED_GAP"
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-4bd11f790ddabef6:observed-canonical-target-and-replay-read"
+        ],
+        "passedTests": [
+          "real release and deployment actions require the owned project target before creating drafts",
+          "real action claim executes only the owned disposable automation rule once",
+          "misbound persisted operations actions cannot leak a receipt or grant confirmation or approval"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
       }
     }
   ]

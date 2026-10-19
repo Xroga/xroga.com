@@ -2,11 +2,20 @@
   "version": "1.0",
   "missionId": "XB01-P2",
   "baseSha": "8a1a0bfa7878603dd488db98568577b2fb1896da",
-  "requirementIds": ["XB01-C007"],
+  "requirementIds": [
+    "XB01-C007"
+  ],
   "state": "IN_PROGRESS",
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+    "backend/src/ai/memoryReadAuthority.test.ts",
+    "backend/src/ai/sessionMemory.ts",
+    "backend/src/ai/projectMemory.ts",
+    "backend/src/ai/webBudget.ts",
+    "backend/src/security/webAccounting.local.integration.ts",
+    "supabase/migrations/20261019000700_web_usage_cycle_owner.sql",
     "frontend/e2e/command3-auth.spec.ts",
     "backend/src/security/platformBenchmark.local.integration.ts",
     "backend/src/ai/measuredEvidence.ts",
@@ -101,34 +110,123 @@
     "docs/xroga/batch-1/phases/PHASE-2-ACCEPTANCE.md"
   ],
   "decisions": {
-    "keep": ["Phase1 source/evidence and frozen371 identities", "Canonical context, resource ownership, worker attempt fences, budget and approval systems"],
-    "extend": ["Source-bound semantic proof and actual migration/catalog evidence", "Existing owner/run association and endpoint admission"],
-    "replace": ["Run-only telemetry association with exact owner/run binding", "Ambiguous disposable source labels with actual checkout attestation"],
-    "deprecate": ["Treating a historical pending-CI note as a new vulnerability", "Treating test names or source review counts as whole-workflow acceptance"]
+    "keep": [
+      "Phase1 source/evidence and frozen371 identities",
+      "Canonical context, resource ownership, worker attempt fences, budget and approval systems"
+    ],
+    "extend": [
+      "Source-bound semantic proof and actual migration/catalog evidence",
+      "Existing owner/run association and endpoint admission"
+    ],
+    "replace": [
+      "Run-only telemetry association with exact owner/run binding",
+      "Ambiguous disposable source labels with actual checkout attestation"
+    ],
+    "deprecate": [
+      "Treating a historical pending-CI note as a new vulnerability",
+      "Treating test names or source review counts as whole-workflow acceptance"
+    ]
   },
-  "schemaImpact": {"changed":true,"migrations":["supabase/migrations/20261019000600_current_profile_setup.sql","supabase/migrations/20261019000500_growth_shared_write_admission.sql","supabase/migrations/20261018002000_browser_table_privileges.sql","supabase/migrations/20261018002100_legacy_server_table_rls.sql","supabase/migrations/20261018002200_growth_identity_parent_admission.sql","supabase/migrations/20261019000100_growth_event_parent_admission.sql","supabase/migrations/20261019000200_provider_budget_cycle_parent.sql","supabase/migrations/20261019000300_worker_database_project_admission.sql"],"rollout":"Disposable CI only. Add a no-argument current-subject private setup projection without widening public profile columns or row policies. Shared growth admission retains existing profile/project/member locking. No new tables, data rewrite or production DDL. Preserve verified growth transactions, browser grants/RLS, worker current-parent guards, safe cancellation and FK deletion behavior.","rollback":"Withhold setup-dependent entry points before withdrawing the private projection. Do not grant onboarding to public profile readers. No data rewrite or new constraint to reverse. Preserve restrictive grants, RLS, existing growth and worker fences. Never restore known unguarded writes as enabled behavior. Any production rollout or privilege rollback requires separate approval."},
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261019000700_web_usage_cycle_owner.sql",
+      "supabase/migrations/20261019000600_current_profile_setup.sql",
+      "supabase/migrations/20261019000500_growth_shared_write_admission.sql",
+      "supabase/migrations/20261018002000_browser_table_privileges.sql",
+      "supabase/migrations/20261018002100_legacy_server_table_rls.sql",
+      "supabase/migrations/20261018002200_growth_identity_parent_admission.sql",
+      "supabase/migrations/20261019000100_growth_event_parent_admission.sql",
+      "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+      "supabase/migrations/20261019000300_worker_database_project_admission.sql"
+    ],
+    "rollout": "Disposable CI only. A composite web-accounting cycle/owner FK serializes current-parent writes, preserves null-cycle deletion and stops on existing invalid rows without rewriting them. No-argument current-subject setup projection retains restrictive public profile columns and policies. Shared growth admission retains existing locks. No new tables, data rewrite or production DDL. Preserve browser grants/RLS, worker guards and safe cancellation.",
+    "rollback": "Withhold affected accounting/setup entry points before withdrawing their FK/projection. Do not re-enable cross-owner cycle attribution or grant private onboarding to public readers. Preserve restrictive grants, RLS and verified growth/worker fences. Any production rollout or privilege/constraint rollback requires separate approval."
+  },
   "securityImpact": {
-    "auth": {"changed": false, "description": "Existing server authentication retained, no login/MFA/role bypass."},
-    "tenant": {"changed": true, "description": "Exact owner/run evidence binding and independently verified parent admission. Strict ten-criterion gate remains blocked until real proof."},
-    "approval": {"changed": false, "description": "No canonical authority replacement or new grant. Phase3 remains unstarted."},
-    "credentials": {"changed": true, "description": "Earlier Phase2 orphan-mirror fixes restrict credential read admission when canonical authority is absent. No live token, key or vault change. Credential custody remains a separate original009 requirement."},
-    "egress": {"changed": false, "description": "No provider call, publishing, message or external effect. Phase4 remains unstarted."},
-    "cost": {"changed": false, "description": "Zero additional spend, existing standard public CI and local/disposable tests only."},
-    "billing": {"changed": false, "description": "No payment, plan or production billing operation."}
+    "auth": {
+      "changed": false,
+      "description": "Existing server authentication retained, no login/MFA/role bypass."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Exact owner/run evidence binding and independently verified parent admission. Strict ten-criterion gate remains blocked until real proof."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No canonical authority replacement or new grant. Phase3 remains unstarted."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Earlier Phase2 orphan-mirror fixes restrict credential read admission when canonical authority is absent. No live token, key or vault change. Credential custody remains a separate original009 requirement."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No provider call, publishing, message or external effect. Phase4 remains unstarted."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Zero additional spend, existing standard public CI and local/disposable tests only."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No payment, plan or production billing operation."
+    }
   },
   "tests": [
-    {"command":"node --import tsx --test backend/src/growth/sharedWriteAdmission.test.ts backend/src/routes/projects.collectionDetail.test.ts","scope":"Shared current-authority write invariant and exact receipt controls across five enabled growth methods. Project detail distinguishes database failure from absent ownership, with existing file/code controls preserved.","negative":true,"reference":"backend/src/growth/sharedWriteAdmission.test.ts"},
-    {"command": "node --import tsx --test backend/src/ai/buildOutcomeOwnership.test.ts backend/src/ai/buildOutcomeMemory.test.ts", "scope": "Owner/run positive and foreign-evidence denial, including a reproduced pre-fix failing test", "negative": true, "reference": "backend/src/ai/buildOutcomeOwnership.test.ts"},
-    {"command": "node --test scripts/xroga/phase-one.test.mjs scripts/xroga/phase-two.test.mjs scripts/security/schema-catalog.test.mjs", "scope": "Frozen input preservation, finite current mapping, no fabricated certification and exact CI source attestation", "negative": true, "reference": "scripts/xroga/phase-two.test.mjs"},
-    {"command": "node --import tsx --test src/security/tenantIsolation.local.integration.ts", "scope": "Real disposable owner/run evidence, tenant and concurrency regression", "negative": true, "reference": "backend/src/security/buildOutcomeAttempt.local.integration.ts"}
+    {
+      "command": "node --import tsx --test backend/src/growth/sharedWriteAdmission.test.ts backend/src/routes/projects.collectionDetail.test.ts",
+      "scope": "Shared current-authority write invariant and exact receipt controls across five enabled growth methods. Project detail distinguishes database failure from absent ownership, with existing file/code controls preserved.",
+      "negative": true,
+      "reference": "backend/src/growth/sharedWriteAdmission.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/buildOutcomeOwnership.test.ts backend/src/ai/buildOutcomeMemory.test.ts",
+      "scope": "Owner/run positive and foreign-evidence denial, including a reproduced pre-fix failing test",
+      "negative": true,
+      "reference": "backend/src/ai/buildOutcomeOwnership.test.ts"
+    },
+    {
+      "command": "node --test scripts/xroga/phase-one.test.mjs scripts/xroga/phase-two.test.mjs scripts/security/schema-catalog.test.mjs",
+      "scope": "Frozen input preservation, finite current mapping, no fabricated certification and exact CI source attestation",
+      "negative": true,
+      "reference": "scripts/xroga/phase-two.test.mjs"
+    },
+    {
+      "command": "node --import tsx --test src/security/tenantIsolation.local.integration.ts",
+      "scope": "Real disposable owner/run evidence, tenant and concurrency regression",
+      "negative": true,
+      "reference": "backend/src/security/buildOutcomeAttempt.local.integration.ts"
+    }
   ],
-  "architecture": {"change": "extends_canonical", "reason": "Existing tenant context, owned resources and attempt-fenced stores only. No new orchestration, relation engine or vault.", "rfc": null},
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Existing tenant context, owned resources and attempt-fenced stores only. No new orchestration, relation engine or vault.",
+    "rfc": null
+  },
   "rollout": "Draft PR803 only, no merge or deploy. Full source-bound acceptance required before Phase2 verification.",
   "rollback": "Withhold the five affected growth endpoints before withdrawing current-authority admission. Never re-enable demonstrated unguarded writes as a rollback. The shared routine is additive and can remain installed. No table/data rewrite or backfill. Preserve Phase1, prior receipts, customer state and existing worker fences.",
-  "knownGaps": ["All ten007 criteria await complete real acceptance", "Unchanged proof reconciliation and remaining frozen packets", "ActualR2 and production parity are separately unverified", "Authority/custody/egress implementation stays Phases3/4"],
+  "knownGaps": [
+    "All ten007 criteria await complete real acceptance",
+    "Unchanged proof reconciliation and remaining frozen packets",
+    "ActualR2 and production parity are separately unverified",
+    "Authority/custody/egress implementation stays Phases3/4"
+  ],
   "placeholderClaimsRemaining": [],
-  "evidenceRefs": ["docs/xroga/batch-1/phases/PHASE-2-ACCEPTANCE.md", "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json"],
+  "evidenceRefs": [
+    "docs/xroga/batch-1/phases/PHASE-2-ACCEPTANCE.md",
+    "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json"
+  ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
-  "release": {"state": "BLOCKED", "blockers": ["Original007-010 acceptance and production approval remain mandatory"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Original007-010 acceptance and production approval remain mandatory"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
 }

@@ -1924,6 +1924,31 @@
         "Bind exact source and authenticated actual allow/denial evidence before promotion",
         "Preserve all independent original scope and later-phase obligations"
       ]
+    },
+    {
+      "packetId": "B1-P2-a26f798a697bc8a6",
+      "sourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "REPRODUCED_WEB_ACCOUNTING_OWNER_SNAPSHOT_AND_CYCLE_PARENT_REPAIR_PENDING_REAL_PROOF",
+      "actorTrace": "Existing internal web adapters retain server pipeline userId. recordWebSpend captures the entire scalar owner/provider/request intent before the cycle lookup. The fixed private accounting row uses that actor and an optional current owner cycle. No web provider executes in the tests.",
+      "invariant": "A mutable request cannot select another owner after awaiting. The database composite FK must serialize insert against current cycle-owner transfer, reject foreign parent tuples and preserve null-cycle deletion receipts.",
+      "evidence": [
+        {
+          "path": "backend/src/security/webAccounting.local.integration.ts",
+          "type": "REAL_DISPOSABLE_CURRENT_PARENT_AND_INPUT_TEST_PREPARED",
+          "result": "NOT_EXECUTED"
+        },
+        {
+          "path": "supabase/migrations/20261019000700_web_usage_cycle_owner.sql",
+          "type": "SYNTHETIC_GRAMMAR_AND_SEMANTIC_PROBE",
+          "result": "PASS_NOT_DATABASE_CONCURRENCY_ACCEPTANCE"
+        }
+      ],
+      "remaining": [
+        "Run actual disposable observed parent-lock wait, same-owner capture and concurrent writes, wrong-owner replay, browser denial and exact persistence/deletion receipts",
+        "Authenticate changed-source complete branch/integrated and fresh/upgrade evidence",
+        "Reconcile only these three verified007 caller outcomes, preserving independent008 budgets and provider egress"
+      ]
     }
   ]
 }

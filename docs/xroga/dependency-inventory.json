@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "30d94a26ad1a84060216939b79e197b4896c2d0a",
+  "source_sha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -595,6 +595,7 @@
         "backend/src/security/terminalIdentity.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
+        "backend/src/security/webAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
@@ -734,6 +735,7 @@
         "backend/src/security/terminalIdentity.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
+        "backend/src/security/webAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
@@ -7219,6 +7221,7 @@
         "backend/src/security/terminalIdentity.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
+        "backend/src/security/webAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
@@ -9874,6 +9877,7 @@
         "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
+        "backend/src/security/webAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingRoutes.local.integration.ts"
@@ -10228,6 +10232,7 @@
         "backend/src/security/terminalIdentity.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
+        "backend/src/security/webAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
@@ -10939,6 +10944,7 @@
         "backend/src/security/terminalIdentity.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
+        "backend/src/security/webAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts",
         "backend/src/services/billingBudget.local.integration.ts",
@@ -11015,6 +11021,7 @@
         "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
+        "backend/src/security/webAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.local.integration.ts",
         "backend/src/security/workerRevision.local.integration.ts"
       ],
@@ -12463,7 +12470,7 @@
     },
     {
       "path": "backend/src/ai/webBudget.ts",
-      "sha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d"
+      "sha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe"
     },
     {
       "path": "backend/src/capabilities/generated.ts",
@@ -13411,7 +13418,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "da028d72c601ce89ba5c33d3cdd6fd006da3f4a0ff066bacf3a64bbfc999c570"
+      "sha256": "99556ebfe0dc45952501d8408f3a0ed657135c41bf588696370e0e96cf5f82de"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13424,6 +13431,10 @@
     {
       "path": "backend/src/security/vercelRefreshAccount.local.integration.ts",
       "sha256": "78f60289a49a6c1bc605036b34299531169c8866620e89678b8506f104f3b1ef"
+    },
+    {
+      "path": "backend/src/security/webAccounting.local.integration.ts",
+      "sha256": "eff4a38488e3b22ab1863dd02a56b2b09cc659cfa50c207b723ec0057f26eb8b"
     },
     {
       "path": "backend/src/security/workerProjectAdmission.local.integration.ts",
@@ -19571,77 +19582,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 113,
+      "line": 114,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 113,
+      "line": 114,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 522,
+      "line": 524,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 572,
+      "line": 574,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 661,
+      "line": 663,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 830,
+      "line": 832,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 888,
+      "line": 890,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1575,
+      "line": 1577,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1593,
+      "line": 1595,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1601,
+      "line": 1603,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1605,
+      "line": 1607,
       "credentialsInUrl": false
     },
     {
@@ -19684,6 +19695,20 @@
       "protocol": "https:",
       "path": "backend/src/security/vercelRefreshAccount.local.integration.ts",
       "line": 40,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/webAccounting.local.integration.ts",
+      "line": 12,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/webAccounting.local.integration.ts",
+      "line": 20,
       "credentialsInUrl": false
     },
     {
@@ -25969,14 +25994,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1074,
+      "line": 1076,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1411,
+      "line": 1413,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

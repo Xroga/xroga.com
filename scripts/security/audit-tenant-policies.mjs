@@ -127,15 +127,28 @@ export function main(args=process.argv.slice(2)) {
 /** Exact-source acceptance cannot trust a locally fabricated CI receipt. Normal
  * inventory checks need no network. External acceptance re-reads authenticated
  * GitHub metadata and logs, including LOCAL tests originally executed in CI. */
-export function authenticateObservedReceipts(receipts,sourceSha,loadRun=runId=>{
-  const gh=args=>execFileSync('gh',args,{cwd:root,encoding:'utf8',maxBuffer:30*1024*1024,stdio:['ignore','pipe','ignore']});
-  return {metadata:JSON.parse(gh(['run','view',runId,'--json','headSha,status,conclusion'])),log:normalized(gh(['run','view',runId,'--log']))};
-}) {
+export function loadObservedRun(runId,receipt={},gh=args=>execFileSync('gh',args,{cwd:root,encoding:'utf8',maxBuffer:30*1024*1024,stdio:['ignore','pipe','ignore']})) {
+  if(!/^\d+$/.test(runId))throw new Error('Independent CI run identity required');
+  const metadata=JSON.parse(gh(['run','view',runId,'--json','headSha,status,conclusion']));
+  if(receipt.logFormat==='GITHUB_JOB_LOG'){
+    if(!/^\d+$/.test(receipt.jobId??''))throw new Error('Independent CI job identity required');
+    const job=JSON.parse(gh(['api',`repos/Xroga/xroga.com/actions/jobs/${receipt.jobId}`]));
+    if(String(job.id)!==receipt.jobId||String(job.run_id)!==runId||job.status!=='completed'||job.conclusion!=='success')throw new Error('CI job does not belong to the successful observed run');
+    // Retrieve the original full job log. Some GitHub run ZIPs contain only a
+    // subset of per-step files, which the CLI can prefer over the full job file.
+    // No step names, passing tests or log content are reconstructed locally.
+    return {metadata,log:normalized(gh(['api',`repos/Xroga/xroga.com/actions/jobs/${receipt.jobId}/logs`,'--allow-escape-sequences']))};
+  }
+  if(receipt.logFormat!==undefined||receipt.jobId!==undefined)throw new Error('Unknown CI log observation format');
+  return {metadata,log:normalized(gh(['run','view',runId,'--log']))};
+}
+export function authenticateObservedReceipts(receipts,sourceSha,loadRun=loadObservedRun) {
   const runs=new Map();
   for(const receipt of receipts){
     if(!/^\d+$/.test(receipt.runId??''))throw new Error('Independent CI run identity required');
-    if(!runs.has(receipt.runId))runs.set(receipt.runId,loadRun(receipt.runId));
-    const {metadata,log}=runs.get(receipt.runId);
+    const key=`${receipt.runId}:${receipt.logFormat??'RUN_LOG'}:${receipt.jobId??''}`;
+    if(!runs.has(key))runs.set(key,loadRun(receipt.runId,receipt));
+    const {metadata,log}=runs.get(key);
     if(metadata.headSha!==sourceSha||metadata.status!=='completed'||metadata.conclusion!=='success'
       ||hash(log)!==receipt.artifactSha256||receipt.sourceSha!==sourceSha)throw new Error('CI observation does not match independently retrieved exact-source log');
     if(!Array.isArray(receipt.passedTests)||receipt.passedTests.some(name=>!log.split(/\r?\n/).some(line=>/\bok \d+ - /.test(line)&&line.endsWith(name))))throw new Error('Claimed test was not observed passing in CI');

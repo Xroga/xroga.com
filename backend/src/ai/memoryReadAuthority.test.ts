@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {test} from 'node:test';
 import {getProjectMemory,getProjectMemoryAsync,setProjectMemory,setProjectMemoryDurable} from './projectMemory.js';
-import {loadSessionHistory} from './sessionMemory.js';
+import {loadSessionHistory,saveSessionHistory,type SessionMessage} from './sessionMemory.js';
 
 test('project and session reads reject foreign lineage and a cold read cannot overwrite newer memory',async()=>{
   const prior=[process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY],originalFetch=globalThis.fetch;
@@ -17,7 +17,7 @@ test('project and session reads reject foreign lineage and a cold read cannot ov
     if(url.pathname.startsWith('/storage/v1/'))return Response.json({statusCode:'404',message:'Synthetic missing credential'},{status:404});
     if(url.pathname==='/rest/v1/session_memory'){assert.equal(url.searchParams.get('user_id'),`eq.${userId}`);assert.equal(url.searchParams.get('repo'),`eq.${repo}`);return Response.json(messages);}
     assert.equal(url.pathname,'/rest/v1/project_memory');
-    if(init?.method==='POST')return new Response(null,{status:201});
+    if(init?.method==='POST'){const written=JSON.parse(String(init.body));return Response.json({user_id:written.user_id,repo:written.repo,branch:written.branch},{status:201});}
     assert.equal(url.searchParams.get('user_id'),`eq.${userId}`);assert.equal(url.searchParams.get('repo'),`eq.${repo}`);assert.equal(url.searchParams.get('branch'),`eq.${branch}`);
     const snapshot=structuredClone(row);if(hold)await new Promise<void>(resolve=>{release=resolve;});return Response.json(snapshot);
   };
@@ -37,6 +37,30 @@ test('project and session reads reject foreign lineage and a cold read cannot ov
     messages={...messages,user_id:randomUUID()};assert.deepEqual(await loadSessionHistory(userId,repo),[]);
     messages={...messages,user_id:userId,repo:'foreign/repo'};assert.deepEqual(await loadSessionHistory(userId,repo),[]);
   }finally{release?.();globalThis.fetch=originalFetch;['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY'].forEach((key,index)=>{if(prior[index]===undefined)delete process.env[key];else process.env[key]=prior[index];});}
+});
+
+test('memory persistence captures session input and refuses substituted or absent platform receipts',async t=>{
+  const prior=[process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY],original=globalThis.fetch;
+  // The existing admin client intentionally retains its first process URL.
+  process.env.SUPABASE_URL='http://127.0.0.1:49228';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-only';
+  const owner=randomUUID(),foreign=randomUUID(),repo=`owner/${randomUUID()}`,messages:SessionMessage[]=[{role:'user',content:'original'}];
+  let release:(()=>void)|undefined,hold=true,payload:Record<string,unknown>|undefined,receipt='foreign';const warnings:unknown[][]=[];
+  t.mock.method(console,'warn',(...args:unknown[])=>{warnings.push(args);});
+  globalThis.fetch=async(input,init)=>{
+    const url=new URL(String(input));assert.equal(url.origin,process.env.SUPABASE_URL);
+    if(url.pathname==='/rest/v1/user_integrations'){if(hold){hold=false;await new Promise<void>(resolve=>{release=resolve;});}return Response.json([]);}
+    if(url.pathname.startsWith('/storage/v1/'))return Response.json({message:'Synthetic missing mirror'},{status:404});
+    assert.equal(init?.method,'POST');payload=JSON.parse(String(init?.body));assert.equal(payload?.user_id,owner);
+    if(receipt==='empty')return Response.json(null,{status:201});
+    return Response.json({user_id:receipt==='foreign'?foreign:owner,repo,...(url.pathname.endsWith('/project_memory')?{branch:'main'}:{})},{status:201});
+  };
+  try{
+    const pending=saveSessionHistory(owner,repo,messages);for(let i=0;!release&&i<100;i++)await new Promise(resolve=>setImmediate(resolve));assert.ok(release,'Credential lookup must reach the bounded held transport');
+    messages[0].content='changed during account lookup';messages.push({role:'assistant',content:'injected'});release();await pending;
+    assert.deepEqual(payload?.messages,[{role:'user',content:'original'}]);assert.deepEqual(warnings,[['[sessionMemory] platform save unavailable']]);
+    for(receipt of ['foreign','empty'])await assert.rejects(setProjectMemoryDurable({userId:owner,repo,branch:'main',files:[{path:'own.txt',content:'own'}]}),/Platform project-memory write unavailable/);
+    receipt='own';assert.equal((await setProjectMemoryDurable({userId:owner,repo,branch:'main',files:[{path:'own.txt',content:'own'}]})).persistence,'platform');
+  }finally{release?.();globalThis.fetch=original;['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY'].forEach((key,index)=>{if(prior[index]===undefined)delete process.env[key];else process.env[key]=prior[index];});}
 });
 
 test('background project-memory persistence snapshots before credential resolution and redacts failures',async t=>{
