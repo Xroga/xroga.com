@@ -354,10 +354,10 @@
     },
     {
       "path": "backend/src/middleware/admin.ts",
-      "sourceSha256": "ead49170241f447e25c5a38334e35791dc6d435d487a275d7032f19921112b00",
+      "sourceSha256": "e6b0d50d8ef9df0b04edcc8abe8e500958c749512948fa9b2ad47997afc4dcaa",
       "callIds": [
         "c52ac69f95df6a81844f",
-        "cb83a545beae49fe93a5"
+        "70e1bf1fe7857088ca36"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Issued tenantContext supplies the profile ID. The middleware reads only that ID's role and permits exact admin or owner values. Request body and auth metadata cannot select the role.",

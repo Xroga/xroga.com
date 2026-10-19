@@ -45,6 +45,7 @@ import {registerWorkerProjectAdmissionTests} from './workerProjectAdmission.loca
 import {registerConnectedAccountRouteTests} from './connectedAccountRoutes.local.integration.js';
 import {registerOAuthWrapperOwnershipTests} from './oauthWrapperOwnership.local.integration.js';
 import {registerRuntimeEventParentTests} from './runtimeEventParent.local.integration.js';
+import {registerAdminReadTests} from './adminReads.local.integration.js';
 import { registerOAuthSessionTests } from './oauthSession.local.integration.js';
 import { registerBuildOutcomeAttemptTests } from './buildOutcomeAttempt.local.integration.js';
 import { registerActionIntentTests } from '../operations/actionIntent.local.integration.js';
@@ -163,6 +164,7 @@ registerWorkerProjectAdmissionTests(admin, () => users);
 registerConnectedAccountRouteTests(() => users);
 registerOAuthWrapperOwnershipTests(admin);
 registerRuntimeEventParentTests(admin,()=>users);
+registerAdminReadTests(admin,request);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }

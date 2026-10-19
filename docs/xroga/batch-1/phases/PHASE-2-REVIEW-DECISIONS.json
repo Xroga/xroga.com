@@ -42,6 +42,19 @@
   ],
   "decisions": [
     {
+      "packetId":"B1-P2-d87d5c8270aa4666",
+      "sourceSha256":"b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+      "executionStatus":"IN_PROGRESS",
+      "finding":"FOREIGN_ADMIN_ROLE_RECEIPT_ACCEPTED_IN_ACTUAL_MIDDLEWARE_TRANSPORT_TEST_FIXED_PENDING_REAL_ROLE_PROOF",
+      "originalCriteria":[2,4,10],
+      "actorTrace":"index mounts admin routes behind authMiddleware and adminMiddleware. Operations readiness uses the same guard after authentication. Issued context supplies the queried profile ID. Previously a successful transport receipt with a different profile ID and admin role reached next(). The guard now requires no query error, exact original actor ID and the unchanged admin/owner role allowlist.",
+      "invariant":"A role receipt for another identity or with missing ID cannot authorize the original actor. Current legitimate admin/owner receipts retain access. Subsequent requests after DB-role demotion must deny even if the signed JWT and user metadata remain unchanged.",
+      "relatedPackets":["B1-P2-f391ec8be99f7cf0"],
+      "relatedSourceBindings":[{"path":"backend/src/middleware/admin.ts","sha256":"e6b0d50d8ef9df0b04edcc8abe8e500958c749512948fa9b2ad47997afc4dcaa"}],
+      "evidence":[{"path":"backend/src/middleware/admin.test.ts","type":"ACTUAL_MIDDLEWARE_SYNTHETIC_SDK_TRANSPORT","result":"PRE_FIX_ALLOWED_FOREIGN_ROLE_RECEIPT_THEN_FIVE_ADMIN_AND_ROUTE_TESTS_PASS","scope":"Foreign or missing profile ID, original admin/owner positives, member denial and fixed owner predicate. Not a reproduced foreign PostgreSQL query result."},{"path":"backend/src/security/adminReads.local.integration.ts","type":"REAL_AUTH_DATABASE_HTTP_TEST_PREPARED","result":"NOT_EXECUTED_AT_RECORD_CREATION","scope":"Existing errors/deployment/readiness endpoints. Fresh real Auth actors, current DB admin, metadata/query forgery denial, bounded redacted global read positives, demotion with same JWT, exact read-only receipts. All seeded evidence explicitly synthetic and unknown, no provider or production verification."}],
+      "remaining":["Execute actual role/endpoint case and final-source branch/integrated regression","Bind six narrow existing admin/readiness caller proofs and the two shared guard calls without certifying unrelated endpoints","This does not promise retroactive revocation of already admitted reads, founder-exclusive/AAL2 policy, new grants,009 custody or production readiness"]
+    },
+    {
       "packetId":"B1-P2-aca46b7ed6cc0fa7",
       "sourceSha256":"592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "executionStatus":"IN_PROGRESS",

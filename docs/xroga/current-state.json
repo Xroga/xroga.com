@@ -15106,7 +15106,7 @@
       "id": "surface:a6a2af1b7585a21ced99",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/middleware/admin.ts",
-      "sha256": "ead49170241f447e25c5a38334e35791dc6d435d487a275d7032f19921112b00",
+      "sha256": "e6b0d50d8ef9df0b04edcc8abe8e500958c749512948fa9b2ad47997afc4dcaa",
       "symbols": [
         "adminMiddleware",
         "canReadAdminOperations",
@@ -21318,6 +21318,7 @@
         "backend/src/ai/runStore.ts:11",
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
         "backend/src/ai/usageAccounting.test.ts:4",
+        "backend/src/middleware/admin.test.ts:7",
         "backend/src/middleware/admin.ts:3",
         "backend/src/middleware/auth.ts:4",
         "backend/src/routes/admin.test.ts:5",
@@ -21411,6 +21412,7 @@
         "backend/src/ai/buildOutcomeMemory.test.ts",
         "backend/src/ai/universal/resumeProjectContext.test.ts",
         "backend/src/ai/usageAccounting.test.ts",
+        "backend/src/middleware/admin.test.ts",
         "backend/src/routes/admin.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
@@ -23640,7 +23642,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:826",
+        "backend/src/security/tenantIsolation.local.integration.ts:828",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -104077,7 +104079,7 @@
     {
       "id": "test-suite:c947ec396bf7a93fba06",
       "sourcePath": "backend/src/middleware/admin.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104485,6 +104487,13 @@
     {
       "id": "test-suite:7f7bfe6ac08b7ec8686c",
       "sourcePath": "backend/src/security/accountRoutes.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e7b84a45e6ac679ad352",
+      "sourcePath": "backend/src/security/adminReads.local.integration.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

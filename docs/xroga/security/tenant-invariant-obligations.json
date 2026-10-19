@@ -560,13 +560,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-f33a7c962d005578",
+      "id": "OB-dd958f664197859f",
       "callerIds": [
         "c52ac69f95df6a81844f",
-        "cb83a545beae49fe93a5"
+        "70e1bf1fe7857088ca36"
       ],
       "path": "backend/src/middleware/admin.ts",
-      "sourceSha256": "ead49170241f447e25c5a38334e35791dc6d435d487a275d7032f19921112b00",
+      "sourceSha256": "e6b0d50d8ef9df0b04edcc8abe8e500958c749512948fa9b2ad47997afc4dcaa",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [

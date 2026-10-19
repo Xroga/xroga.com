@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "2b0845b53b2aa4379d4b32b16995035838872517a2b25b810c8d071f7096e49c",
+  "reviewRegistrySha256": "1de39710b4e38306319486945ab51ffa620b995a8aa71292914719cf9a5c376e",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -212,7 +212,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-f33a7c962d005578"
+        "id": "OB-dd958f664197859f"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -4853,7 +4853,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ead49170241f447e25c5a38334e35791dc6d435d487a275d7032f19921112b00",
+      "sourceSha256": "e6b0d50d8ef9df0b04edcc8abe8e500958c749512948fa9b2ad47997afc4dcaa",
       "semanticReview": {
         "authority": "Issued tenantContext supplies the profile ID. The middleware reads only that ID's role and permits exact admin or owner values. Request body and auth metadata cannot select the role.",
         "reason": "This scoped role-read boundary fails closed for absent context/profile/database failure. Mount and real member-denial tests exist. It preserves admin/owner access, not founder exclusivity, and does not certify downstream global payload redaction.",
@@ -4866,7 +4866,7 @@
       }
     },
     {
-      "id": "cb83a545beae49fe93a5",
+      "id": "70e1bf1fe7857088ca36",
       "path": "backend/src/middleware/admin.ts",
       "line": 24,
       "enclosing": "adminMiddleware",
@@ -4874,7 +4874,7 @@
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ead49170241f447e25c5a38334e35791dc6d435d487a275d7032f19921112b00",
+      "sourceSha256": "e6b0d50d8ef9df0b04edcc8abe8e500958c749512948fa9b2ad47997afc4dcaa",
       "semanticReview": {
         "authority": "Issued tenantContext supplies the profile ID. The middleware reads only that ID's role and permits exact admin or owner values. Request body and auth metadata cannot select the role.",
         "reason": "This scoped role-read boundary fails closed for absent context/profile/database failure. Mount and real member-denial tests exist. It preserves admin/owner access, not founder exclusivity, and does not certify downstream global payload redaction.",

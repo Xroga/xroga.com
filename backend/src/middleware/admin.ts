@@ -21,13 +21,13 @@ export async function adminMiddleware(
 
   try {
     const supabase = getTenantSupabaseAdmin(scope);
-    const { data: profile } = await supabase
+    const { data: profile, error } = await supabase
       .from('profiles')
       .select('role, id')
       .eq('id', scope.userId)
       .maybeSingle();
 
-    if (canReadAdminOperations(profile?.role)) {
+    if (!error && profile?.id === scope.userId && canReadAdminOperations(profile.role)) {
       next();
       return;
     }
