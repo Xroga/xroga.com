@@ -455,6 +455,7 @@ export function AuthSwitchText({
 
       <Link
         href={href}
+        data-auth-switch
         className="
           font-semibold
 
