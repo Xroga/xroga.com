@@ -9,7 +9,6 @@ import {
   PlugZap,
   Rocket,
   Search,
-  Sparkles,
   TestTube2,
   TrendingUp,
 } from 'lucide-react';
@@ -77,25 +76,6 @@ function BrandMark({ mark }: { mark: SimpleIcon }) {
   );
 }
 
-function TrendChart({ variant = 'blue' }: { variant?: 'blue' | 'orange' }) {
-  return (
-    <svg className={`${styles.trendChart} ${variant === 'orange' ? styles.orangeChart : ''}`}
-      viewBox="0 0 260 82" aria-hidden="true" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id={`trend-fill-${variant}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="currentColor" stopOpacity=".24" />
-          <stop offset="1" stopColor="currentColor" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path className={styles.chartGrid} d="M0 18H260M0 41H260M0 64H260" />
-      <path className={styles.chartArea} fill={`url(#trend-fill-${variant})`}
-        d="M0 70L24 64L47 67L71 53L94 57L118 42L142 47L165 31L189 35L212 21L236 25L260 10V82H0Z" />
-      <path className={styles.chartLine}
-        d="M0 70L24 64L47 67L71 53L94 57L118 42L142 47L165 31L189 35L212 21L236 25L260 10" />
-    </svg>
-  );
-}
-
 export function AuthShowcase() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -130,7 +110,7 @@ export function AuthShowcase() {
         <article className={`${styles.slide} ${styles.introSlide} ${activeSlide === 0 ? styles.active : ''}`}
           aria-hidden={activeSlide !== 0}>
           <div className={styles.introCopy}>
-            <p className={styles.eyebrow}><Sparkles aria-hidden="true" /> One idea. A complete business.</p>
+            <p className={styles.eyebrow}>One idea. A complete business.</p>
             <h2>Imagine it.<br /><em>Xroga makes it real.</em></h2>
           </div>
           <div className={styles.introFooter}>
@@ -152,21 +132,9 @@ export function AuthShowcase() {
           </div>
           <div className={styles.visualStage}>
             <figure className={styles.heroArt}>
-              <Image src="/brand/auth-stories/publish-everywhere-clean.webp" alt="A successful responsive business across desktop, laptop, tablet, and phone with verified repairs, growth, and long-running project progress"
+              <Image src="/brand/auth-stories/responsive-growth-v2.webp" alt="A successful responsive business across desktop, laptop, tablet, and phone with verified repairs, growth, and long-running project progress"
                 fill sizes="(max-width: 1279px) 90vw, 38vw" className={styles.artImage} />
             </figure>
-            <section className={`${styles.dataPanel} ${styles.launchPanel}`} aria-label="Example launch readiness">
-              <div className={styles.dataPanelHeader}>
-                <span><Image src="/brand/xroga-orb-mark-v2.webp" alt="" width={18} height={18} /> Launch readiness</span>
-                <strong>94%</strong>
-              </div>
-              <TrendChart />
-              <div className={styles.kpiRow}>
-                <span><strong>128</strong><small>checks passed</small></span>
-                <span><strong>0</strong><small>blockers</small></span>
-                <span><strong>4</strong><small>targets</small></span>
-              </div>
-            </section>
           </div>
           <div className={styles.sceneFooter} aria-label="Delivery outcomes">
             <span><CheckCircle2 aria-hidden="true" /> Success verified</span>
@@ -216,14 +184,14 @@ export function AuthShowcase() {
           </div>
           <div className={`${styles.visualStage} ${styles.employeeStage}`}>
             <figure className={styles.heroArt}>
-              <Image src="/brand/auth-stories/xroga-employees-clean.webp" alt="A clean studio portrait of six specialized Xroga employees"
+              <Image src="/brand/auth-stories/xroga-employees-original-v2.webp" alt="Six colorful Xroga AI employees with research, content, operations, development, and customer engagement roles"
                 fill sizes="(max-width: 1279px) 90vw, 38vw" className={styles.artImage} />
             </figure>
           </div>
           <div className={styles.sceneFooter} aria-label="Growth outcomes">
             <span><Bot aria-hidden="true" /> Specialized AI employees</span>
-            <span><TrendingUp aria-hidden="true" /> Business growth +42%</span>
-            <span><Globe2 aria-hidden="true" /> SEO +42% · AEO 78% · GEO +31%</span>
+            <span><TrendingUp aria-hidden="true" /> Business growth</span>
+            <span><Globe2 aria-hidden="true" /> SEO · AEO · GEO</span>
           </div>
         </article>
       </div>

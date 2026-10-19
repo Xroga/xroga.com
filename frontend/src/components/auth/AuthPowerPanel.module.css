@@ -1,7 +1,6 @@
 .panel {
   --story-gradient:
-    radial-gradient(circle at 52% 72%, rgba(145, 75, 255, .88), transparent 31%),
-    linear-gradient(180deg, #000004 0%, #05000f 31%, #260064 58%, #793cff 78%, #f4efff 100%);
+    radial-gradient(ellipse at 45% 95%, #202020, transparent 65%), #0b0b0b;
   position: relative;
   min-height: 100%;
   overflow: clip;
@@ -125,7 +124,7 @@
 
 .heroArt { inset: 0; border-radius: 22px; }
 .secondaryArt { right: 14px; bottom: 14px; z-index: 5; width: 34%; height: 38%; border-radius: 14px; }
-.artImage { object-fit: cover; }
+.artImage { object-fit: contain; }
 
 .heroArt::after,
 .secondaryArt::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .03); }
@@ -323,6 +322,35 @@
   .dots button { width: 25px; }
 }
 
+/* The auth shell stays monochrome; supplied artwork retains its original colors. */
+.panel { min-height: 100%; }
+.slide { padding: 82px 26px 54px; }
+.slide h2 { font-size: clamp(32px, 3vw, 43px); line-height: 1.08; font-weight: 500; }
+.slide h2 em { font-family: inherit; font-style: normal; color: #aaa; }
+.introSlide { justify-content: flex-end; gap: 26px; padding-bottom: 66px; }
+.introSlide::before { display: none; }
+.introCopy h2 { font-size: clamp(42px, 4vw, 56px); }
+.introCopy h2 em, .buildSlide .sceneCopy em, .connectSlide .sceneCopy em, .growthSlide .sceneCopy em { color: #aaa; }
+.introFooter > p { color: #999; font-weight: 400; }
+.metricsStrip { background: #151515; border-color: #333; box-shadow: none; }
+.metricsStrip strong { color: #eee; }
+.metricsStrip small { color: #999; }
+.metricsStrip span + span { border-color: #333; }
+.heroArt, .secondaryArt { background: #0b0b0b; border: 0; box-shadow: none; }
+.sceneFooter { color: #aaa; }
+.sceneFooter span { background: #151515; border-color: #333; box-shadow: none; }
+.sceneFooter svg { color: #aaa; }
+.appGrid, .appMark, .xrogaHub, .integrationCount, .secondaryArt figcaption { background: #171717; border-color: #333; color: #ddd; }
+.integrationCount span { color: #aaa; }
+.dots button span { background: #555; }
+.dots .activeDot span { background: #ddd; }
+@media (max-width: 700px) {
+  .panel { min-height: 520px; }
+  .slide { padding: 68px 18px 48px; }
+  .introSlide { padding-bottom: 62px; }
+  .introCopy h2 { font-size: 42px; }
+  .visualStage { min-height: 215px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .slide,
   .dots button span { transition: none; }

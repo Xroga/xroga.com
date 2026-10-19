@@ -597,12 +597,8 @@ export function SignupForm() {
           </span>
         }
         title="Create your account"
-        subtitle="Start building with Xroga and personalise your workspace before you begin."
+        subtitle="One account for everything you build with Xroga."
       >
-      <nav className={styles.modeSwitch} aria-label="Account access">
-        <span aria-current="page">Sign up</span>
-        <Link href={`/auth/login?next=${encodeURIComponent(nextPath)}`}>Sign in</Link>
-      </nav>
 
       <AuthSocialButton
         onClick={
@@ -645,63 +641,7 @@ export function SignupForm() {
         }
         className={styles.form}
       >
-        <section className={styles.setupGroup} aria-label="Personalise your workspace">
-          <div className={styles.setupHeader}>
-            <strong>Personalise your workspace</strong>
-            <span>Theme and profile</span>
-          </div>
 
-          <div className={styles.setupGrid}>
-            <div>
-              <AuthModernLabel>Workspace theme</AuthModernLabel>
-              <div className={styles.themeGrid}>
-                {THEME_OPTIONS.map((option) => {
-                  const selected = theme === option.id;
-                  const swatch = THEME_SWATCHES[option.id];
-
-                  return (
-                    <button
-                      key={option.id}
-                      type="button"
-                      onClick={() => selectTheme(option.id)}
-                      aria-pressed={selected}
-                      className={cn(styles.themeOption, selected && styles.themeOptionSelected)}
-                    >
-                      <span
-                        className={styles.themeSwatch}
-                        style={{ background: swatch.background, color: swatch.foreground }}
-                      />
-                      <span className={styles.themeLabel}>{option.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <AuthModernLabel>Profile</AuthModernLabel>
-              <div className={styles.avatarRow}>
-                {XROGA_PROFILE_AVATARS.slice(0, 6).map((avatar) => {
-                  const selected = avatarUrl === avatar.url;
-
-                  return (
-                    <button
-                      key={avatar.url}
-                      type="button"
-                      onClick={() => setAvatarUrl(avatar.url)}
-                      aria-label="Select profile avatar"
-                      aria-pressed={selected}
-                      className={cn(styles.avatarOption, selected && styles.avatarOptionSelected)}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={avatar.url} alt="" />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/*
          * Name and email side-by-side
@@ -969,6 +909,64 @@ export function SignupForm() {
           </div>
         ) : null}
 
+        <section className={styles.setupGroup} aria-label="Personalise your workspace">
+          <div className={styles.setupHeader}>
+            <strong>Personalise your workspace</strong>
+            <span>Theme and profile</span>
+          </div>
+
+          <div className={styles.setupGrid}>
+            <div>
+              <AuthModernLabel>Workspace theme</AuthModernLabel>
+              <div className={styles.themeGrid}>
+                {THEME_OPTIONS.map((option) => {
+                  const selected = theme === option.id;
+                  const swatch = THEME_SWATCHES[option.id];
+
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => selectTheme(option.id)}
+                      aria-pressed={selected}
+                      className={cn(styles.themeOption, selected && styles.themeOptionSelected)}
+                    >
+                      <span
+                        className={styles.themeSwatch}
+                        style={{ background: swatch.background, color: swatch.foreground }}
+                      />
+                      <span className={styles.themeLabel}>{option.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <AuthModernLabel>Profile</AuthModernLabel>
+              <div className={styles.avatarRow}>
+                {XROGA_PROFILE_AVATARS.slice(0, 6).map((avatar) => {
+                  const selected = avatarUrl === avatar.url;
+
+                  return (
+                    <button
+                      key={avatar.url}
+                      type="button"
+                      onClick={() => setAvatarUrl(avatar.url)}
+                      aria-label="Select profile avatar"
+                      aria-pressed={selected}
+                      className={cn(styles.avatarOption, selected && styles.avatarOptionSelected)}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={avatar.url} alt="" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
         <button
           type="submit"
           className={styles.galaxyButton}
@@ -981,8 +979,6 @@ export function SignupForm() {
             <span>{loading ? 'Creating account…' : 'Create account'}</span>
             {!loading ? <ArrowRight className={styles.galaxyIcon} aria-hidden="true" /> : null}
           </span>
-          <span className={styles.galaxyGlow} aria-hidden="true" />
-          <span className={styles.galaxyStars} aria-hidden="true" />
         </button>
       </form>
 

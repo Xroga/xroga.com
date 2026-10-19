@@ -6,7 +6,6 @@ import {
   EyeOff,
   LockKeyhole,
   Mail,
-  Sparkles,
 } from 'lucide-react';
 
 import {
@@ -218,19 +217,6 @@ export function LoginForm() {
   return (
     <AuthModernCard
       compact
-      eyebrow={
-        <>
-          <Sparkles
-            className="
-              h-3.5
-              w-3.5
-              text-[#006aff]
-            "
-          />
-
-          Welcome back
-        </>
-      }
       title="Sign in to Xroga"
       subtitle="Continue creating, building and shipping from your workspace."
     >
