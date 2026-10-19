@@ -59,8 +59,8 @@ export function AuthShowcase() {
         ))}
       </nav>
       <p className={styles.voicePrompt}>
-        Describe your idea in your language.<br />
-        Speak with voice, or simply type.
+        <span>Describe your idea in your language.</span>
+        <strong>Speak with voice, or simply type.</strong>
       </p>
       <div className={styles.copyArea}>
         {STORIES.map((story, index) => (

@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Sparkles,
   Eye,
   EyeOff,
   LockKeyhole,
@@ -403,18 +402,6 @@ export function LoginForm() {
             ? 'Signing in…'
             : 'Sign in'}
 
-          {!loading ? (
-            <Sparkles
-              className="
-                h-4
-                w-4
-
-                transition-transform
-
-                group-hover:translate-x-0.5
-              "
-            />
-          ) : null}
         </AuthGradientButton>
       </form>
 

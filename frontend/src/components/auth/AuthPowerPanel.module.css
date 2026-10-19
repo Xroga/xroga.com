@@ -11,7 +11,9 @@
 .capabilities button[aria-pressed='true'] { border-color: var(--card-accent); background: color-mix(in srgb, var(--card-accent) 26%, #061019); }
 .capabilities button[aria-pressed='true'] svg { color: var(--card-accent); }
 .capabilities button:focus-visible, .dots button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
-.voicePrompt { position: relative; flex-shrink: 0; margin: 14px 22px 0; color: #f1f5f9; font-size: 13px; line-height: 1.6; }
+.voicePrompt { position: relative; flex-shrink: 0; margin: 18px 22px 0; color: #fff; font-size: 20px; line-height: 1.35; font-weight: 500; letter-spacing: -.035em; text-wrap: balance; }
+.voicePrompt span, .voicePrompt strong { display: block; }
+.voicePrompt strong { margin-top: 5px; color: #d2e5ef; font-size: 18px; font-weight: 500; letter-spacing: -.025em; }
 .copyArea { position: relative; margin-top: auto; padding: 20px 22px 17px; }
 .story[hidden] { display: none; }
 .story { animation: reveal .25s ease-out; }
