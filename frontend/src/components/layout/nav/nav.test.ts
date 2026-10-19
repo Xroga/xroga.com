@@ -9,7 +9,6 @@ const dir = fileURLToPath(new URL('./', import.meta.url));
 const read = (p: string) => readFileSync(join(dir, p), 'utf8');
 const HEADER = read('../PublicMarketingHeader.tsx');
 const CSS = read('xroga-nav.css');
-const FX = read('particles.ts');
 const app = join(dir, '../../../app');
 
 test('every menu destination is a real page', () => {
@@ -66,23 +65,29 @@ test('scroll: hides going down past the opening screen, returns going up, never 
   assert.match(CSS, /\.xn\[data-hidden\] \{[^}]*pointer-events: none;/);
 });
 
-test('particles: crisp points, idle at rest, paused when hidden or the bar is hidden, still under reduced motion', () => {
-  // the loop continues only while something moves or the pointer is near; frame time never runs backwards
-  assert.match(FX, /if \(busy\) this\.raf = requestAnimationFrame/);
-  assert.match(FX, /const dt = Math\.max\(0, Math\.min\(40, now - this\.last\)\)/);
-  assert.match(FX, /document\.hidden/);
-  // no blur anywhere in the layer: points are placed on whole device pixels
-  assert.doesNotMatch(FX, /shadowBlur|filter\s*=/);
-  assert.match(FX, /Math\.round\(x \* this\.dpr\)/);
-  assert.doesNotMatch(CSS, /backdrop-filter/);
-  // reduced motion: one still frame, no loop and no pointer response
-  assert.match(HEADER, /new NavParticles\(canvas, bar, matchMedia\('\(prefers-reduced-motion: reduce\)'\)\.matches\)/);
-  assert.match(FX, /if \(this\.raf \|\| document\.hidden \|\| this\.reduced\) return;/);
-  assert.match(HEADER, /fx\.current\?\.setEnabled\(!hidden\)/);
-  assert.match(HEADER, /orbit\.current\?\.setEnabled\(!hidden\)/);
+test('indicator and signal: one gliding surface written to CSS variables, no canvas, no per-frame React state', () => {
+  assert.ok(!existsSync(join(dir, 'particles.ts')), 'the particle layer is gone');
+  assert.doesNotMatch(HEADER, /<canvas|requestAnimationFrame\(frame|NavParticles|LogoOrbit/);
+  assert.match(HEADER, /className="xn-ind"/);
+  assert.match(HEADER, /ind\.style\.setProperty\('--x'/);
+  assert.match(HEADER, /signalRef\.current\?\.style\.setProperty\('--sx'/);
+  // positions are written to the moving elements only, never to an ancestor (which would restyle the open menu)
+  assert.doesNotMatch(HEADER, /root\.style\.setProperty/);
+  assert.match(HEADER, /className="xn-signal"/);
+  assert.match(CSS, /\.xn-ind \{[^}]*transition:[^}]*transform 340ms/);
+  // switching menus slides content from the side it was chosen on
+  assert.match(HEADER, /setProperty\('--dx'/);
+  assert.match(CSS, /translate\(var\(--dx, 0px\), 4px\)/);
+  // no blur, glow sprites or ambient loops
+  assert.doesNotMatch(CSS, /backdrop-filter|filter: blur|drop-shadow/);
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)/);
-  // no React state per frame: the layer is driven imperatively
-  assert.doesNotMatch(FX, /useState|setState/);
+});
+
+test('lockup: the approved orb wordmark, split at its artwork gap and spaced', () => {
+  assert.match(HEADER, /className="xn-lockup"/);
+  assert.match(CSS, /\.xn-lockup \{[^}]*gap: 11px;/);
+  assert.match(CSS, /url\('\/brand\/xroga-orb-wordmark-dark-v3\.webp'\)/);
+  assert.ok(existsSync(join(dir, '../../../../public/brand/xroga-orb-wordmark-dark-v3.webp')));
 });
 
 test('previews are illustrative: no customer claims or invented metrics', () => {

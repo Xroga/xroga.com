@@ -55,18 +55,27 @@ function Win({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-/* ---------------------------------------------------------------- Product: a Xroga workspace carrying one request */
+/* ---------------------------------------------------------------- Product: one request, executed and verified */
 export function ProductPreview({ active }: { active: string }) {
   return (
     <div className="xn-pv xp-product" data-focus={active} aria-hidden="true">
-      <Win title="Xroga · Workspace">
-        <div className="xp-ws">
+      <div className="xp-flow">
+        <div className="xp-stage">
+          <div className="xp-stage-k">
+            <i />
+            Request
+          </div>
           <div className="xp-req" data-z="workspace">
             <span className="xp-avatar">Y</span>
             <p>Add Stripe checkout to my store and test the payment flow.</p>
           </div>
+        </div>
+        <div className="xp-stage">
+          <div className="xp-stage-k">
+            <i />
+            Execution
+          </div>
           <div className="xp-plan" data-z="intelligence">
-            <div className="xp-k">Plan</div>
             <div className="xp-step is-done">
               <i />
               Read the store’s cart and orders code
@@ -94,6 +103,12 @@ export function ProductPreview({ active }: { active: string }) {
               Vercel
             </span>
           </div>
+        </div>
+        <div className="xp-stage">
+          <div className="xp-stage-k">
+            <i />
+            Verified outcome
+          </div>
           <div className="xp-checks" data-z="verification">
             <span className="is-ok">Build</span>
             <span className="is-ok">Tests</span>
@@ -107,7 +122,7 @@ export function ProductPreview({ active }: { active: string }) {
             <em>Ready for your review</em>
           </div>
         </div>
-      </Win>
+      </div>
     </div>
   );
 }
@@ -340,6 +355,8 @@ export function DevelopPreview({ active }: { active: string }) {
                     <span className="xp-term-k">$ npm test portal</span>
                     <span><i className="is-ok" />opens the portal</span>
                     <span><i className="is-ok" />404 for an unknown user</span>
+                    <span><i className="is-ok" />keeps the session after reload</span>
+                    <span className="xp-term-sum">3 passed · 0 failed · 1.2 s</span>
                   </>
                 )}
               </div>
@@ -383,14 +400,29 @@ export function ExplorePreview({ active }: { active: string }) {
       <div className="xp-feature" key={key}>
         <div className="xp-art" data-k={key}>
           {key === 'showcase' && (
-            <div className="xp-cal">
-              <b>October · Dr. Rivera</b>
-              <div>
-                {Array.from({ length: 21 }, (_, i) => (
-                  <i key={i} className={i === 9 ? 'is-pick' : i % 7 > 4 ? 'is-off' : undefined} />
+            <div className="xp-book">
+              <div className="xp-book-head">
+                <b>Rivera Dental</b>
+                <span>Book a visit</span>
+              </div>
+              <div className="xp-days">
+                {['Mon 14', 'Tue 15', 'Wed 16', 'Thu 17', 'Fri 18'].map((d) => (
+                  <span key={d} className={d === 'Wed 16' ? 'is-pick' : undefined}>
+                    {d}
+                  </span>
                 ))}
               </div>
-              <span className="xp-btn">Book 10:30</span>
+              <div className="xp-slots">
+                {['9:00', '9:30', '10:30', '11:15', '14:00', '15:30'].map((t) => (
+                  <span key={t} className={t === '10:30' ? 'is-pick' : t === '9:30' || t === '14:00' ? 'is-off' : undefined}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <div className="xp-book-foot">
+                <span>Cleaning · 45 min</span>
+                <span className="xp-btn">Confirm 10:30</span>
+              </div>
             </div>
           )}
           {key === 'categories' && (

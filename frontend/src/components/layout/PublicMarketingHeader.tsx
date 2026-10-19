@@ -16,16 +16,15 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ArrowUpRight, ChevronDown, TerminalSquare } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react';
-import { Logo } from '@/components/layout/Logo';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { PUBLIC_MARKETING_NAV } from '@/lib/publicMarketing';
 import { CONNECT_GROUPS, MEGA_MENUS, type MegaItem, type MegaMenu, type MenuKey } from './nav/navData';
 import { BrandMark, BuildPreview, ConnectDirectory, DevelopPreview, ExplorePreview, ProductPreview } from './nav/MegaPreviews';
-import { LogoOrbit, NavParticles } from './nav/particles';
 import './nav/xroga-nav.css';
 
 const isMenu = (label: string): label is MenuKey => label in MEGA_MENUS;
+const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 const FIRST_PREVIEW: Record<MenuKey, string> = { Product: 'overview', Build: 'webapp', Connect: '', Develop: 'diff', Explore: 'showcase' };
 
 function MegaLink({ item, onNavigate, onPreview }: { item: MegaItem; onNavigate: () => void; onPreview: (k: string) => void }) {
@@ -88,9 +87,8 @@ function MegaContent({ id, menu, onNavigate }: { id: MenuKey; menu: MegaMenu; on
 function MenuGlyph({ open }: { open: boolean }) {
   return (
     <span className="xn-glyph" data-open={open || undefined} aria-hidden="true">
-      {Array.from({ length: 9 }, (_, i) => (
-        <i key={i} style={{ '--x': `${1.5 + (i % 3) * 5.5}px`, '--y': `${1.5 + Math.floor(i / 3) * 5.5}px` } as CSSProperties} />
-      ))}
+      <i />
+      <i />
     </span>
   );
 }
@@ -99,14 +97,12 @@ export function PublicMarketingHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const rootRef = useRef<HTMLElement>(null);
-  const barRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLElement | null>(null);
-  const fx = useRef<NavParticles | null>(null);
-  const orbitRef = useRef<HTMLCanvasElement>(null);
-  const orbit = useRef<LogoOrbit | null>(null);
   const navRef = useRef<HTMLElement>(null);
+  const indRef = useRef<HTMLSpanElement>(null);
+  const signalRef = useRef<HTMLSpanElement>(null);
+  const traceRef = useRef<HTMLSpanElement>(null);
+  const lastMega = useRef<MenuKey | null>(null);
   const triggers = useRef<Partial<Record<MenuKey, HTMLButtonElement | null>>>({});
   const openTimer = useRef<number>();
   const closeTimer = useRef<number>();
@@ -143,56 +139,55 @@ export function PublicMarketingHeader() {
     setActiveMega(null);
   }, [pathname]);
 
-  /* ------------------------------------------------------------ particles */
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const bar = barRef.current;
-    if (!canvas || !bar) return;
-    // reduced motion keeps one still frame of the rim; nothing moves
-    const p = new NavParticles(canvas, bar, matchMedia('(prefers-reduced-motion: reduce)').matches);
-    fx.current = p;
-    const measure = () => p.resize(ctaRef.current);
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(bar);
-    void document.fonts?.ready.then(measure);
-    return () => {
-      ro.disconnect();
-      p.destroy();
-      fx.current = null;
-    };
-  }, [loggedIn]);
-
-  useEffect(() => {
-    const canvas = orbitRef.current;
-    if (!canvas) return;
-    const o = new LogoOrbit(canvas, matchMedia('(prefers-reduced-motion: reduce)').matches);
-    orbit.current = o;
-    return () => {
-      o.destroy();
-      orbit.current = null;
-    };
-  }, []);
-
-  // labels brighten slightly as the pointer approaches them (a CSS variable per label, no React state)
-  const onNavMove = (e: ReactPointerEvent<HTMLElement>) => {
-    if (e.pointerType !== 'mouse') return;
-    for (const el of navRef.current?.querySelectorAll<HTMLElement>('.xn-item') ?? []) {
-      const r = el.getBoundingClientRect();
-      const d = Math.abs(e.clientX - (r.left + r.width / 2)) / (r.width / 2 + 40);
-      el.style.setProperty('--near', Math.max(0, 1 - d).toFixed(2));
+  /* ------------------------------------------------------------ the indicator and the signal */
+  // One recessed surface glides to the hovered item (else the open menu's trigger) and fades when there is none. Its
+  // centre also places the signal that drops into an open panel. Every measurement is read before anything is written,
+  // and positions go to the few small elements that move (never to an ancestor), so a hover restyles only them and
+  // causes no React render.
+  const place = useCallback((el: HTMLElement | null) => {
+    const ind = indRef.current;
+    const nav = navRef.current;
+    const root = rootRef.current;
+    if (!ind || !nav || !root) return;
+    if (!el) {
+      ind.removeAttribute('data-on');
+      return;
     }
-  };
-  const onNavLeave = () => {
-    for (const el of navRef.current?.querySelectorAll<HTMLElement>('.xn-item') ?? []) el.style.setProperty('--near', '0');
-  };
-
-  // the capsule surrounds the hovered item, else the open menu's trigger, else dissolves
+    const n = nav.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    const h = root.getBoundingClientRect();
+    const x = `${r.left - n.left}px`;
+    const w = `${r.width}px`;
+    const sx = `${r.left + r.width / 2 - h.left}px`;
+    if (!ind.hasAttribute('data-on')) {
+      // appearing: take the new place without sliding there from the last one
+      ind.style.transition = 'none';
+      ind.style.setProperty('--x', x);
+      ind.style.setProperty('--w', w);
+      void ind.offsetWidth;
+      ind.style.transition = '';
+    } else {
+      ind.style.setProperty('--x', x);
+      ind.style.setProperty('--w', w);
+    }
+    ind.setAttribute('data-on', '');
+    signalRef.current?.style.setProperty('--sx', sx);
+    traceRef.current?.style.setProperty('--sx', sx);
+  }, []);
   const aim = useCallback(() => {
-    const el = hoverItem.current ?? (activeMega ? triggers.current[activeMega] ?? null : null);
-    fx.current?.target(el);
-  }, [activeMega]);
+    place(hoverItem.current ?? (activeMega ? triggers.current[activeMega] ?? null : null));
+  }, [activeMega, place]);
   useEffect(aim, [aim]);
+
+  // switching menus slides the new content in from the side it was chosen on (set before paint)
+  useIsoLayoutEffect(() => {
+    const keys = Object.keys(MEGA_MENUS) as MenuKey[];
+    const prev = lastMega.current;
+    if (activeMega && prev && prev !== activeMega) {
+      panelRef.current?.style.setProperty('--dx', keys.indexOf(activeMega) > keys.indexOf(prev) ? '10px' : '-10px');
+    } else panelRef.current?.style.setProperty('--dx', '0px');
+    lastMega.current = activeMega;
+  }, [activeMega]);
 
   /* ------------------------------------------------------------ menus: hover intent, click, Escape, outside */
   const open = (key: MenuKey, delay: number) => {
@@ -251,11 +246,6 @@ export function PublicMarketingHeader() {
   useEffect(() => {
     if (pinned) setHidden(false);
   }, [pinned]);
-  // a hidden bar does no particle work
-  useEffect(() => {
-    fx.current?.setEnabled(!hidden);
-    orbit.current?.setEnabled(!hidden);
-  }, [hidden]);
   useEffect(() => {
     let last = window.scrollY;
     let travel = 0;
@@ -354,24 +344,23 @@ export function PublicMarketingHeader() {
         }
       }}
     >
-      <div ref={barRef} className="xn-bar">
-        <canvas ref={canvasRef} className="xn-particles" aria-hidden="true" />
-        <span className="xn-brand" onPointerEnter={() => orbit.current?.hover(true)} onPointerLeave={() => orbit.current?.hover(false)}>
-          <Logo href="/" variant="homepage" height={38} className="xn-logo" />
-          <canvas ref={orbitRef} className="xn-orbit" aria-hidden="true" />
-        </span>
+      <div className="xn-bar">
+        {/* the approved orb wordmark, split at the gap in its artwork so the orb and the word get proper spacing */}
+        <Link href="/" className="xn-lockup" aria-label="Xroga home">
+          <span className="xn-lockup-orb" aria-hidden="true" />
+          <span className="xn-lockup-word" aria-hidden="true" />
+        </Link>
 
         <nav
           ref={navRef}
           className="xn-nav"
           aria-label="Primary navigation"
-          onPointerMove={onNavMove}
           onPointerLeave={() => {
             hoverItem.current = null;
             aim();
-            onNavLeave();
           }}
         >
+          <span ref={indRef} className="xn-ind" aria-hidden="true" />
           {PUBLIC_MARKETING_NAV.map((item) => {
             const isCurrent = pathname === item.href;
             if (!isMenu(item.label)) {
@@ -431,13 +420,7 @@ export function PublicMarketingHeader() {
           {loggedIn ? (
             <button
               type="button"
-              ref={(el) => {
-                ctaRef.current = el;
-              }}
               className="xn-cta xv-header-dashboard-button"
-              onPointerEnter={() => fx.current?.ctaHover(true)}
-              onPointerLeave={() => fx.current?.ctaHover(false)}
-              onPointerDown={() => fx.current?.ctaPress()}
               onClick={() => router.push(accountHref)}
             >
               <TerminalSquare className="xn-cta-icon" aria-hidden="true" />
@@ -445,14 +428,8 @@ export function PublicMarketingHeader() {
             </button>
           ) : (
             <Link
-              ref={(el) => {
-                ctaRef.current = el;
-              }}
               className="xn-cta"
               href="/workspace"
-              onPointerEnter={() => fx.current?.ctaHover(true)}
-              onPointerLeave={() => fx.current?.ctaHover(false)}
-              onPointerDown={() => fx.current?.ctaPress()}
             >
               <svg className="xn-cta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" aria-hidden="true">
                 <polyline points="13.18 1.37 13.18 9.64 21.45 9.64 10.82 22.63 10.82 14.36 2.55 14.36 13.18 1.37" />
@@ -475,6 +452,9 @@ export function PublicMarketingHeader() {
 
       {/* the shared mega-menu panel: one envelope, content crossfades between menus */}
       <div ref={panelRef} id="xn-panel" className="xn-panel" data-open={menu ? true : undefined} aria-hidden={!menu} onKeyDown={onPanelKey}>
+        {/* the signal: a hairline from the chosen item down to the panel, landing on its top edge */}
+        <span ref={signalRef} className="xn-signal" aria-hidden="true" />
+        <span ref={traceRef} className="xn-trace" aria-hidden="true" />
         <div className="xn-panel-surface">
           {menu && activeMega && <MegaContent key={activeMega} id={activeMega} menu={menu} onNavigate={closeMenus} />}
         </div>
