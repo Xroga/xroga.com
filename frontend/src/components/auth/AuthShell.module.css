@@ -14,7 +14,7 @@
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  padding: 28px;
+  padding: 20px;
   background: #000;
   color: var(--auth-text);
   font-family: Arial, Helvetica, sans-serif;
@@ -24,7 +24,7 @@
 .particles { position: fixed; z-index: -1; inset: 0; pointer-events: none; background: #fff; opacity: .5; mask: radial-gradient(circle at 50% 50%, white 2px, transparent 2.5px) 50% 50% / 20px 20px, url('/brand/particle-noise-mask.png') 256px 50% / 256px 256px; mask-composite: intersect; animation: particleFlicker 20s infinite linear; }
 @keyframes particleFlicker { to { mask-position: 50% 50%, 0 50%; } }
 .shell { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 440px); justify-content: space-between; gap: 70px; width: 100%; max-width: 1060px; }
-.story { min-width: 0; min-height: 650px; overflow: hidden; border-radius: 18px; }
+.story { min-width: 0; overflow: hidden; border-radius: 18px; align-self: center; }
 .formArea { display: flex; align-items: center; justify-content: center; min-width: 0; padding: 24px 0; }
 .form { width: 100%; max-width: 420px; }
 .form h1 { font-family: Arial, Helvetica, sans-serif; font-size: 32px; font-weight: 500; letter-spacing: -.045em; line-height: 1.1; }

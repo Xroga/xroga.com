@@ -507,7 +507,7 @@ export function SignupForm() {
         eyebrow={
           <span className={styles.kicker}>
             <span className={styles.kickerMarker} aria-hidden="true" />
-            Join the next generation workspace
+            Join to access all world possibility of work
           </span>
         }
         title="Create your account"
@@ -536,15 +536,7 @@ export function SignupForm() {
           ? 'Connecting…'
           : 'Continue with GitHub'}
 
-        <ArrowRight
-          className="
-            ml-auto
-            h-3.5
-            w-3.5
 
-            text-[var(--auth-muted)]
-          "
-        />
       </AuthSocialButton>
 
       <AuthDivider />
