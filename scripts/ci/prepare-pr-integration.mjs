@@ -5,6 +5,19 @@ import { join,resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { root,verifyToolchain } from './toolchain.mjs';
 import { discoverPersistenceCalls } from '../security/audit-tenant-policies.mjs';
+import {buildPhaseOne} from '../xroga/phase-one.mjs';
+
+/** Only the current-caller proof template is derived from projected reviews.
+ * Frozen mappings, original criteria and prior accepted evidence never change.
+ */
+export function integrationAdmissionProjection(outputs,readExisting){
+  const path='docs/xroga/security/tenant-invariant-obligations.json';
+  for(const[key,value]of outputs)if(key!==path&&readExisting(key).replace(/\r\n/g,'\n')!==value)throw new Error(`Immutable Phase1 mapping drift:${key}`);
+  const content=outputs.get(path);if(typeof content!=='string')throw new Error('Missing derived admission template');
+  const admission=JSON.parse(content);
+  if(admission.proofs.length!==0||admission.criteria.length!==10||admission.criteria.some(c=>c.status!=='BLOCKED'||c.proofIds.length!==0))throw new Error('Integration generation cannot grant acceptance');
+  return {path,content};
+}
 
 /** Retire only reviewed false positives from files with no remaining candidates.
  * A moved/changed real caller still fails the unchanged semantic review validator.
@@ -38,6 +51,7 @@ export function validateIntegrationIdentity({ci,event,head,parents,expectedHead,
 
 const outputs=[
   'docs/xroga/security/caller-reviews.json',
+  'docs/xroga/security/tenant-invariant-obligations.json',
   'docs/xroga/security/privileged-callers.json','docs/xroga/security/rls-audit.md',
   'docs/xroga/current-state.json','docs/xroga/current-state-schema.json','docs/xroga/current-state.md','docs/xroga/blockers.md',
   'docs/xroga/dependency-inventory.json','docs/xroga/dependency-inventory.schema.json',
@@ -68,6 +82,8 @@ export function main() {
     readIntegrated:path=>readFileSync(join(root,path),'utf8'),
   });
   if(projected.retired.length)writeFileSync(join(root,registryPath),`${JSON.stringify(projected.registry,null,2)}\n`);
+  const admission=integrationAdmissionProjection(buildPhaseOne().outputs,path=>readFileSync(join(root,path),'utf8'));
+  writeFileSync(join(root,admission.path),admission.content);
   // No authority/fixture records are invented. Stale manual semantic reviews
   // still fail; all original baseline stages run after this bounded projection.
   for(const args of [

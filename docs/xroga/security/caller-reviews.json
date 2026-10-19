@@ -950,37 +950,87 @@
     },
     {
       "path": "backend/src/services/memory/buildMemory.ts",
-      "sourceSha256": "141dc91fa4cf33fd8cb2ce36a72bb184d34b44d1d5412b49a196c7aa46759fb8",
+      "sourceSha256": "7fd673b160e0a23436c4ea27ca612d9d37a9a859ef15cd2d97d8ca98996411ab",
       "callIds": [
-        "661ce57ea5e40d34292d",
-        "76af868afcec7d3a5059"
+        "57fd0513dbbc76c05dc9",
+        "bf1b3affa3cada5dbe44"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "getPreviousBuilds reads prompt/output only from supplied userId's completed swarm_runs and produces a bounded history summary. No active production importer was found in the inspected source search.",
-      "reason": "Query owner filtering is present. Exported identity provenance, output/prompt redaction, project-level context and claims that returned memory implies durable file persistence require separate proof.",
+      "authority": "No production consumer is found. The original callable reader now requires the original WeakSet-issued TenantContext before creating its SDK client, derives its only userId from that immutable context and queries only that owner. JSON clones and primitive owner strings cannot choose a history tenant. Formatting helpers remain unchanged.",
+      "reason": "Dormancy alone is not a security certificate. These guarded callable contracts and real default-query/insert witnesses are prepared, with no invented public route or pipeline consumer. Existing003/worker project ownership trigger is reused, not replaced. Actual two-owner history, foreign and duplicate writes, concurrent replay, parent transfer during held lock, rollback, browser foreign insert denial and exact persisted receipts require new-source disposable CI. Original later-phase obligations and earlier concerns are retained in historicalLegacyHistoryReview. This remains REVIEWED_GAP.",
       "evidence": [
         {
           "path": "backend/src/services/memory/buildMemory.ts",
           "marker": "export async function getPreviousBuilds"
+        },
+        {
+          "path": "backend/src/services/memory/buildPersistence.authority.test.ts",
+          "marker": "dormant legacy build writer rejects non-issued and foreign authority before database access"
+        },
+        {
+          "path": "backend/src/security/legacyBuildHistory.local.integration.ts",
+          "marker": "real legacy build history requires issued owners and exact insert receipts without overwriting foreign runs"
         }
-      ]
+      ],
+      "historicalLegacyHistoryReview": {
+        "path": "backend/src/services/memory/buildMemory.ts",
+        "sourceSha256": "141dc91fa4cf33fd8cb2ce36a72bb184d34b44d1d5412b49a196c7aa46759fb8",
+        "callIds": [
+          "661ce57ea5e40d34292d",
+          "76af868afcec7d3a5059"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "getPreviousBuilds reads prompt/output only from supplied userId's completed swarm_runs and produces a bounded history summary. No active production importer was found in the inspected source search.",
+        "reason": "Query owner filtering is present. Exported identity provenance, output/prompt redaction, project-level context and claims that returned memory implies durable file persistence require separate proof.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildMemory.ts",
+            "marker": "export async function getPreviousBuilds"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/services/memory/buildPersistence.ts",
-      "sourceSha256": "4a1e79b7861d6bcbba48176e4fc0d00922a3a67a6d2064782a8927e803e114b2",
+      "sourceSha256": "30682b395cdde685fe1e1181d24ec6add7f097571edaecc338c1dfff5170ff41",
       "callIds": [
-        "4fd6df1420b596f63cae",
-        "13083e0ecb46eb0d8700"
+        "99c17dc2a48bd6be6ae7",
+        "63ba5e2982b2b02ee020"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "persistBuildRun inserts a generated or supplied run ID with supplied userId/projectId. Insert-only identity cannot overwrite a collision. Source search found no active importer in current production code.",
-      "reason": "Parent project ownership and exported actor provenance are unchecked. Failed writes still return the chosen run ID and raw diagnostics are logged. No durable-save or authorization certification.",
+      "authority": "No production consumer is found. The original callable writer now requires an original issued TenantContext, captures nested input before I/O, rejects mismatched owner and inserts only that issued owner. Insert-only global run ID collisions cannot overwrite existing runs. The existing swarm_runs trigger holds current project ownership through insertion, and acknowledgement must match exact owner/project/run/prompt/status/output. Failure throws a fixed503 rather than returning an unpersisted ID.",
+      "reason": "Dormancy alone is not a security certificate. These guarded callable contracts and real default-query/insert witnesses are prepared, with no invented public route or pipeline consumer. Existing003/worker project ownership trigger is reused, not replaced. Actual two-owner history, foreign and duplicate writes, concurrent replay, parent transfer during held lock, rollback, browser foreign insert denial and exact persisted receipts require new-source disposable CI. Original later-phase obligations and earlier concerns are retained in historicalLegacyHistoryReview. This remains REVIEWED_GAP.",
       "evidence": [
         {
           "path": "backend/src/services/memory/buildPersistence.ts",
           "marker": "export async function persistBuildRun"
+        },
+        {
+          "path": "backend/src/services/memory/buildPersistence.authority.test.ts",
+          "marker": "dormant legacy build writer rejects non-issued and foreign authority before database access"
+        },
+        {
+          "path": "backend/src/security/legacyBuildHistory.local.integration.ts",
+          "marker": "real legacy build history requires issued owners and exact insert receipts without overwriting foreign runs"
         }
-      ]
+      ],
+      "historicalLegacyHistoryReview": {
+        "path": "backend/src/services/memory/buildPersistence.ts",
+        "sourceSha256": "4a1e79b7861d6bcbba48176e4fc0d00922a3a67a6d2064782a8927e803e114b2",
+        "callIds": [
+          "4fd6df1420b596f63cae",
+          "13083e0ecb46eb0d8700"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "persistBuildRun inserts a generated or supplied run ID with supplied userId/projectId. Insert-only identity cannot overwrite a collision. Source search found no active importer in current production code.",
+        "reason": "Parent project ownership and exported actor provenance are unchecked. Failed writes still return the chosen run ID and raw diagnostics are logged. No durable-save or authorization certification.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildPersistence.ts",
+            "marker": "export async function persistBuildRun"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/services/responseCache.ts",
@@ -1952,17 +2002,12 @@
       "path": "backend/src/synthesis/livePreview/store.ts",
       "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "callIds": [
-        "260f546643a88434ec35",
         "72439f834416b3fd90eb",
-        "fd09b17779296225433f",
-        "62f2c45d96306d0c651c",
-        "8418218a6fdf978626d1",
-        "e7d0d54375645a30b30f",
-        "790ce21b600ea4bd4f9d"
+        "fd09b17779296225433f"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
-      "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Registered existing signed capability resolution, not tenant impersonation or blanket global data access. Actual signed consumer permits a valid owned capability and rejects changed signature, foreign capability ID reuse, missing authority, revoked grant and current session port removal without opening an upstream socket.\nFive exact original007 factory/latest/revoke sites only. Existing actual create/foreign-parent/held-lock/session-expiry/rollback cases are reused. Actual current consumer test proves correct scoped selection, foreign owner and project denial, foreign revoke preserving the full row, successful own revoke and unaffected other-owner capability. Gateway independently rechecks current session/port and never forwards a provider call in this witness. Custody, live proxy/provider success and revocation of already-open sockets remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
+      "reason": "Only the two exact signed runtime grant-resolution sites use the existing registered signed_runtime_preview_resolution exception and already authenticated831f proof. Five owner-scoped sites are now separately classified under the same original structured container. No new exception, gate relaxation, source certification or caller removal.",
       "evidence": [
         {
           "path": "backend/src/synthesis/livePreview/access.ts",
@@ -2055,6 +2100,128 @@
         "originalReviewReason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
         "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
         "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
+      },
+      "structuredOrigin": {
+        "id": "OB-11526c9c3e6a8aa3",
+        "callIds": [
+          "260f546643a88434ec35",
+          "72439f834416b3fd90eb",
+          "fd09b17779296225433f",
+          "62f2c45d96306d0c651c",
+          "8418218a6fdf978626d1",
+          "e7d0d54375645a30b30f",
+          "790ce21b600ea4bd4f9d"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "historicalMixedProofKindReview": {
+        "path": "backend/src/synthesis/livePreview/store.ts",
+        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "callIds": [
+          "260f546643a88434ec35",
+          "72439f834416b3fd90eb",
+          "fd09b17779296225433f",
+          "62f2c45d96306d0c651c",
+          "8418218a6fdf978626d1",
+          "e7d0d54375645a30b30f",
+          "790ce21b600ea4bd4f9d"
+        ],
+        "disposition": "NARROW_EXCEPTION",
+        "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Registered existing signed capability resolution, not tenant impersonation or blanket global data access. Actual signed consumer permits a valid owned capability and rejects changed signature, foreign capability ID reuse, missing authority, revoked grant and current session port removal without opening an upstream socket.\nFive exact original007 factory/latest/revoke sites only. Existing actual create/foreign-parent/held-lock/session-expiry/rollback cases are reused. Actual current consumer test proves correct scoped selection, foreign owner and project denial, foreign revoke preserving the full row, successful own revoke and unaffected other-owner capability. Gateway independently rechecks current session/port and never forwards a provider call in this witness. Custody, live proxy/provider success and revocation of already-open sockets remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/access.ts",
+            "marker": "session.userId !== grant.userId"
+          },
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "const target = authorizedPreviewTarget(grant, session);"
+          },
+          {
+            "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
+            "marker": "preview grant input and returned capability stay bound"
+          }
+        ],
+        "criterionClosureReview": {
+          "classification": "PROOF_REQUIRED",
+          "criteria": [
+            "XB01-C007-AC02",
+            "XB01-C007-AC10"
+          ],
+          "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
+          "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+          "fixture": "backend/src/security/previewConsumer.local.integration.ts",
+          "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+          "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+        },
+        "historicalReview": {
+          "path": "backend/src/synthesis/livePreview/store.ts",
+          "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+          "callIds": [
+            "260f546643a88434ec35",
+            "72439f834416b3fd90eb",
+            "fd09b17779296225433f",
+            "62f2c45d96306d0c651c",
+            "8418218a6fdf978626d1",
+            "e7d0d54375645a30b30f",
+            "790ce21b600ea4bd4f9d"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
+          "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+          "evidence": [
+            {
+              "path": "backend/src/synthesis/livePreview/access.ts",
+              "marker": "session.userId !== grant.userId"
+            },
+            {
+              "path": "backend/src/middleware/runtimePreviewGateway.ts",
+              "marker": "const target = authorizedPreviewTarget(grant, session);"
+            },
+            {
+              "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
+              "marker": "preview grant input and returned capability stay bound"
+            }
+          ],
+          "criterionClosureReview": {
+            "classification": "PROOF_REQUIRED",
+            "criteria": [
+              "XB01-C007-AC02",
+              "XB01-C007-AC10"
+            ],
+            "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
+            "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+            "fixture": "backend/src/security/previewConsumer.local.integration.ts",
+            "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+            "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+          }
+        },
+        "command007Proof": {
+          "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+          "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+          "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+          "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+          "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+          "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+          "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+          "obligationIds": [
+            "OB-11526c9c3e6a8aa3",
+            "OB-11526c9c3e6a8aa3:observed-preview-consumer-owned-paths"
+          ],
+          "passedTests": [
+            "real signed preview consumer rechecks current private grant and session before selecting any upstream target",
+            "real durable preview session cannot resolve a misbound owner/project or stale capability",
+            "real preview admission rejects changed sessions and expiry during an observed grant-write lock wait"
+          ],
+          "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
+        }
       }
     },
     {
@@ -10083,6 +10250,235 @@
           "f1aaacc8e5daf32fdba1"
         ],
         "disposition": "REVIEWED_GAP"
+      }
+    },
+    {
+      "path": "backend/src/synthesis/livePreview/store.ts",
+      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "callIds": [
+        "260f546643a88434ec35",
+        "62f2c45d96306d0c651c",
+        "8418218a6fdf978626d1",
+        "e7d0d54375645a30b30f",
+        "790ce21b600ea4bd4f9d"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
+      "reason": "Five exact owner-scoped preview factory/latest/revoke boundaries retain their already authenticated positive/negative831f proof. They are SCOPED_BOUNDARY, not global exceptions. The previous combined seven-site NARROW_EXCEPTION classification was rejected by the strict per-caller agreement gate. Correcting this manual kind does not certify a new source or remove any unresolved obligation. Original scope and history remain preserved.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/livePreview/access.ts",
+          "marker": "session.userId !== grant.userId"
+        },
+        {
+          "path": "backend/src/middleware/runtimePreviewGateway.ts",
+          "marker": "const target = authorizedPreviewTarget(grant, session);"
+        },
+        {
+          "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
+          "marker": "preview grant input and returned capability stay bound"
+        }
+      ],
+      "criterionClosureReview": {
+        "classification": "PROOF_REQUIRED",
+        "criteria": [
+          "XB01-C007-AC02",
+          "XB01-C007-AC10"
+        ],
+        "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
+        "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+        "fixture": "backend/src/security/previewConsumer.local.integration.ts",
+        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+      },
+      "historicalReview": {
+        "path": "backend/src/synthesis/livePreview/store.ts",
+        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "callIds": [
+          "260f546643a88434ec35",
+          "72439f834416b3fd90eb",
+          "fd09b17779296225433f",
+          "62f2c45d96306d0c651c",
+          "8418218a6fdf978626d1",
+          "e7d0d54375645a30b30f",
+          "790ce21b600ea4bd4f9d"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
+        "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/access.ts",
+            "marker": "session.userId !== grant.userId"
+          },
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "const target = authorizedPreviewTarget(grant, session);"
+          },
+          {
+            "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
+            "marker": "preview grant input and returned capability stay bound"
+          }
+        ],
+        "criterionClosureReview": {
+          "classification": "PROOF_REQUIRED",
+          "criteria": [
+            "XB01-C007-AC02",
+            "XB01-C007-AC10"
+          ],
+          "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
+          "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+          "fixture": "backend/src/security/previewConsumer.local.integration.ts",
+          "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+          "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+        "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+        "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+        "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+        "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+        "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+        "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+        "obligationIds": [
+          "OB-11526c9c3e6a8aa3",
+          "OB-11526c9c3e6a8aa3:observed-preview-consumer-owned-paths"
+        ],
+        "passedTests": [
+          "real signed preview consumer rechecks current private grant and session before selecting any upstream target",
+          "real durable preview session cannot resolve a misbound owner/project or stale capability",
+          "real preview admission rejects changed sessions and expiry during an observed grant-write lock wait"
+        ],
+        "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
+      },
+      "structuredOrigin": {
+        "id": "OB-11526c9c3e6a8aa3",
+        "callIds": [
+          "260f546643a88434ec35",
+          "72439f834416b3fd90eb",
+          "fd09b17779296225433f",
+          "62f2c45d96306d0c651c",
+          "8418218a6fdf978626d1",
+          "e7d0d54375645a30b30f",
+          "790ce21b600ea4bd4f9d"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "historicalMixedProofKindReview": {
+        "path": "backend/src/synthesis/livePreview/store.ts",
+        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "callIds": [
+          "260f546643a88434ec35",
+          "72439f834416b3fd90eb",
+          "fd09b17779296225433f",
+          "62f2c45d96306d0c651c",
+          "8418218a6fdf978626d1",
+          "e7d0d54375645a30b30f",
+          "790ce21b600ea4bd4f9d"
+        ],
+        "disposition": "NARROW_EXCEPTION",
+        "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Registered existing signed capability resolution, not tenant impersonation or blanket global data access. Actual signed consumer permits a valid owned capability and rejects changed signature, foreign capability ID reuse, missing authority, revoked grant and current session port removal without opening an upstream socket.\nFive exact original007 factory/latest/revoke sites only. Existing actual create/foreign-parent/held-lock/session-expiry/rollback cases are reused. Actual current consumer test proves correct scoped selection, foreign owner and project denial, foreign revoke preserving the full row, successful own revoke and unaffected other-owner capability. Gateway independently rechecks current session/port and never forwards a provider call in this witness. Custody, live proxy/provider success and revocation of already-open sockets remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/access.ts",
+            "marker": "session.userId !== grant.userId"
+          },
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "const target = authorizedPreviewTarget(grant, session);"
+          },
+          {
+            "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
+            "marker": "preview grant input and returned capability stay bound"
+          }
+        ],
+        "criterionClosureReview": {
+          "classification": "PROOF_REQUIRED",
+          "criteria": [
+            "XB01-C007-AC02",
+            "XB01-C007-AC10"
+          ],
+          "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
+          "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+          "fixture": "backend/src/security/previewConsumer.local.integration.ts",
+          "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+          "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+        },
+        "historicalReview": {
+          "path": "backend/src/synthesis/livePreview/store.ts",
+          "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+          "callIds": [
+            "260f546643a88434ec35",
+            "72439f834416b3fd90eb",
+            "fd09b17779296225433f",
+            "62f2c45d96306d0c651c",
+            "8418218a6fdf978626d1",
+            "e7d0d54375645a30b30f",
+            "790ce21b600ea4bd4f9d"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
+          "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+          "evidence": [
+            {
+              "path": "backend/src/synthesis/livePreview/access.ts",
+              "marker": "session.userId !== grant.userId"
+            },
+            {
+              "path": "backend/src/middleware/runtimePreviewGateway.ts",
+              "marker": "const target = authorizedPreviewTarget(grant, session);"
+            },
+            {
+              "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
+              "marker": "preview grant input and returned capability stay bound"
+            }
+          ],
+          "criterionClosureReview": {
+            "classification": "PROOF_REQUIRED",
+            "criteria": [
+              "XB01-C007-AC02",
+              "XB01-C007-AC10"
+            ],
+            "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
+            "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+            "fixture": "backend/src/security/previewConsumer.local.integration.ts",
+            "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+            "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+          }
+        },
+        "command007Proof": {
+          "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+          "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+          "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+          "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+          "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+          "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+          "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+          "obligationIds": [
+            "OB-11526c9c3e6a8aa3",
+            "OB-11526c9c3e6a8aa3:observed-preview-consumer-owned-paths"
+          ],
+          "passedTests": [
+            "real signed preview consumer rechecks current private grant and session before selecting any upstream target",
+            "real durable preview session cannot resolve a misbound owner/project or stale capability",
+            "real preview admission rejects changed sessions and expiry during an observed grant-write lock wait"
+          ],
+          "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
+        }
       }
     }
   ]

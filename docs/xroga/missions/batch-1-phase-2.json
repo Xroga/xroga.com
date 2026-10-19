@@ -9,6 +9,10 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "backend/src/security/legacyBuildHistory.local.integration.ts",
+    "backend/src/services/memory/buildPersistence.authority.test.ts",
+    "backend/src/services/memory/buildPersistence.ts",
+    "backend/src/services/memory/buildMemory.ts",
     "scripts/ci/prepare-pr-integration.mjs",
     "scripts/ci/prepare-pr-integration.test.mjs",
     "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
@@ -186,6 +190,12 @@
     }
   },
   "tests": [
+    {
+      "command": "node --import tsx --test backend/src/services/memory/buildPersistence.authority.test.ts",
+      "scope": "Original-issued-context denial and exact legacy history receipt/outage negatives. Real owner/project/run concurrency remains independently pending.",
+      "negative": true,
+      "reference": "backend/src/services/memory/buildPersistence.authority.test.ts"
+    },
     {
       "command": "node --import tsx --test backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
       "scope": "Dormant readiness export rejects every non-issued context before any credential/database/network access. Real same-owner account proof remains in the disposable consumer case.",

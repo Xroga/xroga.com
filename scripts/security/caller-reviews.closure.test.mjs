@@ -51,5 +51,6 @@ test('manual subset reconciliation preserves the original obligation identity an
  const structuredOrigin={id:before.id,callIds:original.callIds,disposition:'REVIEWED_GAP'};
  const scoped={...original,callIds:['first'],disposition:'SCOPED_BOUNDARY',structuredOrigin},gap={...original,callIds:['second'],structuredOrigin};
  const after=structuredCallerReviewRecords({reviews:[scoped,gap]});assert.equal(after.length,1);assert.equal(after[0].id,before.id);assert.deepEqual(after[0].callIds,original.callIds);assert.equal(after[0].legacyDisposition,'REVIEWED_GAP');assert.deepEqual(after[0].manualPartitions.map(p=>p.disposition),['SCOPED_BOUNDARY','REVIEWED_GAP']);
+ const mixed=structuredCallerReviewRecords({reviews:[scoped,{...gap,disposition:'NARROW_EXCEPTION'}]});assert.equal(mixed.length,1);assert.equal(mixed[0].id,before.id);assert.deepEqual(mixed[0].manualPartitions.map(p=>p.disposition),['SCOPED_BOUNDARY','NARROW_EXCEPTION']);
  for(const invalid of [[scoped],[scoped,scoped],[scoped,{...gap,sourceSha256:'0'.repeat(64)}],[scoped,{...gap,structuredOrigin:{...structuredOrigin,id:'OB-forged'}}],[scoped,{...gap,structuredOrigin:{...structuredOrigin,disposition:'NOT_PERSISTENCE'}}]])assert.throws(()=>structuredCallerReviewRecords({reviews:invalid}));
 });

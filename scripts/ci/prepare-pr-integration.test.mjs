@@ -1,13 +1,25 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createHash } from 'node:crypto';
-import { validateIntegrationIdentity,projectVanishedNonPersistenceReviews } from './prepare-pr-integration.mjs';
+import { validateIntegrationIdentity,projectVanishedNonPersistenceReviews,integrationAdmissionProjection } from './prepare-pr-integration.mjs';
 import { discoverPersistenceCalls } from '../security/audit-tenant-policies.mjs';
 const fixture={ci:'true',event:'pull_request',head:'a'.repeat(40),parents:['b'.repeat(40),'c'.repeat(40)],expectedBase:'b'.repeat(40),expectedHead:'c'.repeat(40)};
 test('candidate evidence binds exact virtual merge, base and feature identities without release approval',()=>{
   const result=validateIntegrationIdentity(fixture);
   assert.equal(result.featureSha,fixture.expectedHead);assert.equal(result.baseSha,fixture.expectedBase);
   assert.equal(result.sourceSha,fixture.head);assert.match(result.scope,/NOT_COMMITTED_TRUTH_OR_RELEASE_APPROVAL/);
+});
+
+test('integration refreshes only unaccepted derived admission while preserving frozen mappings and original criteria',()=>{
+  const path='docs/xroga/security/tenant-invariant-obligations.json',frozen='docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json';
+  const template={proofs:[],criteria:Array.from({length:10},()=>({status:'BLOCKED',proofIds:[]}))};
+  const outputs=new Map([[frozen,'immutable frozen source\n'],[path,JSON.stringify(template)]]);
+  const result=integrationAdmissionProjection(outputs,()=>outputs.get(frozen));assert.equal(result.path,path);assert.deepEqual(JSON.parse(result.content),template);
+  assert.throws(()=>integrationAdmissionProjection(outputs,()=> 'changed frozen source\n'),/Immutable Phase1 mapping drift/);
+  for(const changed of [{...template,proofs:[{id:'fabricated'}]},{...template,criteria:template.criteria.slice(1)},{...template,criteria:template.criteria.map((c,i)=>i===0?{...c,status:'PASS'}:c)}]){
+    assert.throws(()=>integrationAdmissionProjection(new Map([[path,JSON.stringify(changed)]]),()=>''),/cannot grant acceptance/);
+  }
+  assert.throws(()=>integrationAdmissionProjection(new Map(),()=>''),/Missing derived admission/);
 });
 test('ordinary local checkouts, missing identities and wrong parents cannot project passing branch truth',()=>{
   for(const changed of [{ci:undefined},{event:'push'},{event:'workflow_dispatch'},

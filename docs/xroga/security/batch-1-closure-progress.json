@@ -572,12 +572,12 @@
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/services/memory/buildMemory.ts": [
-          "661ce57ea5e40d34292d",
-          "76af868afcec7d3a5059"
+          "57fd0513dbbc76c05dc9",
+          "bf1b3affa3cada5dbe44"
         ],
         "backend/src/services/memory/buildPersistence.ts": [
-          "4fd6df1420b596f63cae",
-          "13083e0ecb46eb0d8700"
+          "99c17dc2a48bd6be6ae7",
+          "63ba5e2982b2b02ee020"
         ],
         "backend/src/services/memory/buildProjectStore.ts": [
           "59fc6590fac35ccb2965",
