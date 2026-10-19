@@ -7,6 +7,10 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "backend/src/synthesis/projectRuntime/store.ts",
+    "backend/src/synthesis/projectRuntime/secretWriteReceipt.test.ts",
+    "backend/src/security/runtimeSecretRead.local.integration.ts",
+    "backend/src/security/oauthWrapperOwnership.local.integration.ts",
     "backend/src/ai/pipeline.ts",
     "backend/src/ai/runStore.ts",
     "backend/src/security/workerProjectAdmission.test.ts",

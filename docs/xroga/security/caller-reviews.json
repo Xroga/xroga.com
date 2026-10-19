@@ -2882,19 +2882,19 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "callIds": [
         "8fc7cf5dd562db7dcd3a",
         "ed5cdf592a4a0494dc20",
         "530ec12058ab9d32794b",
         "419bf279075e606b8b1f",
         "8da826b4f1382152e9e9",
-        "05696d559ec8d6305a1f",
-        "3fbff43474088305493a",
-        "7abc56c35732ad79279a",
-        "b9522163f553d5a418ed",
-        "1d714d1647e2c5f6a436",
-        "2a229397c50f1425b1b5"
+        "6fb334291b6218b12f4c",
+        "f4643ffb0f1224d7da80",
+        "67ce8a604d6d6502cc94",
+        "87f57b0ac97d6b473fa3",
+        "99b6b7ce0de9df1778a6",
+        "8bea5ef54bd825f8e224"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
@@ -4201,7 +4201,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "callIds": [
         "4405d6096d2e71e981b2"
       ],
@@ -4217,7 +4217,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "callIds": [
         "98d184ab88f7ab61318b"
       ],
@@ -4265,7 +4265,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "callIds": [
         "60631ccec69849a4ead7"
       ],
@@ -4281,7 +4281,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "callIds": [
         "56973b18bffeba04db38"
       ],
@@ -4297,7 +4297,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "callIds": [
         "0aa7bcbcf75b4fc1eceb"
       ],
@@ -4313,7 +4313,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "callIds": [
         "b5d3e5c94e9160b42afb"
       ],
@@ -4641,9 +4641,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "callIds": [
-        "4dbeec5086c5b8a28996"
+        "149b3684632af4931199"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Exact receiver is Node Buffer.from, decoding canonical base64 segments of an encrypted envelope in memory. It performs no database or Storage action and does not decrypt or authenticate ciphertext.",

@@ -23737,6 +23737,7 @@
       "callers": [
         "backend/src/lib/platformReady.ts:8",
         "backend/src/routes/supabaseOAuth.ts:11",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts:8",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:7",
@@ -23778,6 +23779,7 @@
         "backend/src/services/integrations/supabaseAuth.ts#verifier"
       ],
       "testCoverage": [
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts"
@@ -24348,6 +24350,7 @@
         "backend/src/routes/integrations.ts:27",
         "backend/src/routes/supabaseOAuth.ts:35",
         "backend/src/routes/vercel.ts:5",
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts:9",
         "backend/src/security/tenantIsolation.local.integration.ts:29",
         "backend/src/services/integrations/githubDeploy.ts:16",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:5",
@@ -24404,6 +24407,7 @@
         "backend/src/services/integrations/vercelAuth.ts#verifyVercelTokenLive"
       ],
       "testCoverage": [
+        "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -30147,6 +30151,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/security/runtimeSecretRead.local.integration.ts:8",
         "backend/src/synthesis/projectRuntime/capabilities.ts:5",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts:3",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts:3",
@@ -30168,6 +30173,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.restore.test.ts",
@@ -30293,6 +30299,7 @@
       ],
       "callers": [
         "backend/src/security/runtimeProjectBinding.test.ts:7",
+        "backend/src/security/runtimeSecretRead.local.integration.ts:7",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts:4",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts:4",
         "backend/src/synthesis/projectRuntime/flyProvider.restore.test.ts:4",
@@ -30312,6 +30319,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/runtimeProjectBinding.test.ts",
+        "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.restore.test.ts",
@@ -30511,7 +30519,7 @@
       "id": "surface:52eacb67555cd24b2de9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "symbols": [
         "EncryptedProjectSecretRecord",
         "InMemoryProjectRuntimeStore",
@@ -30546,6 +30554,7 @@
         "restoreOwnerBoundRuntimeSession",
         "result",
         "revision",
+        "saved",
         "session",
         "snapshot",
         "snapshotRevision",
@@ -30595,6 +30604,7 @@
         "backend/src/synthesis/projectRuntime/projectHistory.ts:10",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:48",
         "backend/src/synthesis/projectRuntime/secretRead.test.ts:3",
+        "backend/src/synthesis/projectRuntime/secretWriteReceipt.test.ts:3",
         "backend/src/synthesis/projectRuntime/sessionIdentity.test.ts:3",
         "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts:5",
         "backend/src/synthesis/projectRuntime/store.owner.test.ts:4",
@@ -30617,8 +30627,8 @@
       "tenantBoundary": [
         "backend/src/synthesis/projectRuntime/store.ts:758 (user_id)",
         "backend/src/synthesis/projectRuntime/store.ts:849 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1032 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1075 (user_id)"
+        "backend/src/synthesis/projectRuntime/store.ts:1043 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:1088 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -30643,6 +30653,7 @@
         "backend/src/synthesis/projectRuntime/flyProvider.restore.test.ts",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
         "backend/src/synthesis/projectRuntime/secretRead.test.ts",
+        "backend/src/synthesis/projectRuntime/secretWriteReceipt.test.ts",
         "backend/src/synthesis/projectRuntime/sessionIdentity.test.ts",
         "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts",
         "backend/src/synthesis/projectRuntime/store.owner.test.ts",
@@ -30710,6 +30721,7 @@
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.test.ts",
+        "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/livePreview/access.test.ts",
@@ -104695,7 +104707,7 @@
     {
       "id": "test-suite:6ea5aa82a1cd019e1a00",
       "sourcePath": "backend/src/security/runtimeSecretRead.local.integration.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -105563,6 +105575,13 @@
     {
       "id": "test-suite:517fbfce976a85e56f66",
       "sourcePath": "backend/src/synthesis/projectRuntime/secretRead.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:602806dda99e56f69105",
+      "sourcePath": "backend/src/synthesis/projectRuntime/secretWriteReceipt.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

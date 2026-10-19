@@ -5,6 +5,8 @@ import {createClient,type SupabaseClient} from '@supabase/supabase-js';
 import {createTenantContext,type TenantContext} from './tenantContext.js';
 import {storePkceSession,consumePkceSession,clearPkceSession,saveOAuthConnection,loadProviderToken,clearProviderToken} from '../services/integrations/oauthPkceStore.js';
 import {ensurePrivateOAuthBucket} from '../services/integrations/credentialStorageBucket.js';
+import {getSupabaseOAuthAccessToken} from '../services/integrations/supabaseAuth.js';
+import {getVercelToken} from '../services/integrations/vercelAuth.js';
 
 /** Actual existing wrapper + Auth/DB/storage behavior. No OAuth provider call. */
 export function registerOAuthWrapperOwnershipTests(admin:SupabaseClient):void{
@@ -43,6 +45,11 @@ export function registerOAuthWrapperOwnershipTests(admin:SupabaseClient):void{
         await saveOAuthConnection(owner.id,selected,token,claimed.authorization_revision,undefined,'fixture-owner-account');
         const active=await loadProviderToken(owner.id,selected,{authoritativeOnly:true});assert.equal(active?.access_token,token.access_token);assert.equal(active?.refresh_token,token.refresh_token);assert.ok(active?.credential_revision);assert.notEqual(active.credential_revision,claimed.authorization_revision);
         assert.notEqual((await loadProviderToken(other.id,selected))?.access_token,token.access_token);
+        const consumer=selected==='vercel'?getVercelToken:getSupabaseOAuthAccessToken;
+        assert.equal(await consumer(owner.id),token.access_token,'The actual token consumer selects this owner connection');
+        assert.equal(await consumer(other.id),null,'The other real authenticated actor cannot inherit this connection');
+        const durable=await admin.from('user_integrations').select('user_id,provider,provider_user_id,credential_revision').eq('user_id',owner.id).eq('provider',selected).single();
+        assert.equal(durable.error,null);assert.deepEqual(durable.data,{user_id:owner.id,provider:selected,provider_user_id:'fixture-owner-account',credential_revision:active.credential_revision});
         const mirrors=actors.map(actor=>`${actor.id}/oauth-${selected}.json`),payload=JSON.stringify({access_token:'SYNTHETIC_LEGACY_MIRROR_ONLY'});
         for(const path of mirrors){paths.push(path);assert.equal((await admin.storage.from(bucket).upload(path,payload,{contentType:'application/json'})).error,null);}
         await clearProviderToken(owner.id,selected);assert.equal(await loadProviderToken(owner.id,selected),null);
@@ -50,6 +57,7 @@ export function registerOAuthWrapperOwnershipTests(admin:SupabaseClient):void{
         const foreignMirror=await admin.storage.from(bucket).download(mirrors[1]!);assert.equal(foreignMirror.error,null);assert.equal(await foreignMirror.data!.text(),payload);
         await assert.rejects(saveOAuthConnection(owner.id,selected,token,active.credential_revision,token.refresh_token));
         assert.equal(await loadProviderToken(owner.id,selected),null,'A prior refresh receipt cannot restore revoked ownership');
+        assert.equal(await consumer(owner.id),null,'The actual consumer rejects the revoked connection and its legacy mirror');
       }
       await assert.rejects(clearPkceSession({...owner.context},provider),{status:401});await clearPkceSession(owner.context,provider);
       assert.equal(await consumePkceSession(owner.context,provider,state),null);

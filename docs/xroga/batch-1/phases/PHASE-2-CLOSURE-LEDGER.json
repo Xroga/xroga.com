@@ -4015,7 +4015,7 @@
       "id": "B1-P2-aca46b7ed6cc0fa7",
       "family": "projects-files-runtime",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "baselineCallerIds": [
         "8fc7cf5dd562db7dcd3a",
         "ed5cdf592a4a0494dc20",
@@ -4035,12 +4035,12 @@
         "530ec12058ab9d32794b",
         "419bf279075e606b8b1f",
         "8da826b4f1382152e9e9",
-        "05696d559ec8d6305a1f",
-        "3fbff43474088305493a",
-        "7abc56c35732ad79279a",
-        "b9522163f553d5a418ed",
-        "1d714d1647e2c5f6a436",
-        "2a229397c50f1425b1b5"
+        "6fb334291b6218b12f4c",
+        "f4643ffb0f1224d7da80",
+        "67ce8a604d6d6502cc94",
+        "87f57b0ac97d6b473fa3",
+        "99b6b7ce0de9df1778a6",
+        "8bea5ef54bd825f8e224"
       ],
       "mapping": [
         {
@@ -4081,42 +4081,42 @@
         {
           "baselineCallerId": "05696d559ec8d6305a1f",
           "currentCallerIds": [
-            "05696d559ec8d6305a1f"
+            "6fb334291b6218b12f4c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3fbff43474088305493a",
           "currentCallerIds": [
-            "3fbff43474088305493a"
+            "f4643ffb0f1224d7da80"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7abc56c35732ad79279a",
           "currentCallerIds": [
-            "7abc56c35732ad79279a"
+            "67ce8a604d6d6502cc94"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b9522163f553d5a418ed",
           "currentCallerIds": [
-            "b9522163f553d5a418ed"
+            "87f57b0ac97d6b473fa3"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1d714d1647e2c5f6a436",
           "currentCallerIds": [
-            "1d714d1647e2c5f6a436"
+            "99b6b7ce0de9df1778a6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2a229397c50f1425b1b5",
           "currentCallerIds": [
-            "2a229397c50f1425b1b5"
+            "8bea5ef54bd825f8e224"
           ],
           "change": "RETAINED"
         }
@@ -4126,9 +4126,9 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-aca46b7ed6cc0fa7",
-        "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+        "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
         "executionStatus": "IN_PROGRESS",
-        "finding": "DEMONSTRATED_EVENT_FOREIGN_SESSION_PARENT_ACCEPTANCE_NARROW_SQL_FIX_PENDING_REAL_DATABASE_PROOF",
+        "finding": "EVENT_PARENT_VERIFIED_AT_397C_SECRET_RECEIPT_REJECTION_FIXED_PENDING_CHANGED_SOURCE_PROOF",
         "actorTrace": "The existing SupabaseProjectRuntimeStore.appendEvent inserts user/project/session values into the fixed event table. Current disposable catalog has only event PK and Auth-user FK, with owner-only browser SELECT policy. It has no session-parent relationship. A synthetic SQL probe using the exact original table definitions accepts an owner's event referencing a foreign session. This establishes a service-write parent gap, not a browser write bypass or foreign-payload disclosure. All eleven original store callers remain open unless separately proven.",
         "invariant": "A new session-bearing event must hold the current session and match both its owner and logical project at the decisive write. Missing, deleted, foreign or different-project sessions deny. Existing session-less logical-project events remain supported.",
         "relatedSourceBindings": [
@@ -4151,10 +4151,30 @@
             "scope": "Same-owner store receipt, foreign/other-project/missing parent denial, updates, null-session compatibility, browser denial, two observed waits including concurrent deletion and rollback"
           }
         ],
+        "priorActualVerification": {
+          "sourceSha": "397c7881daed6895376d1b49b298a82f92d8fdd6",
+          "disposableRun": "39173066924",
+          "scope": "122 migrations,166 security and3 browser tests. Session/event subset and worker lineage accepted. These receipts do not certify new secret-write source."
+        },
+        "receiptCorrection": {
+          "criteria": [
+            2,
+            4,
+            10
+          ],
+          "reproduction": "Actual SDK transport test accepted a successful foreign-owner save receipt before the correction. This is not an actual cross-tenant database write reproduction.",
+          "scope": "Retain owner-inclusive conflict/deletion keys. Clone requested identity across awaits. Check exact save envelope/identity/timestamp and bounded delete identities. Already-absent deletion remains idempotent. No new encryption, migration or provider call.",
+          "consumerTrace": "ProjectSecretManager retains the constructor owner. Its only production constructor is ProjectRuntimeManager. Manager factories receive authenticated runtime-route owner or admitted pipeline/coordinator owner. Enabled exec/start/log consumers load exact owner/session and derive the logical project from that row. secretManager().put/remove have no current production consumer. The actual-database test separately exercises those helpers with real isolated owners, without inventing an enabled public mutation endpoint.",
+          "tests": [
+            "backend/src/synthesis/projectRuntime/secretWriteReceipt.test.ts",
+            "backend/src/security/runtimeSecretRead.local.integration.ts"
+          ],
+          "status": "FOCUSED_PASS_REAL_DATABASE_PENDING"
+        },
         "remaining": [
-          "Run actual122-migration fresh/upgrade/reapply and new event-parent test",
-          "Trace every event producer and retain revision/session/secret caller obligations",
-          "Do not treat current-parent SQL proof as complete actor provenance or009 encrypted custody"
+          "Run changed-source disposable tests including concurrent owner-key writes, exact receipts, deletion isolation, browser denial and actual session secret reader",
+          "Reconcile generic authenticated revision producers and all eight remaining callers without blanket certification",
+          "Preserve009 encryption/key-custody/rotation/migration requirements and008 authority separately"
         ]
       },
       "actor": {

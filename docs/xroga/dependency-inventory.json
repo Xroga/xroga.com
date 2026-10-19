@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce",
+  "source_sha": "397c7881daed6895376d1b49b298a82f92d8fdd6",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -624,6 +624,7 @@
         "SUPABASE_OAUTH_CLIENT_SECRET",
         "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
+        "USER_SECRETS_ENCRYPTION_KEY",
         "VERCEL_CLIENT_ID",
         "VERCEL_CLIENT_SECRET",
         "VERCEL_ENV",
@@ -9815,6 +9816,7 @@
         "backend/src/security/runTraceAttempt.local.integration.ts",
         "backend/src/security/runtimeEventParent.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
+        "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
@@ -10350,6 +10352,7 @@
     {
       "name": "USER_SECRETS_ENCRYPTION_KEY",
       "consuming_sources": [
+        "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
         "backend/src/synthesis/livePreview/signing.ts",
         "backend/src/synthesis/projectRuntime/secretManager.ts"
@@ -10365,7 +10368,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "credential-store"
+        "credential-store",
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -13180,7 +13184,7 @@
     },
     {
       "path": "backend/src/security/oauthWrapperOwnership.local.integration.ts",
-      "sha256": "8cb510d1ab8132d7d414a6a56c1cdd622240e88e72c9baf528227f9927ef78e0"
+      "sha256": "f985bb2c99b3ed87ff3d76a49a395f5ccf425cf58b6c9037d8a00c3b65b6e3f4"
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
@@ -13252,7 +13256,7 @@
     },
     {
       "path": "backend/src/security/runtimeSecretRead.local.integration.ts",
-      "sha256": "6f858c91c64fb0ea655a36c7e6dd98895ad518f1b1500bfc281cf2a4d4ae3c74"
+      "sha256": "57f01e3bb0f582fa4352ba6e3437af32dc5eb9d89a648feb25b66fa5588a3344"
     },
     {
       "path": "backend/src/security/runtimeTerminal.local.integration.ts",
@@ -13772,7 +13776,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357"
+      "sha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/types.ts",
@@ -19115,14 +19119,14 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/oauthWrapperOwnership.local.integration.ts",
-      "line": 12,
+      "line": 14,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/oauthWrapperOwnership.local.integration.ts",
-      "line": 28,
+      "line": 30,
       "credentialsInUrl": false
     },
     {
@@ -19241,7 +19245,14 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/runtimeSecretRead.local.integration.ts",
-      "line": 10,
+      "line": 13,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/runtimeSecretRead.local.integration.ts",
+      "line": 30,
       "credentialsInUrl": false
     },
     {
@@ -25626,6 +25637,20 @@
     {
       "path": "backend/src/security/providerCycleParent.local.integration.ts",
       "line": 38,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/security/runtimeSecretRead.local.integration.ts",
+      "line": 45,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/security/runtimeSecretRead.local.integration.ts",
+      "line": 45,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

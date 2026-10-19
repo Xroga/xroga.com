@@ -1,5 +1,13 @@
 # Phase 2 acceptance
 
+## Four-criterion continuation from accepted397c
+
+Founder accepts original criteria1,3,5,7,8,9 at exact397c7881daed6895376d1b49b298a82f92d8fdd6. Its authenticated external proof remains in artifacts/phase-2-proof/397c7881daed6895376d1b49b298a82f92d8fdd6. Original criteria2,4,6,10 remain mandatory and blocked. No unchanged CI is being rerun merely to restore confidence.
+
+Current bounded change addresses frozen runtime packetB1-P2-aca46b7ed6cc0fa7. The actual SDK transport accepted a wrong-owner secret save receipt before the new negative test. Exact save and bounded deletion receipts are now checked, with immutable input snapshots and fixed failure errors. Existing owner-inclusive keys and idempotent deletion are retained. This is receipt validation evidence, not a reproduced foreign database overwrite. No migration, encryption change or new vault is introduced. New disposable tests exercise two real owners sharing a logical project/key, concurrent writes, browser denial, exact preserved foreign rows, repeated deletion and the actual manager/session secret consumer with a synthetic provider. OAuth proof adds actual Supabase/Vercel token readers and exact stored provider-account identity to the existing real Auth/DB test. No live provider request or token operation occurs.
+
+Changed-source real database and integrated regression are pending. All73 frozen packets/371 historical identities remain intact. The six previously accepted criteria retain their original evidence, without claiming it certifies changed source. Code rollback is the scoped receipt-check revert only, preserving all rows, keys and earlier worker/session fences. Do not enable an unverified secret mutation endpoint or relax the complete gate during rollback. Phase3 remains unstarted.
+
 State: IN_PROGRESS. Command007 is not certified. Founder approved Phase2 only at Phase1 source `8a1a0bfa7878603dd488db98568577b2fb1896da`. Both supplied Phase2 directives have identical contents. Original criteria and Phase1 evidence remain unchanged.
 
 ## Latest authenticated checkpoint and bounded continuation

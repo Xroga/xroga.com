@@ -972,7 +972,10 @@ export class SupabaseProjectRuntimeStore
     record:
       EncryptedProjectSecretRecord,
   ): Promise<void> {
+    // Retain the exact requested identity and envelope across asynchronous I/O.
+    record = clone(record);
     const {
+      data,
       error,
     } =
       await getSupabaseAdmin()
@@ -1007,12 +1010,20 @@ export class SupabaseProjectRuntimeStore
             onConflict:
               'user_id,project_id,name,scope',
           },
-        );
+        )
+        .select('user_id, project_id, name, scope, encrypted_value, key_version, created_at, updated_at')
+        .single();
 
     if (
       error
     ) {
-      throw error;
+      throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
+    }
+    const saved = restoreOwnerBoundEncryptedSecret(data, record.userId, record.projectId);
+    if (saved.name !== record.name || saved.scope !== record.scope ||
+      saved.encryptedValue !== record.encryptedValue || saved.keyVersion !== record.keyVersion ||
+      Date.parse(saved.updatedAt) !== Date.parse(record.updatedAt)) {
+      throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
     }
   }
 
@@ -1069,7 +1080,9 @@ export class SupabaseProjectRuntimeStore
         ProjectSecretScope;
     },
   ): Promise<void> {
+    input = clone(input);
     const {
+      data,
       error,
     } =
       await getSupabaseAdmin()
@@ -1092,12 +1105,19 @@ export class SupabaseProjectRuntimeStore
         .eq(
           'scope',
           input.scope,
-        );
+        )
+        .select('user_id, project_id, name, scope');
 
     if (
       error
     ) {
-      throw error;
+      throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
+    }
+    // Empty is the supported idempotent deletion of an already absent key.
+    if (!Array.isArray(data) || data.length > 1 || data.some(row =>
+      !row || typeof row !== 'object' || row.user_id !== input.userId || row.project_id !== input.projectId ||
+      row.name !== input.name || row.scope !== input.scope)) {
+      throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
     }
   }
 }

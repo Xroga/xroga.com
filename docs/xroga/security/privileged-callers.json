@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "1ad43e3a01df3968f02609fcaf66003ce90d8cd5ae8fe3533d682bcfadf054ca",
+  "reviewRegistrySha256": "d0ebb09aa634a46d72fa9ac6840140f768103bdb6b12b0a7cb0d8db9168ad739",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -348,7 +348,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-aca46b7ed6cc0fa7"
+        "id": "OB-9bfdff17118e0393"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -13645,7 +13645,7 @@
       "target": "project_runtime_revisions",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
         "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
@@ -13670,7 +13670,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
         "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
@@ -13695,7 +13695,7 @@
       "target": "persist_worker_project_revision",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Worker-only revision writer requires an original issued attempt matching immutable owner/run snapshot. Service-only RPC locks swarm parent, requires current running worker generation and existing same-owner canonical project lineage, then returns exact revision receipt. Authenticated nonworker restore/delivery retains separate existing paths.",
         "reason": "VERIFIED unchanged exact writer at54abe997a2bbccd97796131b98519747c8c60c21, disposable38824268139:87 migrations,100 real security/concurrency tests,3 authenticated browser tests,zero failures/skips. Actual observed parent-lock stale-resume/cancellation, owner/lineage and role denial pass. Closure covers only this admitted-attempt database writer. Read freshness, other runtime writers and already-issued external effects remain independently open, no whole-worker certification.",
@@ -13716,7 +13716,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Worker-only revision writer requires an original issued attempt matching immutable owner/run snapshot. Service-only RPC locks swarm parent, requires current running worker generation and existing same-owner canonical project lineage, then returns exact revision receipt. Authenticated nonworker restore/delivery retains separate existing paths.",
         "reason": "VERIFIED unchanged exact writer at54abe997a2bbccd97796131b98519747c8c60c21, disposable38824268139:87 migrations,100 real security/concurrency tests,3 authenticated browser tests,zero failures/skips. Actual observed parent-lock stale-resume/cancellation, owner/lineage and role denial pass. Closure covers only this admitted-attempt database writer. Read freshness, other runtime writers and already-issued external effects remain independently open, no whole-worker certification.",
@@ -13737,7 +13737,7 @@
       "target": "project_runtime_revisions",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Fixed project revision read binds requested owner/project in SQL and verifies returned row owner/project/run against SoftwareProject and contract identities before returning a clone. No persistence or provider action occurs in this read.",
         "reason": "Exact method unchanged from54abe997 and executed again in7d12bf42 disposable38827153400. Narrow identity boundary only; repository authorization, restore freshness, complete SoftwareProject schema and external effects remain separate.",
@@ -13758,7 +13758,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Fixed project revision read binds requested owner/project in SQL and verifies returned row owner/project/run against SoftwareProject and contract identities before returning a clone. No persistence or provider action occurs in this read.",
         "reason": "Exact method unchanged from54abe997 and executed again in7d12bf42 disposable38827153400. Narrow identity boundary only; repository authorization, restore freshness, complete SoftwareProject schema and external effects remain separate.",
@@ -13779,7 +13779,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
         "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
@@ -13804,7 +13804,7 @@
       "target": "project_runtime_sessions",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Fixed runtime session read selects state and owner/session/project columns, filters exact requested owner/session, and binds returned row identity to JSON before returning a clone. It does not mutate or call a provider.",
         "reason": "Exact method unchanged from54abe997 and executed again in7d12bf42 disposable38827153400. Narrow row/JSON identity closure only; machine/providerState validation, lifecycle and current-source terminal latch are independent.",
@@ -13825,7 +13825,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Fixed runtime session read selects state and owner/session/project columns, filters exact requested owner/session, and binds returned row identity to JSON before returning a clone. It does not mutate or call a provider.",
         "reason": "Exact method unchanged from54abe997 and executed again in7d12bf42 disposable38827153400. Narrow row/JSON identity closure only; machine/providerState validation, lifecycle and current-source terminal latch are independent.",
@@ -13846,7 +13846,7 @@
       "target": "project_runtime_events",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
         "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
@@ -13871,7 +13871,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
         "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
@@ -13888,15 +13888,15 @@
       }
     },
     {
-      "id": "05696d559ec8d6305a1f",
+      "id": "6fb334291b6218b12f4c",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 978,
+      "line": 981,
       "enclosing": "saveEncryptedSecret",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
         "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
@@ -13913,15 +13913,15 @@
       }
     },
     {
-      "id": "3fbff43474088305493a",
+      "id": "f4643ffb0f1224d7da80",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 978,
+      "line": 981,
       "enclosing": "saveEncryptedSecret",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
         "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
@@ -13938,15 +13938,15 @@
       }
     },
     {
-      "id": "7abc56c35732ad79279a",
+      "id": "67ce8a604d6d6502cc94",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 1032,
+      "line": 1043,
       "enclosing": "loadEncryptedSecrets",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
         "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
@@ -13963,15 +13963,15 @@
       }
     },
     {
-      "id": "b9522163f553d5a418ed",
+      "id": "87f57b0ac97d6b473fa3",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 1032,
+      "line": 1043,
       "enclosing": "loadEncryptedSecrets",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
         "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
@@ -13988,15 +13988,15 @@
       }
     },
     {
-      "id": "1d714d1647e2c5f6a436",
+      "id": "99b6b7ce0de9df1778a6",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 1075,
+      "line": 1088,
       "enclosing": "deleteEncryptedSecret",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
         "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
@@ -14013,15 +14013,15 @@
       }
     },
     {
-      "id": "2a229397c50f1425b1b5",
+      "id": "8bea5ef54bd825f8e224",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 1075,
+      "line": 1088,
       "enclosing": "deleteEncryptedSecret",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
         "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
@@ -14038,15 +14038,15 @@
       }
     },
     {
-      "id": "4dbeec5086c5b8a28996",
+      "id": "149b3684632af4931199",
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 1118,
+      "line": 1138,
       "enclosing": "restoreOwnerBoundEncryptedSecret",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1eecbc6efc8a11cb323e3480531edd39000d8f9cbbcf019d1e0bbf040ea24357",
+      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
       "semanticReview": {
         "authority": "Exact receiver is Node Buffer.from, decoding canonical base64 segments of an encrypted envelope in memory. It performs no database or Storage action and does not decrypt or authenticate ciphertext.",
         "reason": "Conservative from-method scanner false positive only. Surrounding encrypted secret read has separate owner/project, shape and key-custody review. No cryptographic or tenant certification follows from decoding.",
