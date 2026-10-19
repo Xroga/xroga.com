@@ -1,5 +1,11 @@
 # Phase 2 acceptance
 
+## Grouped database result and regression-fixture correction
+
+Source94967257fe3360e674dd46d375c61d053e93bb37 disposable39251650633 succeeded, including the new shared growth admission case and expanded collection/detail HTTP assertions. The exact redacted catalog and logs are retained in artifacts/9496-disposable. Ten other standalone workflows succeeded. Aggregate39251650632 failed on both branch and integrated source during backend unit tests:3077 passed,5 failed,0 skipped out of3082. All five failures are in the existing inputSnapshot fixture, whose RPC stub handled only the three older transactional functions. It incorrectly asserted that the new shared admission RPC must be record_growth_experiment_outcome. This is a fixture mismatch, not an accepted green full baseline.
+
+The correction recognizes only the five exact shared operations and verifies original actor, tenant, project, canonical nonempty role list and each original admitted-input field before stopping persistence. It preserves the first-database-wait mutation and exact one-write assertions. All16 focused growth/snapshot/projects tests pass. No production source or database migration changed in this correction. Final-source complete branch/integrated regression remains required. Original evaluator and all73 historical packets remain unchanged. Partial proof reconciliation does not promote missing criteria or waive the failed aggregate.
+
 ## Shared-invariant continuation from8adca5f8
 
 Starting source8adca5f84425819821b4b80d94bc09980ecc9e79 has all11 workflows successful, disposable39246108564 passes122 histories/172 security/3 browser, aggregate39246108264 passes21 stages twice branch and twice integrateda4d4e757127ea0cc59efb4f5e6fa9452936b16e5. Original criteria1/3/5/7/8/9 pass,2/4/6/10 remain blocked. Accepted proof372 boundaries/267 unproven,88 scoped factories. All73 frozen packets/371 identities retained. The complete existing-worklist reconciliation is preserved under that exact source's artifacts/phase-2-proof directory as invariant-reconciliation.json. It retains accepted evidence, precise missing proof, inactive/global scope needing proof and independent later obligations, without creating an exemption or a new audit universe.

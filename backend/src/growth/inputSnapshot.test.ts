@@ -42,6 +42,16 @@ for (const fixture of cases) test(`${fixture.method} retains admitted input acro
       then(resolve: (value: unknown) => unknown) { return Promise.resolve(resolve({ data: [], error: null })); },
     }; return q;
   }, async rpc(name:string,args:Record<string,unknown>) {
+    if(name==='write_growth_record_admitted'){
+      const operations:Record<string,string>={recommend:'recommend',suppress:'suppress',recordAttribution:'attribution',createSegment:'segment',createExperiment:'experiment'};
+      assert.equal(args.p_operation,operations[fixture.method]);
+      assert.equal(args.p_actor,'actor');assert.equal(args.p_tenant,'actor');
+      assert.equal(args.p_project,'project');
+      assert.ok(Array.isArray(args.p_allowed_roles)&&args.p_allowed_roles.length>0);
+      writes++;const row={...(args.p_data as Record<string,unknown>),project_id:args.p_project};
+      for(const[key,value]of Object.entries(fixture.expected))assert.deepEqual(row[key],value,key);
+      throw stop;
+    }
     if(name==='transition_growth_lifecycle'){
       writes++;const row={project_id:args.p_project,subject_id:args.p_subject,lifecycle_state:args.p_state,evidence_reference:args.p_evidence};
       for(const[key,value]of Object.entries(fixture.expected))assert.deepEqual(row[key as keyof typeof row],value,key);

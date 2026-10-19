@@ -7,6 +7,7 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "backend/src/growth/inputSnapshot.test.ts",
     "backend/src/growth/sharedWriteAdmission.test.ts",
     "backend/src/growth/sharedWriteAdmission.local.integration.ts",
     "supabase/migrations/20261019000500_growth_shared_write_admission.sql",
