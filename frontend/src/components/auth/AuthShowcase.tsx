@@ -13,10 +13,10 @@ const STORIES = [
 ] as const;
 
 const CAPABILITIES = [
-  { title: 'Create', description: 'Tasks, images, docs', icon: Plus, slide: 0 },
-  { title: 'Find', description: 'Answers & files', icon: ScanSearch, slide: 2 },
-  { title: 'Research', description: 'Apps & web', icon: Globe2, slide: 3 },
-  { title: 'Code', description: 'Build apps', icon: SquareTerminal, slide: 1 },
+  { title: 'Create', description: 'Tasks, images, docs & slides', icon: Plus, slide: 0 },
+  { title: 'Find', description: 'Answers, files & connected apps', icon: ScanSearch, slide: 2 },
+  { title: 'Research', description: 'Web, sources, travel & insights', icon: Globe2, slide: 3 },
+  { title: 'Code', description: 'Build, test, fix & launch apps', icon: SquareTerminal, slide: 1 },
 ] as const;
 
 export function AuthShowcase() {
@@ -58,7 +58,6 @@ export function AuthShowcase() {
           </button>
         ))}
       </nav>
-      <p className={styles.voicePrompt}>Describe your idea in your language.<br /><strong>Speak with voice, or simply type.</strong></p>
       <div className={styles.copyArea}>
         {STORIES.map((story, index) => (
           <article key={story.title} className={styles.story} hidden={activeSlide !== index}>

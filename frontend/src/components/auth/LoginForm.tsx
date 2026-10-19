@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  ArrowRight,
+  Sparkles,
   Eye,
   EyeOff,
   LockKeyhole,
@@ -18,7 +18,7 @@ import {
   useSearchParams,
 } from 'next/navigation';
 
-import { GitHubIcon } from '@/components/icons/GitHubIcon';
+import { GitHubIcon } from './AuthGitHubIcon';
 
 import { createClient } from '@/lib/supabase/client';
 
@@ -404,7 +404,7 @@ export function LoginForm() {
             : 'Sign in'}
 
           {!loading ? (
-            <ArrowRight
+            <Sparkles
               className="
                 h-4
                 w-4

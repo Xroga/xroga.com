@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { Sparkles } from 'lucide-react';
 
 import type {
   ButtonHTMLAttributes,
@@ -318,6 +319,7 @@ export function AuthSocialButton({
   return (
     <button
       type="button"
+      data-auth-github
       className={cn(
         'flex',
 
@@ -466,6 +468,7 @@ export function AuthSwitchText({
           hover:opacity-75
         "
       >
+        {href.startsWith('/auth/login') ? <Sparkles className="mr-1.5 h-4 w-4" aria-hidden="true" /> : null}
         {linkText}
       </Link>
     </p>

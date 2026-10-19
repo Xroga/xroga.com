@@ -6,12 +6,16 @@ import styles from './AuthShell.module.css';
 
 export function AuthShell({ mode }: { mode: 'signup' | 'login' }) {
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-auth-mode={mode}>
       <div className={styles.particles} aria-hidden="true" />
       <div className={styles.shell}>
         <div className={styles.story}><AuthShowcase /></div>
         <section className={styles.formArea} aria-label="Account access">
           <div className={styles.form}>
+            <div className={styles.voiceCallout}>
+              <h2>Describe your idea in your language.</h2>
+              <p>Speak with voice, or simply type.</p>
+            </div>
             {mode === 'signup' ? <SignupForm /> : <LoginForm />}
           </div>
         </section>

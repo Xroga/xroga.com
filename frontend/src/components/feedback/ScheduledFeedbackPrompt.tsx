@@ -1,7 +1,7 @@
 'use client';
 
 import { CircleHelp, Loader2, Send, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { addFeedback } from '@/lib/feedbackStorage';
@@ -22,13 +22,16 @@ const RATING_OPTIONS = [
 export function ScheduledFeedbackPrompt() {
   const [open, setOpen] = useState(false);
   const [experience, setExperience] = useState('');
-  const [ideas, setIdeas] = useState('');
+  const [interacted, setInteracted] = useState(false);
+  const interactedRef = useRef(false);
   const [rating, setRating] = useState<number>(4);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const check = () => {
       if (shouldShowScheduledFeedback()) {
+        interactedRef.current = false;
+        setInteracted(false);
         setOpen(true);
         markFeedbackPromptShown();
       }
@@ -41,11 +44,25 @@ export function ScheduledFeedbackPrompt() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!open || interacted || experience.length > 0 || submitting) return;
+    const timer = window.setTimeout(() => {
+      if (!interactedRef.current) setOpen(false);
+    }, 10_000);
+    return () => window.clearTimeout(timer);
+  }, [open, interacted, experience, submitting]);
+
+  function keepOpen() {
+    interactedRef.current = true;
+    setInteracted(true);
+  }
+
   if (!open) return null;
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (!experience.trim() && !ideas.trim()) {
+    keepOpen();
+    if (!experience.trim()) {
       toast.error('Share a quick thought or improvement idea');
       return;
     }
@@ -55,7 +72,7 @@ export function ScheduledFeedbackPrompt() {
       await addFeedback({
         rating,
         experience: experience.trim(),
-        featuresWanted: ideas.trim(),
+        featuresWanted: '',
       });
       markFeedbackSubmitted();
       toast.success('Thanks for helping shape Xroga.');
@@ -68,7 +85,8 @@ export function ScheduledFeedbackPrompt() {
   }
 
   return (
-    <aside className={styles.card} aria-label="Xroga feedback">
+    <aside className={styles.card} aria-label="Xroga feedback"
+      onPointerDown={keepOpen} onFocusCapture={keepOpen}>
       <header className={styles.header}>
         <div className={styles.title}>
           <CircleHelp aria-hidden="true" />
@@ -95,15 +113,9 @@ export function ScheduledFeedbackPrompt() {
         </div>
 
         <label className={styles.field}>
-          <span>What worked well?</span>
-          <textarea value={experience} onChange={(event) => setExperience(event.target.value)}
-            placeholder="Tell us about your experience" rows={2} maxLength={2000} disabled={submitting} />
-        </label>
-
-        <label className={styles.field}>
-          <span>What should we improve?</span>
-          <textarea value={ideas} onChange={(event) => setIdeas(event.target.value)}
-            placeholder="Share an idea for Xroga" rows={2} maxLength={2000} disabled={submitting} />
+          <span>Your message</span>
+          <textarea value={experience} onChange={(event) => { keepOpen(); setExperience(event.target.value); }}
+            placeholder="What worked well? What should we improve?" rows={3} maxLength={2000} disabled={submitting} />
         </label>
 
         <button type="submit" className={styles.submitButton} disabled={submitting}>

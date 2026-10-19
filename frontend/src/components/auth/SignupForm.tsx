@@ -23,7 +23,7 @@ import {
   useSearchParams,
 } from 'next/navigation';
 
-import { GitHubIcon } from '@/components/icons/GitHubIcon';
+import { GitHubIcon } from './AuthGitHubIcon';
 
 import { createClient } from '@/lib/supabase/client';
 
