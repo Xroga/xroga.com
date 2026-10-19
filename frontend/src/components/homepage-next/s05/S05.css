@@ -10,7 +10,8 @@
   --hair: rgba(236, 240, 246, 0.08);
   --hair-2: rgba(236, 240, 246, 0.14);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --spring: cubic-bezier(0.3, 1.32, 0.45, 1);
+  /* settles without overshoot: product UI, not a toy */
+  --spring: cubic-bezier(0.2, 0.8, 0.25, 1);
   --emerald: #26d98f;
   --gold: #ffc247;
   --coral: #ff6b57;
@@ -26,15 +27,11 @@
 }
 /* the homepage stylesheet clears section backgrounds; re-assert ours with higher specificity (as S03 and S04 do) */
 .s5.s5.s5 {
-  background-color: #07090e !important;
+  background-color: #05070b !important;
   background-image:
-    linear-gradient(180deg, #050607 0, rgba(5, 6, 7, 0) 200px),
-    linear-gradient(0deg, #050607 0, rgba(5, 6, 7, 0) 140px),
-    radial-gradient(56% 34% at 26% 14%, rgba(78, 118, 255, 0.16), rgba(78, 118, 255, 0) 72%),
-    radial-gradient(34% 24% at 74% 8%, rgba(150, 120, 255, 0.08), rgba(150, 120, 255, 0) 70%),
-    radial-gradient(70% 30% at 50% 86%, rgba(108, 92, 255, 0.11), rgba(108, 92, 255, 0) 74%),
-    radial-gradient(40% 22% at 84% 70%, rgba(49, 208, 255, 0.06), rgba(49, 208, 255, 0) 72%),
-    linear-gradient(180deg, #07090e 0%, #0a0d15 46%, #0b0e17 70%, #07090e 100%) !important;
+    linear-gradient(180deg, #050607 0, rgba(5, 6, 7, 0) 160px),
+    radial-gradient(60% 22% at 30% 0%, rgba(90, 130, 230, 0.07), rgba(90, 130, 230, 0) 80%),
+    linear-gradient(180deg, #05070b 0%, #070a10 55%, #05070b 100%) !important;
 }
 /* static micro grain, so the ink reads as a material rather than a flat fill */
 .s5::before {
@@ -43,7 +40,7 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.05;
+  opacity: 0.03;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 .s5.s5 :is(h2, h3, h4, p, span, b, li) {
@@ -97,37 +94,29 @@
   width: 30px;
   height: 2px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #31d0ff, #7a4dff 55%, #ffc247);
+  background: #6f9bff;
 }
 .s5.s5 .s5-title {
-  font-size: clamp(38px, 4.1vw, 64px);
-  font-weight: 640;
-  line-height: 1.04;
-  letter-spacing: -0.048em;
+  font-size: clamp(36px, 3.7vw, 58px);
+  font-weight: 620;
+  line-height: 1.06;
+  letter-spacing: -0.042em;
   color: var(--pearl) !important;
   text-wrap: balance;
 }
 .s5-title .s5-lead {
-  background: linear-gradient(112deg, #ffffff 0%, #eef2f9 60%, #dfe6f2 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #f5f7fb;
 }
-/* the key phrase: one restrained light, cool blue into lavender */
+/* the key phrase: one solid, quiet accent (no gradient) */
 .s5-title .s5-accent {
-  font-weight: 680;
-  background: linear-gradient(98deg, #e9f1ff 0%, #9cc4ff 38%, #b8a6ff 74%, #d8ccff 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  padding-bottom: 0.06em;
+  color: #9db9ff;
 }
 .s5.s5 .s5-lede {
   max-width: 62rem;
   font-size: clamp(17px, 0.88rem + 0.4vw, 20px);
   font-weight: 500;
   line-height: 1.5;
-  color: #c3ccd9;
+  color: #aeb8c6;
 }
 
 /* ------------------------------------------------------------------ rails */
@@ -235,7 +224,7 @@
   --c2r: color-mix(in oklab, var(--c2) 86%, #0b0f16);
   --c1d: color-mix(in oklab, var(--c1) 46%, #0b0f16);
   --c2d: color-mix(in oklab, var(--c2) 46%, #0b0f16);
-  --notch: #0e131b;
+  --notch: #0b0e14;
   position: relative;
   display: grid;
   align-content: start;
@@ -244,44 +233,27 @@
   height: var(--tile-h);
   padding: 24px 24px 0;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 14px;
   scroll-snap-align: start;
-  background: linear-gradient(180deg, #121821 0%, #0c1017 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(236, 240, 246, 0.07),
-    inset 0 0 0 1px rgba(236, 240, 246, 0.07);
-  transition: box-shadow 200ms ease;
+  background: #0b0e14;
+  box-shadow: inset 0 0 0 1px rgba(236, 240, 246, 0.08);
+  transition:
+    background 180ms ease,
+    box-shadow 180ms ease;
   cursor: default;
 }
-/* the active surface: lifts and catches a little of the tile's own colour from below the art */
-.s5-tile::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  background:
-    radial-gradient(90% 70% at 72% 100%, color-mix(in oklab, var(--c1) 22%, transparent), transparent 70%),
-    linear-gradient(180deg, #1a212c 0%, #141a23 100%);
-  opacity: 0;
-  transition: opacity 180ms ease;
-}
 .s5-tile[data-on] {
-  --notch: #161c25;
-  box-shadow:
-    inset 0 1px 0 rgba(236, 240, 246, 0.1),
-    inset 0 0 0 1px color-mix(in oklab, var(--c1) 34%, rgba(236, 240, 246, 0.1));
-}
-.s5-tile[data-on]::before {
-  opacity: 1;
+  --notch: #161a21;
+  background: #161a21;
+  box-shadow: inset 0 0 0 1px rgba(236, 240, 246, 0.14);
 }
 .s5.s5 .s5-tileTitle {
   position: relative;
   z-index: 1;
-  font-size: 21px;
-  font-weight: 680;
-  line-height: 1.18;
-  letter-spacing: -0.026em;
+  font-size: 20px;
+  font-weight: 640;
+  line-height: 1.2;
+  letter-spacing: -0.022em;
   color: #ffffff;
 }
 .s5.s5 .s5-tileLine {
@@ -357,10 +329,13 @@
 }
 .s5-glyph {
   fill: none;
-  stroke: rgba(10, 12, 22, 0.55);
-  stroke-width: 4.5;
+  stroke: rgba(10, 12, 22, 0.5);
+  stroke-width: 3.2;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+.s5-p3 + .s5-glyph {
+  stroke: #9aa4b4;
 }
 .s5-paper.s5-glyph {
   fill: none;
@@ -383,147 +358,125 @@
 }
 
 /* ---- 01 Travel & Bookings ---- */
-.s5-route-rest {
+.s5-flightRest {
   fill: none;
   stroke: var(--c1d);
-  stroke-width: 5;
-  stroke-dasharray: 1 11;
+  stroke-width: 3;
+  stroke-dasharray: 2 9;
   stroke-linecap: round;
 }
-.s5-route {
+.s5-flight {
   fill: none;
   stroke: var(--c1);
-  stroke-width: 5;
+  stroke-width: 3;
   stroke-linecap: round;
+  transition-duration: 950ms;
+  transition-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
 }
-.s5-dest {
+.s5-origin {
   fill: none;
-  stroke: var(--c2r);
-  stroke-width: 5;
+  stroke: var(--c1r);
+  stroke-width: 3.5;
+}
+.s5-code {
+  fill: #232a35;
+}
+.s5-destRing {
+  fill: none;
+  stroke: var(--c2d);
+  stroke-width: 3;
   transform-origin: center;
   transition:
-    stroke 220ms ease 520ms,
-    transform 320ms var(--spring) 520ms;
+    stroke 220ms ease 880ms,
+    transform 320ms var(--ease) 880ms;
 }
-[data-on] .s5-dest {
+[data-on] .s5-destRing {
   stroke: var(--c2);
-  transform: scale(1.12);
+  transform: scale(1.15);
 }
-.s5-dest-dot {
-  transform-origin: center;
-  transition: transform 300ms var(--spring) 560ms;
-}
-[data-on] .s5-dest-dot {
-  transform: scale(1.3);
-}
-.s5-ripple {
-  fill: none;
-  stroke: var(--c2);
-  stroke-width: 3;
-  opacity: 0;
-  transform-origin: center;
-}
-[data-on] .s5-ripple {
-  animation: s5Ripple 1500ms ease-out 640ms infinite;
-}
-@keyframes s5Ripple {
-  0% { opacity: 0.75; transform: scale(1); }
-  100% { opacity: 0; transform: scale(2.1); }
+/* the airliner rides the route (offset-path) and turns with it; at rest it waits at the origin */
+.s5-planeG {
+  transform-box: view-box;
+  /* waits just clear of the origin; lands just short of the destination ring */
+  offset-distance: 17%;
+  offset-rotate: auto;
+  scale: 1.2;
 }
 .s5-plane {
-  opacity: 0;
-  transform-box: view-box;
+  fill: #f2f5fa;
 }
-[data-on] .s5-plane {
-  animation: s5Plane 720ms var(--ease) forwards;
+[data-on] .s5-planeG {
+  animation: s5Fly 950ms cubic-bezier(0.45, 0, 0.25, 1) forwards;
 }
-@keyframes s5Plane {
-  0% { opacity: 1; transform: translate(152px, 128px) rotate(-71deg); }
-  25% { transform: translate(170px, 93.6px) rotate(-52deg); }
-  50% { transform: translate(195.2px, 69.2px) rotate(-30deg); }
-  75% { transform: translate(225.4px, 55.7px) rotate(-8deg); }
-  90% { opacity: 1; transform: translate(252px, 54px) rotate(6deg); }
-  100% { opacity: 0; transform: translate(258px, 54px) rotate(8deg); }
+@keyframes s5Fly {
+  from { offset-distance: 17%; }
+  to { offset-distance: 73%; }
 }
-.s5-ticket {
-  transform-origin: center;
-  transition: transform 460ms var(--spring);
+/* back at the origin after leaving, it fades in rather than flying backwards */
+.s5-tile:not([data-on]) .s5-planeG {
+  animation: s5Return 320ms ease both;
 }
-[data-on] .s5-ticket {
-  transform: translateY(-7px) rotate(-3deg);
-}
-.s5-notch {
-  fill: var(--notch);
-  transition: fill 180ms ease;
+@keyframes s5Return {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ---- 02 Email & Calendars ---- */
-.s5-env {
-  transform-origin: center;
-  transform: rotate(-7deg);
-  transition: transform 420ms var(--spring);
-}
-[data-on] .s5-env {
-  transform: none;
-}
-/* the letter rises out of the envelope (inner), then travels into the calendar slot (outer); both reverse on leave */
-.s5-letterIn {
-  transform: translateY(18px);
-  transition: transform 320ms var(--ease) 120ms;
-}
-[data-on] .s5-letterIn {
-  transform: translateY(-16px);
-}
-.s5-letter {
-  transform-box: view-box;
-  transform-origin: 30px 24px;
-  transition:
-    transform 560ms var(--ease) 420ms,
-    opacity 200ms ease 860ms;
-}
-[data-on] .s5-letter {
-  transform: translate(176px, 66px) scale(0.6);
-  opacity: 0;
-}
-.s5-env-front {
-  fill: color-mix(in oklab, var(--c1) 74%, #0b0f16);
+.s5-calPin { fill: #c9d1dd; }
+.s5-cell { fill: #222a35; }
+.s5-envFold {
+  fill: none;
+  stroke: rgba(10, 12, 22, 0.28);
+  stroke-width: 2.5;
+  stroke-linecap: round;
 }
 .s5-flap {
-  fill: none;
-  stroke: var(--c2r);
-  stroke-width: 5;
-  stroke-linecap: round;
+  fill: color-mix(in oklab, var(--c1) 72%, #ffffff);
+  stroke: color-mix(in oklab, var(--c1) 60%, #0b0f16);
+  stroke-width: 2;
   stroke-linejoin: round;
   transform-origin: 50% 0;
-  transition: transform 260ms var(--ease);
+  transition: transform 300ms var(--ease);
 }
 [data-on] .s5-flap {
-  transform: scaleY(-1);
+  transform: scaleY(-0.55);
 }
-.s5-ev {
+/* the message leaves the open envelope and lands in its slot as an event */
+.s5-evChip {
+  fill: var(--c2);
   opacity: 0;
-  transform-origin: center;
-  transform: scale(0.4);
-  transition:
-    opacity 200ms ease 900ms,
-    transform 360ms var(--spring) 900ms;
-}
-.s5-ev-time {
-  fill: rgba(10, 12, 22, 0.5);
-  opacity: 0;
-  transition: opacity 200ms ease 1040ms;
-}
-[data-on] :is(.s5-ev, .s5-ev-time) {
-  opacity: 1;
   transform: none;
+  transition:
+    transform 520ms cubic-bezier(0.45, 0, 0.25, 1) 220ms,
+    opacity 160ms ease 220ms;
+}
+[data-on] .s5-evChip {
+  opacity: 1;
+  transform: translate(156px, 4px) scale(0.86, 1.66);
+}
+.s5-slotHl {
+  fill: var(--c2);
+  opacity: 0;
+  transition: opacity 200ms ease 720ms;
+}
+[data-on] .s5-slotHl {
+  opacity: 1;
+}
+[data-on] .s5-evChip {
+  transition:
+    transform 520ms cubic-bezier(0.45, 0, 0.25, 1) 220ms,
+    opacity 160ms ease 220ms;
+  animation: s5ChipOut 160ms ease 760ms forwards;
+}
+@keyframes s5ChipOut {
+  to { opacity: 0; }
 }
 
 /* ---- 03 CRM & Support ---- */
 .s5-link-rest {
   fill: none;
-  stroke: var(--c1d);
-  stroke-width: 4;
-  stroke-dasharray: 1 8;
+  stroke: #262d38;
+  stroke-width: 3;
   stroke-linecap: round;
 }
 .s5-link {
@@ -563,11 +516,11 @@
 /* ---- 04 Payments & Accounting ---- */
 .s5-card {
   transform-origin: center;
-  transform: translateY(6px) rotate(-9deg);
-  transition: transform 560ms var(--spring);
+  transform: translateY(4px) rotate(-6deg);
+  transition: transform 480ms var(--ease);
 }
 [data-on] .s5-card {
-  transform: translateX(-6px);
+  transform: translateX(-4px);
 }
 .s5-chip { fill: #b8862a; }
 .s5-wave { fill: none; stroke: rgba(10, 12, 22, 0.32); stroke-width: 3.2; stroke-linecap: round; }
@@ -628,11 +581,14 @@
   stroke-dasharray: 4 5;
 }
 .s5-mod {
-  transform-origin: center;
-  transform: translate(var(--tx), var(--ty)) rotate(var(--r));
-  transition: transform 640ms var(--spring) calc(var(--i) * 55ms);
+  opacity: var(--o);
+  transform: translate(var(--tx), var(--ty));
+  transition:
+    transform 420ms var(--ease) calc(var(--i) * 140ms),
+    opacity 300ms ease calc(var(--i) * 140ms);
 }
 [data-on] .s5-mod {
+  opacity: 1;
   transform: none;
 }
 .s5-preset {
@@ -685,13 +641,7 @@
 .s5-trig {
   transform-origin: center;
 }
-[data-on] .s5-trig {
-  animation: s5Beat 1800ms var(--ease) infinite;
-}
-@keyframes s5Beat {
-  0% { transform: scale(1.1); }
-  20%, 100% { transform: scale(1); }
-}
+
 .s5-cond {
   fill: #252d39;
   stroke: var(--c2d);
@@ -873,9 +823,8 @@
 }
 .s5-flowRest {
   fill: none;
-  stroke: var(--c1d);
-  stroke-width: 4;
-  stroke-dasharray: 1 9;
+  stroke: #262d38;
+  stroke-width: 3;
   stroke-linecap: round;
 }
 .s5-flow {
@@ -916,9 +865,8 @@
 /* ---- 09 Web3 & Blockchain ---- */
 .s5-chainRest {
   fill: none;
-  stroke: var(--c2d);
-  stroke-width: 4;
-  stroke-dasharray: 1 9;
+  stroke: #262d38;
+  stroke-width: 3;
   stroke-linecap: round;
 }
 .s5-chain {
@@ -939,7 +887,7 @@
 }
 @keyframes s5Bob {
   0%, 100% { transform: none; }
-  40% { transform: translateY(-12px); }
+  40% { transform: translateY(-6px); }
 }
 .s5-drop {
   opacity: 0;
@@ -1026,11 +974,6 @@
 [data-on] .s5-flag {
   transform: none;
   transition-delay: 1100ms;
-  animation: s5Wave 1600ms ease-in-out 1500ms infinite;
-}
-@keyframes s5Wave {
-  0%, 100% { transform: skewY(0deg); }
-  50% { transform: skewY(-6deg); }
 }
 
 /* ---- 11 Desktop Applications ---- */
@@ -1055,13 +998,7 @@
 [data-on] .s5-w3 {
   transform: translate(26px, -44px);
 }
-[data-on] .s5-app {
-  animation: s5Hop 520ms var(--ease) calc(700ms + var(--i) * 90ms);
-}
-@keyframes s5Hop {
-  0%, 100% { transform: none; }
-  45% { transform: translateY(-7px); }
-}
+
 
 /* ---- 12 Domains & Infrastructure ---- */
 .s5-lockBg {
@@ -1092,9 +1029,8 @@
 }
 .s5-routeRest {
   fill: none;
-  stroke: var(--c1d);
-  stroke-width: 5;
-  stroke-dasharray: 1 10;
+  stroke: #262d38;
+  stroke-width: 3;
   stroke-linecap: round;
 }
 .s5-net {
