@@ -679,6 +679,27 @@ test('real terminal autosave collision denies foreign id and preserves transcrip
   const stored=await admin.from('terminal_sessions').select('user_id,title,messages').eq('id',id).single();assert.equal(stored.error,null);assert.equal(stored.data?.user_id,owner.id);assert.equal(stored.data?.title,'Owner fixture');
 });
 
+test('real terminal endpoint list restore update delete and replay retain exact authenticated owner records',async()=>{
+  const [owner,other]=users,repo=`fixture/${randomUUID()}`,ids=users.map(()=>`endpoint-${randomUUID()}`);
+  for(const [index,user]of users.entries()){
+    const response=await request(`/api/terminal-sessions/${ids[index]}`,user.token,'PUT',{githubRepoName:repo,title:`Synthetic owner ${index}`,userId:users[1-index].id,messages:[{role:'user',content:`PRIVATE_TERMINAL_${index}`}]});assert.equal(response.status,200);
+    assert.ok(!(await response.text()).includes(`PRIVATE_TERMINAL_${index}`),'Autosave returns metadata, not transcripts');
+  }
+  const read=async(id:string)=>{const result=await admin.from('terminal_sessions').select('*').eq('id',id).single();assert.equal(result.error,null);return result.data;};
+  const foreignBefore=await read(ids[1]);
+  for(const [path,method]of [['/api/terminal-sessions','GET'],[`/api/terminal-sessions/${ids[0]}`,'GET'],[`/api/terminal-sessions/${ids[0]}`,'PUT'],[`/api/terminal-sessions/${ids[0]}`,'DELETE']] as const)assert.equal((await request(path,undefined,method)).status,401);
+  const listed=await request(`/api/terminal-sessions?repo=${encodeURIComponent(repo)}&userId=${other.id}`,owner.token);assert.equal(listed.status,200);
+  const listing=await listed.text();assert.ok(listing.includes(ids[0]));assert.ok(!listing.includes(ids[1]));assert.ok(!listing.includes('PRIVATE_TERMINAL_'));
+  const restored=await request(`/api/terminal-sessions/${ids[0]}?user_id=${other.id}`,owner.token);assert.equal(restored.status,200);assert.ok((await restored.text()).includes('PRIVATE_TERMINAL_0'));
+  assert.equal((await request(`/api/terminal-sessions/${ids[1]}`,owner.token)).status,404);
+  const update={githubRepoName:'fixture/attempted-relocation',title:'Own updated terminal',user_id:other.id,messages:[{role:'user',content:'OWN_UPDATED_TRANSCRIPT'}]};
+  const responses=await Promise.all([request(`/api/terminal-sessions/${ids[0]}`,owner.token,'PUT',update),request(`/api/terminal-sessions/${ids[1]}`,owner.token,'DELETE',{userId:other.id})]);assert.ok(responses.every(response=>response.status===200));
+  const ownReceipt=await read(ids[0]);assert.equal(ownReceipt.user_id,owner.id);assert.equal(ownReceipt.github_repo_name,repo);assert.equal(ownReceipt.title,update.title);assert.deepEqual(ownReceipt.messages,update.messages);
+  assert.deepEqual(await read(ids[1]),foreignBefore);
+  for(let attempt=0;attempt<2;attempt++)assert.equal((await request(`/api/terminal-sessions/${ids[0]}`,owner.token,'DELETE',{user_id:other.id})).status,200);
+  const removed=await admin.from('terminal_sessions').select('id').eq('id',ids[0]);assert.equal(removed.error,null);assert.deepEqual(removed.data,[]);assert.deepEqual(await read(ids[1]),foreignBefore);
+});
+
 test('real run trace collision and concurrent creation preserve trace ownership and private evidence',async()=>{
   const [owner,other]=users;
   await persistOwnedRunTrace(admin,other.context,{run_id:other.run,user_id:other.id,stages:[{message:'FOREIGN_TRACE_CANARY'}],meta:{fixture:true}});
@@ -914,6 +935,25 @@ test('notification list and mutations cannot read or alter another owner notific
   const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${owner.token}`}},auth:{persistSession:false,autoRefreshToken:false}});
   const hidden=await client.from('notifications').select('id').eq('id',foreign);assert.equal(hidden.error,null);assert.deepEqual(hidden.data,[]);
   assert.equal((await request('/api/notifications')).status,401);
+});
+
+test('real notification count bulk read delete and replay preserve the issued actor and exact foreign receipts',async()=>{
+  const [owner,other]=users;
+  const own=await insert('notifications',{user_id:owner.id,title:'OWN_BULK_NOTIFICATION',message:'Synthetic fixture',read:false});
+  const foreign=await insert('notifications',{user_id:other.id,title:'FOREIGN_BULK_NOTIFICATION',message:'Synthetic fixture',read:false});
+  const readForeign=async()=>{const row=await admin.from('notifications').select('*').eq('id',foreign).single();assert.equal(row.error,null);return row.data;};
+  const foreignBefore=await readForeign();
+  const actualCount=await admin.from('notifications').select('id',{count:'exact',head:true}).eq('user_id',owner.id).eq('read',false);assert.equal(actualCount.error,null);
+  const count=await request(`/api/notifications/unread-count?user_id=${other.id}`,owner.token);assert.equal(count.status,200);assert.deepEqual(await count.json(),{count:actualCount.count});
+  for(const [path,method]of [['/api/notifications/unread-count','GET'],['/api/notifications/read-all','PATCH'],[`/api/notifications/${own}`,'DELETE']] as const)assert.equal((await request(path,undefined,method)).status,401);
+  const bulk=await request('/api/notifications/read-all',owner.token,'PATCH',{user_id:other.id,userId:other.id});assert.equal(bulk.status,200);
+  const ownReceipt=await admin.from('notifications').select('id,user_id,read').eq('id',own).single();assert.equal(ownReceipt.error,null);assert.deepEqual(ownReceipt.data,{id:own,user_id:owner.id,read:true});
+  const afterCount=await request('/api/notifications/unread-count',owner.token);assert.equal(afterCount.status,200);assert.deepEqual(await afterCount.json(),{count:0});
+  assert.deepEqual(await readForeign(),foreignBefore);
+  const parallel=await Promise.all([request(`/api/notifications/${own}`,owner.token,'DELETE'),request('/api/notifications/read-all',owner.token,'PATCH',{user_id:other.id}),request(`/api/notifications/${foreign}`,owner.token,'DELETE')]);assert.ok(parallel.every(response=>response.status===200));
+  assert.equal((await request(`/api/notifications/${own}`,owner.token,'DELETE')).status,200);
+  const removed=await admin.from('notifications').select('id').eq('id',own);assert.equal(removed.error,null);assert.deepEqual(removed.data,[]);
+  assert.deepEqual(await readForeign(),foreignBefore);
 });
 
 test('profile activity keeps own and project-less entries but redacts a corrupt foreign project join',async()=>{

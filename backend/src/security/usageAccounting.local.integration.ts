@@ -4,8 +4,33 @@ import { test } from 'node:test';
 import pg from 'pg';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { recordCompletedProviderUsage } from '../ai/postCompletionAccounting.js';
+import {persistUsageAccounting} from '../ai/usageAccounting.js';
+import {createTenantContext,type TenantContext} from './tenantContext.js';
 
 export function registerUsageAccountingTests(admin: SupabaseClient): void {
+  test('real issued accounting wrapper isolates two owners with the same receipt and rejects forged context without writes',async t=>{
+    assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
+    const actors:string[]=[];
+    t.after(async()=>{for(const actor of actors)assert.equal((await admin.auth.admin.deleteUser(actor)).error,null);});
+    const period=`${new Date().toISOString().slice(0,7)}-01`;
+    for(let index=0;index<2;index++){
+      const created=await admin.auth.admin.createUser({email:`accounting-actor-${randomUUID()}@example.invalid`,email_confirm:true});assert.equal(created.error,null);assert.ok(created.data.user);actors.push(created.data.user.id);
+      assert.equal((await admin.from('user_token_usage').upsert({user_id:created.data.user.id,input_tokens:0,output_tokens:0,model_usage:{},spent_usd:0,rollover_usd:0,plan_tier:'free',plan_budget_usd:0,quota_period_start:period})).error,null);
+    }
+    const contexts=actors.map(userId=>createTenantContext({userId,via:'persisted_owner'}));
+    const input={receiptId:randomUUID(),modelId:'kimi_k3',poolRole:'kimi_k3',inputTokens:3,outputTokens:2,costUsd:0.1};
+    const receipts=await Promise.all(contexts.map((context,index)=>persistUsageAccounting(context,{...input,...{userId:actors[1-index]}})));
+    assert.notEqual(receipts[0].ledgerId,receipts[1].ledgerId);
+    for(const [index,receipt]of receipts.entries()){assert.equal(receipt.userId,actors[index]);assert.equal(receipt.receiptId,input.receiptId);assert.equal(receipt.usage.user_id,actors[index]);assert.equal(receipt.inputTokens,input.inputTokens);assert.equal(receipt.outputTokens,input.outputTokens);assert.equal(receipt.costUsd,input.costUsd);assert.equal(receipt.replayed,false);}
+    const read=async()=>{const usage=await admin.from('user_token_usage').select('*').in('user_id',actors).order('user_id');const ledger=await admin.from('ai_usage_ledger').select('*').in('user_id',actors).order('user_id');assert.equal(usage.error,null);assert.equal(ledger.error,null);return{usage:usage.data,ledger:ledger.data};};
+    const before=await read();assert.equal(before.ledger?.length,2);
+    await assert.rejects(persistUsageAccounting({...contexts[0],userId:actors[1]} as TenantContext,{...input,receiptId:randomUUID()}),{code:'TENANT_AUTH_REQUIRED'});
+    assert.deepEqual(await read(),before);
+    const replay=await persistUsageAccounting(contexts[0],input);assert.equal(replay.replayed,true);assert.equal(replay.ledgerId,receipts[0].ledgerId);assert.equal(replay.userId,actors[0]);
+    assert.deepEqual(await read(),before);
+    await assert.rejects(persistUsageAccounting(contexts[0],{...input,inputTokens:4}),{code:'USAGE_ACCOUNTING_UNCERTAIN'});
+    assert.deepEqual(await read(),before);
+  });
   test('completed provider consumer writes one atomic ledger receipt and fails truthfully when accounting owner disappears', async t => {
     assert.equal(process.env.XB01_DISPOSABLE_SUPABASE, '1'); assert.equal(process.env.SUPABASE_URL, 'http://127.0.0.1:54321');
     const created = await admin.auth.admin.createUser({ email: `completed-accounting-${randomUUID()}@example.invalid`, email_confirm: true });

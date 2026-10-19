@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b62c82aec655335169a5a7326f1a8afa4fecdfa3",
+  "source_sha": "f589a05b2f85187e11ebb3da9dfddc397317ffca",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13320,7 +13320,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "ba498831fe72f503b7c8c9d72038178a70f7532a6fbab10a25026644d21c110c"
+      "sha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13328,7 +13328,7 @@
     },
     {
       "path": "backend/src/security/usageAccounting.local.integration.ts",
-      "sha256": "9f7216ceb18b15f31979f40e6da296321190d7b3a2bbd5150986e1aca960977f"
+      "sha256": "4ef980f751a3f446aaee19dcbe0060603dafd7715f0c103eef0187daba5e7604"
     },
     {
       "path": "backend/src/security/vercelRefreshAccount.local.integration.ts",
@@ -19389,42 +19389,42 @@
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 782,
+      "line": 803,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 840,
+      "line": 861,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1508,
+      "line": 1548,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1526,
+      "line": 1566,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1534,
+      "line": 1574,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1538,
+      "line": 1578,
       "credentialsInUrl": false
     },
     {
@@ -19438,14 +19438,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/usageAccounting.local.integration.ts",
-      "line": 10,
+      "line": 12,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/usageAccounting.local.integration.ts",
-      "line": 33,
+      "line": 35,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/usageAccounting.local.integration.ts",
+      "line": 58,
       "credentialsInUrl": false
     },
     {
@@ -25724,21 +25731,21 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1007,
+      "line": 1047,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1344,
+      "line": 1384,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/usageAccounting.local.integration.ts",
-      "line": 23,
+      "line": 48,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -10584,7 +10584,8 @@
       ],
       "callers": [
         "backend/src/ai/postCompletionAccounting.ts:4",
-        "backend/src/ai/usageAccounting.test.ts:3"
+        "backend/src/ai/usageAccounting.test.ts:3",
+        "backend/src/security/usageAccounting.local.integration.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -10597,7 +10598,8 @@
         "backend/src/ai/usageAccounting.ts#UsageAccountingReceipt"
       ],
       "testCoverage": [
-        "backend/src/ai/usageAccounting.test.ts"
+        "backend/src/ai/usageAccounting.test.ts",
+        "backend/src/security/usageAccounting.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21359,6 +21361,7 @@
         "backend/src/security/tenantIsolation.integration.test.ts:15",
         "backend/src/security/tenantIsolation.local.integration.ts:8",
         "backend/src/security/terminalIdentity.local.integration.ts:5",
+        "backend/src/security/usageAccounting.local.integration.ts:8",
         "backend/src/security/workerProjectAdmission.test.ts:7",
         "backend/src/services/ensureUserRecords.receipt.test.ts:5",
         "backend/src/services/ensureUserRecords.ts:4",
@@ -21436,6 +21439,7 @@
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.test.ts",
         "backend/src/services/ensureUserRecords.receipt.test.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
@@ -23644,7 +23648,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:838",
+        "backend/src/security/tenantIsolation.local.integration.ts:859",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -104801,7 +104805,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 72,
+      "declaredTests": 74,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104815,7 +104819,7 @@
     {
       "id": "test-suite:afee1b52b046b94f940e",
       "sourcePath": "backend/src/security/usageAccounting.local.integration.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
