@@ -252,7 +252,9 @@ export class GrowthService {
     const segment = await query<Row | null>(this.db.from('growth_segments').select('id').eq('id', input.segmentId).eq('tenant_id', tenantId).eq('project_id', input.projectId).eq('status', 'active').maybeSingle(), 'Segment unavailable', null);
     if (!segment) throw new GrowthServiceError('not_found', 'Segment not found', 404);
     if (input.channel === 'email' && !process.env.RESEND_API_KEY && !process.env.BREVO_API_KEY) throw new GrowthServiceError('external_setup_required', 'No email provider is configured', 409);
-    const rows = await query<Row[]>(this.db.from('growth_campaigns').insert({ tenant_id: tenantId, project_id: input.projectId, segment_id: input.segmentId, name: input.name, channel: input.channel, status: 'approval_required', template_key: input.templateKey, consent_required: true }).select('*'), 'Campaign could not be stored');
+    const record={segment_id:input.segmentId,name:input.name,channel:input.channel,status:'approval_required',template_key:input.templateKey,consent_required:true};
+    const {data:created,error:createError}=await this.db.rpc('write_growth_record_admitted',{p_actor:userId,p_tenant:tenantId,p_project:input.projectId,p_operation:'campaign_create',p_data:record,p_allowed_roles:writeRoles(true)});
+    const rows=[admittedWriteReceipt(created,createError,tenantId,input.projectId,record)];
     const campaign = rows[0];
     if (rows.length !== 1 || !campaign || typeof campaign.id !== 'string' || !campaign.id
       || campaign.tenant_id !== tenantId || campaign.project_id !== input.projectId || campaign.segment_id !== input.segmentId
@@ -275,9 +277,8 @@ export class GrowthService {
       throw new GrowthServiceError('idempotency_conflict', 'Campaign action does not match the requested campaign', 409);
     }
     const reference = `operations_action:${action.id}`;
-    const linked = await query<Row[]>(this.db.from('growth_campaigns').update({ approval_id: null, evidence_reference: reference })
-      .eq('id', campaign.id).eq('tenant_id', tenantId).eq('project_id', input.projectId)
-      .eq('version', campaign.version).eq('status', 'approval_required').select('*'), 'Campaign action link failed');
+    const {data:linkedRow,error:linkError}=await this.db.rpc('write_growth_record_admitted',{p_actor:userId,p_tenant:tenantId,p_project:input.projectId,p_operation:'campaign_link',p_data:{...campaign,action_id:action.id,action_key:input.idempotencyKey},p_allowed_roles:writeRoles(true)});
+    const linked=[admittedWriteReceipt(linkedRow,linkError,tenantId,input.projectId,{...record,approval_id:null,evidence_reference:reference})];
     const receipt = linked[0];
     if (linked.length !== 1 || !receipt || receipt.id !== campaign.id || receipt.tenant_id !== tenantId
       || receipt.project_id !== input.projectId || receipt.version !== campaign.version || receipt.status !== 'approval_required'

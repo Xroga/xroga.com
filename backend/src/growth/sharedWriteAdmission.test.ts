@@ -43,3 +43,11 @@ test('all admitted growth operations verify exact owner parent and submitted per
  for(const call of calls){mode='own';assert.equal((await call()).id,'generated');for(mode of ['foreign-owner','foreign-project','changed','missing','error'])await assert.rejects(call(),{code:'storage_unavailable'});}
  mode='own';const suppression=await calls[1]();assert.ok(!('tenant_id'in suppression));assert.ok(!('address_hash'in suppression));
 });
+
+test('pending campaign creation cannot attempt a direct write after revoked preflight authority',async()=>{
+ let writes=0;
+ const db={from(table:string){const q={select(){return q;},eq(){return q;},insert(){writes++;throw new Error('stale direct campaign insert');},async maybeSingle(){return{data:table==='projects'?{id:'project',user_id:'owner'}:table==='profiles'?{role:'member'}:table==='operations_memberships'?{role:'operator'}:table==='growth_segments'?{id:'segment'}:null,error:null};},then(resolve:(v:unknown)=>unknown){return Promise.resolve(resolve({data:[],error:null}));}};return q;},async rpc(){return{data:null,error:{code:'42501'}};}};
+ const service=new GrowthService(db as unknown as SupabaseClient);
+ await assert.rejects(service.createCampaign('actor',{projectId:'project',segmentId:'segment',name:'fixture',channel:'in_app',templateKey:'fixture',idempotencyKey:'fixture'}),{code:'forbidden'});
+ assert.equal(writes,0);
+});

@@ -814,7 +814,7 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-f60c4c5e87c85599",
+      "id": "OB-f1c142516a4785eb",
       "callerIds": [
         "521d206b28f660c52ca7",
         "743b3ec38209de66a8b6",
@@ -835,22 +835,22 @@
         "76c55e5deb7620670685",
         "96be9ed395634c138d83",
         "8dad92c642517f05ae1f",
-        "2b970cf4760c499ea3ec",
-        "319d99b290b73dd40941",
-        "37a9769c02ecb5ef161f",
-        "ee9c97c6612d1a4f5903",
-        "92c63a0584bbe986fcfc",
-        "6d5b3f7366a86fff6756",
-        "d86c34824541642c0dfa",
-        "ca9156cdb49711d8f760",
-        "13ee7a8d094ff6ca42d4",
-        "8dca102a2431e9d73d9f",
-        "a482ccbd1145347e2a16",
-        "6703074fd634edb06e65",
-        "14409124ccb9fa5cbb77"
+        "14bd3db0414cf876a35b",
+        "200047d1798ccfd468b9",
+        "8600abc47537b2cf1c9b",
+        "10c1d1d8765eab85bc19",
+        "f0f58b1e06ee91798dac",
+        "3bdc281a980196f12202",
+        "56c3de7b9aaeb0fd5c08",
+        "82223c2c7121f34b24ee",
+        "433b2c2c1af6b0381df9",
+        "94f33371236cc89ec8ee",
+        "43c5eaf5044f58e2679c",
+        "4b2dc212df4188628ab4",
+        "4f53c9e6b293715ac217"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -7756,12 +7756,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-559acd1614ba00eb",
+      "id": "OB-2ec862d4324eac0d",
       "callerIds": [
-        "567fdc2e4f1b3cfdb8dd"
+        "8b7dee00f82b7660ecc3"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -7818,7 +7818,7 @@
         "726c74dca42ecc8a2ffd"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -7906,7 +7906,7 @@
         "1f88e320c84b806fa013"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -7932,7 +7932,7 @@
         "5047c3d82335ddbd42e2"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -7958,7 +7958,7 @@
         "2ad67fd0b03d4dd10360"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -7984,7 +7984,7 @@
         "811dc82be398940450c6"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8203,12 +8203,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-bc59e7c910ae5fc0",
+      "id": "OB-295dab63efd38102",
       "callerIds": [
-        "604010da4337f9bee501"
+        "9c0abc2007b05036c549"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8474,7 +8474,7 @@
         "47ea62e2147abe7416e2"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8504,7 +8504,7 @@
         "fd061df7c98bd653a7a4"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8568,7 +8568,7 @@
         "7918840495c068d573ff"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8593,12 +8593,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-25070b9f14b58b61",
+      "id": "OB-05f0748f86eb0784",
       "callerIds": [
-        "e779f5d2f255e9a49bc8"
+        "3377b5be8d0cd2c38534"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -8623,12 +8623,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-3f222bf567416be8",
+      "id": "OB-519cc338e9eb8915",
       "callerIds": [
-        "df910d8ba64c84e0aa86"
+        "c18fe72f81a6751f45e3"
       ],
       "path": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [

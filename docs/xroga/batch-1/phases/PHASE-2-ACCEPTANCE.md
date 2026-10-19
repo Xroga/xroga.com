@@ -1,5 +1,11 @@
 # Phase 2 acceptance
 
+## Complete shared growth mutation boundary
+
+The same original growth packet still contained direct pending-campaign insert and action-link writes. A focused service-boundary test reproduced a direct campaign insert after the synthetic preflight path rather than decisive current-authority denial. This is an attempted-write reproduction, not a claim of a live database exploit. Both operations now reuse the bounded shared admission routine. Creation locks the current active owned segment. Linking locks the current campaign and canonical action, matching owner/project/requester/target/version/idempotency before writing evidence. No approval, delivery engine, table, endpoint or permission was added. Existing pending/orphan failure semantics remain unchanged and no message is delivered by creation.
+
+All42 focused growth tests and the complete backend typecheck pass. Synthetic SQL47 assertions and migration reapply pass, not real concurrency proof. Existing real campaign case is expanded with seven observed authority/parent waits, exact unchanged records, admitted link replay and insert rollback. The original five-operation database proof at949 is preserved. New campaign assertions require changed-source disposable CI. All44 original growth caller sites and73 frozen packets remain present, with two explicit historical direct-write-to-RPC mappings. No caller is certified by this source rebinding. Remaining read/global policy and later-phase obligations stay separate.
+
 ## Grouped database result and regression-fixture correction
 
 Source94967257fe3360e674dd46d375c61d053e93bb37 disposable39251650633 succeeded, including the new shared growth admission case and expanded collection/detail HTTP assertions. The exact redacted catalog and logs are retained in artifacts/9496-disposable. Ten other standalone workflows succeeded. Aggregate39251650632 failed on both branch and integrated source during backend unit tests:3077 passed,5 failed,0 skipped out of3082. All five failures are in the existing inputSnapshot fixture, whose RPC stub handled only the three older transactional functions. It incorrectly asserted that the new shared admission RPC must be record_growth_experiment_outcome. This is a fixture mismatch, not an accepted green full baseline.

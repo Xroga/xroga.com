@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "94967257fe3360e674dd46d375c61d053e93bb37",
+  "source_sha": "61bab7ec5541bcab890594fbef619dac6106a772",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12563,7 +12563,7 @@
     },
     {
       "path": "backend/src/growth/campaignReceipt.local.integration.ts",
-      "sha256": "2b1e547c618b6d4af9d5bfd51f5994476b31e3faa8d088de421bde9af448f48d"
+      "sha256": "1137ffe7191098676fcb299014efb94699df8ce9dd9ef8758d6a39a011fcfeca"
     },
     {
       "path": "backend/src/growth/delivery.local.integration.ts",
@@ -12583,7 +12583,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8"
+      "sha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74"
     },
     {
       "path": "backend/src/growth/identity.local.integration.ts",
@@ -18434,7 +18434,7 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/growth/campaignReceipt.local.integration.ts",
-      "line": 12,
+      "line": 13,
       "credentialsInUrl": false
     },
     {
@@ -24727,7 +24727,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "line": 415,
+      "line": 416,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

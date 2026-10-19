@@ -43,7 +43,7 @@ for (const fixture of cases) test(`${fixture.method} retains admitted input acro
     }; return q;
   }, async rpc(name:string,args:Record<string,unknown>) {
     if(name==='write_growth_record_admitted'){
-      const operations:Record<string,string>={recommend:'recommend',suppress:'suppress',recordAttribution:'attribution',createSegment:'segment',createExperiment:'experiment'};
+      const operations:Record<string,string>={recommend:'recommend',suppress:'suppress',recordAttribution:'attribution',createSegment:'segment',createExperiment:'experiment',createCampaign:'campaign_create'};
       assert.equal(args.p_operation,operations[fixture.method]);
       assert.equal(args.p_actor,'actor');assert.equal(args.p_tenant,'actor');
       assert.equal(args.p_project,'project');

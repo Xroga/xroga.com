@@ -12249,7 +12249,7 @@
       "id": "surface:4cd464f7016cf52503dd",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "symbols": [
         "GrowthService",
         "GrowthServiceError",
@@ -12314,7 +12314,7 @@
         "backend/src/growth/activationDefinition.test.ts:4",
         "backend/src/growth/activationEvaluation.local.integration.ts:7",
         "backend/src/growth/activationEvaluation.test.ts:4",
-        "backend/src/growth/campaignReceipt.local.integration.ts:6",
+        "backend/src/growth/campaignReceipt.local.integration.ts:7",
         "backend/src/growth/delivery.local.integration.ts:1",
         "backend/src/growth/deliveryReceipt.test.ts:1",
         "backend/src/growth/eventParentAdmission.test.ts:4",
@@ -12382,11 +12382,10 @@
         "backend/src/growth/growthService.ts:191 (tenant_id)",
         "backend/src/growth/growthService.ts:192 (tenant_id)",
         "backend/src/growth/growthService.ts:252 (tenant_id)",
-        "backend/src/growth/growthService.ts:278 (tenant_id)",
-        "backend/src/growth/growthService.ts:298 (tenant_id)",
-        "backend/src/growth/growthService.ts:385 (tenant_id)",
-        "backend/src/growth/growthService.ts:387 (tenant_id)",
-        "backend/src/growth/growthService.ts:412 (tenant_id)"
+        "backend/src/growth/growthService.ts:299 (tenant_id)",
+        "backend/src/growth/growthService.ts:386 (tenant_id)",
+        "backend/src/growth/growthService.ts:388 (tenant_id)",
+        "backend/src/growth/growthService.ts:413 (tenant_id)"
       ],
       "approvalBoundary": [
         "backend/src/growth/growthService.ts#hasOperationsPermission"
@@ -15801,7 +15800,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/growth/campaignReceipt.local.integration.ts:7",
+        "backend/src/growth/campaignReceipt.local.integration.ts:8",
         "backend/src/growth/delivery.local.integration.ts:1",
         "backend/src/growth/growthService.campaignReceipt.test.ts:5",
         "backend/src/growth/growthService.ts:5",
@@ -96339,7 +96338,7 @@
       "sourcePath": "supabase/migrations/20261019000500_growth_shared_write_admission.sql",
       "version": "20261019000500",
       "order": 123,
-      "sha256": "66952f6e6fa43b82cea934b4320abaa444b81dbe79d9eade55329e1d1c8cd90e"
+      "sha256": "fc04288f49de30d0cf40389d64dc74df84b3eafc3bc516d955edbef503ea09af"
     }
   ],
   "workflows": [
@@ -103998,7 +103997,7 @@
     {
       "id": "test-suite:a1b8ac7cb5301ee854db",
       "sourcePath": "backend/src/growth/sharedWriteAdmission.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

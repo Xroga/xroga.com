@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+import { setTimeout as delay } from 'node:timers/promises';
 import { test } from 'node:test';
 import pg from 'pg';
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -37,6 +38,10 @@ export function registerGrowthCampaignReceiptTests(admin:SupabaseClient):void{
     const database=new URL(process.env.XB01_LOCAL_DATABASE_URL!);assert.equal(database.hostname,'127.0.0.1');assert.equal(database.port,'54322');assert.equal(database.pathname,'/postgres');
     const sql=new pg.Client({connectionString:database.href,ssl:false});await sql.connect();
     const suffix=randomUUID().replaceAll('-',''),fn=`fixture_campaign_${suffix}`,failName=`fail-${suffix}`;
+    let pending:Promise<any>|undefined;
+    const member={id:randomUUID(),user_id:owner,project_id:project,member_user_id:foreign,role:'operator',created_by:owner};
+    const snapshot=async()=>{const r=await admin.from('growth_campaigns').select('*').eq('project_id',project).order('id');assert.equal(r.error,null);return r.data!;};
+    const waitFor=async()=>{for(let i=0;i<150;i++){await sql.query('select pg_stat_clear_snapshot()');const r=await sql.query("select pid from pg_stat_activity where pid<>pg_backend_pid() and wait_event_type='Lock' and query like '%write_growth_record_admitted%'");if(r.rowCount)return;await delay(20);}assert.fail('campaign admission must reach the held current authority or parent lock');};
     try{
       await sql.query(`create function public.${fn}() returns trigger language plpgsql as $$begin
         if new.name='${failName}' and new.evidence_reference like 'operations_action:%' then raise exception 'fixture storage failure'; end if;
@@ -44,7 +49,46 @@ export function registerGrowthCampaignReceiptTests(admin:SupabaseClient):void{
       await assert.rejects(service.createCampaign(owner,{...input,name:failName,idempotencyKey:randomUUID()}),{code:'storage_unavailable',statusCode:503});
       const failed=await admin.from('growth_campaigns').select('evidence_reference,status').eq('project_id',project).eq('name',failName).single();
       assert.equal(failed.error,null);assert.equal(failed.data?.evidence_reference,null);assert.equal(failed.data?.status,'approval_required');
-    }finally{await sql.query(`drop trigger if exists ${fn} on growth_campaigns;drop function if exists public.${fn}();`);await sql.end();}
+      assert.equal((await admin.from('operations_memberships').insert(member)).error,null);
+      const stable=await snapshot();
+      for(const mode of ['member','project','segment']){
+        const table=mode==='member'?'operations_memberships':mode==='project'?'projects':'growth_segments';
+        const id=mode==='member'?member.id:mode==='project'?project:segment.id;
+        await sql.query('begin');await sql.query(`select id from ${table} where id=$1 for update`,[id]);
+        pending=service.createCampaign(foreign,{...input,idempotencyKey:randomUUID()});void pending.catch(()=>{});await waitFor();
+        if(mode==='member')await sql.query('delete from operations_memberships where id=$1',[id]);
+        if(mode==='project')await sql.query('update projects set user_id=$2 where id=$1',[id,foreign]);
+        if(mode==='segment')await sql.query('update growth_segments set tenant_id=$2,project_id=$3 where id=$1',[id,foreign,foreignProject]);
+        await sql.query('commit');await assert.rejects(pending,{code:mode==='segment'?'conflict':'forbidden'});pending=undefined;
+        if(mode==='member')assert.equal((await admin.from('operations_memberships').insert(member)).error,null);
+        if(mode==='project')await sql.query('update projects set user_id=$2 where id=$1',[id,owner]);
+        if(mode==='segment')await sql.query('update growth_segments set tenant_id=$2,project_id=$3 where id=$1',[id,owner,project]);
+        assert.deepEqual(await snapshot(),stable,'revoked creation cannot leave a pending campaign');
+      }
+      const byMember=await service.createCampaign(foreign,{...input,idempotencyKey:randomUUID()});
+      const args={p_actor:foreign,p_tenant:owner,p_project:project,p_operation:'campaign_link',p_data:{...byMember.campaign,action_id:byMember.action.id,action_key:byMember.action.idempotency_key},p_allowed_roles:['operator','release_manager','recovery_manager','admin']};
+      const linked=await snapshot();
+      for(const mode of ['member','project','campaign','action']){
+        const table=mode==='member'?'operations_memberships':mode==='project'?'projects':mode==='campaign'?'growth_campaigns':'operations_actions';
+        const id=mode==='member'?member.id:mode==='project'?project:mode==='campaign'?byMember.campaign.id:byMember.action.id;
+        await sql.query('begin');await sql.query(`select id from ${table} where id=$1 for update`,[id]);
+        pending=Promise.resolve(admin.rpc('write_growth_record_admitted',args));await waitFor();
+        if(mode==='member')await sql.query('delete from operations_memberships where id=$1',[id]);
+        if(mode==='project')await sql.query('update projects set user_id=$2 where id=$1',[id,foreign]);
+        if(mode==='campaign')await sql.query('update growth_campaigns set tenant_id=$2 where id=$1',[id,foreign]);
+        if(mode==='action')await sql.query('update operations_actions set requested_by=$2 where id=$1',[id,owner]);
+        await sql.query('commit');const denied=await pending;pending=undefined;assert.equal(denied.error?.code,['member','project'].includes(mode)?'42501':'40001');
+        if(mode==='member')assert.equal((await admin.from('operations_memberships').insert(member)).error,null);
+        if(mode==='project')await sql.query('update projects set user_id=$2 where id=$1',[id,owner]);
+        if(mode==='campaign')await sql.query('update growth_campaigns set tenant_id=$2 where id=$1',[id,owner]);
+        if(mode==='action')await sql.query('update operations_actions set requested_by=$2 where id=$1',[id,foreign]);
+        assert.deepEqual(await snapshot(),linked,'rejected linking cannot alter campaign evidence');
+      }
+      assert.equal((await admin.rpc('write_growth_record_admitted',args)).error,null,'same admitted link replays without creating messages');
+      await sql.query('begin');await sql.query(`alter table growth_campaigns add constraint fixture_campaign_creation_failure check(project_id<>'${project}' or name<>'rollback fixture') not valid`);await sql.query('savepoint attempt');
+      await assert.rejects(sql.query('select write_growth_record_admitted($1,$2,$3,$4,$5,$6)',[owner,owner,project,'campaign_create',{segment_id:segment.id,name:'rollback fixture',channel:'in_app',template_key:'fixture'},args.p_allowed_roles]),{code:'23514'});
+      await sql.query('rollback to savepoint attempt');await sql.query('rollback');assert.deepEqual(await snapshot(),linked);
+    }finally{await sql.query('rollback');if(pending)await Promise.allSettled([pending]);await sql.query(`drop trigger if exists ${fn} on growth_campaigns;drop function if exists public.${fn}();`);await sql.end();}
     const messages=await admin.from('growth_messages').select('id').eq('project_id',project);assert.equal(messages.error,null);assert.deepEqual(messages.data,[]);
   });
 }

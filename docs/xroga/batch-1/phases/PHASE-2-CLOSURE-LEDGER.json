@@ -1550,7 +1550,7 @@
       "id": "B1-P2-b2b55b7ff19b02a8",
       "family": "growth-community",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "baselineCallerIds": [
         "5d2b5832658fd3299a4b",
         "10f3c1b47a240d3e5eec",
@@ -1612,21 +1612,21 @@
         "76c55e5deb7620670685",
         "96be9ed395634c138d83",
         "8dad92c642517f05ae1f",
-        "2b970cf4760c499ea3ec",
-        "319d99b290b73dd40941",
-        "37a9769c02ecb5ef161f",
-        "ee9c97c6612d1a4f5903",
-        "92c63a0584bbe986fcfc",
-        "6d5b3f7366a86fff6756",
-        "e779f5d2f255e9a49bc8",
-        "d86c34824541642c0dfa",
-        "df910d8ba64c84e0aa86",
-        "ca9156cdb49711d8f760",
-        "13ee7a8d094ff6ca42d4",
-        "8dca102a2431e9d73d9f",
-        "a482ccbd1145347e2a16",
-        "6703074fd634edb06e65",
-        "14409124ccb9fa5cbb77"
+        "14bd3db0414cf876a35b",
+        "200047d1798ccfd468b9",
+        "8600abc47537b2cf1c9b",
+        "10c1d1d8765eab85bc19",
+        "f0f58b1e06ee91798dac",
+        "3bdc281a980196f12202",
+        "3377b5be8d0cd2c38534",
+        "56c3de7b9aaeb0fd5c08",
+        "c18fe72f81a6751f45e3",
+        "82223c2c7121f34b24ee",
+        "433b2c2c1af6b0381df9",
+        "94f33371236cc89ec8ee",
+        "43c5eaf5044f58e2679c",
+        "4b2dc212df4188628ab4",
+        "4f53c9e6b293715ac217"
       ],
       "mapping": [
         {
@@ -1779,115 +1779,115 @@
         {
           "baselineCallerId": "876c6be3cfe0b36b0bc2",
           "currentCallerIds": [
-            "2b970cf4760c499ea3ec"
+            "14bd3db0414cf876a35b"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "bcdb9b2ad0ec78199561",
           "currentCallerIds": [
-            "319d99b290b73dd40941"
+            "200047d1798ccfd468b9"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1afffc078cd2692a93a7",
           "currentCallerIds": [
-            "37a9769c02ecb5ef161f"
+            "8600abc47537b2cf1c9b"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "4d9efaae919de1cb3899",
           "currentCallerIds": [
-            "ee9c97c6612d1a4f5903"
+            "10c1d1d8765eab85bc19"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b8e271c2d4b8b3f99af0",
           "currentCallerIds": [
-            "92c63a0584bbe986fcfc"
+            "f0f58b1e06ee91798dac"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9e916878c523feacb73e",
           "currentCallerIds": [
-            "6d5b3f7366a86fff6756",
-            "e779f5d2f255e9a49bc8"
+            "3bdc281a980196f12202",
+            "3377b5be8d0cd2c38534"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "601cc202c94a6d74155b",
           "currentCallerIds": [
-            "e779f5d2f255e9a49bc8"
+            "3377b5be8d0cd2c38534"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "30bd964098cb53dd25b9",
           "currentCallerIds": [
-            "e779f5d2f255e9a49bc8"
+            "3377b5be8d0cd2c38534"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "ed69b922f1cfcb088ee7",
           "currentCallerIds": [
-            "d86c34824541642c0dfa",
-            "df910d8ba64c84e0aa86"
+            "56c3de7b9aaeb0fd5c08",
+            "c18fe72f81a6751f45e3"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "78a1c1ea46ddd084b5c1",
           "currentCallerIds": [
-            "d86c34824541642c0dfa",
-            "df910d8ba64c84e0aa86"
+            "56c3de7b9aaeb0fd5c08",
+            "c18fe72f81a6751f45e3"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "2767db95f48926527f61",
           "currentCallerIds": [
-            "ca9156cdb49711d8f760"
+            "82223c2c7121f34b24ee"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "96289f945e08ba3cd07a",
           "currentCallerIds": [
-            "13ee7a8d094ff6ca42d4"
+            "433b2c2c1af6b0381df9"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "97d13a82464a8eb511f8",
           "currentCallerIds": [
-            "8dca102a2431e9d73d9f"
+            "94f33371236cc89ec8ee"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "5d297da3b78d02625a08",
           "currentCallerIds": [
-            "a482ccbd1145347e2a16"
+            "43c5eaf5044f58e2679c"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "fb46c685a95d26e36595",
           "currentCallerIds": [
-            "6703074fd634edb06e65"
+            "4b2dc212df4188628ab4"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "a7ccd90a654c92e3c6c0",
           "currentCallerIds": [
-            "14409124ccb9fa5cbb77"
+            "4f53c9e6b293715ac217"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         }
@@ -1897,7 +1897,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-b2b55b7ff19b02a8",
-        "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+        "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
         "executionStatus": "IN_PROGRESS",
         "finding": "SHARED_REACHABLE_PREFLIGHT_WRITE_GAP_REPRODUCED_FIXED_PENDING_REAL_GROUPED_PROOF",
         "originalCriteria": [
@@ -1905,12 +1905,12 @@
           4,
           10
         ],
-        "actorTrace": "The authenticated growth router passes req.userId, never body ownership. All five methods previously performed project/member authorization, then asynchronous reads or a direct write without transaction-fenced current authority. A service-boundary test reproduced recommend fulfilling after simulated revocation. One fixed-operation service-only transaction now reuses existing profile/project/member lock and role rules for recommend, suppression, attribution, segment and experiment writes. Recommendation locks and compares its original selected parent evidence, preserving the existing TS decision policy.",
+        "actorTrace": "The authenticated growth router passes req.userId, never body ownership. All five methods previously performed project/member authorization, then asynchronous reads or a direct write without transaction-fenced current authority. A service-boundary test reproduced recommend fulfilling after simulated revocation. One fixed-operation service-only transaction now reuses existing profile/project/member lock and role rules for recommend, suppression, attribution, segment and experiment writes. Recommendation locks and compares its original selected parent evidence, preserving the existing TS decision policy. The remaining createCampaign insert and action link had the same decisive-admission gap. A separate service-boundary negative attempted the direct insert before correction. Both now use this same transaction, with a current active segment for creation and the exact current owned campaign/action/requester/version/idempotency tuple for linking. The original operations approval and in-app delivery engines remain unchanged.",
         "invariant": "Current original actor, tenant and project must remain permitted through the decisive write. Preserve view versus manage, the tenant-wide suppression key, current record payloads and exact persistence receipts. Parent changes cannot silently produce a recommendation from stale evidence.",
         "relatedSourceBindings": [
           {
             "path": "supabase/migrations/20261019000500_growth_shared_write_admission.sql",
-            "sha256": "66952f6e6fa43b82cea934b4320abaa444b81dbe79d9eade55329e1d1c8cd90e"
+            "sha256": "fc04288f49de30d0cf40389d64dc74df84b3eafc3bc516d955edbef503ea09af"
           }
         ],
         "evidence": [
@@ -1925,14 +1925,20 @@
             "type": "REAL_GROUPED_DATABASE_TEST_PREPARED",
             "result": "NOT_EXECUTED",
             "scope": "Ten observed member/owner waits, current parent evidence, allowed viewer controls, concurrent suppression, rollback and browser denial."
+          },
+          {
+            "path": "backend/src/growth/campaignReceipt.local.integration.ts",
+            "type": "REAL_GROUPED_DATABASE_TEST_PREPARED",
+            "result": "NOT_EXECUTED",
+            "scope": "Existing allowed pending campaign and exact action receipts, plus current member/project/segment creation waits and current member/project/campaign/action link waits, exact unchanged records, rollback and replay. Final-source CI required."
           }
         ],
         "remaining": [
-          "Execute actual fresh/upgrade/reapply and grouped lock/receipt tests at the final source",
+          "Execute final-source fresh/upgrade/reapply and all grouped growth/campaign lock/receipt tests. Earlier949 five-operation proof is preserved but is not changed-source campaign evidence.",
           "Reconcile already proven growth RPCs without reopening unchanged event, identity, activation or lifecycle code",
           "Assess other original growth read/global suppression/lifecycle obligations separately, no whole-service or Phase3 certificate"
         ],
-        "rollback": "No schema/data rewrite. Routine is additive. Withhold the five affected endpoints before withdrawing guarded source, do not restore known unguarded writes as an enabled rollback."
+        "rollback": "Withhold all affected growth mutation endpoints before withdrawing admission. No data rewrite or Phase3 implementation. Do not restore known unguarded writes as an enabled rollback."
       },
       "actor": {
         "existingTrace": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
@@ -8132,18 +8138,18 @@
       "id": "B1-P2-3114d15ea14a5bef",
       "family": "growth-community",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "baselineCallerIds": [
         "1bbf9fc4a4d64e0ceaf2"
       ],
       "currentCallerIds": [
-        "567fdc2e4f1b3cfdb8dd"
+        "8b7dee00f82b7660ecc3"
       ],
       "mapping": [
         {
           "baselineCallerId": "1bbf9fc4a4d64e0ceaf2",
           "currentCallerIds": [
-            "567fdc2e4f1b3cfdb8dd"
+            "8b7dee00f82b7660ecc3"
           ],
           "change": "RETAINED"
         }
@@ -8187,7 +8193,7 @@
       "id": "B1-P2-05e42140dd947e21",
       "family": "growth-community",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "baselineCallerIds": [
         "fe39e67000ca4c823db9"
       ],
@@ -8208,7 +8214,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-05e42140dd947e21",
-        "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+        "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_STALE_PARENT_WRITE_FIXED_PENDING_REAL_LOCK_PROOF",
         "actorTrace": "Authenticated growth route supplies req.userId. Existing OperationsService.permissions preflight supplies the observed project owner. The former two service-role writes did not recheck that owner or current membership at commit. New service-only link_growth_identity locks current actor profile, project and membership through one first-owner-preserving identity mutation.",
@@ -8267,7 +8273,7 @@
       "id": "B1-P2-235593db1d7f94e0",
       "family": "growth-community",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "baselineCallerIds": [
         "a16a5d06c352a7901267"
       ],
@@ -8288,7 +8294,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-235593db1d7f94e0",
-        "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+        "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_STALE_EVENT_PARENT_CREATION_AND_REPLAY_FIXED_REAL_LOCK_PROOF_RECONCILED",
         "priorVerifiedTenantScope": {
@@ -8508,7 +8514,7 @@
       "id": "B1-P2-8fc17fb0f7454d3f",
       "family": "growth-community",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "baselineCallerIds": [
         "f06c7a10e85186933e84"
       ],
@@ -8570,7 +8576,7 @@
       "id": "B1-P2-0b626418dfd30f43",
       "family": "growth-community",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+      "sourceSha256": "d6083cd5e009274d1c263ad3aa0bf21be3cd6f8b3d5ce16f455e548ea1b18c74",
       "baselineCallerIds": [
         "fba3ec246993cb38ab8d"
       ],
