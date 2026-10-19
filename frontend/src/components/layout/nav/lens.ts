@@ -36,6 +36,8 @@ class Spring {
       this.x += this.v * h;
       left -= h;
     }
+    // land exactly on the target once settled, so nothing (an edge's opacity, say) rests a few percent short of it
+    if (this.done) this.snap(this.t);
   }
   get done() {
     return Math.abs(this.t - this.x) < 0.05 && Math.abs(this.v) < 1;
