@@ -7,6 +7,10 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "frontend/e2e/command3-auth.spec.ts",
+    "backend/src/security/platformBenchmark.local.integration.ts",
+    "backend/src/ai/measuredEvidence.ts",
+    "backend/src/services/integrations/credentialStorageBucket.ts",
     "frontend/src/app/(shell)/layout.tsx",
     "frontend/src/app/(workspace)/layout.tsx",
     "frontend/src/app/onboarding/page.tsx",

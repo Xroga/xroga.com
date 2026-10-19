@@ -435,7 +435,7 @@
     "reviewedCandidates": 639,
     "unresolvedSafetyCandidates": 126,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 13
+    "registeredNarrowGlobalExceptions": 16
   },
   "dependency": {
     "downstreamPatchStatus": "VERIFIED_SCOPE at4f8c56acdf6b9c90a5ea1147dfd79151bffe6c46: four targeted fixtures and18 combined dependency/Cline tests, frozen workspace/standalone38806776199, Docker38806776574 and repeated branch/integrated21-stage baseline38806776471 pass. Integrated7377b5a5ffc76d49c7dcb4094ddc9055c4062eeb. Versions/audit findings retained, no waiver. Current later-source CI still required.",
@@ -524,7 +524,7 @@
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/services/integrations/credentialStorageBucket.ts": [
-          "36f74cf393d92fc17a74"
+          "111e6abf2b97a49b75f3"
         ],
         "backend/src/services/integrations/githubDeploy.ts": [
           "b4b2b91f3280a140691a",
@@ -710,8 +710,8 @@
           "9506c72ea0f341c2a492"
         ],
         "backend/src/ai/measuredEvidence.ts": [
-          "c663e216c5611944484e",
-          "5a64876f70c81d99e294"
+          "2f512a182d41df743ba7",
+          "fd966b75f6a38bb90f05"
         ],
         "backend/src/ai/providerHealthStore.ts": [
           "b7e87dfbceb281533b94",
@@ -752,7 +752,7 @@
         ],
         "backend/src/security/serviceRoleGuard.ts": [
           "d84df34ff692e4fb31c1",
-          "3ca8e5d316bd9fafc9fe"
+          "fd91a4c4ec87b33c520f"
         ],
         "backend/src/services/integrations/supabaseProvision.ts": [
           "b1d69d6354dd94af3c3e"

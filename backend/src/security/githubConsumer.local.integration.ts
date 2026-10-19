@@ -3,7 +3,7 @@ import {once} from 'node:events';
 import {randomUUID} from 'node:crypto';
 import {test} from 'node:test';
 import express from 'express';
-import type {SupabaseClient} from '@supabase/supabase-js';
+import {createClient,type SupabaseClient} from '@supabase/supabase-js';
 import {authMiddleware} from '../middleware/auth.js';
 import githubRouter from '../routes/github.js';
 import {getGithubDefaultRepo} from '../services/integrations/githubDeploy.js';
@@ -26,10 +26,17 @@ export function registerGithubConsumerTests(admin:SupabaseClient,getUsers:()=>re
  });
  test('real GitHub repository consumer selects only authenticated owner credentials and rejects metadata-time disconnect replacement and outage',async t=>{
   assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
-  const [owner,other]=getUsers(),original=globalThis.fetch,actors=[owner,other],sent:string[]=[];
+  const original=globalThis.fetch,actors:{id:string;token:string}[]=[],sent:string[]=[];
+  t.after(async()=>{globalThis.fetch=original;for(const actor of actors)assert.equal((await admin.auth.admin.deleteUser(actor.id)).error,null);});
+  for(let i=0;i<2;i++){
+   const email=`github-consumer-${randomUUID()}@example.invalid`,password=`Synthetic-${randomUUID()}!`;
+   const created=await admin.auth.admin.createUser({email,password,email_confirm:true});assert.equal(created.error,null);assert.ok(created.data.user);
+   const actor={id:created.data.user.id,token:''};actors.push(actor);
+   const browser:SupabaseClient=createClient(process.env.SUPABASE_URL!,process.env.SUPABASE_ANON_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});const signed=await browser.auth.signInWithPassword({email,password});assert.equal(signed.error,null);assert.ok(signed.data.session);actor.token=signed.data.session.access_token;
+  }
+  const [owner,other]=actors;
   const tokens=new Map(actors.map(a=>[a.id,`SYNTHETIC_CONSUMER_${a.id}`]));
   let mode='normal',intercepted=false;
-  t.after(async()=>{globalThis.fetch=original;assert.equal((await admin.from('github_integrations').delete().in('user_id',actors.map(a=>a.id))).error,null);});
   for(const actor of actors)assert.equal((await admin.from('github_integrations').upsert({user_id:actor.id,access_token:tokens.get(actor.id),repo_strategy:'manual',default_repo:`fixture/${actor.id}`},{onConflict:'user_id'})).error,null);
   const foreignBefore=await admin.from('github_integrations').select('*').eq('user_id',other.id).single();assert.equal(foreignBefore.error,null);
   globalThis.fetch=async(input,init)=>{

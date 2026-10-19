@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "aa2ee7e45aea48d6de2930d0ab1c40a4ff8fcc4e",
+  "source_sha": "30d94a26ad1a84060216939b79e197b4896c2d0a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -570,6 +570,7 @@
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
+        "backend/src/security/platformBenchmark.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
@@ -708,6 +709,7 @@
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
+        "backend/src/security/platformBenchmark.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
@@ -1353,6 +1355,7 @@
         "NETLIFY_ACCESS_TOKEN",
         "NODE_ENV",
         "REQUIRE_REMOTE_AUTH_CHECK",
+        "SUPABASE_ANON_KEY",
         "SUPABASE_URL",
         "VERCEL_API_KEY",
         "VERCEL_MANAGED_PROJECT_NAME",
@@ -7192,6 +7195,7 @@
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
+        "backend/src/security/platformBenchmark.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
@@ -9851,8 +9855,10 @@
         "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
+        "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
+        "backend/src/security/platformBenchmark.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
@@ -9885,6 +9891,7 @@
       "dependency_ids": [
         "supabase",
         "endpoint-127-0-0-1",
+        "endpoint-api-github-com",
         "endpoint-api-vercel-com",
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
@@ -10196,6 +10203,7 @@
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
+        "backend/src/security/platformBenchmark.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
@@ -10906,6 +10914,7 @@
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
+        "backend/src/security/platformBenchmark.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
@@ -12110,7 +12119,7 @@
     },
     {
       "path": "backend/src/ai/measuredEvidence.ts",
-      "sha256": "611a945fb7fa975f1ecab77d5b5589141d9f245fe49cba6901d92744147f350a"
+      "sha256": "61a2c74c7050dc736f4beab1b83c38bd28931d36163da1ed520f4e7b75f3c365"
     },
     {
       "path": "backend/src/ai/modelBenchmarks.ts",
@@ -13274,7 +13283,7 @@
     },
     {
       "path": "backend/src/security/githubConsumer.local.integration.ts",
-      "sha256": "b8474b291e6aa0aa046638fecd044a000ffa85ad7cc833e45cdcfc4a71c696bf"
+      "sha256": "d271a2961c28c3d7ceca12ac43bbad7d6aa9200ea3bf63dd27b8788b9fdd67e8"
     },
     {
       "path": "backend/src/security/growthReferral.local.integration.ts",
@@ -13299,6 +13308,10 @@
     {
       "path": "backend/src/security/ownership.ts",
       "sha256": "2771e83fbadd2591d749909cfdf5f4d641d57cbd052f9cf98dab52bb5075c792"
+    },
+    {
+      "path": "backend/src/security/platformBenchmark.local.integration.ts",
+      "sha256": "85df36c6de464c5353d2336644a0fe4a9976fa9bcc795af85f5d9f944bfa3933"
     },
     {
       "path": "backend/src/security/platformHealth.local.integration.ts",
@@ -13370,7 +13383,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238"
+      "sha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813"
     },
     {
       "path": "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
@@ -13398,7 +13411,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "5229909a5a861ab7bdd721b82e1d9ef17be06cb88957d691c4382574856dad37"
+      "sha256": "da028d72c601ce89ba5c33d3cdd6fd006da3f4a0ff066bacf3a64bbfc999c570"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13466,7 +13479,7 @@
     },
     {
       "path": "backend/src/services/integrations/credentialStorageBucket.ts",
-      "sha256": "1bc5d086c48e89ac22228bfcfff44bcd072dc3311bbec15cabd4390eaa2e579d"
+      "sha256": "691ccba36714dcb82060acdb4dc296e7e0a63b12540e6f1fe98e770a30a1c381"
     },
     {
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
@@ -19285,14 +19298,14 @@
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/security/githubConsumer.local.integration.ts",
-      "line": 37,
+      "line": 44,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/githubConsumer.local.integration.ts",
-      "line": 58,
+      "line": 65,
       "credentialsInUrl": false
     },
     {
@@ -19349,6 +19362,13 @@
       "protocol": "http:",
       "path": "backend/src/security/oauthWrapperOwnership.local.integration.ts",
       "line": 52,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/platformBenchmark.local.integration.ts",
+      "line": 12,
       "credentialsInUrl": false
     },
     {
@@ -19551,77 +19571,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 112,
+      "line": 113,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 112,
+      "line": 113,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 520,
+      "line": 522,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 570,
+      "line": 572,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 659,
+      "line": 661,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 828,
+      "line": 830,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 886,
+      "line": 888,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1573,
+      "line": 1575,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1591,
+      "line": 1593,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1599,
+      "line": 1601,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1603,
+      "line": 1605,
       "credentialsInUrl": false
     },
     {
@@ -25886,7 +25906,7 @@
     },
     {
       "path": "backend/src/security/githubConsumer.local.integration.ts",
-      "line": 30,
+      "line": 38,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25949,14 +25969,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1072,
+      "line": 1074,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1409,
+      "line": 1411,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

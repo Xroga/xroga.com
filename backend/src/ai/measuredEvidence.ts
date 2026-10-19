@@ -30,7 +30,7 @@
 
 import type { BenchmarkResult } from './modelBenchmarks.js';
 import { buildLedger, type LedgerEntry } from './benchmarkLedger.js';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { getGlobalSupabaseAdmin } from '../security/serviceRoleGuard.js';
 import { assertBenchmarkResult } from './benchmarkRunner.js';
 
 /** How long a loaded ledger is reused before the next load. */
@@ -71,7 +71,7 @@ export function resetMeasuredEvidenceCache(): void {
 export type BenchmarkResultLoader = () => Promise<readonly BenchmarkResult[]>;
 
 export async function supabaseBenchmarkResults(): Promise<readonly BenchmarkResult[]> {
-  const { data, error } = await getSupabaseAdmin()
+  const { data, error } = await getGlobalSupabaseAdmin('platform_benchmark_read')
     .from('model_benchmark_runs')
     .select('*')
     .order('ran_at', { ascending: false })

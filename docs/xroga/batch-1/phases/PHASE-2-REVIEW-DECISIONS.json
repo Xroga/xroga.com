@@ -375,6 +375,36 @@
       "target": "<dynamic>",
       "currentCallerId": "1ac34398173cf0fedf3a",
       "reason": "Same original legacy mirror upload/factory operation now derives the object owner from original issued TenantContext before any bucket access. Duplicate initial/retry upload ordinal is preserved. Mapping is identity provenance, not security certification."
+    },
+    {
+      "previousCallerId": "c663e216c5611944484e",
+      "reviewPacketId": "B1-P2-28417c8ee61b7f32",
+      "path": "backend/src/ai/measuredEvidence.ts",
+      "enclosing": "supabaseBenchmarkResults",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "model_benchmark_runs",
+      "currentCallerId": "2f512a182d41df743ba7",
+      "reason": "The same fixed operation now uses the existing registered global factory rather than an unregistered SDK default. This preserves its historical caller obligation and exact source mapping, and grants no security certification before actual positive and negative evidence."
+    },
+    {
+      "previousCallerId": "5a64876f70c81d99e294",
+      "reviewPacketId": "B1-P2-28417c8ee61b7f32",
+      "path": "backend/src/ai/measuredEvidence.ts",
+      "enclosing": "supabaseBenchmarkResults",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getGlobalSupabaseAdmin",
+      "currentCallerId": "fd966b75f6a38bb90f05",
+      "reason": "The same fixed operation now uses the existing registered global factory rather than an unregistered SDK default. This preserves its historical caller obligation and exact source mapping, and grants no security certification before actual positive and negative evidence."
+    },
+    {
+      "previousCallerId": "36f74cf393d92fc17a74",
+      "reviewPacketId": "B1-P2-b08b8dc219eb5a5a",
+      "path": "backend/src/services/integrations/credentialStorageBucket.ts",
+      "enclosing": "ensurePrivateOAuthBucket",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getGlobalSupabaseAdmin",
+      "currentCallerId": "111e6abf2b97a49b75f3",
+      "reason": "The same fixed operation now uses the existing registered global factory rather than an unregistered SDK default. This preserves its historical caller obligation and exact source mapping, and grants no security certification before actual positive and negative evidence."
     }
   ],
   "decisions": [
@@ -1856,6 +1886,44 @@
         "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
         "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
       }
+    },
+    {
+      "packetId": "B1-P2-28417c8ee61b7f32",
+      "sourceSha256": "61a2c74c7050dc736f4beab1b83c38bd28931d36163da1ed520f4e7b75f3c365",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "FIXED_PLATFORM_EXCEPTION_REGISTERED_REAL_PROOF_PENDING",
+      "actorTrace": "Internal fixed model benchmark reader, mapped to only platform measurement fields. No raw customer prompt, file or identity. Existing operations adapter controls benchmark invocation separately.",
+      "invariant": "Only the exact registered platform operation is admitted. Browser roles cannot obtain or change private rows or objects. This does not grant paid execution or later-phase credential custody.",
+      "evidence": [
+        {
+          "path": "backend/src/security/platformBenchmark.local.integration.ts",
+          "type": "REAL_DISPOSABLE_REGISTERED_EXCEPTION_TEST_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Bind exact source and authenticated actual allow/denial evidence before promotion",
+        "Preserve all independent original scope and later-phase obligations"
+      ]
+    },
+    {
+      "packetId": "B1-P2-b08b8dc219eb5a5a",
+      "sourceSha256": "691ccba36714dcb82060acdb4dc296e7e0a63b12540e6f1fe98e770a30a1c381",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "FIXED_PLATFORM_EXCEPTION_REGISTERED_REAL_PROOF_PENDING",
+      "actorTrace": "Internal admission for only the existing private OAuth bucket. No owner selector, object read, bucket name input or public policy repair.",
+      "invariant": "Only the exact registered platform operation is admitted. Browser roles cannot obtain or change private rows or objects. This does not grant paid execution or later-phase credential custody.",
+      "evidence": [
+        {
+          "path": "backend/src/security/platformBenchmark.local.integration.ts",
+          "type": "REAL_DISPOSABLE_REGISTERED_EXCEPTION_TEST_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Bind exact source and authenticated actual allow/denial evidence before promotion",
+        "Preserve all independent original scope and later-phase obligations"
+      ]
     }
   ]
 }

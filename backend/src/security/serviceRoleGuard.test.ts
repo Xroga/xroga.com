@@ -12,4 +12,10 @@ test('unregistered or prototype-derived global operations fail before constructi
   assert.equal(globalServiceExceptions.readiness_profile_probe.action,'select');
   assert.equal(globalServiceExceptions.readiness_profile_probe.columns,'id');
   assert.equal(globalServiceExceptions.readiness_profile_probe.limit,1);
+  assert.equal(globalServiceExceptions.platform_benchmark_read.source,'backend/src/ai/measuredEvidence.ts');
+  assert.equal(globalServiceExceptions.platform_benchmark_read.action,'select');
+  assert.equal(globalServiceExceptions.platform_benchmark_write.source,'backend/src/ai/benchmarkRunner.ts');
+  assert.equal(globalServiceExceptions.platform_benchmark_write.action,'insert');
+  assert.equal(globalServiceExceptions.private_oauth_bucket_admission.source,'backend/src/services/integrations/credentialStorageBucket.ts');
+  assert.equal(globalServiceExceptions.private_oauth_bucket_admission.action,'listBuckets/createBucket');
 });

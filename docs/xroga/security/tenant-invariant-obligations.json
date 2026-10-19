@@ -761,13 +761,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-28417c8ee61b7f32",
+      "id": "OB-912bd572b95dab17",
       "callerIds": [
-        "c663e216c5611944484e",
-        "5a64876f70c81d99e294"
+        "2f512a182d41df743ba7",
+        "fd966b75f6a38bb90f05"
       ],
       "path": "backend/src/ai/measuredEvidence.ts",
-      "sourceSha256": "611a945fb7fa975f1ecab77d5b5589141d9f245fe49cba6901d92744147f350a",
+      "sourceSha256": "61a2c74c7050dc736f4beab1b83c38bd28931d36163da1ed520f4e7b75f3c365",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6359,12 +6359,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-b08b8dc219eb5a5a",
+      "id": "OB-be8d86c56649fa71",
       "callerIds": [
-        "36f74cf393d92fc17a74"
+        "111e6abf2b97a49b75f3"
       ],
       "path": "backend/src/services/integrations/credentialStorageBucket.ts",
-      "sourceSha256": "1bc5d086c48e89ac22228bfcfff44bcd072dc3311bbec15cabd4390eaa2e579d",
+      "sourceSha256": "691ccba36714dcb82060acdb4dc296e7e0a63b12540e6f1fe98e770a30a1c381",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6454,13 +6454,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-4622a56704746b05",
+      "id": "OB-01cdbf2817e3c0b4",
       "callerIds": [
         "d84df34ff692e4fb31c1",
-        "3ca8e5d316bd9fafc9fe"
+        "fd91a4c4ec87b33c520f"
       ],
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6481,13 +6481,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-2606df81d5ee8813",
+      "id": "OB-fc872e2e421090a4",
       "callerIds": [
-        "cfd6a567629e5ea8ea8d",
-        "e1a9ecc6141d3fe69902"
+        "2a21a68145fa80a09652",
+        "31bdf4b1891a57808b2f"
       ],
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [

@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "8772ce72a7db4222f8bd52f3c8cf7319124302515d7bf4be8240810ad4772b73",
+  "reviewRegistrySha256": "6f7f84c2adb4458e47de7dfd2a2601ce2b9aab9f69c6f94e8b40af6dbdcf06ce",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -14,7 +14,7 @@
     "reviewedCandidates": 639,
     "unresolvedSafetyCandidates": 126,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 13
+    "registeredNarrowGlobalExceptions": 16
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
@@ -244,7 +244,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-28417c8ee61b7f32"
+        "id": "OB-912bd572b95dab17"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -444,7 +444,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-b08b8dc219eb5a5a"
+        "id": "OB-be8d86c56649fa71"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -456,11 +456,11 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-4622a56704746b05"
+        "id": "OB-01cdbf2817e3c0b4"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-2606df81d5ee8813"
+        "id": "OB-fc872e2e421090a4"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -820,11 +820,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c663e216c5611944484e"
+        "id": "2f512a182d41df743ba7"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5a64876f70c81d99e294"
+        "id": "fd966b75f6a38bb90f05"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -1032,7 +1032,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "3ca8e5d316bd9fafc9fe"
+        "id": "fd91a4c4ec87b33c520f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -1076,7 +1076,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "36f74cf393d92fc17a74"
+        "id": "111e6abf2b97a49b75f3"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -2192,11 +2192,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "cfd6a567629e5ea8ea8d"
+        "id": "2a21a68145fa80a09652"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "e1a9ecc6141d3fe69902"
+        "id": "31bdf4b1891a57808b2f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -3186,7 +3186,7 @@
       }
     },
     {
-      "id": "c663e216c5611944484e",
+      "id": "2f512a182d41df743ba7",
       "path": "backend/src/ai/measuredEvidence.ts",
       "line": 74,
       "enclosing": "supabaseBenchmarkResults",
@@ -3194,7 +3194,7 @@
       "target": "model_benchmark_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "611a945fb7fa975f1ecab77d5b5589141d9f245fe49cba6901d92744147f350a",
+      "sourceSha256": "61a2c74c7050dc736f4beab1b83c38bd28931d36163da1ed520f4e7b75f3c365",
       "semanticReview": {
         "authority": "supabaseBenchmarkResults reads global model_benchmark_runs with a2000-row bound, maps numeric benchmark fields and feeds cached aggregation to the existing model router.",
         "reason": "New source removes truthy Boolean and numeric/default coercions, validates all measurements before routing aggregation and replaces raw database failure reasons with fixed safe text.55 focused tests pass. Global reader scope, real database acceptance and authentic benchmark producer provenance remain open, no model-quality claim inferred from synthetic cases.",
@@ -3207,15 +3207,15 @@
       }
     },
     {
-      "id": "5a64876f70c81d99e294",
+      "id": "fd966b75f6a38bb90f05",
       "path": "backend/src/ai/measuredEvidence.ts",
       "line": 74,
       "enclosing": "supabaseBenchmarkResults",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "611a945fb7fa975f1ecab77d5b5589141d9f245fe49cba6901d92744147f350a",
+      "sourceSha256": "61a2c74c7050dc736f4beab1b83c38bd28931d36163da1ed520f4e7b75f3c365",
       "semanticReview": {
         "authority": "supabaseBenchmarkResults reads global model_benchmark_runs with a2000-row bound, maps numeric benchmark fields and feeds cached aggregation to the existing model router.",
         "reason": "New source removes truthy Boolean and numeric/default coercions, validates all measurements before routing aggregation and replaces raw database failure reasons with fixed safe text.55 focused tests pass. Global reader scope, real database acceptance and authentic benchmark producer provenance remain open, no model-quality claim inferred from synthetic cases.",
@@ -10343,7 +10343,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
       "semanticReview": {
         "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
         "reason": "These are admission helpers, not automatic RLS or constrained query proxies. The full control flow of every recipient must be reviewed. Registry names cannot certify their callers, raw diagnostic redaction, account authority or arbitrary subsequent queries. Keep unresolved rather than pretending this shared factory completes tenant isolation.",
@@ -10356,15 +10356,15 @@
       }
     },
     {
-      "id": "3ca8e5d316bd9fafc9fe",
+      "id": "fd91a4c4ec87b33c520f",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 30,
+      "line": 33,
       "enclosing": "getGlobalSupabaseAdmin",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
       "semanticReview": {
         "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
         "reason": "These are admission helpers, not automatic RLS or constrained query proxies. The full control flow of every recipient must be reviewed. Registry names cannot certify their callers, raw diagnostic redaction, account authority or arbitrary subsequent queries. Keep unresolved rather than pretending this shared factory completes tenant isolation.",
@@ -10377,15 +10377,15 @@
       }
     },
     {
-      "id": "cfd6a567629e5ea8ea8d",
+      "id": "2a21a68145fa80a09652",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 34,
+      "line": 37,
       "enclosing": "probeDatabaseReadiness",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
       "semanticReview": {
         "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
         "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
@@ -10398,15 +10398,15 @@
       }
     },
     {
-      "id": "e1a9ecc6141d3fe69902",
+      "id": "31bdf4b1891a57808b2f",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 34,
+      "line": 37,
       "enclosing": "probeDatabaseReadiness",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
       "semanticReview": {
         "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
         "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
@@ -11444,15 +11444,15 @@
       }
     },
     {
-      "id": "36f74cf393d92fc17a74",
+      "id": "111e6abf2b97a49b75f3",
       "path": "backend/src/services/integrations/credentialStorageBucket.ts",
       "line": 9,
       "enclosing": "ensurePrivateOAuthBucket",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "1bc5d086c48e89ac22228bfcfff44bcd072dc3311bbec15cabd4390eaa2e579d",
+      "sourceSha256": "691ccba36714dcb82060acdb4dc296e7e0a63b12540e6f1fe98e770a30a1c381",
       "semanticReview": {
         "authority": "Internal fixed-bucket configuration admission, no supplied tenant/table/object path. Reads catalogue and, only when absent, retains the existing BYOK server bootstrap allowance of a private 64KiB bucket. It never changes an existing public or unknown-policy bucket.",
         "reason": "Privacy is independently rechecked after create or duplicate, and catalogue failure denies upload. This is not an identity issuer or new CredentialVault. Complete upstream caller review and staged storage compatibility remain outstanding; do not infer authorization of every token caller from this configuration guard.",

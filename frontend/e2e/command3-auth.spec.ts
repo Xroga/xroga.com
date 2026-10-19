@@ -55,20 +55,15 @@ test.beforeAll(async () => {
    * sends every one of them to `/onboarding` — which is correct behaviour and would
    * fail every workspace assertion below, since none of them would reach a workspace.
    *
-   * Written with a fallback because the column arrives with a migration: a run
-   * against a database that does not have it yet must not fail in `beforeAll`, which
-   * would take the whole suite down before a single assertion ran.
+   * The disposable suite requires the complete migration history. Verify the
+   * exact durable setup receipt rather than masking a failed upsert with a
+   * second write that omits the required onboarding state.
    */
   const onboarded = { status: 'completed', current_step: 'complete', backfilled: true };
-  const withOnboarding = await admin.from('profiles').upsert([
-    { id: ownerId, display_name: 'Command 3 Owner', onboarding: onboarded },
-    { id: outsiderId, display_name: 'Command 3 Outsider', onboarding: onboarded },
-  ]);
-  if (withOnboarding.error) {
-    await admin.from('profiles').upsert([
-      { id: ownerId, display_name: 'Command 3 Owner' },
-      { id: outsiderId, display_name: 'Command 3 Outsider' },
-    ]);
+  for (const [id,display_name] of [[ownerId,'Command 3 Owner'],[outsiderId,'Command 3 Outsider']]) {
+    const receipt = await admin.from('profiles').update({display_name,onboarding:onboarded}).eq('id',id).select('id,display_name,onboarding').single();
+    expect(receipt.error).toBeNull();
+    expect(receipt.data).toEqual({id,display_name,onboarding:onboarded});
   }
   const projects = await admin.from('projects').insert([
     { user_id: ownerId, name: `command3-demo-owner-${run}`, type: 'app', status: 'in_progress' },

@@ -627,10 +627,10 @@
     },
     {
       "path": "backend/src/ai/measuredEvidence.ts",
-      "sourceSha256": "611a945fb7fa975f1ecab77d5b5589141d9f245fe49cba6901d92744147f350a",
+      "sourceSha256": "61a2c74c7050dc736f4beab1b83c38bd28931d36163da1ed520f4e7b75f3c365",
       "callIds": [
-        "c663e216c5611944484e",
-        "5a64876f70c81d99e294"
+        "2f512a182d41df743ba7",
+        "fd966b75f6a38bb90f05"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "supabaseBenchmarkResults reads global model_benchmark_runs with a2000-row bound, maps numeric benchmark fields and feeds cached aggregation to the existing model router.",
@@ -640,7 +640,17 @@
           "path": "backend/src/ai/measuredEvidence.ts",
           "marker": "export async function supabaseBenchmarkResults"
         }
-      ]
+      ],
+      "platformExceptionSourceMapping": {
+        "base": "30d94a26ad1a84060216939b79e197b4896c2d0a",
+        "beforeHash": "611a945fb7fa975f1ecab77d5b5589141d9f245fe49cba6901d92744147f350a",
+        "afterHash": "61a2c74c7050dc736f4beab1b83c38bd28931d36163da1ed520f4e7b75f3c365",
+        "mapping": {
+          "c663e216c5611944484e": "2f512a182d41df743ba7",
+          "5a64876f70c81d99e294": "fd966b75f6a38bb90f05"
+        },
+        "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
+      }
     },
     {
       "path": "backend/src/synthesis/universalPersistence.ts",
@@ -4653,9 +4663,9 @@
     },
     {
       "path": "backend/src/services/integrations/credentialStorageBucket.ts",
-      "sourceSha256": "1bc5d086c48e89ac22228bfcfff44bcd072dc3311bbec15cabd4390eaa2e579d",
+      "sourceSha256": "691ccba36714dcb82060acdb4dc296e7e0a63b12540e6f1fe98e770a30a1c381",
       "callIds": [
-        "36f74cf393d92fc17a74"
+        "111e6abf2b97a49b75f3"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Internal fixed-bucket configuration admission, no supplied tenant/table/object path. Reads catalogue and, only when absent, retains the existing BYOK server bootstrap allowance of a private 64KiB bucket. It never changes an existing public or unknown-policy bucket.",
@@ -4669,7 +4679,16 @@
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket"
         }
-      ]
+      ],
+      "platformExceptionSourceMapping": {
+        "base": "30d94a26ad1a84060216939b79e197b4896c2d0a",
+        "beforeHash": "1bc5d086c48e89ac22228bfcfff44bcd072dc3311bbec15cabd4390eaa2e579d",
+        "afterHash": "691ccba36714dcb82060acdb4dc296e7e0a63b12540e6f1fe98e770a30a1c381",
+        "mapping": {
+          "36f74cf393d92fc17a74": "111e6abf2b97a49b75f3"
+        },
+        "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
+      }
     },
     {
       "path": "backend/src/security/ownership.ts",
@@ -4718,10 +4737,10 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
       "callIds": [
         "d84df34ff692e4fb31c1",
-        "3ca8e5d316bd9fafc9fe"
+        "fd91a4c4ec87b33c520f"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
@@ -4742,14 +4761,26 @@
           "331a1be3d1ee639d294f": "e1a9ecc6141d3fe69902"
         },
         "scope": "Fixed existing readiness exception source to the actual data-query module. All three functions and the exact query remain byte-identical. No new authority or operation. Actual disposable allow/outage/restore proof remains required."
+      },
+      "platformExceptionSourceMapping": {
+        "base": "30d94a26ad1a84060216939b79e197b4896c2d0a",
+        "beforeHash": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+        "afterHash": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+        "mapping": {
+          "d84df34ff692e4fb31c1": "d84df34ff692e4fb31c1",
+          "3ca8e5d316bd9fafc9fe": "fd91a4c4ec87b33c520f",
+          "cfd6a567629e5ea8ea8d": "2a21a68145fa80a09652",
+          "e1a9ecc6141d3fe69902": "31bdf4b1891a57808b2f"
+        },
+        "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
       }
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
       "callIds": [
-        "cfd6a567629e5ea8ea8d",
-        "e1a9ecc6141d3fe69902"
+        "2a21a68145fa80a09652",
+        "31bdf4b1891a57808b2f"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
@@ -4770,6 +4801,18 @@
           "331a1be3d1ee639d294f": "e1a9ecc6141d3fe69902"
         },
         "scope": "Fixed existing readiness exception source to the actual data-query module. All three functions and the exact query remain byte-identical. No new authority or operation. Actual disposable allow/outage/restore proof remains required."
+      },
+      "platformExceptionSourceMapping": {
+        "base": "30d94a26ad1a84060216939b79e197b4896c2d0a",
+        "beforeHash": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+        "afterHash": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+        "mapping": {
+          "d84df34ff692e4fb31c1": "d84df34ff692e4fb31c1",
+          "3ca8e5d316bd9fafc9fe": "fd91a4c4ec87b33c520f",
+          "cfd6a567629e5ea8ea8d": "2a21a68145fa80a09652",
+          "e1a9ecc6141d3fe69902": "31bdf4b1891a57808b2f"
+        },
+        "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
       }
     },
     {
