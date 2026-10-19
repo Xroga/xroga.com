@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import {
-  ArrowUpRight,
   Bot,
   CheckCircle2,
   Globe2,
@@ -10,7 +9,6 @@ import {
   PlugZap,
   Rocket,
   Search,
-  Sparkles,
   TestTube2,
   TrendingUp,
 } from 'lucide-react';
@@ -78,25 +76,6 @@ function BrandMark({ mark }: { mark: SimpleIcon }) {
   );
 }
 
-function TrendChart({ variant = 'blue' }: { variant?: 'blue' | 'orange' }) {
-  return (
-    <svg className={`${styles.trendChart} ${variant === 'orange' ? styles.orangeChart : ''}`}
-      viewBox="0 0 260 82" aria-hidden="true" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id={`trend-fill-${variant}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="currentColor" stopOpacity=".24" />
-          <stop offset="1" stopColor="currentColor" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path className={styles.chartGrid} d="M0 18H260M0 41H260M0 64H260" />
-      <path className={styles.chartArea} fill={`url(#trend-fill-${variant})`}
-        d="M0 70L24 64L47 67L71 53L94 57L118 42L142 47L165 31L189 35L212 21L236 25L260 10V82H0Z" />
-      <path className={styles.chartLine}
-        d="M0 70L24 64L47 67L71 53L94 57L118 42L142 47L165 31L189 35L212 21L236 25L260 10" />
-    </svg>
-  );
-}
-
 export function AuthShowcase() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -130,12 +109,11 @@ export function AuthShowcase() {
       <div className={styles.viewport} aria-live="polite">
         <article className={`${styles.slide} ${styles.introSlide} ${activeSlide === 0 ? styles.active : ''}`}
           aria-hidden={activeSlide !== 0}>
-          <Image src="/brand/auth-stories/idea-to-business-clean.webp" alt="A clean product workspace turning an idea into a digital product"
-            fill priority sizes="(max-width: 1279px) 100vw, 44vw" className={styles.fullBleedArt} />
-          <div className={styles.artVeil} aria-hidden="true" />
           <div className={styles.introCopy}>
-            <p className={styles.eyebrow}><Sparkles aria-hidden="true" /> One idea. A complete business.</p>
+            <p className={styles.eyebrow}>One idea. A complete business.</p>
             <h2>Imagine it.<br /><em>Xroga makes it real.</em></h2>
+          </div>
+          <div className={styles.introFooter}>
             <p>Start with a conversation. Move into research, a working product, testing, launch, and growth.</p>
             <div className={styles.metricsStrip} aria-label="Xroga capability counts">
               <span><strong>1,500+</strong><small>connected apps</small></span>
@@ -148,32 +126,20 @@ export function AuthShowcase() {
         <article className={`${styles.slide} ${styles.buildSlide} ${activeSlide === 1 ? styles.active : ''}`}
           aria-hidden={activeSlide !== 1}>
           <div className={styles.sceneCopy}>
-            <p className={styles.eyebrow}><Rocket aria-hidden="true" /> From idea to every screen</p>
-            <h2>Build once.<br /><em>Launch everywhere.</em></h2>
-            <p>Web, mobile, tablet, desktop, and APIs—built, tested like a real user, repaired, and prepared for release.</p>
+            <p className={styles.eyebrow}><Rocket aria-hidden="true" /> Responsive delivery · lasting progress</p>
+            <h2>Build it once.<br /><em>Succeed everywhere.</em></h2>
+            <p>Every screen stays responsive while Xroga tests, repairs, grows the business, and keeps long-running projects moving.</p>
           </div>
           <div className={styles.visualStage}>
             <figure className={styles.heroArt}>
-              <Image src="/brand/auth-stories/publish-everywhere-clean.webp" alt="One clean product delivered across laptop, tablet, and phone"
+              <Image src="/brand/auth-stories/responsive-growth-v2.webp" alt="A successful responsive business across desktop, laptop, tablet, and phone with verified repairs, growth, and long-running project progress"
                 fill sizes="(max-width: 1279px) 90vw, 38vw" className={styles.artImage} />
             </figure>
-            <section className={`${styles.dataPanel} ${styles.launchPanel}`} aria-label="Example launch readiness">
-              <div className={styles.dataPanelHeader}>
-                <span><Image src="/brand/xroga-orb-mark-v2.webp" alt="" width={18} height={18} /> Launch readiness</span>
-                <strong>94%</strong>
-              </div>
-              <TrendChart />
-              <div className={styles.kpiRow}>
-                <span><strong>128</strong><small>checks passed</small></span>
-                <span><strong>0</strong><small>blockers</small></span>
-                <span><strong>4</strong><small>targets</small></span>
-              </div>
-            </section>
-            <figure className={styles.secondaryArt}>
-              <Image src="/brand/auth-stories/ai-testing-clean.webp" alt="A clean quality-assurance scene resolving an issue"
-                fill sizes="(max-width: 700px) 42vw, 17vw" className={styles.artImage} />
-              <figcaption><TestTube2 aria-hidden="true" /> Tested and repaired</figcaption>
-            </figure>
+          </div>
+          <div className={styles.sceneFooter} aria-label="Delivery outcomes">
+            <span><CheckCircle2 aria-hidden="true" /> Success verified</span>
+            <span><TestTube2 aria-hidden="true" /> Repaired and tested</span>
+            <span><TrendingUp aria-hidden="true" /> Long projects keep moving</span>
           </div>
         </article>
 
@@ -202,6 +168,11 @@ export function AuthShowcase() {
               <figcaption><Globe2 aria-hidden="true" /> Research <Plane aria-hidden="true" /> Travel</figcaption>
             </figure>
           </div>
+          <div className={styles.sceneFooter} aria-label="Connected work outcomes">
+            <span><PlugZap aria-hidden="true" /> 1,500+ apps</span>
+            <span><Search aria-hidden="true" /> Research with sources</span>
+            <span><Plane aria-hidden="true" /> Plans ready for approval</span>
+          </div>
         </article>
 
         <article className={`${styles.slide} ${styles.growthSlide} ${activeSlide === 3 ? styles.active : ''}`}
@@ -213,25 +184,14 @@ export function AuthShowcase() {
           </div>
           <div className={`${styles.visualStage} ${styles.employeeStage}`}>
             <figure className={styles.heroArt}>
-              <Image src="/brand/auth-stories/xroga-employees-clean.webp" alt="A clean studio portrait of six specialized Xroga employees"
+              <Image src="/brand/auth-stories/xroga-employees-original-v2.webp" alt="Six colorful Xroga AI employees with research, content, operations, development, and customer engagement roles"
                 fill sizes="(max-width: 1279px) 90vw, 38vw" className={styles.artImage} />
             </figure>
-            <section className={`${styles.dataPanel} ${styles.growthPanel}`} aria-label="Example visibility growth">
-              <div className={styles.dataPanelHeader}>
-                <span><TrendingUp aria-hidden="true" /> Visibility</span>
-                <strong><ArrowUpRight aria-hidden="true" /> 42%</strong>
-              </div>
-              <TrendChart variant="orange" />
-              <div className={styles.visibilityStats}>
-                <span><Search aria-hidden="true" /><b>SEO</b><strong>+42%</strong></span>
-                <span><CheckCircle2 aria-hidden="true" /><b>AEO</b><strong>78%</strong></span>
-                <span><Globe2 aria-hidden="true" /><b>GEO</b><strong>+31%</strong></span>
-              </div>
-            </section>
-            <figure className={`${styles.secondaryArt} ${styles.visibilityArt}`}>
-              <Image src="/brand/auth-stories/seo-aeo-geo-clean.webp" alt="Clean search, answer, and geographic discovery objects"
-                fill sizes="(max-width: 700px) 42vw, 17vw" className={styles.artImage} />
-            </figure>
+          </div>
+          <div className={styles.sceneFooter} aria-label="Growth outcomes">
+            <span><Bot aria-hidden="true" /> Specialized AI employees</span>
+            <span><TrendingUp aria-hidden="true" /> Business growth</span>
+            <span><Globe2 aria-hidden="true" /> SEO · AEO · GEO</span>
           </div>
         </article>
       </div>

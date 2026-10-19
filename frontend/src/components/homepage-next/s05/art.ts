@@ -12,62 +12,45 @@ import type { CapabilityId } from './capabilities';
 const svg = (id: CapabilityId, body: string) =>
   `<svg class="s5-art" data-art="${id}" viewBox="0 0 300 160" aria-hidden="true" focusable="false">${body}</svg>`;
 
-/* 01 Travel & Bookings: a boarding pass over a route map; the route flies to the destination */
+/* 01 Travel & Bookings: a flight path from origin to destination; an airliner flies it */
+const ROUTE = 'M48 112C100 34 196 22 254 50';
 const travel = svg(
   'travel',
-  `<g class="s5-map">
-    <rect class="s5-p1" x="104" y="12" width="210" height="170" rx="18"/>
-    <path class="s5-contour" d="M112 70c30-18 58 6 88-8s52-30 110-14M112 112c40-10 66 12 104-2s52-26 94-12M150 12c-8 30 10 52 2 80"/>
+  `<path class="s5-flightRest" d="${ROUTE}"/>
+  <path class="s5-flight s5-draw" d="${ROUTE}" pathLength="1"/>
+  <circle class="s5-origin" cx="48" cy="112" r="7"/>
+  <rect class="s5-code" x="30" y="128" width="36" height="10" rx="5"/>
+  <g class="s5-destG">
+    <circle class="s5-destRing" cx="254" cy="50" r="13"/>
+    <circle class="s5-c2" cx="254" cy="50" r="6"/>
   </g>
-  <path class="s5-route-rest" d="M152 128C170 76 214 48 258 54"/>
-  <path class="s5-route s5-draw" d="M152 128C170 76 214 48 258 54" pathLength="1"/>
-  <circle class="s5-c1" cx="152" cy="128" r="7"/>
-  <circle class="s5-ripple" cx="258" cy="54" r="15"/>
-  <circle class="s5-dest" cx="258" cy="54" r="15"/>
-  <circle class="s5-c2 s5-dest-dot" cx="258" cy="54" r="6"/>
-  <g class="s5-plane"><path class="s5-paper" d="M-9-6 10 0-9 6-5 0z"/></g>
-  <g class="s5-ticket">
-    <rect class="s5-paper" x="14" y="56" width="132" height="86" rx="12"/>
-    <rect class="s5-c1" x="14" y="56" width="132" height="22" rx="12"/>
-    <rect class="s5-c1" x="14" y="68" width="132" height="10"/>
-    <rect class="s5-ink" x="28" y="92" width="30" height="12" rx="4"/>
-    <path class="s5-ink-s" d="M64 98h14m-4-4 4 4-4 4"/>
-    <rect class="s5-ink" x="84" y="92" width="30" height="12" rx="4"/>
-    <rect class="s5-inkL" x="28" y="114" width="44" height="6" rx="3"/>
-    <rect class="s5-inkL" x="28" y="126" width="28" height="6" rx="3"/>
-    <path class="s5-barcode" d="M96 114v20m5-20v20m4-20v20m6-20v20m4-20v20m5-20v20m4-20v20"/>
-    <circle class="s5-notch" cx="14" cy="104" r="6"/>
-    <circle class="s5-notch" cx="146" cy="104" r="6"/>
+  <rect class="s5-code" x="236" y="72" width="36" height="10" rx="5"/>
+  <g class="s5-planeG" style="offset-path: path('${ROUTE}')">
+    <path class="s5-plane" d="M17 0c0-1.7-1.6-2.7-4-2.7H4L-6-14h-5l4.2 11.3H-12l-3.8-4.6h-3.4L-16.6 0l-2.6 7.3h3.4L-12 2.7h5.2L-11 14h5L4 2.7h9c2.4 0 4-1 4-2.7z"/>
   </g>`,
 );
 
-/* 02 Email & Calendars: an envelope beside a calendar; the message becomes an event */
+/* 02 Email & Calendars: an envelope and a calendar side by side; a message becomes an event */
+const CELLS = [0, 1, 2]
+  .map((r) => [0, 1, 2, 3].map((c) => `<rect class="s5-cell" x="${166 + c * 30}" y="${74 + r * 26}" width="24" height="20" rx="4"/>`).join(''))
+  .join('');
 const mail = svg(
   'mail',
   `<g class="s5-cal">
-    <rect class="s5-p1" x="128" y="22" width="190" height="160" rx="16"/>
-    <rect class="s5-c2" x="128" y="22" width="190" height="30" rx="16"/>
-    <rect class="s5-c2" x="128" y="38" width="190" height="14"/>
-    <rect class="s5-paper" x="152" y="14" width="7" height="18" rx="3.5"/>
-    <rect class="s5-paper" x="262" y="14" width="7" height="18" rx="3.5"/>
-    ${[0, 1, 2]
-      .map((r) => [0, 1, 2, 3, 4].map((c) => `<rect class="s5-p2" x="${142 + c * 32}" y="${62 + r * 28}" width="26" height="22" rx="5"/>`).join(''))
-      .join('')}
-    <rect class="s5-c1 s5-ev-old" x="142" y="118" width="58" height="22" rx="6"/>
-    <rect class="s5-c1 s5-ev" x="206" y="90" width="58" height="22" rx="6"/>
-    <rect class="s5-ev-time" x="212" y="99" width="22" height="4" rx="2"/>
+    <rect class="s5-p1" x="156" y="30" width="134" height="150" rx="14"/>
+    <rect class="s5-c2" x="156" y="30" width="134" height="30" rx="14"/>
+    <rect class="s5-c2" x="156" y="46" width="134" height="14"/>
+    <rect class="s5-calPin" x="182" y="24" width="6" height="14" rx="3"/>
+    <rect class="s5-calPin" x="258" y="24" width="6" height="14" rx="3"/>
+    ${CELLS}
+    <rect class="s5-slotHl" x="226" y="100" width="24" height="20" rx="4"/>
   </g>
-  <g class="s5-env">
-    <g class="s5-letter"><g class="s5-letterIn">
-      <rect class="s5-paper" x="30" y="40" width="98" height="64" rx="7"/>
-      <rect class="s5-ink" x="42" y="52" width="46" height="7" rx="3.5"/>
-      <rect class="s5-inkL" x="42" y="66" width="70" height="5" rx="2.5"/>
-      <rect class="s5-inkL" x="42" y="77" width="58" height="5" rx="2.5"/>
-    </g></g>
-    <path class="s5-c1" d="M18 72a10 10 0 0 1 10-10h112a10 10 0 0 1 10 10v66H18z"/>
-    <path class="s5-env-front" d="M18 76l66 44 66-44v62H18z"/>
-    <path class="s5-flap" d="M20 68l64 42 64-42"/>
-  </g>`,
+  <g class="s5-envG">
+    <rect class="s5-c1" x="34" y="72" width="96" height="64" rx="9"/>
+    <path class="s5-envFold" d="M36 133l36-28M128 133l-36-28"/>
+    <path class="s5-flap" d="M36 75l46 32 46-32"/>
+  </g>
+  <rect class="s5-evChip" x="68" y="96" width="28" height="12" rx="4"/>`,
 );
 
 /* 03 CRM & Support: a contact record beside a pipeline; the deal moves on, the record links up */
@@ -147,19 +130,19 @@ const slots = [
   [166, 94],
   [228, 94],
 ];
-// three modules wait loose on the left at rest, stacked at deliberate angles
-const modFrom = ['0px,0px,0deg', '0px,0px,0deg', '-214px,-8px,-10deg', '0px,0px,0deg', '-136px,-10px,7deg', '-222px,22px,-5deg'];
-const modClass = ['s5-c1', 's5-c2', 's5-c1', 's5-paper', 's5-c2', 's5-c1'];
+// at rest three slots wait empty; the missing modules slide a short way into them, one after another
+const modFrom = ['0px,0px,0deg', '0px,0px,0deg', '-16px,0px,0deg', '0px,0px,0deg', '-16px,0px,0deg', '-16px,0px,0deg'];
+const modClass = ['s5-c1', 's5-p3', 's5-c1', 's5-p3', 's5-c2', 's5-p3'];
 const templates = svg(
   'templates',
   `<rect class="s5-frame" x="92" y="22" width="210" height="140" rx="18"/>
-  ${slots.map(([x, y]) => `<rect class="s5-slot" x="${x}" y="${y}" width="54" height="50" rx="10"/>`).join('')}
+  ${slots.map(([x, y]) => `<rect class="s5-slot" x="${x}" y="${y}" width="54" height="50" rx="8"/>`).join('')}
   <g class="s5-preset"><rect class="s5-paper" x="196" y="12" width="70" height="20" rx="10"/><circle class="s5-c1" cx="209" cy="22" r="4.5"/><rect class="s5-ink" x="218" y="19" width="38" height="6" rx="3"/></g>
   ${slots
     .map(([x, y], i) => {
       const [tx, ty, r] = modFrom[i].split(',');
       const glyph = i % 3 === 0 ? `<path class="s5-glyph" d="M${x + 14} ${y + 25}h26M${x + 27} ${y + 12}v26"/>` : i % 3 === 1 ? `<circle class="s5-glyph" cx="${x + 27}" cy="${y + 25}" r="10"/>` : `<path class="s5-glyph" d="M${x + 15} ${y + 33}l12-16 12 16z"/>`;
-      return `<g class="s5-mod" style="--tx:${tx};--ty:${ty};--r:${r};--i:${i}"><rect class="${modClass[i]}" x="${x}" y="${y}" width="54" height="50" rx="10"/>${glyph}</g>`;
+      return `<g class="s5-mod" style="--tx:${tx};--ty:${ty};--r:${r};--i:${[2, 4, 5].indexOf(i) + 1};--o:${tx === '0px' ? 1 : 0}"><rect class="${modClass[i]}" x="${x}" y="${y}" width="54" height="50" rx="8"/>${glyph}</g>`;
     })
     .join('')}`,
 );

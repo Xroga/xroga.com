@@ -148,7 +148,40 @@ function Rail({ label, items }: { label: string; items: Capability[] }) {
   );
 }
 
+/** arriving at /#s05: the sections above keep growing as they load, which carries S05 away from the anchor; keep it
+ * aligned under the navigation while the page settles, and stop the moment the visitor scrolls or presses a key */
+function useAnchorArrival(id: string) {
+  useEffect(() => {
+    if (location.hash !== `#${id}`) return;
+    const el = document.getElementById(id);
+    if (!el) return;
+    let done = false;
+    const stop = () => {
+      done = true;
+    };
+    const align = () => {
+      if (!done) el.scrollIntoView({ block: 'start' });
+    };
+    const ro = new ResizeObserver(align);
+    ro.observe(document.body);
+    const opts = { passive: true, once: true } as const;
+    for (const e of ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const) window.addEventListener(e, stop, opts);
+    align();
+    const end = window.setTimeout(() => {
+      stop();
+      ro.disconnect();
+    }, 6000);
+    return () => {
+      stop();
+      ro.disconnect();
+      window.clearTimeout(end);
+      for (const e of ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const) window.removeEventListener(e, stop);
+    };
+  }, [id]);
+}
+
 export function S05Capabilities() {
+  useAnchorArrival('s05');
   return (
     <section id="s05" aria-labelledby="s05-title" className="s5">
       <div className="s5-inner">

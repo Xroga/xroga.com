@@ -1,0 +1,32 @@
+.page {
+  --auth-page: #000;
+  --auth-shell: #080808;
+  --auth-surface: #080808;
+  --auth-side: #080808;
+  --auth-border: #242424;
+  --auth-border-strong: #454545;
+  --auth-text: #f5f5f5;
+  --auth-muted: #999;
+  --auth-input: #111;
+  --auth-input-hover: #171717;
+  --auth-soft: #151515;
+  --auth-shadow: none;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background: #000;
+  color: var(--auth-text);
+}
+.shell { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); width: 100%; max-width: 1160px; padding: 14px; border: 1px solid #202020; border-radius: 28px; background: #080808; }
+.story { min-width: 0; min-height: 650px; overflow: hidden; border-radius: 18px; }
+.formArea { display: flex; align-items: center; justify-content: center; min-width: 0; padding: 30px 38px; }
+.form { width: 100%; max-width: 420px; }
+.form h1 { font-family: var(--font-goga), system-ui, sans-serif; font-size: 30px; font-weight: 600; letter-spacing: -.04em; }
+.form input { border-radius: 9px; }
+.form button[type='submit'] { border: 1px solid #444; border-radius: 9px; background: linear-gradient(#292929, #191919); box-shadow: 0 5px 12px #0006; }
+.form button[type='submit']:hover:not(:disabled) { background: #303030; transform: translateY(-1px); }
+.form a { color: #ddd; }
+@media (max-width: 900px) { .page { padding: 14px; } .formArea { padding: 26px 22px; } }
+@media (max-width: 700px) { .page { padding: 10px; } .shell { grid-template-columns: minmax(0, 1fr); padding: 9px; border-radius: 22px; } .story { min-height: 520px; border-radius: 15px; } .formArea { padding: 30px 16px; } }
+@media (prefers-reduced-motion: reduce) { .form button { transition: none; transform: none !important; } }
