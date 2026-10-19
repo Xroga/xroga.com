@@ -462,22 +462,19 @@ test('one S01 narrative: no separate six-item strip or footer disclaimer; its us
   assert.equal(CAPABILITIES.length, 8);
 });
 
-test('Galaxy field: budgeted, behind the cards, never takes the pointer, released on unmount', () => {
-  const g = read('./GalaxyField.tsx');
-  assert.match(g, /GALAXY_SCALE = 0\.5;/);
-  assert.match(g, /GALAXY_FRAME_MS = 1000 \/ 30;/);
-  assert.match(g, /new IntersectionObserver/);
-  assert.match(g, /document\.hidden/);
-  assert.match(g, /if \(reduced\) \{\s*draw\(4000\);/, 'reduced motion: one static frame');
-  assert.match(g, /GALAXY_PROBE_LIMIT_MS/);
-  assert.match(g, /loseContext\(\)/);
-  assert.doesNotMatch(g, /mousemove|addEventListener\('mouse/);
-  assert.match(g, /saturation: 0\.12,/);
-  const css = read('./S01.module.css');
-  assert.match(css, /\.galaxy \{[\s\S]*?pointer-events: none;[\s\S]*?mask-image/);
+test('S01 uses a quiet self-contained dot matrix rather than a WebGL starfield', () => {
   const deck = read('./S01CapabilityDeck.tsx');
-  assert.match(deck, /dynamic\(\(\) => import\('\.\/GalaxyField'\)[\s\S]*?ssr: false/);
+  const css = read('./S01.module.css');
+  assert.doesNotMatch(deck, /GalaxyField|next\/dynamic|<canvas/);
+  assert.match(deck, /<div className=\{s\.particleField\} aria-hidden="true" \/>/);
   const stage = deck.slice(deck.indexOf('function DeckStage('), deck.indexOf('function Gallery('));
-  assert.ok(stage.indexOf('<GalaxyField') < stage.indexOf('<ol className={s.deck}'), 'the field is behind the cards');
-  assert.doesNotMatch(deck.slice(deck.indexOf('function Gallery(')), /<GalaxyField/, 'no WebGL field on phones and tablets');
+  assert.ok(stage.indexOf('s.particleField') < stage.indexOf('<ol className={s.deck}'), 'matrix stays behind cards');
+  assert.match(css, /\.particleField \{[\s\S]*?pointer-events: none;[\s\S]*?mask-image/);
+  assert.match(css, /background: radial-gradient\(circle,[^;]*20px 20px repeat;/);
+  assert.match(css, /s01NoiseDrift 20s linear infinite;/);
+  assert.match(css, /url\("data:image\/svg\+xml,/);
+  assert.match(css, /\.section\[data-mode='carousel'\]::before/);
+  assert.match(css, /\.section\[data-mode='static'\]::before/);
+  assert.match(css, /\(prefers-reduced-motion: reduce\)/);
+  assert.doesNotMatch(css, /\.galaxy \{|assets\.codepen\.io/);
 });
