@@ -219,9 +219,9 @@
         "cf1ee4207ba21ac496ac",
         "b85bc952750476ba5d75"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Pipeline invokes the improvement loader for opts.userId; the loader filters build_outcomes by user_id, age cutoff and bounded row limit.",
-      "reason": "Owner-filtered learning reads do not certify pipeline actor provenance, model_telemetry validation, project reuse policy or poisoning resistance. No mutation occurs at these sites.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The sole production consumer of each exported reader is the existing pipeline advisory Promise.all. Pipeline requires the issued context, rejects opts.userId mismatch and captures the issued subject before reaching these calls. Every default database query selects bounded sanitized build outcome fields with exact user_id, freshness, ordering and limit. The source table deliberately stores owner-wide evaluation_and_routing metadata, not project files or prompts, and has no project selector to substitute. Pure summaries validate bounded identifiers/telemetry and never expose another owner row. No reader writes rows or calls a model/provider.",
+      "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Six exact default read/factory sites across three existing modules. Actual isolated Auth-owner rows have distinct model/recipe identifiers, identical task namespace and nonempty bounded summaries. Every actual default reader matches only its owner rows, excludes foreign outcomes, returns empty for a third owner, fails closed during real-query authority outage, denies browser read/insert and preserves exact persisted rows. This establishes tenant ownership, not model quality, full learning policy, consequential spend authority or provider success. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
       "evidence": [
         {
           "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -239,6 +239,57 @@
         "fixture": "backend/src/security/learningOwnerReads.local.integration.ts",
         "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec",
         "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+      },
+      "historicalReview": {
+        "path": "backend/src/ai/buildImprovementMemory.ts",
+        "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec",
+        "callIds": [
+          "cf1ee4207ba21ac496ac",
+          "b85bc952750476ba5d75"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Pipeline invokes the improvement loader for opts.userId; the loader filters build_outcomes by user_id, age cutoff and bounded row limit.",
+        "reason": "Owner-filtered learning reads do not certify pipeline actor provenance, model_telemetry validation, project reuse policy or poisoning resistance. No mutation occurs at these sites.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/buildImprovementMemory.ts",
+            "marker": "MAX_IMPROVEMENT_ROWS"
+          }
+        ],
+        "criterionClosureReview": {
+          "classification": "PROOF_REQUIRED",
+          "criteria": [
+            "XB01-C007-AC02",
+            "XB01-C007-AC10"
+          ],
+          "actorTrace": "Pipeline retains its issued actor before the sole production default reader. Exact owner predicate, bounded sanitized advisory projection, existing freshness/order/limit and no writes.",
+          "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+          "fixture": "backend/src/security/learningOwnerReads.local.integration.ts",
+          "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec",
+          "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+        "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+        "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+        "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+        "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+        "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+        "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+        "obligationIds": [
+          "OB-76b294c090331cc4:observed-owner-advisory-reader"
+        ],
+        "passedTests": [
+          "real learning readers use the issued owner namespace and cannot reuse foreign outcomes or unavailable authority"
+        ],
+        "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Owner-filtered learning reads do not certify pipeline actor provenance, model_telemetry validation, project reuse policy or poisoning resistance. No mutation occurs at these sites.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
       }
     },
     {
@@ -309,9 +360,9 @@
         "5e75a66eaa35941a01e5",
         "23ab29cbd5073a2cb088"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Pipeline invokes this userId-scoped reader, filtering build_outcomes by owner, age and row cap before summarizing model telemetry.",
-      "reason": "Remaining gaps are pipeline identity provenance, malformed persisted telemetry, cross-project reuse policy and verification of all exported consumers.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The sole production consumer of each exported reader is the existing pipeline advisory Promise.all. Pipeline requires the issued context, rejects opts.userId mismatch and captures the issued subject before reaching these calls. Every default database query selects bounded sanitized build outcome fields with exact user_id, freshness, ordering and limit. The source table deliberately stores owner-wide evaluation_and_routing metadata, not project files or prompts, and has no project selector to substitute. Pure summaries validate bounded identifiers/telemetry and never expose another owner row. No reader writes rows or calls a model/provider.",
+      "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Six exact default read/factory sites across three existing modules. Actual isolated Auth-owner rows have distinct model/recipe identifiers, identical task namespace and nonempty bounded summaries. Every actual default reader matches only its owner rows, excludes foreign outcomes, returns empty for a third owner, fails closed during real-query authority outage, denies browser read/insert and preserves exact persisted rows. This establishes tenant ownership, not model quality, full learning policy, consequential spend authority or provider success. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
       "evidence": [
         {
           "path": "backend/src/ai/buildOutcomeRoutingMemory.ts",
@@ -329,6 +380,57 @@
         "fixture": "backend/src/security/learningOwnerReads.local.integration.ts",
         "sourceSha256": "bfa3804acb045b2a53877859dbd03f288a6db28533528972e31b3a6d8bdee902",
         "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+      },
+      "historicalReview": {
+        "path": "backend/src/ai/buildOutcomeRoutingMemory.ts",
+        "sourceSha256": "bfa3804acb045b2a53877859dbd03f288a6db28533528972e31b3a6d8bdee902",
+        "callIds": [
+          "5e75a66eaa35941a01e5",
+          "23ab29cbd5073a2cb088"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Pipeline invokes this userId-scoped reader, filtering build_outcomes by owner, age and row cap before summarizing model telemetry.",
+        "reason": "Remaining gaps are pipeline identity provenance, malformed persisted telemetry, cross-project reuse policy and verification of all exported consumers.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/buildOutcomeRoutingMemory.ts",
+            "marker": "loadBuildOutcomeRoutingMemory"
+          }
+        ],
+        "criterionClosureReview": {
+          "classification": "PROOF_REQUIRED",
+          "criteria": [
+            "XB01-C007-AC02",
+            "XB01-C007-AC10"
+          ],
+          "actorTrace": "The sole production pipeline caller uses the immutable issued owner. Existing default query selects only that user outcomes before bounded advisory aggregation. No provider account or external action.",
+          "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+          "fixture": "backend/src/security/learningOwnerReads.local.integration.ts",
+          "sourceSha256": "bfa3804acb045b2a53877859dbd03f288a6db28533528972e31b3a6d8bdee902",
+          "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+        "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+        "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+        "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+        "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+        "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+        "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+        "obligationIds": [
+          "OB-15382bc411fb9f9b:observed-owner-advisory-reader"
+        ],
+        "passedTests": [
+          "real learning readers use the issued owner namespace and cannot reuse foreign outcomes or unavailable authority"
+        ],
+        "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Remaining gaps are pipeline identity provenance, malformed persisted telemetry, cross-project reuse policy and verification of all exported consumers.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
       }
     },
     {
@@ -338,9 +440,9 @@
         "c0288e26c844107ebca9",
         "51e187f3cd0b99673791"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Pipeline strategy memory reads selected outcome/recipe fields for supplied userId with age and row bounds, then feeds the existing strategy scorer.",
-      "reason": "Upstream actor assurance, persisted strategy validation, same-user project isolation policy and contaminated learning evidence remain unresolved.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The sole production consumer of each exported reader is the existing pipeline advisory Promise.all. Pipeline requires the issued context, rejects opts.userId mismatch and captures the issued subject before reaching these calls. Every default database query selects bounded sanitized build outcome fields with exact user_id, freshness, ordering and limit. The source table deliberately stores owner-wide evaluation_and_routing metadata, not project files or prompts, and has no project selector to substitute. Pure summaries validate bounded identifiers/telemetry and never expose another owner row. No reader writes rows or calls a model/provider.",
+      "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Six exact default read/factory sites across three existing modules. Actual isolated Auth-owner rows have distinct model/recipe identifiers, identical task namespace and nonempty bounded summaries. Every actual default reader matches only its owner rows, excludes foreign outcomes, returns empty for a third owner, fails closed during real-query authority outage, denies browser read/insert and preserves exact persisted rows. This establishes tenant ownership, not model quality, full learning policy, consequential spend authority or provider success. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
       "evidence": [
         {
           "path": "backend/src/ai/buildStrategyMemory.ts",
@@ -358,6 +460,57 @@
         "fixture": "backend/src/security/learningOwnerReads.local.integration.ts",
         "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56",
         "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+      },
+      "historicalReview": {
+        "path": "backend/src/ai/buildStrategyMemory.ts",
+        "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56",
+        "callIds": [
+          "c0288e26c844107ebca9",
+          "51e187f3cd0b99673791"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Pipeline strategy memory reads selected outcome/recipe fields for supplied userId with age and row bounds, then feeds the existing strategy scorer.",
+        "reason": "Upstream actor assurance, persisted strategy validation, same-user project isolation policy and contaminated learning evidence remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/buildStrategyMemory.ts",
+            "marker": "MAX_STRATEGY_ROWS"
+          }
+        ],
+        "criterionClosureReview": {
+          "classification": "PROOF_REQUIRED",
+          "criteria": [
+            "XB01-C007-AC02",
+            "XB01-C007-AC10"
+          ],
+          "actorTrace": "Existing default reader is called only by the issued-owner pipeline. Exact user scope precedes existing sanitized recipe/taxonomy summarization. Source table explicitly stores owner-wide evaluation metadata without raw source or prompts.",
+          "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+          "fixture": "backend/src/security/learningOwnerReads.local.integration.ts",
+          "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56",
+          "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+        "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+        "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+        "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+        "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+        "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+        "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+        "obligationIds": [
+          "OB-ecfadcff49b9bfe6:observed-owner-advisory-reader"
+        ],
+        "passedTests": [
+          "real learning readers use the issued owner namespace and cannot reuse foreign outcomes or unavailable authority"
+        ],
+        "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Upstream actor assurance, persisted strategy validation, same-user project isolation policy and contaminated learning evidence remain unresolved.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
       }
     },
     {
@@ -538,9 +691,9 @@
         "371f13126c4ab7aab2dc",
         "74cc6545383bea8e320f"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "loadProjectDelivery supplies user/project to the runtime revision loader and loadEvidence; evidence selects owner/project and four publication/deployment types.",
-      "reason": "Payloads are interpreted as ready/failed without provider proof. Actor provenance, parent consistency across reads, payload URL/reason validation and publish/deploy authority remain unresolved.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The actual delivery route is mounted behind authMiddleware. It supplies only requireUser(req) and the validated project path. loadProjectDelivery reads the exact owned revision in parallel with its private event query and returns no envelope if that revision is absent. The event query constrains the same original owner plus logical project and fixed four event types before mapping bounded evidence fields. No body/query actor, default other account, provider request or durable mutation occurs in these selected reads. Existing publishing/deployment consumer authority is separate.",
+      "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Two exact evidence read/factory sites only. The real HTTP/database fixture gives two fresh unconnected Auth subjects distinct evidence and revisions for the same logical project label. Forged opposite-owner query does not change exact returned revision/repository/deployment IDs, a second private project cannot be read by the other actor and anonymous requests deny. Missing canonical event authority rejects, while exact event/revision rows remain unchanged. Ready events and URLs are explicitly fictional seeded metadata with verified:false, never live-provider deployment acceptance. Whole publish/deploy actions, URL/content trust, credentials and010 egress remain independently open. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
       "evidence": [
         {
           "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
@@ -554,6 +707,53 @@
         "fixture": "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
         "scope": "ORIGINAL007_TENANT_OWNERSHIP_ONLY_OTHER_SCOPE_RETAINED"
+      },
+      "historicalReview": {
+        "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
+        "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+        "callIds": [
+          "371f13126c4ab7aab2dc",
+          "74cc6545383bea8e320f"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "loadProjectDelivery supplies user/project to the runtime revision loader and loadEvidence; evidence selects owner/project and four publication/deployment types.",
+        "reason": "Payloads are interpreted as ready/failed without provider proof. Actor provenance, parent consistency across reads, payload URL/reason validation and publish/deploy authority remain unresolved.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
+            "marker": "async function loadEvidence"
+          }
+        ],
+        "criterionClosureReview": {
+          "classification": "PROOF_REQUIRED",
+          "actorTrace": "index mounts delivery routes behind authMiddleware. The GET handler uses requireUser(req) and validated project path only. loadProjectDelivery reads the exact owner/project revision before any envelope is returned, and its private evidence query filters that same owner/project with a fixed event-type projection. Fresh disposable subjects have no provider credentials. Actual HTTP evidence uses distinct owner rows under the same logical project label and a second private project. No publish/deploy action is called.",
+          "completionCondition": "Authenticate the actual own/foreign/anonymous endpoint and unavailable authority case. Persisted fictional ready events prove tenant-scoped metadata projection only, never live provider success, full publication/deployment authority or egress.",
+          "fixture": "backend/src/security/deliveryEvidenceRead.local.integration.ts",
+          "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+          "scope": "ORIGINAL007_TENANT_OWNERSHIP_ONLY_OTHER_SCOPE_RETAINED"
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+        "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+        "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+        "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+        "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+        "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+        "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+        "obligationIds": [
+          "OB-47ed76ce09cbb18f:observed-actual-owned-delivery-evidence-endpoint"
+        ],
+        "passedTests": [
+          "real delivery evidence endpoint uses verified owner and project before exposing persisted publication or deployment metadata"
+        ],
+        "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Payloads are interpreted as ready/failed without provider proof. Actor provenance, parent consistency across reads, payload URL/reason validation and publish/deploy authority remain unresolved.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
       }
     },
     {
@@ -956,9 +1156,9 @@
         "722894c8c92d40e08b97",
         "71e802345b31b6d2fd5f"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-      "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Actual universal execution uses the admitted pipeline owner/project/run and a per-request scoped store, never a global retained privileged identity. scope requires the original issued context and exact owner before any selected query. Spec and plan reads filter owner plus logical project, mutation reads also bind run, and index deletion binds the exact project/repository/branch identity plus issued owner. savePlan preflight is only advisory. The existing owned write snapshots payload and validates context; the new composite spec/owner/project FK now decides the actual insert/update under the parent tuple lock. Neither another owner nor same-owner different-project spec can become its parent. Optional parent deletion clears only spec_id and retains the owned plan.",
+      "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Five exact remaining original sites, not constructor or entire universal execution certification. Actual nonempty own/foreign spec/plan/mutation namespaces remain distinct despite identical logical keys, third-project/run reads return nothing, forged/foreign contexts reject, a foreign spec is not accepted, and index foreign delete leaves the owned snapshot while legitimate own deletion works. Actual savePlan must be observed waiting on a spec-owner transfer and return unsaved with zero child rows after transfer commits. Valid save succeeds, both parent owner/project reassignments are denied with exact child retention, and parent deletion preserves the optional owned receipt. Fresh/upgrade validation is separately required and invalid historical tuples are never rewritten. No provider, authority, vault or egress certificate follows. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
       "evidence": [
         {
           "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
@@ -985,6 +1185,72 @@
         "migration": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
         "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
         "laterPhaseScope": "Unchanged original008/009/010 obligations remain separate."
+      },
+      "historicalReview": {
+        "path": "backend/src/synthesis/universalPersistence.ts",
+        "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
+        "callIds": [
+          "7b91dfaf8225d8e56493",
+          "cc45bc751ae8166f15f4",
+          "45d1a388e450de3014cc",
+          "722894c8c92d40e08b97",
+          "71e802345b31b6d2fd5f"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
+        "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
+            "marker": "mutation history binds the requested project"
+          },
+          {
+            "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+            "marker": "real universal plan parent ownership rechecks after an observed insert lock wait and preserves optional deletion receipts"
+          },
+          {
+            "path": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+            "marker": "architecture_plans_spec_owner_project_fkey"
+          }
+        ],
+        "criterionClosureReview": {
+          "classification": "FIX_REQUIRED",
+          "criteria": [
+            "XB01-C007-AC02",
+            "XB01-C007-AC10"
+          ],
+          "finding": "Original schema reproduction allows foreign-parent plan after an ownership preflight. Composite FK repair is implemented locally, real acceptance pending.",
+          "completionCondition": "Actual held-parent insert wait rejects ownership transfer, own/project/run read namespace and deletion work, changed-source fresh/upgrade and repeated integrated verification pass.",
+          "fixture": "backend/src/security/universalOwnerReads.local.integration.ts",
+          "migration": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+          "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
+          "laterPhaseScope": "Unchanged original008/009/010 obligations remain separate."
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+        "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+        "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+        "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+        "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+        "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+        "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+        "obligationIds": [
+          "OB-f1384a65c2d70a16:observed-universal-owner-read-and-current-spec-parent"
+        ],
+        "passedTests": [
+          "real universal default readers and index removal preserve issued owner project and run namespaces",
+          "real universal plan parent ownership rechecks after an observed insert lock wait and preserves optional deletion receipts",
+          "real universal spec and plan collision cannot transfer ownership or reference a foreign parent",
+          "real repository index cannot be read deleted overwritten or have children removed by another tenant"
+        ],
+        "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
       }
     },
     {
@@ -1432,11 +1698,7 @@
       "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
       "callIds": [
         "3faa7ece6a312b431802",
-        "09c18505660bd25e7f05",
-        "ab1702a45a7ccb57ac8f",
-        "1990f5c97beb40b8b783",
-        "e27b9abaf3fe02c61229",
-        "f1aaacc8e5daf32fdba1"
+        "09c18505660bd25e7f05"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
@@ -1454,6 +1716,18 @@
         "fixture": "backend/src/security/quotaEvidence.local.integration.ts",
         "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
         "scope": "ORIGINAL007_TENANT_OWNERSHIP_ONLY_OTHER_SCOPE_RETAINED"
+      },
+      "structuredOrigin": {
+        "id": "OB-346186bea635be22",
+        "callIds": [
+          "3faa7ece6a312b431802",
+          "09c18505660bd25e7f05",
+          "ab1702a45a7ccb57ac8f",
+          "1990f5c97beb40b8b783",
+          "e27b9abaf3fe02c61229",
+          "f1aaacc8e5daf32fdba1"
+        ],
+        "disposition": "REVIEWED_GAP"
       }
     },
     {
@@ -1464,9 +1738,9 @@
         "cb5da87d32bfae7b42b8",
         "b3cacfdb187f1405097d"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
-      "reason": "A held real-SDK loopback cycle lookup reproduced mutable input producing one owner cycle with another owner user/provider/request tuple. The input is now captured before awaiting. A composite current cycle-owner foreign key fences the decisive insert against parent changes and retains existing null-cycle deletion behavior. Actual changed-source PostgreSQL lock, actor-isolation, browser-denial and exact receipt evidence is still required. This remains an original007 gap, not a spending-policy certificate.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The only production accounting producers are the existing Parallel and internal web-intelligence wrappers. Research and admitted pipeline chains pass their original server userId, not model/body identity. The accounting helper snapshots all scalar owner/provider/request fields before awaiting the bounded current-owner cycle query. The fixed private insert uses that captured actor and optional cycle ID. The composite database foreign key validates cycle_id plus user_id at the decisive write, takes PostgreSQL referential locks and refuses a cycle transferred to a different owner while the insert waits. Browser roles have no accounting-table privileges. Diagnostics remain best-effort with no claimed execution or billing receipt on a failed insert.",
+      "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Three original query/factory/insert sites, one shared relationship correction. Actual local Auth/database tests preserve exact captured owner/provider/request/amount/price receipts despite input mutation during the actual cycle response, reject service-role foreign cycle substitution and browser reads/writes, observe the real delayed FK insert losing to committed parent ownership change, preserve valid concurrent current-owner appends and deny later parent transfer while children exist. Cycle deletion retains only those same-owner receipts with null cycle, preserving legacy semantics. Migration validation stops on mismatched old history without rewriting it. No web provider executes and no008 budget, paid spend or exactly-once provider claim is made. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
       "evidence": [
         {
           "path": "backend/src/ai/webBudget.ts",
@@ -1483,21 +1757,69 @@
       ],
       "historicalReview": {
         "path": "backend/src/ai/webBudget.ts",
-        "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d",
+        "sourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
         "callIds": [
-          "6d55007bf3ddd2edc540",
-          "d97bbed18063d9cc41d7",
-          "5a8e3957447bad08faa1"
+          "3a079bb3694a289488d7",
+          "cb5da87d32bfae7b42b8",
+          "b3cacfdb187f1405097d"
         ],
         "disposition": "REVIEWED_GAP",
         "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
-        "reason": "No hard-limit acceptance: missing store skips accounting, lookup errors can produce a null cycle, and failures are logged. Full caller ownership, provider reservation coverage, numeric validation and reconciliation after partial writes remain open. Do not use this telemetry as proof of zero spend.",
+        "reason": "A held real-SDK loopback cycle lookup reproduced mutable input producing one owner cycle with another owner user/provider/request tuple. The input is now captured before awaiting. A composite current cycle-owner foreign key fences the decisive insert against parent changes and retains existing null-cycle deletion behavior. Actual changed-source PostgreSQL lock, actor-isolation, browser-denial and exact receipt evidence is still required. This remains an original007 gap, not a spending-policy certificate.",
         "evidence": [
           {
             "path": "backend/src/ai/webBudget.ts",
             "marker": "recordWebSpend"
+          },
+          {
+            "path": "backend/src/security/webAccounting.local.integration.ts",
+            "marker": "real web accounting retains captured owner intent and cycle ownership across an observed database lock wait"
+          },
+          {
+            "path": "supabase/migrations/20261019000700_web_usage_cycle_owner.sql",
+            "marker": "xroga_web_usage_cycle_owner_fkey"
           }
-        ]
+        ],
+        "historicalReview": {
+          "path": "backend/src/ai/webBudget.ts",
+          "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d",
+          "callIds": [
+            "6d55007bf3ddd2edc540",
+            "d97bbed18063d9cc41d7",
+            "5a8e3957447bad08faa1"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
+          "reason": "No hard-limit acceptance: missing store skips accounting, lookup errors can produce a null cycle, and failures are logged. Full caller ownership, provider reservation coverage, numeric validation and reconciliation after partial writes remain open. Do not use this telemetry as proof of zero spend.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/webBudget.ts",
+              "marker": "recordWebSpend"
+            }
+          ]
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+        "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+        "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+        "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+        "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+        "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+        "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+        "obligationIds": [
+          "OB-0fbb2964e9911f44:observed-captured-web-owner-and-cycle-parent"
+        ],
+        "passedTests": [
+          "real web accounting retains captured owner intent and cycle ownership across an observed database lock wait"
+        ],
+        "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "A held real-SDK loopback cycle lookup reproduced mutable input producing one owner cycle with another owner user/provider/request tuple. The input is now captured before awaiting. A composite current cycle-owner foreign key fences the decisive insert against parent changes and retains existing null-cycle deletion behavior. Actual changed-source PostgreSQL lock, actor-isolation, browser-denial and exact receipt evidence is still required. This remains an original007 gap, not a spending-policy certificate.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
       }
     },
     {
@@ -1638,9 +1960,9 @@
         "e7d0d54375645a30b30f",
         "790ce21b600ea4bd4f9d"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
-      "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
+      "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Registered existing signed capability resolution, not tenant impersonation or blanket global data access. Actual signed consumer permits a valid owned capability and rejects changed signature, foreign capability ID reuse, missing authority, revoked grant and current session port removal without opening an upstream socket.\nFive exact original007 factory/latest/revoke sites only. Existing actual create/foreign-parent/held-lock/session-expiry/rollback cases are reused. Actual current consumer test proves correct scoped selection, foreign owner and project denial, foreign revoke preserving the full row, successful own revoke and unaffected other-owner capability. Gateway independently rechecks current session/port and never forwards a provider call in this witness. Custody, live proxy/provider success and revocation of already-open sockets remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
       "evidence": [
         {
           "path": "backend/src/synthesis/livePreview/access.ts",
@@ -1666,6 +1988,73 @@
         "fixture": "backend/src/security/previewConsumer.local.integration.ts",
         "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
         "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+      },
+      "historicalReview": {
+        "path": "backend/src/synthesis/livePreview/store.ts",
+        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "callIds": [
+          "260f546643a88434ec35",
+          "72439f834416b3fd90eb",
+          "fd09b17779296225433f",
+          "62f2c45d96306d0c651c",
+          "8418218a6fdf978626d1",
+          "e7d0d54375645a30b30f",
+          "790ce21b600ea4bd4f9d"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
+        "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+        "evidence": [
+          {
+            "path": "backend/src/synthesis/livePreview/access.ts",
+            "marker": "session.userId !== grant.userId"
+          },
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "const target = authorizedPreviewTarget(grant, session);"
+          },
+          {
+            "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
+            "marker": "preview grant input and returned capability stay bound"
+          }
+        ],
+        "criterionClosureReview": {
+          "classification": "PROOF_REQUIRED",
+          "criteria": [
+            "XB01-C007-AC02",
+            "XB01-C007-AC10"
+          ],
+          "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
+          "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+          "fixture": "backend/src/security/previewConsumer.local.integration.ts",
+          "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+          "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+        "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+        "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+        "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+        "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+        "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+        "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+        "obligationIds": [
+          "OB-11526c9c3e6a8aa3",
+          "OB-11526c9c3e6a8aa3:observed-preview-consumer-owned-paths"
+        ],
+        "passedTests": [
+          "real signed preview consumer rechecks current private grant and session before selecting any upstream target",
+          "real durable preview session cannot resolve a misbound owner/project or stale capability",
+          "real preview admission rejects changed sessions and expiry during an observed grant-write lock wait"
+        ],
+        "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
       }
     },
     {
@@ -4981,9 +5370,9 @@
       "callIds": [
         "a59eb5df1a268fbe2b96"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "The dormant readiness export now requires the original WeakSet-issued TenantContext before any credential or database access, derives its only userId from that immutable context, and selects the current canonical Supabase bundle for only that owner. The query constrains xroga_user_id. No active production caller or new identity issuer is invented. All other module functions remain byte-identical.",
-      "reason": "No active production consumer was found. Dormancy alone is not a security certificate. The existing canonical issued-context guard now makes this export callable only with original server authority, and cloned/plain/string inputs reject before I/O. Its actual canonical-DB two-owner account query, revocation/outage and forged-context witness is prepared. This remains an original007 gap until complete exact-source real CI succeeds. Existing provisioning, provider-success, custody and migration scope is preserved in historicalReadinessReview.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "No production consumer of this dormant readiness export exists. Its own callable contract now requires the original issued TenantContext before credential/database access and derives its only owner from that context. A primitive user string or cloned/forged context cannot select any account. It then resolves the current exact owner canonical bundle and queries only xroga_user_id for that owner. All other module functions are byte-identical after this bounded guard/import change. No new route, issuer or caller is invented.",
+      "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. One original readiness query, not whole provisioning/custody certification. Actual canonical owner credentials with issued contexts select each correct synthetic account and exact owner predicate. Cloned contexts and primitive identities reject before any query, missing account returns false, and revoked/outage authority reaches no provider. Dormancy is recorded, never used as an exemption. No enabled production caller was removed. External schema/provider success and009 migration/custody remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -5021,6 +5410,76 @@
             "marker": "existing public or unknown buckets cannot be reported private"
           }
         ]
+      },
+      "historicalReview": {
+        "path": "backend/src/services/integrations/supabaseProvision.ts",
+        "sourceSha256": "78a71490f381ab699c55168fc075b0042dbb081bc0cc3b6e13d440d2a13fe014",
+        "callIds": [
+          "a59eb5df1a268fbe2b96"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "The dormant readiness export now requires the original WeakSet-issued TenantContext before any credential or database access, derives its only userId from that immutable context, and selects the current canonical Supabase bundle for only that owner. The query constrains xroga_user_id. No active production caller or new identity issuer is invented. All other module functions remain byte-identical.",
+        "reason": "No active production consumer was found. Dormancy alone is not a security certificate. The existing canonical issued-context guard now makes this export callable only with original server authority, and cloned/plain/string inputs reject before I/O. Its actual canonical-DB two-owner account query, revocation/outage and forged-context witness is prepared. This remains an original007 gap until complete exact-source real CI succeeds. Existing provisioning, provider-success, custody and migration scope is preserved in historicalReadinessReview.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "generated external-project memory SQL denies browser roles"
+          },
+          {
+            "path": "backend/src/services/integrations/supabaseProvision.test.ts",
+            "marker": "existing public or unknown buckets cannot be reported private"
+          },
+          {
+            "path": "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
+            "marker": "dormant memory readiness export requires the original issued context before credential or network access"
+          },
+          {
+            "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+            "marker": "real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage"
+          }
+        ],
+        "historicalReadinessReview": {
+          "path": "backend/src/services/integrations/supabaseProvision.ts",
+          "sourceSha256": "ef0f6abbabad0dd200ce434d68148c9531977d69fb5da6a655fdd6807acd15d4",
+          "callIds": [
+            "b1d69d6354dd94af3c3e"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
+          "reason": "Full helper examined, including Management API, direct SQL and Storage calls outside the scanner. Generated memory tables lacked browser-role isolation and existing public buckets were falsely accepted; both corrected with pending real CI. Full caller provenance, provider/project binding, legacy customer catalog review, direct-PG TLS validation and explicit consequential approval remain unresolved, not certified from owner syntax.",
+          "evidence": [
+            {
+              "path": "backend/src/security/tenantIsolation.local.integration.ts",
+              "marker": "generated external-project memory SQL denies browser roles"
+            },
+            {
+              "path": "backend/src/services/integrations/supabaseProvision.test.ts",
+              "marker": "existing public or unknown buckets cannot be reported private"
+            }
+          ]
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+        "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+        "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+        "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+        "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+        "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+        "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+        "obligationIds": [
+          "OB-61ba440b1af6fb01:observed-actual-connected-memory-consumer"
+        ],
+        "passedTests": [
+          "real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage"
+        ],
+        "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "No active production consumer was found. Dormancy alone is not a security certificate. The existing canonical issued-context guard now makes this export callable only with original server authority, and cloned/plain/string inputs reject before I/O. Its actual canonical-DB two-owner account query, revocation/outage and forged-context witness is prepared. This remains an original007 gap until complete exact-source real CI succeeds. Existing provisioning, provider-success, custody and migration scope is preserved in historicalReadinessReview.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
       }
     },
     {
@@ -5032,9 +5491,9 @@
         "6490d83cf96f9cca168e",
         "78bf7f66609885faaceb"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
-      "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The sole production project/session consumers are the existing pipeline, which validates the issued actor and captures opts.userId before memory operations. Each actual consumer resolves the current exact owner canonical Supabase bundle through readUserSupabaseBundle and constructs only that validated project URL/key, never a body owner or another account fallback. External queries carry xroga_user_id and full repository/branch namespace, read results revalidate the same identity, and write acknowledgement requires exact returned identity. Project snapshots and session messages are captured before awaiting account resolution. Platform fallback uses that same original owner plus repository/branch composite key and validates its exact write receipt. Missing/revoked account can only select the original owner platform fallback or report unavailable.",
+      "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Eight exact connected read/write and platform write/factory sites. Actual canonical Auth/database credentials for two owners select distinct synthetic external accounts with exact SDK headers and predicates. The refusing transport checks namespace, foreign read results are discarded, same-owner writes return exact scope, foreign/empty receipts use only the original owner platform rows, held canonical lookup cannot mutate captured session payload and substituted platform receipt is not acknowledged. Actual project/session reads and writes after revoked/outage authority reach no external project and retain exact own fallback rows, not merely a neighboring readiness helper assertion. Foreign canonical rows remain byte-identical. External responses are synthetic and never forwarded, so live customer Supabase schema/provider success, already-dispatched operation revocation, encryption and full009 lifecycle remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
       "evidence": [
         {
           "path": "backend/src/ai/pipeline.ts",
@@ -5103,6 +5562,110 @@
           ],
           "disposition": "REVIEWED_GAP"
         }
+      },
+      "historicalReview": {
+        "path": "backend/src/ai/sessionMemory.ts",
+        "sourceSha256": "d42622f91cd218c0509a6d77f8223890a2afed7222ffa93a57d3482da064c851",
+        "callIds": [
+          "d30b589aad03f57a5e34",
+          "ac8f40ddd4a161a16cdb",
+          "6490d83cf96f9cca168e",
+          "78bf7f66609885faaceb"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
+        "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "marker": "loadSessionHistory(opts.userId"
+          },
+          {
+            "path": "backend/src/ai/sessionMemory.ts",
+            "marker": "onConflict: 'xroga_user_id,repo'"
+          },
+          {
+            "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
+            "marker": "registerRecoveryMemoryReadTests"
+          },
+          {
+            "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+            "marker": "real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-9a16bc7d34216aa8",
+          "callIds": [
+            "d30b589aad03f57a5e34",
+            "ac8f40ddd4a161a16cdb",
+            "624de55167fdf2321f9e",
+            "1ef1d3af12bbfcd2c188",
+            "6490d83cf96f9cca168e",
+            "78bf7f66609885faaceb"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        "memoryReceiptSourceHistory": {
+          "path": "backend/src/ai/sessionMemory.ts",
+          "sourceSha256": "412f07c9519db8594f26e00ef13492a36d62c0796bab001bb40ff0f06ccfbfca",
+          "callIds": [
+            "d30b589aad03f57a5e34",
+            "7b2ab76ab16f67d4bc3f",
+            "ab26b537916b9c6dae85",
+            "9a21725abae3843c4e12"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
+          "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "loadSessionHistory(opts.userId"
+            },
+            {
+              "path": "backend/src/ai/sessionMemory.ts",
+              "marker": "onConflict: 'xroga_user_id,repo'"
+            },
+            {
+              "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
+              "marker": "registerRecoveryMemoryReadTests"
+            }
+          ],
+          "structuredOrigin": {
+            "id": "OB-aeb04ec4bd9ce357",
+            "callIds": [
+              "d30b589aad03f57a5e34",
+              "7b2ab76ab16f67d4bc3f",
+              "c5dfa39288196ad28fb9",
+              "9645b6cbe302cd3fd49a",
+              "ab26b537916b9c6dae85",
+              "9a21725abae3843c4e12"
+            ],
+            "disposition": "REVIEWED_GAP"
+          }
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+        "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+        "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+        "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+        "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+        "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+        "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+        "obligationIds": [
+          "OB-9a16bc7d34216aa8:observed-actual-connected-memory-consumer"
+        ],
+        "passedTests": [
+          "real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage"
+        ],
+        "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
       }
     },
     {
@@ -5114,9 +5677,9 @@
         "046abf28f9d69dee5112",
         "1828007517113aa44702"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
-      "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The sole production project/session consumers are the existing pipeline, which validates the issued actor and captures opts.userId before memory operations. Each actual consumer resolves the current exact owner canonical Supabase bundle through readUserSupabaseBundle and constructs only that validated project URL/key, never a body owner or another account fallback. External queries carry xroga_user_id and full repository/branch namespace, read results revalidate the same identity, and write acknowledgement requires exact returned identity. Project snapshots and session messages are captured before awaiting account resolution. Platform fallback uses that same original owner plus repository/branch composite key and validates its exact write receipt. Missing/revoked account can only select the original owner platform fallback or report unavailable.",
+      "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Eight exact connected read/write and platform write/factory sites. Actual canonical Auth/database credentials for two owners select distinct synthetic external accounts with exact SDK headers and predicates. The refusing transport checks namespace, foreign read results are discarded, same-owner writes return exact scope, foreign/empty receipts use only the original owner platform rows, held canonical lookup cannot mutate captured session payload and substituted platform receipt is not acknowledged. Actual project/session reads and writes after revoked/outage authority reach no external project and retain exact own fallback rows, not merely a neighboring readiness helper assertion. Foreign canonical rows remain byte-identical. External responses are synthetic and never forwarded, so live customer Supabase schema/provider success, already-dispatched operation revocation, encryption and full009 lifecycle remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
       "evidence": [
         {
           "path": "backend/src/ai/projectMemory.ts",
@@ -5185,6 +5748,110 @@
           ],
           "disposition": "REVIEWED_GAP"
         }
+      },
+      "historicalReview": {
+        "path": "backend/src/ai/projectMemory.ts",
+        "sourceSha256": "5296a4cecbca3c2a4d7c19e7eb98d3120677af212eadaf2bcaf7766915a68125",
+        "callIds": [
+          "278f199f6ac90620ad7f",
+          "b321103d0cf501326d72",
+          "046abf28f9d69dee5112",
+          "1828007517113aa44702"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
+        "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/projectMemory.ts",
+            "marker": "onConflict: 'xroga_user_id,repo,branch'"
+          },
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "marker": "const saved = await setProjectMemoryDurable({"
+          },
+          {
+            "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
+            "marker": "registerRecoveryMemoryReadTests"
+          },
+          {
+            "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+            "marker": "real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-7c2f132fe54be33a",
+          "callIds": [
+            "278f199f6ac90620ad7f",
+            "f4b4398d7c1562f69f44",
+            "2ee02eb3c8608df30614",
+            "b321103d0cf501326d72",
+            "046abf28f9d69dee5112",
+            "1828007517113aa44702"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        "memoryReceiptSourceHistory": {
+          "path": "backend/src/ai/projectMemory.ts",
+          "sourceSha256": "a8185a6b2e6ae8ac82bb4ca9b20572292070afa996d92553cb4012765de5f391",
+          "callIds": [
+            "278f199f6ac90620ad7f",
+            "162926698a1e1b553196",
+            "3dae213a685f6a044dad",
+            "014baaf3ebb696f48dd4"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
+          "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/projectMemory.ts",
+              "marker": "onConflict: 'xroga_user_id,repo,branch'"
+            },
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "const saved = await setProjectMemoryDurable({"
+            },
+            {
+              "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
+              "marker": "registerRecoveryMemoryReadTests"
+            }
+          ],
+          "structuredOrigin": {
+            "id": "OB-c10dcba465926510",
+            "callIds": [
+              "278f199f6ac90620ad7f",
+              "f4b4398d7c1562f69f44",
+              "2ee02eb3c8608df30614",
+              "162926698a1e1b553196",
+              "3dae213a685f6a044dad",
+              "014baaf3ebb696f48dd4"
+            ],
+            "disposition": "REVIEWED_GAP"
+          }
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+        "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+        "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+        "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+        "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+        "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+        "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+        "obligationIds": [
+          "OB-7c2f132fe54be33a:observed-actual-connected-memory-consumer"
+        ],
+        "passedTests": [
+          "real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage"
+        ],
+        "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
       }
     },
     {
@@ -9325,6 +9992,97 @@
         "originalReviewReason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
         "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
         "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      }
+    },
+    {
+      "path": "backend/src/ai/quota.ts",
+      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+      "callIds": [
+        "ab1702a45a7ccb57ac8f",
+        "1990f5c97beb40b8b783",
+        "e27b9abaf3fe02c61229",
+        "f1aaacc8e5daf32fdba1"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The actual producer set is the issued-owner pipeline and server business/agent/planner callbacks already traced for provider reservations. No route accepts a meter userId from the client. The selected method parameters are immutable primitives. readUsageRow first verifies exact original owner and current configured durable evidence. All three fixed increment/model/ledger RPCs retain exactly that owner and current period, and the final getUsage uses the same owner. Authenticated status separately obtains requireUserId(req), not a query actor. Browser roles have no execute grant on the exact legacy RPC signatures.",
+      "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Four original tenant writer/factory sites only. Actual two fresh Auth owners retain distinct counters and ledger entries, concurrent same-owner deltas persist without changing the other owner, real HTTP status ignores forged user/tenant query and denies anonymous access, catalog proves the exact routines exist with browser EXECUTE denied, actual browser calls cannot mutate either owner, and missing durable owner evidence denies before additional ledger rows. This does not certify split-write atomicity, reliable acknowledgement after later RPC failure, retry/credit policy, dormant syncPlanBudget or canonical008 spending authority. Those independent concerns remain in the existing review history and later-phase mappings, never turned into another owner grant. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/quota.ts",
+          "marker": "export async function recordUsage"
+        }
+      ],
+      "criterionClosureReview": {
+        "classification": "PROOF_REQUIRED",
+        "actorTrace": "The four selected recordUsage sites retain the original server user primitive through readUsageRow, three fixed usage RPCs and the final same-owner read. Actual producers are the issued-owner pipeline, server business read/action callbacks and admitted software-agent/planner hooks. The new real default-consumer case checks two isolated Auth subjects, exact durable counters and ledger rows, concurrent same-owner deltas, authenticated status ignoring foreign query identity, browser denial and missing authority. No provider or paid credit is used.",
+        "completionCondition": "Exactly four usage writer/factory sites await proof. Two dormant syncPlanBudget caller sites remain unproven for original007 issuance and must not inherit this proof. Split accounting uncertainty and unified008 spending authority remain separately recorded, not certified.",
+        "fixture": "backend/src/security/quotaEvidence.local.integration.ts",
+        "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+        "scope": "ORIGINAL007_TENANT_OWNERSHIP_ONLY_OTHER_SCOPE_RETAINED"
+      },
+      "historicalReview": {
+        "path": "backend/src/ai/quota.ts",
+        "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+        "callIds": [
+          "3faa7ece6a312b431802",
+          "09c18505660bd25e7f05",
+          "ab1702a45a7ccb57ac8f",
+          "1990f5c97beb40b8b783",
+          "e27b9abaf3fe02c61229",
+          "f1aaacc8e5daf32fdba1"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
+        "reason": "Read evidence now fails closed and preserves zero entitlement, verified at01bd0716. These six remaining legacy sync/meter callers still omit RPC result checks and update local counters before split durable accounting. New atomic wrapper affects only three separately reviewed consumers. Full payment admission and concurrent spending remain unresolved. No credit or tenant acceptance is granted. Sixth-source syncPlanBudget checks durable RPC acknowledgement before memory update and rejects returned/thrown errors with a fixed safe error. Existing explicit no-database test behavior retained. Durable billing consumers no longer issue redundant nontransactional budget changes. Complete usage writer provenance and concurrency remain separate gaps.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/quota.ts",
+            "marker": "export async function recordUsage"
+          }
+        ],
+        "criterionClosureReview": {
+          "classification": "PROOF_REQUIRED",
+          "actorTrace": "The four selected recordUsage sites retain the original server user primitive through readUsageRow, three fixed usage RPCs and the final same-owner read. Actual producers are the issued-owner pipeline, server business read/action callbacks and admitted software-agent/planner hooks. The new real default-consumer case checks two isolated Auth subjects, exact durable counters and ledger rows, concurrent same-owner deltas, authenticated status ignoring foreign query identity, browser denial and missing authority. No provider or paid credit is used.",
+          "completionCondition": "Exactly four usage writer/factory sites await proof. Two dormant syncPlanBudget caller sites remain unproven for original007 issuance and must not inherit this proof. Split accounting uncertainty and unified008 spending authority remain separately recorded, not certified.",
+          "fixture": "backend/src/security/quotaEvidence.local.integration.ts",
+          "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+          "scope": "ORIGINAL007_TENANT_OWNERSHIP_ONLY_OTHER_SCOPE_RETAINED"
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+        "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+        "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+        "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+        "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+        "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+        "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+        "obligationIds": [
+          "OB-346186bea635be22:observed-actual-owner-legacy-meter"
+        ],
+        "passedTests": [
+          "real legacy usage consumer persists only its original owner and the authenticated status ignores forged ownership",
+          "real quota reads bind owner and preserve zero budget without inventing paid fallback"
+        ],
+        "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Read evidence now fails closed and preserves zero entitlement, verified at01bd0716. These six remaining legacy sync/meter callers still omit RPC result checks and update local counters before split durable accounting. New atomic wrapper affects only three separately reviewed consumers. Full payment admission and concurrent spending remain unresolved. No credit or tenant acceptance is granted. Sixth-source syncPlanBudget checks durable RPC acknowledgement before memory update and rejects returned/thrown errors with a fixed safe error. Existing explicit no-database test behavior retained. Durable billing consumers no longer issue redundant nontransactional budget changes. Complete usage writer provenance and concurrency remain separate gaps.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
+      },
+      "structuredOrigin": {
+        "id": "OB-346186bea635be22",
+        "callIds": [
+          "3faa7ece6a312b431802",
+          "09c18505660bd25e7f05",
+          "ab1702a45a7ccb57ac8f",
+          "1990f5c97beb40b8b783",
+          "e27b9abaf3fe02c61229",
+          "f1aaacc8e5daf32fdba1"
+        ],
+        "disposition": "REVIEWED_GAP"
       }
     }
   ]

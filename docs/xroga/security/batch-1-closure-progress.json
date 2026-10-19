@@ -398,7 +398,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:75 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:39 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -433,7 +433,7 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 75,
+    "unresolvedSafetyCandidates": 39,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 16
   },
@@ -568,33 +568,9 @@
       "existingImplementation": "Existing owner checks, project/file stores and runtime",
       "missingBehavior": "Inherited parent identity, durable receipt, revision and runtime ownership gaps",
       "acceptanceTest": "Wrong parent, orphan, stale revision, failed persistence and cross-tenant download",
-      "pendingCandidates": 40,
+      "pendingCandidates": 19,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
-        "backend/src/ai/buildImprovementMemory.ts": [
-          "cf1ee4207ba21ac496ac",
-          "b85bc952750476ba5d75"
-        ],
-        "backend/src/ai/buildOutcomeRoutingMemory.ts": [
-          "5e75a66eaa35941a01e5",
-          "23ab29cbd5073a2cb088"
-        ],
-        "backend/src/ai/buildStrategyMemory.ts": [
-          "c0288e26c844107ebca9",
-          "51e187f3cd0b99673791"
-        ],
-        "backend/src/ai/projectMemory.ts": [
-          "278f199f6ac90620ad7f",
-          "b321103d0cf501326d72",
-          "046abf28f9d69dee5112",
-          "1828007517113aa44702"
-        ],
-        "backend/src/ai/sessionMemory.ts": [
-          "d30b589aad03f57a5e34",
-          "ac8f40ddd4a161a16cdb",
-          "6490d83cf96f9cca168e",
-          "78bf7f66609885faaceb"
-        ],
         "backend/src/services/memory/buildMemory.ts": [
           "661ce57ea5e40d34292d",
           "76af868afcec7d3a5059"
@@ -621,19 +597,8 @@
           "82128ce3750aebf2c11c",
           "86bc34b55fee2854131b"
         ],
-        "backend/src/synthesis/delivery/projectDeliveryService.ts": [
-          "371f13126c4ab7aab2dc",
-          "74cc6545383bea8e320f"
-        ],
         "backend/src/synthesis/universalEntrypoint.ts": [
           "10b5e279dd241e2f40ec"
-        ],
-        "backend/src/synthesis/universalPersistence.ts": [
-          "7b91dfaf8225d8e56493",
-          "cc45bc751ae8166f15f4",
-          "45d1a388e450de3014cc",
-          "722894c8c92d40e08b97",
-          "71e802345b31b6d2fd5f"
         ]
       }
     },
@@ -653,16 +618,12 @@
       "existingImplementation": "Existing services and source-bound register",
       "missingBehavior": "Inspect the exact remaining reason for each listed caller, grouping shared helpers",
       "acceptanceTest": "Per-caller negative verification proportional to risk",
-      "pendingCandidates": 23,
+      "pendingCandidates": 8,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/quota.ts": [
           "3faa7ece6a312b431802",
-          "09c18505660bd25e7f05",
-          "ab1702a45a7ccb57ac8f",
-          "1990f5c97beb40b8b783",
-          "e27b9abaf3fe02c61229",
-          "f1aaacc8e5daf32fdba1"
+          "09c18505660bd25e7f05"
         ],
         "backend/src/ai/routingOutcomes.ts": [
           "8c57a0debf51a7a340f8",
@@ -670,26 +631,9 @@
           "a11bf3e4f0c999a36b58",
           "952ba0881d01437685bf"
         ],
-        "backend/src/ai/webBudget.ts": [
-          "3a079bb3694a289488d7",
-          "cb5da87d32bfae7b42b8",
-          "b3cacfdb187f1405097d"
-        ],
         "backend/src/security/serviceRoleGuard.ts": [
           "d84df34ff692e4fb31c1",
           "fd91a4c4ec87b33c520f"
-        ],
-        "backend/src/services/integrations/supabaseProvision.ts": [
-          "a59eb5df1a268fbe2b96"
-        ],
-        "backend/src/synthesis/livePreview/store.ts": [
-          "260f546643a88434ec35",
-          "72439f834416b3fd90eb",
-          "fd09b17779296225433f",
-          "62f2c45d96306d0c651c",
-          "8418218a6fdf978626d1",
-          "e7d0d54375645a30b30f",
-          "790ce21b600ea4bd4f9d"
         ]
       }
     }

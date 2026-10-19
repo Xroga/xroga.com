@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "9d53cda467d7649dff46b15f6634efe4fa215bb09a6850fcb0750f9b41460d43",
+  "reviewRegistrySha256": "ce140c315f853c9061a78f7b007fcb467f085ccd596f9ac0437e4dc262397c36",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -12,16 +12,16 @@
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 75,
+    "unresolvedSafetyCandidates": 39,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 16
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 389,
-    "NARROW_EXCEPTION": 35,
+    "SCOPED_BOUNDARY": 418,
+    "NARROW_EXCEPTION": 42,
     "NOT_PERSISTENCE": 140,
-    "REVIEWED_GAP": 75
+    "REVIEWED_GAP": 39
   },
   "acceptance": {
     "version": 1,
@@ -780,46 +780,6 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "cf1ee4207ba21ac496ac"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "b85bc952750476ba5d75"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5e75a66eaa35941a01e5"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "23ab29cbd5073a2cb088"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c0288e26c844107ebca9"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "51e187f3cd0b99673791"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "278f199f6ac90620ad7f"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "b321103d0cf501326d72"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "046abf28f9d69dee5112"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1828007517113aa44702"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "00d351afbe045a136c66"
       },
       {
@@ -836,22 +796,6 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ab1702a45a7ccb57ac8f"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1990f5c97beb40b8b783"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e27b9abaf3fe02c61229"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "f1aaacc8e5daf32fdba1"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "8c57a0debf51a7a340f8"
       },
       {
@@ -865,34 +809,6 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "952ba0881d01437685bf"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d30b589aad03f57a5e34"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ac8f40ddd4a161a16cdb"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6490d83cf96f9cca168e"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "78bf7f66609885faaceb"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "3a079bb3694a289488d7"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "cb5da87d32bfae7b42b8"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "b3cacfdb187f1405097d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -941,10 +857,6 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "fd91a4c4ec87b33c520f"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a59eb5df1a268fbe2b96"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -1020,67 +932,19 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "371f13126c4ab7aab2dc"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "74cc6545383bea8e320f"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "260f546643a88434ec35"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "72439f834416b3fd90eb"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "fd09b17779296225433f"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "62f2c45d96306d0c651c"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8418218a6fdf978626d1"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e7d0d54375645a30b30f"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "790ce21b600ea4bd4f9d"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "10b5e279dd241e2f40ec"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "7b91dfaf8225d8e56493"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "cc45bc751ae8166f15f4"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "45d1a388e450de3014cc"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "722894c8c92d40e08b97"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "71e802345b31b6d2fd5f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "9506c72ea0f341c2a492"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "cf1ee4207ba21ac496ac"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b85bc952750476ba5d75"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -1093,6 +957,22 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "f78c85803ca9f116a8ac"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "5e75a66eaa35941a01e5"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "23ab29cbd5073a2cb088"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "c0288e26c844107ebca9"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "51e187f3cd0b99673791"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -1120,11 +1000,27 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "278f199f6ac90620ad7f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "f4b4398d7c1562f69f44"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "2ee02eb3c8608df30614"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b321103d0cf501326d72"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "046abf28f9d69dee5112"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "1828007517113aa44702"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -1205,6 +1101,22 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "39d17e6c2a9120f50030"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "ab1702a45a7ccb57ac8f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "1990f5c97beb40b8b783"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "e27b9abaf3fe02c61229"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "f1aaacc8e5daf32fdba1"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -1292,11 +1204,27 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "d30b589aad03f57a5e34"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "ac8f40ddd4a161a16cdb"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "624de55167fdf2321f9e"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "1ef1d3af12bbfcd2c188"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "6490d83cf96f9cca168e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "78bf7f66609885faaceb"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -1321,6 +1249,18 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "224d992ddd99b8389fed"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "3a079bb3694a289488d7"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "cb5da87d32bfae7b42b8"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b3cacfdb187f1405097d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -2372,6 +2312,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "a59eb5df1a268fbe2b96"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "3696472e5c2e79ec3877"
       },
       {
@@ -2640,7 +2584,43 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "371f13126c4ab7aab2dc"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "74cc6545383bea8e320f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "a6d30f02806fc550256d"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "260f546643a88434ec35"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "72439f834416b3fd90eb"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "fd09b17779296225433f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "62f2c45d96306d0c651c"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "8418218a6fdf978626d1"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "e7d0d54375645a30b30f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "790ce21b600ea4bd4f9d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -2736,11 +2716,31 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "7b91dfaf8225d8e56493"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "cc45bc751ae8166f15f4"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "45d1a388e450de3014cc"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "722894c8c92d40e08b97"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "117955fa99f0ba83ee68"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "12b673818237d517468a"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "71e802345b31b6d2fd5f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -2780,8 +2780,8 @@
     "currentCallers": 639,
     "structuredVerified": 140,
     "structuredUnproven": 499,
-    "manualUnresolved": 75,
-    "manualUnsupported": 424,
+    "manualUnresolved": 39,
+    "manualUnsupported": 460,
     "agreedVerified": 140,
     "proofAwaitingManualReconciliation": 0
   },
@@ -2920,11 +2920,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "build_outcomes",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec",
       "semanticReview": {
-        "authority": "Pipeline invokes the improvement loader for opts.userId; the loader filters build_outcomes by user_id, age cutoff and bounded row limit.",
-        "reason": "Owner-filtered learning reads do not certify pipeline actor provenance, model_telemetry validation, project reuse policy or poisoning resistance. No mutation occurs at these sites.",
+        "authority": "The sole production consumer of each exported reader is the existing pipeline advisory Promise.all. Pipeline requires the issued context, rejects opts.userId mismatch and captures the issued subject before reaching these calls. Every default database query selects bounded sanitized build outcome fields with exact user_id, freshness, ordering and limit. The source table deliberately stores owner-wide evaluation_and_routing metadata, not project files or prompts, and has no project selector to substitute. Pure summaries validate bounded identifiers/telemetry and never expose another owner row. No reader writes rows or calls a model/provider.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Six exact default read/factory sites across three existing modules. Actual isolated Auth-owner rows have distinct model/recipe identifiers, identical task namespace and nonempty bounded summaries. Every actual default reader matches only its owner rows, excludes foreign outcomes, returns empty for a third owner, fails closed during real-query authority outage, denies browser read/insert and preserves exact persisted rows. This establishes tenant ownership, not model quality, full learning policy, consequential spend authority or provider success. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -2941,11 +2941,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec",
       "semanticReview": {
-        "authority": "Pipeline invokes the improvement loader for opts.userId; the loader filters build_outcomes by user_id, age cutoff and bounded row limit.",
-        "reason": "Owner-filtered learning reads do not certify pipeline actor provenance, model_telemetry validation, project reuse policy or poisoning resistance. No mutation occurs at these sites.",
+        "authority": "The sole production consumer of each exported reader is the existing pipeline advisory Promise.all. Pipeline requires the issued context, rejects opts.userId mismatch and captures the issued subject before reaching these calls. Every default database query selects bounded sanitized build outcome fields with exact user_id, freshness, ordering and limit. The source table deliberately stores owner-wide evaluation_and_routing metadata, not project files or prompts, and has no project selector to substitute. Pure summaries validate bounded identifiers/telemetry and never expose another owner row. No reader writes rows or calls a model/provider.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Six exact default read/factory sites across three existing modules. Actual isolated Auth-owner rows have distinct model/recipe identifiers, identical task namespace and nonempty bounded summaries. Every actual default reader matches only its owner rows, excludes foreign outcomes, returns empty for a third owner, fails closed during real-query authority outage, denies browser read/insert and preserves exact persisted rows. This establishes tenant ownership, not model quality, full learning policy, consequential spend authority or provider success. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -3025,11 +3025,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "build_outcomes",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "bfa3804acb045b2a53877859dbd03f288a6db28533528972e31b3a6d8bdee902",
       "semanticReview": {
-        "authority": "Pipeline invokes this userId-scoped reader, filtering build_outcomes by owner, age and row cap before summarizing model telemetry.",
-        "reason": "Remaining gaps are pipeline identity provenance, malformed persisted telemetry, cross-project reuse policy and verification of all exported consumers.",
+        "authority": "The sole production consumer of each exported reader is the existing pipeline advisory Promise.all. Pipeline requires the issued context, rejects opts.userId mismatch and captures the issued subject before reaching these calls. Every default database query selects bounded sanitized build outcome fields with exact user_id, freshness, ordering and limit. The source table deliberately stores owner-wide evaluation_and_routing metadata, not project files or prompts, and has no project selector to substitute. Pure summaries validate bounded identifiers/telemetry and never expose another owner row. No reader writes rows or calls a model/provider.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Six exact default read/factory sites across three existing modules. Actual isolated Auth-owner rows have distinct model/recipe identifiers, identical task namespace and nonempty bounded summaries. Every actual default reader matches only its owner rows, excludes foreign outcomes, returns empty for a third owner, fails closed during real-query authority outage, denies browser read/insert and preserves exact persisted rows. This establishes tenant ownership, not model quality, full learning policy, consequential spend authority or provider success. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/buildOutcomeRoutingMemory.ts",
@@ -3046,11 +3046,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "bfa3804acb045b2a53877859dbd03f288a6db28533528972e31b3a6d8bdee902",
       "semanticReview": {
-        "authority": "Pipeline invokes this userId-scoped reader, filtering build_outcomes by owner, age and row cap before summarizing model telemetry.",
-        "reason": "Remaining gaps are pipeline identity provenance, malformed persisted telemetry, cross-project reuse policy and verification of all exported consumers.",
+        "authority": "The sole production consumer of each exported reader is the existing pipeline advisory Promise.all. Pipeline requires the issued context, rejects opts.userId mismatch and captures the issued subject before reaching these calls. Every default database query selects bounded sanitized build outcome fields with exact user_id, freshness, ordering and limit. The source table deliberately stores owner-wide evaluation_and_routing metadata, not project files or prompts, and has no project selector to substitute. Pure summaries validate bounded identifiers/telemetry and never expose another owner row. No reader writes rows or calls a model/provider.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Six exact default read/factory sites across three existing modules. Actual isolated Auth-owner rows have distinct model/recipe identifiers, identical task namespace and nonempty bounded summaries. Every actual default reader matches only its owner rows, excludes foreign outcomes, returns empty for a third owner, fails closed during real-query authority outage, denies browser read/insert and preserves exact persisted rows. This establishes tenant ownership, not model quality, full learning policy, consequential spend authority or provider success. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/buildOutcomeRoutingMemory.ts",
@@ -3067,11 +3067,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "build_outcomes",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56",
       "semanticReview": {
-        "authority": "Pipeline strategy memory reads selected outcome/recipe fields for supplied userId with age and row bounds, then feeds the existing strategy scorer.",
-        "reason": "Upstream actor assurance, persisted strategy validation, same-user project isolation policy and contaminated learning evidence remain unresolved.",
+        "authority": "The sole production consumer of each exported reader is the existing pipeline advisory Promise.all. Pipeline requires the issued context, rejects opts.userId mismatch and captures the issued subject before reaching these calls. Every default database query selects bounded sanitized build outcome fields with exact user_id, freshness, ordering and limit. The source table deliberately stores owner-wide evaluation_and_routing metadata, not project files or prompts, and has no project selector to substitute. Pure summaries validate bounded identifiers/telemetry and never expose another owner row. No reader writes rows or calls a model/provider.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Six exact default read/factory sites across three existing modules. Actual isolated Auth-owner rows have distinct model/recipe identifiers, identical task namespace and nonempty bounded summaries. Every actual default reader matches only its owner rows, excludes foreign outcomes, returns empty for a third owner, fails closed during real-query authority outage, denies browser read/insert and preserves exact persisted rows. This establishes tenant ownership, not model quality, full learning policy, consequential spend authority or provider success. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/buildStrategyMemory.ts",
@@ -3088,11 +3088,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56",
       "semanticReview": {
-        "authority": "Pipeline strategy memory reads selected outcome/recipe fields for supplied userId with age and row bounds, then feeds the existing strategy scorer.",
-        "reason": "Upstream actor assurance, persisted strategy validation, same-user project isolation policy and contaminated learning evidence remain unresolved.",
+        "authority": "The sole production consumer of each exported reader is the existing pipeline advisory Promise.all. Pipeline requires the issued context, rejects opts.userId mismatch and captures the issued subject before reaching these calls. Every default database query selects bounded sanitized build outcome fields with exact user_id, freshness, ordering and limit. The source table deliberately stores owner-wide evaluation_and_routing metadata, not project files or prompts, and has no project selector to substitute. Pure summaries validate bounded identifiers/telemetry and never expose another owner row. No reader writes rows or calls a model/provider.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Six exact default read/factory sites across three existing modules. Actual isolated Auth-owner rows have distinct model/recipe identifiers, identical task namespace and nonempty bounded summaries. Every actual default reader matches only its owner rows, excludes foreign outcomes, returns empty for a third owner, fails closed during real-query authority outage, denies browser read/insert and preserves exact persisted rows. This establishes tenant ownership, not model quality, full learning policy, consequential spend authority or provider success. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/buildStrategyMemory.ts",
@@ -3298,11 +3298,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_project_memory",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "5296a4cecbca3c2a4d7c19e7eb98d3120677af212eadaf2bcaf7766915a68125",
       "semanticReview": {
-        "authority": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
-        "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+        "authority": "The sole production project/session consumers are the existing pipeline, which validates the issued actor and captures opts.userId before memory operations. Each actual consumer resolves the current exact owner canonical Supabase bundle through readUserSupabaseBundle and constructs only that validated project URL/key, never a body owner or another account fallback. External queries carry xroga_user_id and full repository/branch namespace, read results revalidate the same identity, and write acknowledgement requires exact returned identity. Project snapshots and session messages are captured before awaiting account resolution. Platform fallback uses that same original owner plus repository/branch composite key and validates its exact write receipt. Missing/revoked account can only select the original owner platform fallback or report unavailable.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Eight exact connected read/write and platform write/factory sites. Actual canonical Auth/database credentials for two owners select distinct synthetic external accounts with exact SDK headers and predicates. The refusing transport checks namespace, foreign read results are discarded, same-owner writes return exact scope, foreign/empty receipts use only the original owner platform rows, held canonical lookup cannot mutate captured session payload and substituted platform receipt is not acknowledged. Actual project/session reads and writes after revoked/outage authority reach no external project and retain exact own fallback rows, not merely a neighboring readiness helper assertion. Foreign canonical rows remain byte-identical. External responses are synthetic and never forwarded, so live customer Supabase schema/provider success, already-dispatched operation revocation, encryption and full009 lifecycle remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/projectMemory.ts",
@@ -3389,11 +3389,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_project_memory",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "5296a4cecbca3c2a4d7c19e7eb98d3120677af212eadaf2bcaf7766915a68125",
       "semanticReview": {
-        "authority": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
-        "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+        "authority": "The sole production project/session consumers are the existing pipeline, which validates the issued actor and captures opts.userId before memory operations. Each actual consumer resolves the current exact owner canonical Supabase bundle through readUserSupabaseBundle and constructs only that validated project URL/key, never a body owner or another account fallback. External queries carry xroga_user_id and full repository/branch namespace, read results revalidate the same identity, and write acknowledgement requires exact returned identity. Project snapshots and session messages are captured before awaiting account resolution. Platform fallback uses that same original owner plus repository/branch composite key and validates its exact write receipt. Missing/revoked account can only select the original owner platform fallback or report unavailable.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Eight exact connected read/write and platform write/factory sites. Actual canonical Auth/database credentials for two owners select distinct synthetic external accounts with exact SDK headers and predicates. The refusing transport checks namespace, foreign read results are discarded, same-owner writes return exact scope, foreign/empty receipts use only the original owner platform rows, held canonical lookup cannot mutate captured session payload and substituted platform receipt is not acknowledged. Actual project/session reads and writes after revoked/outage authority reach no external project and retain exact own fallback rows, not merely a neighboring readiness helper assertion. Foreign canonical rows remain byte-identical. External responses are synthetic and never forwarded, so live customer Supabase schema/provider success, already-dispatched operation revocation, encryption and full009 lifecycle remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/projectMemory.ts",
@@ -3422,11 +3422,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "5296a4cecbca3c2a4d7c19e7eb98d3120677af212eadaf2bcaf7766915a68125",
       "semanticReview": {
-        "authority": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
-        "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+        "authority": "The sole production project/session consumers are the existing pipeline, which validates the issued actor and captures opts.userId before memory operations. Each actual consumer resolves the current exact owner canonical Supabase bundle through readUserSupabaseBundle and constructs only that validated project URL/key, never a body owner or another account fallback. External queries carry xroga_user_id and full repository/branch namespace, read results revalidate the same identity, and write acknowledgement requires exact returned identity. Project snapshots and session messages are captured before awaiting account resolution. Platform fallback uses that same original owner plus repository/branch composite key and validates its exact write receipt. Missing/revoked account can only select the original owner platform fallback or report unavailable.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Eight exact connected read/write and platform write/factory sites. Actual canonical Auth/database credentials for two owners select distinct synthetic external accounts with exact SDK headers and predicates. The refusing transport checks namespace, foreign read results are discarded, same-owner writes return exact scope, foreign/empty receipts use only the original owner platform rows, held canonical lookup cannot mutate captured session payload and substituted platform receipt is not acknowledged. Actual project/session reads and writes after revoked/outage authority reach no external project and retain exact own fallback rows, not merely a neighboring readiness helper assertion. Foreign canonical rows remain byte-identical. External responses are synthetic and never forwarded, so live customer Supabase schema/provider success, already-dispatched operation revocation, encryption and full009 lifecycle remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/projectMemory.ts",
@@ -3455,11 +3455,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_memory",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "5296a4cecbca3c2a4d7c19e7eb98d3120677af212eadaf2bcaf7766915a68125",
       "semanticReview": {
-        "authority": "Complete module read. Production consumers discovered in pipeline preserve a user argument; hot keys include user/repo/branch. Both external-project and platform reads filter owner/repo/branch and upsert on matching composite keys. Durable writes distinguish user_project, platform and memory_only instead of issuing a deployment receipt.",
-        "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+        "authority": "The sole production project/session consumers are the existing pipeline, which validates the issued actor and captures opts.userId before memory operations. Each actual consumer resolves the current exact owner canonical Supabase bundle through readUserSupabaseBundle and constructs only that validated project URL/key, never a body owner or another account fallback. External queries carry xroga_user_id and full repository/branch namespace, read results revalidate the same identity, and write acknowledgement requires exact returned identity. Project snapshots and session messages are captured before awaiting account resolution. Platform fallback uses that same original owner plus repository/branch composite key and validates its exact write receipt. Missing/revoked account can only select the original owner platform fallback or report unavailable.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Eight exact connected read/write and platform write/factory sites. Actual canonical Auth/database credentials for two owners select distinct synthetic external accounts with exact SDK headers and predicates. The refusing transport checks namespace, foreign read results are discarded, same-owner writes return exact scope, foreign/empty receipts use only the original owner platform rows, held canonical lookup cannot mutate captured session payload and substituted platform receipt is not acknowledged. Actual project/session reads and writes after revoked/outage authority reach no external project and retain exact own fallback rows, not merely a neighboring readiness helper assertion. Foreign canonical rows remain byte-identical. External responses are synthetic and never forwarded, so live customer Supabase schema/provider success, already-dispatched operation revocation, encryption and full009 lifecycle remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/projectMemory.ts",
@@ -4056,11 +4056,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
       "semanticReview": {
-        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
-        "reason": "Read evidence now fails closed and preserves zero entitlement, verified at01bd0716. These six remaining legacy sync/meter callers still omit RPC result checks and update local counters before split durable accounting. New atomic wrapper affects only three separately reviewed consumers. Full payment admission and concurrent spending remain unresolved. No credit or tenant acceptance is granted. Sixth-source syncPlanBudget checks durable RPC acknowledgement before memory update and rejects returned/thrown errors with a fixed safe error. Existing explicit no-database test behavior retained. Durable billing consumers no longer issue redundant nontransactional budget changes. Complete usage writer provenance and concurrency remain separate gaps.",
+        "authority": "The actual producer set is the issued-owner pipeline and server business/agent/planner callbacks already traced for provider reservations. No route accepts a meter userId from the client. The selected method parameters are immutable primitives. readUsageRow first verifies exact original owner and current configured durable evidence. All three fixed increment/model/ledger RPCs retain exactly that owner and current period, and the final getUsage uses the same owner. Authenticated status separately obtains requireUserId(req), not a query actor. Browser roles have no execute grant on the exact legacy RPC signatures.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Four original tenant writer/factory sites only. Actual two fresh Auth owners retain distinct counters and ledger entries, concurrent same-owner deltas persist without changing the other owner, real HTTP status ignores forged user/tenant query and denies anonymous access, catalog proves the exact routines exist with browser EXECUTE denied, actual browser calls cannot mutate either owner, and missing durable owner evidence denies before additional ledger rows. This does not certify split-write atomicity, reliable acknowledgement after later RPC failure, retry/credit policy, dormant syncPlanBudget or canonical008 spending authority. Those independent concerns remain in the existing review history and later-phase mappings, never turned into another owner grant. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/quota.ts",
@@ -4077,11 +4077,11 @@
       "kind": "RPC_CANDIDATE",
       "target": "increment_user_token_usage",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
       "semanticReview": {
-        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
-        "reason": "Read evidence now fails closed and preserves zero entitlement, verified at01bd0716. These six remaining legacy sync/meter callers still omit RPC result checks and update local counters before split durable accounting. New atomic wrapper affects only three separately reviewed consumers. Full payment admission and concurrent spending remain unresolved. No credit or tenant acceptance is granted. Sixth-source syncPlanBudget checks durable RPC acknowledgement before memory update and rejects returned/thrown errors with a fixed safe error. Existing explicit no-database test behavior retained. Durable billing consumers no longer issue redundant nontransactional budget changes. Complete usage writer provenance and concurrency remain separate gaps.",
+        "authority": "The actual producer set is the issued-owner pipeline and server business/agent/planner callbacks already traced for provider reservations. No route accepts a meter userId from the client. The selected method parameters are immutable primitives. readUsageRow first verifies exact original owner and current configured durable evidence. All three fixed increment/model/ledger RPCs retain exactly that owner and current period, and the final getUsage uses the same owner. Authenticated status separately obtains requireUserId(req), not a query actor. Browser roles have no execute grant on the exact legacy RPC signatures.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Four original tenant writer/factory sites only. Actual two fresh Auth owners retain distinct counters and ledger entries, concurrent same-owner deltas persist without changing the other owner, real HTTP status ignores forged user/tenant query and denies anonymous access, catalog proves the exact routines exist with browser EXECUTE denied, actual browser calls cannot mutate either owner, and missing durable owner evidence denies before additional ledger rows. This does not certify split-write atomicity, reliable acknowledgement after later RPC failure, retry/credit policy, dormant syncPlanBudget or canonical008 spending authority. Those independent concerns remain in the existing review history and later-phase mappings, never turned into another owner grant. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/quota.ts",
@@ -4098,11 +4098,11 @@
       "kind": "RPC_CANDIDATE",
       "target": "merge_user_model_usage",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
       "semanticReview": {
-        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
-        "reason": "Read evidence now fails closed and preserves zero entitlement, verified at01bd0716. These six remaining legacy sync/meter callers still omit RPC result checks and update local counters before split durable accounting. New atomic wrapper affects only three separately reviewed consumers. Full payment admission and concurrent spending remain unresolved. No credit or tenant acceptance is granted. Sixth-source syncPlanBudget checks durable RPC acknowledgement before memory update and rejects returned/thrown errors with a fixed safe error. Existing explicit no-database test behavior retained. Durable billing consumers no longer issue redundant nontransactional budget changes. Complete usage writer provenance and concurrency remain separate gaps.",
+        "authority": "The actual producer set is the issued-owner pipeline and server business/agent/planner callbacks already traced for provider reservations. No route accepts a meter userId from the client. The selected method parameters are immutable primitives. readUsageRow first verifies exact original owner and current configured durable evidence. All three fixed increment/model/ledger RPCs retain exactly that owner and current period, and the final getUsage uses the same owner. Authenticated status separately obtains requireUserId(req), not a query actor. Browser roles have no execute grant on the exact legacy RPC signatures.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Four original tenant writer/factory sites only. Actual two fresh Auth owners retain distinct counters and ledger entries, concurrent same-owner deltas persist without changing the other owner, real HTTP status ignores forged user/tenant query and denies anonymous access, catalog proves the exact routines exist with browser EXECUTE denied, actual browser calls cannot mutate either owner, and missing durable owner evidence denies before additional ledger rows. This does not certify split-write atomicity, reliable acknowledgement after later RPC failure, retry/credit policy, dormant syncPlanBudget or canonical008 spending authority. Those independent concerns remain in the existing review history and later-phase mappings, never turned into another owner grant. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/quota.ts",
@@ -4119,11 +4119,11 @@
       "kind": "RPC_CANDIDATE",
       "target": "insert_ai_usage_ledger",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
       "semanticReview": {
-        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
-        "reason": "Read evidence now fails closed and preserves zero entitlement, verified at01bd0716. These six remaining legacy sync/meter callers still omit RPC result checks and update local counters before split durable accounting. New atomic wrapper affects only three separately reviewed consumers. Full payment admission and concurrent spending remain unresolved. No credit or tenant acceptance is granted. Sixth-source syncPlanBudget checks durable RPC acknowledgement before memory update and rejects returned/thrown errors with a fixed safe error. Existing explicit no-database test behavior retained. Durable billing consumers no longer issue redundant nontransactional budget changes. Complete usage writer provenance and concurrency remain separate gaps.",
+        "authority": "The actual producer set is the issued-owner pipeline and server business/agent/planner callbacks already traced for provider reservations. No route accepts a meter userId from the client. The selected method parameters are immutable primitives. readUsageRow first verifies exact original owner and current configured durable evidence. All three fixed increment/model/ledger RPCs retain exactly that owner and current period, and the final getUsage uses the same owner. Authenticated status separately obtains requireUserId(req), not a query actor. Browser roles have no execute grant on the exact legacy RPC signatures.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Four original tenant writer/factory sites only. Actual two fresh Auth owners retain distinct counters and ledger entries, concurrent same-owner deltas persist without changing the other owner, real HTTP status ignores forged user/tenant query and denies anonymous access, catalog proves the exact routines exist with browser EXECUTE denied, actual browser calls cannot mutate either owner, and missing durable owner evidence denies before additional ledger rows. This does not certify split-write atomicity, reliable acknowledgement after later RPC failure, retry/credit policy, dormant syncPlanBudget or canonical008 spending authority. Those independent concerns remain in the existing review history and later-phase mappings, never turned into another owner grant. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/quota.ts",
@@ -4822,11 +4822,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_session_memory",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "d42622f91cd218c0509a6d77f8223890a2afed7222ffa93a57d3482da064c851",
       "semanticReview": {
-        "authority": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
-        "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+        "authority": "The sole production project/session consumers are the existing pipeline, which validates the issued actor and captures opts.userId before memory operations. Each actual consumer resolves the current exact owner canonical Supabase bundle through readUserSupabaseBundle and constructs only that validated project URL/key, never a body owner or another account fallback. External queries carry xroga_user_id and full repository/branch namespace, read results revalidate the same identity, and write acknowledgement requires exact returned identity. Project snapshots and session messages are captured before awaiting account resolution. Platform fallback uses that same original owner plus repository/branch composite key and validates its exact write receipt. Missing/revoked account can only select the original owner platform fallback or report unavailable.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Eight exact connected read/write and platform write/factory sites. Actual canonical Auth/database credentials for two owners select distinct synthetic external accounts with exact SDK headers and predicates. The refusing transport checks namespace, foreign read results are discarded, same-owner writes return exact scope, foreign/empty receipts use only the original owner platform rows, held canonical lookup cannot mutate captured session payload and substituted platform receipt is not acknowledged. Actual project/session reads and writes after revoked/outage authority reach no external project and retain exact own fallback rows, not merely a neighboring readiness helper assertion. Foreign canonical rows remain byte-identical. External responses are synthetic and never forwarded, so live customer Supabase schema/provider success, already-dispatched operation revocation, encryption and full009 lifecycle remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/pipeline.ts",
@@ -4855,11 +4855,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_session_memory",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "d42622f91cd218c0509a6d77f8223890a2afed7222ffa93a57d3482da064c851",
       "semanticReview": {
-        "authority": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
-        "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+        "authority": "The sole production project/session consumers are the existing pipeline, which validates the issued actor and captures opts.userId before memory operations. Each actual consumer resolves the current exact owner canonical Supabase bundle through readUserSupabaseBundle and constructs only that validated project URL/key, never a body owner or another account fallback. External queries carry xroga_user_id and full repository/branch namespace, read results revalidate the same identity, and write acknowledgement requires exact returned identity. Project snapshots and session messages are captured before awaiting account resolution. Platform fallback uses that same original owner plus repository/branch composite key and validates its exact write receipt. Missing/revoked account can only select the original owner platform fallback or report unavailable.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Eight exact connected read/write and platform write/factory sites. Actual canonical Auth/database credentials for two owners select distinct synthetic external accounts with exact SDK headers and predicates. The refusing transport checks namespace, foreign read results are discarded, same-owner writes return exact scope, foreign/empty receipts use only the original owner platform rows, held canonical lookup cannot mutate captured session payload and substituted platform receipt is not acknowledged. Actual project/session reads and writes after revoked/outage authority reach no external project and retain exact own fallback rows, not merely a neighboring readiness helper assertion. Foreign canonical rows remain byte-identical. External responses are synthetic and never forwarded, so live customer Supabase schema/provider success, already-dispatched operation revocation, encryption and full009 lifecycle remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/pipeline.ts",
@@ -4946,11 +4946,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "d42622f91cd218c0509a6d77f8223890a2afed7222ffa93a57d3482da064c851",
       "semanticReview": {
-        "authority": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
-        "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+        "authority": "The sole production project/session consumers are the existing pipeline, which validates the issued actor and captures opts.userId before memory operations. Each actual consumer resolves the current exact owner canonical Supabase bundle through readUserSupabaseBundle and constructs only that validated project URL/key, never a body owner or another account fallback. External queries carry xroga_user_id and full repository/branch namespace, read results revalidate the same identity, and write acknowledgement requires exact returned identity. Project snapshots and session messages are captured before awaiting account resolution. Platform fallback uses that same original owner plus repository/branch composite key and validates its exact write receipt. Missing/revoked account can only select the original owner platform fallback or report unavailable.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Eight exact connected read/write and platform write/factory sites. Actual canonical Auth/database credentials for two owners select distinct synthetic external accounts with exact SDK headers and predicates. The refusing transport checks namespace, foreign read results are discarded, same-owner writes return exact scope, foreign/empty receipts use only the original owner platform rows, held canonical lookup cannot mutate captured session payload and substituted platform receipt is not acknowledged. Actual project/session reads and writes after revoked/outage authority reach no external project and retain exact own fallback rows, not merely a neighboring readiness helper assertion. Foreign canonical rows remain byte-identical. External responses are synthetic and never forwarded, so live customer Supabase schema/provider success, already-dispatched operation revocation, encryption and full009 lifecycle remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/pipeline.ts",
@@ -4979,11 +4979,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "session_memory",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "d42622f91cd218c0509a6d77f8223890a2afed7222ffa93a57d3482da064c851",
       "semanticReview": {
-        "authority": "Only production load/save callers discovered are the canonical pipeline using opts.userId, never a client-supplied owner column in this module. External reads use xroga_user_id plus repo; platform reads use user_id plus repo; both upserts use the composite owner/repo conflict key.",
-        "reason": "Next source binds actual returned owner/repository/branch identity and validates files or user/assistant message roles. Immutable cache copies, delayed-read versus newer-write protection and pending-write snapshot tests pass. Raw logs replaced with fixed categories. Three real recovery/memory tests prepared, pending final-source CI. Cross-process writes, full lifecycle, connected-provider schemas and asynchronous durability remain unresolved. Current work requires exact owner/repository/branch representation on write acknowledgement and captures session messages before asynchronous account selection. Existing platform read functions remain unchanged. The connected-consumer disposable case is prepared, not accepted. Provider account revocation fencing, actual actor producers and all original007 scope still require explicit proof. No later credential custody or egress obligation is closed.",
+        "authority": "The sole production project/session consumers are the existing pipeline, which validates the issued actor and captures opts.userId before memory operations. Each actual consumer resolves the current exact owner canonical Supabase bundle through readUserSupabaseBundle and constructs only that validated project URL/key, never a body owner or another account fallback. External queries carry xroga_user_id and full repository/branch namespace, read results revalidate the same identity, and write acknowledgement requires exact returned identity. Project snapshots and session messages are captured before awaiting account resolution. Platform fallback uses that same original owner plus repository/branch composite key and validates its exact write receipt. Missing/revoked account can only select the original owner platform fallback or report unavailable.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Eight exact connected read/write and platform write/factory sites. Actual canonical Auth/database credentials for two owners select distinct synthetic external accounts with exact SDK headers and predicates. The refusing transport checks namespace, foreign read results are discarded, same-owner writes return exact scope, foreign/empty receipts use only the original owner platform rows, held canonical lookup cannot mutate captured session payload and substituted platform receipt is not acknowledged. Actual project/session reads and writes after revoked/outage authority reach no external project and retain exact own fallback rows, not merely a neighboring readiness helper assertion. Foreign canonical rows remain byte-identical. External responses are synthetic and never forwarded, so live customer Supabase schema/provider success, already-dispatched operation revocation, encryption and full009 lifecycle remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/pipeline.ts",
@@ -5167,11 +5167,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
       "semanticReview": {
-        "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
-        "reason": "A held real-SDK loopback cycle lookup reproduced mutable input producing one owner cycle with another owner user/provider/request tuple. The input is now captured before awaiting. A composite current cycle-owner foreign key fences the decisive insert against parent changes and retains existing null-cycle deletion behavior. Actual changed-source PostgreSQL lock, actor-isolation, browser-denial and exact receipt evidence is still required. This remains an original007 gap, not a spending-policy certificate.",
+        "authority": "The only production accounting producers are the existing Parallel and internal web-intelligence wrappers. Research and admitted pipeline chains pass their original server userId, not model/body identity. The accounting helper snapshots all scalar owner/provider/request fields before awaiting the bounded current-owner cycle query. The fixed private insert uses that captured actor and optional cycle ID. The composite database foreign key validates cycle_id plus user_id at the decisive write, takes PostgreSQL referential locks and refuses a cycle transferred to a different owner while the insert waits. Browser roles have no accounting-table privileges. Diagnostics remain best-effort with no claimed execution or billing receipt on a failed insert.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Three original query/factory/insert sites, one shared relationship correction. Actual local Auth/database tests preserve exact captured owner/provider/request/amount/price receipts despite input mutation during the actual cycle response, reject service-role foreign cycle substitution and browser reads/writes, observe the real delayed FK insert losing to committed parent ownership change, preserve valid concurrent current-owner appends and deny later parent transfer while children exist. Cycle deletion retains only those same-owner receipts with null cycle, preserving legacy semantics. Migration validation stops on mismatched old history without rewriting it. No web provider executes and no008 budget, paid spend or exactly-once provider claim is made. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/webBudget.ts",
@@ -5196,11 +5196,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_billing_cycles",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
       "semanticReview": {
-        "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
-        "reason": "A held real-SDK loopback cycle lookup reproduced mutable input producing one owner cycle with another owner user/provider/request tuple. The input is now captured before awaiting. A composite current cycle-owner foreign key fences the decisive insert against parent changes and retains existing null-cycle deletion behavior. Actual changed-source PostgreSQL lock, actor-isolation, browser-denial and exact receipt evidence is still required. This remains an original007 gap, not a spending-policy certificate.",
+        "authority": "The only production accounting producers are the existing Parallel and internal web-intelligence wrappers. Research and admitted pipeline chains pass their original server userId, not model/body identity. The accounting helper snapshots all scalar owner/provider/request fields before awaiting the bounded current-owner cycle query. The fixed private insert uses that captured actor and optional cycle ID. The composite database foreign key validates cycle_id plus user_id at the decisive write, takes PostgreSQL referential locks and refuses a cycle transferred to a different owner while the insert waits. Browser roles have no accounting-table privileges. Diagnostics remain best-effort with no claimed execution or billing receipt on a failed insert.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Three original query/factory/insert sites, one shared relationship correction. Actual local Auth/database tests preserve exact captured owner/provider/request/amount/price receipts despite input mutation during the actual cycle response, reject service-role foreign cycle substitution and browser reads/writes, observe the real delayed FK insert losing to committed parent ownership change, preserve valid concurrent current-owner appends and deny later parent transfer while children exist. Cycle deletion retains only those same-owner receipts with null cycle, preserving legacy semantics. Migration validation stops on mismatched old history without rewriting it. No web provider executes and no008 budget, paid spend or exactly-once provider claim is made. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/webBudget.ts",
@@ -5225,11 +5225,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_web_usage",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
       "semanticReview": {
-        "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
-        "reason": "A held real-SDK loopback cycle lookup reproduced mutable input producing one owner cycle with another owner user/provider/request tuple. The input is now captured before awaiting. A composite current cycle-owner foreign key fences the decisive insert against parent changes and retains existing null-cycle deletion behavior. Actual changed-source PostgreSQL lock, actor-isolation, browser-denial and exact receipt evidence is still required. This remains an original007 gap, not a spending-policy certificate.",
+        "authority": "The only production accounting producers are the existing Parallel and internal web-intelligence wrappers. Research and admitted pipeline chains pass their original server userId, not model/body identity. The accounting helper snapshots all scalar owner/provider/request fields before awaiting the bounded current-owner cycle query. The fixed private insert uses that captured actor and optional cycle ID. The composite database foreign key validates cycle_id plus user_id at the decisive write, takes PostgreSQL referential locks and refuses a cycle transferred to a different owner while the insert waits. Browser roles have no accounting-table privileges. Diagnostics remain best-effort with no claimed execution or billing receipt on a failed insert.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Three original query/factory/insert sites, one shared relationship correction. Actual local Auth/database tests preserve exact captured owner/provider/request/amount/price receipts despite input mutation during the actual cycle response, reject service-role foreign cycle substitution and browser reads/writes, observe the real delayed FK insert losing to committed parent ownership change, preserve valid concurrent current-owner appends and deny later parent transfer while children exist. Cycle deletion retains only those same-owner receipts with null cycle, preserving legacy semantics. Migration validation stops on mismatched old history without rewriting it. No web provider executes and no008 budget, paid spend or exactly-once provider claim is made. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/webBudget.ts",
@@ -12556,11 +12556,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_session_memory",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "78a71490f381ab699c55168fc075b0042dbb081bc0cc3b6e13d440d2a13fe014",
       "semanticReview": {
-        "authority": "The dormant readiness export now requires the original WeakSet-issued TenantContext before any credential or database access, derives its only userId from that immutable context, and selects the current canonical Supabase bundle for only that owner. The query constrains xroga_user_id. No active production caller or new identity issuer is invented. All other module functions remain byte-identical.",
-        "reason": "No active production consumer was found. Dormancy alone is not a security certificate. The existing canonical issued-context guard now makes this export callable only with original server authority, and cloned/plain/string inputs reject before I/O. Its actual canonical-DB two-owner account query, revocation/outage and forged-context witness is prepared. This remains an original007 gap until complete exact-source real CI succeeds. Existing provisioning, provider-success, custody and migration scope is preserved in historicalReadinessReview.",
+        "authority": "No production consumer of this dormant readiness export exists. Its own callable contract now requires the original issued TenantContext before credential/database access and derives its only owner from that context. A primitive user string or cloned/forged context cannot select any account. It then resolves the current exact owner canonical bundle and queries only xroga_user_id for that owner. All other module functions are byte-identical after this bounded guard/import change. No new route, issuer or caller is invented.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. One original readiness query, not whole provisioning/custody certification. Actual canonical owner credentials with issued contexts select each correct synthetic account and exact owner predicate. Cloned contexts and primitive identities reject before any query, missing account returns false, and revoked/outage authority reaches no provider. Dormancy is recorded, never used as an exemption. No enabled production caller was removed. External schema/provider success and009 migration/custody remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -15070,11 +15070,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_events",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
       "semanticReview": {
-        "authority": "loadProjectDelivery supplies user/project to the runtime revision loader and loadEvidence; evidence selects owner/project and four publication/deployment types.",
-        "reason": "Payloads are interpreted as ready/failed without provider proof. Actor provenance, parent consistency across reads, payload URL/reason validation and publish/deploy authority remain unresolved.",
+        "authority": "The actual delivery route is mounted behind authMiddleware. It supplies only requireUser(req) and the validated project path. loadProjectDelivery reads the exact owned revision in parallel with its private event query and returns no envelope if that revision is absent. The event query constrains the same original owner plus logical project and fixed four event types before mapping bounded evidence fields. No body/query actor, default other account, provider request or durable mutation occurs in these selected reads. Existing publishing/deployment consumer authority is separate.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Two exact evidence read/factory sites only. The real HTTP/database fixture gives two fresh unconnected Auth subjects distinct evidence and revisions for the same logical project label. Forged opposite-owner query does not change exact returned revision/repository/deployment IDs, a second private project cannot be read by the other actor and anonymous requests deny. Missing canonical event authority rejects, while exact event/revision rows remain unchanged. Ready events and URLs are explicitly fictional seeded metadata with verified:false, never live-provider deployment acceptance. Whole publish/deploy actions, URL/content trust, credentials and010 egress remain independently open. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
@@ -15091,11 +15091,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
       "semanticReview": {
-        "authority": "loadProjectDelivery supplies user/project to the runtime revision loader and loadEvidence; evidence selects owner/project and four publication/deployment types.",
-        "reason": "Payloads are interpreted as ready/failed without provider proof. Actor provenance, parent consistency across reads, payload URL/reason validation and publish/deploy authority remain unresolved.",
+        "authority": "The actual delivery route is mounted behind authMiddleware. It supplies only requireUser(req) and the validated project path. loadProjectDelivery reads the exact owned revision in parallel with its private event query and returns no envelope if that revision is absent. The event query constrains the same original owner plus logical project and fixed four event types before mapping bounded evidence fields. No body/query actor, default other account, provider request or durable mutation occurs in these selected reads. Existing publishing/deployment consumer authority is separate.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Two exact evidence read/factory sites only. The real HTTP/database fixture gives two fresh unconnected Auth subjects distinct evidence and revisions for the same logical project label. Forged opposite-owner query does not change exact returned revision/repository/deployment IDs, a second private project cannot be read by the other actor and anonymous requests deny. Missing canonical event authority rejects, while exact event/revision rows remain unchanged. Ready events and URLs are explicitly fictional seeded metadata with verified:false, never live-provider deployment acceptance. Whole publish/deploy actions, URL/content trust, credentials and010 egress remain independently open. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
@@ -15242,11 +15242,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
-        "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
-        "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+        "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Registered existing signed capability resolution, not tenant impersonation or blanket global data access. Actual signed consumer permits a valid owned capability and rejects changed signature, foreign capability ID reuse, missing authority, revoked grant and current session port removal without opening an upstream socket.\nFive exact original007 factory/latest/revoke sites only. Existing actual create/foreign-parent/held-lock/session-expiry/rollback cases are reused. Actual current consumer test proves correct scoped selection, foreign owner and project denial, foreign revoke preserving the full row, successful own revoke and unaffected other-owner capability. Gateway independently rechecks current session/port and never forwards a provider call in this witness. Custody, live proxy/provider success and revocation of already-open sockets remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/livePreview/access.ts",
@@ -15271,11 +15271,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
-        "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
-        "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+        "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Registered existing signed capability resolution, not tenant impersonation or blanket global data access. Actual signed consumer permits a valid owned capability and rejects changed signature, foreign capability ID reuse, missing authority, revoked grant and current session port removal without opening an upstream socket.\nFive exact original007 factory/latest/revoke sites only. Existing actual create/foreign-parent/held-lock/session-expiry/rollback cases are reused. Actual current consumer test proves correct scoped selection, foreign owner and project denial, foreign revoke preserving the full row, successful own revoke and unaffected other-owner capability. Gateway independently rechecks current session/port and never forwards a provider call in this witness. Custody, live proxy/provider success and revocation of already-open sockets remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/livePreview/access.ts",
@@ -15300,11 +15300,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
-        "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
-        "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+        "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Registered existing signed capability resolution, not tenant impersonation or blanket global data access. Actual signed consumer permits a valid owned capability and rejects changed signature, foreign capability ID reuse, missing authority, revoked grant and current session port removal without opening an upstream socket.\nFive exact original007 factory/latest/revoke sites only. Existing actual create/foreign-parent/held-lock/session-expiry/rollback cases are reused. Actual current consumer test proves correct scoped selection, foreign owner and project denial, foreign revoke preserving the full row, successful own revoke and unaffected other-owner capability. Gateway independently rechecks current session/port and never forwards a provider call in this witness. Custody, live proxy/provider success and revocation of already-open sockets remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/livePreview/access.ts",
@@ -15329,11 +15329,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
-        "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
-        "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+        "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Registered existing signed capability resolution, not tenant impersonation or blanket global data access. Actual signed consumer permits a valid owned capability and rejects changed signature, foreign capability ID reuse, missing authority, revoked grant and current session port removal without opening an upstream socket.\nFive exact original007 factory/latest/revoke sites only. Existing actual create/foreign-parent/held-lock/session-expiry/rollback cases are reused. Actual current consumer test proves correct scoped selection, foreign owner and project denial, foreign revoke preserving the full row, successful own revoke and unaffected other-owner capability. Gateway independently rechecks current session/port and never forwards a provider call in this witness. Custody, live proxy/provider success and revocation of already-open sockets remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/livePreview/access.ts",
@@ -15358,11 +15358,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
-        "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
-        "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+        "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Registered existing signed capability resolution, not tenant impersonation or blanket global data access. Actual signed consumer permits a valid owned capability and rejects changed signature, foreign capability ID reuse, missing authority, revoked grant and current session port removal without opening an upstream socket.\nFive exact original007 factory/latest/revoke sites only. Existing actual create/foreign-parent/held-lock/session-expiry/rollback cases are reused. Actual current consumer test proves correct scoped selection, foreign owner and project denial, foreign revoke preserving the full row, successful own revoke and unaffected other-owner capability. Gateway independently rechecks current session/port and never forwards a provider call in this witness. Custody, live proxy/provider success and revocation of already-open sockets remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/livePreview/access.ts",
@@ -15387,11 +15387,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_preview_grants",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
-        "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
-        "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+        "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Registered existing signed capability resolution, not tenant impersonation or blanket global data access. Actual signed consumer permits a valid owned capability and rejects changed signature, foreign capability ID reuse, missing authority, revoked grant and current session port removal without opening an upstream socket.\nFive exact original007 factory/latest/revoke sites only. Existing actual create/foreign-parent/held-lock/session-expiry/rollback cases are reused. Actual current consumer test proves correct scoped selection, foreign owner and project denial, foreign revoke preserving the full row, successful own revoke and unaffected other-owner capability. Gateway independently rechecks current session/port and never forwards a provider call in this witness. Custody, live proxy/provider success and revocation of already-open sockets remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/livePreview/access.ts",
@@ -15416,11 +15416,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
       "semanticReview": {
-        "authority": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
-        "reason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
+        "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Registered existing signed capability resolution, not tenant impersonation or blanket global data access. Actual signed consumer permits a valid owned capability and rejects changed signature, foreign capability ID reuse, missing authority, revoked grant and current session port removal without opening an upstream socket.\nFive exact original007 factory/latest/revoke sites only. Existing actual create/foreign-parent/held-lock/session-expiry/rollback cases are reused. Actual current consumer test proves correct scoped selection, foreign owner and project denial, foreign revoke preserving the full row, successful own revoke and unaffected other-owner capability. Gateway independently rechecks current session/port and never forwards a provider call in this witness. Custody, live proxy/provider success and revocation of already-open sockets remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/livePreview/access.ts",
@@ -16185,11 +16185,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_specs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "semanticReview": {
-        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
+        "authority": "Actual universal execution uses the admitted pipeline owner/project/run and a per-request scoped store, never a global retained privileged identity. scope requires the original issued context and exact owner before any selected query. Spec and plan reads filter owner plus logical project, mutation reads also bind run, and index deletion binds the exact project/repository/branch identity plus issued owner. savePlan preflight is only advisory. The existing owned write snapshots payload and validates context; the new composite spec/owner/project FK now decides the actual insert/update under the parent tuple lock. Neither another owner nor same-owner different-project spec can become its parent. Optional parent deletion clears only spec_id and retains the owned plan.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Five exact remaining original sites, not constructor or entire universal execution certification. Actual nonempty own/foreign spec/plan/mutation namespaces remain distinct despite identical logical keys, third-project/run reads return nothing, forged/foreign contexts reject, a foreign spec is not accepted, and index foreign delete leaves the owned snapshot while legitimate own deletion works. Actual savePlan must be observed waiting on a spec-owner transfer and return unsaved with zero child rows after transfer commits. Valid save succeeds, both parent owner/project reassignments are denied with exact child retention, and parent deletion preserves the optional owned receipt. Fresh/upgrade validation is separately required and invalid historical tuples are never rewritten. No provider, authority, vault or egress certificate follows. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
@@ -16214,11 +16214,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_specs",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "semanticReview": {
-        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
+        "authority": "Actual universal execution uses the admitted pipeline owner/project/run and a per-request scoped store, never a global retained privileged identity. scope requires the original issued context and exact owner before any selected query. Spec and plan reads filter owner plus logical project, mutation reads also bind run, and index deletion binds the exact project/repository/branch identity plus issued owner. savePlan preflight is only advisory. The existing owned write snapshots payload and validates context; the new composite spec/owner/project FK now decides the actual insert/update under the parent tuple lock. Neither another owner nor same-owner different-project spec can become its parent. Optional parent deletion clears only spec_id and retains the owned plan.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Five exact remaining original sites, not constructor or entire universal execution certification. Actual nonempty own/foreign spec/plan/mutation namespaces remain distinct despite identical logical keys, third-project/run reads return nothing, forged/foreign contexts reject, a foreign spec is not accepted, and index foreign delete leaves the owned snapshot while legitimate own deletion works. Actual savePlan must be observed waiting on a spec-owner transfer and return unsaved with zero child rows after transfer commits. Valid save succeeds, both parent owner/project reassignments are denied with exact child retention, and parent deletion preserves the optional owned receipt. Fresh/upgrade validation is separately required and invalid historical tuples are never rewritten. No provider, authority, vault or egress certificate follows. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
@@ -16243,11 +16243,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "architecture_plans",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "semanticReview": {
-        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
+        "authority": "Actual universal execution uses the admitted pipeline owner/project/run and a per-request scoped store, never a global retained privileged identity. scope requires the original issued context and exact owner before any selected query. Spec and plan reads filter owner plus logical project, mutation reads also bind run, and index deletion binds the exact project/repository/branch identity plus issued owner. savePlan preflight is only advisory. The existing owned write snapshots payload and validates context; the new composite spec/owner/project FK now decides the actual insert/update under the parent tuple lock. Neither another owner nor same-owner different-project spec can become its parent. Optional parent deletion clears only spec_id and retains the owned plan.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Five exact remaining original sites, not constructor or entire universal execution certification. Actual nonempty own/foreign spec/plan/mutation namespaces remain distinct despite identical logical keys, third-project/run reads return nothing, forged/foreign contexts reject, a foreign spec is not accepted, and index foreign delete leaves the owned snapshot while legitimate own deletion works. Actual savePlan must be observed waiting on a spec-owner transfer and return unsaved with zero child rows after transfer commits. Valid save succeeds, both parent owner/project reassignments are denied with exact child retention, and parent deletion preserves the optional owned receipt. Fresh/upgrade validation is separately required and invalid historical tuples are never rewritten. No provider, authority, vault or egress certificate follows. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
@@ -16272,11 +16272,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "plan_mutations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "semanticReview": {
-        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
+        "authority": "Actual universal execution uses the admitted pipeline owner/project/run and a per-request scoped store, never a global retained privileged identity. scope requires the original issued context and exact owner before any selected query. Spec and plan reads filter owner plus logical project, mutation reads also bind run, and index deletion binds the exact project/repository/branch identity plus issued owner. savePlan preflight is only advisory. The existing owned write snapshots payload and validates context; the new composite spec/owner/project FK now decides the actual insert/update under the parent tuple lock. Neither another owner nor same-owner different-project spec can become its parent. Optional parent deletion clears only spec_id and retains the owned plan.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Five exact remaining original sites, not constructor or entire universal execution certification. Actual nonempty own/foreign spec/plan/mutation namespaces remain distinct despite identical logical keys, third-project/run reads return nothing, forged/foreign contexts reject, a foreign spec is not accepted, and index foreign delete leaves the owned snapshot while legitimate own deletion works. Actual savePlan must be observed waiting on a spec-owner transfer and return unsaved with zero child rows after transfer commits. Valid save succeeds, both parent owner/project reassignments are denied with exact child retention, and parent deletion preserves the optional owned receipt. Fresh/upgrade validation is separately required and invalid historical tuples are never rewritten. No provider, authority, vault or egress certificate follows. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
@@ -16343,11 +16343,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "repository_indexes",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
       "semanticReview": {
-        "authority": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
-        "reason": "Spec/plan parent admission and embedded identity, mutation provenance, repository delete lifecycle and in-memory fallback isolation remain unresolved. Repository load/save now use separate atomic snapshot RPC candidates, awaiting exact-source real tests. Their repaired missing-child insertion and read consistency defects are not assigned to these remaining legacy calls.",
+        "authority": "Actual universal execution uses the admitted pipeline owner/project/run and a per-request scoped store, never a global retained privileged identity. scope requires the original issued context and exact owner before any selected query. Spec and plan reads filter owner plus logical project, mutation reads also bind run, and index deletion binds the exact project/repository/branch identity plus issued owner. savePlan preflight is only advisory. The existing owned write snapshots payload and validates context; the new composite spec/owner/project FK now decides the actual insert/update under the parent tuple lock. Neither another owner nor same-owner different-project spec can become its parent. Optional parent deletion clears only spec_id and retains the owned plan.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Five exact remaining original sites, not constructor or entire universal execution certification. Actual nonempty own/foreign spec/plan/mutation namespaces remain distinct despite identical logical keys, third-project/run reads return nothing, forged/foreign contexts reject, a foreign spec is not accepted, and index foreign delete leaves the owned snapshot while legitimate own deletion works. Actual savePlan must be observed waiting on a spec-owner transfer and return unsaved with zero child rows after transfer commits. Valid save succeeds, both parent owner/project reassignments are denied with exact child retention, and parent deletion preserves the optional owned receipt. Fresh/upgrade validation is separately required and invalid historical tuples are never rewritten. No provider, authority, vault or egress certificate follows. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
