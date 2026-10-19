@@ -13,7 +13,6 @@
   --xn-fill: rgba(236, 233, 226, 0.04);
   --xn-hover: rgba(236, 233, 226, 0.045);
   --xn-blue: #2868ff;
-  --xn-signal: #6f9dff;
   --xn-ice: #a9c4ff;
   --xn-jade: #7ad6bc;
   --xn-ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -103,41 +102,6 @@
   position: relative;
   display: flex;
   align-items: center;
-}
-/* the indicator: one recessed key surface with a sapphire signal beneath it; it glides and resizes between items */
-.xn-ind {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: var(--w, 0);
-  height: 34px;
-  border-radius: 9px;
-  background: linear-gradient(180deg, #06080b, #0c1014);
-  box-shadow:
-    inset 0 1px 1.5px rgba(0, 0, 0, 0.8),
-    inset 0 -1px 0 rgba(236, 233, 226, 0.075);
-  transform: translate(var(--x, 0), -50%);
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    transform 340ms var(--xn-glide),
-    width 340ms var(--xn-glide),
-    opacity 160ms ease;
-}
-.xn-ind::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: 3px;
-  width: 16px;
-  height: 1.5px;
-  margin-left: -8px;
-  border-radius: 1px;
-  background: var(--xn-signal);
-  opacity: 0.85;
-}
-.xn-ind[data-on] {
-  opacity: 1;
 }
 .xn-item {
   position: relative;
@@ -287,46 +251,6 @@
     opacity 160ms ease,
     transform 300ms var(--xn-ease),
     visibility 0s;
-}
-/* the signal: a short drop from the indicator to the panel's top edge, then a trace along it. Both move by transform
-   only (--sx is set on these two elements, never on an ancestor) */
-.xn-signal,
-.xn-trace {
-  position: absolute;
-  z-index: 3;
-  left: 0;
-  pointer-events: none;
-}
-.xn-signal {
-  top: -1px;
-  width: 1px;
-  height: 11px;
-  background: var(--xn-signal);
-  transform: translateX(var(--sx, 50vw)) scaleY(0);
-  transform-origin: 50% 0;
-  transition: transform 200ms var(--xn-ease);
-}
-.xn-panel[data-open] .xn-signal {
-  transform: translateX(var(--sx, 50vw)) scaleY(1);
-  transition: transform 340ms var(--xn-glide);
-}
-.xn-trace {
-  top: 10px;
-  width: 400px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(111, 157, 255, 0.85), transparent);
-  transform: translateX(calc(var(--sx, 50vw) - 200px)) scaleX(0.2);
-  opacity: 0;
-  transition:
-    transform 320ms var(--xn-ease),
-    opacity 200ms ease;
-}
-.xn-panel[data-open] .xn-trace {
-  transform: translateX(calc(var(--sx, 50vw) - 200px));
-  opacity: 1;
-  transition:
-    transform 340ms var(--xn-glide),
-    opacity 200ms ease 100ms;
 }
 .xn-panel-surface {
   position: relative;

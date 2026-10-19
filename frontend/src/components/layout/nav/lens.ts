@@ -1,5 +1,5 @@
 /**
- * Navigation motion proof "Context Lens" (local review only: a build with NEXT_PUBLIC_NAVLAB=1, opened with ?nav=lens).
+ * Navigation "Context Lens": the imperative layer of PublicMarketingHeader.
  *
  * One optical instrument rather than a highlight:
  * - The bar's surface catches a broad, faint light where the pointer is.

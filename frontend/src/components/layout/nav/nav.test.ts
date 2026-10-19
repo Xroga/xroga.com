@@ -65,27 +65,43 @@ test('scroll: hides going down past the opening screen, returns going up, never 
   assert.match(CSS, /\.xn\[data-hidden\] \{[^}]*pointer-events: none;/);
 });
 
-test('indicator and signal: one gliding surface written to CSS variables, no canvas, no per-frame React state', () => {
+test('Context Lens: mounted by default, imperative, writes only to its own moving layers', () => {
+  const LENS = read('lens.ts');
+  const LCSS = read('lens.css');
   assert.ok(!existsSync(join(dir, 'particles.ts')), 'the particle layer is gone');
-  assert.doesNotMatch(HEADER, /<canvas|requestAnimationFrame\(frame|NavParticles|LogoOrbit/);
-  assert.match(HEADER, /className="xn-ind"/);
-  assert.match(HEADER, /ind\.style\.setProperty\('--x'/);
-  assert.match(HEADER, /signalRef\.current\?\.style\.setProperty\('--sx'/);
-  // positions are written to the moving elements only, never to an ancestor (which would restyle the open menu)
-  assert.doesNotMatch(HEADER, /root\.style\.setProperty/);
-  assert.match(HEADER, /className="xn-signal"/);
-  assert.match(CSS, /\.xn-ind \{[^}]*transition:[^}]*transform 340ms/);
+  assert.ok(!existsSync(join(dir, 'lab.ts')), 'review prototypes are not shipped');
+  // the approved design is the default: no query string or build flag selects it
+  assert.match(HEADER, /data-concept="lens"/);
+  assert.match(HEADER, /const lens = mountLens\(root\);/);
+  assert.doesNotMatch(HEADER, /NEXT_PUBLIC_NAVLAB|URLSearchParams|[?&]nav=/);
+  // one loop that stops when settled, pauses with the page, never writes to the header root (which would restyle the
+  // open menu), and reads geometry before writing in a frame
+  assert.match(LENS, /raf = busy && !document\.hidden \? requestAnimationFrame\(tick\) : 0;/);
+  assert.doesNotMatch(LENS, /root\.style\.setProperty/);
+  assert.match(LENS, /\/\/ read phase: the hovered menu link's box \(before any write this frame\)/);
+  assert.match(LENS, /const dt = reduced \? 1 : Math\.max\(0, Math\.min\(1 \/ 30/);
+  assert.doesNotMatch(HEADER + LENS, /<canvas|NavParticles|LogoOrbit/);
+  // the perimeter answers the nearest point of the outline, within a bounded reach
+  assert.match(LENS, /const EDGE_REACH = 64;/);
+  assert.match(LENS, /nearestOnOutline/);
+  // the only motion at rest is the orb's slow sweep, which pauses with a hidden bar and is absent under reduced motion
+  assert.match(LCSS, /\.xn\[data-hidden\] \.xs-orb-sweep \{\s*animation-play-state: paused;/);
+  assert.match(LCSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.xs-orb-sweep \{\s*display: none;/);
+  // the 60 px bar is a desktop geometry; the compact bar keeps its own height
+  assert.match(LCSS, /@media \(min-width: 1081px\) \{\s*\.xn\[data-concept='lens'\] \.xn-bar \{\s*height: 60px;/);
   // switching menus slides content from the side it was chosen on
   assert.match(HEADER, /setProperty\('--dx'/);
-  assert.match(CSS, /translate\(var\(--dx, 0px\), 4px\)/);
-  // no blur, glow sprites or ambient loops
-  assert.doesNotMatch(CSS, /backdrop-filter|filter: blur|drop-shadow/);
+  assert.match(LCSS, /translate\(var\(--dx, 0px\), 8px\)/);
+  // no blur or glow sprites
+  assert.doesNotMatch(CSS + LCSS, /backdrop-filter|filter: blur|drop-shadow/);
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)/);
 });
 
 test('lockup: the approved orb wordmark, split at its artwork gap and spaced', () => {
   assert.match(HEADER, /className="xn-lockup"/);
   assert.match(CSS, /\.xn-lockup \{[^}]*gap: 11px;/);
+  // only the lockup's own two halves carry the artwork (its light layers are separate)
+  assert.match(CSS, /\.xn-lockup > span \{/);
   assert.match(CSS, /url\('\/brand\/xroga-orb-wordmark-dark-v3\.webp'\)/);
   assert.ok(existsSync(join(dir, '../../../../public/brand/xroga-orb-wordmark-dark-v3.webp')));
 });

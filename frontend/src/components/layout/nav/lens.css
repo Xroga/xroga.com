@@ -1,9 +1,6 @@
-/* Navigation motion proof "Context Lens" (local review only). Scoped under .xn[data-concept='lens']. */
-.xn[data-concept='lens'] .xn-ind,
-.xn[data-concept='lens'] .xn-signal,
-.xn[data-concept='lens'] .xn-trace {
-  display: none;
-}
+/* Navigation "Context Lens" (PublicMarketingHeader + nav/lens.ts): the shell material, the reactive perimeter, the
+   layered lens, the orb glass, the satin sapphire CTA and the menu morph. Scoped under .xn[data-concept='lens'], which
+   the header sets on its root; the layers marked xs-* are created by lens.ts. */
 .xs-surface,
 .xs-lens,
 .xs-meniscus,
@@ -16,9 +13,7 @@
 
 /* ------------------------------------------------------------------ the shell: near-black graphite, navy undertone */
 .xn[data-concept='lens'] .xn-bar {
-  height: 60px;
   border-radius: 20px;
-  padding: 0 10px 0 22px;
   /* base plate, a faint sapphire reflection from above, and the inner tonal layer */
   background:
     radial-gradient(70% 160% at 50% -60%, rgba(57, 123, 250, 0.07), transparent 60%),
@@ -30,6 +25,12 @@
     inset 0 -14px 24px -18px rgba(57, 123, 250, 0.12),
     0 1px 0 rgba(0, 0, 0, 0.5),
     0 24px 50px -26px rgba(0, 0, 0, 0.95);
+}
+@media (min-width: 1081px) {
+  .xn[data-concept='lens'] .xn-bar {
+    height: 60px;
+    padding: 0 10px 0 22px;
+  }
 }
 /* light layers inside the bar (clipped to its shape) */
 .xs-surface {

@@ -16,11 +16,12 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ArrowUpRight, ChevronDown, TerminalSquare } from 'lucide-react';
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { PUBLIC_MARKETING_NAV } from '@/lib/publicMarketing';
 import { CONNECT_GROUPS, MEGA_MENUS, type MegaItem, type MegaMenu, type MenuKey } from './nav/navData';
 import { BrandMark, BuildPreview, ConnectDirectory, DevelopPreview, ExplorePreview, ProductPreview } from './nav/MegaPreviews';
+import { mountLens } from './nav/lens';
 import './nav/xroga-nav.css';
 
 const isMenu = (label: string): label is MenuKey => label in MEGA_MENUS;
@@ -99,9 +100,6 @@ export function PublicMarketingHeader() {
   const rootRef = useRef<HTMLElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLElement>(null);
-  const indRef = useRef<HTMLSpanElement>(null);
-  const signalRef = useRef<HTMLSpanElement>(null);
-  const traceRef = useRef<HTMLSpanElement>(null);
   const lastMega = useRef<MenuKey | null>(null);
   const triggers = useRef<Partial<Record<MenuKey, HTMLButtonElement | null>>>({});
   const openTimer = useRef<number>();
@@ -112,7 +110,6 @@ export function PublicMarketingHeader() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [focusInside, setFocusInside] = useState(false);
-  const hoverItem = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -139,67 +136,14 @@ export function PublicMarketingHeader() {
     setActiveMega(null);
   }, [pathname]);
 
-  /* ------------------------------------------------------------ the indicator and the signal */
-  // One recessed surface glides to the hovered item (else the open menu's trigger) and fades when there is none. Its
-  // centre also places the signal that drops into an open panel. Every measurement is read before anything is written,
-  // and positions go to the few small elements that move (never to an ancestor), so a hover restyles only them and
-  // causes no React render.
-  const place = useCallback((el: HTMLElement | null) => {
-    const ind = indRef.current;
-    const nav = navRef.current;
-    const root = rootRef.current;
-    if (!ind || !nav || !root) return;
-    if (!el) {
-      ind.removeAttribute('data-on');
-      return;
-    }
-    const n = nav.getBoundingClientRect();
-    const r = el.getBoundingClientRect();
-    const h = root.getBoundingClientRect();
-    const x = `${r.left - n.left}px`;
-    const w = `${r.width}px`;
-    const sx = `${r.left + r.width / 2 - h.left}px`;
-    if (!ind.hasAttribute('data-on')) {
-      // appearing: take the new place without sliding there from the last one
-      ind.style.transition = 'none';
-      ind.style.setProperty('--x', x);
-      ind.style.setProperty('--w', w);
-      void ind.offsetWidth;
-      ind.style.transition = '';
-    } else {
-      ind.style.setProperty('--x', x);
-      ind.style.setProperty('--w', w);
-    }
-    ind.setAttribute('data-on', '');
-    signalRef.current?.style.setProperty('--sx', sx);
-    traceRef.current?.style.setProperty('--sx', sx);
-  }, []);
-  const aim = useCallback(() => {
-    place(hoverItem.current ?? (activeMega ? triggers.current[activeMega] ?? null : null));
-  }, [activeMega, place]);
-  useEffect(aim, [aim]);
-
-  // local design review only: ?nav=a or ?nav=b mounts a concept prototype when built with NEXT_PUBLIC_NAVLAB=1
+  /* ------------------------------------------------------------ the Context Lens (nav/lens.ts) */
+  // The lens, the reactive perimeter, the menu morph, the link focus card, the orb glass and the CTA light are driven
+  // imperatively from one loop that reads the header's own state (aria-expanded, focus, pointer); no React renders.
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_NAVLAB !== '1') return;
-    const concept = new URLSearchParams(window.location.search).get('nav');
     const root = rootRef.current;
-    if ((concept !== 'a' && concept !== 'b' && concept !== 'lens') || !root) return;
-    let lab: { destroy: () => void } | undefined;
-    let gone = false;
-    if (concept === 'lens') {
-      void import('./nav/lens').then((m) => {
-        if (!gone) lab = m.mountLens(root);
-      });
-    } else {
-      void import('./nav/lab').then((m) => {
-        if (!gone) lab = m.mountLab(concept, root);
-      });
-    }
-    return () => {
-      gone = true;
-      lab?.destroy();
-    };
+    if (!root) return;
+    const lens = mountLens(root);
+    return () => lens.destroy();
   }, []);
 
   // switching menus slides the new content in from the side it was chosen on (set before paint)
@@ -354,6 +298,7 @@ export function PublicMarketingHeader() {
       ref={rootRef}
       className="xn"
       data-public-marketing-header
+      data-concept="lens"
       data-hidden={hidden || undefined}
       data-open={activeMega ? 'mega' : menuOpen ? 'mobile' : undefined}
       onPointerEnter={() => window.clearTimeout(closeTimer.current)}
@@ -378,12 +323,7 @@ export function PublicMarketingHeader() {
           ref={navRef}
           className="xn-nav"
           aria-label="Primary navigation"
-          onPointerLeave={() => {
-            hoverItem.current = null;
-            aim();
-          }}
         >
-          <span ref={indRef} className="xn-ind" aria-hidden="true" />
           {PUBLIC_MARKETING_NAV.map((item) => {
             const isCurrent = pathname === item.href;
             if (!isMenu(item.label)) {
@@ -393,11 +333,7 @@ export function PublicMarketingHeader() {
                   href={item.href}
                   className="xn-item"
                   aria-current={isCurrent ? 'page' : undefined}
-                  onPointerEnter={(e) => {
-                    hoverItem.current = e.currentTarget;
-                    aim();
-                    scheduleClose();
-                  }}
+                  onPointerEnter={() => scheduleClose()}
                 >
                   {item.label}
                 </Link>
@@ -419,8 +355,6 @@ export function PublicMarketingHeader() {
                 aria-current={isCurrent ? 'page' : undefined}
                 onPointerEnter={(e) => {
                   if (e.pointerType !== 'mouse') return;
-                  hoverItem.current = e.currentTarget;
-                  aim();
                   // the first menu opens after a short intent delay; once a menu is open, moving across switches at once
                   open(key, activeMega ? 0 : 90);
                 }}
@@ -475,9 +409,6 @@ export function PublicMarketingHeader() {
 
       {/* the shared mega-menu panel: one envelope, content crossfades between menus */}
       <div ref={panelRef} id="xn-panel" className="xn-panel" data-open={menu ? true : undefined} aria-hidden={!menu} onKeyDown={onPanelKey}>
-        {/* the signal: a hairline from the chosen item down to the panel, landing on its top edge */}
-        <span ref={signalRef} className="xn-signal" aria-hidden="true" />
-        <span ref={traceRef} className="xn-trace" aria-hidden="true" />
         <div className="xn-panel-surface">
           {menu && activeMega && <MegaContent key={activeMega} id={activeMega} menu={menu} onNavigate={closeMenus} />}
         </div>
