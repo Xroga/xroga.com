@@ -6,16 +6,17 @@ import {prepareSupabaseBundleWrite,saveSupabaseBundle} from '../services/integra
 import {userSupabaseMemoryReady} from '../services/integrations/supabaseProvision.js';
 import {getProjectMemoryAsync,setProjectMemoryDurable} from '../ai/projectMemory.js';
 import {loadSessionHistory,saveSessionHistory,type SessionMessage} from '../ai/sessionMemory.js';
+import {createTenantContext,type TenantContext} from './tenantContext.js';
 
 /** Real canonical credentials and platform DB, synthetic external PostgREST only. */
 export function registerConnectedMemoryConsumerTests(admin:SupabaseClient):void{
  test('real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage',async t=>{
   assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
-  const actors:{id:string;url:string;key:string}[]=[],original=globalThis.fetch;
+  const actors:{id:string;url:string;key:string;context:TenantContext}[]=[],original=globalThis.fetch;
   t.after(async()=>{globalThis.fetch=original;for(const actor of actors)assert.equal((await admin.auth.admin.deleteUser(actor.id)).error,null);});
   for(let i=0;i<3;i++){
    const created=await admin.auth.admin.createUser({email:`memory-consumer-${randomUUID()}@example.invalid`,email_confirm:true});assert.equal(created.error,null);assert.ok(created.data.user);
-   const actor={id:created.data.user.id,url:`https://fixture${randomUUID().replaceAll('-','')}.supabase.co`,key:`SYNTHETIC_SERVICE_${created.data.user.id}`};actors.push(actor);
+   const actor={id:created.data.user.id,url:`https://fixture${randomUUID().replaceAll('-','')}.supabase.co`,key:`SYNTHETIC_SERVICE_${created.data.user.id}`,context:createTenantContext({userId:created.data.user.id,via:'persisted_owner'})};actors.push(actor);
    if(i<2)await saveSupabaseBundle(await prepareSupabaseBundleWrite(actor.id),{projectUrl:actor.url,anonKey:`SYNTHETIC_ANON_${actor.id}`,serviceRoleKey:actor.key});
   }
   const [owner,other,platform]=actors,branch='topic',repo=`fixture/memory-${randomUUID()}`,calls:{owner:string;table:string;method:string;body:Record<string,unknown>|null}[]=[];
@@ -46,11 +47,12 @@ export function registerConnectedMemoryConsumerTests(admin:SupabaseClient):void{
    return Response.json({xroga_user_id:selectedOwner,repo:requestedRepo,messages:[{role:'user',content:actor.id},{role:'system',content:'SYNTHETIC_CONTROL'}]});
   };
   for(const actor of [owner,other]){
-   assert.equal(await userSupabaseMemoryReady(actor.id),true);const before=calls.length;
+   assert.equal(await userSupabaseMemoryReady(actor.context),true);const before=calls.length;
    const project=await getProjectMemoryAsync(actor.id,repo,branch);assert.equal(project?.userId,actor.id);assert.deepEqual(project?.files,[{path:'own.txt',content:actor.id}]);assert.ok(calls.length>before);
    assert.deepEqual(await loadSessionHistory(actor.id,repo),[{role:'user',content:actor.id}]);
   }
-  const noAccount=calls.length;assert.equal(await userSupabaseMemoryReady(platform.id),false);assert.equal(calls.length,noAccount);
+  const noAccount=calls.length;assert.equal(await userSupabaseMemoryReady(platform.context),false);assert.equal(calls.length,noAccount);
+  await assert.rejects(userSupabaseMemoryReady({...owner.context}),{code:'TENANT_AUTH_REQUIRED'});await assert.rejects(userSupabaseMemoryReady(owner.id as unknown as TenantContext),{code:'TENANT_AUTH_REQUIRED'});assert.equal(calls.length,noAccount);
   mode='foreign_read';assert.equal(await getProjectMemoryAsync(owner.id,`${repo}-foreign`,branch),null);assert.deepEqual(await loadSessionHistory(owner.id,`${repo}-foreign`),[]);mode='normal';
   // Same repository names across users must not turn valid writes into an
   // account fallback. Only exact representation receipts are acknowledged.
@@ -65,8 +67,15 @@ export function registerConnectedMemoryConsumerTests(admin:SupabaseClient):void{
   mode='normal';const local=await setProjectMemoryDurable({userId:platform.id,repo,branch,files:[{path:'platform.txt',content:'own platform'}]});assert.equal(local.persistence,'platform');
   await saveSessionHistory(platform.id,repo,[{role:'user',content:'platform own'}]);const retained=await admin.from('session_memory').select('*').eq('user_id',platform.id).eq('repo',repo).single();assert.equal(retained.error,null);assert.deepEqual(retained.data?.messages,[{role:'user',content:'platform own'}]);
   mode='forged_platform_receipt';await assert.rejects(setProjectMemoryDurable({userId:platform.id,repo,branch,files:[{path:'recovery.txt',content:'own retained write'}]}),/Platform project-memory write unavailable/);
-  mode='authority_outage';const beforeOutage=calls.length;assert.equal(await userSupabaseMemoryReady(owner.id).catch(()=>false),false);assert.equal(calls.length,beforeOutage);
-  mode='normal';assert.equal((await admin.rpc('revoke_provider_key',{p_owner_id:owner.id,p_provider:'apikey_supabase'})).error,null);const beforeRevoked=calls.length;assert.equal(await userSupabaseMemoryReady(owner.id),false);assert.equal(calls.length,beforeRevoked);assert.equal(await userSupabaseMemoryReady(other.id),true);assert.equal(calls.at(-1)?.owner,other.id);
+  mode='authority_outage';const beforeOutage=calls.length;assert.equal(await userSupabaseMemoryReady(owner.context).catch(()=>false),false);
+  assert.equal(await getProjectMemoryAsync(owner.id,`${repo}-authority-outage`,branch),null);assert.deepEqual(await loadSessionHistory(owner.id,`${repo}-authority-outage`),[]);
+  assert.equal((await setProjectMemoryDurable({userId:owner.id,repo,branch,files:[{path:'outage.txt',content:'OWN_AUTHORITY_OUTAGE'}]})).persistence,'platform');await saveSessionHistory(owner.id,repo,[{role:'user',content:'OWN_AUTHORITY_OUTAGE'}]);assert.equal(calls.length,beforeOutage);
+  const outageSession=await admin.from('session_memory').select('user_id,repo,messages').eq('user_id',owner.id).eq('repo',repo).single();assert.equal(outageSession.error,null);assert.deepEqual(outageSession.data,{user_id:owner.id,repo,messages:[{role:'user',content:'OWN_AUTHORITY_OUTAGE'}]});
+  mode='normal';assert.equal((await admin.rpc('revoke_provider_key',{p_owner_id:owner.id,p_provider:'apikey_supabase'})).error,null);const beforeRevoked=calls.length;assert.equal(await userSupabaseMemoryReady(owner.context),false);
+  assert.equal(await getProjectMemoryAsync(owner.id,`${repo}-revoked`,branch),null);assert.deepEqual(await loadSessionHistory(owner.id,`${repo}-revoked`),[]);
+  assert.equal((await setProjectMemoryDurable({userId:owner.id,repo,branch,files:[{path:'revoked.txt',content:'OWN_AFTER_REVOCATION'}]})).persistence,'platform');await saveSessionHistory(owner.id,repo,[{role:'user',content:'OWN_AFTER_REVOCATION'}]);assert.equal(calls.length,beforeRevoked);
+  const revokedProject=await admin.from('project_memory').select('user_id,repo,branch,files').eq('user_id',owner.id).eq('repo',repo).eq('branch',branch).single(),revokedSession=await admin.from('session_memory').select('user_id,repo,messages').eq('user_id',owner.id).eq('repo',repo).single();assert.equal(revokedProject.error,null);assert.deepEqual(revokedProject.data,{user_id:owner.id,repo,branch,files:[{path:'revoked.txt',content:'OWN_AFTER_REVOCATION'}]});assert.equal(revokedSession.error,null);assert.deepEqual(revokedSession.data,{user_id:owner.id,repo,messages:[{role:'user',content:'OWN_AFTER_REVOCATION'}]});
+  assert.equal(await userSupabaseMemoryReady(other.context),true);assert.equal(calls.at(-1)?.owner,other.id);
   assert.deepEqual((await admin.from('user_integrations').select('*').eq('user_id',other.id).order('provider')).data,foreignCredentials.data);
  });
 }

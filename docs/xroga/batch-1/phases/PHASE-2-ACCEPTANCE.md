@@ -1,5 +1,15 @@
 # Phase 2 acceptance
 
+## Source b7ebae4d regression preserved, next proof remains pending
+
+At b7ebae4dcef509c4ddd82cc73a39c8f62db222dc, ten workflow categories pass, including repeated branch/integrated aggregate39288439112. Its four complete21-stage manifests pass without source mutation. The actual integrated source is bf08c459ca282341b9714449301fc881f4bca08a. Independently authenticated receipts and comparison are preserved under artifacts/b7eb-baseline.
+
+Disposable39288439042/job118182494411 passes126 migration histories and189 of190 security cases with zero skips. Its only failure compares input ISO timestamp formatting with PostgreSQL's equivalent serialized timestamp. The learning assertion now derives its expected exact rows from the database snapshot, retaining owner, model, recipe and all-field comparisons. The actual web/universal lock tests and signed preview consumer pass, but a failed disposable workflow does not certify this source. Original logs, final failure metadata and hashes remain under artifacts/b7eb-disposable-failed.
+
+The next source strengthens actual connected-memory reads and writes during canonical account outage and revocation. Source tracing found no active production caller for userSupabaseMemoryReady, so no route provenance is invented. This existing dormant export now requires the original issued TenantContext before credential or network access. Eight focused readiness/provisioning tests and backend types pass. The real consumer case still requires changed-source disposable execution.
+
+Two additional existing packet witnesses are prepared without production changes: actual legacy usage persistence and authenticated usage status, and actual delivery metadata endpoint with verified owner/project selection. Fresh disposable actors have no provider connections. The usage proof covers four recordUsage sites, not the two dormant syncPlanBudget sites. Delivery fixtures neither publish nor deploy. Semantic decisions36 are progress only. Canonical pending75, original22 open groups and all73/371 frozen obligations remain until genuine source-bound evidence is reconciled. The original ten criteria and strict gate are unchanged.
+
 ## Source11c949d7 rejected, lock observation fixture corrected
 
 Disposable39284416673/job118166197822 fails at11c949d718297f72e647e0367bfb937a0982b32c:125 migration histories pass,186 security cases execute with185pass/1fail/0skip. The new connected-memory case passes, but this failed source is not accepted and its callers are not promoted. Full direct job log, independently retrieved final failure metadata and SHA256 are preserved under artifacts/11c9-disposable-failed. No unchanged rerun is dispatched.

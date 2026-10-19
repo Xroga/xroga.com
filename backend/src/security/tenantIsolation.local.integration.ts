@@ -10,6 +10,7 @@ import {registerConnectedMemoryConsumerTests} from './connectedMemoryConsumer.lo
 import {registerLearningOwnerReadTests} from './learningOwnerReads.local.integration.js';
 import {registerPreviewConsumerTests} from './previewConsumer.local.integration.js';
 import {registerUniversalOwnerReadTests} from './universalOwnerReads.local.integration.js';
+import {registerDeliveryEvidenceReadTests} from './deliveryEvidenceRead.local.integration.js';
 import billingWebhookRouter from '../routes/billingWebhook.js';
 import { createClient } from '@supabase/supabase-js';
 import { createTenantContext, type TenantContext } from './tenantContext.js';
@@ -192,6 +193,7 @@ registerConnectedMemoryConsumerTests(admin);
 registerLearningOwnerReadTests(admin,()=>users);
 registerPreviewConsumerTests(admin,()=>users);
 registerUniversalOwnerReadTests(admin,()=>users);
+registerDeliveryEvidenceReadTests(admin,request);
 registerVercelRefreshAccountTests(admin,request);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});

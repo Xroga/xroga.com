@@ -7,6 +7,7 @@
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import pg from 'pg';
+import {requireTenantContext,type TenantContext} from '../../security/tenantContext.js';
 import {
   getUserProviderKey,
   getUserSupabaseStatus,
@@ -545,7 +546,8 @@ export async function getUserSupabaseManagementToken(userId: string): Promise<st
   return getUserProviderKey(userId, 'supabase_pat');
 }
 
-export async function userSupabaseMemoryReady(userId: string): Promise<boolean> {
+export async function userSupabaseMemoryReady(context: TenantContext): Promise<boolean> {
+  const {userId}=requireTenantContext(context);
   const client = await getUserSupabaseAdmin(userId);
   if (!client) return false;
   const { error } = await client.from('xroga_session_memory').select('id').eq('xroga_user_id', userId).limit(1);

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "11c949d718297f72e647e0367bfb937a0982b32c",
+  "source_sha": "b7ebae4dcef509c4ddd82cc73a39c8f62db222dc",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -566,6 +566,7 @@
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
+        "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
@@ -712,6 +713,7 @@
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
+        "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
@@ -3241,6 +3243,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
@@ -3277,6 +3280,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
@@ -7237,6 +7241,7 @@
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
+        "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
@@ -7715,6 +7720,7 @@
       "name": "E2E_BACKEND_URL",
       "consuming_sources": [
         "backend/src/security/projectCreation.local.integration.ts",
+        "backend/src/security/quotaEvidence.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "environments": [
@@ -9905,6 +9911,7 @@
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
+        "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
@@ -9918,6 +9925,7 @@
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerCycleParent.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
+        "backend/src/security/quotaEvidence.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
         "backend/src/security/runtimeEventParent.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
@@ -10252,6 +10260,7 @@
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
+        "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
@@ -10970,6 +10979,7 @@
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
+        "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
@@ -11072,6 +11082,7 @@
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
         "backend/src/security/providerCycleParent.local.integration.ts",
+        "backend/src/security/quotaEvidence.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runTraceAttempt.local.integration.ts",
         "backend/src/security/runtimeEventParent.local.integration.ts",
@@ -13341,11 +13352,15 @@
     },
     {
       "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
-      "sha256": "089da8db36552cf71536133ee55f976b77767ffdb18aacf538c8ad373b6e3349"
+      "sha256": "e73cd5a6b63f92230d638360636fee6d3b8d5581b696436d65676741e800f1a8"
     },
     {
       "path": "backend/src/security/credentialReadMatrix.local.integration.ts",
       "sha256": "f670715274906beb8c7de98e3af35290816784e3b6b25faf1758d7415fcb84c2"
+    },
+    {
+      "path": "backend/src/security/deliveryEvidenceRead.local.integration.ts",
+      "sha256": "379184e2e75a8002df7e9e84525e2aa4603f4c65fd38f2befebddeb5bd182d5e"
     },
     {
       "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
@@ -13365,7 +13380,7 @@
     },
     {
       "path": "backend/src/security/learningOwnerReads.local.integration.ts",
-      "sha256": "6e3f51097e5db6a4b33d41e21a41ca3e2acad5bb8698b7f89d23960207dfabef"
+      "sha256": "7fef8a0e337a0d5311006103aa88dee2642ea3d0b9f3ea031167a2d7d7c4b709"
     },
     {
       "path": "backend/src/security/oauthSession.local.integration.ts",
@@ -13425,7 +13440,7 @@
     },
     {
       "path": "backend/src/security/quotaEvidence.local.integration.ts",
-      "sha256": "e41350ae79880eb8ae2c357adaf6f863e4779800585486b57073b5cbfbcf32c2"
+      "sha256": "fada49f928fe3d2befccc4ae0d1f8741fe759f6cbd1604c2fea820eded80b0f4"
     },
     {
       "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",
@@ -13493,7 +13508,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140"
+      "sha256": "2214cde438d8705057ef3fe7254ff8625c2b7c9b446cff200021abae7909a846"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13633,7 +13648,7 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "sha256": "ef0f6abbabad0dd200ce434d68148c9531977d69fb5da6a655fdd6807acd15d4"
+      "sha256": "78a71490f381ab699c55168fc075b0042dbb081bc0cc3b6e13d440d2a13fe014"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
@@ -19332,21 +19347,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
-      "line": 13,
+      "line": 14,
       "credentialsInUrl": false
     },
     {
       "hostname": "fixture",
       "protocol": "https:",
       "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
-      "line": 18,
+      "line": 19,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
-      "line": 26,
+      "line": 27,
       "credentialsInUrl": false
     },
     {
@@ -19361,6 +19376,34 @@
       "protocol": "http:",
       "path": "backend/src/security/credentialReadMatrix.local.integration.ts",
       "line": 37,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/deliveryEvidenceRead.local.integration.ts",
+      "line": 17,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "example.invalid",
+      "protocol": "https:",
+      "path": "backend/src/security/deliveryEvidenceRead.local.integration.ts",
+      "line": 31,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "example.invalid",
+      "protocol": "https:",
+      "path": "backend/src/security/deliveryEvidenceRead.local.integration.ts",
+      "line": 32,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/deliveryEvidenceRead.local.integration.ts",
+      "line": 40,
       "credentialsInUrl": false
     },
     {
@@ -19591,7 +19634,28 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/quotaEvidence.local.integration.ts",
-      "line": 9,
+      "line": 10,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/quotaEvidence.local.integration.ts",
+      "line": 33,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/quotaEvidence.local.integration.ts",
+      "line": 34,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/quotaEvidence.local.integration.ts",
+      "line": 34,
       "credentialsInUrl": false
     },
     {
@@ -19710,77 +19774,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 118,
+      "line": 119,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 118,
+      "line": 119,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 532,
+      "line": 534,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 582,
+      "line": 584,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 671,
+      "line": 673,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 840,
+      "line": 842,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 898,
+      "line": 900,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1585,
+      "line": 1587,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1603,
+      "line": 1605,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1611,
+      "line": 1613,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1615,
+      "line": 1617,
       "credentialsInUrl": false
     },
     {
@@ -20081,7 +20145,7 @@
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "line": 19,
+      "line": 20,
       "credentialsInUrl": false
     },
     {
@@ -26136,14 +26200,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1084,
+      "line": 1086,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1421,
+      "line": 1423,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

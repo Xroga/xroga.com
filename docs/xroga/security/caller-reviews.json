@@ -546,7 +546,15 @@
           "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
           "marker": "async function loadEvidence"
         }
-      ]
+      ],
+      "criterionClosureReview": {
+        "classification": "PROOF_REQUIRED",
+        "actorTrace": "index mounts delivery routes behind authMiddleware. The GET handler uses requireUser(req) and validated project path only. loadProjectDelivery reads the exact owner/project revision before any envelope is returned, and its private evidence query filters that same owner/project with a fixed event-type projection. Fresh disposable subjects have no provider credentials. Actual HTTP evidence uses distinct owner rows under the same logical project label and a second private project. No publish/deploy action is called.",
+        "completionCondition": "Authenticate the actual own/foreign/anonymous endpoint and unavailable authority case. Persisted fictional ready events prove tenant-scoped metadata projection only, never live provider success, full publication/deployment authority or egress.",
+        "fixture": "backend/src/security/deliveryEvidenceRead.local.integration.ts",
+        "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+        "scope": "ORIGINAL007_TENANT_OWNERSHIP_ONLY_OTHER_SCOPE_RETAINED"
+      }
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
@@ -1438,7 +1446,15 @@
           "path": "backend/src/ai/quota.ts",
           "marker": "export async function recordUsage"
         }
-      ]
+      ],
+      "criterionClosureReview": {
+        "classification": "PROOF_REQUIRED",
+        "actorTrace": "The four selected recordUsage sites retain the original server user primitive through readUsageRow, three fixed usage RPCs and the final same-owner read. Actual producers are the issued-owner pipeline, server business read/action callbacks and admitted software-agent/planner hooks. The new real default-consumer case checks two isolated Auth subjects, exact durable counters and ledger rows, concurrent same-owner deltas, authenticated status ignoring foreign query identity, browser denial and missing authority. No provider or paid credit is used.",
+        "completionCondition": "Exactly four usage writer/factory sites await proof. Two dormant syncPlanBudget caller sites remain unproven for original007 issuance and must not inherit this proof. Split accounting uncertainty and unified008 spending authority remain separately recorded, not certified.",
+        "fixture": "backend/src/security/quotaEvidence.local.integration.ts",
+        "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+        "scope": "ORIGINAL007_TENANT_OWNERSHIP_ONLY_OTHER_SCOPE_RETAINED"
+      }
     },
     {
       "path": "backend/src/ai/webBudget.ts",
@@ -4961,13 +4977,13 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "sourceSha256": "ef0f6abbabad0dd200ce434d68148c9531977d69fb5da6a655fdd6807acd15d4",
+      "sourceSha256": "78a71490f381ab699c55168fc075b0042dbb081bc0cc3b6e13d440d2a13fe014",
       "callIds": [
-        "b1d69d6354dd94af3c3e"
+        "a59eb5df1a268fbe2b96"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
-      "reason": "Full helper examined, including Management API, direct SQL and Storage calls outside the scanner. Generated memory tables lacked browser-role isolation and existing public buckets were falsely accepted; both corrected with pending real CI. Full caller provenance, provider/project binding, legacy customer catalog review, direct-PG TLS validation and explicit consequential approval remain unresolved, not certified from owner syntax.",
+      "authority": "The dormant readiness export now requires the original WeakSet-issued TenantContext before any credential or database access, derives its only userId from that immutable context, and selects the current canonical Supabase bundle for only that owner. The query constrains xroga_user_id. No active production caller or new identity issuer is invented. All other module functions remain byte-identical.",
+      "reason": "No active production consumer was found. Dormancy alone is not a security certificate. The existing canonical issued-context guard now makes this export callable only with original server authority, and cloned/plain/string inputs reject before I/O. Its actual canonical-DB two-owner account query, revocation/outage and forged-context witness is prepared. This remains an original007 gap until complete exact-source real CI succeeds. Existing provisioning, provider-success, custody and migration scope is preserved in historicalReadinessReview.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -4976,8 +4992,36 @@
         {
           "path": "backend/src/services/integrations/supabaseProvision.test.ts",
           "marker": "existing public or unknown buckets cannot be reported private"
+        },
+        {
+          "path": "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
+          "marker": "dormant memory readiness export requires the original issued context before credential or network access"
+        },
+        {
+          "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+          "marker": "real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage"
         }
-      ]
+      ],
+      "historicalReadinessReview": {
+        "path": "backend/src/services/integrations/supabaseProvision.ts",
+        "sourceSha256": "ef0f6abbabad0dd200ce434d68148c9531977d69fb5da6a655fdd6807acd15d4",
+        "callIds": [
+          "b1d69d6354dd94af3c3e"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
+        "reason": "Full helper examined, including Management API, direct SQL and Storage calls outside the scanner. Generated memory tables lacked browser-role isolation and existing public buckets were falsely accepted; both corrected with pending real CI. Full caller provenance, provider/project binding, legacy customer catalog review, direct-PG TLS validation and explicit consequential approval remain unresolved, not certified from owner syntax.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "generated external-project memory SQL denies browser roles"
+          },
+          {
+            "path": "backend/src/services/integrations/supabaseProvision.test.ts",
+            "marker": "existing public or unknown buckets cannot be reported private"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/ai/sessionMemory.ts",

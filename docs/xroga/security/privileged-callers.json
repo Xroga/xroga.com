@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "a21112f3d7d3c7b4d68196a138e18c3f87d7f06f24baefa9dfa4a3a8eae063a6",
+  "reviewRegistrySha256": "9d53cda467d7649dff46b15f6634efe4fa215bb09a6850fcb0750f9b41460d43",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -408,7 +408,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-50f57cd7c2568e3b"
+        "id": "OB-61ba440b1af6fb01"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -944,7 +944,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "b1d69d6354dd94af3c3e"
+        "id": "a59eb5df1a268fbe2b96"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -12549,18 +12549,18 @@
       }
     },
     {
-      "id": "b1d69d6354dd94af3c3e",
+      "id": "a59eb5df1a268fbe2b96",
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "line": 551,
+      "line": 553,
       "enclosing": "userSupabaseMemoryReady",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_session_memory",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ef0f6abbabad0dd200ce434d68148c9531977d69fb5da6a655fdd6807acd15d4",
+      "sourceSha256": "78a71490f381ab699c55168fc075b0042dbb081bc0cc3b6e13d440d2a13fe014",
       "semanticReview": {
-        "authority": "The memory readiness query obtains the separate project's service credential using the internal user argument and now constrains xroga_user_id. No production caller of this readiness export was found; provisioning itself is called by authenticated integration/OAuth routes and the existing pipeline's user-scoped options.",
-        "reason": "Full helper examined, including Management API, direct SQL and Storage calls outside the scanner. Generated memory tables lacked browser-role isolation and existing public buckets were falsely accepted; both corrected with pending real CI. Full caller provenance, provider/project binding, legacy customer catalog review, direct-PG TLS validation and explicit consequential approval remain unresolved, not certified from owner syntax.",
+        "authority": "The dormant readiness export now requires the original WeakSet-issued TenantContext before any credential or database access, derives its only userId from that immutable context, and selects the current canonical Supabase bundle for only that owner. The query constrains xroga_user_id. No active production caller or new identity issuer is invented. All other module functions remain byte-identical.",
+        "reason": "No active production consumer was found. Dormancy alone is not a security certificate. The existing canonical issued-context guard now makes this export callable only with original server authority, and cloned/plain/string inputs reject before I/O. Its actual canonical-DB two-owner account query, revocation/outage and forged-context witness is prepared. This remains an original007 gap until complete exact-source real CI succeeds. Existing provisioning, provider-success, custody and migration scope is preserved in historicalReadinessReview.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -12569,6 +12569,14 @@
           {
             "path": "backend/src/services/integrations/supabaseProvision.test.ts",
             "marker": "existing public or unknown buckets cannot be reported private"
+          },
+          {
+            "path": "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
+            "marker": "dormant memory readiness export requires the original issued context before credential or network access"
+          },
+          {
+            "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+            "marker": "real connected memory consumers retain owner account namespace and exact receipts without foreign fallback after revocation or outage"
           }
         ]
       }

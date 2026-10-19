@@ -2050,6 +2050,68 @@
         "Authenticate fresh/upgrade and repeated branch/integrated final source",
         "Reconcile exactly these five original007 caller sites, preserving every later-phase obligation"
       ]
+    },
+    {
+      "packetId": "B1-P2-346186bea635be22",
+      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "EXISTING_AUTHENTICATED_CONSUMER_OWNERSHIP_PROOF_PREPARED_NO_PRODUCTION_CHANGE",
+      "actorTrace": "The four selected recordUsage sites retain the original server user primitive through readUsageRow, three fixed usage RPCs and the final same-owner read. Actual producers are the issued-owner pipeline, server business read/action callbacks and admitted software-agent/planner hooks. The new real default-consumer case checks two isolated Auth subjects, exact durable counters and ledger rows, concurrent same-owner deltas, authenticated status ignoring foreign query identity, browser denial and missing authority. No provider or paid credit is used.",
+      "invariant": "The actual consumer retains its original verified subject, exact owned namespace and result without foreign-owner substitution. Missing authority cannot select a foreign account or row.",
+      "evidence": [
+        {
+          "path": "backend/src/security/quotaEvidence.local.integration.ts",
+          "type": "REAL_DEFAULT_CONSUMER_AND_AUTHENTICATED_ENDPOINT_CASE_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Exactly four usage writer/factory sites await proof. Two dormant syncPlanBudget caller sites remain unproven for original007 issuance and must not inherit this proof. Split accounting uncertainty and unified008 spending authority remain separately recorded, not certified.",
+        "Require complete successful final-source disposable and repeated branch/integrated verification before manual or structured promotion"
+      ]
+    },
+    {
+      "packetId": "B1-P2-47ed76ce09cbb18f",
+      "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "EXISTING_AUTHENTICATED_CONSUMER_OWNERSHIP_PROOF_PREPARED_NO_PRODUCTION_CHANGE",
+      "actorTrace": "index mounts delivery routes behind authMiddleware. The GET handler uses requireUser(req) and validated project path only. loadProjectDelivery reads the exact owner/project revision before any envelope is returned, and its private evidence query filters that same owner/project with a fixed event-type projection. Fresh disposable subjects have no provider credentials. Actual HTTP evidence uses distinct owner rows under the same logical project label and a second private project. No publish/deploy action is called.",
+      "invariant": "The actual consumer retains its original verified subject, exact owned namespace and result without foreign-owner substitution. Missing authority cannot select a foreign account or row.",
+      "evidence": [
+        {
+          "path": "backend/src/security/deliveryEvidenceRead.local.integration.ts",
+          "type": "REAL_DEFAULT_CONSUMER_AND_AUTHENTICATED_ENDPOINT_CASE_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Authenticate the actual own/foreign/anonymous endpoint and unavailable authority case. Persisted fictional ready events prove tenant-scoped metadata projection only, never live provider success, full publication/deployment authority or egress.",
+        "Require complete successful final-source disposable and repeated branch/integrated verification before manual or structured promotion"
+      ]
+    },
+    {
+      "packetId": "B1-P2-50f57cd7c2568e3b",
+      "sourceSha256": "78a71490f381ab699c55168fc075b0042dbb081bc0cc3b6e13d440d2a13fe014",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "DORMANT_READINESS_EXPORT_REQUIRES_EXISTING_ISSUED_CONTEXT_REAL_PROOF_PENDING",
+      "actorTrace": "The dormant readiness export now requires the original WeakSet-issued TenantContext before any credential or database access, derives its only userId from that immutable context, and selects the current canonical Supabase bundle for only that owner. The query constrains xroga_user_id. No active production caller or new identity issuer is invented. All other module functions remain byte-identical.",
+      "invariant": "This callable export cannot use arbitrary string or cloned body authority to select a customer Supabase service credential. Exact issued owner and current canonical account must determine the query.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
+          "type": "LOCAL_NON_ISSUED_BEFORE_IO_DENIAL",
+          "result": "PASS"
+        },
+        {
+          "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+          "type": "REAL_OWNER_ACCOUNT_AND_CONTEXT_CASE_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Authenticate actual new context-positive/forged/foreign-account and revocation/outage assertions",
+        "Bind exact current source to both manual and structured records without certifying provisioning or009 custody"
+      ]
     }
   ]
 }

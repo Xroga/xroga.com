@@ -21,7 +21,7 @@ export function registerLearningOwnerReadTests(admin:SupabaseClient,getUsers:()=
   const snapshot=async()=>{const r=await admin.from('build_outcomes').select('*').in('user_id',actors).order('run_id');assert.equal(r.error,null);return r.data!;};
   const before=await snapshot();
   for(const [i,owner]of actors.entries()){
-   const owned=rows.filter(row=>row.user_id===owner);
+   const owned=before.filter(row=>row.user_id===owner).sort((a,b)=>Date.parse(b.updated_at)-Date.parse(a.updated_at));
    const [improvement,routing,strategy]=await Promise.all([loadBuildImprovementMemory(owner),loadBuildOutcomeRoutingMemory(owner),loadBuildStrategyMemory(owner)]);
    assert.deepEqual(improvement,summarizeBuildImprovementRows(owned));assert.deepEqual(routing,summarizeBuildOutcomeRows(owned));assert.deepEqual(strategy,summarizeBuildStrategyRows(owned));
    if(i<2){assert.equal(improvement.observationCount,2);assert.ok(improvement.observations.every(o=>o.modelId===`fixture_model_${i}`));assert.deepEqual(routing.deprioritizedModels,[`fixture_model_${i}`]);assert.equal(strategy.observationCount,2);assert.ok(strategy.observations.every(o=>o.recipeId===`recipe_${i}`));}
