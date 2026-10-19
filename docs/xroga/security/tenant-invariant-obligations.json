@@ -6054,13 +6054,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-e7319d6bd8d0d6dd",
+      "id": "OB-76148b2177594e89",
       "callerIds": [
         "d84df34ff692e4fb31c1",
-        "50264ff60cc6dffe2345"
+        "3182a013220000508dad"
       ],
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
+      "sourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6081,13 +6081,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-911eaa4720313d55",
+      "id": "OB-91cdd46ad87a05f1",
       "callerIds": [
-        "cafa82e3b4fb14576aa1",
-        "a22962598684bcdd5ce4"
+        "428afb8386c4474f5abb",
+        "331a1be3d1ee639d294f"
       ],
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
+      "sourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [
@@ -7323,7 +7323,7 @@
       "path": "backend/src/community/service.ts",
       "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
+      "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
@@ -7349,7 +7349,7 @@
       "path": "backend/src/community/service.ts",
       "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
+      "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
@@ -7401,7 +7401,7 @@
       "path": "backend/src/community/service.ts",
       "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
+      "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
@@ -7505,7 +7505,7 @@
       "path": "backend/src/community/service.ts",
       "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
+      "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
@@ -7531,7 +7531,7 @@
       "path": "backend/src/community/service.ts",
       "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
+      "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"

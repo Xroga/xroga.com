@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "397c7881daed6895376d1b49b298a82f92d8fdd6",
+  "source_sha": "893b4c69950e1e5d48c333dcd09c3cf0923dbce4",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13264,7 +13264,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17"
+      "sha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad"
     },
     {
       "path": "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
@@ -13292,7 +13292,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad"
+      "sha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -19329,63 +19329,63 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 465,
+      "line": 494,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 515,
+      "line": 544,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 604,
+      "line": 633,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 747,
+      "line": 776,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 799,
+      "line": 828,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1467,
+      "line": 1496,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1485,
+      "line": 1514,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1493,
+      "line": 1522,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1497,
+      "line": 1526,
       "credentialsInUrl": false
     },
     {
@@ -25671,14 +25671,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 966,
+      "line": 995,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1303,
+      "line": 1332,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

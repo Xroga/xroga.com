@@ -7,6 +7,9 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "backend/src/organicIntelligence/organicIntelligence.test.ts",
+    "backend/src/security/serviceRoleGuard.ts",
+    "backend/src/security/communityPublicException.test.ts",
     "backend/src/synthesis/projectRuntime/store.ts",
     "backend/src/synthesis/projectRuntime/secretWriteReceipt.test.ts",
     "backend/src/security/runtimeSecretRead.local.integration.ts",

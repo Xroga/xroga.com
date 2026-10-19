@@ -435,7 +435,7 @@
     "reviewedCandidates": 639,
     "unresolvedSafetyCandidates": 330,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 11
+    "registeredNarrowGlobalExceptions": 13
   },
   "dependency": {
     "downstreamPatchStatus": "VERIFIED_SCOPE at4f8c56acdf6b9c90a5ea1147dfd79151bffe6c46: four targeted fixtures and18 combined dependency/Cline tests, frozen workspace/standalone38806776199, Docker38806776574 and repeated branch/integrated21-stage baseline38806776471 pass. Integrated7377b5a5ffc76d49c7dcb4094ddc9055c4062eeb. Versions/audit findings retained, no waiver. Current later-source CI still required.",
@@ -970,7 +970,7 @@
         ],
         "backend/src/security/serviceRoleGuard.ts": [
           "d84df34ff692e4fb31c1",
-          "50264ff60cc6dffe2345"
+          "3182a013220000508dad"
         ],
         "backend/src/services/ensureUserRecords.ts": [
           "d81d114079399f02921b",

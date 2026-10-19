@@ -1911,7 +1911,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3113,7 +3113,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -3939,6 +3939,21 @@
         "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
         "executionStatus": "IN_PROGRESS",
         "finding": "UNCHANGED_COMMUNITY_FIELD_PARENT_ROLE_GUARDS_PRIOR_REAL_LOCK_PROOF_RECONCILED",
+        "exceptionReconciliation": {
+          "criteria": [
+            2,
+            4,
+            10
+          ],
+          "sourceChanged": false,
+          "registeredOperations": [
+            "community_public_projection",
+            "community_current_staff_reads"
+          ],
+          "scope": "Three fixed public-author/aggregate queries and two existing current-staff-only read RPCs. No ownership is invented for public data or global staff summaries. Self-role/viewer votes retain actor filters. Existing single-statement role/visibility and held-snapshot tests remain mandatory. Registry declarations grant no new route, query, role or mutation authority.",
+          "focusedTest": "backend/src/security/communityPublicException.test.ts",
+          "changedSourceIntegration": "PENDING"
+        },
         "actorTrace": "Only production constructor is routes/community.ts, mounted at /api/community. optionalAuthMiddleware resolves the real session, requireUser rejects missing actor for mutations, and request JSON never selects userId. Fixed service-only SQL operations lock current profiles and parent rows before field-specific mutations. Anonymous/public reads return public projections, not private staff notes.",
         "invariant": "Author body edits, parent-owner acceptance and staff moderation are distinct permissions. Foreign authors and revoked staff cannot inherit another field's permission. Parent/staff changes serialize against the mutation.",
         "evidence": [
@@ -3995,7 +4010,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4171,10 +4186,18 @@
           ],
           "status": "FOCUSED_PASS_REAL_DATABASE_PENDING"
         },
+        "receiptActualVerification": {
+          "sourceSha": "893b4c69950e1e5d48c333dcd09c3cf0923dbce4",
+          "disposableRun": "39236358054",
+          "migrations": 122,
+          "securityTests": 167,
+          "browserTests": 3,
+          "scope": "Actual concurrent owner-separated secret keys, checked save/delete receipts, deletion isolation/idempotency, browser denial and owner/session manager consumer all pass. Exact-source externally authenticated reconciliation proves the eight remaining runtime calls and four OAuth primitive calls,296 total verified and343 unproven boundaries. Aggregate39236357964 fails three unrelated dated organic-intelligence assertions, retained rather than waived."
+        },
         "remaining": [
-          "Run changed-source disposable tests including concurrent owner-key writes, exact receipts, deletion isolation, browser denial and actual session secret reader",
-          "Reconcile generic authenticated revision producers and all eight remaining callers without blanket certification",
-          "Preserve009 encryption/key-custody/rotation/migration requirements and008 authority separately"
+          "Verify the grouped regression correction and newly expanded same-owner restore/fork/event receipt assertions at final source",
+          "Preserve separate original criterion2/4/6/10 gaps and009 custody/rotation/migration obligations",
+          "Do not label the failed893b aggregate or pending later source as full Phase2 acceptance"
         ]
       },
       "actor": {
@@ -4202,7 +4225,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4315,7 +4338,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4583,7 +4606,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4754,7 +4777,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5106,7 +5129,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5359,7 +5382,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5428,7 +5451,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5877,7 +5900,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6474,7 +6497,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6563,7 +6586,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "dcc78764c99d18472a04035654fe5ef04d275db9e62dc7a5cad304dc8adff4ad",
+          "sourceSha256": "76408a5e3767d5617a60fcf4b19f8c45e28f5e3bb1aadaca9015953b9686dcb8",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6610,14 +6633,14 @@
       "id": "B1-P2-f8cb123dcb4c4a53",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
+      "sourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
       "baselineCallerIds": [
         "d84df34ff692e4fb31c1",
         "bda2ddc16c7864ef18d8"
       ],
       "currentCallerIds": [
         "d84df34ff692e4fb31c1",
-        "50264ff60cc6dffe2345"
+        "3182a013220000508dad"
       ],
       "mapping": [
         {
@@ -6630,7 +6653,7 @@
         {
           "baselineCallerId": "bda2ddc16c7864ef18d8",
           "currentCallerIds": [
-            "50264ff60cc6dffe2345"
+            "3182a013220000508dad"
           ],
           "change": "RETAINED"
         }

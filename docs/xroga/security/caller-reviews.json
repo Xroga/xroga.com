@@ -3543,10 +3543,10 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
+      "sourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
       "callIds": [
         "d84df34ff692e4fb31c1",
-        "50264ff60cc6dffe2345"
+        "3182a013220000508dad"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
@@ -3560,10 +3560,10 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
+      "sourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
       "callIds": [
-        "cafa82e3b4fb14576aa1",
-        "a22962598684bcdd5ce4"
+        "428afb8386c4474f5abb",
+        "331a1be3d1ee639d294f"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
@@ -4349,7 +4349,8 @@
       "callIds": [
         "90b6c420425f298724d1"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "NARROW_EXCEPTION",
+      "exceptionId": "community_public_projection",
       "authority": "Community public identity projection contains only id, username, display_name and avatar_url. Vote counts expose post aggregate only, viewer vote filters verified viewer, self-role filters verified actor. Comment aggregates discard hidden rows before public counts/official flag. No writes or secrets.",
       "reason": "VERIFIED7d12bf426118660c9adfe7d6c7447d99c6e4eb24 disposable38827153400: exact public author keys, two votes/one visible comment, hidden official exclusion, anonymous/own-vote separation and role tests pass. These are deliberate public projections or own-identity reads. Separate-query aggregate freshness and whole-feed atomicity remain outside closure.",
       "evidence": [
@@ -4365,7 +4366,8 @@
       "callIds": [
         "19ee150c041a2d3b8485"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "NARROW_EXCEPTION",
+      "exceptionId": "community_public_projection",
       "authority": "Community public identity projection contains only id, username, display_name and avatar_url. Vote counts expose post aggregate only, viewer vote filters verified viewer, self-role filters verified actor. Comment aggregates discard hidden rows before public counts/official flag. No writes or secrets.",
       "reason": "VERIFIED7d12bf426118660c9adfe7d6c7447d99c6e4eb24 disposable38827153400: exact public author keys, two votes/one visible comment, hidden official exclusion, anonymous/own-vote separation and role tests pass. These are deliberate public projections or own-identity reads. Separate-query aggregate freshness and whole-feed atomicity remain outside closure.",
       "evidence": [
@@ -4397,7 +4399,8 @@
       "callIds": [
         "15e0cb8961aed336af9e"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "NARROW_EXCEPTION",
+      "exceptionId": "community_public_projection",
       "authority": "Community public identity projection contains only id, username, display_name and avatar_url. Vote counts expose post aggregate only, viewer vote filters verified viewer, self-role filters verified actor. Comment aggregates discard hidden rows before public counts/official flag. No writes or secrets.",
       "reason": "VERIFIED7d12bf426118660c9adfe7d6c7447d99c6e4eb24 disposable38827153400: exact public author keys, two votes/one visible comment, hidden official exclusion, anonymous/own-vote separation and role tests pass. These are deliberate public projections or own-identity reads. Separate-query aggregate freshness and whole-feed atomicity remain outside closure.",
       "evidence": [
@@ -4461,7 +4464,8 @@
       "callIds": [
         "26dd943742c4d7b6a62f"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "NARROW_EXCEPTION",
+      "exceptionId": "community_current_staff_reads",
       "authority": "Server-verified optional viewer or authenticated actor reaches service-only STABLE SQL reads. Role and post/comment visibility or private staff content are evaluated within the same statement snapshot. Private read receipt and returned target identity are validated.",
       "reason": "VERIFIED7d12bf426118660c9adfe7d6c7447d99c6e4eb24 disposable38827153400. Actual held statement before demotion cannot combine old role with newly committed private content, later reads deny. Public/member hidden denials, staff positive and browser RPC denial pass. Cursor grammar and whole-feed multiquery consistency are separate, already-read data cannot be revoked retroactively.",
       "evidence": [
@@ -4477,7 +4481,8 @@
       "callIds": [
         "0a827dbb168d8125a85c"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "NARROW_EXCEPTION",
+      "exceptionId": "community_current_staff_reads",
       "authority": "Server-verified optional viewer or authenticated actor reaches service-only STABLE SQL reads. Role and post/comment visibility or private staff content are evaluated within the same statement snapshot. Private read receipt and returned target identity are validated.",
       "reason": "VERIFIED7d12bf426118660c9adfe7d6c7447d99c6e4eb24 disposable38827153400. Actual held statement before demotion cannot combine old role with newly committed private content, later reads deny. Public/member hidden denials, staff positive and browser RPC denial pass. Cursor grammar and whole-feed multiquery consistency are separate, already-read data cannot be revoked retroactively.",
       "evidence": [

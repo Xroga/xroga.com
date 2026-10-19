@@ -17352,7 +17352,7 @@
         "backend/src/organicIntelligence/content/engine.ts:1",
         "backend/src/organicIntelligence/content/pipeline.ts:2",
         "backend/src/organicIntelligence/intelligence.ts:1",
-        "backend/src/organicIntelligence/organicIntelligence.test.ts:7"
+        "backend/src/organicIntelligence/organicIntelligence.test.ts:6"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -17476,7 +17476,7 @@
       "callers": [
         "backend/src/organicIntelligence/cli.ts:1",
         "backend/src/organicIntelligence/content/pipeline.ts:1",
-        "backend/src/organicIntelligence/organicIntelligence.test.ts:12"
+        "backend/src/organicIntelligence/organicIntelligence.test.ts:11"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -17640,7 +17640,7 @@
       "callers": [
         "backend/src/organicIntelligence/content/providers.ts:1",
         "backend/src/organicIntelligence/intelligence.ts:12",
-        "backend/src/organicIntelligence/organicIntelligence.test.ts:13",
+        "backend/src/organicIntelligence/organicIntelligence.test.ts:12",
         "backend/src/organicIntelligence/repository.ts:10"
       ],
       "reachable": false,
@@ -17689,7 +17689,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/organicIntelligence/cli.ts:3",
-        "backend/src/organicIntelligence/organicIntelligence.test.ts:15"
+        "backend/src/organicIntelligence/organicIntelligence.test.ts:14"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -17757,7 +17757,7 @@
         "backend/src/organicIntelligence/content/pipeline.ts:3",
         "backend/src/organicIntelligence/content/repository.ts:9",
         "backend/src/organicIntelligence/intelligence.ts:11",
-        "backend/src/organicIntelligence/organicIntelligence.test.ts:14"
+        "backend/src/organicIntelligence/organicIntelligence.test.ts:13"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -21215,7 +21215,7 @@
       "id": "surface:e31c62507c56bf4fa325",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
+      "sha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
       "symbols": [
         "getGlobalSupabaseAdmin",
         "getTenantSupabaseAdmin",
@@ -21248,6 +21248,7 @@
         "backend/src/routes/operations.ts:4",
         "backend/src/routes/profile.ts:3",
         "backend/src/routes/projects.ts:3",
+        "backend/src/security/communityPublicException.test.ts:5",
         "backend/src/security/ownership.ts:2",
         "backend/src/security/serviceRoleGuard.test.ts:3",
         "backend/src/security/tenantContext.test.ts:4",
@@ -21271,6 +21272,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/communityPublicException.test.ts",
         "backend/src/security/serviceRoleGuard.test.ts",
         "backend/src/security/tenantContext.test.ts"
       ],
@@ -23638,7 +23640,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:797",
+        "backend/src/security/tenantIsolation.local.integration.ts:826",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -104287,7 +104289,7 @@
     {
       "id": "test-suite:08266c1d005e132f3a0e",
       "sourcePath": "backend/src/organicIntelligence/organicIntelligence.test.ts",
-      "declaredTests": 27,
+      "declaredTests": 28,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104533,6 +104535,13 @@
       "id": "test-suite:9584a8c447a0cf53aa0d",
       "sourcePath": "backend/src/security/clineGitDependency.test.ts",
       "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:10272de6987be2d0a68e",
+      "sourcePath": "backend/src/security/communityPublicException.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

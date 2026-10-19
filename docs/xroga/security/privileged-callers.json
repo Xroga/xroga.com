@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "d0ebb09aa634a46d72fa9ac6840140f768103bdb6b12b0a7cb0d8db9168ad739",
+  "reviewRegistrySha256": "2b0845b53b2aa4379d4b32b16995035838872517a2b25b810c8d071f7096e49c",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -14,12 +14,12 @@
     "reviewedCandidates": 639,
     "unresolvedSafetyCandidates": 330,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 11
+    "registeredNarrowGlobalExceptions": 13
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 153,
-    "NARROW_EXCEPTION": 16,
+    "SCOPED_BOUNDARY": 148,
+    "NARROW_EXCEPTION": 21,
     "NOT_PERSISTENCE": 140,
     "REVIEWED_GAP": 330
   },
@@ -448,11 +448,11 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-e7319d6bd8d0d6dd"
+        "id": "OB-76148b2177594e89"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-911eaa4720313d55"
+        "id": "OB-91cdd46ad87a05f1"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -3273,7 +3273,7 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
-      "review": "SCOPED_BOUNDARY",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
         "authority": "Community public identity projection contains only id, username, display_name and avatar_url. Vote counts expose post aggregate only, viewer vote filters verified viewer, self-role filters verified actor. Comment aggregates discard hidden rows before public counts/official flag. No writes or secrets.",
@@ -3294,7 +3294,7 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_votes",
       "ownerPredicateCandidate": false,
-      "review": "SCOPED_BOUNDARY",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
         "authority": "Community public identity projection contains only id, username, display_name and avatar_url. Vote counts expose post aggregate only, viewer vote filters verified viewer, self-role filters verified actor. Comment aggregates discard hidden rows before public counts/official flag. No writes or secrets.",
@@ -3315,7 +3315,7 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "community_comments",
       "ownerPredicateCandidate": false,
-      "review": "SCOPED_BOUNDARY",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
         "authority": "Community public identity projection contains only id, username, display_name and avatar_url. Vote counts expose post aggregate only, viewer vote filters verified viewer, self-role filters verified actor. Comment aggregates discard hidden rows before public counts/official flag. No writes or secrets.",
@@ -3507,7 +3507,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "read_community_staff_notes",
       "ownerPredicateCandidate": false,
-      "review": "SCOPED_BOUNDARY",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
         "authority": "Server-verified optional viewer or authenticated actor reaches service-only STABLE SQL reads. Role and post/comment visibility or private staff content are evaluated within the same statement snapshot. Private read receipt and returned target identity are validated.",
@@ -3528,7 +3528,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "read_community_staff_summary",
       "ownerPredicateCandidate": false,
-      "review": "SCOPED_BOUNDARY",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "961ebe524deda14816068f5d51b413b2d5b6da623bd3b17385e1b97737249410",
       "semanticReview": {
         "authority": "Server-verified optional viewer or authenticated actor reaches service-only STABLE SQL reads. Role and post/comment visibility or private staff content are evaluated within the same statement snapshot. Private read receipt and returned target identity are validated.",
@@ -8330,7 +8330,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
+      "sourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
       "semanticReview": {
         "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
         "reason": "These are admission helpers, not automatic RLS or constrained query proxies. The full control flow of every recipient must be reviewed. Registry names cannot certify their callers, raw diagnostic redaction, account authority or arbitrary subsequent queries. Keep unresolved rather than pretending this shared factory completes tenant isolation.",
@@ -8343,15 +8343,15 @@
       }
     },
     {
-      "id": "50264ff60cc6dffe2345",
+      "id": "3182a013220000508dad",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 28,
+      "line": 30,
       "enclosing": "getGlobalSupabaseAdmin",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
+      "sourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
       "semanticReview": {
         "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
         "reason": "These are admission helpers, not automatic RLS or constrained query proxies. The full control flow of every recipient must be reviewed. Registry names cannot certify their callers, raw diagnostic redaction, account authority or arbitrary subsequent queries. Keep unresolved rather than pretending this shared factory completes tenant isolation.",
@@ -8364,15 +8364,15 @@
       }
     },
     {
-      "id": "cafa82e3b4fb14576aa1",
+      "id": "428afb8386c4474f5abb",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 32,
+      "line": 34,
       "enclosing": "probeDatabaseReadiness",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
+      "sourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
       "semanticReview": {
         "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
         "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
@@ -8385,15 +8385,15 @@
       }
     },
     {
-      "id": "a22962598684bcdd5ce4",
+      "id": "331a1be3d1ee639d294f",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 32,
+      "line": 34,
       "enclosing": "probeDatabaseReadiness",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "980b580dd55a6020e53ae1cccd2d792f6149a94f5cf5f1647d11419348504e17",
+      "sourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
       "semanticReview": {
         "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
         "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",

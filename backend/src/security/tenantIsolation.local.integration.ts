@@ -14,7 +14,7 @@ import { getCachedResponse,setCachedResponse } from '../services/responseCache.j
 import { notifyBuildFailed } from '../services/notificationService.js';
 import pg from 'pg';
 import { SupabaseProjectRuntimeStore } from '../synthesis/projectRuntime/store.js';
-import { listProjectRevisions, loadProjectRevision, restoreProjectRevision, forkProjectRevision } from '../synthesis/projectRuntime/projectHistory.js';
+import { listProjectRevisions, loadProjectRevision, restoreProjectRevision, forkProjectRevision, listProjectRuntimeEvents } from '../synthesis/projectRuntime/projectHistory.js';
 import { createCanonicalExecutionState,SupabaseExecutionStateStore } from '../ai/executionRuntime.js';
 import { SupabaseUniversalStore } from '../synthesis/universalPersistence.js';
 import { synthesizeUniversalProductSpec } from '../synthesis/universalProductSpec.js';
@@ -353,9 +353,9 @@ test('real community API rejects cross-author mixed-field privilege escalation w
 
 test('real revision restore rejects mismatched snapshot identities before restore or fork writes',async()=>{
   const [owner,other]=users,store=new SupabaseProjectRuntimeStore();
-  const projectId=`revision-binding-${randomUUID()}`,runId=randomUUID();
+  const projectId=`revision-binding-${randomUUID()}`,forkId=`revision-fork-${randomUUID()}`,runId=randomUUID();
   // Only identity restoration is exercised; no fixture is executed or sent to a provider.
-  const snapshot={projectId,runId,contract:{projectId,runId},workspace:{files:[]}};
+  const snapshot={projectId,runId,contract:{projectId,runId,repository:null},workspace:{files:[],fileCount:0,revision:1},repository:null,createdAt:new Date().toISOString()};
   // Deliberately partial identity fixture, not full software-project validation.
   const saved=await store.saveRevision(owner.id,snapshot as unknown as Parameters<typeof store.saveRevision>[1]);
   const revisionId=saved.revisionId;
@@ -381,7 +381,36 @@ test('real revision restore rejects mismatched snapshot identities before restor
       const events=await admin.from('project_runtime_events').select('event_id').eq('user_id',owner.id).eq('project_id',projectId);
       assert.equal(events.error,null);assert.deepEqual(events.data,[]);
     }
-  } finally {assert.equal((await admin.from('project_runtime_revisions').delete().eq('revision_id',revisionId).eq('user_id',owner.id)).error,null);}
+    assert.equal((await admin.from('project_runtime_revisions').update({software_project:snapshot}).eq('revision_id',revisionId)).error,null);
+    for(const userId of [other.id]){
+      await assert.rejects(restoreProjectRevision({userId,projectId,revisionId,runId:randomUUID()}));
+      await assert.rejects(forkProjectRevision({userId,sourceProjectId:projectId,revisionId,newProjectId:forkId,runId:randomUUID()}));
+    }
+    const restored=await restoreProjectRevision({userId:owner.id,projectId,revisionId,runId:randomUUID()});
+    const forked=await forkProjectRevision({userId:owner.id,sourceProjectId:projectId,revisionId,newProjectId:forkId,runId:randomUUID()});
+    for(const receipt of [restored,forked]){
+      assert.equal(receipt.userId,owner.id);assert.equal(receipt.project.contract.projectId,receipt.projectId);assert.equal(receipt.project.contract.runId,receipt.runId);
+      assert.equal(receipt.project.runtime,null);assert.equal(receipt.project.workspace.revision,2);
+      const row=await admin.from('project_runtime_revisions').select('*').eq('revision_id',receipt.revisionId).single();assert.equal(row.error,null);
+      assert.equal(row.data.user_id,owner.id);assert.equal(row.data.project_id,receipt.projectId);assert.equal(row.data.run_id,receipt.runId);
+      assert.deepEqual(row.data.software_project,receipt.project);assert.equal(row.data.workspace_fingerprint,receipt.workspaceFingerprint);
+      assert.equal(await loadProjectRevision(other.id,receipt.projectId,receipt.revisionId),null);
+    }
+    assert.equal(restored.projectId,projectId);assert.equal(forked.projectId,forkId);assert.equal(forked.project.repository,null);
+    assert.deepEqual((await loadProjectRevision(owner.id,projectId,revisionId))?.project,snapshot,'Restoration never mutates historical state');
+    const events=await admin.from('project_runtime_events').select('user_id,project_id,event_type,payload').eq('user_id',owner.id).in('project_id',[projectId,forkId]);
+    assert.equal(events.error,null);assert.equal(events.data?.length,2);
+    for(const receipt of [restored,forked]){
+      assert.ok(events.data?.some(event=>event.user_id===owner.id&&event.project_id===receipt.projectId&&event.payload.revisionId===receipt.revisionId));
+      const history=await listProjectRuntimeEvents({userId:owner.id,projectId:receipt.projectId});
+      assert.equal(history.length,1);assert.equal(history[0].userId,owner.id);assert.equal(history[0].payload.revisionId,receipt.revisionId);
+      assert.deepEqual(await listProjectRuntimeEvents({userId:other.id,projectId:receipt.projectId}),[]);
+      assert.deepEqual(await listProjectRuntimeEvents({userId:owner.id,projectId:receipt.projectId,sessionId:randomUUID()}),[]);
+    }
+  } finally {
+    assert.equal((await admin.from('project_runtime_events').delete().eq('user_id',owner.id).in('project_id',[projectId,forkId])).error,null);
+    assert.equal((await admin.from('project_runtime_revisions').delete().eq('user_id',owner.id).in('project_id',[projectId,forkId])).error,null);
+  }
 });
 
 test('real durable preview session cannot resolve a misbound owner/project or stale capability', async t => {
