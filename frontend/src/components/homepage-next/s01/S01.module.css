@@ -137,6 +137,7 @@
 .precisionField {
   position: absolute;
   inset: 0;
+  z-index: 0;
   overflow: hidden;
   pointer-events: none;
   -webkit-mask-image: radial-gradient(ellipse 82% 73% at 50% 61%, #000 14%, rgba(0, 0, 0, 0.9) 42%, rgba(0, 0, 0, 0.37) 73%, transparent 94%);
@@ -264,6 +265,7 @@
 }
 .head {
   position: absolute;
+  z-index: 2;
   left: 0;
   right: 0;
   top: calc(var(--nav) + 6px);
