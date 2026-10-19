@@ -12,10 +12,6 @@ export function AuthShell({ mode }: { mode: 'signup' | 'login' }) {
         <div className={styles.story}><AuthShowcase /></div>
         <section className={styles.formArea} aria-label="Account access">
           <div className={styles.form}>
-            <div className={styles.voiceCallout}>
-              <h2>Describe your idea in your language.</h2>
-              <p>Speak with voice, or simply type.</p>
-            </div>
             {mode === 'signup' ? <SignupForm /> : <LoginForm />}
           </div>
         </section>

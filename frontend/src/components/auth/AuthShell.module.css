@@ -27,9 +27,6 @@
 .story { min-width: 0; overflow: hidden; border-radius: 18px; align-self: center; }
 .formArea { display: flex; align-items: center; justify-content: center; min-width: 0; padding: 0; }
 .form { width: 100%; max-width: 420px; }
-.voiceCallout { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #ffffff25; }
-.voiceCallout h2 { margin: 0; max-width: 400px; font-size: clamp(23px, 2.2vw, 30px); line-height: 1.15; font-weight: 500; letter-spacing: -.04em; color: #fff; }
-.voiceCallout p { margin: 9px 0 0; font-size: 17px; line-height: 1.4; color: #b5d4e4; }
 .form [data-auth-github] { height: 44px; padding: 10px 15px; gap: 15px; border: none; border-radius: 5px; outline: 3px solid #181717; outline-offset: -3px; color: #fff; background: #181717; box-shadow: none; transition: background .4s, color .4s; }
 .form [data-auth-github] svg { width: 24px; height: 24px; }
 .form [data-auth-github]:hover:not(:disabled) { color: #181717; background: #fff; transform: none; }

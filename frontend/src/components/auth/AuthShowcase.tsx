@@ -58,6 +58,10 @@ export function AuthShowcase() {
           </button>
         ))}
       </nav>
+      <p className={styles.voicePrompt}>
+        Describe your idea in your language.<br />
+        Speak with voice, or simply type.
+      </p>
       <div className={styles.copyArea}>
         {STORIES.map((story, index) => (
           <article key={story.title} className={styles.story} hidden={activeSlide !== index}>
