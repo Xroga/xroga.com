@@ -130,21 +130,39 @@
   0% { background-position: 125% 0; }
   12%, 100% { background-position: -25% 0; }
 }
-/* the star field sits behind everything on the stage, kept out of the heading area and faded at the edges */
-.galaxy {
+/* S01 only: founder-provided 20px white dot mask, composed with a self-hosted, irregular
+   noise texture. Unlike the retired Galaxy/WebGL field, no twinkling stars, bloom or GPU shader.
+   This is background material, not a layer over the card artwork or text. */
+.particles {
+  --particle-pitch: 20px;
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.55;
-  -webkit-mask-image: radial-gradient(80% 70% at 50% 62%, #000 30%, transparent 85%);
-  mask-image: radial-gradient(80% 70% at 50% 62%, #000 30%, transparent 85%);
-  transition: opacity 600ms ease;
+  background: #ecf1fa;
+  opacity: 0.3;
+  -webkit-mask-image:
+    radial-gradient(circle at 50% 50%, #000 1.2px, transparent 1.65px),
+    url('/s01/noise-mask.svg'),
+    radial-gradient(78% 70% at 50% 63%, #000 8%, rgba(0, 0, 0, 0.82) 60%, transparent 100%);
+  mask-image:
+    radial-gradient(circle at 50% 50%, #000 1.2px, transparent 1.65px),
+    url('/s01/noise-mask.svg'),
+    radial-gradient(78% 70% at 50% 63%, #000 8%, rgba(0, 0, 0, 0.82) 60%, transparent 100%);
+  -webkit-mask-size: var(--particle-pitch) var(--particle-pitch), 256px 256px, 100% 100%;
+  mask-size: var(--particle-pitch) var(--particle-pitch), 256px 256px, 100% 100%;
+  -webkit-mask-repeat: repeat, repeat, no-repeat;
+  mask-repeat: repeat, repeat, no-repeat;
+  -webkit-mask-position: 0 0, 0 50%, center;
+  mask-position: 0 0, 0 50%, center;
+  -webkit-mask-composite: source-in, source-in;
+  mask-composite: intersect, intersect;
+  animation: s01NoisePass 20s linear infinite;
 }
-.galaxy[data-state='off'] {
-  opacity: 0;
-}
-.galaxy canvas {
-  display: block;
+@keyframes s01NoisePass {
+  to {
+    -webkit-mask-position: 0 0, 256px 50%, center;
+    mask-position: 0 0, 256px 50%, center;
+  }
 }
 .statement {
   margin: 16px 0 0;
@@ -375,6 +393,7 @@
 
 /* ---------------------------------------------------------------------------------------- carousel and grid */
 .flow {
+  position: relative;
   max-width: 1280px;
   margin: 0 auto;
   padding: 104px 24px 8px;
@@ -549,11 +568,22 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .particles {
+    animation: none;
+  }
   .titleMain::after {
     display: none;
   }
   .turnIn,
   .dots i {
     transition: none;
+  }
+}
+
+/* On constrained/touch screens the pattern is quieter and stays still to keep carousel swiping cheap. */
+@media (max-width: 1024px), (pointer: coarse) {
+  .particles {
+    opacity: 0.18;
+    animation: none;
   }
 }
