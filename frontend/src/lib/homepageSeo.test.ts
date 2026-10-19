@@ -6,7 +6,8 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf
 const ROUTE = read('../app/page.tsx');
 const CLIENT = read('../components/homepage/HomepageClient.tsx');
 const PUBLIC_NAV = read('./publicMarketing.ts');
-const HEADER = read('../components/layout/PublicMarketingHeader.tsx');
+// the header's menu content lives beside it in nav/navData.ts
+const HEADER = read('../components/layout/PublicMarketingHeader.tsx') + read('../components/layout/nav/navData.ts');
 const FAQ = read('./homepageFaq.ts');
 const SEO = read('./seo.ts');
 const PRICING = read('../components/homepage/HomepagePricingPreview.tsx');
