@@ -6,26 +6,15 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { S00Hero } from '@/components/homepage-next/phase1/S00Hero';
 import '@/components/homepage-next/tokens.css';
-import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
-import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
-import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
-import { HomepageShowcase } from '@/components/showcase/HomepageShowcase';
 import '@/styles/homepage-coding.css';
 import '@/styles/homepage-closing-animation.css';
 import { createClient } from '@/lib/supabase/client';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
-import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
-import { XrogaIntelligenceSection } from '@/components/homepage/XrogaIntelligenceSection';
-import { HomepageOwnershipProof } from '@/components/homepage/HomepageOwnershipProof';
-import { HomepageStackStudio } from '@/components/homepage/HomepageStackStudio';
-import { HomepageAllInOne } from '@/components/homepage/HomepageAllInOne';
-import { HomepagePricingPreview } from '@/components/homepage/HomepagePricingPreview';
 import { S01CapabilityDeck } from '@/components/homepage-next/s01/S01CapabilityDeck';
 import { S02Work } from '@/components/homepage-next/s02/S02Work';
 import { S03Growth } from '@/components/homepage-next/s03/S03Growth';
 import { S04Publish } from '@/components/homepage-next/s04/S04Publish';
 import { S05Capabilities } from '@/components/homepage-next/s05/S05Capabilities';
-import { HomepagePowerStories } from '@/components/homepage/HomepagePowerStories';
 import { AiCodingAgentSquaresTerminal } from '@/components/marketing/AiCodingAgentSquaresTerminal';
 
 export function HomepageClient() {
@@ -119,20 +108,6 @@ export function HomepageClient() {
       <S03Growth loggedIn={loggedIn} />
       <S04Publish loggedIn={loggedIn} />
       <S05Capabilities />
-      <HomepagePowerStories />
-      <HomepageWorkspaceTour loggedIn={loggedIn} />
-      <div id="product"><HomepageAllInOne /></div>
-      <div className="xv-system-combined" aria-label="Xroga intelligence and build system"><XrogaIntelligenceSection /><HomepageStackStudio /></div>
-      <div id="showcase"><HomepageShowcase /></div>
-      <div id="how-xroga-works"><HomepageShipStack /></div>
-      <HomepageEnterpriseProof />
-      <HomepagePricingPreview loggedIn={loggedIn} />
-
-      <div className="xv-endgame-frame" aria-label="Who Xroga is for and common questions">
-        <HomepageOwnershipProof />
-        <HomepageFaqSection />
-      </div>
-
       <section
   className="xv-closing-frame"
   aria-label="Community, support, and getting started"
