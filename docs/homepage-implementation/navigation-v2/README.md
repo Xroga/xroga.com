@@ -1,37 +1,38 @@
-# Navigation (V4, "Precision Flow")
+# Navigation ("Context Lens")
 
 The public marketing header (homepage and marketing pages; the workspace keeps its own chrome) and its five mega menus.
 Code: `frontend/src/components/layout/PublicMarketingHeader.tsx` and `frontend/src/components/layout/nav/` (`navData.ts`,
-`MegaPreviews.tsx`, `xroga-nav.css`, `nav.test.ts`).
+`MegaPreviews.tsx`, `xroga-nav.css`, `lens.ts`, `lens.css`, `nav.test.ts`).
 
 ## Direction
 
-V2 and V3 followed the Framer Particle Navbar closely (a particle rim, a travelling particle capsule, an orbiting logo
-shell). The founder reset the brief: the reference shows the level of craft wanted, not a style to reproduce. Three
-art-direction studies were rendered over the real hero (A Precision Interface, B Intelligent Flow, C Editorial
-Technology); V4 combines A's machined material and indicator, B's signal into the menu, and the hero's own warm pearl for
-the primary action. The particle layer is removed entirely.
-
-The navigation is built from the homepage's own system: mineral neutrals, warm pearl type (#f2f0ea), hairlines derived
-from ivory, the machined plate material lit from the top-left edge, mono uppercase labels, Mineral Jade for verified
-states, Xroga cobalt for the one accent. It moves only in response to the visitor; nothing loops.
+Earlier rounds (a particle rim, then minimal and A/B prototypes) were reviewed and rejected. The approved direction is
+Context Lens: a dark, matte bar that answers the visitor's pointer with light in Xroga's own sapphire and cyan, only where
+the visitor is. References were used for craft only: the Particle Navbar (locality, formation, continuity), Glow Navbar
+(an edge highlight under the pointer with a short lag) and Liquid Metal Navbar (reflections that answer the cursor). No
+code, artwork or branding was taken from them.
 
 ## Shell
 
-- Same footprint as before (16 px from the top, 56 px tall; 10 px and 54 px on small screens), so the S00 hero and the S04
-  and S05 header shields keep their offsets. A machined graphite plate with a 16 px radius, a top-edge highlight and an
-  ivory hairline. Labels 14 px/500 in #a3abb8, pearl when active; 12 px chevrons that turn on open.
-- **Lockup**: the approved orb wordmark (`xroga-orb-wordmark-dark-v3.webp`) is split at the gap in its artwork (column 252
-  of 640) into the orb and the word, drawn 30 px tall and 11 px apart; in the original artwork the orb's glow touches the X.
-  The artwork itself is unchanged; no logo animation.
-- **Indicator**: one recessed key surface with a short sapphire tick that glides and resizes between items (340 ms) and
-  fades when nothing is hovered or open. It appears in place rather than sliding in from its last position.
-- **Signal**: when a menu is open, a hairline drops from the chosen item to the panel and becomes a trace along the panel's
-  top edge, following the item as the visitor moves across menus. Positions are written as CSS variables on the moving
-  elements only (never on an ancestor, which would restyle the open menu), after all measurements are read.
-- **CTA** keeps its destination and signed-in behaviour (Workspace): warm pearl (the material of the hero's own primary
-  action) with a cobalt bolt; hover brightens the surface and lifts the bolt a pixel, press settles it; navigation is never
-  delayed. A refined cobalt version was compared and not chosen.
+- Horizontal floating bar: logo left, Product to Pricing centred, Start Building Free right. 16 px from the top; 60 px tall
+  on desktop (the compact bar on tablet and phone keeps 54 px). Near-black graphite with a navy undertone (#080B12 to
+  #121B2A), a faint sapphire reflection from above, a silver-blue structural edge and an inner tonal layer.
+- **Reactive perimeter**: within 64 px of the bar, the point of the outline nearest the pointer lights in a narrow
+  stretch of the edge (cyan into sapphire, a brighter core leading in the direction of travel) and casts a little light
+  onto the surface beside it. It follows straight edges and corners, lags slightly, and fades with distance.
+- **Lens**: hovering an item forms a glass lens around it from four layers that move at different rates against the
+  pointer (glass body, deep caustic, top sheen, light filament under the label) plus a rim whose bright arc faces the
+  pointer. It travels between items as one object (the leading edge is stiffer, so it stretches and settles), squashes
+  slightly with speed, and retargets without restarting. The other labels step back while it is focused; the text never
+  moves.
+- **Lockup**: the approved orb wordmark split at the gap in its artwork so the orb and the word sit apart; the orb's glass
+  reflects light toward the pointer and a slow light sweep crosses it on hover and about every 11 s at rest (paused when
+  the bar is hidden, absent under reduced motion). All motion stays inside the orb.
+- **CTA** keeps its destination and signed-in behaviour (Workspace): satin sapphire with an inner light and an edge
+  highlight that follow the pointer, and a short press; navigation is never delayed.
+- **Engineering**: `lens.ts` runs one requestAnimationFrame loop on springs that stops when everything settles and pauses
+  with the page; it writes only to its own small layers (never to the header root, which would restyle an open menu),
+  reads geometry before writing in a frame, and reacts only to mouse pointers.
 - **Scroll**: hides after the opening screen when the visitor scrolls down (24 px of travel in one direction), returns on any
   upward scroll (12 px), near the top, when the pointer reaches the top edge, or when keyboard focus enters it. It never hides
   while a menu or the mobile menu is open. Passive listener, one frame per update, direction hysteresis; a hidden bar takes
@@ -39,13 +40,15 @@ states, Xroga cobalt for the one accent. It moves only in response to the visito
 
 ## Mega menus
 
-One shared panel directly beneath the bar, one envelope size (404 px tall) for all five menus so switching never jumps; the
-new content arrives from the side it was chosen on (10 px), the signal moves with it. Editorial column (serif title in the hero's display face, short description, one action), grouped links
+One shared panel directly beneath the bar, one envelope size (404 px tall) for all five menus so switching never jumps.
+Opening, the panel grows out of the lens's own outline (about 340 ms) and closes back into it; the editorial column, links
+and preview arrive in quick succession, and switching slides new content in from the side it was chosen on. Inside the
+menu one glass focus card glides between links. Editorial column (serif title in the hero's display face, short description, one action), grouped links
 with one icon system (36 px tiles, 1.7 px strokes), and a preview that answers the link in focus:
 
 | Menu | Preview |
 | --- | --- |
-| Product | one request on a rail through three stages: Request, Execution (plan and the apps it uses), Verified outcome (checks and the branch ready for review) |
+| Product | a miniature Xroga workspace for one task (Request, Execution, Verified): each link resolves its own view: the conversation, the plan as connected steps, the evidence, the tools in use, the branch and pull request |
 | Build | one device showing a web app, website, SaaS, extension, game or Web3 product, following the hovered category |
 | Connect | a curated directory: three groups of real provider marks on light tiles (dark marks stay legible), plus "and more" |
 | Develop | a compact IDE: file tree, a short diff, the branch, tests and review status; the hovered link highlights its part |
