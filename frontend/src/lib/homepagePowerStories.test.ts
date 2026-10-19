@@ -9,11 +9,8 @@ const browserEmployees = read('../components/homepage/HomepageBrowserEmployeesEx
 const css = read('../styles/homepage-power-stories.css');
 const homepageCss = read('../styles/homepage-coding.css');
 
-test('the six-part capability story follows browser employees and precedes the workspace tour', () => {
-  const browser = page.indexOf('<S02Work loggedIn={loggedIn} />');
-  const powerStories = page.indexOf('<HomepagePowerStories />');
-  const workspace = page.indexOf('<HomepageWorkspaceTour loggedIn={loggedIn} />');
-  assert.ok(browser !== -1 && browser < powerStories && powerStories < workspace);
+test('legacy power stories no longer extend the homepage past S05', () => {
+  assert.doesNotMatch(page, /<HomepagePowerStories|<HomepageWorkspaceTour/);
   assert.equal((stories.match(/<StorySection/g) ?? []).length, 5);
   assert.match(stories, /<section className="xps-story xps-story--inputs"/);
 });
