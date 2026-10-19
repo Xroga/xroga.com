@@ -462,19 +462,20 @@ test('one S01 narrative: no separate six-item strip or footer disclaimer; its us
   assert.equal(CAPABILITIES.length, 8);
 });
 
-test('S01 noise-masked particles replace the galaxy only in the capability background', () => {
+test('S01 uses a section-scoped moving particle mask, never the old WebGL galaxy', () => {
   const deck = read('./S01CapabilityDeck.tsx');
   const css = read('./S01.module.css');
-  assert.doesNotMatch(deck, /GalaxyField|next\\/dynamic/);
-  assert.doesNotMatch(css, /\\.galaxy\\s*\\{/);
-  assert.match(css, /\\.particles\\s*\\{[\\s\\S]*?pointer-events: none;/);
-  assert.match(css, /--particle-pitch: 20px;/);
-  assert.match(css, /mask-composite: intersect, intersect;/);
-  assert.match(css, /noise-mask\\.svg/);
-  assert.match(css, /animation: s01NoisePass 20s linear infinite;/);
-  assert.match(css, /@media \\(prefers-reduced-motion: reduce\\) \\{[\\s\\S]*?\\.particles \\{\\s*animation: none;/);
-  assert.match(css, /@media \\(max-width: 1024px\\), \\(pointer: coarse\\)/);
+  assert.ok(!deck.includes('GalaxyField'));
+  assert.ok(!deck.includes('next/dynamic'));
+  assert.ok(!css.includes('.galaxy {'));
+  assert.ok(css.includes('.particles {'));
+  assert.ok(css.includes('--particle-pitch: 20px;'));
+  assert.ok(css.includes("url('/s01/noise-mask.svg')"));
+  assert.ok(css.includes('mask-composite: intersect, intersect;'));
+  assert.ok(css.includes('animation: s01NoisePass 20s linear infinite;'));
+  assert.ok(css.includes('@media (prefers-reduced-motion: reduce)'));
+  assert.ok(css.includes('@media (max-width: 1024px), (pointer: coarse)'));
   const stage = deck.slice(deck.indexOf('function DeckStage('), deck.indexOf('function Gallery('));
-  assert.ok(stage.indexOf('className={s.particles}') < stage.indexOf('<ol className={s.deck}'), 'field precedes cards');
-  assert.equal((deck.match(/<div className=\\{s\\.particles\\}/g) ?? []).length, 4, 'all modes keep a local background');
+  assert.ok(stage.indexOf('className={s.particles}') < stage.indexOf('<ol className={s.deck}'), 'particles are behind cards');
+  assert.equal(deck.split('className={s.particles}').length - 1, 4, 'stage, carousel, static and first paint all receive the pattern');
 });
