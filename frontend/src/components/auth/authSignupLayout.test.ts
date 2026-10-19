@@ -29,7 +29,10 @@ test('the signup story rotates through four focused Xroga capability scenes', ()
 
   for (const phrase of [
     'Imagine it',
-    'Launch everywhere',
+    'Succeed everywhere',
+    'Success verified',
+    'Repaired and tested',
+    'Long projects keep moving',
     '1,500+ apps',
     'Research',
     'Your AI team',
@@ -41,11 +44,9 @@ test('the signup story rotates through four focused Xroga capability scenes', ()
   }
 });
 
-test('the story uses seven optimized clean images plus twenty real integration marks', () => {
+test('the story uses five optimized image cards plus twenty real integration marks', () => {
   for (const image of [
-    'idea-to-business-clean.webp',
     'publish-everywhere-clean.webp',
-    'ai-testing-clean.webp',
     'connected-work-clean.webp',
     'research-travel-clean.webp',
     'xroga-employees-clean.webp',
@@ -56,6 +57,9 @@ test('the story uses seven optimized clean images plus twenty real integration m
     assert.ok(existsSync(imageUrl), `${image} does not exist in public assets`);
     assert.ok(statSync(imageUrl).size < 200_000, `${image} was not optimized for signup delivery`);
   }
+
+  assert.doesNotMatch(showcase, /idea-to-business-clean\.webp/, 'the first slide must stay image-free');
+  assert.doesNotMatch(showcase, /ai-testing-clean\.webp/, 'the responsive success image now owns repair and testing');
 
   for (const mark of [
     'siGmail', 'siGooglecalendar', 'siGoogledrive', 'siGithub', 'siGitlab',
@@ -83,6 +87,14 @@ test('the panel renders graphs, counts, and percentages without animating imager
   assert.match(styles, /\.trendChart/);
   assert.doesNotMatch(styles, /@keyframes|animation\s*:/);
   assert.doesNotMatch(styles, /\.artImage[^}]*transition|\.artImage[^}]*transform/s);
+});
+
+test('every slide shares the black-to-violet gradient and keeps text above and below its image card', () => {
+  assert.match(styles, /--story-gradient:/);
+  assert.match(styles, /linear-gradient\(180deg, #000004 0%, #05000f 31%, #260064 58%, #793cff 78%, #f4efff 100%\)/);
+  assert.match(styles, /\.buildSlide,\s*\n\.connectSlide,\s*\n\.growthSlide \{ background: var\(--story-gradient\); \}/);
+  assert.match(showcase, /styles\.introFooter/);
+  assert.equal((showcase.match(/styles\.sceneFooter/g) ?? []).length, 3);
 });
 
 test('the capability panel stays usable on phones and respects reduced motion', () => {

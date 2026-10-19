@@ -130,12 +130,11 @@ export function AuthShowcase() {
       <div className={styles.viewport} aria-live="polite">
         <article className={`${styles.slide} ${styles.introSlide} ${activeSlide === 0 ? styles.active : ''}`}
           aria-hidden={activeSlide !== 0}>
-          <Image src="/brand/auth-stories/idea-to-business-clean.webp" alt="A clean product workspace turning an idea into a digital product"
-            fill priority sizes="(max-width: 1279px) 100vw, 44vw" className={styles.fullBleedArt} />
-          <div className={styles.artVeil} aria-hidden="true" />
           <div className={styles.introCopy}>
             <p className={styles.eyebrow}><Sparkles aria-hidden="true" /> One idea. A complete business.</p>
             <h2>Imagine it.<br /><em>Xroga makes it real.</em></h2>
+          </div>
+          <div className={styles.introFooter}>
             <p>Start with a conversation. Move into research, a working product, testing, launch, and growth.</p>
             <div className={styles.metricsStrip} aria-label="Xroga capability counts">
               <span><strong>1,500+</strong><small>connected apps</small></span>
@@ -148,13 +147,13 @@ export function AuthShowcase() {
         <article className={`${styles.slide} ${styles.buildSlide} ${activeSlide === 1 ? styles.active : ''}`}
           aria-hidden={activeSlide !== 1}>
           <div className={styles.sceneCopy}>
-            <p className={styles.eyebrow}><Rocket aria-hidden="true" /> From idea to every screen</p>
-            <h2>Build once.<br /><em>Launch everywhere.</em></h2>
-            <p>Web, mobile, tablet, desktop, and APIs—built, tested like a real user, repaired, and prepared for release.</p>
+            <p className={styles.eyebrow}><Rocket aria-hidden="true" /> Responsive delivery · lasting progress</p>
+            <h2>Build it once.<br /><em>Succeed everywhere.</em></h2>
+            <p>Every screen stays responsive while Xroga tests, repairs, grows the business, and keeps long-running projects moving.</p>
           </div>
           <div className={styles.visualStage}>
             <figure className={styles.heroArt}>
-              <Image src="/brand/auth-stories/publish-everywhere-clean.webp" alt="One clean product delivered across laptop, tablet, and phone"
+              <Image src="/brand/auth-stories/publish-everywhere-clean.webp" alt="A successful responsive business across desktop, laptop, tablet, and phone with verified repairs, growth, and long-running project progress"
                 fill sizes="(max-width: 1279px) 90vw, 38vw" className={styles.artImage} />
             </figure>
             <section className={`${styles.dataPanel} ${styles.launchPanel}`} aria-label="Example launch readiness">
@@ -169,11 +168,11 @@ export function AuthShowcase() {
                 <span><strong>4</strong><small>targets</small></span>
               </div>
             </section>
-            <figure className={styles.secondaryArt}>
-              <Image src="/brand/auth-stories/ai-testing-clean.webp" alt="A clean quality-assurance scene resolving an issue"
-                fill sizes="(max-width: 700px) 42vw, 17vw" className={styles.artImage} />
-              <figcaption><TestTube2 aria-hidden="true" /> Tested and repaired</figcaption>
-            </figure>
+          </div>
+          <div className={styles.sceneFooter} aria-label="Delivery outcomes">
+            <span><CheckCircle2 aria-hidden="true" /> Success verified</span>
+            <span><TestTube2 aria-hidden="true" /> Repaired and tested</span>
+            <span><TrendingUp aria-hidden="true" /> Long projects keep moving</span>
           </div>
         </article>
 
@@ -201,6 +200,11 @@ export function AuthShowcase() {
                 fill sizes="(max-width: 700px) 42vw, 17vw" className={styles.artImage} />
               <figcaption><Globe2 aria-hidden="true" /> Research <Plane aria-hidden="true" /> Travel</figcaption>
             </figure>
+          </div>
+          <div className={styles.sceneFooter} aria-label="Connected work outcomes">
+            <span><PlugZap aria-hidden="true" /> 1,500+ apps</span>
+            <span><Search aria-hidden="true" /> Research with sources</span>
+            <span><Plane aria-hidden="true" /> Plans ready for approval</span>
           </div>
         </article>
 
@@ -232,6 +236,11 @@ export function AuthShowcase() {
               <Image src="/brand/auth-stories/seo-aeo-geo-clean.webp" alt="Clean search, answer, and geographic discovery objects"
                 fill sizes="(max-width: 700px) 42vw, 17vw" className={styles.artImage} />
             </figure>
+          </div>
+          <div className={styles.sceneFooter} aria-label="Growth outcomes">
+            <span><Bot aria-hidden="true" /> Specialized AI employees</span>
+            <span><TrendingUp aria-hidden="true" /> Business growth</span>
+            <span><Globe2 aria-hidden="true" /> SEO · AEO · GEO</span>
           </div>
         </article>
       </div>
