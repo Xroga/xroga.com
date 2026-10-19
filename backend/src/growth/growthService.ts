@@ -21,6 +21,19 @@ async function query<T = Row[]>(promise: PromiseLike<{ data: T | null; error: an
 
 function hash(value: string): string { return createHash('sha256').update(value).digest('hex'); }
 
+const growthRoles:OperationsRole[]=['viewer','operator','release_manager','recovery_manager','admin'];
+function writeRoles(manage=false):OperationsRole[]{return growthRoles.filter(role=>hasOperationsPermission(role,manage?'manage_automation':'view_product_operations'));}
+function admittedWriteReceipt(data:unknown,error:{code?:string}|null,tenantId:string,projectId:string,expected:Row):Row{
+  if(error?.code==='42501')throw new GrowthServiceError('forbidden','Growth write is not permitted',403);
+  if(error?.code==='40001')throw new GrowthServiceError('conflict','Growth ownership or evidence changed',409);
+  if(error?.code==='23505')throw new GrowthServiceError('conflict','Growth record already exists',409);
+  if(error||!data||typeof data!=='object'||Array.isArray(data))throw new GrowthServiceError('storage_unavailable','Growth write could not be verified',503);
+  const row=data as Row;
+  if(typeof row.id!=='string'||!row.id||row.tenant_id!==tenantId||row.project_id!==projectId
+    ||Object.entries(expected).some(([key,value])=>!isDeepStrictEqual(row[key],value)))throw new GrowthServiceError('storage_unavailable','Growth receipt could not be verified',503);
+  return row;
+}
+
 export class GrowthService {
   private readonly operations: OperationsService;
   constructor(private readonly db: SupabaseClient = getSupabaseAdmin()) { this.operations = new OperationsService(db); }
@@ -182,8 +195,9 @@ export class GrowthService {
     const deploymentVerified = ['verified','production_verified','succeeded'].includes(String(deployment?.verification_state ?? deployment?.status));
     const decision = recommendationDecision({ criticalIncident: critical, deploymentVerified, activated: lifecycle?.lifecycle_state === 'activated' || lifecycle?.lifecycle_state === 'retained', consent: input.consent, suppressed: Boolean(suppression) });
     const evidenceReference = critical ? `incident:${incidents[0].id}` : deployment ? `deployment:${deployment.id}` : 'deployment:missing';
-    const rows = await query<Row[]>(this.db.from('growth_recommendations').insert({ tenant_id: tenantId, project_id: input.projectId, recommendation_type: decision.type, priority: decision.priority, status: decision.status, blocker_category: decision.blocker, rationale: decision.blocker ? `Growth is gated by ${decision.blocker}` : 'Next action is eligible from verified lifecycle state', action_plan: decision.type === 'prepare_operational_repair' ? { operation: 'prepare_repair' } : { operation: decision.type }, evidence_reference: evidenceReference }).select('*'), 'Recommendation could not be persisted');
-    return rows[0];
+    const record={recommendation_type:decision.type,priority:decision.priority,status:decision.status,blocker_category:decision.blocker,rationale:decision.blocker?`Growth is gated by ${decision.blocker}`:'Next action is eligible from verified lifecycle state',action_plan:decision.type==='prepare_operational_repair'?{operation:'prepare_repair'}:{operation:decision.type},evidence_reference:evidenceReference};
+    const {data,error}=await this.db.rpc('write_growth_record_admitted',{p_actor:userId,p_tenant:tenantId,p_project:input.projectId,p_operation:'recommend',p_data:record,p_allowed_roles:writeRoles(),p_basis:{incidents:[...incidents].sort((a,b)=>String(a.id).localeCompare(String(b.id))),deployment,lifecycle,suppression}});
+    return admittedWriteReceipt(data,error,tenantId,input.projectId,record);
   }
 
   async transitionLifecycle(userId: string, input: { projectId: string; subjectType: 'user'|'product'; subjectId: string; state: string; evidenceReference: string }): Promise<Row> {
@@ -209,23 +223,27 @@ export class GrowthService {
   async suppress(userId: string, input: { projectId: string; channel: 'email'|'in_app'; address: string; reason: 'unsubscribed'|'bounced'|'complained'|'manual'|'consent_denied'; evidenceReference: string }): Promise<Row> {
     input = { ...input };
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
-    const rows = await query<Row[]>(this.db.from('growth_suppressions').upsert({ tenant_id: tenantId, project_id: input.projectId, channel: input.channel, address_hash: hash(input.address.trim().toLowerCase()), reason: input.reason, source_evidence: input.evidenceReference }, { onConflict: 'tenant_id,channel,address_hash' }).select('id,project_id,channel,reason,source_evidence,created_at'), 'Suppression could not be stored');
-    return rows[0];
+    const record={channel:input.channel,address_hash:hash(input.address.trim().toLowerCase()),reason:input.reason,source_evidence:input.evidenceReference};
+    const {data,error}=await this.db.rpc('write_growth_record_admitted',{p_actor:userId,p_tenant:tenantId,p_project:input.projectId,p_operation:'suppress',p_data:record,p_allowed_roles:writeRoles(true)});
+    const row=admittedWriteReceipt(data,error,tenantId,input.projectId,record);
+    return Object.fromEntries(['id','project_id','channel','reason','source_evidence','created_at'].map(key=>[key,row[key]]));
   }
 
   async recordAttribution(userId: string, input: { projectId: string; anonymousId?: string; touchType: 'first'|'recent'|'utm'|'referral'|'unknown'; source?: string; medium?: string; campaign?: string; evidenceReference: string }): Promise<Row> {
     input = { ...input };
     const { tenantId } = await this.access(userId, input.projectId);
-    const rows = await query<Row[]>(this.db.from('growth_attribution_touches').insert({ tenant_id: tenantId, project_id: input.projectId, user_id: userId, anonymous_id: input.anonymousId ?? null, touch_type: input.touchType, source: input.source?.slice(0, 120) ?? null, medium: input.medium?.slice(0, 120) ?? null, campaign: input.campaign?.slice(0, 120) ?? null, evidence_reference: input.evidenceReference }).select('*'), 'Attribution could not be recorded');
-    return rows[0];
+    const record={user_id:userId,anonymous_id:input.anonymousId??null,touch_type:input.touchType,source:input.source?.slice(0,120)??null,medium:input.medium?.slice(0,120)??null,campaign:input.campaign?.slice(0,120)??null,evidence_reference:input.evidenceReference};
+    const {data,error}=await this.db.rpc('write_growth_record_admitted',{p_actor:userId,p_tenant:tenantId,p_project:input.projectId,p_operation:'attribution',p_data:record,p_allowed_roles:writeRoles()});
+    return admittedWriteReceipt(data,error,tenantId,input.projectId,record);
   }
 
   async createSegment(userId: string, input: { projectId: string; name: string; lifecycleStates: string[] }): Promise<Row> {
     input = { ...input, lifecycleStates: [...input.lifecycleStates] };
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
     if (!input.lifecycleStates.length) throw new GrowthServiceError('invalid_segment', 'At least one lifecycle state is required');
-    const rows = await query<Row[]>(this.db.from('growth_segments').insert({ tenant_id: tenantId, project_id: input.projectId, name: input.name, definition: { lifecycleStates: input.lifecycleStates }, status: 'active' }).select('*'), 'Segment could not be stored');
-    return rows[0];
+    const record={name:input.name,definition:{lifecycleStates:input.lifecycleStates},status:'active'};
+    const {data,error}=await this.db.rpc('write_growth_record_admitted',{p_actor:userId,p_tenant:tenantId,p_project:input.projectId,p_operation:'segment',p_data:record,p_allowed_roles:writeRoles(true)});
+    return admittedWriteReceipt(data,error,tenantId,input.projectId,record);
   }
 
   async createCampaign(userId: string, input: { projectId: string; segmentId: string; name: string; channel: 'email'|'in_app'; templateKey: string; idempotencyKey: string }): Promise<{ campaign: Row; action: Row }> {
@@ -296,8 +314,9 @@ export class GrowthService {
     input = { ...input, variants: input.variants.map(variant => ({ ...variant })) };
     const { tenantId } = await this.access(userId, input.projectId, 'manage');
     deterministicVariant({ experimentId: 'validation', subjectKey: 'validation', seed: input.seed, variants: input.variants });
-    const rows = await query<Row[]>(this.db.from('growth_experiments').insert({ tenant_id: tenantId, project_id: input.projectId, key: input.key, status: 'running', variants: input.variants, allocation_seed: input.seed, minimum_sample_size: input.minimumSampleSize }).select('*'), 'Experiment could not be stored');
-    return rows[0];
+    const record={key:input.key,status:'running',variants:input.variants,allocation_seed:input.seed,minimum_sample_size:input.minimumSampleSize};
+    const {data,error}=await this.db.rpc('write_growth_record_admitted',{p_actor:userId,p_tenant:tenantId,p_project:input.projectId,p_operation:'experiment',p_data:record,p_allowed_roles:writeRoles(true)});
+    return admittedWriteReceipt(data,error,tenantId,input.projectId,record);
   }
 
   async assignExperiment(userId: string, experimentId: string, subjectKey: string): Promise<Row> {

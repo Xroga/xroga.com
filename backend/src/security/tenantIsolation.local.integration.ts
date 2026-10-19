@@ -50,6 +50,7 @@ import {registerVercelRefreshAccountTests} from './vercelRefreshAccount.local.in
 import { registerOAuthSessionTests } from './oauthSession.local.integration.js';
 import { registerBuildOutcomeAttemptTests } from './buildOutcomeAttempt.local.integration.js';
 import { registerActionIntentTests } from '../operations/actionIntent.local.integration.js';
+import {registerSharedGrowthWriteTests} from '../growth/sharedWriteAdmission.local.integration.js';
 import { registerActionCompletionTests } from '../operations/actionCompletion.local.integration.js';
 import { registerActionApprovalTests } from '../operations/actionApproval.local.integration.js';
 import { registerActionClaimClockTests } from '../operations/actionClaimClock.local.integration.js';
@@ -129,6 +130,7 @@ registerGrowthOutcomeTests(admin, () => users);
 registerBusinessConfirmationFinishTests(admin, () => users);
 registerBusinessConfirmationClaimTests(admin, () => users);
 registerProjectCreationTests(admin, () => users);
+registerSharedGrowthWriteTests(admin,()=>users);
 registerProfileDeletionTests(admin);
 registerGrowthReferralTests(admin, () => users);
 registerTerminalIdentityTests(admin, () => users);
@@ -467,6 +469,14 @@ test('real durable preview session cannot resolve a misbound owner/project or st
 });
 test('actual API ignores client owner and rejects foreign project/file access and unsigned requests',async()=>{
   const [owner,other]=users;
+  const collection=await request(`/api/projects?userId=${other.id}`,owner.token);assert.equal(collection.status,200);
+  const collectionRows=await collection.json() as {id:string;user_id:string}[];
+  assert.ok(collectionRows.some(row=>row.id===owner.project));assert.ok(collectionRows.every(row=>row.user_id===owner.id&&row.id!==other.project));
+  const detail=await request(`/api/projects/${owner.project}?userId=${other.id}`,owner.token);assert.equal(detail.status,200);
+  const detailRow=await detail.json() as {id:string;user_id:string;project_files:{id:string;project_id:string}[]};
+  assert.equal(detailRow.id,owner.project);assert.equal(detailRow.user_id,owner.id);assert.ok(detailRow.project_files.some(file=>file.id===owner.file));assert.ok(detailRow.project_files.every(file=>file.project_id===owner.project));
+  const membership=await insert('operations_memberships',{user_id:other.id,project_id:other.project,member_user_id:owner.id,role:'viewer',created_by:other.id});
+  try{assert.equal((await request(`/api/projects/${other.project}?user_id=${other.id}`,owner.token)).status,404);}finally{assert.equal((await admin.from('operations_memberships').delete().eq('id',membership)).error,null);}
   for(const path of [`/api/projects/${other.project}`,`/api/projects/${other.project}/files`,`/api/projects/${other.project}/code`]) assert.equal((await request(path,owner.token)).status,404);
   const ownFiles=await request(`/api/projects/${owner.project}/files`,owner.token);assert.equal(ownFiles.status,200);
   const files=await ownFiles.json() as Array<{id:string;project_id:string;projects?:unknown}>;

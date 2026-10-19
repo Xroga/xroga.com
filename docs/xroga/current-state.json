@@ -12249,12 +12249,13 @@
       "id": "surface:4cd464f7016cf52503dd",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
+      "sha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
       "symbols": [
         "GrowthService",
         "GrowthServiceError",
         "Row",
         "action",
+        "admittedWriteReceipt",
         "assignment",
         "assignmentById",
         "attribution",
@@ -12270,6 +12271,7 @@
         "evidenceReference",
         "existing",
         "experiment",
+        "growthRoles",
         "hash",
         "linked",
         "loaded",
@@ -12278,13 +12280,15 @@
         "payload",
         "query",
         "receipt",
+        "record",
         "reference",
         "result",
         "roles",
         "row",
         "rows",
         "segment",
-        "variant"
+        "variant",
+        "writeRoles"
       ],
       "imports": [
         "../config/supabase.js",
@@ -12329,6 +12333,8 @@
         "backend/src/growth/lifecycleTransition.test.ts:4",
         "backend/src/growth/outcome.local.integration.ts:7",
         "backend/src/growth/outcomeReceipt.test.ts:4",
+        "backend/src/growth/sharedWriteAdmission.local.integration.ts:7",
+        "backend/src/growth/sharedWriteAdmission.test.ts:4",
         "backend/src/routes/growth.ts:5",
         "backend/src/security/growthReferral.local.integration.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:33"
@@ -12359,34 +12365,35 @@
         "backend/src/growth/growthService.ts#hasOperationsPermission"
       ],
       "tenantBoundary": [
-        "backend/src/growth/growthService.ts:43 (tenant_id)",
-        "backend/src/growth/growthService.ts:44 (tenant_id)",
-        "backend/src/growth/growthService.ts:45 (tenant_id)",
-        "backend/src/growth/growthService.ts:46 (tenant_id)",
-        "backend/src/growth/growthService.ts:47 (tenant_id)",
-        "backend/src/growth/growthService.ts:48 (tenant_id)",
-        "backend/src/growth/growthService.ts:49 (tenant_id)",
-        "backend/src/growth/growthService.ts:50 (tenant_id)",
-        "backend/src/growth/growthService.ts:70 (tenant_id)",
-        "backend/src/growth/growthService.ts:73 (tenant_id)",
-        "backend/src/growth/growthService.ts:77 (tenant_id)",
-        "backend/src/growth/growthService.ts:84 (tenant_id)",
-        "backend/src/growth/growthService.ts:176 (user_id)",
-        "backend/src/growth/growthService.ts:177 (user_id)",
-        "backend/src/growth/growthService.ts:178 (tenant_id)",
-        "backend/src/growth/growthService.ts:179 (tenant_id)",
-        "backend/src/growth/growthService.ts:234 (tenant_id)",
-        "backend/src/growth/growthService.ts:260 (tenant_id)",
-        "backend/src/growth/growthService.ts:280 (tenant_id)",
-        "backend/src/growth/growthService.ts:366 (tenant_id)",
-        "backend/src/growth/growthService.ts:368 (tenant_id)",
-        "backend/src/growth/growthService.ts:393 (tenant_id)"
+        "backend/src/growth/growthService.ts:56 (tenant_id)",
+        "backend/src/growth/growthService.ts:57 (tenant_id)",
+        "backend/src/growth/growthService.ts:58 (tenant_id)",
+        "backend/src/growth/growthService.ts:59 (tenant_id)",
+        "backend/src/growth/growthService.ts:60 (tenant_id)",
+        "backend/src/growth/growthService.ts:61 (tenant_id)",
+        "backend/src/growth/growthService.ts:62 (tenant_id)",
+        "backend/src/growth/growthService.ts:63 (tenant_id)",
+        "backend/src/growth/growthService.ts:83 (tenant_id)",
+        "backend/src/growth/growthService.ts:86 (tenant_id)",
+        "backend/src/growth/growthService.ts:90 (tenant_id)",
+        "backend/src/growth/growthService.ts:97 (tenant_id)",
+        "backend/src/growth/growthService.ts:189 (user_id)",
+        "backend/src/growth/growthService.ts:190 (user_id)",
+        "backend/src/growth/growthService.ts:191 (tenant_id)",
+        "backend/src/growth/growthService.ts:192 (tenant_id)",
+        "backend/src/growth/growthService.ts:252 (tenant_id)",
+        "backend/src/growth/growthService.ts:278 (tenant_id)",
+        "backend/src/growth/growthService.ts:298 (tenant_id)",
+        "backend/src/growth/growthService.ts:385 (tenant_id)",
+        "backend/src/growth/growthService.ts:387 (tenant_id)",
+        "backend/src/growth/growthService.ts:412 (tenant_id)"
       ],
       "approvalBoundary": [
         "backend/src/growth/growthService.ts#hasOperationsPermission"
       ],
       "costBoundary": [],
       "evidenceBoundary": [
+        "backend/src/growth/growthService.ts#admittedWriteReceipt",
         "backend/src/growth/growthService.ts#deploymentVerified",
         "backend/src/growth/growthService.ts#event",
         "backend/src/growth/growthService.ts#evidenceReference",
@@ -12417,6 +12424,8 @@
         "backend/src/growth/lifecycleTransition.test.ts",
         "backend/src/growth/outcome.local.integration.ts",
         "backend/src/growth/outcomeReceipt.test.ts",
+        "backend/src/growth/sharedWriteAdmission.local.integration.ts",
+        "backend/src/growth/sharedWriteAdmission.test.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
@@ -15232,6 +15241,7 @@
         "backend/src/routes/phase1.quota.test.ts",
         "backend/src/routes/phase1BusinessPreflight.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
+        "backend/src/routes/projects.collectionDetail.test.ts",
         "backend/src/routes/projects.creation.test.ts",
         "backend/src/routes/projects.deletion.test.ts",
         "backend/src/routes/projects.fileAuthority.test.ts",
@@ -19440,7 +19450,7 @@
       "id": "surface:367b4030b0826dac3fa7",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/projects.ts",
-      "sha256": "6776769d6e1785e9ecb7635fc8d68b4d3d9d896c6a17dda9ba6846affd10c087",
+      "sha256": "8c3c07c96dab7e44a8adc6b2143dbf66e826ff0dbf2fb6e6bf63898e8093d0b8",
       "symbols": [
         "error",
         "fileParentMatches",
@@ -19475,6 +19485,7 @@
       ],
       "callers": [
         "backend/src/index.ts:10",
+        "backend/src/routes/projects.collectionDetail.test.ts:11",
         "backend/src/routes/projects.creation.test.ts:11",
         "backend/src/routes/projects.deletion.test.ts:15",
         "backend/src/routes/projects.fileAuthority.test.ts:11",
@@ -19502,6 +19513,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/routes/projects.collectionDetail.test.ts",
         "backend/src/routes/projects.creation.test.ts",
         "backend/src/routes/projects.deletion.test.ts",
         "backend/src/routes/projects.fileAuthority.test.ts",
@@ -21331,6 +21343,7 @@
         "backend/src/routes/profile.deletionIdentity.test.ts:7",
         "backend/src/routes/profile.ts:4",
         "backend/src/routes/projectRuntime.ts:8",
+        "backend/src/routes/projects.collectionDetail.test.ts:5",
         "backend/src/routes/projects.creation.test.ts:5",
         "backend/src/routes/projects.deletion.test.ts:5",
         "backend/src/routes/projects.fileAuthority.test.ts:5",
@@ -21419,6 +21432,7 @@
         "backend/src/routes/admin.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
+        "backend/src/routes/projects.collectionDetail.test.ts",
         "backend/src/routes/projects.creation.test.ts",
         "backend/src/routes/projects.deletion.test.ts",
         "backend/src/routes/projects.fileAuthority.test.ts",
@@ -23648,7 +23662,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:859",
+        "backend/src/security/tenantIsolation.local.integration.ts:869",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -90819,7 +90833,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:946ea0dbf2e9404990dc",
+      "id": "registration:852fce65e6bde529166e",
       "sourcePath": "backend/src/routes/projects.ts",
       "line": 182,
       "receiver": "router",
@@ -93381,8 +93395,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ac0b36ec2977dee7f071",
-      "registrationId": "registration:946ea0dbf2e9404990dc",
+      "id": "route:befe57093adbf120352f",
+      "registrationId": "registration:852fce65e6bde529166e",
       "sourcePath": "backend/src/routes/projects.ts",
       "line": 182,
       "method": "GET",
@@ -96319,6 +96333,13 @@
       "version": "20261019000400",
       "order": 122,
       "sha256": "8e332bafe5a48235644fb4392bd0fb79f5c9573426788a322154783b7308e16e"
+    },
+    {
+      "id": "migration:67d4188b4eabd7354e7f",
+      "sourcePath": "supabase/migrations/20261019000500_growth_shared_write_admission.sql",
+      "version": "20261019000500",
+      "order": 123,
+      "sha256": "66952f6e6fa43b82cea934b4320abaa444b81dbe79d9eade55329e1d1c8cd90e"
     }
   ],
   "workflows": [
@@ -103968,6 +103989,20 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:dac7c177fa90743b56a9",
+      "sourcePath": "backend/src/growth/sharedWriteAdmission.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a1b8ac7cb5301ee854db",
+      "sourcePath": "backend/src/growth/sharedWriteAdmission.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:2b05d677bbde176a18cc",
       "sourcePath": "backend/src/hardening/launchHardening.test.ts",
       "declaredTests": 47,
@@ -104385,6 +104420,13 @@
     {
       "id": "test-suite:3305578eb85a8d0be330",
       "sourcePath": "backend/src/routes/profile.deletionIdentity.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8e53cdc5aefc671402ad",
+      "sourcePath": "backend/src/routes/projects.collectionDetail.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

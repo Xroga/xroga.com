@@ -186,9 +186,13 @@ router.get('/:id', async (req: AuthRequest, res) => {
     .select('*, project_files(*), project_messages(*)')
     .eq('id', req.params.id)
     .eq('user_id', req.userId!)
-    .single();
+    .maybeSingle();
 
   if (error) {
+    res.status(503).json({ error: 'Project could not be loaded. Retry shortly.' });
+    return;
+  }
+  if (!data) {
     res.status(404).json({ error: 'Project not found' });
     return;
   }

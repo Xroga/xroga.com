@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f589a05b2f85187e11ebb3da9dfddc397317ffca",
+  "source_sha": "8adca5f84425819821b4b80d94bc09980ecc9e79",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -543,6 +543,7 @@
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
+        "backend/src/growth/sharedWriteAdmission.local.integration.ts",
         "backend/src/operations/actionAdmission.local.integration.ts",
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
@@ -673,6 +674,7 @@
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
+        "backend/src/growth/sharedWriteAdmission.local.integration.ts",
         "backend/src/operations/actionAdmission.local.integration.ts",
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
@@ -7148,6 +7150,7 @@
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
+        "backend/src/growth/sharedWriteAdmission.local.integration.ts",
         "backend/src/operations/actionAdmission.local.integration.ts",
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
@@ -9806,6 +9809,7 @@
         "backend/src/growth/experimentAdmission.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
+        "backend/src/growth/sharedWriteAdmission.local.integration.ts",
         "backend/src/operations/actionAdmission.local.integration.ts",
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
@@ -10131,6 +10135,7 @@
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
+        "backend/src/growth/sharedWriteAdmission.local.integration.ts",
         "backend/src/index.ts",
         "backend/src/lib/capabilityRegistry.ts",
         "backend/src/lib/platformReady.ts",
@@ -10840,6 +10845,7 @@
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
+        "backend/src/growth/sharedWriteAdmission.local.integration.ts",
         "backend/src/operations/actionAdmission.local.integration.ts",
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
@@ -10929,6 +10935,7 @@
         "backend/src/growth/identity.local.integration.ts",
         "backend/src/growth/lifecycleTransition.local.integration.ts",
         "backend/src/growth/outcome.local.integration.ts",
+        "backend/src/growth/sharedWriteAdmission.local.integration.ts",
         "backend/src/operations/actionAdmission.local.integration.ts",
         "backend/src/operations/actionApproval.local.integration.ts",
         "backend/src/operations/actionClaimClock.local.integration.ts",
@@ -12576,7 +12583,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "sha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c"
+      "sha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8"
     },
     {
       "path": "backend/src/growth/identity.local.integration.ts",
@@ -12589,6 +12596,10 @@
     {
       "path": "backend/src/growth/outcome.local.integration.ts",
       "sha256": "9a75b7da78e3438c67092f9a5870193de8f3954437ef0ae2e37ee85253aaaab7"
+    },
+    {
+      "path": "backend/src/growth/sharedWriteAdmission.local.integration.ts",
+      "sha256": "454216f3396a6af19e6d481e2f5e1de49b73d03c5539aa65145b8d3e2e9fca15"
     },
     {
       "path": "backend/src/index.ts",
@@ -13080,7 +13091,7 @@
     },
     {
       "path": "backend/src/routes/projects.ts",
-      "sha256": "6776769d6e1785e9ecb7635fc8d68b4d3d9d896c6a17dda9ba6846affd10c087"
+      "sha256": "8c3c07c96dab7e44a8adc6b2143dbf66e826ff0dbf2fb6e6bf63898e8093d0b8"
     },
     {
       "path": "backend/src/routes/publish.ts",
@@ -13320,7 +13331,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd"
+      "sha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -18483,6 +18494,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/growth/sharedWriteAdmission.local.integration.ts",
+      "line": 11,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
@@ -19354,77 +19372,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 105,
+      "line": 106,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 105,
+      "line": 106,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 498,
+      "line": 508,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 548,
+      "line": 558,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 637,
+      "line": 647,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 803,
+      "line": 813,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 861,
+      "line": 871,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1548,
+      "line": 1558,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1566,
+      "line": 1576,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1574,
+      "line": 1584,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1578,
+      "line": 1588,
       "credentialsInUrl": false
     },
     {
@@ -24709,7 +24727,7 @@
     },
     {
       "path": "backend/src/growth/growthService.ts",
-      "line": 396,
+      "line": 415,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25731,14 +25749,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1047,
+      "line": 1057,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1384,
+      "line": 1394,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

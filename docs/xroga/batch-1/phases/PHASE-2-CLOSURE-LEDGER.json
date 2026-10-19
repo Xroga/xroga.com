@@ -1550,7 +1550,7 @@
       "id": "B1-P2-b2b55b7ff19b02a8",
       "family": "growth-community",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
+      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
       "baselineCallerIds": [
         "5d2b5832658fd3299a4b",
         "10f3c1b47a240d3e5eec",
@@ -1591,311 +1591,349 @@
         "a7ccd90a654c92e3c6c0"
       ],
       "currentCallerIds": [
-        "5d2b5832658fd3299a4b",
-        "10f3c1b47a240d3e5eec",
-        "3a0e8b50029c933df215",
-        "f07e1c65dfa12c4bfa66",
-        "936285ab387a45719561",
-        "8a4004b8ecb457a4a56c",
-        "8eb28e7a820e5ba7e0d5",
-        "53e04f9e265e59db81e5",
-        "714fd3e95dccdeeb7cfa",
-        "c4b48546dd042cc91bf0",
-        "7da72c17fc2cd9b645f6",
-        "d837c5ed2b4022b6e71c",
-        "954c42fd1a2437f38ed5",
-        "126ec04bb2325ac5e091",
-        "e8c8697a4352dcfcc9cc",
-        "6f6f225977a580ed8fe5",
-        "9165c67959d8d407c5a5",
-        "217775d36b1bfb2a82d7",
-        "f38c186211e3bdc5cd0c",
-        "3e008f78c752aac4b1db",
-        "9e2dc91ea6a697441853",
-        "0dde4c3ada0f6a0c7f1a",
-        "aa7b09be7d9eaa4a9eaa",
-        "fdcf63161ed9e5974934",
-        "475f72899defe3275ff6",
-        "7e49c18af7e9d2a2ab4d",
-        "fe6817a5fc74340f5374",
-        "2e0772f3a7d5c2dbe133",
-        "5a66230d3ca8b6da41e2",
-        "2bba1c835da16479b688",
-        "69f945f3952abb99aa42",
-        "cb6ad27c63645e069d74",
-        "d56c4b7825d7f2b53b41",
-        "a277bc4aeecdecf24bd8",
-        "ed4315ef29a1b2295862",
-        "e83943315635e947cfcb"
+        "521d206b28f660c52ca7",
+        "743b3ec38209de66a8b6",
+        "70674fcabb7973d0909c",
+        "98a51063b8117bbc2ad1",
+        "65173e083c611fe4f8ad",
+        "0c64adfe8bac8c6f9e8a",
+        "4c4c5151a644e1afd480",
+        "85b6a438c447d6293ab3",
+        "7057f486ce219b8cb4c6",
+        "11101077dd0d8ad1cb7f",
+        "811dc82be398940450c6",
+        "726c74dca42ecc8a2ffd",
+        "0c978c7dd2ea1c9022b2",
+        "6efe9ed2d629814df975",
+        "794709739cc0e5521650",
+        "717772bdfa767350a841",
+        "e9affb30cb83590d28be",
+        "9726445c0a4a7cda3bda",
+        "76c55e5deb7620670685",
+        "96be9ed395634c138d83",
+        "8dad92c642517f05ae1f",
+        "2b970cf4760c499ea3ec",
+        "319d99b290b73dd40941",
+        "37a9769c02ecb5ef161f",
+        "ee9c97c6612d1a4f5903",
+        "92c63a0584bbe986fcfc",
+        "6d5b3f7366a86fff6756",
+        "e779f5d2f255e9a49bc8",
+        "d86c34824541642c0dfa",
+        "df910d8ba64c84e0aa86",
+        "ca9156cdb49711d8f760",
+        "13ee7a8d094ff6ca42d4",
+        "8dca102a2431e9d73d9f",
+        "a482ccbd1145347e2a16",
+        "6703074fd634edb06e65",
+        "14409124ccb9fa5cbb77"
       ],
       "mapping": [
         {
           "baselineCallerId": "5d2b5832658fd3299a4b",
           "currentCallerIds": [
-            "5d2b5832658fd3299a4b"
+            "521d206b28f660c52ca7"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "10f3c1b47a240d3e5eec",
           "currentCallerIds": [
-            "10f3c1b47a240d3e5eec"
+            "743b3ec38209de66a8b6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3a0e8b50029c933df215",
           "currentCallerIds": [
-            "3a0e8b50029c933df215"
+            "70674fcabb7973d0909c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "f07e1c65dfa12c4bfa66",
           "currentCallerIds": [
-            "f07e1c65dfa12c4bfa66"
+            "98a51063b8117bbc2ad1"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "936285ab387a45719561",
           "currentCallerIds": [
-            "936285ab387a45719561"
+            "65173e083c611fe4f8ad"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8a4004b8ecb457a4a56c",
           "currentCallerIds": [
-            "8a4004b8ecb457a4a56c"
+            "0c64adfe8bac8c6f9e8a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8eb28e7a820e5ba7e0d5",
           "currentCallerIds": [
-            "8eb28e7a820e5ba7e0d5"
+            "4c4c5151a644e1afd480"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "53e04f9e265e59db81e5",
           "currentCallerIds": [
-            "53e04f9e265e59db81e5"
+            "85b6a438c447d6293ab3"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "714fd3e95dccdeeb7cfa",
           "currentCallerIds": [
-            "714fd3e95dccdeeb7cfa"
+            "7057f486ce219b8cb4c6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2a10818ab5282f53a025",
           "currentCallerIds": [
-            "c4b48546dd042cc91bf0"
+            "11101077dd0d8ad1cb7f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c1d15835cacb17c3e97f",
           "currentCallerIds": [
-            "7da72c17fc2cd9b645f6"
+            "811dc82be398940450c6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "049cf6f3b8c71da16801",
           "currentCallerIds": [
-            "d837c5ed2b4022b6e71c"
+            "726c74dca42ecc8a2ffd"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "24a34ec20e39c5e05b11",
           "currentCallerIds": [
-            "954c42fd1a2437f38ed5"
+            "0c978c7dd2ea1c9022b2"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3c7c0800d22410ced33f",
           "currentCallerIds": [
-            "126ec04bb2325ac5e091"
+            "6efe9ed2d629814df975"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "4283bf27845b180354e4",
           "currentCallerIds": [
-            "e8c8697a4352dcfcc9cc"
+            "794709739cc0e5521650"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "f3cbd772aa9f8cbdb572",
           "currentCallerIds": [
-            "6f6f225977a580ed8fe5"
+            "717772bdfa767350a841"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "f2dfbe03e9a73e2d27f2",
           "currentCallerIds": [
-            "9165c67959d8d407c5a5"
+            "e9affb30cb83590d28be"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a85cc21b6ff0083df5d4",
           "currentCallerIds": [
-            "217775d36b1bfb2a82d7"
+            "9726445c0a4a7cda3bda"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "d2a151148896c4cc08dd",
           "currentCallerIds": [
-            "f38c186211e3bdc5cd0c"
+            "76c55e5deb7620670685"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "19698d466429031b3924",
           "currentCallerIds": [
-            "3e008f78c752aac4b1db"
+            "96be9ed395634c138d83"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "ae2435e4296547f982c8",
           "currentCallerIds": [
-            "9e2dc91ea6a697441853"
+            "8dad92c642517f05ae1f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "876c6be3cfe0b36b0bc2",
           "currentCallerIds": [
-            "0dde4c3ada0f6a0c7f1a"
+            "2b970cf4760c499ea3ec"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "bcdb9b2ad0ec78199561",
           "currentCallerIds": [
-            "aa7b09be7d9eaa4a9eaa"
+            "319d99b290b73dd40941"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1afffc078cd2692a93a7",
           "currentCallerIds": [
-            "fdcf63161ed9e5974934"
+            "37a9769c02ecb5ef161f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "4d9efaae919de1cb3899",
           "currentCallerIds": [
-            "475f72899defe3275ff6"
+            "ee9c97c6612d1a4f5903"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b8e271c2d4b8b3f99af0",
           "currentCallerIds": [
-            "7e49c18af7e9d2a2ab4d"
+            "92c63a0584bbe986fcfc"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9e916878c523feacb73e",
           "currentCallerIds": [
-            "fe6817a5fc74340f5374",
-            "2e0772f3a7d5c2dbe133"
+            "6d5b3f7366a86fff6756",
+            "e779f5d2f255e9a49bc8"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "601cc202c94a6d74155b",
           "currentCallerIds": [
-            "2e0772f3a7d5c2dbe133"
+            "e779f5d2f255e9a49bc8"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "30bd964098cb53dd25b9",
           "currentCallerIds": [
-            "2e0772f3a7d5c2dbe133"
+            "e779f5d2f255e9a49bc8"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "ed69b922f1cfcb088ee7",
           "currentCallerIds": [
-            "5a66230d3ca8b6da41e2",
-            "2bba1c835da16479b688"
+            "d86c34824541642c0dfa",
+            "df910d8ba64c84e0aa86"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "78a1c1ea46ddd084b5c1",
           "currentCallerIds": [
-            "5a66230d3ca8b6da41e2",
-            "2bba1c835da16479b688"
+            "d86c34824541642c0dfa",
+            "df910d8ba64c84e0aa86"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "2767db95f48926527f61",
           "currentCallerIds": [
-            "69f945f3952abb99aa42"
+            "ca9156cdb49711d8f760"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "96289f945e08ba3cd07a",
           "currentCallerIds": [
-            "cb6ad27c63645e069d74"
+            "13ee7a8d094ff6ca42d4"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "97d13a82464a8eb511f8",
           "currentCallerIds": [
-            "d56c4b7825d7f2b53b41"
+            "8dca102a2431e9d73d9f"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "5d297da3b78d02625a08",
           "currentCallerIds": [
-            "a277bc4aeecdecf24bd8"
+            "a482ccbd1145347e2a16"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "fb46c685a95d26e36595",
           "currentCallerIds": [
-            "ed4315ef29a1b2295862"
+            "6703074fd634edb06e65"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         },
         {
           "baselineCallerId": "a7ccd90a654c92e3c6c0",
           "currentCallerIds": [
-            "e83943315635e947cfcb"
+            "14409124ccb9fa5cbb77"
           ],
           "change": "REPLACED_OR_CONSOLIDATED_NOT_CERTIFICATION"
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-b2b55b7ff19b02a8",
+        "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "SHARED_REACHABLE_PREFLIGHT_WRITE_GAP_REPRODUCED_FIXED_PENDING_REAL_GROUPED_PROOF",
+        "originalCriteria": [
+          2,
+          4,
+          10
+        ],
+        "actorTrace": "The authenticated growth router passes req.userId, never body ownership. All five methods previously performed project/member authorization, then asynchronous reads or a direct write without transaction-fenced current authority. A service-boundary test reproduced recommend fulfilling after simulated revocation. One fixed-operation service-only transaction now reuses existing profile/project/member lock and role rules for recommend, suppression, attribution, segment and experiment writes. Recommendation locks and compares its original selected parent evidence, preserving the existing TS decision policy.",
+        "invariant": "Current original actor, tenant and project must remain permitted through the decisive write. Preserve view versus manage, the tenant-wide suppression key, current record payloads and exact persistence receipts. Parent changes cannot silently produce a recommendation from stale evidence.",
+        "relatedSourceBindings": [
+          {
+            "path": "supabase/migrations/20261019000500_growth_shared_write_admission.sql",
+            "sha256": "66952f6e6fa43b82cea934b4320abaa444b81dbe79d9eade55329e1d1c8cd90e"
+          }
+        ],
+        "evidence": [
+          {
+            "path": "backend/src/growth/sharedWriteAdmission.test.ts",
+            "type": "SYNTHETIC_SERVICE_BOUNDARY",
+            "result": "PRE_FIX_MISSING_REJECTION_THEN_PASS",
+            "scope": "Revoked preflight and exact receipt positives/substitution negatives across the five operations. Not actual PostgreSQL concurrency."
+          },
+          {
+            "path": "backend/src/growth/sharedWriteAdmission.local.integration.ts",
+            "type": "REAL_GROUPED_DATABASE_TEST_PREPARED",
+            "result": "NOT_EXECUTED",
+            "scope": "Ten observed member/owner waits, current parent evidence, allowed viewer controls, concurrent suppression, rollback and browser denial."
+          }
+        ],
+        "remaining": [
+          "Execute actual fresh/upgrade/reapply and grouped lock/receipt tests at the final source",
+          "Reconcile already proven growth RPCs without reopening unchanged event, identity, activation or lifecycle code",
+          "Assess other original growth read/global suppression/lifecycle obligations separately, no whole-service or Phase3 certificate"
+        ],
+        "rollback": "No schema/data rewrite. Routine is additive. Withhold the five affected endpoints before withdrawing guarded source, do not restore known unguarded writes as an enabled rollback."
+      },
       "actor": {
         "existingTrace": "All mounted growth routes use authMiddleware and req.userId. The injected/default privileged client delegates access to OperationsService.permissions, then derives tenantId from project.user_id. Management methods additionally require manage_automation. Overview and most event/lifecycle reads constrain tenant/project. Campaign and experiment IDs are resolved before access checks. Notification delivery deliberately writes to recipient accounts selected by lifecycle and consent records.",
         "currentSemanticVerification": "PENDING"
@@ -1951,7 +1989,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -1971,7 +2009,7 @@
       "id": "B1-P2-89cf390cd3dcef40",
       "family": "projects-files-runtime",
       "sourcePath": "backend/src/routes/projects.ts",
-      "sourceSha256": "6776769d6e1785e9ecb7635fc8d68b4d3d9d896c6a17dda9ba6846affd10c087",
+      "sourceSha256": "8c3c07c96dab7e44a8adc6b2143dbf66e826ff0dbf2fb6e6bf63898e8093d0b8",
       "baselineCallerIds": [
         "a1602e2131ac55ae41f2",
         "b0fcef8a6524e67436e8",
@@ -3153,7 +3191,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4082,7 +4120,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4297,7 +4335,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4410,7 +4448,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4678,7 +4716,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4849,7 +4887,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5201,7 +5239,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5454,7 +5492,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5523,7 +5561,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5972,7 +6010,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6569,7 +6607,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6658,7 +6696,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "dfe28c8aed7d79f47f8ac487323148ed557cdf3b32c18872444b8c4f97cd55dd",
+          "sourceSha256": "ed60f32ac818ac4386c6a194abff41ff145ca24f20b5789b9f8dd4f4b9ab1a8a",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -8094,18 +8132,18 @@
       "id": "B1-P2-3114d15ea14a5bef",
       "family": "growth-community",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
+      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
       "baselineCallerIds": [
         "1bbf9fc4a4d64e0ceaf2"
       ],
       "currentCallerIds": [
-        "c1474c428e0318338162"
+        "567fdc2e4f1b3cfdb8dd"
       ],
       "mapping": [
         {
           "baselineCallerId": "1bbf9fc4a4d64e0ceaf2",
           "currentCallerIds": [
-            "c1474c428e0318338162"
+            "567fdc2e4f1b3cfdb8dd"
           ],
           "change": "RETAINED"
         }
@@ -8149,18 +8187,18 @@
       "id": "B1-P2-05e42140dd947e21",
       "family": "growth-community",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
+      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
       "baselineCallerIds": [
         "fe39e67000ca4c823db9"
       ],
       "currentCallerIds": [
-        "d837c5ed2b4022b6e71c"
+        "726c74dca42ecc8a2ffd"
       ],
       "mapping": [
         {
           "baselineCallerId": "fe39e67000ca4c823db9",
           "currentCallerIds": [
-            "d837c5ed2b4022b6e71c"
+            "726c74dca42ecc8a2ffd"
           ],
           "change": "RETAINED"
         }
@@ -8170,7 +8208,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-05e42140dd947e21",
-        "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
+        "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_STALE_PARENT_WRITE_FIXED_PENDING_REAL_LOCK_PROOF",
         "actorTrace": "Authenticated growth route supplies req.userId. Existing OperationsService.permissions preflight supplies the observed project owner. The former two service-role writes did not recheck that owner or current membership at commit. New service-only link_growth_identity locks current actor profile, project and membership through one first-owner-preserving identity mutation.",
@@ -8229,18 +8267,18 @@
       "id": "B1-P2-235593db1d7f94e0",
       "family": "growth-community",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
+      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
       "baselineCallerIds": [
         "a16a5d06c352a7901267"
       ],
       "currentCallerIds": [
-        "7da72c17fc2cd9b645f6"
+        "811dc82be398940450c6"
       ],
       "mapping": [
         {
           "baselineCallerId": "a16a5d06c352a7901267",
           "currentCallerIds": [
-            "7da72c17fc2cd9b645f6"
+            "811dc82be398940450c6"
           ],
           "change": "RETAINED"
         }
@@ -8250,7 +8288,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-235593db1d7f94e0",
-        "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
+        "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_STALE_EVENT_PARENT_CREATION_AND_REPLAY_FIXED_REAL_LOCK_PROOF_RECONCILED",
         "priorVerifiedTenantScope": {
@@ -8470,18 +8508,18 @@
       "id": "B1-P2-8fc17fb0f7454d3f",
       "family": "growth-community",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
+      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
       "baselineCallerIds": [
         "f06c7a10e85186933e84"
       ],
       "currentCallerIds": [
-        "5029c4f93698661c528c"
+        "fd061df7c98bd653a7a4"
       ],
       "mapping": [
         {
           "baselineCallerId": "f06c7a10e85186933e84",
           "currentCallerIds": [
-            "5029c4f93698661c528c"
+            "fd061df7c98bd653a7a4"
           ],
           "change": "RETAINED"
         }
@@ -8532,18 +8570,18 @@
       "id": "B1-P2-0b626418dfd30f43",
       "family": "growth-community",
       "sourcePath": "backend/src/growth/growthService.ts",
-      "sourceSha256": "9fc2826b3348c983df86d7de870f1f09a411e180e8eaef9bc02ccad0a1fb125c",
+      "sourceSha256": "112ab9c37215abb9151ec445f8836769cb97446890c556ad83961620f32e70f8",
       "baselineCallerIds": [
         "fba3ec246993cb38ab8d"
       ],
       "currentCallerIds": [
-        "1e602fb4373033690dd5"
+        "7918840495c068d573ff"
       ],
       "mapping": [
         {
           "baselineCallerId": "fba3ec246993cb38ab8d",
           "currentCallerIds": [
-            "1e602fb4373033690dd5"
+            "7918840495c068d573ff"
           ],
           "change": "RETAINED"
         }
