@@ -48,7 +48,7 @@ for (const fixture of cases) test(`${fixture.method} retains admitted input acro
       assert.equal(args.p_actor,'actor');assert.equal(args.p_tenant,'actor');
       assert.equal(args.p_project,'project');
       assert.ok(Array.isArray(args.p_allowed_roles)&&args.p_allowed_roles.length>0);
-      writes++;const row={...(args.p_data as Record<string,unknown>),project_id:args.p_project};
+      writes++;const row:Record<string,unknown>={...(args.p_data as Record<string,unknown>),project_id:args.p_project};
       for(const[key,value]of Object.entries(fixture.expected))assert.deepEqual(row[key],value,key);
       throw stop;
     }
