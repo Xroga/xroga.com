@@ -179,6 +179,23 @@ export function PublicMarketingHeader() {
   }, [activeMega, place]);
   useEffect(aim, [aim]);
 
+  // local design review only: ?nav=a or ?nav=b mounts a concept prototype when built with NEXT_PUBLIC_NAVLAB=1
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_NAVLAB !== '1') return;
+    const concept = new URLSearchParams(window.location.search).get('nav');
+    const root = rootRef.current;
+    if ((concept !== 'a' && concept !== 'b') || !root) return;
+    let lab: { destroy: () => void } | undefined;
+    let gone = false;
+    void import('./nav/lab').then((m) => {
+      if (!gone) lab = m.mountLab(concept, root);
+    });
+    return () => {
+      gone = true;
+      lab?.destroy();
+    };
+  }, []);
+
   // switching menus slides the new content in from the side it was chosen on (set before paint)
   useIsoLayoutEffect(() => {
     const keys = Object.keys(MEGA_MENUS) as MenuKey[];
