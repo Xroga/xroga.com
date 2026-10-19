@@ -66,10 +66,20 @@ test('scroll: hides going down past the opening screen, returns going up, never 
   assert.match(CSS, /\.xn\[data-hidden\] \{[^}]*pointer-events: none;/);
 });
 
-test('particles: one canvas, idle at rest, paused when hidden, never under reduced motion', () => {
-  assert.match(FX, /if \(moving \|\| this\.tgt \|\| this\.ctaWant\) this\.raf = requestAnimationFrame/);
+test('particles: crisp points, idle at rest, paused when hidden or the bar is hidden, still under reduced motion', () => {
+  // the loop continues only while something moves or the pointer is near; frame time never runs backwards
+  assert.match(FX, /if \(busy\) this\.raf = requestAnimationFrame/);
+  assert.match(FX, /const dt = Math\.max\(0, Math\.min\(40, now - this\.last\)\)/);
   assert.match(FX, /document\.hidden/);
-  assert.match(HEADER, /prefers-reduced-motion: reduce\)'\)\.matches\) return;/);
+  // no blur anywhere in the layer: points are placed on whole device pixels
+  assert.doesNotMatch(FX, /shadowBlur|filter\s*=/);
+  assert.match(FX, /Math\.round\(x \* this\.dpr\)/);
+  assert.doesNotMatch(CSS, /backdrop-filter/);
+  // reduced motion: one still frame, no loop and no pointer response
+  assert.match(HEADER, /new NavParticles\(canvas, bar, matchMedia\('\(prefers-reduced-motion: reduce\)'\)\.matches\)/);
+  assert.match(FX, /if \(this\.raf \|\| document\.hidden \|\| this\.reduced\) return;/);
+  assert.match(HEADER, /fx\.current\?\.setEnabled\(!hidden\)/);
+  assert.match(HEADER, /orbit\.current\?\.setEnabled\(!hidden\)/);
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)/);
   // no React state per frame: the layer is driven imperatively
   assert.doesNotMatch(FX, /useState|setState/);

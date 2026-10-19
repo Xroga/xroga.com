@@ -52,17 +52,17 @@ export const MEGA_MENUS: Record<MenuKey, MegaMenu> = {
       {
         label: 'Platform',
         items: [
-          { href: '/features', label: 'Overview', note: 'See the full Xroga product.', icon: Sparkles, preview: 'request' },
-          { href: '/software', label: 'Workspace', note: 'Chat, build, inspect, preview and iterate.', icon: LayoutDashboard, preview: 'request' },
-          { href: '/features', label: 'Xroga Intelligence', note: 'Plan and coordinate software work.', icon: Workflow, preview: 'plan' },
+          { href: '/features', label: 'Overview', note: 'See the full Xroga product.', icon: Sparkles, preview: 'overview' },
+          { href: '/software', label: 'Workspace', note: 'Chat, build, inspect, preview and iterate.', icon: LayoutDashboard, preview: 'workspace' },
+          { href: '/features', label: 'Xroga Intelligence', note: 'Plan and coordinate software work.', icon: Workflow, preview: 'intelligence' },
         ],
       },
       {
         label: 'Trust & tools',
         items: [
-          { href: '/features', label: 'Verification', note: 'Tests, builds, evidence and blockers.', icon: ShieldCheck, preview: 'verify' },
-          { href: '/integrations', label: 'Integrations', note: 'Connect apps and services to Xroga.', icon: Boxes, preview: 'plan' },
-          { href: '/github-ai-coding-agent', label: 'GitHub & ownership', note: 'Keep source code in repositories you control.', icon: GitBranch, preview: 'verify' },
+          { href: '/features', label: 'Verification', note: 'Tests, builds, evidence and blockers.', icon: ShieldCheck, preview: 'verification' },
+          { href: '/integrations', label: 'Integrations', note: 'Connect apps and services to Xroga.', icon: Boxes, preview: 'integrations' },
+          { href: '/github-ai-coding-agent', label: 'GitHub & ownership', note: 'Keep source code in repositories you control.', icon: GitBranch, preview: 'ownership' },
         ],
       },
     ],
@@ -120,7 +120,7 @@ export const MEGA_MENUS: Record<MenuKey, MegaMenu> = {
         items: [
           { href: '/ai-coding-agent', label: 'Test & verify', note: 'Run relevant checks and surface failures.', icon: ShieldCheck, preview: 'tests' },
           { href: '/tools/production-readiness-checker', label: 'Production readiness', note: 'Check whether a project is ready to ship.', icon: Search, preview: 'ready' },
-          { href: '/docs', label: 'Developer docs', note: 'Technical reference and workflow guidance.', icon: TerminalSquare, preview: 'tree' },
+          { href: '/docs', label: 'Developer docs', note: 'Technical reference and workflow guidance.', icon: TerminalSquare, preview: 'docs' },
         ],
       },
     ],
@@ -135,17 +135,17 @@ export const MEGA_MENUS: Record<MenuKey, MegaMenu> = {
       {
         label: 'Discover',
         items: [
-          { href: '/showcase', label: 'Showcase', note: 'See real product directions and output.', icon: GalleryHorizontalEnd, preview: 'product' },
-          { href: '/build', label: 'Build categories', note: 'Explore apps, websites, SaaS, tools and more.', icon: Boxes, preview: 'project' },
-          { href: '/learn', label: 'Guides & tutorials', note: 'Learn how to build with Xroga.', icon: BookOpen, preview: 'workflow' },
+          { href: '/showcase', label: 'Showcase', note: 'See real product directions and output.', icon: GalleryHorizontalEnd, preview: 'showcase' },
+          { href: '/build', label: 'Build categories', note: 'Explore apps, websites, SaaS, tools and more.', icon: Boxes, preview: 'categories' },
+          { href: '/learn', label: 'Guides & tutorials', note: 'Learn how to build with Xroga.', icon: BookOpen, preview: 'guides' },
         ],
       },
       {
         label: 'Read',
         items: [
-          { href: '/blog', label: 'Blog', note: 'Product, software and AI-building insights.', icon: FileCode2, preview: 'workflow' },
-          { href: '/compare', label: 'Compare', note: 'Evidence-based comparisons and alternatives.', icon: ShieldCheck, preview: 'integration' },
-          { href: '/docs', label: 'Docs', note: 'Product and technical documentation.', icon: BookOpen, preview: 'integration' },
+          { href: '/blog', label: 'Blog', note: 'Product, software and AI-building insights.', icon: FileCode2, preview: 'blog' },
+          { href: '/compare', label: 'Compare', note: 'Evidence-based comparisons and alternatives.', icon: ShieldCheck, preview: 'compare' },
+          { href: '/docs', label: 'Docs', note: 'Product and technical documentation.', icon: BookOpen, preview: 'docs' },
         ],
       },
     ],

@@ -16,17 +16,17 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ArrowUpRight, ChevronDown, TerminalSquare } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import { Logo } from '@/components/layout/Logo';
 import { createClient } from '@/lib/supabase/client';
 import { PUBLIC_MARKETING_NAV } from '@/lib/publicMarketing';
 import { CONNECT_GROUPS, MEGA_MENUS, type MegaItem, type MegaMenu, type MenuKey } from './nav/navData';
 import { BrandMark, BuildPreview, ConnectDirectory, DevelopPreview, ExplorePreview, ProductPreview } from './nav/MegaPreviews';
-import { NavParticles } from './nav/particles';
+import { LogoOrbit, NavParticles } from './nav/particles';
 import './nav/xroga-nav.css';
 
 const isMenu = (label: string): label is MenuKey => label in MEGA_MENUS;
-const FIRST_PREVIEW: Record<MenuKey, string> = { Product: 'request', Build: 'webapp', Connect: '', Develop: 'diff', Explore: 'product' };
+const FIRST_PREVIEW: Record<MenuKey, string> = { Product: 'overview', Build: 'webapp', Connect: '', Develop: 'diff', Explore: 'showcase' };
 
 function MegaLink({ item, onNavigate, onPreview }: { item: MegaItem; onNavigate: () => void; onPreview: (k: string) => void }) {
   const Icon = item.icon;
@@ -104,6 +104,9 @@ export function PublicMarketingHeader() {
   const panelRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLElement | null>(null);
   const fx = useRef<NavParticles | null>(null);
+  const orbitRef = useRef<HTMLCanvasElement>(null);
+  const orbit = useRef<LogoOrbit | null>(null);
+  const navRef = useRef<HTMLElement>(null);
   const triggers = useRef<Partial<Record<MenuKey, HTMLButtonElement | null>>>({});
   const openTimer = useRef<number>();
   const closeTimer = useRef<number>();
@@ -144,8 +147,9 @@ export function PublicMarketingHeader() {
   useEffect(() => {
     const canvas = canvasRef.current;
     const bar = barRef.current;
-    if (!canvas || !bar || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const p = new NavParticles(canvas, bar);
+    if (!canvas || !bar) return;
+    // reduced motion keeps one still frame of the rim; nothing moves
+    const p = new NavParticles(canvas, bar, matchMedia('(prefers-reduced-motion: reduce)').matches);
     fx.current = p;
     const measure = () => p.resize(ctaRef.current);
     measure();
@@ -158,6 +162,30 @@ export function PublicMarketingHeader() {
       fx.current = null;
     };
   }, [loggedIn]);
+
+  useEffect(() => {
+    const canvas = orbitRef.current;
+    if (!canvas) return;
+    const o = new LogoOrbit(canvas, matchMedia('(prefers-reduced-motion: reduce)').matches);
+    orbit.current = o;
+    return () => {
+      o.destroy();
+      orbit.current = null;
+    };
+  }, []);
+
+  // labels brighten slightly as the pointer approaches them (a CSS variable per label, no React state)
+  const onNavMove = (e: ReactPointerEvent<HTMLElement>) => {
+    if (e.pointerType !== 'mouse') return;
+    for (const el of navRef.current?.querySelectorAll<HTMLElement>('.xn-item') ?? []) {
+      const r = el.getBoundingClientRect();
+      const d = Math.abs(e.clientX - (r.left + r.width / 2)) / (r.width / 2 + 40);
+      el.style.setProperty('--near', Math.max(0, 1 - d).toFixed(2));
+    }
+  };
+  const onNavLeave = () => {
+    for (const el of navRef.current?.querySelectorAll<HTMLElement>('.xn-item') ?? []) el.style.setProperty('--near', '0');
+  };
 
   // the capsule surrounds the hovered item, else the open menu's trigger, else dissolves
   const aim = useCallback(() => {
@@ -223,6 +251,11 @@ export function PublicMarketingHeader() {
   useEffect(() => {
     if (pinned) setHidden(false);
   }, [pinned]);
+  // a hidden bar does no particle work
+  useEffect(() => {
+    fx.current?.setEnabled(!hidden);
+    orbit.current?.setEnabled(!hidden);
+  }, [hidden]);
   useEffect(() => {
     let last = window.scrollY;
     let travel = 0;
@@ -323,9 +356,22 @@ export function PublicMarketingHeader() {
     >
       <div ref={barRef} className="xn-bar">
         <canvas ref={canvasRef} className="xn-particles" aria-hidden="true" />
-        <Logo href="/" variant="homepage" height={38} className="xn-logo" />
+        <span className="xn-brand" onPointerEnter={() => orbit.current?.hover(true)} onPointerLeave={() => orbit.current?.hover(false)}>
+          <Logo href="/" variant="homepage" height={38} className="xn-logo" />
+          <canvas ref={orbitRef} className="xn-orbit" aria-hidden="true" />
+        </span>
 
-        <nav className="xn-nav" aria-label="Primary navigation" onPointerLeave={() => { hoverItem.current = null; aim(); }}>
+        <nav
+          ref={navRef}
+          className="xn-nav"
+          aria-label="Primary navigation"
+          onPointerMove={onNavMove}
+          onPointerLeave={() => {
+            hoverItem.current = null;
+            aim();
+            onNavLeave();
+          }}
+        >
           {PUBLIC_MARKETING_NAV.map((item) => {
             const isCurrent = pathname === item.href;
             if (!isMenu(item.label)) {
@@ -368,7 +414,9 @@ export function PublicMarketingHeader() {
                 }}
                 onKeyDown={onTriggerKey(key)}
                 onClick={() => {
+                  // a click or Enter wins over any pending hover timer (a close armed by an earlier pointer exit)
                   window.clearTimeout(openTimer.current);
+                  window.clearTimeout(closeTimer.current);
                   setActiveMega((value) => (value === key ? null : key));
                 }}
               >
