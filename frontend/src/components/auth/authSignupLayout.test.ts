@@ -5,6 +5,8 @@ import { test } from 'node:test';
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const shell = read('./AuthShell.tsx');
 const showcase = read('./AuthShowcase.tsx');
+const signupForm = read('./SignupForm.tsx');
+const signupStyles = read('./SignupForm.module.css');
 const styles = read('./AuthPowerPanel.module.css');
 
 test('signup is a focused black two-column surface without the duplicate login panel', () => {
@@ -44,13 +46,12 @@ test('the signup story rotates through four focused Xroga capability scenes', ()
   }
 });
 
-test('the story uses five optimized image cards plus twenty real integration marks', () => {
+test('the story uses four optimized image cards plus twenty real integration marks', () => {
   for (const image of [
     'publish-everywhere-clean.webp',
     'connected-work-clean.webp',
     'research-travel-clean.webp',
     'xroga-employees-clean.webp',
-    'seo-aeo-geo-clean.webp',
   ]) {
     assert.ok(showcase.includes(`/brand/auth-stories/${image}`), `${image} is missing from the story`);
     const imageUrl = new URL(`../../../public/brand/auth-stories/${image}`, import.meta.url);
@@ -77,6 +78,29 @@ test('the story uses five optimized image cards plus twenty real integration mar
   assert.match(showcase, /1,500\+ available/);
   assert.match(showcase, /\/brand\/xroga-orb-mark-v2\.webp/);
   assert.doesNotMatch(showcase, /https?:\/\//);
+  assert.match(styles, /\.employeeStage \.heroArt \{ background: #000; \}/);
+  assert.match(styles, /\.employeeStage \.heroArt \.artImage \{ object-fit: contain; object-position: center; \}/);
+});
+
+test('signup keeps theme and profile choices inside a compact glass personalization surface', () => {
+  assert.match(signupForm, /Personalise your workspace/);
+  assert.match(signupForm, /styles\.themeGrid/);
+  assert.match(signupForm, /styles\.avatarRow/);
+  assert.match(signupForm, /styles\.modeSwitch/);
+  assert.match(signupForm, />Sign up<\/span>/);
+  assert.match(signupForm, />Sign in<\/Link>/);
+  assert.doesNotMatch(signupForm, /\bSparkles\b/, 'the AI sparkle icon must stay out of the signup form');
+  assert.match(signupStyles, /backdrop-filter: blur\(26px\) saturate\(155%\)/);
+  assert.match(signupStyles, /font-family: var\(--font-remixa\)/);
+});
+
+test('the create-account action uses an accessible hover-driven galaxy treatment', () => {
+  assert.match(signupForm, /className=\{styles\.galaxyButton\}/);
+  assert.match(signupForm, /styles\.galaxyGlow/);
+  assert.match(signupForm, /styles\.galaxyStars/);
+  assert.match(signupStyles, /\.galaxyButton:hover::before \{ animation: rotateNebula 2\.4s linear infinite/);
+  assert.match(signupStyles, /\.galaxyButton:focus-visible/);
+  assert.match(signupStyles, /@media \(prefers-reduced-motion: reduce\)/);
 });
 
 test('the panel renders graphs, counts, and percentages without animating imagery', () => {
@@ -86,7 +110,7 @@ test('the panel renders graphs, counts, and percentages without animating imager
   assert.match(showcase, /function TrendChart/);
   assert.match(styles, /\.trendChart/);
   assert.doesNotMatch(styles, /@keyframes|animation\s*:/);
-  assert.doesNotMatch(styles, /\.artImage[^}]*transition|\.artImage[^}]*transform/s);
+  assert.doesNotMatch(styles, /\.artImage[^}]*transition|\.artImage[^}]*transform/);
 });
 
 test('every slide shares the black-to-violet gradient and keeps text above and below its image card', () => {

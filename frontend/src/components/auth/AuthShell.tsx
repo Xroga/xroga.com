@@ -359,6 +359,14 @@ export function AuthShell({
          * when the current route is signup.
          */}
         <section
+          style={
+            mode === 'signup'
+              ? {
+                  background:
+                    'radial-gradient(circle at 72% 15%, rgba(133,83,244,.18), transparent 34%), radial-gradient(circle at 10% 88%, rgba(59,130,246,.09), transparent 31%), #07070b',
+                }
+              : undefined
+          }
           className={[
             `
               min-h-0
@@ -378,8 +386,8 @@ export function AuthShell({
               xl:overflow-y-auto
               xl:border-l
               xl:border-[var(--auth-border)]
-              xl:px-8
-              xl:py-6
+              xl:px-7
+              xl:py-5
 
               [scrollbar-width:none]
               [&::-webkit-scrollbar]:hidden

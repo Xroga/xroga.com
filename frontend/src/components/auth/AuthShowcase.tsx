@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import {
-  ArrowUpRight,
   Bot,
   CheckCircle2,
   Globe2,
@@ -220,27 +219,11 @@ export function AuthShowcase() {
               <Image src="/brand/auth-stories/xroga-employees-clean.webp" alt="A clean studio portrait of six specialized Xroga employees"
                 fill sizes="(max-width: 1279px) 90vw, 38vw" className={styles.artImage} />
             </figure>
-            <section className={`${styles.dataPanel} ${styles.growthPanel}`} aria-label="Example visibility growth">
-              <div className={styles.dataPanelHeader}>
-                <span><TrendingUp aria-hidden="true" /> Visibility</span>
-                <strong><ArrowUpRight aria-hidden="true" /> 42%</strong>
-              </div>
-              <TrendChart variant="orange" />
-              <div className={styles.visibilityStats}>
-                <span><Search aria-hidden="true" /><b>SEO</b><strong>+42%</strong></span>
-                <span><CheckCircle2 aria-hidden="true" /><b>AEO</b><strong>78%</strong></span>
-                <span><Globe2 aria-hidden="true" /><b>GEO</b><strong>+31%</strong></span>
-              </div>
-            </section>
-            <figure className={`${styles.secondaryArt} ${styles.visibilityArt}`}>
-              <Image src="/brand/auth-stories/seo-aeo-geo-clean.webp" alt="Clean search, answer, and geographic discovery objects"
-                fill sizes="(max-width: 700px) 42vw, 17vw" className={styles.artImage} />
-            </figure>
           </div>
           <div className={styles.sceneFooter} aria-label="Growth outcomes">
             <span><Bot aria-hidden="true" /> Specialized AI employees</span>
-            <span><TrendingUp aria-hidden="true" /> Business growth</span>
-            <span><Globe2 aria-hidden="true" /> SEO · AEO · GEO</span>
+            <span><TrendingUp aria-hidden="true" /> Business growth +42%</span>
+            <span><Globe2 aria-hidden="true" /> SEO +42% · AEO 78% · GEO +31%</span>
           </div>
         </article>
       </div>

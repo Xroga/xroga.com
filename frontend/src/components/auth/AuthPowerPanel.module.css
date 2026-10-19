@@ -231,14 +231,8 @@
 .integrationCount span { color: #6b7280; }
 .travelArt .artImage { object-position: 52% center; }
 
-.employeeStage .heroArt .artImage { object-position: center 42%; }
-.growthPanel { bottom: 14px; left: 14px; }
-.visibilityArt { height: 37%; }
-.visibilityStats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
-.visibilityStats span { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 2px 4px; border-radius: 9px; padding: 6px 7px; background: #f5f7f9; }
-.visibilityStats svg { grid-row: 1 / 3; width: 13px; height: 13px; color: #64748b; }
-.visibilityStats b { color: #6b7280; font-size: 6px; letter-spacing: .08em; }
-.visibilityStats strong { font-size: 10px; }
+.employeeStage .heroArt { background: #000; }
+.employeeStage .heroArt .artImage { object-fit: contain; object-position: center; }
 
 .sceneFooter {
   position: relative;
@@ -280,7 +274,7 @@
 }
 
 @media (max-width: 700px) {
-  .panel { min-height: 620px; }
+  .panel { min-height: 540px; }
   .header { top: 18px; left: 20px; }
   .logo { width: 28px; height: 28px; }
   .slide { padding: 67px 20px 50px; }
@@ -288,11 +282,11 @@
   .slide h2 { font-size: clamp(36px, 10vw, 48px); }
   .introCopy h2 { font-size: clamp(43px, 11.5vw, 56px); }
   .sceneCopy > p:last-child { max-width: 430px; font-size: 10px; }
-  .visualStage { min-height: 286px; margin-top: 16px; }
+  .visualStage { min-height: 230px; margin-top: 14px; }
   .heroArt { border-radius: 18px; }
   .secondaryArt { right: 10px; bottom: 10px; width: 34%; height: 34%; border-radius: 12px; }
   .dataPanel { width: 59%; padding: 10px; }
-  .launchPanel, .growthPanel { bottom: 10px; left: 10px; }
+  .launchPanel { bottom: 10px; left: 10px; }
   .trendChart { height: 54px; }
   .appGrid { top: 10px; left: 10px; grid-template-columns: repeat(5, 30px); gap: 4px; padding: 7px; }
   .appMark { width: 30px; height: 30px; border-radius: 8px; }
@@ -306,7 +300,7 @@
 }
 
 @media (max-width: 480px) {
-  .panel { min-height: 610px; }
+  .panel { min-height: 520px; }
   .slide { padding: 65px 16px 47px; }
   .introSlide { padding: 76px 17px 58px; }
   .eyebrow { margin-bottom: 9px; font-size: 7px; }
@@ -317,7 +311,7 @@
   .metricsStrip span { min-width: 0; flex: 1; padding: 9px 8px; }
   .metricsStrip strong { font-size: 14px; }
   .metricsStrip small { font-size: 5.5px; }
-  .visualStage { min-height: 279px; margin-top: 13px; }
+  .visualStage { min-height: 225px; margin-top: 12px; }
   .dataPanel { width: calc(100% - 20px); }
   .secondaryArt { display: none; }
   .appGrid { grid-template-columns: repeat(5, 28px); }
@@ -325,7 +319,6 @@
   .xrogaHub { left: auto; right: -48px; }
   .integrationCount { right: 10px; bottom: 10px; left: auto; }
   .kpiRow small { font-size: 5.5px; }
-  .visibilityStats b { font-size: 5.5px; }
   .sceneFooter span { font-size: 6px; }
   .dots button { width: 25px; }
 }
