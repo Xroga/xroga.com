@@ -39,7 +39,7 @@ export function registerWebAccountingTests(admin:SupabaseClient,getUsers:()=>rea
    await locker.query('begin');const pid=(await locker.query('select pg_backend_pid() pid')).rows[0].pid;
    await locker.query('update public.xroga_billing_cycles set user_id=$2 where id=$1',[cycle.data.id,other]);
    pending=recordWebSpend({...admitted,providerRequestId:`web-stale-${randomUUID()}`});void pending.catch(()=>{});let blocked=false;
-   for(let n=0;n<150;n++){const waiting=await locker.query("select count(*)::int n from pg_stat_activity a where a.pid<>pg_backend_pid() and $1=any(pg_blocking_pids(a.pid)) and a.query ilike '%xroga_web_usage%'",[pid]);if(waiting.rows[0].n>0){blocked=true;break;}await delay(20);}
+   for(let n=0;n<150;n++){await locker.query('select pg_stat_clear_snapshot()');const waiting=await locker.query("select count(*)::int n from pg_stat_activity a where a.pid<>pg_backend_pid() and $1=any(pg_blocking_pids(a.pid)) and a.query ilike '%xroga_web_usage%'",[pid]);if(waiting.rows[0].n>0){blocked=true;break;}await delay(20);}
    assert.equal(blocked,true,'Must observe the actual stale-parent insert waiting on this cycle transaction');await locker.query('commit');await pending;pending=undefined;assert.deepEqual(await rows(),[]);
   }finally{await locker.query('rollback');if(pending)await pending;await locker.end();}
   const transferred=await admin.from('xroga_billing_cycles').select('user_id').eq('id',cycle.data.id).single();assert.equal(transferred.error,null);assert.equal(transferred.data.user_id,other);

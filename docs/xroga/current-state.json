@@ -2094,6 +2094,7 @@
       "callers": [
         "backend/src/ai/buildImprovementMemory.test.ts:12",
         "backend/src/ai/pipeline.ts:233",
+        "backend/src/security/learningOwnerReads.local.integration.ts:5",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:34",
         "backend/src/synthesis/universalEntrypoint.ts:88"
       ],
@@ -2114,6 +2115,7 @@
       ],
       "testCoverage": [
         "backend/src/ai/buildImprovementMemory.test.ts",
+        "backend/src/security/learningOwnerReads.local.integration.ts",
         "backend/src/synthesis/reliability/step7cReliability.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -2291,7 +2293,7 @@
         "backend/src/ai/runStore.ts:16",
         "backend/src/ai/step7LearningStrategy.test.ts:12",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:26",
+        "backend/src/security/tenantIsolation.local.integration.ts:29",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:41"
       ],
       "reachable": true,
@@ -2382,6 +2384,7 @@
       "callers": [
         "backend/src/ai/buildOutcomeRoutingMemory.test.ts:8",
         "backend/src/ai/pipeline.ts:232",
+        "backend/src/security/learningOwnerReads.local.integration.ts:6",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:29",
         "backend/src/synthesis/universalEntrypoint.ts:83"
       ],
@@ -2399,6 +2402,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/buildOutcomeRoutingMemory.test.ts",
+        "backend/src/security/learningOwnerReads.local.integration.ts",
         "backend/src/synthesis/reliability/step7cReliability.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -2527,6 +2531,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:234",
         "backend/src/ai/step7LearningStrategy.test.ts:21",
+        "backend/src/security/learningOwnerReads.local.integration.ts:7",
         "backend/src/synthesis/productIntelligence.ts:18",
         "backend/src/synthesis/universalFlow.ts:24"
       ],
@@ -2545,7 +2550,8 @@
         "backend/src/ai/buildStrategyMemory.ts#candidateEvidence"
       ],
       "testCoverage": [
-        "backend/src/ai/step7LearningStrategy.test.ts"
+        "backend/src/ai/step7LearningStrategy.test.ts",
+        "backend/src/security/learningOwnerReads.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -3466,7 +3472,7 @@
         "backend/src/hardening/launchHardening.test.ts:47",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts:7",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:22",
+        "backend/src/security/tenantIsolation.local.integration.ts:25",
         "backend/src/security/workerProjectAdmission.local.integration.ts:8",
         "backend/src/security/workerProjectAdmission.test.ts:6",
         "backend/src/security/workerRevision.local.integration.ts:8",
@@ -3950,7 +3956,7 @@
         "backend/src/ai/buildOutcomeMemory.ts:10",
         "backend/src/ai/buildOutcomeRoutingMemory.ts:9",
         "backend/src/ai/buildStrategyMemory.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:29",
+        "backend/src/security/tenantIsolation.local.integration.ts:32",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:24"
       ],
       "reachable": true,
@@ -5941,7 +5947,7 @@
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:27",
         "backend/src/security/confirmationMetadata.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:35",
+        "backend/src/security/tenantIsolation.local.integration.ts:38",
         "backend/src/services/BillingService.ts:14",
         "backend/src/services/integrations/businessAction.ts:11",
         "backend/src/services/integrations/businessRead.ts:7"
@@ -7011,7 +7017,7 @@
       "callers": [
         "backend/src/ai/runReconciler.test.ts:3",
         "backend/src/index.ts:49",
-        "backend/src/security/tenantIsolation.local.integration.ts:16"
+        "backend/src/security/tenantIsolation.local.integration.ts:19"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -7198,7 +7204,7 @@
         "backend/src/security/runTraceAttempt.local.integration.ts:7",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts:7",
         "backend/src/security/tenantIsolation.integration.test.ts:13",
-        "backend/src/security/tenantIsolation.local.integration.ts:36",
+        "backend/src/security/tenantIsolation.local.integration.ts:39",
         "backend/src/security/workerProjectAdmission.local.integration.ts:7",
         "backend/src/security/workerProjectAdmission.test.ts:8",
         "backend/src/security/workerRevision.local.integration.ts:7",
@@ -12352,7 +12358,7 @@
         "backend/src/growth/sharedWriteAdmission.test.ts:4",
         "backend/src/routes/growth.ts:5",
         "backend/src/security/growthReferral.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:37"
+        "backend/src/security/tenantIsolation.local.integration.ts:40"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -15424,7 +15430,7 @@
       "id": "surface:bd41a7e2f60985200cff",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383",
+      "sha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
       "symbols": [
         "HOP_BY_HOP",
         "PreviewTarget",
@@ -15471,7 +15477,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:63"
+        "backend/src/index.ts:63",
+        "backend/src/security/previewConsumer.local.integration.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -15492,7 +15499,9 @@
       "evidenceBoundary": [
         "backend/src/middleware/runtimePreviewGateway.ts#verifyLivePreviewSignature"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/security/previewConsumer.local.integration.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -17997,7 +18006,7 @@
       "callers": [
         "backend/src/index.ts:24",
         "backend/src/routes/billingWebhook.test.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:10",
+        "backend/src/security/tenantIsolation.local.integration.ts:13",
         "backend/src/services/billingOwnership.local.integration.ts:6"
       ],
       "reachable": true,
@@ -21050,7 +21059,7 @@
         "backend/src/security/ownedRunHeartbeat.test.ts:5",
         "backend/src/security/ownedRunPersistence.test.ts:4",
         "backend/src/security/swarmHeartbeat.local.integration.ts:8",
-        "backend/src/security/tenantIsolation.local.integration.ts:14",
+        "backend/src/security/tenantIsolation.local.integration.ts:17",
         "backend/src/synthesis/projectRuntime/store.ts:11",
         "backend/src/synthesis/universalPersistence.ts:25"
       ],
@@ -21172,7 +21181,7 @@
         "backend/src/ai/pipeline.ts:3",
         "backend/src/security/ownership.test.ts:5",
         "backend/src/security/tenantIsolation.integration.test.ts:16",
-        "backend/src/security/tenantIsolation.local.integration.ts:13",
+        "backend/src/security/tenantIsolation.local.integration.ts:16",
         "backend/src/services/storage/projectFiles.ts:5"
       ],
       "reachable": true,
@@ -21396,7 +21405,7 @@
         "backend/src/security/swarmHeartbeat.local.integration.ts:7",
         "backend/src/security/tenantContext.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:15",
-        "backend/src/security/tenantIsolation.local.integration.ts:12",
+        "backend/src/security/tenantIsolation.local.integration.ts:15",
         "backend/src/security/terminalIdentity.local.integration.ts:5",
         "backend/src/security/usageAccounting.local.integration.ts:8",
         "backend/src/security/workerProjectAdmission.test.ts:7",
@@ -21479,6 +21488,7 @@
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/universalOwnerReads.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.test.ts",
         "backend/src/services/ensureUserRecords.receipt.test.ts",
@@ -21705,7 +21715,7 @@
         "backend/src/routes/billing.ts:3",
         "backend/src/routes/billingWebhook.test.ts:7",
         "backend/src/routes/billingWebhook.ts:3",
-        "backend/src/security/tenantIsolation.local.integration.ts:45",
+        "backend/src/security/tenantIsolation.local.integration.ts:48",
         "backend/src/services/BillingService.budget.test.ts:3",
         "backend/src/services/BillingService.checkoutOwnership.test.ts:3",
         "backend/src/services/BillingService.test.ts:4",
@@ -22498,7 +22508,7 @@
         "backend/src/security/credentialReadMatrix.local.integration.ts:7",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:8",
         "backend/src/security/supabaseBundle.local.integration.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:31",
+        "backend/src/security/tenantIsolation.local.integration.ts:34",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:6",
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
@@ -22729,7 +22739,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.ts:58",
         "backend/src/routes/github.settings.test.ts:17",
         "backend/src/routes/github.ts:8",
-        "backend/src/security/tenantIsolation.local.integration.ts:32",
+        "backend/src/security/tenantIsolation.local.integration.ts:35",
         "backend/src/services/integrations/githubAuth.revocation.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:15",
         "backend/src/services/publish/easPublish.ts:12",
@@ -23483,7 +23493,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:30",
+        "backend/src/security/tenantIsolation.local.integration.ts:33",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:3",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:5",
         "backend/src/services/integrations/githubAuth.ts:2",
@@ -23623,7 +23633,7 @@
       "callers": [
         "backend/src/routes/github.ts:7",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:34",
+        "backend/src/security/tenantIsolation.local.integration.ts:37",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:6",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:5",
@@ -23701,7 +23711,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:890",
+        "backend/src/security/tenantIsolation.local.integration.ts:896",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -23986,7 +23996,7 @@
         "backend/src/routes/supabaseOAuth.ts:21",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:6",
         "backend/src/security/providerKeyRevision.local.integration.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:46",
+        "backend/src/security/tenantIsolation.local.integration.ts:49",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
         "backend/src/services/integrations/userProviderKeys.ts:1159",
@@ -24219,7 +24229,7 @@
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:11",
         "backend/src/security/providerKeyRevision.local.integration.ts:6",
         "backend/src/security/supabaseBundle.local.integration.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:15",
+        "backend/src/security/tenantIsolation.local.integration.ts:18",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:4",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:58",
@@ -24422,7 +24432,7 @@
         "backend/src/routes/supabaseOAuth.ts:35",
         "backend/src/routes/vercel.ts:5",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:10",
-        "backend/src/security/tenantIsolation.local.integration.ts:33",
+        "backend/src/security/tenantIsolation.local.integration.ts:36",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:5",
         "backend/src/services/integrations/githubDeploy.ts:16",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:5",
@@ -24715,7 +24725,7 @@
       ],
       "callers": [
         "backend/src/routes/swarm.ts:11",
-        "backend/src/security/tenantIsolation.local.integration.ts:18",
+        "backend/src/security/tenantIsolation.local.integration.ts:21",
         "backend/src/services/notificationService.receipt.test.ts:4",
         "backend/src/services/notificationService.test.ts:3"
       ],
@@ -25505,7 +25515,7 @@
       ],
       "entryPoints": [],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:17",
+        "backend/src/security/tenantIsolation.local.integration.ts:20",
         "backend/src/services/responseCache.receipt.test.ts:4",
         "backend/src/services/responseCache.test.ts:4"
       ],
@@ -26229,7 +26239,7 @@
       "callers": [
         "backend/src/lib/r2.ts:3",
         "backend/src/routes/projects.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:40",
+        "backend/src/security/tenantIsolation.local.integration.ts:43",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.ts:6",
         "backend/src/services/storage/projectFiles.receipt.test.ts:6",
@@ -26343,7 +26353,7 @@
       ],
       "callers": [
         "backend/src/routes/projects.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:39",
+        "backend/src/security/tenantIsolation.local.integration.ts:42",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5"
       ],
       "reachable": true,
@@ -26410,7 +26420,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/security/tenantIsolation.integration.test.ts:14",
-        "backend/src/security/tenantIsolation.local.integration.ts:38",
+        "backend/src/security/tenantIsolation.local.integration.ts:41",
         "backend/src/services/memory/buildProjectStore.ts:8",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7",
         "backend/src/services/storage/projectFiles.receipt.test.ts:5"
@@ -26802,7 +26812,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:25",
+        "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/security/universalOwnerReads.local.integration.ts:9",
         "backend/src/synthesis/followUpAndRegression.test.ts:23",
         "backend/src/synthesis/securityControls.test.ts:14",
         "backend/src/synthesis/universalArchitecture.test.ts:21",
@@ -26819,6 +26830,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/universalOwnerReads.local.integration.ts",
         "backend/src/synthesis/followUpAndRegression.test.ts",
         "backend/src/synthesis/securityControls.test.ts",
         "backend/src/synthesis/universalArchitecture.test.ts",
@@ -27899,6 +27911,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/universalOwnerReads.local.integration.ts",
         "backend/src/synthesis/dynamicPlanning.test.ts",
         "backend/src/synthesis/universalPersistence.test.ts"
       ],
@@ -28782,7 +28795,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:29",
-        "backend/src/security/tenantIsolation.local.integration.ts:41",
+        "backend/src/security/tenantIsolation.local.integration.ts:44",
         "backend/src/synthesis/livePreview/access.test.ts:5",
         "backend/src/synthesis/livePreview/store.ts:9"
       ],
@@ -29196,6 +29209,7 @@
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:31",
         "backend/src/routes/projectRuntime.ts:26",
+        "backend/src/security/previewConsumer.local.integration.ts:9",
         "backend/src/synthesis/livePreview/coordinator.ts:34",
         "backend/src/synthesis/livePreview/index.ts:5",
         "backend/src/synthesis/livePreview/livePreview.test.ts:20"
@@ -29213,6 +29227,7 @@
         "backend/src/synthesis/livePreview/signing.ts#verifyLivePreviewSignature"
       ],
       "testCoverage": [
+        "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/synthesis/livePreview/livePreview.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -29303,8 +29318,9 @@
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:26",
         "backend/src/routes/projectRuntime.ts:21",
+        "backend/src/security/previewConsumer.local.integration.ts:8",
         "backend/src/security/previewGrantAdmission.local.integration.ts:9",
-        "backend/src/security/tenantIsolation.local.integration.ts:44",
+        "backend/src/security/tenantIsolation.local.integration.ts:47",
         "backend/src/synthesis/livePreview/coordinator.ts:28",
         "backend/src/synthesis/livePreview/index.ts:3",
         "backend/src/synthesis/livePreview/store.receipt.test.ts:6"
@@ -29329,6 +29345,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/livePreview/store.receipt.test.ts"
@@ -30490,7 +30507,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:21",
+        "backend/src/security/tenantIsolation.local.integration.ts:24",
         "backend/src/synthesis/projectRuntime/index.ts:5",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:36"
       ],
@@ -30659,6 +30676,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:141",
+        "backend/src/security/previewConsumer.local.integration.ts:6",
         "backend/src/security/previewGrantAdmission.local.integration.ts:7",
         "backend/src/security/runtimeEventParent.local.integration.ts:7",
         "backend/src/security/runtimeIdentity.local.integration.ts:7",
@@ -30666,7 +30684,7 @@
         "backend/src/security/runtimeProjectBinding.test.ts:6",
         "backend/src/security/runtimeSecretRead.local.integration.ts:5",
         "backend/src/security/runtimeTerminal.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:20",
+        "backend/src/security/tenantIsolation.local.integration.ts:23",
         "backend/src/security/workerProjectAdmission.local.integration.ts:11",
         "backend/src/security/workerRevision.local.integration.ts:9",
         "backend/src/synthesis/livePreview/store.receipt.test.ts:4",
@@ -30712,6 +30730,7 @@
         "backend/src/synthesis/projectRuntime/store.ts#event"
       ],
       "testCoverage": [
+        "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/runtimeEventParent.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
@@ -30792,6 +30811,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
@@ -31211,7 +31231,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:27",
+        "backend/src/security/tenantIsolation.local.integration.ts:30",
         "backend/src/synthesis/researchEvidence.test.ts:15",
         "backend/src/synthesis/universalPersistence.test.ts:20"
       ],
@@ -32937,7 +32957,8 @@
       ],
       "callers": [
         "backend/src/security/repositorySnapshot.local.integration.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:23",
+        "backend/src/security/tenantIsolation.local.integration.ts:26",
+        "backend/src/security/universalOwnerReads.local.integration.ts:7",
         "backend/src/synthesis/followUpAndRegression.test.ts:24",
         "backend/src/synthesis/universalEntrypoint.test.ts:20",
         "backend/src/synthesis/universalEntrypoint.ts:46",
@@ -32974,6 +32995,7 @@
       "testCoverage": [
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/universalOwnerReads.local.integration.ts",
         "backend/src/synthesis/browserGateVerification.test.ts",
         "backend/src/synthesis/followUpAndRegression.test.ts",
         "backend/src/synthesis/universalEntrypoint.test.ts",
@@ -33059,7 +33081,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:24",
+        "backend/src/security/tenantIsolation.local.integration.ts:27",
+        "backend/src/security/universalOwnerReads.local.integration.ts:8",
         "backend/src/synthesis/followUpAndRegression.test.ts:22",
         "backend/src/synthesis/securityControls.test.ts:15",
         "backend/src/synthesis/universalArchitecture.test.ts:14",
@@ -33080,6 +33103,7 @@
       ],
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/universalOwnerReads.local.integration.ts",
         "backend/src/synthesis/followUpAndRegression.test.ts",
         "backend/src/synthesis/securityControls.test.ts",
         "backend/src/synthesis/universalArchitecture.test.ts",
@@ -86466,12 +86490,14 @@
         "node:url"
       ],
       "runtimeImports": [],
-      "entryPoints": [],
+      "entryPoints": [
+        "scripts/xroga/validate-requirements-ledger.mjs"
+      ],
       "callers": [
         "scripts/xroga/private-research.test.mjs:4",
         "scripts/xroga/reconcile-requirements.mjs:8"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:crypto",
@@ -86491,11 +86517,11 @@
       "testCoverage": [
         "scripts/xroga/private-research.test.mjs"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -86523,7 +86549,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "scripts/xroga/inventory.mjs"
+        "scripts/xroga/inventory.mjs",
+        "scripts/xroga/validate-requirements-ledger.mjs"
       ],
       "callers": [
         "scripts/xroga/inventory.mjs:7",
@@ -87184,14 +87211,16 @@
         "scripts/xroga/research-candidates.mjs",
         "scripts/xroga/supplemental-owners.mjs"
       ],
-      "entryPoints": [],
+      "entryPoints": [
+        "scripts/xroga/validate-requirements-ledger.mjs"
+      ],
       "callers": [
         "scripts/xroga/phase-one.mjs:7",
         "scripts/xroga/requirements.test.mjs:5",
         "scripts/xroga/validate-requirements-ledger.mjs:4",
         "scripts/xroga/verify-phase-one.mjs:13"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "declared-host:chatgpt.com",
@@ -87213,11 +87242,11 @@
       "testCoverage": [
         "scripts/xroga/requirements.test.mjs"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -87259,13 +87288,15 @@
         "scripts/xroga/inventory-schema.mjs",
         "scripts/xroga/supplemental-owners.mjs"
       ],
-      "entryPoints": [],
+      "entryPoints": [
+        "scripts/xroga/validate-requirements-ledger.mjs"
+      ],
       "callers": [
         "scripts/xroga/reconcile-requirements.mjs:7",
         "scripts/xroga/requirements.test.mjs:6",
         "scripts/xroga/validate-requirements-ledger.mjs:5"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "zod"
@@ -87278,11 +87309,11 @@
       "testCoverage": [
         "scripts/xroga/requirements.test.mjs"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -87310,11 +87341,13 @@
         "node:url"
       ],
       "runtimeImports": [],
-      "entryPoints": [],
+      "entryPoints": [
+        "scripts/xroga/validate-requirements-ledger.mjs"
+      ],
       "callers": [
         "scripts/xroga/reconcile-requirements.mjs:6"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:child_process",
@@ -87329,11 +87362,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -87696,13 +87729,15 @@
         "node:crypto"
       ],
       "runtimeImports": [],
-      "entryPoints": [],
+      "entryPoints": [
+        "scripts/xroga/validate-requirements-ledger.mjs"
+      ],
       "callers": [
         "scripts/xroga/reconcile-requirements.mjs:9",
         "scripts/xroga/requirements-schema.mjs:3",
         "scripts/xroga/supplemental-owners.test.mjs:4"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:assert/strict",
@@ -87716,11 +87751,11 @@
       "testCoverage": [
         "scripts/xroga/supplemental-owners.test.mjs"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -87806,11 +87841,13 @@
         "scripts/xroga/reconcile-requirements.mjs",
         "scripts/xroga/requirements-schema.mjs"
       ],
-      "entryPoints": [],
+      "entryPoints": [
+        "scripts/xroga/validate-requirements-ledger.mjs"
+      ],
       "callers": [
         "scripts/xroga/requirements.test.mjs:7"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:fs",
@@ -87825,11 +87862,11 @@
       "testCoverage": [
         "scripts/xroga/requirements.test.mjs"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -96438,6 +96475,13 @@
       "version": "20261019000700",
       "order": 125,
       "sha256": "79dd196e56d27ee5c5598274d0e5d4bb42e7ecffe0ea585f91cbd1d717c85534"
+    },
+    {
+      "id": "migration:bdd04ade487dd4d0dd0d",
+      "sourcePath": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+      "version": "20261019000800",
+      "order": 126,
+      "sha256": "f739a5ce2e6de14bcc27411db76583faefaf27aa10fccc5bb676d41db87543a5"
     }
   ],
   "workflows": [
@@ -96547,12 +96591,13 @@
     {
       "id": "workflow:cd0effce06f425599e96",
       "sourcePath": ".github/workflows/unit-tests.yml",
-      "sha256": "5a174daa65b809bb9e3759036cddcca5bd6533c7cf3127f6b2d946434a83efd6",
+      "sha256": "60d2f50de15081db9d42b125c4feb8229b9a809a316c88c0b3234a8c1652b84a",
       "sourceEntrypoints": [
         "scripts/ci/compare-baseline-runs.mjs",
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/xroga/inventory.mjs",
-        "scripts/xroga/phase-two.mjs"
+        "scripts/xroga/phase-two.mjs",
+        "scripts/xroga/validate-requirements-ledger.mjs"
       ],
       "hasSchedule": false
     },
@@ -100213,7 +100258,7 @@
       "sourcePath": "scripts/xroga/reconcile-requirements.mjs",
       "line": 175,
       "kind": "PLACEHOLDER",
-      "reachable": false,
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -104768,6 +104813,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:46003c12b4ca53e80de6",
+      "sourcePath": "backend/src/security/learningOwnerReads.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9a3f2cdf99fa97b3092e",
       "sourcePath": "backend/src/security/mcpDependency.test.ts",
       "declaredTests": 4,
@@ -104827,6 +104879,13 @@
       "id": "test-suite:b9d70f75192f738faed9",
       "sourcePath": "backend/src/security/platformHealth.local.integration.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:cbc79040d29aae441a9e",
+      "sourcePath": "backend/src/security/previewConsumer.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -105009,6 +105068,13 @@
       "id": "test-suite:f6e8f9bf3ae1d7321b00",
       "sourcePath": "backend/src/security/terminalIdentity.local.integration.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:836484ed30991d2cd334",
+      "sourcePath": "backend/src/security/universalOwnerReads.local.integration.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

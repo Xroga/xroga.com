@@ -1949,6 +1949,107 @@
         "Authenticate changed-source complete branch/integrated and fresh/upgrade evidence",
         "Reconcile only these three verified007 caller outcomes, preserving independent008 budgets and provider egress"
       ]
+    },
+    {
+      "packetId": "B1-P2-76b294c090331cc4",
+      "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "EXISTING_OWNERSHIP_PATH_TRACED_TARGETED_CONSUMER_PROOF_PREPARED",
+      "actorTrace": "Pipeline retains its issued actor before the sole production default reader. Exact owner predicate, bounded sanitized advisory projection, existing freshness/order/limit and no writes.",
+      "invariant": "Only the original issued owner namespace or the existing exact signed-capability exception may reach these specific read/revoke paths. Foreign owners, substituted parents and unavailable authority cannot select another tenant data. Original007 scope only.",
+      "evidence": [
+        {
+          "path": "backend/src/security/learningOwnerReads.local.integration.ts",
+          "type": "ACTUAL_DISPOSABLE_CONSUMER_MATRIX_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Execute the exact new disposable case and authenticate its complete successful source-bound run",
+        "Reconcile exact proven callers in both existing record systems, retaining all other and later-phase scope"
+      ]
+    },
+    {
+      "packetId": "B1-P2-15382bc411fb9f9b",
+      "sourceSha256": "bfa3804acb045b2a53877859dbd03f288a6db28533528972e31b3a6d8bdee902",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "EXISTING_OWNERSHIP_PATH_TRACED_TARGETED_CONSUMER_PROOF_PREPARED",
+      "actorTrace": "The sole production pipeline caller uses the immutable issued owner. Existing default query selects only that user outcomes before bounded advisory aggregation. No provider account or external action.",
+      "invariant": "Only the original issued owner namespace or the existing exact signed-capability exception may reach these specific read/revoke paths. Foreign owners, substituted parents and unavailable authority cannot select another tenant data. Original007 scope only.",
+      "evidence": [
+        {
+          "path": "backend/src/security/learningOwnerReads.local.integration.ts",
+          "type": "ACTUAL_DISPOSABLE_CONSUMER_MATRIX_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Execute the exact new disposable case and authenticate its complete successful source-bound run",
+        "Reconcile exact proven callers in both existing record systems, retaining all other and later-phase scope"
+      ]
+    },
+    {
+      "packetId": "B1-P2-ecfadcff49b9bfe6",
+      "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "EXISTING_OWNERSHIP_PATH_TRACED_TARGETED_CONSUMER_PROOF_PREPARED",
+      "actorTrace": "Existing default reader is called only by the issued-owner pipeline. Exact user scope precedes existing sanitized recipe/taxonomy summarization. Source table explicitly stores owner-wide evaluation metadata without raw source or prompts.",
+      "invariant": "Only the original issued owner namespace or the existing exact signed-capability exception may reach these specific read/revoke paths. Foreign owners, substituted parents and unavailable authority cannot select another tenant data. Original007 scope only.",
+      "evidence": [
+        {
+          "path": "backend/src/security/learningOwnerReads.local.integration.ts",
+          "type": "ACTUAL_DISPOSABLE_CONSUMER_MATRIX_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Execute the exact new disposable case and authenticate its complete successful source-bound run",
+        "Reconcile exact proven callers in both existing record systems, retaining all other and later-phase scope"
+      ]
+    },
+    {
+      "packetId": "B1-P2-11526c9c3e6a8aa3",
+      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "EXISTING_OWNERSHIP_PATH_TRACED_TARGETED_CONSUMER_PROOF_PREPARED",
+      "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
+      "invariant": "Only the original issued owner namespace or the existing exact signed-capability exception may reach these specific read/revoke paths. Foreign owners, substituted parents and unavailable authority cannot select another tenant data. Original007 scope only.",
+      "evidence": [
+        {
+          "path": "backend/src/security/previewConsumer.local.integration.ts",
+          "type": "ACTUAL_DISPOSABLE_CONSUMER_MATRIX_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Execute the exact new disposable case and authenticate its complete successful source-bound run",
+        "Reconcile exact proven callers in both existing record systems, retaining all other and later-phase scope"
+      ]
+    },
+    {
+      "packetId": "B1-P2-f1384a65c2d70a16",
+      "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "REPRODUCED_PLAN_SPEC_PARENT_RACE_COMPOSITE_FK_AND_CONSUMER_PROOF_PREPARED",
+      "actorTrace": "The admitted universal pipeline supplies its issued owner/project/run to the existing scoped store. loadLatestSpec/loadLatestPlan/loadMutations constrain owner/project and, for mutations, run. savePlan checks a selected spec before the existing owned persistence helper. Original spec-id-only FK permits that parent to change owners after preflight. The new composite FK binds spec/owner/project at decisive insert/update and serializes current parent changes. Owner-bound repository delete remains unchanged.",
+      "invariant": "A stored plan may reference only a spec with its exact current owner and logical project. Reads and deletion must preserve owner/project/run namespaces and reject non-issued or foreign scope. Optional parent deletion clears only the spec link.",
+      "evidence": [
+        {
+          "path": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+          "type": "SYNTHETIC_DATABASE_BEFORE_AFTER_AND_HISTORY_REFUSAL",
+          "result": "PASS_NOT_REAL_CONCURRENCY_ACCEPTANCE"
+        },
+        {
+          "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+          "type": "ACTUAL_DISPOSABLE_DEFAULT_READ_AND_HELD_PARENT_LOCK_CASES_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Run actual Supabase current-parent lock wait and exact namespace/deletion cases",
+        "Authenticate fresh/upgrade and repeated branch/integrated final source",
+        "Reconcile exactly these five original007 caller sites, preserving every later-phase obligation"
+      ]
     }
   ]
 }

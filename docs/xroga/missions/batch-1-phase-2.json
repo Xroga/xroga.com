@@ -9,6 +9,11 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+    "backend/src/security/universalOwnerReads.local.integration.ts",
+    "backend/src/middleware/runtimePreviewGateway.ts",
+    "backend/src/security/previewConsumer.local.integration.ts",
+    "backend/src/security/learningOwnerReads.local.integration.ts",
     "backend/src/security/connectedMemoryConsumer.local.integration.ts",
     "backend/src/ai/memoryReadAuthority.test.ts",
     "backend/src/ai/sessionMemory.ts",
@@ -130,6 +135,7 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
+      "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
       "supabase/migrations/20261019000700_web_usage_cycle_owner.sql",
       "supabase/migrations/20261019000600_current_profile_setup.sql",
       "supabase/migrations/20261019000500_growth_shared_write_admission.sql",
@@ -140,8 +146,8 @@
       "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
       "supabase/migrations/20261019000300_worker_database_project_admission.sql"
     ],
-    "rollout": "Disposable CI only. A composite web-accounting cycle/owner FK serializes current-parent writes, preserves null-cycle deletion and stops on existing invalid rows without rewriting them. No-argument current-subject setup projection retains restrictive public profile columns and policies. Shared growth admission retains existing locks. No new tables, data rewrite or production DDL. Preserve browser grants/RLS, worker guards and safe cancellation.",
-    "rollback": "Withhold affected accounting/setup entry points before withdrawing their FK/projection. Do not re-enable cross-owner cycle attribution or grant private onboarding to public readers. Preserve restrictive grants, RLS and verified growth/worker fences. Any production rollout or privilege/constraint rollback requires separate approval."
+    "rollout": "Disposable CI only. A composite web-accounting cycle/owner FK serializes current-parent writes, preserves null-cycle deletion and stops on existing invalid rows without rewriting them. No-argument current-subject setup projection retains restrictive public profile columns and policies. Shared growth admission retains existing locks. No new tables, data rewrite or production DDL. Preserve browser grants/RLS, worker guards and safe cancellation. Composite universal plan/spec owner/project FK likewise serializes current-parent writes, preserves optional spec deletion and refuses invalid history without rewrite. Disposable only.",
+    "rollback": "Withhold affected accounting/setup entry points before withdrawing their FK/projection. Do not re-enable cross-owner cycle attribution or grant private onboarding to public readers. Preserve restrictive grants, RLS and verified growth/worker fences. Any production rollout or privilege/constraint rollback requires separate approval. Preserve the universal parent FK. Any withdrawal requires first withholding its sensitive plan entry point and separate production approval."
   },
   "securityImpact": {
     "auth": {

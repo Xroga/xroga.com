@@ -37,6 +37,7 @@ jobs:
         run: |
           node scripts/xroga/phase-two.mjs
           node scripts/xroga/inventory.mjs --check
+          node scripts/xroga/validate-requirements-ledger.mjs
 
       - name: Install pinned browser for existing local browser integration tests
         env:
@@ -85,6 +86,7 @@ jobs:
         run: |
           node scripts/xroga/phase-two.mjs
           node scripts/xroga/inventory.mjs --check
+          node scripts/xroga/validate-requirements-ledger.mjs
       - name: Install the same pinned browser for integrated regression
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright

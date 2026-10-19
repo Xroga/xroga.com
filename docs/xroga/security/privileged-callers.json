@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ee37f77cb317f9c066bdc8471c05aaf107bcbaa4912e9fe8eccb1ed9f85f5eba",
+  "reviewRegistrySha256": "a21112f3d7d3c7b4d68196a138e18c3f87d7f06f24baefa9dfa4a3a8eae063a6",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6956,7 +6956,7 @@
       }
     },
     {
-      "id": "37aeba5e7ba598d930da",
+      "id": "b9d29af2f2ef47d2dbd8",
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
       "line": 588,
       "enclosing": "attachRuntimePreviewWebSocketGateway",
@@ -6964,7 +6964,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383",
+      "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in attachRuntimePreviewWebSocketGateway. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -16186,6 +16186,14 @@
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
             "marker": "mutation history binds the requested project"
+          },
+          {
+            "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+            "marker": "real universal plan parent ownership rechecks after an observed insert lock wait and preserves optional deletion receipts"
+          },
+          {
+            "path": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+            "marker": "architecture_plans_spec_owner_project_fkey"
           }
         ]
       }
@@ -16207,6 +16215,14 @@
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
             "marker": "mutation history binds the requested project"
+          },
+          {
+            "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+            "marker": "real universal plan parent ownership rechecks after an observed insert lock wait and preserves optional deletion receipts"
+          },
+          {
+            "path": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+            "marker": "architecture_plans_spec_owner_project_fkey"
           }
         ]
       }
@@ -16228,6 +16244,14 @@
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
             "marker": "mutation history binds the requested project"
+          },
+          {
+            "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+            "marker": "real universal plan parent ownership rechecks after an observed insert lock wait and preserves optional deletion receipts"
+          },
+          {
+            "path": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+            "marker": "architecture_plans_spec_owner_project_fkey"
           }
         ]
       }
@@ -16249,6 +16273,14 @@
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
             "marker": "mutation history binds the requested project"
+          },
+          {
+            "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+            "marker": "real universal plan parent ownership rechecks after an observed insert lock wait and preserves optional deletion receipts"
+          },
+          {
+            "path": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+            "marker": "architecture_plans_spec_owner_project_fkey"
           }
         ]
       }
@@ -16312,6 +16344,14 @@
           {
             "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
             "marker": "mutation history binds the requested project"
+          },
+          {
+            "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+            "marker": "real universal plan parent ownership rechecks after an observed insert lock wait and preserves optional deletion receipts"
+          },
+          {
+            "path": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+            "marker": "architecture_plans_spec_owner_project_fkey"
           }
         ]
       }

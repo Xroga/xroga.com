@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `a4bfaddfbc9f4824b8c310087eb1cb892e465c74`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `11c949d718297f72e647e0367bfb937a0982b32c`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -87,6 +87,7 @@ Source SHA: `a4bfaddfbc9f4824b8c310087eb1cb892e465c74`; source/config hashes are
 | endpoint-example-invalid | Source-defined endpoint example.invalid | CONFIGURED_BUT_UNVERIFIED | example.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-exp-host | Source-defined endpoint exp.host | CONFIGURED_BUT_UNVERIFIED | exp.host | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-expo-dev | Source-defined endpoint expo.dev | CONFIGURED_BUT_UNVERIFIED | expo.dev | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-fixture | Source-defined endpoint fixture | CONFIGURED_BUT_UNVERIFIED | fixture | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-fixture-invalid | Source-defined endpoint fixture.invalid | CONFIGURED_BUT_UNVERIFIED | fixture.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-fixture-supabase-co | Source-defined endpoint fixture.supabase.co | CONFIGURED_BUT_UNVERIFIED | fixture.supabase.co | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-fixtureproject-supabase-co | Source-defined endpoint fixtureproject.supabase.co | CONFIGURED_BUT_UNVERIFIED | fixtureproject.supabase.co | NOT_INDEPENDENTLY_VERIFIED |

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+  "source_sha": "11c949d718297f72e647e0367bfb937a0982b32c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -564,14 +564,17 @@
         "backend/src/security/chatBoundary.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
+        "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/learningOwnerReads.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/platformBenchmark.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
+        "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -593,6 +596,7 @@
         "backend/src/security/systemErrorLog.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/universalOwnerReads.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
         "backend/src/security/webAccounting.local.integration.ts",
@@ -654,6 +658,8 @@
         "XB01_LOCAL_DATABASE_URL",
         "XROGA_DEPLOYMENT_ENVIRONMENT",
         "XROGA_ISOLATED_AUTH_BUILD",
+        "XROGA_LEARNING_ENABLED",
+        "XROGA_PREVIEW_SIGNING_SECRET",
         "XROGA_RELEASE_SHA",
         "XROGA_SANDBOX_BROWSER_IMAGE",
         "XROGA_STAGING_AUTH_BUILD"
@@ -704,14 +710,17 @@
         "backend/src/security/chatBoundary.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
+        "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/learningOwnerReads.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/platformBenchmark.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
+        "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -733,6 +742,7 @@
         "backend/src/security/systemErrorLog.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/universalOwnerReads.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
         "backend/src/security/webAccounting.local.integration.ts",
@@ -3341,6 +3351,44 @@
         "backend/src/services/publish/easCredentials.ts",
         "backend/src/services/publish/userOwnedPublish.ts",
         "frontend/src/components/publish/MobilePublishPanel.tsx"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-fixture",
+      "provider": "Source-defined endpoint fixture",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/security/connectedMemoryConsumer.local.integration.ts"
+      ],
+      "hostnames": [
+        "fixture"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "CI",
+        "SUPABASE_URL",
+        "XB01_DISPOSABLE_SUPABASE"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/security/connectedMemoryConsumer.local.integration.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -6725,7 +6773,6 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/ai/black-hole/cutover.ts",
-        "backend/src/ai/learningPolicy.ts",
         "backend/src/ai/legacyBuilderAdapter.ts",
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/providerRuntime.ts",
@@ -6839,14 +6886,12 @@
         "XROGA_CIRCUIT_FAILURE_THRESHOLD",
         "XROGA_DISABLED_PROVIDERS",
         "XROGA_FORCE_RESEARCH_TASK_CLASSES",
-        "XROGA_LEARNING_ENABLED",
         "XROGA_MAX_REPAIR_ATTEMPTS",
         "XROGA_MODEL_FALLBACK_ORDER",
         "XROGA_PER_TASK_TOKEN_CAP",
         "XROGA_PLAN_ROUTING_MODES_JSON",
         "XROGA_PREVIEW_BASE_DOMAIN",
         "XROGA_PREVIEW_SCHEME",
-        "XROGA_PREVIEW_SIGNING_SECRET",
         "XROGA_PROVIDER_BUDGETS_JSON",
         "XROGA_REQUIRE_HIGH_RISK_REVIEW",
         "XROGA_ROUTING_MODE",
@@ -6867,7 +6912,6 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/ai/black-hole/cutover.ts",
-        "backend/src/ai/learningPolicy.ts",
         "backend/src/ai/legacyBuilderAdapter.ts",
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/providerRuntime.ts",
@@ -7191,14 +7235,17 @@
         "backend/src/security/chatBoundary.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
+        "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/learningOwnerReads.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/platformBenchmark.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
+        "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -7219,6 +7266,7 @@
         "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/universalOwnerReads.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
         "backend/src/security/webAccounting.local.integration.ts",
@@ -7246,6 +7294,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fixture",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
@@ -9859,6 +9908,7 @@
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
+        "backend/src/security/learningOwnerReads.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/platformBenchmark.local.integration.ts",
@@ -10200,15 +10250,18 @@
         "backend/src/security/chatBoundary.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
+        "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/learningOwnerReads.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/platformBenchmark.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
+        "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -10230,6 +10283,7 @@
         "backend/src/security/systemErrorLog.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/universalOwnerReads.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
         "backend/src/security/webAccounting.local.integration.ts",
@@ -10260,6 +10314,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fixture",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
@@ -10913,14 +10968,17 @@
         "backend/src/security/chatBoundary.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
+        "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
+        "backend/src/security/learningOwnerReads.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/platformBenchmark.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
+        "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/projectCreation.local.integration.ts",
@@ -10942,6 +11000,7 @@
         "backend/src/security/systemErrorLog.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/terminalIdentity.local.integration.ts",
+        "backend/src/security/universalOwnerReads.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
         "backend/src/security/webAccounting.local.integration.ts",
@@ -10969,6 +11028,7 @@
         "endpoint-api-whop-com",
         "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
+        "endpoint-fixture",
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
@@ -11020,6 +11080,7 @@
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/universalOwnerReads.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/webAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.local.integration.ts",
@@ -11206,7 +11267,8 @@
     {
       "name": "XROGA_LEARNING_ENABLED",
       "consuming_sources": [
-        "backend/src/ai/learningPolicy.ts"
+        "backend/src/ai/learningPolicy.ts",
+        "backend/src/security/learningOwnerReads.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -11219,7 +11281,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "runtime-controls-and-conditional-aliases"
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -11339,6 +11401,7 @@
     {
       "name": "XROGA_PREVIEW_SIGNING_SECRET",
       "consuming_sources": [
+        "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/synthesis/livePreview/signing.ts"
       ],
       "environments": [
@@ -11352,7 +11415,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "runtime-controls-and-conditional-aliases"
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -11894,7 +11957,7 @@
     },
     {
       "path": ".github/workflows/unit-tests.yml",
-      "sha256": "5a174daa65b809bb9e3759036cddcca5bd6533c7cf3127f6b2d946434a83efd6"
+      "sha256": "60d2f50de15081db9d42b125c4feb8229b9a809a316c88c0b3234a8c1652b84a"
     },
     {
       "path": ".github/workflows/vercel-build-check.yml",
@@ -12178,7 +12241,7 @@
     },
     {
       "path": "backend/src/ai/projectMemory.ts",
-      "sha256": "a8185a6b2e6ae8ac82bb4ca9b20572292070afa996d92553cb4012765de5f391"
+      "sha256": "5296a4cecbca3c2a4d7c19e7eb98d3120677af212eadaf2bcaf7766915a68125"
     },
     {
       "path": "backend/src/ai/prompts.ts",
@@ -12254,7 +12317,7 @@
     },
     {
       "path": "backend/src/ai/sessionMemory.ts",
-      "sha256": "412f07c9519db8594f26e00ef13492a36d62c0796bab001bb40ff0f06ccfbfca"
+      "sha256": "d42622f91cd218c0509a6d77f8223890a2afed7222ffa93a57d3482da064c851"
     },
     {
       "path": "backend/src/ai/shipOutcome.ts",
@@ -12898,7 +12961,7 @@
     },
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383"
+      "sha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106"
     },
     {
       "path": "backend/src/operations/actionAdmission.local.integration.ts",
@@ -13277,6 +13340,10 @@
       "sha256": "7f2eeaa7692db6e1ce438d3574a40228da92d77287612163db88a1a2e894dd2f"
     },
     {
+      "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+      "sha256": "089da8db36552cf71536133ee55f976b77767ffdb18aacf538c8ad373b6e3349"
+    },
+    {
       "path": "backend/src/security/credentialReadMatrix.local.integration.ts",
       "sha256": "f670715274906beb8c7de98e3af35290816784e3b6b25faf1758d7415fcb84c2"
     },
@@ -13295,6 +13362,10 @@
     {
       "path": "backend/src/security/growthReferral.local.integration.ts",
       "sha256": "b340acf380c9405d8d1af1e4e26adf7f6dc574890974338267e2a8e015e358b3"
+    },
+    {
+      "path": "backend/src/security/learningOwnerReads.local.integration.ts",
+      "sha256": "6e3f51097e5db6a4b33d41e21a41ca3e2acad5bb8698b7f89d23960207dfabef"
     },
     {
       "path": "backend/src/security/oauthSession.local.integration.ts",
@@ -13323,6 +13394,10 @@
     {
       "path": "backend/src/security/platformHealth.local.integration.ts",
       "sha256": "1ef23205e913bea7133ec96fb5f93fda915990b10ce700f55dc95fb7becdda63"
+    },
+    {
+      "path": "backend/src/security/previewConsumer.local.integration.ts",
+      "sha256": "be9d96528dc945a4158975f76bb15b2eb3681b989c2002902f4f026765b7ec59"
     },
     {
       "path": "backend/src/security/previewGrantAdmission.local.integration.ts",
@@ -13418,11 +13493,15 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "99556ebfe0dc45952501d8408f3a0ed657135c41bf588696370e0e96cf5f82de"
+      "sha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
       "sha256": "af7f449c8ae2935837cf34fc821172bb12503169888239316a2bdfebcaa2b775"
+    },
+    {
+      "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+      "sha256": "0be85066ee3b8c3ae9247a43574ff33e2817c7c11f5e18ee7d5c0e4abbdcc49d"
     },
     {
       "path": "backend/src/security/usageAccounting.local.integration.ts",
@@ -13434,7 +13513,7 @@
     },
     {
       "path": "backend/src/security/webAccounting.local.integration.ts",
-      "sha256": "eff4a38488e3b22ab1863dd02a56b2b09cc659cfa50c207b723ec0057f26eb8b"
+      "sha256": "2b70564ff5dadd8b52fdeb07d4f5ee37d3dbbf1190ba437fbe971bd9a5f52863"
     },
     {
       "path": "backend/src/security/workerProjectAdmission.local.integration.ts",
@@ -19252,6 +19331,27 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+      "line": 13,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "fixture",
+      "protocol": "https:",
+      "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+      "line": 18,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+      "line": 26,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/credentialReadMatrix.local.integration.ts",
       "line": 13,
       "credentialsInUrl": false
@@ -19327,6 +19427,20 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/learningOwnerReads.local.integration.ts",
+      "line": 12,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/learningOwnerReads.local.integration.ts",
+      "line": 32,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/oauthSession.local.integration.ts",
@@ -19394,6 +19508,20 @@
       "protocol": "http:",
       "path": "backend/src/security/platformHealth.local.integration.ts",
       "line": 29,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/previewConsumer.local.integration.ts",
+      "line": 14,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/previewConsumer.local.integration.ts",
+      "line": 23,
       "credentialsInUrl": false
     },
     {
@@ -19582,77 +19710,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 114,
+      "line": 118,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 114,
+      "line": 118,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 524,
+      "line": 532,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 574,
+      "line": 582,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 663,
+      "line": 671,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 832,
+      "line": 840,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 890,
+      "line": 898,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1577,
+      "line": 1585,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1595,
+      "line": 1603,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1603,
+      "line": 1611,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1607,
+      "line": 1615,
       "credentialsInUrl": false
     },
     {
@@ -19660,6 +19788,20 @@
       "protocol": "http:",
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
       "line": 10,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+      "line": 16,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+      "line": 41,
       "credentialsInUrl": false
     },
     {
@@ -25994,14 +26136,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1076,
+      "line": 1084,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1413,
+      "line": 1421,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

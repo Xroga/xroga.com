@@ -227,7 +227,19 @@
           "path": "backend/src/ai/buildImprovementMemory.ts",
           "marker": "MAX_IMPROVEMENT_ROWS"
         }
-      ]
+      ],
+      "criterionClosureReview": {
+        "classification": "PROOF_REQUIRED",
+        "criteria": [
+          "XB01-C007-AC02",
+          "XB01-C007-AC10"
+        ],
+        "actorTrace": "Pipeline retains its issued actor before the sole production default reader. Exact owner predicate, bounded sanitized advisory projection, existing freshness/order/limit and no writes.",
+        "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+        "fixture": "backend/src/security/learningOwnerReads.local.integration.ts",
+        "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec",
+        "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+      }
     },
     {
       "path": "backend/src/ai/buildOutcomeMemory.ts",
@@ -305,7 +317,19 @@
           "path": "backend/src/ai/buildOutcomeRoutingMemory.ts",
           "marker": "loadBuildOutcomeRoutingMemory"
         }
-      ]
+      ],
+      "criterionClosureReview": {
+        "classification": "PROOF_REQUIRED",
+        "criteria": [
+          "XB01-C007-AC02",
+          "XB01-C007-AC10"
+        ],
+        "actorTrace": "The sole production pipeline caller uses the immutable issued owner. Existing default query selects only that user outcomes before bounded advisory aggregation. No provider account or external action.",
+        "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+        "fixture": "backend/src/security/learningOwnerReads.local.integration.ts",
+        "sourceSha256": "bfa3804acb045b2a53877859dbd03f288a6db28533528972e31b3a6d8bdee902",
+        "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+      }
     },
     {
       "path": "backend/src/ai/buildStrategyMemory.ts",
@@ -322,7 +346,19 @@
           "path": "backend/src/ai/buildStrategyMemory.ts",
           "marker": "MAX_STRATEGY_ROWS"
         }
-      ]
+      ],
+      "criterionClosureReview": {
+        "classification": "PROOF_REQUIRED",
+        "criteria": [
+          "XB01-C007-AC02",
+          "XB01-C007-AC10"
+        ],
+        "actorTrace": "Existing default reader is called only by the issued-owner pipeline. Exact user scope precedes existing sanitized recipe/taxonomy summarization. Source table explicitly stores owner-wide evaluation metadata without raw source or prompts.",
+        "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+        "fixture": "backend/src/security/learningOwnerReads.local.integration.ts",
+        "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56",
+        "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+      }
     },
     {
       "path": "backend/src/routes/dashboard.ts",
@@ -919,8 +955,29 @@
         {
           "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
           "marker": "mutation history binds the requested project"
+        },
+        {
+          "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+          "marker": "real universal plan parent ownership rechecks after an observed insert lock wait and preserves optional deletion receipts"
+        },
+        {
+          "path": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+          "marker": "architecture_plans_spec_owner_project_fkey"
         }
-      ]
+      ],
+      "criterionClosureReview": {
+        "classification": "FIX_REQUIRED",
+        "criteria": [
+          "XB01-C007-AC02",
+          "XB01-C007-AC10"
+        ],
+        "finding": "Original schema reproduction allows foreign-parent plan after an ownership preflight. Composite FK repair is implemented locally, real acceptance pending.",
+        "completionCondition": "Actual held-parent insert wait rejects ownership transfer, own/project/run read namespace and deletion work, changed-source fresh/upgrade and repeated integrated verification pass.",
+        "fixture": "backend/src/security/universalOwnerReads.local.integration.ts",
+        "migration": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+        "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
+        "laterPhaseScope": "Unchanged original008/009/010 obligations remain separate."
+      }
     },
     {
       "path": "backend/src/routes/operations.ts",
@@ -1581,7 +1638,19 @@
           "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
           "marker": "preview grant input and returned capability stay bound"
         }
-      ]
+      ],
+      "criterionClosureReview": {
+        "classification": "PROOF_REQUIRED",
+        "criteria": [
+          "XB01-C007-AC02",
+          "XB01-C007-AC10"
+        ],
+        "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
+        "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
+        "fixture": "backend/src/security/previewConsumer.local.integration.ts",
+        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
+      }
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -2657,9 +2726,9 @@
     },
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sourceSha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383",
+      "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
       "callIds": [
-        "37aeba5e7ba598d930da"
+        "b9d29af2f2ef47d2dbd8"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in attachRuntimePreviewWebSocketGateway. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2669,7 +2738,14 @@
           "path": "backend/src/middleware/runtimePreviewGateway.ts",
           "marker": "                        : Buffer.from(\n                            data as\n                              ArrayBuffer,"
         }
-      ]
+      ],
+      "previousSourcePosition": {
+        "sourceSha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383",
+        "callIds": [
+          "37aeba5e7ba598d930da"
+        ],
+        "reason": "An export modifier exposes the unchanged actual resolver to the disposable test. This shifted only the position of an unchanged Buffer.from expression, which remains a non-persistence conversion. No security-sensitive caller is exempted."
+      }
     },
     {
       "path": "backend/src/routes/phase1.ts",

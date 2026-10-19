@@ -813,6 +813,14 @@
         {
           "path": "backend/src/synthesis/universalPersistence.owner.test.ts",
           "marker": "mutation history binds the requested project"
+        },
+        {
+          "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+          "marker": "real universal plan parent ownership rechecks after an observed insert lock wait and preserves optional deletion receipts"
+        },
+        {
+          "path": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+          "marker": "architecture_plans_spec_owner_project_fkey"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -2436,12 +2444,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-1923294573c2e782",
+      "id": "OB-a0d5c143aa290324",
       "callerIds": [
-        "37aeba5e7ba598d930da"
+        "b9d29af2f2ef47d2dbd8"
       ],
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sourceSha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383",
+      "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -2462,7 +2470,7 @@
       "review": {
         "path": "backend/src/middleware/runtimePreviewGateway.ts",
         "marker": "                        : Buffer.from(\n                            data as\n                              ArrayBuffer,",
-        "sha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383"
+        "sha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },

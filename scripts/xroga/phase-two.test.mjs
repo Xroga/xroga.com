@@ -10,7 +10,7 @@ test('Phase2 retains all73 packets and371 historical identities without certifyi
   assert.ok(r.packets.every(p=>p.state==='EVIDENCE_GAP'&&p.proofIds.length===0));
   assert.ok(r.packets.flatMap(p=>p.independentLaterObligations).every(o=>o.phase>2));
   assert.ok(r.criteria.every(c=>c.status==='BLOCKED'));assert.equal(r.criteria.length,10);
-  assert.equal(r.packets.filter(p=>p.semanticProgress).length,28);
+  assert.equal(r.packets.filter(p=>p.semanticProgress).length,33);
   const pkce=r.packets.find(p=>p.id==='B1-P2-d068943836963a9c');
   assert.equal(pkce.currentCallerIds.length,16);
   assert.equal(pkce.semanticProgress.verifiedCurrentCallerIds.length,16);
@@ -65,6 +65,8 @@ test('both baseline jobs reject stale Phase2 evidence hashes before browser inst
     assert.ok(check<job.indexOf('npm run verify:baseline'));
     const inventory=job.indexOf('node scripts/xroga/inventory.mjs --check');
     assert.ok(inventory>check&&inventory<job.indexOf('run: npx playwright install'),'Reject source inventory drift before browser installation and full regression');
+    const requirements=job.indexOf('node scripts/xroga/validate-requirements-ledger.mjs');
+    assert.ok(requirements>inventory&&requirements<job.indexOf('run: npx playwright install'),'Reject stale source-ledger hashes before expensive regression');
     assert.equal(job.match(/npm run verify:baseline/g)?.length,2,'Both complete baseline repetitions remain mandatory');
   }
 });

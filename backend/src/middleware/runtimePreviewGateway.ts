@@ -60,7 +60,7 @@ function requestHostname(
     );
 }
 
-async function resolveTarget(
+export async function resolveTarget(
   hostname:
     string,
 ): Promise<PreviewTarget | null> {

@@ -287,9 +287,27 @@
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-76b294c090331cc4",
+        "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "EXISTING_OWNERSHIP_PATH_TRACED_TARGETED_CONSUMER_PROOF_PREPARED",
+        "actorTrace": "Pipeline retains its issued actor before the sole production default reader. Exact owner predicate, bounded sanitized advisory projection, existing freshness/order/limit and no writes.",
+        "invariant": "Only the original issued owner namespace or the existing exact signed-capability exception may reach these specific read/revoke paths. Foreign owners, substituted parents and unavailable authority cannot select another tenant data. Original007 scope only.",
+        "evidence": [
+          {
+            "path": "backend/src/security/learningOwnerReads.local.integration.ts",
+            "type": "ACTUAL_DISPOSABLE_CONSUMER_MATRIX_PREPARED",
+            "result": "NOT_EXECUTED"
+          }
+        ],
+        "remaining": [
+          "Execute the exact new disposable case and authenticate its complete successful source-bound run",
+          "Reconcile exact proven callers in both existing record systems, retaining all other and later-phase scope"
+        ]
+      },
       "actor": {
         "existingTrace": "Pipeline invokes the improvement loader for opts.userId; the loader filters build_outcomes by user_id, age cutoff and bounded row limit.",
         "currentSemanticVerification": "PENDING"
@@ -456,9 +474,27 @@
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-15382bc411fb9f9b",
+        "sourceSha256": "bfa3804acb045b2a53877859dbd03f288a6db28533528972e31b3a6d8bdee902",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "EXISTING_OWNERSHIP_PATH_TRACED_TARGETED_CONSUMER_PROOF_PREPARED",
+        "actorTrace": "The sole production pipeline caller uses the immutable issued owner. Existing default query selects only that user outcomes before bounded advisory aggregation. No provider account or external action.",
+        "invariant": "Only the original issued owner namespace or the existing exact signed-capability exception may reach these specific read/revoke paths. Foreign owners, substituted parents and unavailable authority cannot select another tenant data. Original007 scope only.",
+        "evidence": [
+          {
+            "path": "backend/src/security/learningOwnerReads.local.integration.ts",
+            "type": "ACTUAL_DISPOSABLE_CONSUMER_MATRIX_PREPARED",
+            "result": "NOT_EXECUTED"
+          }
+        ],
+        "remaining": [
+          "Execute the exact new disposable case and authenticate its complete successful source-bound run",
+          "Reconcile exact proven callers in both existing record systems, retaining all other and later-phase scope"
+        ]
+      },
       "actor": {
         "existingTrace": "Pipeline invokes this userId-scoped reader, filtering build_outcomes by owner, age and row cap before summarizing model telemetry.",
         "currentSemanticVerification": "PENDING"
@@ -522,9 +558,27 @@
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-ecfadcff49b9bfe6",
+        "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "EXISTING_OWNERSHIP_PATH_TRACED_TARGETED_CONSUMER_PROOF_PREPARED",
+        "actorTrace": "Existing default reader is called only by the issued-owner pipeline. Exact user scope precedes existing sanitized recipe/taxonomy summarization. Source table explicitly stores owner-wide evaluation metadata without raw source or prompts.",
+        "invariant": "Only the original issued owner namespace or the existing exact signed-capability exception may reach these specific read/revoke paths. Foreign owners, substituted parents and unavailable authority cannot select another tenant data. Original007 scope only.",
+        "evidence": [
+          {
+            "path": "backend/src/security/learningOwnerReads.local.integration.ts",
+            "type": "ACTUAL_DISPOSABLE_CONSUMER_MATRIX_PREPARED",
+            "result": "NOT_EXECUTED"
+          }
+        ],
+        "remaining": [
+          "Execute the exact new disposable case and authenticate its complete successful source-bound run",
+          "Reconcile exact proven callers in both existing record systems, retaining all other and later-phase scope"
+        ]
+      },
       "actor": {
         "existingTrace": "Pipeline strategy memory reads selected outcome/recipe fields for supplied userId with age and row bounds, then feeds the existing strategy scorer.",
         "currentSemanticVerification": "PENDING"
@@ -1491,9 +1545,33 @@
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-f1384a65c2d70a16",
+        "sourceSha256": "98e863b6316891f534e01f15dcf0eee852d74a0a1ae85cec935bd9c36869c10d",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "REPRODUCED_PLAN_SPEC_PARENT_RACE_COMPOSITE_FK_AND_CONSUMER_PROOF_PREPARED",
+        "actorTrace": "The admitted universal pipeline supplies its issued owner/project/run to the existing scoped store. loadLatestSpec/loadLatestPlan/loadMutations constrain owner/project and, for mutations, run. savePlan checks a selected spec before the existing owned persistence helper. Original spec-id-only FK permits that parent to change owners after preflight. The new composite FK binds spec/owner/project at decisive insert/update and serializes current parent changes. Owner-bound repository delete remains unchanged.",
+        "invariant": "A stored plan may reference only a spec with its exact current owner and logical project. Reads and deletion must preserve owner/project/run namespaces and reject non-issued or foreign scope. Optional parent deletion clears only the spec link.",
+        "evidence": [
+          {
+            "path": "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+            "type": "SYNTHETIC_DATABASE_BEFORE_AFTER_AND_HISTORY_REFUSAL",
+            "result": "PASS_NOT_REAL_CONCURRENCY_ACCEPTANCE"
+          },
+          {
+            "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+            "type": "ACTUAL_DISPOSABLE_DEFAULT_READ_AND_HELD_PARENT_LOCK_CASES_PREPARED",
+            "result": "NOT_EXECUTED"
+          }
+        ],
+        "remaining": [
+          "Run actual Supabase current-parent lock wait and exact namespace/deletion cases",
+          "Authenticate fresh/upgrade and repeated branch/integrated final source",
+          "Reconcile exactly these five original007 caller sites, preserving every later-phase obligation"
+        ]
+      },
       "actor": {
         "existingTrace": "Supabase store requires issued context and owner equality. Spec/plan reads bind owner/project; plan parent lookup binds owner/project/spec. Mutation history now binds owner/project/run. Repository header/child operations bind owner and calculated index ID, and writes use existing owner-collision helpers.",
         "currentSemanticVerification": "PENDING"
@@ -2096,7 +2174,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3423,7 +3501,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -3535,9 +3613,27 @@
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-11526c9c3e6a8aa3",
+        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "EXISTING_OWNERSHIP_PATH_TRACED_TARGETED_CONSUMER_PROOF_PREPARED",
+        "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
+        "invariant": "Only the original issued owner namespace or the existing exact signed-capability exception may reach these specific read/revoke paths. Foreign owners, substituted parents and unavailable authority cannot select another tenant data. Original007 scope only.",
+        "evidence": [
+          {
+            "path": "backend/src/security/previewConsumer.local.integration.ts",
+            "type": "ACTUAL_DISPOSABLE_CONSUMER_MATRIX_PREPARED",
+            "result": "NOT_EXECUTED"
+          }
+        ],
+        "remaining": [
+          "Execute the exact new disposable case and authenticate its complete successful source-bound run",
+          "Reconcile exact proven callers in both existing record systems, retaining all other and later-phase scope"
+        ]
+      },
       "actor": {
         "existingTrace": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
         "currentSemanticVerification": "PENDING"
@@ -3566,7 +3662,7 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.ts",
           "marker": "const target = authorizedPreviewTarget(grant, session);",
-          "sourceSha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383",
+          "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4409,7 +4505,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4651,7 +4747,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4764,7 +4860,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5081,7 +5177,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5273,7 +5369,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5701,7 +5797,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5954,7 +6050,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6023,7 +6119,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6498,7 +6594,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7196,7 +7292,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7303,7 +7399,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "5d9a3d3987a76b7f3390ad3e666f9375472fa16196e0b8bb11aa5b86f79a5080",
+          "sourceSha256": "fa315a16f1ba5d900a78b95ad9b666e38ab07f614d91f9bc16b207d7f3f0e140",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }

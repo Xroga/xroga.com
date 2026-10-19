@@ -83,6 +83,7 @@ flowchart LR
   endpoint_example_invalid["Source-defined endpoint example.invalid — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_exp_host["Source-defined endpoint exp.host — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_expo_dev["Source-defined endpoint expo.dev — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_fixture["Source-defined endpoint fixture — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_fixture_invalid["Source-defined endpoint fixture.invalid — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_fixture_supabase_co["Source-defined endpoint fixture.supabase.co — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_fixtureproject_supabase_co["Source-defined endpoint fixtureproject.supabase.co — CONFIGURED_BUT_UNVERIFIED"]
@@ -250,6 +251,7 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_example_invalid
   api -. "source host/reference; unverified" .-> endpoint_exp_host
   api -. "source host/reference; unverified" .-> endpoint_expo_dev
+  api -. "source host/reference; unverified" .-> endpoint_fixture
   api -. "source host/reference; unverified" .-> endpoint_fixture_invalid
   api -. "source host/reference; unverified" .-> endpoint_fixture_supabase_co
   api -. "source host/reference; unverified" .-> endpoint_fixtureproject_supabase_co
