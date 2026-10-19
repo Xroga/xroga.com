@@ -42,14 +42,11 @@ import { isTemporaryEmail } from '@/lib/emailValidation';
 
 import { getPasswordStrength } from '@/lib/passwordStrength';
 
-import { cn } from '@/lib/utils';
 
 import { useThemeStore } from '@/store/useThemeStore';
 
 import {
   normalizeTheme,
-  THEME_OPTIONS,
-  type CoreThemeId,
 } from '@/lib/theme';
 
 import {
@@ -68,42 +65,6 @@ import {
 } from './AuthModern';
 
 import styles from './SignupForm.module.css';
-
-const THEME_SWATCHES: Record<
-  CoreThemeId,
-  {
-    background: string;
-    foreground: string;
-  }
-> = {
-  white: {
-    background:
-      '#ffffff',
-    foreground:
-      '#111111',
-  },
-
-  beige: {
-    background:
-      '#f5efe3',
-    foreground:
-      '#3a3127',
-  },
-
-  gray: {
-    background:
-      '#2a2a2a',
-    foreground:
-      '#f5f5f5',
-  },
-
-  black: {
-    background:
-      '#000000',
-    foreground:
-      '#ffffff',
-  },
-};
 
 function getStrengthLabel(
   score: number
@@ -159,22 +120,7 @@ export function SignupForm() {
         state.theme
     );
 
-  const setGlobalTheme =
-    useThemeStore(
-      (state) =>
-        state.setTheme
-    );
-
-  const [
-    theme,
-    setTheme,
-  ] =
-    useState<CoreThemeId>(
-      () =>
-        normalizeTheme(
-          globalTheme
-        )
-    );
+  const theme = normalizeTheme(globalTheme);
 
   const [
     referralCode,
@@ -201,14 +147,7 @@ export function SignupForm() {
     setDisplayName,
   ] = useState('');
 
-  const [
-    avatarUrl,
-    setAvatarUrl,
-  ] = useState(
-    XROGA_PROFILE_AVATARS[
-      0
-    ]?.url ?? ''
-  );
+  const avatarUrl = XROGA_PROFILE_AVATARS[0]?.url ?? '';
 
   const [
     loading,
@@ -245,15 +184,6 @@ export function SignupForm() {
       passwordStrength.score
     );
 
-  useEffect(() => {
-    setTheme(
-      normalizeTheme(
-        globalTheme
-      )
-    );
-  }, [
-    globalTheme,
-  ]);
 
   useEffect(() => {
     const code =
@@ -272,18 +202,6 @@ export function SignupForm() {
   }, [
     refFromUrl,
   ]);
-
-  function selectTheme(
-    nextTheme: CoreThemeId
-  ) {
-    setTheme(
-      nextTheme
-    );
-
-    setGlobalTheme(
-      nextTheme
-    );
-  }
 
   async function handleGitHub() {
     setError('');
@@ -397,10 +315,6 @@ export function SignupForm() {
     );
 
     setError('');
-
-    setGlobalTheme(
-      theme
-    );
 
     try {
       const supabase =
@@ -909,63 +823,6 @@ export function SignupForm() {
           </div>
         ) : null}
 
-        <section className={styles.setupGroup} aria-label="Personalise your workspace">
-          <div className={styles.setupHeader}>
-            <strong>Personalise your workspace</strong>
-            <span>Theme and profile</span>
-          </div>
-
-          <div className={styles.setupGrid}>
-            <div>
-              <AuthModernLabel>Workspace theme</AuthModernLabel>
-              <div className={styles.themeGrid}>
-                {THEME_OPTIONS.map((option) => {
-                  const selected = theme === option.id;
-                  const swatch = THEME_SWATCHES[option.id];
-
-                  return (
-                    <button
-                      key={option.id}
-                      type="button"
-                      onClick={() => selectTheme(option.id)}
-                      aria-pressed={selected}
-                      className={cn(styles.themeOption, selected && styles.themeOptionSelected)}
-                    >
-                      <span
-                        className={styles.themeSwatch}
-                        style={{ background: swatch.background, color: swatch.foreground }}
-                      />
-                      <span className={styles.themeLabel}>{option.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <AuthModernLabel>Profile</AuthModernLabel>
-              <div className={styles.avatarRow}>
-                {XROGA_PROFILE_AVATARS.slice(0, 6).map((avatar) => {
-                  const selected = avatarUrl === avatar.url;
-
-                  return (
-                    <button
-                      key={avatar.url}
-                      type="button"
-                      onClick={() => setAvatarUrl(avatar.url)}
-                      aria-label="Select profile avatar"
-                      aria-pressed={selected}
-                      className={cn(styles.avatarOption, selected && styles.avatarOptionSelected)}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={avatar.url} alt="" />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </section>
 
         <button
           type="submit"

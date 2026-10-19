@@ -10,11 +10,10 @@ test('auth mounts exactly one form and does not depend on workspace theme', () =
   assert.doesNotMatch(shell, /useThemeStore|<aside/);
 });
 
-test('email fields precede preserved workspace personalization', () => {
+test('signup does not ask for workspace theme or profile selection', () => {
   const form = read('./SignupForm.tsx');
-  assert.ok(form.indexOf('id="signup-email"') < form.indexOf('styles.setupGroup'));
-  assert.match(form, /styles.themeGrid/);
-  assert.match(form, /styles.avatarRow/);
+  assert.doesNotMatch(form, /styles.setupGroup|styles.themeGrid|styles.avatarRow/);
+  assert.match(form, /id="signup-email"/);
 });
 
 test('capability slides use text rather than feature images', () => {

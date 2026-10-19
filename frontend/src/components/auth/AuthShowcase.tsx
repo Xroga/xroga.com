@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { Plus, ScanSearch, Globe2, SquareTerminal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import styles from './AuthPowerPanel.module.css';
 
@@ -9,6 +10,13 @@ const STORIES = [
   { label: 'Build · test · repair', title: 'Build for every screen.', accent: 'Keep moving forward.', description: 'Create responsive apps, test in the browser, and work through fixes. Keep long-running projects moving from the first version to launch.', color: '#8b83f6' },
   { label: 'Connected apps · browser workflows', title: 'Less busywork.', accent: 'More possibility.', description: 'Bring your apps and custom MCP tools together. Research, plan, and run browser workflows, with approvals for sensitive actions.', color: '#eda46c' },
   { label: 'AI employees · SEO · AEO · GEO', title: 'Your team for', accent: 'what comes next.', description: 'Put specialized AI employees to work on research, content, operations, and development. Build a stronger presence across search and AI discovery.', color: '#69cbb0' },
+] as const;
+
+const CAPABILITIES = [
+  { title: 'Create', description: 'Tasks, images, docs', icon: Plus, slide: 0 },
+  { title: 'Find', description: 'Answers & files', icon: ScanSearch, slide: 2 },
+  { title: 'Research', description: 'Apps & web', icon: Globe2, slide: 3 },
+  { title: 'Code', description: 'Build apps', icon: SquareTerminal, slide: 1 },
 ] as const;
 
 export function AuthShowcase() {
@@ -37,9 +45,18 @@ export function AuthShowcase() {
       onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false); }}>
       <div className={styles.pattern} aria-hidden="true" style={{ backgroundColor: STORIES[activeSlide].color }} />
       <header className={styles.header}>
-        <Image src="/brand/xroga-orb-mark-v2.webp" alt="" width={28} height={28} priority unoptimized />
-        <span>Xroga</span>
+        <Image src="/brand/xroga-orb-wordmark-v2.webp" alt="Xroga" width={160} height={60} priority />
       </header>
+      <nav className={styles.capabilities} aria-label="Explore Xroga capabilities">
+        {CAPABILITIES.map(({ title, description, icon: Icon, slide }) => (
+          <button key={title} type="button" onClick={() => setActiveSlide(slide)}
+            aria-pressed={activeSlide === slide}>
+            <Icon aria-hidden="true" />
+            <strong>{title}</strong>
+            <span>{description}</span>
+          </button>
+        ))}
+      </nav>
       <div className={styles.copyArea}>
         {STORIES.map((story, index) => (
           <article key={story.title} className={styles.story} hidden={activeSlide !== index}>

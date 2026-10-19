@@ -7,6 +7,7 @@ import styles from './AuthShell.module.css';
 export function AuthShell({ mode }: { mode: 'signup' | 'login' }) {
   return (
     <main className={styles.page}>
+      <div className={styles.particles} aria-hidden="true" />
       <div className={styles.shell}>
         <div className={styles.story}><AuthShowcase /></div>
         <section className={styles.formArea} aria-label="Account access">

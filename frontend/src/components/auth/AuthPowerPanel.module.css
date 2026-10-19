@@ -2,7 +2,14 @@
 .pattern { position: absolute; inset: 0 0 23%; overflow: hidden; background-image: linear-gradient(180deg, #f0f4f2 0%, #e7eeeecc 12%, transparent 50%, #061019 99%), repeating-linear-gradient(90deg, #ffffffa8 0px, #ffffff12 3px, #001324bb 13px, #00132400 17px); background-blend-mode: normal; }
 .pattern::after { content: ''; position: absolute; inset: 0; background: linear-gradient(160deg, transparent 20%, #06101900 35%, #061019e6 74%, #061019 95%); }
 .header { position: absolute; top: 23px; left: 25px; z-index: 2; display: flex; align-items: center; gap: 8px; color: #111820; font-size: 17px; font-weight: 600; letter-spacing: -.06em; }
-.header img { width: 27px; height: 27px; }
+.header img { width: 160px; height: 60px; object-fit: contain; }
+.capabilities { position: absolute; top: 123px; left: 26px; right: 26px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.capabilities button { display: grid; gap: 5px; padding: 13px 16px; text-align: left; border: 1px solid #ffffff45; border-radius: 16px; color: #f7fafc; background: #061019b8; backdrop-filter: blur(14px); cursor: pointer; transition: border-color .18s, background .18s; }
+.capabilities button:hover, .capabilities button[aria-pressed='true'] { border-color: #fff; background: #0b2336e8; }
+.capabilities button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.capabilities svg { width: 22px; height: 22px; margin-bottom: 7px; color: #d1e7ed; }
+.capabilities strong { font-size: 18px; font-weight: 500; }
+.capabilities span { font-size: 11px; color: #b7c6ce; }
 .copyArea { position: absolute; right: 26px; bottom: 23px; left: 26px; }
 .story[hidden] { display: none; }
 .story { animation: reveal .35s ease-out; }
@@ -17,5 +24,7 @@
 .dots button[aria-current='true'] span { background: #e7f8ff; }
 .dots button:focus-visible { outline: 2px solid #d5f8ff; outline-offset: 3px; border-radius: 3px; }
 @keyframes reveal { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-@media (max-width: 700px) { .panel { min-height: 500px; } .copyArea { left: 23px; right: 23px; bottom: 19px; } .story h2 { font-size: 36px; } .description { font-size: 11px; } .pattern { bottom: 27%; } }
+@media (max-width: 700px) { .panel { min-height: 600px; } .copyArea { left: 23px; right: 23px; bottom: 19px; } .story h2 { font-size: 34px; } .description { font-size: 11px; } .pattern { bottom: 27%; } .capabilities { top: 105px; left: 23px; right: 23px; } .capabilities button { padding: 11px 13px; } }
+@media (max-width: 700px) { .panel { min-height: 660px; } }
+@media (max-width: 380px) { .panel { min-height: 710px; } }
 @media (prefers-reduced-motion: reduce) { .story { animation: none; } }

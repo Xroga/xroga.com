@@ -18,19 +18,24 @@
   background: #000;
   color: var(--auth-text);
   font-family: Arial, Helvetica, sans-serif;
+  position: relative;
+  isolation: isolate;
 }
+.particles { position: fixed; z-index: -1; inset: 0; pointer-events: none; background: #fff; opacity: .18; mask: radial-gradient(circle at 50% 50%, white 1.5px, transparent 2px) 50% 50% / 20px 20px, url('/brand/particle-noise-mask.png') 256px 50% / 256px 256px; mask-composite: intersect; animation: particleFlicker 20s infinite linear; }
+@keyframes particleFlicker { to { mask-position: 50% 50%, 0 50%; } }
 .shell { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 440px); justify-content: space-between; gap: 70px; width: 100%; max-width: 1060px; }
 .story { min-width: 0; min-height: 650px; overflow: hidden; border-radius: 18px; }
 .formArea { display: flex; align-items: center; justify-content: center; min-width: 0; padding: 24px 0; }
 .form { width: 100%; max-width: 420px; }
 .form h1 { font-family: Arial, Helvetica, sans-serif; font-size: 32px; font-weight: 500; letter-spacing: -.045em; line-height: 1.1; }
 .form input { border-radius: 9px; }
-.form button[type='submit'] { border: 1px solid #444; border-radius: 9px; background: linear-gradient(#292929, #191919); box-shadow: 0 5px 12px #0006; }
-.form button[type='submit']:hover:not(:disabled) { background: #303030; transform: translateY(-1px); }
+.form button[type='submit'] { border: 1px solid #fff; border-radius: 9px; color: #111; background: #fff; box-shadow: 0 5px 12px #0006; }
+.form button[type='submit'] span { color: inherit; }
+.form button[type='submit']:hover:not(:disabled) { background: #e8e8e8; transform: translateY(-1px); }
 .form a { color: #ddd; }
-.form a[data-auth-switch] { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; margin-left: 8px; padding: 0 14px; border: 1px solid #363636; border-radius: 8px; background: linear-gradient(#242424, #141414); color: #f5f5f5; font-size: 12px; font-weight: 500; text-decoration: none; transition: background .18s, transform .18s; }
+.form a[data-auth-switch] { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; margin-left: 8px; padding: 0 14px; border: 1px solid #eee; border-radius: 8px; background: #000; color: #fff; font-size: 12px; font-weight: 500; text-decoration: none; transition: background .18s, transform .18s; }
 .form a[data-auth-switch]:hover { background: #2a2a2a; transform: translateY(-1px); opacity: 1; }
 .form a[data-auth-switch]:focus-visible { outline: 2px solid #bbb; outline-offset: 3px; }
 @media (max-width: 900px) { .page { padding: 24px; } .shell { gap: 32px; } }
 @media (max-width: 700px) { .page { padding: 20px; } .shell { grid-template-columns: minmax(0, 1fr); gap: 22px; max-width: 460px; } .story { min-height: 500px; border-radius: 22px; } .formArea { padding: 20px 0; } }
-@media (prefers-reduced-motion: reduce) { .form button { transition: none; transform: none !important; } }
+@media (prefers-reduced-motion: reduce) { .form button { transition: none; transform: none !important; } .particles { animation: none; } }
